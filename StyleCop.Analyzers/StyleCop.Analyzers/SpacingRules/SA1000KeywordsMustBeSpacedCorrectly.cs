@@ -2,6 +2,7 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -28,7 +29,7 @@
     {
         public const string DiagnosticId = "SA1000";
         internal const string Title = "Keywords Must Be Spaced Correctly";
-        internal const string MessageFormat = "TODO: Message format";
+        internal const string MessageFormat = "The keyword '{0}' must{1} be followed by a space.";
         internal const string Category = "StyleCop.CSharp.Spacing";
         internal const string Description = "The spacing around a C# keyword is incorrect.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1000.html";
@@ -51,7 +52,122 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxTreeAction(HandleSyntaxTree);
+        }
+
+        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        {
+            SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
+            foreach (var token in root.DescendantTokens())
+            {
+                switch (token.CSharpKind())
+                {
+                case SyntaxKind.CatchKeyword:
+                case SyntaxKind.FixedKeyword:
+                case SyntaxKind.ForKeyword:
+                case SyntaxKind.ForEachKeyword:
+                case SyntaxKind.FromKeyword:
+                case SyntaxKind.GroupKeyword:
+                case SyntaxKind.IfKeyword:
+                case SyntaxKind.IntoKeyword:
+                case SyntaxKind.JoinKeyword:
+                case SyntaxKind.LetKeyword:
+                case SyntaxKind.LockKeyword:
+                case SyntaxKind.OrderByKeyword:
+                case SyntaxKind.SelectKeyword:
+                case SyntaxKind.StackAllocKeyword:
+                case SyntaxKind.SwitchKeyword:
+                case SyntaxKind.ThrowKeyword:
+                case SyntaxKind.UsingKeyword:
+                case SyntaxKind.WhereKeyword:
+                case SyntaxKind.YieldKeyword:
+                    HandleRequiredSpaceToken(context, token);
+                    break;
+
+                case SyntaxKind.CheckedKeyword:
+                case SyntaxKind.DefaultKeyword:
+                case SyntaxKind.SizeOfKeyword:
+                case SyntaxKind.TypeOfKeyword:
+                case SyntaxKind.UncheckedKeyword:
+                    HandleDisallowedSpaceToken(context, token);
+                    break;
+
+                case SyntaxKind.NewKeyword:
+                    HandleNewKeywordToken(context, token);
+                    break;
+
+                case SyntaxKind.ReturnKeyword:
+                    HandleReturnKeywordToken(context, token);
+                    break;
+
+                default:
+                    break;
+                }
+            }
+        }
+
+        private void HandleRequiredSpaceToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        {
+            if (token.IsMissing)
+                return;
+
+            if (token.HasTrailingTrivia)
+            {
+                if (token.TrailingTrivia.First().IsKind(SyntaxKind.WhitespaceTrivia))
+                    return;
+
+                if (token.TrailingTrivia.First().IsKind(SyntaxKind.EndOfLineTrivia))
+                    return;
+            }
+
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), token.Text, string.Empty));
+        }
+
+        private void HandleDisallowedSpaceToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        {
+            if (token.IsMissing || !token.HasTrailingTrivia)
+                return;
+
+            if (!token.TrailingTrivia.First().IsKind(SyntaxKind.WhitespaceTrivia))
+                return;
+
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), token.Text, " not"));
+        }
+
+        private void HandleNewKeywordToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        {
+            if (token.IsMissing)
+                return;
+
+            // if the next token is [, then treat as disallowed
+            SyntaxToken nextToken = token.GetNextToken();
+            if (nextToken.IsKind(SyntaxKind.OpenBracketToken))
+            {
+                HandleDisallowedSpaceToken(context, token);
+                return;
+            }
+
+            // otherwise treat as required
+            HandleRequiredSpaceToken(context, token);
+        }
+
+        private void HandleReturnKeywordToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        {
+            if (token.IsMissing)
+                return;
+
+            // if the next token is ; or :, then treat as disallowed
+            //   1. return;
+            //   2. [return: Attribute(...)]
+            SyntaxToken nextToken = token.GetNextToken();
+            if (nextToken.IsKind(SyntaxKind.SemicolonToken) || nextToken.IsKind(SyntaxKind.ColonToken))
+            {
+                HandleDisallowedSpaceToken(context, token);
+                return;
+            }
+
+            // otherwise treat as required
+            HandleRequiredSpaceToken(context, token);
         }
     }
 }
