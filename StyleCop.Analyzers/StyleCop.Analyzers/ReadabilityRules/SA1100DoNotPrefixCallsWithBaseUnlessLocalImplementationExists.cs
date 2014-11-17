@@ -53,11 +53,11 @@
         internal const string Category = "Readability";
         internal const string Description = "A call to a member from an inherited class begins with 'base.', and the local class does not contain an override or implementation of the member.";
 
-        public static readonly DiagnosticDescriptor Diagnostic =
+        public static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
-            ImmutableArray.Create(Diagnostic);
+            ImmutableArray.Create(Descriptor);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {

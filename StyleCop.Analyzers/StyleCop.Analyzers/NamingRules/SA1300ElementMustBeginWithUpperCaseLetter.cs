@@ -30,11 +30,11 @@
         internal const string Category = "Naming";
         internal const string Description = "The name of a C# element does not begin with an upper-case letter.";
 
-        public static readonly DiagnosticDescriptor Diagnostic =
+        public static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
-            ImmutableArray.Create(Diagnostic);
+            ImmutableArray.Create(Descriptor);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {

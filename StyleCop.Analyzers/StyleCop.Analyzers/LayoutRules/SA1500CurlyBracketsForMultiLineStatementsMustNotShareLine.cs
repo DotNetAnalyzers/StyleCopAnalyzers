@@ -55,11 +55,11 @@
         internal const string Category = "Layout";
         internal const string Description = "The opening or closing curly bracket within a C# statement, element, or expression is not placed on its own line.";
 
-        public static readonly DiagnosticDescriptor Diagnostic =
+        public static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
-            ImmutableArray.Create(Diagnostic);
+            ImmutableArray.Create(Descriptor);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {

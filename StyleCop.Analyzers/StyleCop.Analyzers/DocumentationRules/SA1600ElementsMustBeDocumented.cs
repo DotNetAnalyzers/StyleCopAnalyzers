@@ -25,11 +25,11 @@
         internal const string Category = "Documentation";
         internal const string Description = "A C# code element is missing a documentation header.";
 
-        public static readonly DiagnosticDescriptor Diagnostic =
+        public static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
-            ImmutableArray.Create(Diagnostic);
+            ImmutableArray.Create(Descriptor);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
