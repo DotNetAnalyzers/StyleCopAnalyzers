@@ -1,7 +1,10 @@
 ﻿namespace StyleCop.Analyzers.NamingRules
 {
+    using System;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -26,7 +29,7 @@
     {
         public const string DiagnosticId = "SA1300";
         internal const string Title = "Element Must Begin With Upper Case Letter";
-        internal const string MessageFormat = "TODO: Message format";
+        internal const string MessageFormat = "Element '{0}' must begin with an uppercase letter";
         internal const string Category = "Naming";
         internal const string Description = "The name of a C# element does not begin with an upper-case letter.";
 
@@ -48,7 +51,150 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(HandleNamespaceDeclarationSyntax, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeAction(HandleClassDeclarationSyntax, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeAction(HandleEnumDeclarationSyntax, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeAction(HandleStructDeclarationSyntax, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeAction(HandleDelegateDeclarationSyntax, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeAction(HandleEventDeclarationSyntax, SyntaxKind.EventDeclaration);
+            context.RegisterSyntaxNodeAction(HandleMethodDeclarationSyntax, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(HandlePropertyDeclarationSyntax, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeAction(HandleFieldDeclarationSyntax, SyntaxKind.FieldDeclaration);
+        }
+
+        private void HandleNamespaceDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        {
+            NameSyntax nameSyntax = ((NamespaceDeclarationSyntax)context.Node).Name;
+            CheckNameSyntax(context, nameSyntax);
+        }
+
+        private void CheckNameSyntax(SyntaxNodeAnalysisContext context, NameSyntax nameSyntax)
+        {
+            if (nameSyntax == null || nameSyntax.IsMissing)
+                return;
+
+            QualifiedNameSyntax qualifiedNameSyntax = nameSyntax as QualifiedNameSyntax;
+            if (qualifiedNameSyntax != null)
+            {
+                CheckNameSyntax(context, qualifiedNameSyntax.Left);
+                CheckNameSyntax(context, qualifiedNameSyntax.Right);
+                return;
+            }
+
+            SimpleNameSyntax simpleNameSyntax = nameSyntax as SimpleNameSyntax;
+            if (simpleNameSyntax != null)
+            {
+                CheckElementNameToken(context, simpleNameSyntax.Identifier);
+                return;
+            }
+
+            // TODO: any other cases?
+        }
+
+        private void HandleClassDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        {
+            CheckElementNameToken(context, ((ClassDeclarationSyntax)context.Node).Identifier);
+        }
+
+        private void HandleEnumDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        {
+            CheckElementNameToken(context, ((EnumDeclarationSyntax)context.Node).Identifier);
+        }
+
+        private void HandleStructDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        {
+            CheckElementNameToken(context, ((StructDeclarationSyntax)context.Node).Identifier);
+        }
+
+        private void HandleDelegateDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        {
+            CheckElementNameToken(context, ((DelegateDeclarationSyntax)context.Node).Identifier);
+        }
+
+        private void HandleEventDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        {
+            CheckElementNameToken(context, ((EventDeclarationSyntax)context.Node).Identifier);
+        }
+
+        private void HandleMethodDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        {
+            CheckElementNameToken(context, ((MethodDeclarationSyntax)context.Node).Identifier);
+        }
+
+        private void HandlePropertyDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        {
+            CheckElementNameToken(context, ((PropertyDeclarationSyntax)context.Node).Identifier);
+        }
+
+        private void HandleFieldDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        {
+            FieldDeclarationSyntax fieldDeclarationSyntax = (FieldDeclarationSyntax)context.Node;
+            VariableDeclarationSyntax variableDeclarationSyntax = fieldDeclarationSyntax.Declaration;
+            if (variableDeclarationSyntax == null || variableDeclarationSyntax.IsMissing)
+                return;
+
+            bool? checkName = null;
+            if (fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.PublicKeyword)
+                || fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.ConstKeyword))
+            {
+                checkName = true;
+            }
+
+            if (!checkName.HasValue)
+            {
+                if (fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.ProtectedKeyword))
+                {
+                    if (fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.ReadOnlyKeyword))
+                        checkName = true;
+                }
+                else if (fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.InternalKeyword))
+                {
+                    checkName = true;
+                }
+            }
+
+            if (!(checkName ?? false))
+                return;
+
+            foreach (var declarator in variableDeclarationSyntax.Variables)
+            {
+                if (declarator == null || declarator.IsMissing)
+                    continue;
+
+                CheckElementNameToken(context, declarator.Identifier);
+            }
+        }
+
+        private void CheckElementNameToken(SyntaxNodeAnalysisContext context, SyntaxToken identifier)
+        {
+            if (identifier.IsMissing)
+                return;
+
+            if (string.IsNullOrEmpty(identifier.Text))
+                return;
+
+            if (char.IsUpper(identifier.Text[0]))
+                return;
+
+            if (IsIgnored(context.Node))
+                return;
+
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), identifier.Text));
+        }
+
+        private bool IsIgnored(SyntaxNode node)
+        {
+            ClassDeclarationSyntax containingClass = node.Parent.FirstAncestorOrSelf<ClassDeclarationSyntax>();
+            if (containingClass == null)
+                return false;
+
+            if (containingClass.Identifier.IsMissing)
+                return IsIgnored(containingClass);
+
+            if (containingClass.Identifier.Text.EndsWith("NativeMethods", StringComparison.Ordinal))
+                return true;
+
+            return IsIgnored(containingClass);
         }
     }
 }
