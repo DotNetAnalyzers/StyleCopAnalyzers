@@ -10,7 +10,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace StyleCop.Analyzers
 {
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    //[DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class StyleCopAnalyzersAnalyzer : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "StyleCopAnalyzers";

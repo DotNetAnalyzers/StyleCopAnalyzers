@@ -15,7 +15,7 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace StyleCop.Analyzers
 {
-    [ExportCodeFixProvider("StyleCopAnalyzersCodeFixProvider", LanguageNames.CSharp), Shared]
+    //[ExportCodeFixProvider("StyleCopAnalyzersCodeFixProvider", LanguageNames.CSharp), Shared]
     public class StyleCopAnalyzersCodeFixProvider : CodeFixProvider
     {
         public sealed override ImmutableArray<string> GetFixableDiagnosticIds()
