@@ -29,9 +29,10 @@
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "Naming";
         internal const string Description = "The name of a C# element does not begin with an upper-case letter.";
+        internal const string HelpLink = "http://www.stylecop.com/docs/SA1300.html";
 
         public static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
