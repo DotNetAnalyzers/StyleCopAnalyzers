@@ -1,3 +1,5 @@
+#pragma warning disable 1591 // will be removing this file
+
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
