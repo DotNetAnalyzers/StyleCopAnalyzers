@@ -38,6 +38,7 @@
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
+        /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
@@ -46,6 +47,7 @@
             }
         }
 
+        /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
             // TODO: Implement analysis
