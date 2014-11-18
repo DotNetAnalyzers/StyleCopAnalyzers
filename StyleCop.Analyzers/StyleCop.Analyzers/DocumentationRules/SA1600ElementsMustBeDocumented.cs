@@ -24,9 +24,10 @@
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "Documentation";
         internal const string Description = "A C# code element is missing a documentation header.";
+        internal const string HelpLink = "http://www.stylecop.com/docs/SA1600.html";
 
         public static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
