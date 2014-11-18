@@ -34,6 +34,7 @@
     <DocumentationFile>bin\Release\StyleCop.Analyzers.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AnalyzerConstants.cs" />
     <Compile Include="CodeFixProvider.cs" />
     <Compile Include="DiagnosticAnalyzer.cs" />
     <Compile Include="DocumentationRules\SA1600ElementsMustBeDocumented.cs" />
