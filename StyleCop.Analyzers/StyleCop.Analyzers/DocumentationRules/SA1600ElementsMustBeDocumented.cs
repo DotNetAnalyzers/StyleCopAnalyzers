@@ -22,7 +22,7 @@
         public const string DiagnosticId = "SA1600";
         internal const string Title = "Elements Must Be Documented";
         internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "Documentation";
+        internal const string Category = "StyleCop.CSharp.Documentation";
         internal const string Description = "A C# code element is missing a documentation header.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1600.html";
 

@@ -50,7 +50,7 @@
         public const string DiagnosticId = "SA1100";
         internal const string Title = "Do Not Prefix Calls With Base Unless Local Implementation Exists";
         internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "Readability";
+        internal const string Category = "StyleCop.CSharp.Readability";
         internal const string Description = "A call to a member from an inherited class begins with 'base.', and the local class does not contain an override or implementation of the member.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1100.html";
 
