@@ -29,7 +29,7 @@
         public const string DiagnosticId = "SA1000";
         internal const string Title = "Keywords Must Be Spaced Correctly";
         internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "Spacing";
+        internal const string Category = "StyleCop.CSharp.Spacing";
         internal const string Description = "The spacing around a C# keyword is incorrect.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1000.html";
 

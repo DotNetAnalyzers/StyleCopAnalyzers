@@ -27,7 +27,7 @@
         public const string DiagnosticId = "SA1300";
         internal const string Title = "Element Must Begin With Upper Case Letter";
         internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "Naming";
+        internal const string Category = "StyleCop.CSharp.Naming";
         internal const string Description = "The name of a C# element does not begin with an upper-case letter.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1300.html";
 
