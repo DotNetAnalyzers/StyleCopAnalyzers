@@ -62,6 +62,8 @@
             {
                 switch (token.CSharpKind())
                 {
+                case SyntaxKind.AwaitKeyword:
+                case SyntaxKind.CaseKeyword:
                 case SyntaxKind.CatchKeyword:
                 case SyntaxKind.FixedKeyword:
                 case SyntaxKind.ForKeyword:
@@ -79,6 +81,7 @@
                 case SyntaxKind.SwitchKeyword:
                 case SyntaxKind.UsingKeyword:
                 case SyntaxKind.WhereKeyword:
+                case SyntaxKind.WhileKeyword:
                 case SyntaxKind.YieldKeyword:
                     HandleRequiredSpaceToken(context, token);
                     break;
