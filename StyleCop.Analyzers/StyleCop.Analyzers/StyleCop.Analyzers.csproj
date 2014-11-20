@@ -51,6 +51,7 @@
     <Compile Include="SpacingRules\SA1009ClosingParenthesisMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1010OpeningSquareBracketsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1011ClosingSquareBracketsMustBeSpacedCorrectly.cs" />
+    <Compile Include="SpacingRules\SA1012OpeningCurlyBracketsMustBeSpacedCorrectly.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Diagnostic.nuspec">
