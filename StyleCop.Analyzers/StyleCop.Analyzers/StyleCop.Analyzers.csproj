@@ -63,6 +63,7 @@
     <Compile Include="SpacingRules\SA1021NegativeSignsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1022PositiveSignsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1023DereferenceAndAccessOfSymbolsMustBeSpacedCorrectly.cs" />
+    <Compile Include="SpacingRules\SA1024ColonsMustBeSpacedCorrectly.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Diagnostic.nuspec">
