@@ -46,6 +46,7 @@
     <Compile Include="ReadabilityRules\SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists.cs" />
     <Compile Include="SpacingRules\SA1000KeywordsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1001CommasMustBeSpacedCorrectly.cs" />
+    <Compile Include="SpacingRules\SA1002SemicolonsMustBeSpacedCorrectly.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Diagnostic.nuspec">
