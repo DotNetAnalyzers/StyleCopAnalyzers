@@ -47,6 +47,7 @@
     <Compile Include="SpacingRules\SA1000KeywordsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1001CommasMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1002SemicolonsMustBeSpacedCorrectly.cs" />
+    <Compile Include="SpacingRules\SA1008OpeningParenthesisMustBeSpacedCorrectly.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Diagnostic.nuspec">
