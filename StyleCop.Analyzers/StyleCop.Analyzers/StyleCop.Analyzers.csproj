@@ -50,6 +50,7 @@
     <Compile Include="SpacingRules\SA1008OpeningParenthesisMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1009ClosingParenthesisMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1010OpeningSquareBracketsMustBeSpacedCorrectly.cs" />
+    <Compile Include="SpacingRules\SA1011ClosingSquareBracketsMustBeSpacedCorrectly.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Diagnostic.nuspec">
