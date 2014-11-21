@@ -51,6 +51,7 @@
     <Compile Include="SpacingRules\SA1004DocumentationLinesMustBeginWithSingleSpace.cs" />
     <Compile Include="SpacingRules\SA1005SingleLineCommentsMustBeginWithSingleSpace.cs" />
     <Compile Include="SpacingRules\SA1006PreprocessorKeywordsMustNotBePrecededBySpace.cs" />
+    <Compile Include="SpacingRules\SA1007OperatorKeywordMustBeFollowedBySpace.cs" />
     <Compile Include="SpacingRules\SA1008OpeningParenthesisMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1009ClosingParenthesisMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1010OpeningSquareBracketsMustBeSpacedCorrectly.cs" />
