@@ -46,6 +46,32 @@
     <Compile Include="ReadabilityRules\SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists.cs" />
     <Compile Include="SpacingRules\SA1000KeywordsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1001CommasMustBeSpacedCorrectly.cs" />
+    <Compile Include="SpacingRules\SA1002SemicolonsMustBeSpacedCorrectly.cs" />
+    <Compile Include="SpacingRules\SA1003SymbolsMustBeSpacedCorrectly.cs" />
+    <Compile Include="SpacingRules\SA1004DocumentationLinesMustBeginWithSingleSpace.cs" />
+    <Compile Include="SpacingRules\SA1005SingleLineCommentsMustBeginWithSingleSpace.cs" />
+    <Compile Include="SpacingRules\SA1006PreprocessorKeywordsMustNotBePrecededBySpace.cs" />
+    <Compile Include="SpacingRules\SA1007OperatorKeywordMustBeFollowedBySpace.cs" />
+    <Compile Include="SpacingRules\SA1008OpeningParenthesisMustBeSpacedCorrectly.cs" />
+    <Compile Include="SpacingRules\SA1009ClosingParenthesisMustBeSpacedCorrectly.cs" />
+    <Compile Include="SpacingRules\SA1010OpeningSquareBracketsMustBeSpacedCorrectly.cs" />
+    <Compile Include="SpacingRules\SA1011ClosingSquareBracketsMustBeSpacedCorrectly.cs" />
+    <Compile Include="SpacingRules\SA1012OpeningCurlyBracketsMustBeSpacedCorrectly.cs" />
+    <Compile Include="SpacingRules\SA1013ClosingCurlyBracketsMustBeSpacedCorrectly.cs" />
+    <Compile Include="SpacingRules\SA1014OpeningGenericBracketsMustBeSpacedCorrectly.cs" />
+    <Compile Include="SpacingRules\SA1015ClosingGenericBracketsMustBeSpacedCorrectly.cs" />
+    <Compile Include="SpacingRules\SA1016OpeningAttributeBracketsMustBeSpacedCorrectly.cs" />
+    <Compile Include="SpacingRules\SA1017ClosingAttributeBracketsMustBeSpacedCorrectly.cs" />
+    <Compile Include="SpacingRules\SA1018NullableTypeSymbolsMustNotBePrecededBySpace.cs" />
+    <Compile Include="SpacingRules\SA1019MemberAccessSymbolsMustBeSpacedCorrectly.cs" />
+    <Compile Include="SpacingRules\SA1020IncrementDecrementSymbolsMustBeSpacedCorrectly.cs" />
+    <Compile Include="SpacingRules\SA1021NegativeSignsMustBeSpacedCorrectly.cs" />
+    <Compile Include="SpacingRules\SA1022PositiveSignsMustBeSpacedCorrectly.cs" />
+    <Compile Include="SpacingRules\SA1023DereferenceAndAccessOfSymbolsMustBeSpacedCorrectly.cs" />
+    <Compile Include="SpacingRules\SA1024ColonsMustBeSpacedCorrectly.cs" />
+    <Compile Include="SpacingRules\SA1025CodeMustNotContainMultipleWhitespaceInARow.cs" />
+    <Compile Include="SpacingRules\SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation.cs" />
+    <Compile Include="SpacingRules\SA1027TabsMustNotBeUsed.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Diagnostic.nuspec">
