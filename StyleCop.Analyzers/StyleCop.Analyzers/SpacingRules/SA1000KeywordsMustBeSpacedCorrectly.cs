@@ -143,6 +143,12 @@
             SyntaxToken nextToken = token.GetNextToken();
             if (nextToken.IsKind(SyntaxKind.OpenBracketToken))
             {
+                if (token.Parent.IsKind(SyntaxKind.ImplicitArrayCreationExpression))
+                {
+                    // This is handled by SA1026
+                    return;
+                }
+
                 HandleDisallowedSpaceToken(context, token);
                 return;
             }
