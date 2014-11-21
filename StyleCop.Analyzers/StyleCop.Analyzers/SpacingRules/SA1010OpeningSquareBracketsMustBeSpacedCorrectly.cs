@@ -75,6 +75,7 @@
 
             bool precededBySpace;
             bool firstInLine;
+            bool ignorePrecedingSpaceProblem = false;
 
             firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
             if (firstInLine)
@@ -85,12 +86,14 @@
             {
                 SyntaxToken precedingToken = token.GetPreviousToken();
                 precededBySpace = precedingToken.HasTrailingTrivia;
+                // ignore if handled by SA1026
+                ignorePrecedingSpaceProblem = precededBySpace && precedingToken.IsKind(SyntaxKind.NewKeyword);
             }
 
             bool followedBySpace = token.HasTrailingTrivia;
             bool lastInLine = followedBySpace && token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia);
 
-            if (!firstInLine && precededBySpace)
+            if (!firstInLine && precededBySpace && !ignorePrecedingSpaceProblem)
             {
                 // Opening square bracket must not be {preceded} by a space.
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), "preceded"));
