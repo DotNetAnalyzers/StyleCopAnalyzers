@@ -62,6 +62,8 @@
             {
                 switch (token.CSharpKind())
                 {
+                case SyntaxKind.AwaitKeyword:
+                case SyntaxKind.CaseKeyword:
                 case SyntaxKind.CatchKeyword:
                 case SyntaxKind.FixedKeyword:
                 case SyntaxKind.ForKeyword:
@@ -77,9 +79,9 @@
                 case SyntaxKind.SelectKeyword:
                 case SyntaxKind.StackAllocKeyword:
                 case SyntaxKind.SwitchKeyword:
-                case SyntaxKind.ThrowKeyword:
                 case SyntaxKind.UsingKeyword:
                 case SyntaxKind.WhereKeyword:
+                case SyntaxKind.WhileKeyword:
                 case SyntaxKind.YieldKeyword:
                     HandleRequiredSpaceToken(context, token);
                     break;
@@ -98,6 +100,10 @@
 
                 case SyntaxKind.ReturnKeyword:
                     HandleReturnKeywordToken(context, token);
+                    break;
+
+                case SyntaxKind.ThrowKeyword:
+                    HandleThrowKeywordToken(context, token);
                     break;
 
                 default:
@@ -161,6 +167,24 @@
             //   2. [return: Attribute(...)]
             SyntaxToken nextToken = token.GetNextToken();
             if (nextToken.IsKind(SyntaxKind.SemicolonToken) || nextToken.IsKind(SyntaxKind.ColonToken))
+            {
+                HandleDisallowedSpaceToken(context, token);
+                return;
+            }
+
+            // otherwise treat as required
+            HandleRequiredSpaceToken(context, token);
+        }
+
+        private void HandleThrowKeywordToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        {
+            if (token.IsMissing)
+                return;
+
+            // if the next token is ;, then treat as disallowed:
+            //    throw;
+            SyntaxToken nextToken = token.GetNextToken();
+            if (nextToken.IsKind(SyntaxKind.SemicolonToken))
             {
                 HandleDisallowedSpaceToken(context, token);
                 return;
