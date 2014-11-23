@@ -69,6 +69,7 @@
     <Compile Include="SpacingRules\SA1013ClosingCurlyBracketsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1014OpeningGenericBracketsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1015ClosingGenericBracketsMustBeSpacedCorrectly.cs" />
+    <Compile Include="SpacingRules\SA1016CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1016OpeningAttributeBracketsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1017ClosingAttributeBracketsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1018CodeFixProvider.cs" />
