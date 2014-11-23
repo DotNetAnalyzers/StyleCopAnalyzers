@@ -1,0 +1,107 @@
+﻿namespace StyleCop.Analyzers.SpacingRules
+{
+    using System.Collections.Generic;
+    using System.Collections.Immutable;
+    using System.Composition;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CodeActions;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+    /// <summary>
+    /// Implements a code fix for <see cref="SA1003SymbolsMustBeSpacedCorrectly"/>.
+    /// </summary>
+    /// <remarks>
+    /// <para>To fix a violation of this rule, ensure that the spacing around the symbol follows the rule described in
+    /// <see cref="SA1003SymbolsMustBeSpacedCorrectly"/>.</para>
+    /// </remarks>
+    [ExportCodeFixProvider(nameof(SA1003CodeFixProvider), LanguageNames.CSharp)]
+    [Shared]
+    public class SA1003CodeFixProvider : CodeFixProvider
+    {
+        private static readonly ImmutableArray<string> _fixableDiagnostics =
+            ImmutableArray.Create(SA1003SymbolsMustBeSpacedCorrectly.DiagnosticId);
+
+        /// <inheritdoc/>
+        public override ImmutableArray<string> GetFixableDiagnosticIds()
+        {
+            return _fixableDiagnostics;
+        }
+
+        /// <inheritdoc/>
+        public override FixAllProvider GetFixAllProvider()
+        {
+            return WellKnownFixAllProviders.BatchFixer;
+        }
+
+        /// <inheritdoc/>
+        public override async Task ComputeFixesAsync(CodeFixContext context)
+        {
+            foreach (var diagnostic in context.Diagnostics)
+            {
+                if (!diagnostic.Id.Equals(SA1003SymbolsMustBeSpacedCorrectly.DiagnosticId))
+                    continue;
+
+                var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+                SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
+                if (token.IsMissing)
+                    continue;
+
+                Dictionary<SyntaxToken, SyntaxToken> replacements = new Dictionary<SyntaxToken, SyntaxToken>();
+
+                // always a space before unless at the beginning of a line or after certain tokens
+                bool firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
+                if (!firstInLine)
+                {
+                    SyntaxToken precedingToken = token.GetPreviousToken();
+                    SyntaxToken correctedPrecedingNoSpace = precedingToken.WithoutTrailingWhitespace();
+                    switch (precedingToken.CSharpKind())
+                    {
+                    case SyntaxKind.OpenParenToken:
+                    case SyntaxKind.CloseParenToken:
+                    case SyntaxKind.OpenBracketToken:
+                    case SyntaxKind.CloseBracketToken:
+                        // remove any whitespace before
+                        replacements[precedingToken] = correctedPrecedingNoSpace;
+                        break;
+
+                    default:
+                        if (!precedingToken.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
+                        {
+                            SyntaxToken correctedPreceding = correctedPrecedingNoSpace.WithTrailingTrivia(correctedPrecedingNoSpace.TrailingTrivia.Insert(0, SyntaxFactory.Whitespace(" ")));
+                            replacements[precedingToken] = correctedPreceding;
+                        }
+                        break;
+                    }
+                }
+
+                if (token.Parent is BinaryExpressionSyntax)
+                {
+                    // include a space after unless last on line
+                    if (!token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia))
+                    {
+                        SyntaxToken correctedOperatorNoSpace = token.WithoutTrailingWhitespace();
+                        SyntaxToken correctedOperator = correctedOperatorNoSpace.WithTrailingTrivia(correctedOperatorNoSpace.TrailingTrivia.Insert(0, SyntaxFactory.Whitespace(" ")));
+                        replacements[token] = correctedOperator;
+                    }
+                }
+                else if (token.Parent is PrefixUnaryExpressionSyntax)
+                {
+                    // do not include a space after (includes new line characters)
+                    SyntaxToken correctedOperatorNoSpace = token.WithoutTrailingWhitespace(removeEndOfLineTrivia: true);
+                    replacements[token] = correctedOperatorNoSpace;
+                }
+
+                if (replacements.Count == 0)
+                    continue;
+
+                var transformed = root.ReplaceTokens(replacements.Keys, (original, maybeRewritten) => replacements[original]);
+                Document updatedDocument = context.Document.WithSyntaxRoot(transformed);
+                context.RegisterFix(CodeAction.Create("Fix spacing", updatedDocument), diagnostic);
+            }
+        }
+    }
+}
