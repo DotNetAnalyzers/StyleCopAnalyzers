@@ -1,6 +1,7 @@
 ﻿namespace StyleCop.Analyzers.SpacingRules
 {
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -47,7 +48,7 @@
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
-            foreach (var trivia in root.DescendantTrivia(descendIntoTrivia: true))
+            foreach (var trivia in root.DescendantTrivia())
             {
                 switch (trivia.CSharpKind())
                 {
@@ -67,6 +68,28 @@
                 return;
 
             if (trivia.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0)
+                return;
+
+            SyntaxToken token = trivia.Token;
+            SyntaxToken precedingToken;
+            SyntaxToken followingToken;
+            if (token.LeadingTrivia.Contains(trivia))
+            {
+                precedingToken = token.GetPreviousToken();
+                followingToken = token;
+            }
+            else if (token.TrailingTrivia.Contains(trivia))
+            {
+                precedingToken = token;
+                followingToken = precedingToken.GetNextToken();
+            }
+            else
+            {
+                // shouldn't be reachable, but either way can't proceed
+                return;
+            }
+
+            if (precedingToken.IsKind(SyntaxKind.CommaToken) || precedingToken.IsKind(SyntaxKind.SemicolonToken))
                 return;
 
             // Code must not contain multiple whitespace characters in a row.
