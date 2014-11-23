@@ -70,14 +70,14 @@
             if (token.Parent.CSharpKind() != SyntaxKind.NullableType)
                 return;
 
+            bool firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
+            if (firstInLine)
+                return;
+
             bool hasPrecedingSpace = false;
-            if (!token.HasLeadingTrivia)
-            {
-                // only the first token on the line has leading trivia, and those are ignored
-                SyntaxToken precedingToken = token.GetPreviousToken();
-                if (precedingToken.HasTrailingTrivia)
-                    hasPrecedingSpace = true;
-            }
+            SyntaxToken precedingToken = token.GetPreviousToken();
+            if (precedingToken.HasTrailingTrivia)
+                hasPrecedingSpace = true;
 
             if (hasPrecedingSpace)
             {
