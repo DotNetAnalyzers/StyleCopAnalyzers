@@ -149,7 +149,7 @@ namespace TestHelper
         /// <returns>A <see cref="Document"/> created from the source string.</returns>
         protected static Document CreateDocument(string source, string language = LanguageNames.CSharp)
         {
-            return CreateProject(new[] { source }, language).Documents.First();
+            return CreateProject(new[] { source }, language).Documents.Single();
         }
 
         /// <summary>
