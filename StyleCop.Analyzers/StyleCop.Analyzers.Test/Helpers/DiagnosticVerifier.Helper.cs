@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace TestHelper
 {
@@ -39,11 +40,12 @@ namespace TestHelper
         /// <param name="language">The language the source classes are in. Values may be taken from the
         /// <see cref="LanguageNames"/> class.</param>
         /// <param name="analyzer">The analyzer to be run on the sources.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>A collection of <see cref="Diagnostic"/>s that surfaced in the source code, sorted by
         /// <see cref="Diagnostic.Location"/>.</returns>
-        private static Diagnostic[] GetSortedDiagnostics(string[] sources, string language, DiagnosticAnalyzer analyzer)
+        private static Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsAsync(string[] sources, string language, DiagnosticAnalyzer analyzer, CancellationToken cancellationToken)
         {
-            return GetSortedDiagnosticsFromDocuments(analyzer, GetDocuments(sources, language));
+            return GetSortedDiagnosticsFromDocumentsAsync(analyzer, GetDocuments(sources, language), cancellationToken);
         }
 
         /// <summary>
@@ -52,9 +54,10 @@ namespace TestHelper
         /// </summary>
         /// <param name="analyzer">The analyzer to run on the documents.</param>
         /// <param name="documents">The <see cref="Document"/>s that the analyzer will be run on.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>A collection of <see cref="Diagnostic"/>s that surfaced in the source code, sorted by
         /// <see cref="Diagnostic.Location"/>.</returns>
-        protected static Diagnostic[] GetSortedDiagnosticsFromDocuments(DiagnosticAnalyzer analyzer, Document[] documents)
+        protected static async Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsFromDocumentsAsync(DiagnosticAnalyzer analyzer, Document[] documents, CancellationToken cancellationToken)
         {
             var projects = new HashSet<Project>();
             foreach (var document in documents)
@@ -62,13 +65,13 @@ namespace TestHelper
                 projects.Add(document.Project);
             }
 
-            var diagnostics = new List<Diagnostic>();
+            var diagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
             foreach (var project in projects)
             {
-                var compilation = project.GetCompilationAsync().Result;
-                var driver = AnalyzerDriver.Create(compilation, ImmutableArray.Create(analyzer), null, out compilation, CancellationToken.None);
-                var discarded = compilation.GetDiagnostics();
-                var diags = driver.GetDiagnosticsAsync().Result;
+                var compilation = await project.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
+                var driver = AnalyzerDriver.Create(compilation, ImmutableArray.Create(analyzer), null, out compilation, cancellationToken);
+                var discarded = compilation.GetDiagnostics(cancellationToken);
+                var diags = await driver.GetDiagnosticsAsync().ConfigureAwait(false);
                 foreach (var diag in diags)
                 {
                     if (diag.Location == Location.None || diag.Location.IsInMetadata)
@@ -80,7 +83,7 @@ namespace TestHelper
                         for (int i = 0; i < documents.Length; i++)
                         {
                             var document = documents[i];
-                            var tree = document.GetSyntaxTreeAsync().Result;
+                            var tree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
                             if (tree == diag.Location.SourceTree)
                             {
                                 diagnostics.Add(diag);
@@ -91,8 +94,7 @@ namespace TestHelper
             }
 
             var results = SortDiagnostics(diagnostics);
-            diagnostics.Clear();
-            return results;
+            return results.ToImmutableArray();
         }
 
         /// <summary>
@@ -110,7 +112,7 @@ namespace TestHelper
 
         #region Set up compilation and documents
         /// <summary>
-        /// Given an array of strings as soruces and a language, turn them into a <see cref="Project"/> and return the
+        /// Given an array of strings as sources and a language, turn them into a <see cref="Project"/> and return the
         /// documents and spans of it.
         /// </summary>
         /// <param name="sources">Classes in the form of strings.</param>

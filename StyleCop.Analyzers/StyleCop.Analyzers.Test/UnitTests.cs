@@ -4,26 +4,28 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using TestHelper;
-using StyleCop.Analyzers;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace StyleCop.Analyzers.Test
 {
     [TestClass]
     public class UnitTest : CodeFixVerifier
     {
+        private static readonly DiagnosticResult[] EmptyDiagnosticResults = { };
 
         //No diagnostics expected to show up
         [TestMethod]
-        public void TestMethod1()
+        public async Task TestMethod1()
         {
             var test = @"";
 
-            VerifyCSharpDiagnostic(test);
+            await VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         //Diagnostic and CodeFix both triggered and checked for
         [TestMethod]
-        public void TestMethod2()
+        public async Task TestMethod2()
         {
             var test = @"
     using System;
@@ -50,7 +52,7 @@ namespace StyleCop.Analyzers.Test
                         }
             };
 
-            VerifyCSharpDiagnostic(test, expected);
+            await VerifyCSharpDiagnosticAsync(test, new[] { expected }, CancellationToken.None);
 
             var fixtest = @"
     using System;
@@ -66,7 +68,7 @@ namespace StyleCop.Analyzers.Test
         {   
         }
     }";
-            VerifyCSharpFix(test, fixtest);
+            await VerifyCSharpFixAsync(test, fixtest, cancellationToken: CancellationToken.None);
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

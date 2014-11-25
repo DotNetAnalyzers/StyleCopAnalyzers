@@ -5,6 +5,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace TestHelper
 {
@@ -42,9 +44,10 @@ namespace TestHelper
         /// <param name="source">A class in the form of a string to run the analyzer on.</param>
         /// <param name="expected">A collection of <see cref="DiagnosticResult"/>s describing the
         /// <see cref="Diagnostic"/>s that should be reported by the analyzer for the specified source.</param>
-        protected void VerifyCSharpDiagnostic(string source, params DiagnosticResult[] expected)
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
+        protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
-            VerifyDiagnostics(new[] { source }, LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), expected);
+            return VerifyDiagnosticsAsync(new[] { source }, LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), expected, cancellationToken);
         }
 
         /// <summary>
@@ -57,9 +60,10 @@ namespace TestHelper
         /// <param name="source">A class in the form of a string to run the analyzer on.</param>
         /// <param name="expected">A collection of <see cref="DiagnosticResult"/>s describing the
         /// <see cref="Diagnostic"/>s that should be reported by the analyzer for the specified source.</param>
-        protected void VerifyBasicDiagnostic(string source, params DiagnosticResult[] expected)
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
+        protected Task VerifyBasicDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
-            VerifyDiagnostics(new[] { source }, LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), expected);
+            return VerifyDiagnosticsAsync(new[] { source }, LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), expected, cancellationToken);
         }
 
         /// <summary>
@@ -72,9 +76,10 @@ namespace TestHelper
         /// on.</param>
         /// <param name="expected">A collection of <see cref="DiagnosticResult"/>s describing the
         /// <see cref="Diagnostic"/>s that should be reported by the analyzer for the specified sources.</param>
-        protected void VerifyCSharpDiagnostic(string[] sources, params DiagnosticResult[] expected)
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
+        protected Task VerifyCSharpDiagnosticAsync(string[] sources, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
-            VerifyDiagnostics(sources, LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), expected);
+            return VerifyDiagnosticsAsync(sources, LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), expected, cancellationToken);
         }
 
         /// <summary>
@@ -87,9 +92,10 @@ namespace TestHelper
         /// on.</param>
         /// <param name="expected">A collection of <see cref="DiagnosticResult"/>s describing the
         /// <see cref="Diagnostic"/>s that should be reported by the analyzer for the specified sources.</param>
-        protected void VerifyBasicDiagnostic(string[] sources, params DiagnosticResult[] expected)
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
+        protected Task VerifyBasicDiagnosticAsync(string[] sources, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
-            VerifyDiagnostics(sources, LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), expected);
+            return VerifyDiagnosticsAsync(sources, LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), expected, cancellationToken);
         }
 
         /// <summary>
@@ -101,9 +107,10 @@ namespace TestHelper
         /// <param name="analyzer">The analyzer to be run on the source code.</param>
         /// <param name="expected">A collection of <see cref="DiagnosticResult"/>s that should appear after the analyzer
         /// is run on the sources.</param>
-        private void VerifyDiagnostics(string[] sources, string language, DiagnosticAnalyzer analyzer, params DiagnosticResult[] expected)
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
+        private async Task VerifyDiagnosticsAsync(string[] sources, string language, DiagnosticAnalyzer analyzer, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
-            var diagnostics = GetSortedDiagnostics(sources, language, analyzer);
+            var diagnostics = await GetSortedDiagnosticsAsync(sources, language, analyzer, cancellationToken);
             VerifyDiagnosticResults(diagnostics, analyzer, expected);
         }
 

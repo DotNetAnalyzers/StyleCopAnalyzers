@@ -5,26 +5,29 @@ using Microsoft.CodeAnalysis.Simplification;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Collections.Immutable;
 
 namespace TestHelper
 {
     /// <summary>
-    /// Diagnostic Producer class with extra methods dealing with applying codefixes
+    /// Diagnostic Producer class with extra methods dealing with applying code fixes.
     /// All methods are static
     /// </summary>
     public abstract partial class CodeFixVerifier : DiagnosticVerifier
     {
         /// <summary>
         /// Apply the inputted <see cref="CodeAction"/> to the inputted document.
-        /// Meant to be used to apply codefixes.
+        /// Meant to be used to apply code fixes.
         /// </summary>
         /// <param name="document">The <see cref="Document"/> to apply the fix on</param>
         /// <param name="codeAction">A <see cref="CodeAction"/> that will be applied to the
         /// <paramref name="document"/>.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>A <see cref="Document"/> with the changes from the <see cref="CodeAction"/>.</returns>
-        private static Document ApplyFix(Document document, CodeAction codeAction)
+        private static async Task<Document> ApplyFixAsync(Document document, CodeAction codeAction, CancellationToken cancellationToken)
         {
-            var operations = codeAction.GetOperationsAsync(CancellationToken.None).Result;
+            var operations = await codeAction.GetOperationsAsync(cancellationToken).ConfigureAwait(false);
             var solution = operations.OfType<ApplyChangesOperation>().Single().ChangedSolution;
             return solution.GetDocument(document.Id);
         }
@@ -34,7 +37,7 @@ namespace TestHelper
         /// only in the second collection.
         /// <note type="note">
         /// <para>Considers <see cref="Diagnostic"/> to be the same if they have the same <see cref="Diagnostic.Id"/>s.
-        /// In the case of mulitple diagnostics with the same <see cref="Diagnostic.Id"/> in a row, this method may not
+        /// In the case of multiple diagnostics with the same <see cref="Diagnostic.Id"/> in a row, this method may not
         /// necessarily return the new one.</para>
         /// </note>
         /// </summary>
@@ -70,23 +73,26 @@ namespace TestHelper
         /// Get the existing compiler diagnostics on the input document.
         /// </summary>
         /// <param name="document">The <see cref="Document"/> to run the compiler diagnostic analyzers on.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>The compiler diagnostics that were found in the code.</returns>
-        private static IEnumerable<Diagnostic> GetCompilerDiagnostics(Document document)
+        private static async Task<ImmutableArray<Diagnostic>> GetCompilerDiagnosticsAsync(Document document, CancellationToken cancellationToken)
         {
-            return document.GetSemanticModelAsync().Result.GetDiagnostics();
+            var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+            return semanticModel.GetDiagnostics(cancellationToken: cancellationToken);
         }
 
         /// <summary>
         /// Given a document, turn it into a string based on the syntax root.
         /// </summary>
         /// <param name="document">The <see cref="Document"/> to be converted to a string.</param>
-        /// <returns>A string contianing the syntax of the <see cref="Document"/> after formatting.</returns>
-        private static string GetStringFromDocument(Document document)
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
+        /// <returns>A string containing the syntax of the <see cref="Document"/> after formatting.</returns>
+        private static async Task<string> GetStringFromDocumentAsync(Document document, CancellationToken cancellationToken)
         {
-            var simplifiedDoc = Simplifier.ReduceAsync(document, Simplifier.Annotation).Result;
-            var root = simplifiedDoc.GetSyntaxRootAsync().Result;
-            root = Formatter.Format(root, Formatter.Annotation, simplifiedDoc.Project.Solution.Workspace);
-            return root.GetText().ToString();
+            var simplifiedDoc = await Simplifier.ReduceAsync(document, Simplifier.Annotation, cancellationToken: cancellationToken).ConfigureAwait(false);
+            var formatted = await Formatter.FormatAsync(simplifiedDoc, Formatter.Annotation, cancellationToken: cancellationToken);
+            var sourceText = await formatted.GetTextAsync(cancellationToken).ConfigureAwait(false);
+            return sourceText.ToString();
         }
     }
 }
