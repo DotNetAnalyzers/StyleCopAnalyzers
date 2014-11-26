@@ -95,6 +95,9 @@
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SpacingRules\NumberSignSpacingTestBase.cs" />
+    <Compile Include="SpacingRules\SA1021UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1022UnitTests.cs" />
     <Compile Include="Verifiers\CodeFixVerifier.cs" />
     <Compile Include="Verifiers\DiagnosticVerifier.cs" />
     <Compile Include="Helpers\CodeFixVerifier.Helper.cs" />
