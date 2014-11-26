@@ -30,7 +30,7 @@ namespace TestHelper
     }
 
     /// <summary>
-    /// Struct that stores information about a Diagnostic appearing in a source
+    /// Structure that stores information about a <see cref="Diagnostic"/> appearing in a source.
     /// </summary>
     public struct DiagnosticResult
     {

@@ -7,12 +7,13 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace TestHelper
 {
     /// <summary>
-    /// Class for turning strings into documents and getting the diagnostics on them
-    /// All methods are static
+    /// Class for turning strings into documents and getting the diagnostics on them.
+    /// All methods are static.
     /// </summary>
     public abstract partial class DiagnosticVerifier
     {
@@ -31,26 +32,32 @@ namespace TestHelper
         #region  Get Diagnostics
 
         /// <summary>
-        /// Given classes in the form of strings, their language, and an IDiagnosticAnlayzer to apply to it, return the diagnostics found in the string after converting it to a document.
+        /// Given classes in the form of strings, their language, and an <see cref="DiagnosticAnalyzer"/> to apply to
+        /// it, return the <see cref="Diagnostic"/>s found in the string after converting it to a
+        /// <see cref="Document"/>.
         /// </summary>
-        /// <param name="sources">Classes in the form of strings</param>
-        /// <param name="language">The language the soruce classes are in</param>
-        /// <param name="analyzer">The analyzer to be run on the sources</param>
-        /// <returns>An IEnumerable of Diagnostics that surfaced in teh source code, sorted by Location</returns>
-        private static Diagnostic[] GetSortedDiagnostics(string[] sources, string language, DiagnosticAnalyzer analyzer)
+        /// <param name="sources">Classes in the form of strings.</param>
+        /// <param name="language">The language the source classes are in. Values may be taken from the
+        /// <see cref="LanguageNames"/> class.</param>
+        /// <param name="analyzer">The analyzer to be run on the sources.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
+        /// <returns>A collection of <see cref="Diagnostic"/>s that surfaced in the source code, sorted by
+        /// <see cref="Diagnostic.Location"/>.</returns>
+        private static Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsAsync(string[] sources, string language, DiagnosticAnalyzer analyzer, CancellationToken cancellationToken)
         {
-            return GetSortedDiagnosticsFromDocuments(analyzer, GetDocuments(sources, language));
+            return GetSortedDiagnosticsFromDocumentsAsync(analyzer, GetDocuments(sources, language), cancellationToken);
         }
 
         /// <summary>
-        /// Given an analyzer and a document to apply it to, run the analyzer and gather an array of diagnostics found in it.
-        /// The returned diagnostics are then ordered by location in the source document.
+        /// Given an analyzer and a collection of documents to apply it to, run the analyzer and gather an array of
+        /// diagnostics found. The returned diagnostics are then ordered by location in the source documents.
         /// </summary>
-        /// <param name="analyzer">The analyzer to run on the documents</param>
-        /// <param name="documents">The Documents that the analyzer will be run on</param>
-        /// <param name="spans">Optional TextSpan indicating where a Diagnostic will be found</param>
-        /// <returns>An IEnumerable of Diagnostics that surfaced in teh source code, sorted by Location</returns>
-        protected static Diagnostic[] GetSortedDiagnosticsFromDocuments(DiagnosticAnalyzer analyzer, Document[] documents)
+        /// <param name="analyzer">The analyzer to run on the documents.</param>
+        /// <param name="documents">The <see cref="Document"/>s that the analyzer will be run on.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
+        /// <returns>A collection of <see cref="Diagnostic"/>s that surfaced in the source code, sorted by
+        /// <see cref="Diagnostic.Location"/>.</returns>
+        protected static async Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsFromDocumentsAsync(DiagnosticAnalyzer analyzer, Document[] documents, CancellationToken cancellationToken)
         {
             var projects = new HashSet<Project>();
             foreach (var document in documents)
@@ -58,13 +65,13 @@ namespace TestHelper
                 projects.Add(document.Project);
             }
 
-            var diagnostics = new List<Diagnostic>();
+            var diagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
             foreach (var project in projects)
             {
-                var compilation = project.GetCompilationAsync().Result;
-                var driver = AnalyzerDriver.Create(compilation, ImmutableArray.Create(analyzer), null, out compilation, CancellationToken.None);
-                var discarded = compilation.GetDiagnostics();
-                var diags = driver.GetDiagnosticsAsync().Result;
+                var compilation = await project.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
+                var driver = AnalyzerDriver.Create(compilation, ImmutableArray.Create(analyzer), null, out compilation, cancellationToken);
+                var discarded = compilation.GetDiagnostics(cancellationToken);
+                var diags = await driver.GetDiagnosticsAsync().ConfigureAwait(false);
                 foreach (var diag in diags)
                 {
                     if (diag.Location == Location.None || diag.Location.IsInMetadata)
@@ -76,7 +83,7 @@ namespace TestHelper
                         for (int i = 0; i < documents.Length; i++)
                         {
                             var document = documents[i];
-                            var tree = document.GetSyntaxTreeAsync().Result;
+                            var tree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
                             if (tree == diag.Location.SourceTree)
                             {
                                 diagnostics.Add(diag);
@@ -87,15 +94,15 @@ namespace TestHelper
             }
 
             var results = SortDiagnostics(diagnostics);
-            diagnostics.Clear();
-            return results;
+            return results.ToImmutableArray();
         }
 
         /// <summary>
-        /// Sort diagnostices by location in source document
+        /// Sort <see cref="Diagnostic"/>s by location in source document.
         /// </summary>
-        /// <param name="diagnostics">The list of Diagnostics to be sorted</param>
-        /// <returns>An IEnumerable containing the Diagnostics in order of Location</returns>
+        /// <param name="diagnostics">A collection of <see cref="Diagnostic"/>s to be sorted.</param>
+        /// <returns>A collection containing the input <paramref name="diagnostics"/>, sorted by
+        /// <see cref="Diagnostic.Location"/>.</returns>
         private static Diagnostic[] SortDiagnostics(IEnumerable<Diagnostic> diagnostics)
         {
             return diagnostics.OrderBy(d => d.Location.SourceSpan.Start).ToArray();
@@ -105,11 +112,13 @@ namespace TestHelper
 
         #region Set up compilation and documents
         /// <summary>
-        /// Given an array of strings as soruces and a language, turn them into a project and return the documents and spans of it.
+        /// Given an array of strings as sources and a language, turn them into a <see cref="Project"/> and return the
+        /// documents and spans of it.
         /// </summary>
-        /// <param name="sources">Classes in the form of strings</param>
-        /// <param name="language">The language the source code is in</param>
-        /// <returns>A Tuple containing the Documents produced from the sources and thier TextSpans if relevant</returns>
+        /// <param name="sources">Classes in the form of strings.</param>
+        /// <param name="language">The language the source classes are in. Values may be taken from the
+        /// <see cref="LanguageNames"/> class.</param>
+        /// <returns>A collection of <see cref="Document"/>s representing the sources.</returns>
         private static Document[] GetDocuments(string[] sources, string language)
         {
             if (language != LanguageNames.CSharp && language != LanguageNames.VisualBasic)
@@ -134,22 +143,25 @@ namespace TestHelper
         }
 
         /// <summary>
-        /// Create a Document from a string through creating a project that contains it.
+        /// Create a <see cref="Document"/> from a string through creating a project that contains it.
         /// </summary>
-        /// <param name="source">Classes in the form of a string</param>
-        /// <param name="language">The language the source code is in</param>
-        /// <returns>A Document created from the source string</returns>
+        /// <param name="source">Classes in the form of a string.</param>
+        /// <param name="language">The language the source classes are in. Values may be taken from the
+        /// <see cref="LanguageNames"/> class.</param>
+        /// <returns>A <see cref="Document"/> created from the source string.</returns>
         protected static Document CreateDocument(string source, string language = LanguageNames.CSharp)
         {
-            return CreateProject(new[] { source }, language).Documents.First();
+            return CreateProject(new[] { source }, language).Documents.Single();
         }
 
         /// <summary>
-        /// Create a project using the inputted strings as sources.
+        /// Create a project using the input strings as sources.
         /// </summary>
-        /// <param name="sources">Classes in the form of strings</param>
-        /// <param name="language">The language the source code is in</param>
-        /// <returns>A Project created out of the Douments created from the source strings</returns>
+        /// <param name="sources">Classes in the form of strings.</param>
+        /// <param name="language">The language the source classes are in. Values may be taken from the
+        /// <see cref="LanguageNames"/> class.</param>
+        /// <returns>A <see cref="Project"/> created out of the <see cref="Document"/>s created from the source
+        /// strings.</returns>
         private static Project CreateProject(string[] sources, string language = LanguageNames.CSharp)
         {
             string fileNamePrefix = DefaultFilePathPrefix;
