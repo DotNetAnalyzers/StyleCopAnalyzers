@@ -100,7 +100,6 @@
     <Compile Include="Helpers\CodeFixVerifier.Helper.cs" />
     <Compile Include="Helpers\DiagnosticResult.cs" />
     <Compile Include="Helpers\DiagnosticVerifier.Helper.cs" />
-    <Compile Include="UnitTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

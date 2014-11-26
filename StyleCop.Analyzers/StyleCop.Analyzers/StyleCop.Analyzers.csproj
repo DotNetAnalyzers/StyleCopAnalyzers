@@ -35,8 +35,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AnalyzerConstants.cs" />
-    <Compile Include="CodeFixProvider.cs" />
-    <Compile Include="DiagnosticAnalyzer.cs" />
     <Compile Include="DocumentationRules\SA1600ElementsMustBeDocumented.cs" />
     <Compile Include="LayoutRules\SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine.cs" />
     <Compile Include="MaintainabilityRules\SA1400AccessModifierMustBeDeclared.cs" />
