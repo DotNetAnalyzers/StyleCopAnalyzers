@@ -1,0 +1,20 @@
+# Source code files
+*.cs text
+*.vsixmanifest text
+*.config text
+*.resx text
+*.vstemplate text
+*.nuspec text
+*.md text
+*.txt text
+*.ps1 text
+LICENSE text
+
+# Projects and solutions
+*.sln text
+*.csproj text
+
+# Certainly binary files
+*.png binary
+*.ico binary
+*.snk binary
