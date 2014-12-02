@@ -151,7 +151,7 @@
         public const string DiagnosticId = "SA1200";
         internal const string Title = "Using Directives Must Be Placed Within Namespace";
         internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.Ordering";
+        internal const string Category = "StyleCop.CSharp.OrderingRules";
         internal const string Description = "A C# using directive is placed outside of a namespace element.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1200.html";
 

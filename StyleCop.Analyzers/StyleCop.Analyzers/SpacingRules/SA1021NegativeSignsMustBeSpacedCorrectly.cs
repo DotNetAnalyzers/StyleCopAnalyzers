@@ -23,7 +23,7 @@
         public const string DiagnosticId = "SA1021";
         internal const string Title = "Negative Signs Must Be Spaced Correctly";
         internal const string MessageFormat = "Negative sign must{0} be {1} by a space.";
-        internal const string Category = "StyleCop.CSharp.Spacing";
+        internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "A negative sign within a C# element is not spaced correctly.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1021.html";
 

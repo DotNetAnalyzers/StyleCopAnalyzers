@@ -22,7 +22,7 @@
         public const string DiagnosticId = "SA1010";
         internal const string Title = "Opening Square Brackets Must Be Spaced Correctly";
         internal const string MessageFormat = "Opening square brackets must not be {0} by a space.";
-        internal const string Category = "StyleCop.CSharp.Spacing";
+        internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "An opening square bracket within a C# statement is not spaced correctly.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1010.html";
 

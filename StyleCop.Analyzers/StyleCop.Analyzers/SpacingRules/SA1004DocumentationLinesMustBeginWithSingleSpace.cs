@@ -42,7 +42,7 @@
         public const string DiagnosticId = "SA1004";
         internal const string Title = "Documentation Lines Must Begin With Single Space";
         internal const string MessageFormat = "Documentation line must begin with a space.";
-        internal const string Category = "StyleCop.CSharp.Spacing";
+        internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "A line within a documentation header above a C# element does not begin with a single space.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1004.html";
 

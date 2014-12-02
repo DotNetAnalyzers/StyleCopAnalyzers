@@ -25,7 +25,7 @@
         public const string DiagnosticId = "SA1007";
         internal const string Title = "Operator Keyword Must Be Followed By Space";
         internal const string MessageFormat = "Operator keyword must be followed by a space.";
-        internal const string Category = "StyleCop.CSharp.Spacing";
+        internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "The operator keyword within a C# operator overload method is not followed by any whitespace.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1007.html";
 

@@ -42,7 +42,7 @@
         public const string DiagnosticId = "SA1003";
         internal const string Title = "Symbols Must Be Spaced Correctly";
         internal const string MessageFormat = "Operator '{0}' must {1}.";
-        internal const string Category = "StyleCop.CSharp.Spacing";
+        internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "The spacing around an operator symbol is incorrect, within a C# code file.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1003.html";
 

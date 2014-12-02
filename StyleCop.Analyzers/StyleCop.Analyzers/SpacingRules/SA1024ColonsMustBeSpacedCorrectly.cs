@@ -49,7 +49,7 @@
         public const string DiagnosticId = "SA1024";
         internal const string Title = "Colons Must Be Spaced Correctly";
         internal const string MessageFormat = "Colon must{0} be {1} by a space.";
-        internal const string Category = "StyleCop.CSharp.Spacing";
+        internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "A colon within a C# element is not spaced correctly.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1024.html";
 

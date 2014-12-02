@@ -24,7 +24,7 @@
         public const string DiagnosticId = "SA1011";
         internal const string Title = "Closing Square Brackets Must Be Spaced Correctly";
         internal const string MessageFormat = "Closing square bracket must{0} be {1} by a space.";
-        internal const string Category = "StyleCop.CSharp.Spacing";
+        internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "A closing square bracket within a C# statement is not spaced correctly.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1011.html";
 

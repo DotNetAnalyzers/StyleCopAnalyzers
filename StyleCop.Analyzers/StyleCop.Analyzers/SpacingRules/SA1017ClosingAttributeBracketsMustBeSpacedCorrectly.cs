@@ -20,7 +20,7 @@
         public const string DiagnosticId = "SA1017";
         internal const string Title = "Closing Attribute Brackets Must Be Spaced Correctly";
         internal const string MessageFormat = "Closing attribute brackets must not be preceded by a space.";
-        internal const string Category = "StyleCop.CSharp.Spacing";
+        internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "A closing attribute bracket within a C# element is not spaced correctly.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1017.html";
 

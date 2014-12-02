@@ -23,7 +23,7 @@
         public const string DiagnosticId = "SA1026";
         internal const string Title = "Code Must Not Contain Space After New Keyword In Implicitly Typed Array Allocation";
         internal const string MessageFormat = "The keyword 'new' must not be followed by a space.";
-        internal const string Category = "StyleCop.CSharp.Spacing";
+        internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "An implicitly typed new array allocation within a C# code file is not spaced correctly.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1026.html";
 

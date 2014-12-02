@@ -28,7 +28,7 @@
         public const string DiagnosticId = "SA1006";
         internal const string Title = "Preprocessor Keywords Must Not Be Preceded By Space";
         internal const string MessageFormat = "Preprocessor keyword '{0}' must not be preceded by a space.";
-        internal const string Category = "StyleCop.CSharp.Spacing";
+        internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "A C# preprocessor-type keyword is preceded by space.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1006.html";
 
