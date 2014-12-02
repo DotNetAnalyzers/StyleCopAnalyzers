@@ -1,7 +1,11 @@
 ﻿namespace StyleCop.Analyzers.OrderingRules
 {
+    using System;
     using System.Collections.Immutable;
+    using System.Threading;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -18,8 +22,8 @@
     public class SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1208";
-        internal const string Title = "A using directive which declares a member of the 'System' namespace appears after a using directive which declares a member of a different namespace, within a C# code file.";
-        internal const string MessageFormat = "TODO: Message format";
+        internal const string Title = "System using directives must be placed before other using directives";
+        internal const string MessageFormat = "Using directive for '{0}' must appear before directive for '{1}'";
         internal const string Category = "StyleCop.CSharp.OrderingRules";
         internal const string Description = "A using directive which declares a member of the 'System' namespace appears after a using directive which declares a member of a different namespace, within a C# code file.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1208.html";
@@ -42,7 +46,75 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(HandleUsingDirectiveSyntax, SyntaxKind.UsingDirective);
+        }
+
+        private void HandleUsingDirectiveSyntax(SyntaxNodeAnalysisContext context)
+        {
+            UsingDirectiveSyntax syntax = context.Node as UsingDirectiveSyntax;
+            if (syntax.Alias != null)
+                return;
+
+            SemanticModel semanticModel = context.SemanticModel;
+            INamespaceSymbol namespaceSymbol;
+            string topLevelNamespace = GetTopLevelNamespace(semanticModel, syntax, out namespaceSymbol, context.CancellationToken);
+            if (!"System".Equals(topLevelNamespace, StringComparison.Ordinal))
+                return;
+
+            CompilationUnitSyntax compilationUnit = syntax.Parent as CompilationUnitSyntax;
+            SyntaxList<UsingDirectiveSyntax>? usingDirectives = compilationUnit?.Usings;
+            if (!usingDirectives.HasValue)
+            {
+                NamespaceDeclarationSyntax namespaceDeclaration = syntax.Parent as NamespaceDeclarationSyntax;
+                usingDirectives = namespaceDeclaration?.Usings;
+            }
+
+            if (!usingDirectives.HasValue)
+                return;
+
+            foreach (var usingDirective in usingDirectives)
+            {
+                // we are only interested in nodes before the current node
+                if (usingDirective == syntax)
+                    break;
+
+                // ignore using alias directives, since they are handled by SA1209
+                if (usingDirective.Alias != null)
+                    continue;
+
+                INamespaceSymbol precedingNamespaceSymbol;
+                string precedingTopLevelNamespace = GetTopLevelNamespace(semanticModel, usingDirective, out precedingNamespaceSymbol, context.CancellationToken);
+                if (precedingTopLevelNamespace == null || "System".Equals(precedingTopLevelNamespace, StringComparison.Ordinal))
+                    continue;
+
+                string @namespace = namespaceSymbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat);
+                string precedingNamespace = precedingNamespaceSymbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat);
+
+                // Using directive for '{namespace}' must appear before directive for '{precedingNamespace}'
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.GetLocation(), @namespace, precedingNamespace));
+                break;
+            }
+        }
+
+        private static string GetTopLevelNamespace(SemanticModel semanticModel, UsingDirectiveSyntax syntax, out INamespaceSymbol namespaceSymbol, CancellationToken cancellationToken)
+        {
+            SymbolInfo symbolInfo = semanticModel.GetSymbolInfo(syntax.Name, cancellationToken);
+            namespaceSymbol = symbolInfo.Symbol as INamespaceSymbol;
+            if (namespaceSymbol == null)
+                return null;
+
+            string fullyQualifiedName = namespaceSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            string name = fullyQualifiedName;
+
+            int doubleColon = name.IndexOf("::");
+            if (doubleColon >= 0)
+                name = name.Substring(doubleColon + 2);
+
+            int dot = name.IndexOf('.');
+            if (dot >= 0)
+                name = name.Substring(0, dot);
+
+            return name;
         }
     }
 }
