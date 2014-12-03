@@ -93,6 +93,7 @@
 
             followedBySpace = token.HasTrailingTrivia;
             lastInLine = followedBySpace && token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia);
+            bool suppressFollowingSpaceError = false;
 
             SyntaxToken nextToken = token.GetNextToken();
             switch (nextToken.CSharpKind())
@@ -108,10 +109,14 @@
 
             case SyntaxKind.PlusToken:
                 precedesStickyCharacter = nextToken.Parent.IsKind(SyntaxKind.UnaryPlusExpression);
+                // this will be reported as SA1022
+                suppressFollowingSpaceError = true;
                 break;
 
             case SyntaxKind.MinusToken:
                 precedesStickyCharacter = nextToken.Parent.IsKind(SyntaxKind.UnaryMinusExpression);
+                // this will be reported as SA1021
+                suppressFollowingSpaceError = true;
                 break;
 
             case SyntaxKind.DotToken:
@@ -131,7 +136,7 @@
             default:
                 precedesStickyCharacter = false;
                 break;
-             }
+            }
 
             switch (token.Parent.CSharpKind())
             {
@@ -149,15 +154,18 @@
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), " not", "preceded"));
             }
 
-            if (!precedesStickyCharacter && !followedBySpace)
+            if (!suppressFollowingSpaceError)
             {
-                // Closing parenthesis must{} be {followed} by a space.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "followed"));
-            }
-            else if (precedesStickyCharacter && followedBySpace && (!lastInLine || !allowEndOfLine))
-            {
-                // Closing parenthesis must{ not} be {followed} by a space.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), " not", "followed"));
+                if (!precedesStickyCharacter && !followedBySpace)
+                {
+                    // Closing parenthesis must{} be {followed} by a space.
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "followed"));
+                }
+                else if (precedesStickyCharacter && followedBySpace && (!lastInLine || !allowEndOfLine))
+                {
+                    // Closing parenthesis must{ not} be {followed} by a space.
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), " not", "followed"));
+                }
             }
         }
     }

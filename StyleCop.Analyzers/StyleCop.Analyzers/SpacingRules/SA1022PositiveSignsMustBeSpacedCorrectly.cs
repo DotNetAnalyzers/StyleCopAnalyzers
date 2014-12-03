@@ -100,10 +100,18 @@
             followedBySpace = token.HasTrailingTrivia;
             lastInLine = token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia);
 
-            if (!firstInLine && !followsSpecialCharacter && !precededBySpace)
+            if (!firstInLine)
             {
-                // Positive sign must{} be {preceded} by a space.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "preceded"));
+                if (!followsSpecialCharacter && !precededBySpace)
+                {
+                    // Positive sign must{} be {preceded} by a space.
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "preceded"));
+                }
+                else if (followsSpecialCharacter && precededBySpace)
+                {
+                    // Positive sign must{ not} be {preceded} by a space.
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), " not", "preceded"));
+                }
             }
 
             if (lastInLine || followedBySpace)
