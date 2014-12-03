@@ -1,12 +1,10 @@
 ﻿namespace StyleCop.Analyzers.OrderingRules
 {
     using System;
-    using System.Collections.Generic;
     using System.Collections.Immutable;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -149,8 +147,8 @@
     public class SA1200UsingDirectivesMustBePlacedWithinNamespace : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1200";
-        internal const string Title = "Using Directives Must Be Placed Within Namespace";
-        internal const string MessageFormat = "TODO: Message format";
+        internal const string Title = "Using directives must be placed within namespace";
+        internal const string MessageFormat = "Using directive must appear within a namespace declaration";
         internal const string Category = "StyleCop.CSharp.OrderingRules";
         internal const string Description = "A C# using directive is placed outside of a namespace element.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1200.html";
@@ -173,7 +171,16 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(HandleUsingDirectiveSyntax, SyntaxKind.UsingDirective);
+        }
+
+        private void HandleUsingDirectiveSyntax(SyntaxNodeAnalysisContext context)
+        {
+            if (context.Node.Parent is NamespaceDeclarationSyntax)
+                return;
+
+            // Using directive must appear within a namespace declaration
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation()));
         }
     }
 }
