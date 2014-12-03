@@ -71,6 +71,7 @@
                 case SyntaxKind.FromKeyword:
                 case SyntaxKind.GroupKeyword:
                 case SyntaxKind.IfKeyword:
+                case SyntaxKind.InKeyword:
                 case SyntaxKind.IntoKeyword:
                 case SyntaxKind.JoinKeyword:
                 case SyntaxKind.LetKeyword:
