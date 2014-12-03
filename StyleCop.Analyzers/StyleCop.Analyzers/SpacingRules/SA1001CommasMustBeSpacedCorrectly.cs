@@ -20,7 +20,7 @@
         public const string DiagnosticId = "SA1001";
         internal const string Title = "Commas Must Be Spaced Correctly";
         internal const string MessageFormat = "Commas must{0} be {1} by a space.";
-        internal const string Category = "StyleCop.CSharp.Spacing";
+        internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "The spacing around a comma is incorrect, within a C# code file.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1001.html";
 

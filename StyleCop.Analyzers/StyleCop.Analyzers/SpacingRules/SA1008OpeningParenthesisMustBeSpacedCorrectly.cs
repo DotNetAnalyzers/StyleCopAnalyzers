@@ -24,7 +24,7 @@
         public const string DiagnosticId = "SA1008";
         internal const string Title = "Opening Parenthesis Must Be Spaced Correctly";
         internal const string MessageFormat = "Opening parenthesis must{0} be {1} by a space.";
-        internal const string Category = "StyleCop.CSharp.Spacing";
+        internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "An opening parenthesis within a C# statement is not spaced correctly.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1008.html";
 

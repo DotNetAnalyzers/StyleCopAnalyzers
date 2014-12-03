@@ -22,7 +22,7 @@
         public const string DiagnosticId = "SA1123";
         internal const string Title = "Do Not Place Regions Within Elements";
         internal const string MessageFormat = "Region must not be located within a code element.";
-        internal const string Category = "StyleCop.CSharp.Readability";
+        internal const string Category = "StyleCop.CSharp.ReadabilityRules";
         internal const string Description = "The C# code contains a region within the body of a code element.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1123.html";
 

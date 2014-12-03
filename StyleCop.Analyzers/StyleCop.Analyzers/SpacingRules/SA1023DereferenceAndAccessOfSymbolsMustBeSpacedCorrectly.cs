@@ -38,7 +38,7 @@
         public const string DiagnosticId = "SA1023";
         internal const string Title = "Dereference And Access Of Symbols Must Be Spaced Correctly";
         internal const string MessageFormat = "Dereference symbol '*' must {0}.";
-        internal const string Category = "StyleCop.CSharp.Spacing";
+        internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "A dereference symbol or an access-of symbol within a C# element is not spaced correctly.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1023.html";
 

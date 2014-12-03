@@ -18,7 +18,7 @@
         public const string DiagnosticId = "SA1019";
         internal const string Title = "Member Access Symbols Must Be Spaced Correctly";
         internal const string MessageFormat = "Member access symbol '{0}' must not be {1} by a space.";
-        internal const string Category = "StyleCop.CSharp.Spacing";
+        internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "The spacing around a member access symbol is incorrect, within a C# code file.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1019.html";
 

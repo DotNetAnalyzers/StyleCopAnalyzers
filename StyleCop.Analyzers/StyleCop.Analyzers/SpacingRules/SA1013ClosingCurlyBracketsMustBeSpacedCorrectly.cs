@@ -23,7 +23,7 @@
         public const string DiagnosticId = "SA1013";
         internal const string Title = "Closing Curly Brackets Must Be Spaced Correctly";
         internal const string MessageFormat = "Closing curly bracket must{0} be {1} by a space.";
-        internal const string Category = "StyleCop.CSharp.Spacing";
+        internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "A closing curly bracket within a C# element is not spaced correctly.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1013.html";
 

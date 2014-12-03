@@ -24,7 +24,7 @@
         public const string DiagnosticId = "SA1012";
         internal const string Title = "Opening Curly Brackets Must Be Spaced Correctly";
         internal const string MessageFormat = "Opening curly bracket must{0} be {1} by a space.";
-        internal const string Category = "StyleCop.CSharp.Spacing";
+        internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "An opening curly bracket within a C# element is not spaced correctly.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1012.html";
 

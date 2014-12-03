@@ -24,7 +24,7 @@
         public const string DiagnosticId = "SA1027";
         internal const string Title = "Tabs Must Not Be Used";
         internal const string MessageFormat = "Tabs must not be used.";
-        internal const string Category = "StyleCop.CSharp.Spacing";
+        internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "The C# code contains a tab character.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1027.html";
 
