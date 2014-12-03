@@ -69,6 +69,14 @@
 
                     break;
 
+                case SyntaxKind.CheckedKeyword:
+                case SyntaxKind.DefaultKeyword:
+                case SyntaxKind.SizeOfKeyword:
+                case SyntaxKind.TypeOfKeyword:
+                case SyntaxKind.UncheckedKeyword:
+                    isAddingSpace = false;
+                    break;
+
                 default:
                     break;
                 }
