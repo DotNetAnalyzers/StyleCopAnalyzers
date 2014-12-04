@@ -41,7 +41,7 @@
     public class SA1305FieldNamesMustNotUseHungarianNotation : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1305";
-        internal const string Title = "The name of a field or variable in C# uses Hungarian notation.";
+        internal const string Title = "Field names must not use Hungarian notation";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.NamingRules";
         internal const string Description = "The name of a field or variable in C# uses Hungarian notation.";

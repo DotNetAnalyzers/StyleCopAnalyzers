@@ -19,7 +19,7 @@
     public class SA1020IncrementDecrementSymbolsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1020";
-        internal const string Title = "Increment Decrement Symbols Must Be Spaced Correctly";
+        internal const string Title = "Increment decrement symbols must be spaced correctly";
         internal const string MessageFormat = "{0} symbol '{1}' must not be {2} by a space.";
         internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "An increment or decrement symbol within a C# element is not spaced correctly.";

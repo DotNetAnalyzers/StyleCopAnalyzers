@@ -25,7 +25,7 @@
     public class SA1300ElementMustBeginWithUpperCaseLetter : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1300";
-        internal const string Title = "Element Must Begin With Upper Case Letter";
+        internal const string Title = "Element must begin with upper-case letter";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.NamingRules";
         internal const string Description = "The name of a C# element does not begin with an upper-case letter.";

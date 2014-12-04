@@ -36,7 +36,7 @@
     public class SA1639FileHeaderMustHaveSummary : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1639";
-        internal const string Title = "The file header at the top of a C# code file does not contain a filled-in summary tag.";
+        internal const string Title = "File header must have summary";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "The file header at the top of a C# code file does not contain a filled-in summary tag.";

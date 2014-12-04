@@ -46,7 +46,7 @@
     public class SA1005SingleLineCommentsMustBeginWithSingleSpace : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1005";
-        internal const string Title = "Single Line Comments Must Begin With Single Space";
+        internal const string Title = "Single line comments must begin with single space";
         internal const string MessageFormat = "Single line comment must begin with a space.";
         internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "A single-line comment within a C# code file does not begin with a single space.";

@@ -15,7 +15,7 @@
     public class SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1311";
-        internal const string Title = "The name of a static readonly field does not begin with an upper-case letter.";
+        internal const string Title = "Static readonly fields must begin with upper-case letter";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.NamingRules";
         internal const string Description = "The name of a static readonly field does not begin with an upper-case letter.";

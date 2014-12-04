@@ -22,7 +22,7 @@
     public class SA1611ElementParametersMustBeDocumented : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1611";
-        internal const string Title = "A C# method, constructor, delegate or indexer element is missing documentation for one or more of its parameters.";
+        internal const string Title = "Element parameters must be documented";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "A C# method, constructor, delegate or indexer element is missing documentation for one or more of its parameters.";

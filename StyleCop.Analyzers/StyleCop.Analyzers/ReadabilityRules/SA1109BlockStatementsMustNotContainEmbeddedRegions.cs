@@ -24,7 +24,7 @@
     public class SA1109BlockStatementsMustNotContainEmbeddedRegions : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1109";
-        internal const string Title = "A C# statement contains a region tag between the declaration of the statement and the opening curly bracket of the statement.";
+        internal const string Title = "Block statements must not contain embedded regions";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
         internal const string Description = "A C# statement contains a region tag between the declaration of the statement and the opening curly bracket of the statement.";

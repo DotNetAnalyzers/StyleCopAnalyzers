@@ -30,7 +30,7 @@
     public class SA1636FileHeaderCopyrightTextMustMatch : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1636";
-        internal const string Title = "The file header at the top of a C# code file does not contain the appropriate copyright text.";
+        internal const string Title = "File header copyright text must match";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "The file header at the top of a C# code file does not contain the appropriate copyright text.";

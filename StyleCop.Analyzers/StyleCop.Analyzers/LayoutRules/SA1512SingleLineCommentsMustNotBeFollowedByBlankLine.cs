@@ -65,7 +65,7 @@
     public class SA1512SingleLineCommentsMustNotBeFollowedByBlankLine : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1512";
-        internal const string Title = "A single-line comment within C# code is followed by a blank line.";
+        internal const string Title = "Single-line comments must not be followed by blank line";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.LayoutRules";
         internal const string Description = "A single-line comment within C# code is followed by a blank line.";

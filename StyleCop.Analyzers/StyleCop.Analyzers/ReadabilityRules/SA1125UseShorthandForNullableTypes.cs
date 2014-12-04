@@ -17,7 +17,7 @@
     public class SA1125UseShorthandForNullableTypes : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1125";
-        internal const string Title = "The Nullable<T> type has been defined not using the C# shorthand. For example, Nullable<DateTime> has been used instead of the preferred DateTime?";
+        internal const string Title = "Use shorthand for nullable types";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
         internal const string Description = "The Nullable<T> type has been defined not using the C# shorthand. For example, Nullable<DateTime> has been used instead of the preferred DateTime?";

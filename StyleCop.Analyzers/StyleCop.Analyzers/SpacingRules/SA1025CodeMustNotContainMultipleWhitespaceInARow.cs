@@ -18,7 +18,7 @@
     public class SA1025CodeMustNotContainMultipleWhitespaceInARow : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1025";
-        internal const string Title = "Code Must Not Contain Multiple Whitespace In A Row";
+        internal const string Title = "Code must not contain multiple whitespace in a row";
         internal const string MessageFormat = "Code must not contain multiple whitespace characters in a row.";
         internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "The code contains multiple whitespace characters in a row.";

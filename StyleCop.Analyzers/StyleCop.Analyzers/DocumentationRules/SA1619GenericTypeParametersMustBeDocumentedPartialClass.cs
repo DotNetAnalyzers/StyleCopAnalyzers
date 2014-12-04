@@ -70,7 +70,7 @@
     public class SA1619GenericTypeParametersMustBeDocumentedPartialClass : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1619";
-        internal const string Title = "A generic, partial C# element is missing documentation for one or more of its generic type parameters, and the documentation for the element contains a <summary> tag.";
+        internal const string Title = "Generic type parameters must be documented partial class";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "A generic, partial C# element is missing documentation for one or more of its generic type parameters, and the documentation for the element contains a <summary> tag.";

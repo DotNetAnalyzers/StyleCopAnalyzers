@@ -31,7 +31,7 @@
     public class SA1202ElementsMustBeOrderedByAccess : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1202";
-        internal const string Title = "An element within a C# code file is out of order within regard to access level, in relation to other elements in the code.";
+        internal const string Title = "Elements must be ordered by access";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.OrderingRules";
         internal const string Description = "An element within a C# code file is out of order within regard to access level, in relation to other elements in the code.";

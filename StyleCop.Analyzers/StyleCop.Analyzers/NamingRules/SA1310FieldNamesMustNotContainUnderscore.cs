@@ -23,7 +23,7 @@
     public class SA1310FieldNamesMustNotContainUnderscore : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1310";
-        internal const string Title = "A field name in C# contains an underscore.";
+        internal const string Title = "Field names must not contain underscore";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.NamingRules";
         internal const string Description = "A field name in C# contains an underscore.";

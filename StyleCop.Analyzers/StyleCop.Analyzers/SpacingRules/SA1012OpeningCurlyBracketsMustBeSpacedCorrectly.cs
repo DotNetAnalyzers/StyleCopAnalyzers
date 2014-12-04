@@ -22,7 +22,7 @@
     public class SA1012OpeningCurlyBracketsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1012";
-        internal const string Title = "Opening Curly Brackets Must Be Spaced Correctly";
+        internal const string Title = "Opening curly brackets must be spaced correctly";
         internal const string MessageFormat = "Opening curly bracket must{0} be {1} by a space.";
         internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "An opening curly bracket within a C# element is not spaced correctly.";

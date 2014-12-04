@@ -18,7 +18,7 @@
     public class SA1018NullableTypeSymbolsMustNotBePrecededBySpace : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1018";
-        internal const string Title = "Nullable Type Symbols Must Be Spaced Correctly";
+        internal const string Title = "Nullable type symbols must be spaced correctly";
         internal const string MessageFormat = "Nullable type symbol must not be preceded by a space.";
         internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "A nullable type symbol within a C# element is not spaced correctly.";

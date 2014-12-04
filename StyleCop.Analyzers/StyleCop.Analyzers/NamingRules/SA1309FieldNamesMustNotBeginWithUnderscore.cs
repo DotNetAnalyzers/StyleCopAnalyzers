@@ -27,7 +27,7 @@
     public class SA1309FieldNamesMustNotBeginWithUnderscore : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1309";
-        internal const string Title = "A field name in C# begins with an underscore.";
+        internal const string Title = "Field names must not begin with underscore";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.NamingRules";
         internal const string Description = "A field name in C# begins with an underscore.";

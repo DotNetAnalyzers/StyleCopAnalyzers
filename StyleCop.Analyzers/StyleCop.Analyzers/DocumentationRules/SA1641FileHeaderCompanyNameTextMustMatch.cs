@@ -29,7 +29,7 @@
     public class SA1641FileHeaderCompanyNameTextMustMatch : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1641";
-        internal const string Title = "The file header at the top of a C# code file does not contain the appropriate company name text.";
+        internal const string Title = "File header company name text must match";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "The file header at the top of a C# code file does not contain the appropriate company name text.";

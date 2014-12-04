@@ -20,7 +20,7 @@
     public class SA1616ElementReturnValueDocumentationMustHaveText : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1616";
-        internal const string Title = "The <returns> tag within a C# element's documentation header is empty.";
+        internal const string Title = "Element return value documentation must have text";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "The <returns> tag within a C# element's documentation header is empty.";

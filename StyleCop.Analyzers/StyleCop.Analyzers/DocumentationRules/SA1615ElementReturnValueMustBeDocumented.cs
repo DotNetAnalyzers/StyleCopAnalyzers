@@ -21,7 +21,7 @@
     public class SA1615ElementReturnValueMustBeDocumented : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1615";
-        internal const string Title = "A C# element is missing documentation for its return value.";
+        internal const string Title = "Element return value must be documented";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "A C# element is missing documentation for its return value.";

@@ -23,7 +23,7 @@
     public class SA1007OperatorKeywordMustBeFollowedBySpace : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1007";
-        internal const string Title = "Operator Keyword Must Be Followed By Space";
+        internal const string Title = "Operator keyword must be followed by space";
         internal const string MessageFormat = "Operator keyword must be followed by a space.";
         internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "The operator keyword within a C# operator overload method is not followed by any whitespace.";

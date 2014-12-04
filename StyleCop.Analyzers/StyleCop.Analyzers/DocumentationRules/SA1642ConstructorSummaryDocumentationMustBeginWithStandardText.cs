@@ -88,7 +88,7 @@
     public class SA1642ConstructorSummaryDocumentationMustBeginWithStandardText : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1642";
-        internal const string Title = "The XML documentation header for a C# constructor does not contain the appropriate summary text.";
+        internal const string Title = "Constructor summary documentation must begin with standard text";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "The XML documentation header for a C# constructor does not contain the appropriate summary text.";

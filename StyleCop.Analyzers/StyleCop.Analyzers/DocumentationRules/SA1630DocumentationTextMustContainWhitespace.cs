@@ -34,7 +34,7 @@
     public class SA1630DocumentationTextMustContainWhitespace : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1630";
-        internal const string Title = "A section of the XML header documentation for a C# element does not contain any whitespace between words.";
+        internal const string Title = "Documentation text must contain whitespace";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "A section of the XML header documentation for a C# element does not contain any whitespace between words.";

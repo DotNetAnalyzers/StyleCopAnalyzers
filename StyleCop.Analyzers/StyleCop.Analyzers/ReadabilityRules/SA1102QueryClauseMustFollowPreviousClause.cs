@@ -30,7 +30,7 @@
     public class SA1102QueryClauseMustFollowPreviousClause : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1102";
-        internal const string Title = "A C# query clause does not begin on the same line as the previous clause, or on the next line.";
+        internal const string Title = "Query clause must follow previous clause";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
         internal const string Description = "A C# query clause does not begin on the same line as the previous clause, or on the next line.";

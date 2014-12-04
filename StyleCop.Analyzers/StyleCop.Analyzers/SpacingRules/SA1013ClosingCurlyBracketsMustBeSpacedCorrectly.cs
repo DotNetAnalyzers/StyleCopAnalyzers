@@ -21,7 +21,7 @@
     public class SA1013ClosingCurlyBracketsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1013";
-        internal const string Title = "Closing Curly Brackets Must Be Spaced Correctly";
+        internal const string Title = "Closing curly brackets must be spaced correctly";
         internal const string MessageFormat = "Closing curly bracket must{0} be {1} by a space.";
         internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "A closing curly bracket within a C# element is not spaced correctly.";

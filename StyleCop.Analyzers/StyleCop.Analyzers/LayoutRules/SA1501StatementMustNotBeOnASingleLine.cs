@@ -36,7 +36,7 @@
     public class SA1501StatementMustNotBeOnASingleLine : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1501";
-        internal const string Title = "A C# statement containing opening and closing curly brackets is written completely on a single line.";
+        internal const string Title = "Statement must not be on a single line";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.LayoutRules";
         internal const string Description = "A C# statement containing opening and closing curly brackets is written completely on a single line.";

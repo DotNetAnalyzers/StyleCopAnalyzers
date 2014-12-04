@@ -50,7 +50,7 @@
     public class SA1650ElementDocumentationMustBeSpelledCorrectly : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1650";
-        internal const string Title = "The element documentation for the element contains one or more spelling mistakes or unrecognized words.";
+        internal const string Title = "Element documentation must be spelled correctly";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "The element documentation for the element contains one or more spelling mistakes or unrecognized words.";

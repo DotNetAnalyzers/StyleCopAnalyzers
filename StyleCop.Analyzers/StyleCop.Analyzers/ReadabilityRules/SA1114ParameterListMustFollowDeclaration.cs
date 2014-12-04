@@ -35,7 +35,7 @@
     public class SA1114ParameterListMustFollowDeclaration : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1114";
-        internal const string Title = "The start of the parameter list for a method or indexer call or declaration does not begin on the same line as the opening bracket, or on the line after the opening bracket.";
+        internal const string Title = "Parameter list must follow declaration";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
         internal const string Description = "The start of the parameter list for a method or indexer call or declaration does not begin on the same line as the opening bracket, or on the line after the opening bracket.";

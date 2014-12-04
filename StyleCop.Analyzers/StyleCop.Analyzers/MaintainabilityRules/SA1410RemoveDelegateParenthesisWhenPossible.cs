@@ -29,7 +29,7 @@
     public class SA1410RemoveDelegateParenthesisWhenPossible : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1410";
-        internal const string Title = "A call to a C# anonymous method does not contain any method parameters, yet the statement still includes parenthesis.";
+        internal const string Title = "Remove delegate parenthesis when possible";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
         internal const string Description = "A call to a C# anonymous method does not contain any method parameters, yet the statement still includes parenthesis.";

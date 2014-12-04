@@ -34,7 +34,7 @@
     public class SA1509OpeningCurlyBracketsMustNotBePrecededByBlankLine : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1509";
-        internal const string Title = "An opening curly bracket within a C# element, statement, or expression is preceded by a blank line.";
+        internal const string Title = "Opening curly brackets must not be preceded by blank line";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.LayoutRules";
         internal const string Description = "An opening curly bracket within a C# element, statement, or expression is preceded by a blank line.";

@@ -15,7 +15,7 @@
     public class SA1106CodeMustNotContainEmptyStatements : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1106";
-        internal const string Title = "The C# code contains an extra semicolon.";
+        internal const string Title = "Code must not contain empty statements";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
         internal const string Description = "The C# code contains an extra semicolon.";

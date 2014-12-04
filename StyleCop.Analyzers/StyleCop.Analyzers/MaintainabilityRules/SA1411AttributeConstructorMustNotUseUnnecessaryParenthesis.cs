@@ -25,7 +25,7 @@
     public class SA1411AttributeConstructorMustNotUseUnnecessaryParenthesis : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1411";
-        internal const string Title = "TODO.";
+        internal const string Title = "Attribute constructor must not use unnecessary parenthesis";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
         internal const string Description = "TODO.";

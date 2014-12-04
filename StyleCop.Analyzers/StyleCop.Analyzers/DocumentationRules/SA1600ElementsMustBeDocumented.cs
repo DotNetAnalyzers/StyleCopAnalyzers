@@ -20,7 +20,7 @@
     public class SA1600ElementsMustBeDocumented : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1600";
-        internal const string Title = "Elements Must Be Documented";
+        internal const string Title = "Elements must be documented";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.Documentation";
         internal const string Description = "A C# code element is missing a documentation header.";

@@ -28,7 +28,7 @@
     public class SA1511WhileDoFooterMustNotBePrecededByBlankLine : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1511";
-        internal const string Title = "The while footer at the bottom of a do-while statement is separated from the statement by a blank line.";
+        internal const string Title = "while-do footer must not be preceded by blank line";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.LayoutRules";
         internal const string Description = "The while footer at the bottom of a do-while statement is separated from the statement by a blank line.";

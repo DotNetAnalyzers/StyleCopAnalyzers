@@ -27,7 +27,7 @@
     public class SA1206DeclarationKeywordsMustFollowOrder : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1206";
-        internal const string Title = "The keywords within the declaration of an element do not follow a standard ordering scheme.";
+        internal const string Title = "Declaration keywords must follow order";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.OrderingRules";
         internal const string Description = "The keywords within the declaration of an element do not follow a standard ordering scheme.";

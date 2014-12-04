@@ -22,7 +22,7 @@
     public class SA1027TabsMustNotBeUsed : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1027";
-        internal const string Title = "Tabs Must Not Be Used";
+        internal const string Title = "Tabs must not be used";
         internal const string MessageFormat = "Tabs must not be used.";
         internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "The C# code contains a tab character.";

@@ -24,7 +24,7 @@
     public class SA1009ClosingParenthesisMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1009";
-        internal const string Title = "Closing Parenthesis Must Be Spaced Correctly";
+        internal const string Title = "Closing parenthesis must be spaced correctly";
         internal const string MessageFormat = "Closing parenthesis must{0} be {1} by a space.";
         internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "A closing parenthesis within a C# statement is not spaced correctly.";

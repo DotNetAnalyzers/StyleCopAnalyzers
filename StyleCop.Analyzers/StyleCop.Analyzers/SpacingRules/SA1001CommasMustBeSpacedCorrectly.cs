@@ -18,7 +18,7 @@
     public class SA1001CommasMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1001";
-        internal const string Title = "Commas Must Be Spaced Correctly";
+        internal const string Title = "Commas must be spaced correctly";
         internal const string MessageFormat = "Commas must{0} be {1} by a space.";
         internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "The spacing around a comma is incorrect, within a C# code file.";

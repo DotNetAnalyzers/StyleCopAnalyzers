@@ -33,7 +33,7 @@
     public class SA1602EnumerationItemsMustBeDocumented : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1602";
-        internal const string Title = "An item within a C# enumeration is missing an Xml documentation header.";
+        internal const string Title = "Enumeration items must be documented";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "An item within a C# enumeration is missing an Xml documentation header.";

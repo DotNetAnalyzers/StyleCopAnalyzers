@@ -36,7 +36,7 @@
     public class SA1119StatementMustNotUseUnnecessaryParenthesis : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1119";
-        internal const string Title = "A C# statement contains parenthesis which are unnecessary and should be removed.";
+        internal const string Title = "Statement must not use unnecessary parenthesis";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
         internal const string Description = "A C# statement contains parenthesis which are unnecessary and should be removed.";

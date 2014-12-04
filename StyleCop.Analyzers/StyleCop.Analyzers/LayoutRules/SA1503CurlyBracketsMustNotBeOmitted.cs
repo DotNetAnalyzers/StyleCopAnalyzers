@@ -49,7 +49,7 @@
     public class SA1503CurlyBracketsMustNotBeOmitted : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1503";
-        internal const string Title = "The opening and closing curly brackets for a C# statement have been omitted.";
+        internal const string Title = "Curly brackets must not be omitted";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.LayoutRules";
         internal const string Description = "The opening and closing curly brackets for a C# statement have been omitted.";

@@ -21,7 +21,7 @@
     public class SA1302InterfaceNamesMustBeginWithI : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1302";
-        internal const string Title = "The name of a C# interface does not begin with the capital letter I.";
+        internal const string Title = "Interface names must begin with I";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.NamingRules";
         internal const string Description = "The name of a C# interface does not begin with the capital letter I.";

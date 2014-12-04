@@ -20,7 +20,7 @@
     public class SA1010OpeningSquareBracketsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1010";
-        internal const string Title = "Opening Square Brackets Must Be Spaced Correctly";
+        internal const string Title = "Opening square brackets must be spaced correctly";
         internal const string MessageFormat = "Opening square brackets must not be {0} by a space.";
         internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "An opening square bracket within a C# statement is not spaced correctly.";

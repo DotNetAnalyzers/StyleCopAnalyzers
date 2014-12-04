@@ -31,7 +31,7 @@
     public class SA1116SplitParametersMustStartOnLineAfterDeclaration : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1116";
-        internal const string Title = "The parameters to a C# method or indexer call or declaration span across multiple lines, but the first parameter does not start on the line after the opening bracket.";
+        internal const string Title = "Split parameters must start on line after declaration";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
         internal const string Description = "The parameters to a C# method or indexer call or declaration span across multiple lines, but the first parameter does not start on the line after the opening bracket.";

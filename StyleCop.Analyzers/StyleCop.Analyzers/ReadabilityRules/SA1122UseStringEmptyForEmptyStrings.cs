@@ -25,10 +25,10 @@
     public class SA1122UseStringEmptyForEmptyStrings : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1122";
-        internal const string Title = "The C# code includes an empty string, written as “”.";
+        internal const string Title = "Use string.Empty for empty strings";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
-        internal const string Description = "The C# code includes an empty string, written as “”.";
+        internal const string Description = "The C# code includes an empty string, written as \"\".";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1122.html";
 
         public static readonly DiagnosticDescriptor Descriptor =

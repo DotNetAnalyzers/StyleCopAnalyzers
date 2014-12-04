@@ -30,7 +30,7 @@
     public class SA1104QueryClauseMustBeginOnNewLineWhenPreviousClauseSpansMultipleLines : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1104";
-        internal const string Title = "A clause within a C# query expression begins on the same line as the previous clause, when the previous clause spans across multiple lines.";
+        internal const string Title = "Query clause must begin on new line when previous clause spans multiple lines";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
         internal const string Description = "A clause within a C# query expression begins on the same line as the previous clause, when the previous clause spans across multiple lines.";

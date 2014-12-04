@@ -49,7 +49,7 @@
     public class SA1516ElementsMustBeSeparatedByBlankLine : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1516";
-        internal const string Title = "Adjacent C# elements are not separated by a blank line.";
+        internal const string Title = "Elements must be separated by blank line";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.LayoutRules";
         internal const string Description = "Adjacent C# elements are not separated by a blank line.";

@@ -18,7 +18,7 @@
     public class SA1014OpeningGenericBracketsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1014";
-        internal const string Title = "Opening Generic Brackets Must Be Spaced Correctly";
+        internal const string Title = "Opening generic brackets must be spaced correctly";
         internal const string MessageFormat = "Opening generic brackets must not be {0} by a space.";
         internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "An opening generic bracket within a C# element is not spaced correctly.";

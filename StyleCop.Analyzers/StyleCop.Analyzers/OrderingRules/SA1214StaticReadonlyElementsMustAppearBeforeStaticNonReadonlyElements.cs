@@ -15,7 +15,7 @@
     public class SA1214StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1214";
-        internal const string Title = "A static readonly element is positioned beneath a static non-readonly element of the same type.";
+        internal const string Title = "Static readonly elements must appear before static non-readonly elements";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.OrderingRules";
         internal const string Description = "A static readonly element is positioned beneath a static non-readonly element of the same type.";

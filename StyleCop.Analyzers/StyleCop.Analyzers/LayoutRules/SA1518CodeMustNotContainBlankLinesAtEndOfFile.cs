@@ -16,7 +16,7 @@
     public class SA1518CodeMustNotContainBlankLinesAtEndOfFile : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1518";
-        internal const string Title = "The code file has blank lines at the end.";
+        internal const string Title = "Code must not contain blank lines at end of file";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.LayoutRules";
         internal const string Description = "The code file has blank lines at the end.";

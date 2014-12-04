@@ -21,7 +21,7 @@
     public class SA1304NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1304";
-        internal const string Title = "The name of a non-private readonly C# field must being with an upper-case letter.";
+        internal const string Title = "Non-private readonly fields must begin with upper-case letter";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.NamingRules";
         internal const string Description = "The name of a non-private readonly C# field must being with an upper-case letter.";

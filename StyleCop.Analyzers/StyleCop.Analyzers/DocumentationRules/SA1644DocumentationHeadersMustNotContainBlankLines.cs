@@ -56,7 +56,7 @@
     public class SA1644DocumentationHeadersMustNotContainBlankLines : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1644";
-        internal const string Title = "A section within the XML documentation header for a C# element contains blank lines.";
+        internal const string Title = "Documentation headers must not contain blank lines";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "A section within the XML documentation header for a C# element contains blank lines.";

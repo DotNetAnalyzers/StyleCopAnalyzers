@@ -28,7 +28,7 @@
     public class SA1105QueryClausesSpanningMultipleLinesMustBeginOnOwnLine : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1105";
-        internal const string Title = "A clause within a C# query expression spans across multiple lines, and does not begin on its own line.";
+        internal const string Title = "Query clauses spanning multiple lines must begin on own line";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
         internal const string Description = "A clause within a C# query expression spans across multiple lines, and does not begin on its own line.";

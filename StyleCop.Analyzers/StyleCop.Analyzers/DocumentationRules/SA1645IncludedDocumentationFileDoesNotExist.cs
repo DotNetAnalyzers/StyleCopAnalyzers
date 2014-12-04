@@ -33,7 +33,7 @@
     public class SA1645IncludedDocumentationFileDoesNotExist : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1645";
-        internal const string Title = "An included XML documentation file does not exist.";
+        internal const string Title = "Included documentation file does not exist";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "An included XML documentation file does not exist.";

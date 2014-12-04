@@ -11,7 +11,7 @@
     public class SA1301ElementMustBeginWithLowerCaseLetter : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1301";
-        internal const string Title = "There are currently no situations in which this rule will fire.";
+        internal const string Title = "Element must begin with lower-case letter";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.NamingRules";
         internal const string Description = "There are currently no situations in which this rule will fire.";

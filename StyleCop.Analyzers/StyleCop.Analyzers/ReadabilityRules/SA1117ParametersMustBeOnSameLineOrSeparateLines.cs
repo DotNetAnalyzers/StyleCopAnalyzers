@@ -42,7 +42,7 @@
     public class SA1117ParametersMustBeOnSameLineOrSeparateLines : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1117";
-        internal const string Title = "The parameters to a C# method or indexer call or declaration are not all on the same line or each on a separate line.";
+        internal const string Title = "Parameters must be on same line or separate lines";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
         internal const string Description = "The parameters to a C# method or indexer call or declaration are not all on the same line or each on a separate line.";

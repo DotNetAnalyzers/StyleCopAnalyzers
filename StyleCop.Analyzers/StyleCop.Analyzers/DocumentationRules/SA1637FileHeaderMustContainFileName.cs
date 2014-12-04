@@ -33,7 +33,7 @@
     public class SA1637FileHeaderMustContainFileName : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1637";
-        internal const string Title = "The file header at the top of a C# code file is missing the file name.";
+        internal const string Title = "File header must contain file name";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "The file header at the top of a C# code file is missing the file name.";

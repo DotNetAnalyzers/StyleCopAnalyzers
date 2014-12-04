@@ -15,7 +15,7 @@
     public class SA1215InstanceReadonlyElementsMustAppearBeforeInstanceNonReadonlyElements : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1215";
-        internal const string Title = "An instance readonly element is positioned beneath an instance non-readonly element of the same type.";
+        internal const string Title = "Instance readonly elements must appear before instance non-readonly elements";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.OrderingRules";
         internal const string Description = "An instance readonly element is positioned beneath an instance non-readonly element of the same type.";

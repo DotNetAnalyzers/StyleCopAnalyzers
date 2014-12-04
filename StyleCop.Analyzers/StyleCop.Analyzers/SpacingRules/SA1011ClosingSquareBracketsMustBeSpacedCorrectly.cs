@@ -22,7 +22,7 @@
     public class SA1011ClosingSquareBracketsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1011";
-        internal const string Title = "Closing Square Brackets Must Be Spaced Correctly";
+        internal const string Title = "Closing square brackets must be spaced correctly";
         internal const string MessageFormat = "Closing square bracket must{0} be {1} by a space.";
         internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "A closing square bracket within a C# statement is not spaced correctly.";

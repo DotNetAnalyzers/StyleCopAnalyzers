@@ -22,7 +22,7 @@
     public class SA1613ElementParameterDocumentationMustDeclareParameterName : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1613";
-        internal const string Title = "A <param> tag within a C# element's documentation header is missing a name attribute containing the name of the parameter.";
+        internal const string Title = "Element parameter documentation must declare parameter name";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "A <param> tag within a C# element's documentation header is missing a name attribute containing the name of the parameter.";

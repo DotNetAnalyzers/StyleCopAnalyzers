@@ -34,7 +34,7 @@
     public class SA1631DocumentationMustMeetCharacterPercentage : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1631";
-        internal const string Title = "A section of the Xml header documentation for a C# element does not contain enough alphabetic characters.";
+        internal const string Title = "Documentation must meet character percentage";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "A section of the Xml header documentation for a C# element does not contain enough alphabetic characters.";

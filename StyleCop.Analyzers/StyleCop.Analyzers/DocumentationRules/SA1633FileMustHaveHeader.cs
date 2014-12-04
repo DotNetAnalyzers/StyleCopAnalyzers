@@ -66,7 +66,7 @@
     public class SA1633FileMustHaveHeader : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1633";
-        internal const string Title = "A C# code file is missing a standard file header.";
+        internal const string Title = "File must have header";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "A C# code file is missing a standard file header.";

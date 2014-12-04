@@ -29,7 +29,7 @@
     public class SA1110OpeningParenthesisMustBeOnDeclarationLine : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1110";
-        internal const string Title = "The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the method or indexer name.";
+        internal const string Title = "Opening parenthesis must be on declaration line";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
         internal const string Description = "The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the method or indexer name.";

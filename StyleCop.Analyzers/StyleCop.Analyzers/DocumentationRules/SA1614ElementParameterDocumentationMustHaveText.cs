@@ -21,7 +21,7 @@
     public class SA1614ElementParameterDocumentationMustHaveText : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1614";
-        internal const string Title = "A <param> tag within a C# element's documentation header is empty.";
+        internal const string Title = "Element parameter documentation must have text";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "A <param> tag within a C# element's documentation header is empty.";

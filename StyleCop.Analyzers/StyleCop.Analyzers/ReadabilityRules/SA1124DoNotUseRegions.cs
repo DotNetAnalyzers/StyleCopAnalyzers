@@ -17,7 +17,7 @@
     public class SA1124DoNotUseRegions : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1124";
-        internal const string Title = "The C# code contains a region.";
+        internal const string Title = "Do not use regions";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
         internal const string Description = "The C# code contains a region.";
