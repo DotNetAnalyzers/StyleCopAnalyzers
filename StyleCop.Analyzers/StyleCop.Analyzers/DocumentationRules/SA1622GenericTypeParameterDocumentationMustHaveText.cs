@@ -21,7 +21,7 @@
     public class SA1622GenericTypeParameterDocumentationMustHaveText : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1622";
-        internal const string Title = "A &lt;typeparam&gt; tag within the Xml header documentation for a generic C# element is empty.";
+        internal const string Title = "Generic type parameter documentation must have text";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "A &lt;typeparam&gt; tag within the Xml header documentation for a generic C# element is empty.";

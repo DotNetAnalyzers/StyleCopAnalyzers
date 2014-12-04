@@ -32,7 +32,7 @@
     public class SA1632DocumentationTextMustMeetMinimumCharacterLength : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1632";
-        internal const string Title = "A section of the Xml header documentation for a C# element is too short.";
+        internal const string Title = "Documentation text must meet minimum character length";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "A section of the Xml header documentation for a C# element is too short.";

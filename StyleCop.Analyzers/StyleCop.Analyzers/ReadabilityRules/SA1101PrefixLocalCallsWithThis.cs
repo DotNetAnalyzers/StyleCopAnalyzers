@@ -28,7 +28,7 @@
     public class SA1101PrefixLocalCallsWithThis : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1101";
-        internal const string Title = "A call to an instance member of the local class or a base class is not prefixed with 'this.', within a C# code file.";
+        internal const string Title = "Prefix local calls with this";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
         internal const string Description = "A call to an instance member of the local class or a base class is not prefixed with 'this.', within a C# code file.";

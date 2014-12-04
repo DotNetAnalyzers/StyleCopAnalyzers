@@ -45,7 +45,7 @@
     public class SA1643DestructorSummaryDocumentationMustBeginWithStandardText : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1643";
-        internal const string Title = "The XML documentation header for a C# finalizer does not contain the appropriate summary text.";
+        internal const string Title = "Destructor summary documentation must begin with standard text";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "The XML documentation header for a C# finalizer does not contain the appropriate summary text.";

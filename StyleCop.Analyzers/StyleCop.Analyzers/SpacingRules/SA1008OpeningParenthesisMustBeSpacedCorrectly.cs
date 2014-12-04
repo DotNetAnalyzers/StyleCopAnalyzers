@@ -22,7 +22,7 @@
     public class SA1008OpeningParenthesisMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1008";
-        internal const string Title = "Opening Parenthesis Must Be Spaced Correctly";
+        internal const string Title = "Opening parenthesis must be spaced correctly";
         internal const string MessageFormat = "Opening parenthesis must{0} be {1} by a space.";
         internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "An opening parenthesis within a C# statement is not spaced correctly.";

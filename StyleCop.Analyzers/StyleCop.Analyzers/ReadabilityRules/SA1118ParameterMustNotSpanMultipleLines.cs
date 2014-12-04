@@ -50,7 +50,7 @@
     public class SA1118ParameterMustNotSpanMultipleLines : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1118";
-        internal const string Title = "A parameter to a C# method or indexer, other than the first parameter, spans across multiple lines.";
+        internal const string Title = "Parameter must not span multiple lines";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
         internal const string Description = "A parameter to a C# method or indexer, other than the first parameter, spans across multiple lines.";

@@ -99,7 +99,7 @@
     public class SA1201ElementsMustAppearInTheCorrectOrder : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1201";
-        internal const string Title = "An element within a C# code file is out of order in relation to the other elements in the code.";
+        internal const string Title = "Elements must appear in the correct order";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.OrderingRules";
         internal const string Description = "An element within a C# code file is out of order in relation to the other elements in the code.";

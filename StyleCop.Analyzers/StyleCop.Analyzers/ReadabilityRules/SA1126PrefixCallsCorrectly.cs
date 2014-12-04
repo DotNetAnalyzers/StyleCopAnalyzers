@@ -19,7 +19,7 @@
     public class SA1126PrefixCallsCorrectly : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1126";
-        internal const string Title = "A call to a member is not prefixed with the 'this.', 'base.', 'object.' or 'typename.' prefix to indicate the intended method call, within a C# code file.";
+        internal const string Title = "Prefix calls correctly";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
         internal const string Description = "A call to a member is not prefixed with the 'this.', 'base.', 'object.' or 'typename.' prefix to indicate the intended method call, within a C# code file.";

@@ -20,7 +20,7 @@
     public class SA1015ClosingGenericBracketsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1015";
-        internal const string Title = "Closing Generic Brackets Must Be Spaced Correctly";
+        internal const string Title = "Closing generic brackets must be spaced correctly";
         internal const string MessageFormat = "Closing generic bracket must{0} be {1} by a space.";
         internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "A closing generic bracket within a C# element is not spaced correctly.";

@@ -23,7 +23,7 @@
     public class SA1306FieldNamesMustBeginWithLowerCaseLetter : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1306";
-        internal const string Title = "The name of a field or variable in C# does not begin with a lower-case letter.";
+        internal const string Title = "Field names must begin with lower-case letter";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.NamingRules";
         internal const string Description = "The name of a field or variable in C# does not begin with a lower-case letter.";

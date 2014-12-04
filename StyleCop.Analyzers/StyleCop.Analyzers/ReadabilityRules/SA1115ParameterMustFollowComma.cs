@@ -36,7 +36,7 @@
     public class SA1115ParameterMustFollowComma : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1115";
-        internal const string Title = "A parameter within a C# method or indexer call or declaration does not begin on the same line as the previous parameter, or on the next line.";
+        internal const string Title = "Parameter must follow comma";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
         internal const string Description = "A parameter within a C# method or indexer call or declaration does not begin on the same line as the previous parameter, or on the next line.";

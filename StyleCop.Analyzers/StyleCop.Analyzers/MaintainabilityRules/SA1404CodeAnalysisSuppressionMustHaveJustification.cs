@@ -25,7 +25,7 @@
     public class SA1404CodeAnalysisSuppressionMustHaveJustification : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1404";
-        internal const string Title = "A Code Analysis SuppressMessage attribute does not include a justification.";
+        internal const string Title = "Code analysis suppression must have justification";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
         internal const string Description = "A Code Analysis SuppressMessage attribute does not include a justification.";

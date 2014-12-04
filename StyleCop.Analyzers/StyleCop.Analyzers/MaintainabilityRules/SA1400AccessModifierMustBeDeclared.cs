@@ -17,7 +17,7 @@
     public class SA1400AccessModifierMustBeDeclared : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1400";
-        internal const string Title = "Access Modifier Must Be Declared";
+        internal const string Title = "Access modifier must be declared";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.Maintainability";
         internal const string Description = "The access modifier for a C# element has not been explicitly defined.";

@@ -33,7 +33,7 @@
     public class SA1640FileHeaderMustHaveValidCompanyText : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1640";
-        internal const string Title = "The file header at the top of a C# code file does not contain company name text.";
+        internal const string Title = "File header must have valid company text";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "The file header at the top of a C# code file does not contain company name text.";

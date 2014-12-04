@@ -40,7 +40,7 @@
     public class SA1004DocumentationLinesMustBeginWithSingleSpace : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1004";
-        internal const string Title = "Documentation Lines Must Begin With Single Space";
+        internal const string Title = "Documentation lines must begin with single space";
         internal const string MessageFormat = "Documentation line must begin with a space.";
         internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "A line within a documentation header above a C# element does not begin with a single space.";

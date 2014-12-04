@@ -36,7 +36,7 @@
     public class SA1023DereferenceAndAccessOfSymbolsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1023";
-        internal const string Title = "Dereference And Access Of Symbols Must Be Spaced Correctly";
+        internal const string Title = "Dereference and access of symbols must be spaced correctly";
         internal const string MessageFormat = "Dereference symbol '*' must {0}.";
         internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "A dereference symbol or an access-of symbol within a C# element is not spaced correctly.";

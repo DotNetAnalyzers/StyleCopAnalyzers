@@ -15,7 +15,7 @@
     public class SA1107CodeMustNotContainMultipleStatementsOnOneLine : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1107";
-        internal const string Title = "The C# code contains more than one statement on a single line.";
+        internal const string Title = "Code must not contain multiple statements on one line";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
         internal const string Description = "The C# code contains more than one statement on a single line.";

@@ -26,7 +26,7 @@
     public class SA1006PreprocessorKeywordsMustNotBePrecededBySpace : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1006";
-        internal const string Title = "Preprocessor Keywords Must Not Be Preceded By Space";
+        internal const string Title = "Preprocessor keywords must not be preceded by space";
         internal const string MessageFormat = "Preprocessor keyword '{0}' must not be preceded by a space.";
         internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "A C# preprocessor-type keyword is preceded by space.";

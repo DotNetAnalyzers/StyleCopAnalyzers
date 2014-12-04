@@ -50,7 +50,7 @@
     public class SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1500";
-        internal const string Title = "Curly Brackets For Multi-Line Statements Must Not Share Line";
+        internal const string Title = "Curly brackets for multi-line statements must not share line";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.Layout";
         internal const string Description = "The opening or closing curly bracket within a C# statement, element, or expression is not placed on its own line.";

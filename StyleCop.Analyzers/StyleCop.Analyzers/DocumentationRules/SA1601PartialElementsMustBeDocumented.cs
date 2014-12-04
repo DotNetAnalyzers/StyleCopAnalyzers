@@ -62,7 +62,7 @@
     public class SA1601PartialElementsMustBeDocumented : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1601";
-        internal const string Title = "A C# partial element is missing a documentation header.";
+        internal const string Title = "Partial elements must be documented";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "A C# partial element is missing a documentation header.";

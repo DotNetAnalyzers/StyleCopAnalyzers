@@ -19,7 +19,7 @@
     public class SA1648InheritDocMustBeUsedWithInheritingClass : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1648";
-        internal const string Title = "<inheritdoc> has been used on an element that doesn't inherit from a base class or implement an interface.";
+        internal const string Title = "inheritdoc must be used with inheriting class";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "<inheritdoc> has been used on an element that doesn't inherit from a base class or implement an interface.";

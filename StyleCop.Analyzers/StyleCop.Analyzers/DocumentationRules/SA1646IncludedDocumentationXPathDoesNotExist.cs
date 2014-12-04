@@ -33,7 +33,7 @@
     public class SA1646IncludedDocumentationXPathDoesNotExist : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1646";
-        internal const string Title = "An included XML documentation link contains an invalid path.";
+        internal const string Title = "Included documentation XPath does not exist";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "An included XML documentation link contains an invalid path.";

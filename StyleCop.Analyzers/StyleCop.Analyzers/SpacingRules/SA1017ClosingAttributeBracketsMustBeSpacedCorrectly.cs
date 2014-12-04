@@ -18,7 +18,7 @@
     public class SA1017ClosingAttributeBracketsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1017";
-        internal const string Title = "Closing Attribute Brackets Must Be Spaced Correctly";
+        internal const string Title = "Closing attribute brackets must be spaced correctly";
         internal const string MessageFormat = "Closing attribute brackets must not be preceded by a space.";
         internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "A closing attribute bracket within a C# element is not spaced correctly.";

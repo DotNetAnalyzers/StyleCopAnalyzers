@@ -21,7 +21,7 @@
     public class SA1303ConstFieldNamesMustBeginWithUpperCaseLetter : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1303";
-        internal const string Title = "The name of a constant C# field must begin with an upper-case letter.";
+        internal const string Title = "Const field names must begin with upper-case letter";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.NamingRules";
         internal const string Description = "The name of a constant C# field must begin with an upper-case letter.";

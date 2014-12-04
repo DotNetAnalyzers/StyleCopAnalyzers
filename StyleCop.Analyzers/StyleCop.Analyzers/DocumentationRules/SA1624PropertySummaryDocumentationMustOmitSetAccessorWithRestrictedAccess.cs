@@ -169,7 +169,7 @@
     public class SA1624PropertySummaryDocumentationMustOmitSetAccessorWithRestrictedAccess : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1624";
-        internal const string Title = "The documentation text within a C# property's <summary> tag takes into account all of the accessors within the property, but one of the accessors has limited access.";
+        internal const string Title = "Property summary documentation must omit set accessor with restricted access";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "The documentation text within a C# property's <summary> tag takes into account all of the accessors within the property, but one of the accessors has limited access.";

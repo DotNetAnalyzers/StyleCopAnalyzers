@@ -49,7 +49,7 @@
     public class SA1409RemoveUnnecessaryCode : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1409";
-        internal const string Title = "A C# file contains code which is unnecessary and can be removed without changing the overall logic of the code.";
+        internal const string Title = "Remove unnecessary code";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
         internal const string Description = "A C# file contains code which is unnecessary and can be removed without changing the overall logic of the code.";

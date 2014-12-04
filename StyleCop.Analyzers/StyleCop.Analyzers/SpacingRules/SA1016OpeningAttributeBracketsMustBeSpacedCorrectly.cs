@@ -19,7 +19,7 @@
     public class SA1016OpeningAttributeBracketsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1016";
-        internal const string Title = "Opening Attribute Brackets Must Be Spaced Correctly";
+        internal const string Title = "Opening attribute brackets must be spaced correctly";
         internal const string MessageFormat = "Opening attribute brackets must not be followed by a space.";
         internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "An opening attribute bracket within a C# element is not spaced correctly.";

@@ -16,7 +16,7 @@
     public class SA1204StaticElementsMustAppearBeforeInstanceElements : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1204";
-        internal const string Title = "A static element is positioned beneath an instance element of the same type.";
+        internal const string Title = "Static elements must appear before instance elements";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.OrderingRules";
         internal const string Description = "A static element is positioned beneath an instance element of the same type.";

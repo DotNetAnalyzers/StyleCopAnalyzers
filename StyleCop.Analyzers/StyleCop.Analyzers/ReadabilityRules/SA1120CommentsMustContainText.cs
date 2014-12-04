@@ -15,7 +15,7 @@
     public class SA1120CommentsMustContainText : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1120";
-        internal const string Title = "The C# comment does not contain any comment text.";
+        internal const string Title = "Comments must contain text";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
         internal const string Description = "The C# comment does not contain any comment text.";

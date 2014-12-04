@@ -34,7 +34,7 @@
     public class SA1628DocumentationTextMustBeginWithACapitalLetter : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1628";
-        internal const string Title = "A section of the XML header documentation for a C# element does not begin with a capital letter.";
+        internal const string Title = "Documentation text must begin with a capital letter";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "A section of the XML header documentation for a C# element does not begin with a capital letter.";

@@ -20,7 +20,7 @@
     public class SA1406DebugFailMustProvideMessageText : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1406";
-        internal const string Title = "A call to Debug.Fail in C# code does not include a descriptive message.";
+        internal const string Title = "Debug.Fail must provide message text";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
         internal const string Description = "A call to Debug.Fail in C# code does not include a descriptive message.";

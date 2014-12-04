@@ -21,7 +21,7 @@
     public class SA1402FileMayOnlyContainASingleClass : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1402";
-        internal const string Title = "A C# code file contains more than one unique class.";
+        internal const string Title = "File may only contain a single class";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
         internal const string Description = "A C# code file contains more than one unique class.";

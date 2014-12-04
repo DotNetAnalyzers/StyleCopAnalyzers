@@ -189,7 +189,7 @@
     public class SA1623PropertySummaryDocumentationMustMatchAccessors : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1623";
-        internal const string Title = "The documentation text within a C# property’s &lt;summary&gt; tag does not match the accessors within the property.";
+        internal const string Title = "Property summary documentation must match accessors";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "The documentation text within a C# property’s &lt;summary&gt; tag does not match the accessors within the property.";

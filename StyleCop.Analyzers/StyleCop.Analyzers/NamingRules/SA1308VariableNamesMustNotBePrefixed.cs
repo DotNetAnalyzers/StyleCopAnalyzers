@@ -27,7 +27,7 @@
     public class SA1308VariableNamesMustNotBePrefixed : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1308";
-        internal const string Title = "A field name in C# is prefixed with 'm_' or 's_'.";
+        internal const string Title = "Variable names must not be prefixed";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.NamingRules";
         internal const string Description = "A field name in C# is prefixed with 'm_' or 's_'.";

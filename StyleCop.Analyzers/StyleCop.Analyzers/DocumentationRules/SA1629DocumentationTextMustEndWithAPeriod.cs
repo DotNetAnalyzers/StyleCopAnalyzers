@@ -35,7 +35,7 @@
     public class SA1629DocumentationTextMustEndWithAPeriod : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1629";
-        internal const string Title = "A section of the XML header documentation for a C# element does not end with a period.";
+        internal const string Title = "Documentation text must end with a period";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "A section of the XML header documentation for a C# element does not end with a period.";

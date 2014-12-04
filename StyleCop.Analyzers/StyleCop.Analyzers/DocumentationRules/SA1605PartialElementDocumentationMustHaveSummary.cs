@@ -64,7 +64,7 @@
     public class SA1605PartialElementDocumentationMustHaveSummary : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1605";
-        internal const string Title = "The <summary> or <content> tag within the documentation header for a C# code element is missing or empty.";
+        internal const string Title = "Partial element documentation must have summary";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "The <summary> or <content> tag within the documentation header for a C# code element is missing or empty.";

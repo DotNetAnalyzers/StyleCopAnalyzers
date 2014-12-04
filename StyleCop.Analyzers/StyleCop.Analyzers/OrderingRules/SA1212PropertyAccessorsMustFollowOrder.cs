@@ -35,7 +35,7 @@
     public class SA1212PropertyAccessorsMustFollowOrder : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1212";
-        internal const string Title = "A get accessor appears after a set accessor within a property or indexer.";
+        internal const string Title = "Property accessors must follow order";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.OrderingRules";
         internal const string Description = "A get accessor appears after a set accessor within a property or indexer.";

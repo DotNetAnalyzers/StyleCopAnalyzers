@@ -22,7 +22,7 @@
     public class SA1621GenericTypeParameterDocumentationMustDeclareParameterName : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1621";
-        internal const string Title = "A <typeparam> tag within the XML header documentation for a generic C# element is missing a name attribute, or contains an empty name attribute.";
+        internal const string Title = "Generic type parameter documentation must declare parameter name";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "A <typeparam> tag within the XML header documentation for a generic C# element is missing a name attribute, or contains an empty name attribute.";

@@ -18,7 +18,7 @@
     public class SA1002SemicolonsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1002";
-        internal const string Title = "Semicolons Must Be Spaced Correctly";
+        internal const string Title = "Semicolons must be spaced correctly";
         internal const string MessageFormat = "Semicolons must{0} be {1} by a space.";
         internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "The spacing around a semicolon is incorrect, within a C# code file.";

@@ -34,7 +34,7 @@
     public class SA1627DocumentationTextMustNotBeEmpty : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1627";
-        internal const string Title = "The XML header documentation for a C# code element contains an empty tag.";
+        internal const string Title = "Documentation text must not be empty";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "The XML header documentation for a C# code element contains an empty tag.";

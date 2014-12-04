@@ -21,7 +21,7 @@
     public class SA1307AccessibleFieldsMustBeginWithUpperCaseLetter : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1307";
-        internal const string Title = "The name of a public or internal field in C# does not begin with an upper-case letter.";
+        internal const string Title = "Accessible fields must begin with upper-case letter";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.NamingRules";
         internal const string Description = "The name of a public or internal field in C# does not begin with an upper-case letter.";

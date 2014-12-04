@@ -22,7 +22,7 @@
     public class SA1617VoidReturnValueMustNotBeDocumented : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1617";
-        internal const string Title = "A C# code element does not contain a return value, or returns void, but the documentation header for the element contains a <returns> tag.";
+        internal const string Title = "Void return value must not be documented";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "A C# code element does not contain a return value, or returns void, but the documentation header for the element contains a <returns> tag.";

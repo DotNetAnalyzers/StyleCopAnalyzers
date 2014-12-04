@@ -16,7 +16,7 @@
     public class SA1203ConstantsMustAppearBeforeFields : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1203";
-        internal const string Title = "A constant field is placed beneath a non-constant field.";
+        internal const string Title = "Constants must appear before fields";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.OrderingRules";
         internal const string Description = "A constant field is placed beneath a non-constant field.";

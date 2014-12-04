@@ -33,7 +33,7 @@
     public class SA1510ChainedStatementBlocksMustNotBePrecededByBlankLine : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1510";
-        internal const string Title = "Chained C# statements are separated by a blank line.";
+        internal const string Title = "Chained statement blocks must not be preceded by blank line";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.LayoutRules";
         internal const string Description = "Chained C# statements are separated by a blank line.";

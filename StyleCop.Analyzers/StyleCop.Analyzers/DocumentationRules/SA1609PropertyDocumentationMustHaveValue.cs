@@ -23,7 +23,7 @@
     public class SA1609PropertyDocumentationMustHaveValue : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1609";
-        internal const string Title = "The XML header documentation for a C# property does not contain a <value> tag.";
+        internal const string Title = "Property documentation must have value";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "The XML header documentation for a C# property does not contain a <value> tag.";

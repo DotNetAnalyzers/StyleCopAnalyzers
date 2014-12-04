@@ -55,7 +55,7 @@
     public class SA1514ElementDocumentationHeaderMustBePrecededByBlankLine : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1514";
-        internal const string Title = "An element documentation header above a C# element is not preceded by a blank line.";
+        internal const string Title = "Element documentation header must be preceded by blank line";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.LayoutRules";
         internal const string Description = "An element documentation header above a C# element is not preceded by a blank line.";

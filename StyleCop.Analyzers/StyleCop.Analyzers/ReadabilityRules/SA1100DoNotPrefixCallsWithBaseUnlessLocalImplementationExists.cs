@@ -48,7 +48,7 @@
     public class SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1100";
-        internal const string Title = "Do Not Prefix Calls With Base Unless Local Implementation Exists";
+        internal const string Title = "Do not prefix calls with base unless local implementation exists";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
         internal const string Description = "A call to a member from an inherited class begins with 'base.', and the local class does not contain an override or implementation of the member.";

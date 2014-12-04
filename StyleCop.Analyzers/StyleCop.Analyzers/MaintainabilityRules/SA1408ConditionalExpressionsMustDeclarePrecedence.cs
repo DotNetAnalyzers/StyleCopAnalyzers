@@ -48,7 +48,7 @@
     public class SA1408ConditionalExpressionsMustDeclarePrecedence : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1408";
-        internal const string Title = "A C# statement contains a complex conditional expression which omits parenthesis around operators.";
+        internal const string Title = "Conditional expressions must declare precedence";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
         internal const string Description = "A C# statement contains a complex conditional expression which omits parenthesis around operators.";

@@ -19,7 +19,7 @@
     public class SA1401FieldsMustBePrivate : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1401";
-        internal const string Title = "A field within a C# class has an access modifier other than private.";
+        internal const string Title = "Fields must be private";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
         internal const string Description = "A field within a C# class has an access modifier other than private.";

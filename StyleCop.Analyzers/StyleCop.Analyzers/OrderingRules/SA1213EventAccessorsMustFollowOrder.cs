@@ -35,7 +35,7 @@
     public class SA1213EventAccessorsMustFollowOrder : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1213";
-        internal const string Title = "An add accessor appears after a remove accessor within an event.";
+        internal const string Title = "Event accessors must follow order";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.OrderingRules";
         internal const string Description = "An add accessor appears after a remove accessor within an event.";

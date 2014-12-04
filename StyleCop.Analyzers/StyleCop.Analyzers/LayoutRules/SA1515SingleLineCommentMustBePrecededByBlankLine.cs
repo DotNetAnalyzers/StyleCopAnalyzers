@@ -66,7 +66,7 @@
     public class SA1515SingleLineCommentMustBePrecededByBlankLine : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1515";
-        internal const string Title = "A single-line comment within C# code is not preceded by a blank line.";
+        internal const string Title = "Single-line comment must be preceded by blank line";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.LayoutRules";
         internal const string Description = "A single-line comment within C# code is not preceded by a blank line.";

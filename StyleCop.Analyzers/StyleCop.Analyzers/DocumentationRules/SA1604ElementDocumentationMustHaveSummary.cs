@@ -21,7 +21,7 @@
     public class SA1604ElementDocumentationMustHaveSummary : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1604";
-        internal const string Title = "The XML header documentation for a C# element is missing a <summary> tag.";
+        internal const string Title = "Element documentation must have summary";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "The XML header documentation for a C# element is missing a <summary> tag.";

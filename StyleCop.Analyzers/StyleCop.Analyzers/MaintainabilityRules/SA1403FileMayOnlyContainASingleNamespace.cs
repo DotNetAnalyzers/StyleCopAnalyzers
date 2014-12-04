@@ -15,7 +15,7 @@
     public class SA1403FileMayOnlyContainASingleNamespace : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1403";
-        internal const string Title = "A C# code file contains more than one namespace.";
+        internal const string Title = "File may only contain a single namespace";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
         internal const string Description = "A C# code file contains more than one namespace.";

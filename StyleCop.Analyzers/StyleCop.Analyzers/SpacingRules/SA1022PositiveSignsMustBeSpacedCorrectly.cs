@@ -21,7 +21,7 @@
     public class SA1022PositiveSignsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1022";
-        internal const string Title = "Positive Signs Must Be Spaced Correctly";
+        internal const string Title = "Positive signs must be spaced correctly";
         internal const string MessageFormat = "Positive sign must{0} be {1} by a space.";
         internal const string Category = "StyleCop.CSharp.SpacingRules";
         internal const string Description = "A positive sign within a C# element is not spaced correctly.";

@@ -20,7 +20,7 @@
     public class SA1207ProtectedMustComeBeforeInternal : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1207";
-        internal const string Title = "The keyword 'protected' is positioned after the keyword 'internal' within the declaration of a protected internal C# element.";
+        internal const string Title = "Protected must come before internal";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.OrderingRules";
         internal const string Description = "The keyword 'protected' is positioned after the keyword 'internal' within the declaration of a protected internal C# element.";

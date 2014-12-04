@@ -20,7 +20,7 @@
     public class SA1405DebugAssertMustProvideMessageText : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1405";
-        internal const string Title = "A call to Debug.Assert in C# code does not include a descriptive message.";
+        internal const string Title = "Debug.Assert must provide message text";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
         internal const string Description = "A call to Debug.Assert in C# code does not include a descriptive message.";

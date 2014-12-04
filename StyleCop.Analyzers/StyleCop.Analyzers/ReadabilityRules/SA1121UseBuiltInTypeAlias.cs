@@ -115,7 +115,7 @@
     public class SA1121UseBuiltInTypeAlias : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1121";
-        internal const string Title = "The code uses one of the basic C# types, but does not use the built-in alias for the type.";
+        internal const string Title = "Use built-in type alias";
         internal const string MessageFormat = "TODO: Message format";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
         internal const string Description = "The code uses one of the basic C# types, but does not use the built-in alias for the type.";
