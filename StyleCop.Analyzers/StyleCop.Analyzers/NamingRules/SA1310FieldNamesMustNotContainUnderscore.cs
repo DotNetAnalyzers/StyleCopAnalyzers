@@ -2,7 +2,10 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A field name in C# contains an underscore.
@@ -24,7 +27,7 @@
     {
         public const string DiagnosticId = "SA1310";
         internal const string Title = "Field names must not contain underscore";
-        internal const string MessageFormat = "TODO: Message format";
+        internal const string MessageFormat = "Field '{0}' must not contain an underscore";
         internal const string Category = "StyleCop.CSharp.NamingRules";
         internal const string Description = "A field name in C# contains an underscore.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1310.html";
@@ -47,7 +50,60 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(HandleFieldDeclarationSyntax, SyntaxKind.FieldDeclaration);
+        }
+
+        private void HandleFieldDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        {
+            FieldDeclarationSyntax syntax = (FieldDeclarationSyntax)context.Node;
+            if (NamedTypeHelpers.IsContainedInNativeMethodsClass(syntax))
+                return;
+
+            var variables = syntax.Declaration?.Variables;
+            if (variables == null)
+                return;
+
+            foreach (VariableDeclaratorSyntax variableDeclarator in variables.Value)
+            {
+                if (variableDeclarator == null)
+                    continue;
+
+                var identifier = variableDeclarator.Identifier;
+                if (identifier.IsMissing)
+                    continue;
+
+                switch (identifier.ValueText.IndexOf('_'))
+                {
+                case -1:
+                    // no _ character
+                    continue;
+
+                case 0:
+                    // leading underscore -> report as SA1309
+                    continue;
+
+                case 1:
+                    switch (identifier.ValueText[0])
+                    {
+                    case 'm':
+                    case 's':
+                        // m_ or s_ prefixes are reported as SA1308
+                        continue;
+
+                    default:
+                        break;
+                    }
+
+                    break;
+
+                default:
+                    break;
+                }
+
+                // Field '{name}' must not contain an underscore
+                string name = identifier.ValueText;
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), name));
+            }
         }
     }
 }
