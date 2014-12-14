@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using StyleCop.Analyzers.MaintainabilityRules;
@@ -45,6 +46,13 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var expectedCode = @"public class Foo
+{
+    private string bar;
+}";
+
+            await VerifyCSharpFixAsync(testCode, expectedCode);
         }
 
         [TestMethod]
@@ -71,6 +79,59 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var expectedCode = @"public class Foo
+{
+    private string bar;
+}";
+
+            await VerifyCSharpFixAsync(testCode, expectedCode);
+        }
+
+        [TestMethod]
+        public async Task TestClassWith2FieldOnePublicOneInternal()
+        {
+            var testCode = @"public class Foo
+{
+    internal string bar;
+    public int baz;
+}";
+
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Field must be private",
+                    Severity = DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 3, 21)
+                        }
+                },
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Field must be private",
+                    Severity = DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 4, 16)
+                        }
+                }
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var expectedCode = @"public class Foo
+{
+    private string bar;
+    private int baz;
+}";
+
+            await VerifyCSharpFixAsync(testCode, expectedCode);
         }
 
         [TestMethod]
@@ -98,6 +159,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1401FieldsMustBePrivate();
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1401FieldsMustBePrivateCodeFix();
         }
     }
 }
