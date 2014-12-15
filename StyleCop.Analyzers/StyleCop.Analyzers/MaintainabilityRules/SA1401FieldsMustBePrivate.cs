@@ -20,7 +20,7 @@
     {
         public const string DiagnosticId = "SA1401";
         internal const string Title = "Fields must be private";
-        internal const string MessageFormat = "TODO: Message format";
+        internal const string MessageFormat = "Field must be private";
         internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
         internal const string Description = "A field within a C# class has an access modifier other than private.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1401.html";
@@ -43,7 +43,32 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSymbolAction(AnalyzeField,SymbolKind.Field);
+        }
+
+        private void AnalyzeField(SymbolAnalysisContext symbolAnalysisContext)
+        {
+            var fieldDeclarationSyntax = (IFieldSymbol)symbolAnalysisContext.Symbol;
+            if (!IsFieldPrivate(fieldDeclarationSyntax) && IsParentAClass(fieldDeclarationSyntax))
+            {
+                symbolAnalysisContext.ReportDiagnostic(Diagnostic.Create(Descriptor, fieldDeclarationSyntax.Locations[0]));
+            }
+        }
+
+        private bool IsFieldPrivate(IFieldSymbol fieldDeclarationSyntax)
+        {
+            return fieldDeclarationSyntax.DeclaredAccessibility == Accessibility.Private;
+        }
+
+        private bool IsParentAClass(IFieldSymbol fieldDeclarationSyntax)
+        {
+            if (fieldDeclarationSyntax.ContainingSymbol != null &&
+                fieldDeclarationSyntax.ContainingSymbol.Kind == SymbolKind.NamedType)
+            {
+                return ((ITypeSymbol) fieldDeclarationSyntax.ContainingSymbol).TypeKind == TypeKind.Class;
+            }
+
+            return false;
         }
     }
 }
