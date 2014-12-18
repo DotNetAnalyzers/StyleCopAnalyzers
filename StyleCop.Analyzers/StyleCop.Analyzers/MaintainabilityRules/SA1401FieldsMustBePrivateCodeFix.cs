@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
 using System.Threading;
@@ -60,11 +61,36 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             return Task.Factory.StartNew(() =>
             {
                 var firstToken = fieldDeclaration.GetFirstToken();
-                var newModifiers = SyntaxFactory.TokenList(SyntaxFactory.Token(firstToken.LeadingTrivia, SyntaxKind.PrivateKeyword, firstToken.TrailingTrivia));
-                var newFieldDeclaration = fieldDeclaration.WithModifiers(newModifiers);
+                var modifiers = new SyntaxTokenList();
+                modifiers = modifiers.Add(SyntaxFactory.Token(firstToken.LeadingTrivia,
+                    SyntaxKind.PrivateKeyword, firstToken.TrailingTrivia));
+                modifiers = modifiers.AddRange(GetNoAccessModifiersTokens(fieldDeclaration));
+                var newFieldDeclaration =
+                    fieldDeclaration.WithModifiers(modifiers);
                 var newRoot = root.ReplaceNode(fieldDeclaration, newFieldDeclaration);
                 return document.WithSyntaxRoot(newRoot);
             }, cancellationToken);
         }
+
+        private IEnumerable<SyntaxToken> GetNoAccessModifiersTokens(FieldDeclarationSyntax fieldDeclaration)
+        {
+            foreach (var modifier in fieldDeclaration.Modifiers)
+            {
+                var cSharpKind = modifier.CSharpKind();
+                if (!accessModifiersSyntaxKinds.Any(am => am == cSharpKind))
+                {
+                    yield return modifier;
+                }
+            }
+        }
+
+        private readonly SyntaxKind[] accessModifiersSyntaxKinds = new SyntaxKind[]
+        {
+            SyntaxKind.PublicKeyword,
+            SyntaxKind.InternalKeyword,
+            SyntaxKind.ProtectedKeyword,
+        };
+
+
     }
 }
