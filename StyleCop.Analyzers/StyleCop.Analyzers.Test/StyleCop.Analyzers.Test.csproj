@@ -96,6 +96,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MaintainabilityRules\SA1401UnitTests.cs" />
+    <Compile Include="ReadabilityRules\SA1100UnitTests.cs" />
     <Compile Include="SpacingRules\NumberSignSpacingTestBase.cs" />
     <Compile Include="SpacingRules\SA1000UnitTests.cs" />
     <Compile Include="SpacingRules\SA1021UnitTests.cs" />
@@ -115,6 +116,9 @@
       <Project>{3B052737-06CE-4182-AE0F-08EB82DFA73E}</Project>
       <Name>StyleCop.Analyzers</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

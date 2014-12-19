@@ -1,8 +1,14 @@
-﻿namespace StyleCop.Analyzers.ReadabilityRules
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using System.Linq;
 
     /// <summary>
     /// A call to a member from an inherited class begins with <c>base.</c>, and the local class does not contain an
@@ -49,7 +55,7 @@
     {
         public const string DiagnosticId = "SA1100";
         internal const string Title = "Do not prefix calls with base unless local implementation exists";
-        internal const string MessageFormat = "TODO: Message format";
+        internal const string MessageFormat = "A call to a member from an inherited class begins with ‘base.’, and the local class does not contain an override or implementation of the member";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
         internal const string Description = "A call to a member from an inherited class begins with 'base.', and the local class does not contain an override or implementation of the member.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1100.html";
@@ -72,7 +78,58 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(AnalyzeBaseExpression, SyntaxKind.BaseExpression);
+        }
+
+        private void AnalyzeBaseExpression(SyntaxNodeAnalysisContext context)
+        {
+            var baseExpressionSyntax = (BaseExpressionSyntax) context.Node;
+
+            var classDeclarationSyntax = GetParentClass(baseExpressionSyntax);
+            if (classDeclarationSyntax == null)
+            {
+                return;
+            }
+
+            var memberAccessExpression = baseExpressionSyntax.Parent as MemberAccessExpressionSyntax;
+            if (memberAccessExpression == null)
+            {
+                return;
+            }
+
+            if (!ContainsBaseMember(memberAccessExpression, classDeclarationSyntax))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, baseExpressionSyntax.GetLocation()));
+            }
+        }
+
+        private static bool ContainsBaseMember(MemberAccessExpressionSyntax memberAccessExpression,
+            ClassDeclarationSyntax classDeclarationSyntax)
+        {
+            var memberName = memberAccessExpression.Name.Identifier.Text;
+
+            var containsBaseMember = classDeclarationSyntax.ChildNodes()
+                .OfType<MemberDeclarationSyntax>()
+                .SelectMany(m => m.ChildTokens().Where(c => c.CSharpKind() == SyntaxKind.IdentifierToken))
+                .Any(i => i.Text == memberName);
+            return containsBaseMember;
+        }
+
+        private ClassDeclarationSyntax GetParentClass(BaseExpressionSyntax baseExpressionSyntax)
+        {
+            SyntaxNode parent = baseExpressionSyntax;
+            while (parent.CSharpKind() != SyntaxKind.CompilationUnit && parent != null)
+            {
+                if (parent.CSharpKind() == SyntaxKind.ClassDeclaration)
+                {
+                    return (ClassDeclarationSyntax) parent;
+                   
+                }
+
+                parent = parent.Parent;
+            }
+
+            return null;
         }
     }
 }
