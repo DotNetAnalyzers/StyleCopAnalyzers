@@ -3,6 +3,8 @@
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
     /// A C# file contains code which is unnecessary and can be removed without changing the overall logic of the code.
@@ -53,7 +55,7 @@
         /// </summary>
         public const string DiagnosticId = "SA1409";
         private const string Title = "Remove unnecessary code";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "Remove unnecessary code";
         private const string Category = "StyleCop.CSharp.MaintainabilityRules";
         private const string Description = "A C# file contains code which is unnecessary and can be removed without changing the overall logic of the code.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1409.html";
@@ -76,7 +78,94 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(this.HandleTryStatements, SyntaxKind.TryStatement);
+            context.RegisterSyntaxNodeAction(this.HandleIfStatements, SyntaxKind.IfStatement);
+            context.RegisterSyntaxNodeAction(this.HandleUnsafeStatements, SyntaxKind.UnsafeStatement);
+            context.RegisterSyntaxNodeAction(this.HandleCheckedStatements, SyntaxKind.CheckedStatement);
+            context.RegisterSyntaxNodeAction(this.HandleCheckedStatements, SyntaxKind.UncheckedStatement);
+
+            context.RegisterSyntaxNodeAction(this.HandleConstructorDecleration, SyntaxKind.ConstructorDeclaration);
+        }
+
+        private void HandleTryStatements(SyntaxNodeAnalysisContext context)
+        {
+            TryStatementSyntax tryStatement = context.Node as TryStatementSyntax;
+
+            // Empty try block
+            if (tryStatement.Block.Statements.Count == 0)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, tryStatement.TryKeyword.GetLocation()));
+            }
+
+            // Empty Finally Block
+
+            if (tryStatement != null)
+            {
+                if (tryStatement.Catches.Count == 0)
+                {
+                    if (tryStatement.Finally != null && tryStatement.Finally.Block.Statements.Count == 0)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, tryStatement.Finally.FinallyKeyword.GetLocation()));
+                    }
+                }
+            }
+        }
+
+        private void HandleIfStatements(SyntaxNodeAnalysisContext context)
+        {
+            IfStatementSyntax ifStatement = context.Node as IfStatementSyntax;
+
+            if (ifStatement != null)
+            {
+                if (!ifStatement.Else.IsMissing)
+                {
+                    if (ifStatement.Else.Statement.IsKind(SyntaxKind.EmptyStatement)
+                        || (ifStatement.Else.Statement.IsKind(SyntaxKind.Block)
+                        && ((BlockSyntax)ifStatement.Else.Statement).Statements.Count == 0))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, ifStatement.Else.ElseKeyword.GetLocation()));
+                    }
+                }
+            }
+        }
+
+        private void HandleUnsafeStatements(SyntaxNodeAnalysisContext context)
+        {
+            UnsafeStatementSyntax unsafeStatement = context.Node as UnsafeStatementSyntax;
+
+            if (unsafeStatement != null)
+            {
+                if (unsafeStatement.Block.Statements.Count == 0)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, unsafeStatement.UnsafeKeyword.GetLocation()));
+                }
+            }
+        }
+
+        private void HandleCheckedStatements(SyntaxNodeAnalysisContext context)
+        {
+            CheckedStatementSyntax unsafeStatement = context.Node as CheckedStatementSyntax;
+
+            if (unsafeStatement != null)
+            {
+                if (unsafeStatement.Block.Statements.Count == 0)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, unsafeStatement.Keyword.GetLocation()));
+                }
+            }
+        }
+
+        private void HandleConstructorDecleration(SyntaxNodeAnalysisContext context)
+        {
+            ConstructorDeclarationSyntax constructorDecleration = context.Node as ConstructorDeclarationSyntax;
+
+            if (constructorDecleration != null)
+            {
+                if (constructorDecleration.Body.Statements.Count == 0 && constructorDecleration.Modifiers.Any(SyntaxKind.StaticKeyword))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, constructorDecleration.GetLocation()));
+                }
+            }
         }
     }
 }
