@@ -3,6 +3,12 @@
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Text;
+
+
+
 
     /// <summary>
     /// The C# code contains a single-line comment which begins with three forward slashes in a row.
@@ -46,7 +52,7 @@
         /// </summary>
         public const string DiagnosticId = "SA1626";
         private const string Title = "Single-line comments must not use documentation style slashes";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "Single-line comments must not use documentation style slashes";
         private const string Category = "StyleCop.CSharp.DocumentationRules";
         private const string Description = "The C# code contains a single-line comment which begins with three forward slashes in a row.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1626.html";
@@ -69,7 +75,22 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(this.HandleSingleLineDocumentationTrivia, SyntaxKind.SingleLineDocumentationCommentTrivia);
+        }
+
+        private void HandleSingleLineDocumentationTrivia(SyntaxNodeAnalysisContext context)
+        {
+            var node = context.Node as DocumentationCommentTriviaSyntax;
+            if (node == null)
+                return;
+            // Check if the comment is not multi line
+            if (!node.Content.ToString().Trim().Contains("\n"))
+            {
+                //Add a diagnostic on '///'
+                var trivia = context.Node.GetLeadingTrivia().First();
+
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, trivia.GetLocation()));
+            }
         }
     }
 }
