@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using StyleCop.Analyzers.MaintainabilityRules;
@@ -216,9 +217,37 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
+        [TestMethod]
+        public async Task TestCodeFix()
+        {
+            var testCode = @"public class Foo
+{
+    public void Bar()
+    {
+        int x = 1 * 1 + 1 * 1;
+        int y = 5 + y * b / 6 % z - 2;
+    }
+}";
+            var fixedCode = @"public class Foo
+{
+    public void Bar()
+    {
+        int x = (1 * 1) + (1 * 1);
+        int y = 5 + ((y * b / 6) % z) - 2;
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, fixedCode);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1407ArithmeticExpressionsMustDeclarePrecedence();
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1407CodeFixProvider();
         }
     }
 }
