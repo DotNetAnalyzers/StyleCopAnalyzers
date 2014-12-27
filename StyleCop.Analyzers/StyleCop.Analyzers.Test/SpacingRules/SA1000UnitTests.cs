@@ -1105,6 +1105,27 @@ default :
         }
 
         [TestMethod]
+        public async Task TestNewConstructorContraintStatementWithSpace()
+        {
+            string statementWithSpace = @"public class Foo<T> where T : new ()
+{
+
+}";
+            await VerifyCSharpDiagnosticAsync(statementWithSpace, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestNewConstructorContraintStatementWithout()
+        {
+            string statementWithoutSpace = @"public class Foo<T> where T : new()
+{
+
+}";
+
+            await VerifyCSharpDiagnosticAsync(statementWithoutSpace, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
         public async Task TestAwaitIdentifier()
         {
             string statementWithoutSpace = @"var result = await(x);";

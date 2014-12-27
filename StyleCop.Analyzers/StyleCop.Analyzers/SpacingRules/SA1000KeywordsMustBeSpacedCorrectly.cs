@@ -159,7 +159,10 @@
                 HandleDisallowedSpaceToken(context, token);
                 return;
             }
-
+            else if (token.Parent.IsKind(SyntaxKind.ConstructorConstraint))
+            {
+                return;
+            }
             // otherwise treat as required
             HandleRequiredSpaceToken(context, token);
         }

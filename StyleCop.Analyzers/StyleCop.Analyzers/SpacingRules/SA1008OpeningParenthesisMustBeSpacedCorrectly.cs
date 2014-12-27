@@ -123,6 +123,7 @@
 
                 case SyntaxKind.CheckedKeyword:
                 case SyntaxKind.DefaultKeyword:
+                case SyntaxKind.NewKeyword:
                 case SyntaxKind.SizeOfKeyword:
                 case SyntaxKind.TypeOfKeyword:
                 case SyntaxKind.UncheckedKeyword:
