@@ -117,7 +117,7 @@
 
             if (ifStatement != null)
             {
-                if (!ifStatement.Else.IsMissing)
+                if (ifStatement.Else != null && !ifStatement.Else.IsMissing)
                 {
                     if (ifStatement.Else.Statement.IsKind(SyntaxKind.EmptyStatement)
                         || (ifStatement.Else.Statement.IsKind(SyntaxKind.Block)
@@ -144,13 +144,13 @@
 
         private void HandleCheckedStatements(SyntaxNodeAnalysisContext context)
         {
-            CheckedStatementSyntax unsafeStatement = context.Node as CheckedStatementSyntax;
+            CheckedStatementSyntax checkedStatement = context.Node as CheckedStatementSyntax;
 
-            if (unsafeStatement != null)
+            if (checkedStatement != null)
             {
-                if (unsafeStatement.Block.Statements.Count == 0)
+                if (checkedStatement.Block.Statements.Count == 0)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, unsafeStatement.Keyword.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, checkedStatement.Keyword.GetLocation()));
                 }
             }
         }
