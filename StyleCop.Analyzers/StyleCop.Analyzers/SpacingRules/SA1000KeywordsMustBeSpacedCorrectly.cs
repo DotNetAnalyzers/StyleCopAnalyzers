@@ -155,12 +155,8 @@
                     // This is handled by SA1026
                     return;
                 }
+
                 HandleDisallowedSpaceToken(context, token);
-                return;
-            }
-            if (token.Parent.IsKind(SyntaxKind.ConstructorConstraint))
-            {
-                // Constructor constraints are allowed to have no space
                 return;
             }
 

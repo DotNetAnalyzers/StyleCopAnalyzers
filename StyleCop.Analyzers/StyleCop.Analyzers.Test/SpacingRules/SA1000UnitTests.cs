@@ -1105,20 +1105,43 @@ default :
         }
 
         [TestMethod]
-        public async Task TestNewConstructorContraintStatement()
+        public async Task TestNewConstructorContraintStatementWithSpace()
+        {
+            string statementWithSpace = @"public class Foo<T> where T : new ()
+{
+
+}";
+            await VerifyCSharpDiagnosticAsync(statementWithSpace, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestNewConstructorContraintStatementWithout()
         {
             string statementWithoutSpace = @"public class Foo<T> where T : new()
 {
 
 }";
-            string statementWithSpace = @"public class Foo<T> where T : new ()
-{
 
-}";
+            DiagnosticResult[] expected;
 
-            await VerifyCSharpDiagnosticAsync(statementWithoutSpace, EmptyDiagnosticResults, CancellationToken.None);
-            // Is handled by SA1008
-            await VerifyCSharpDiagnosticAsync(statementWithSpace, EmptyDiagnosticResults, CancellationToken.None);
+            expected =
+                new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                        Message = "The keyword 'new' must be followed by a space.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 1, 31)
+                            }
+                    }
+                };
+
+
+            await VerifyCSharpDiagnosticAsync(statementWithoutSpace, expected, CancellationToken.None);
         }
 
         [TestMethod]

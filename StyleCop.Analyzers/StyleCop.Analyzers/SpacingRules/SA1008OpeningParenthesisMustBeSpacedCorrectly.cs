@@ -94,66 +94,70 @@
                 precededBySpace = precedingToken.HasTrailingTrivia;
                 switch (precedingToken.CSharpKind())
                 {
-                case SyntaxKind.AwaitKeyword:
-                case SyntaxKind.CaseKeyword:
-                case SyntaxKind.CatchKeyword:
-                case SyntaxKind.FixedKeyword:
-                case SyntaxKind.ForKeyword:
-                case SyntaxKind.ForEachKeyword:
-                //case SyntaxKind.FromKeyword: // ?
-                case SyntaxKind.GroupKeyword: // ?
-                case SyntaxKind.IfKeyword:
-                //case SyntaxKind.IntoKeyword: // ?
-                //case SyntaxKind.JoinKeyword: // ?
-                //case SyntaxKind.LetKeyword: // ?
-                case SyntaxKind.LockKeyword:
-                case SyntaxKind.OrderByKeyword: // ?
-                case SyntaxKind.ReturnKeyword:
-                case SyntaxKind.SelectKeyword: // ?
-                //case SyntaxKind.StackAllocKeyword: // ?
-                case SyntaxKind.SwitchKeyword:
-                case SyntaxKind.UsingKeyword:
-                case SyntaxKind.WhereKeyword: // ?
-                case SyntaxKind.WhileKeyword:
-                    allowLeadingNoSpace = false;
-                    allowLeadingSpace = true;
-                    // allow these to be reported as SA1000
-                    reportPrecedingError = false;
-                    break;
+                    case SyntaxKind.AwaitKeyword:
+                    case SyntaxKind.CaseKeyword:
+                    case SyntaxKind.CatchKeyword:
+                    case SyntaxKind.FixedKeyword:
+                    case SyntaxKind.ForKeyword:
+                    case SyntaxKind.ForEachKeyword:
+                    //case SyntaxKind.FromKeyword: // ?
+                    case SyntaxKind.GroupKeyword: // ?
+                    case SyntaxKind.IfKeyword:
+                    //case SyntaxKind.IntoKeyword: // ?
+                    //case SyntaxKind.JoinKeyword: // ?
+                    //case SyntaxKind.LetKeyword: // ?
+                    case SyntaxKind.LockKeyword:
+                    case SyntaxKind.OrderByKeyword: // ?
+                    case SyntaxKind.ReturnKeyword:
+                    case SyntaxKind.SelectKeyword: // ?
+                                                   //case SyntaxKind.StackAllocKeyword: // ?
+                    case SyntaxKind.SwitchKeyword:
+                    case SyntaxKind.UsingKeyword:
+                    case SyntaxKind.WhereKeyword: // ?
+                    case SyntaxKind.WhileKeyword:
+                        allowLeadingNoSpace = false;
+                        allowLeadingSpace = true;
+                        // allow these to be reported as SA1000
+                        reportPrecedingError = false;
+                        break;
 
-                case SyntaxKind.CheckedKeyword:
-                case SyntaxKind.DefaultKeyword:
-                case SyntaxKind.SizeOfKeyword:
-                case SyntaxKind.TypeOfKeyword:
-                case SyntaxKind.UncheckedKeyword:
-                    allowLeadingNoSpace = true;
-                    allowLeadingSpace = false;
-                    // allow these to be reported as SA1000
-                    reportPrecedingError = false;
-                    break;
+                    case SyntaxKind.CheckedKeyword:
+                    case SyntaxKind.DefaultKeyword:
+                    case SyntaxKind.SizeOfKeyword:
+                    case SyntaxKind.TypeOfKeyword:
+                    case SyntaxKind.UncheckedKeyword:
+                        allowLeadingNoSpace = true;
+                        allowLeadingSpace = false;
+                        // allow these to be reported as SA1000
+                        reportPrecedingError = false;
+                        break;
 
-                case SyntaxKind.EqualsGreaterThanToken: // lambda containing a cast
-                case SyntaxKind.CommaToken:
-                    allowLeadingNoSpace = false;
-                    allowLeadingSpace = true;
-                    break;
-
-                default:
-                    if (precedingToken.Parent is BinaryExpressionSyntax
-                        || precedingToken.Parent is AssignmentExpressionSyntax
-                        || precedingToken.Parent is ConditionalExpressionSyntax
-                        || precedingToken.Parent is EqualsValueClauseSyntax)
-                    {
+                    case SyntaxKind.EqualsGreaterThanToken: // lambda containing a cast
+                    case SyntaxKind.CommaToken:
                         allowLeadingNoSpace = false;
                         allowLeadingSpace = true;
                         break;
-                    }
-                    else
-                    {
+                    case SyntaxKind.NewKeyword:
+                        // Constructor constraints are handled by SA1000
+                        allowLeadingSpace = true;
                         allowLeadingNoSpace = true;
-                        allowLeadingSpace = false;
                         break;
-                    }
+                    default:
+                        if (precedingToken.Parent is BinaryExpressionSyntax
+                            || precedingToken.Parent is AssignmentExpressionSyntax
+                            || precedingToken.Parent is ConditionalExpressionSyntax
+                            || precedingToken.Parent is EqualsValueClauseSyntax)
+                        {
+                            allowLeadingNoSpace = false;
+                            allowLeadingSpace = true;
+                            break;
+                        }
+                        else
+                        {
+                            allowLeadingNoSpace = true;
+                            allowLeadingSpace = false;
+                            break;
+                        }
                 }
             }
 
