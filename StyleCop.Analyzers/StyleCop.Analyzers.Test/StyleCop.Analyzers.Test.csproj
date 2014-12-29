@@ -96,6 +96,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MaintainabilityRules\SA1401UnitTests.cs" />
+    <Compile Include="MaintainabilityRules\SA1404UnitTests.cs" />
     <Compile Include="SpacingRules\NumberSignSpacingTestBase.cs" />
     <Compile Include="SpacingRules\SA1000UnitTests.cs" />
     <Compile Include="SpacingRules\SA1021UnitTests.cs" />
