@@ -195,7 +195,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                     Locations =
                         new[]
                         {
-                            new DiagnosticResultLocation("Test0.cs", 3, 66)
+                            new DiagnosticResultLocation("Test0.cs", 4, 66)
                         }
                 }
             };
