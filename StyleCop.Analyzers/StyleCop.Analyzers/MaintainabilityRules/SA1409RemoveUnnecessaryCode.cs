@@ -61,7 +61,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1409.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink, customTags: new[] { WellKnownDiagnosticTags.Unnecessary });
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink, customTags: new[] { WellKnownDiagnosticTags.Unnecessary });
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
