@@ -122,6 +122,48 @@ public class FooChild : Foo
         }
 
         [TestMethod]
+        public async Task TestChildClassUsesBaseMethodWithSameNameButDifferentParametersExist()
+        {
+            var testCode = @"
+public class Foo
+{
+    protected  void Bar()
+    {
+
+    }
+}
+
+public class FooChild : Foo
+{
+    protected  void Baz()
+    {
+        base.Bar();
+    }
+    protected  void Bar(string param)
+    {
+
+    }
+}";
+
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "A call to a member from an inherited class begins with ‘base.’, and the local class does not contain an override or implementation of the member",
+                    Severity =  DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 14, 9)
+                        }
+                }
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
         public async Task TestChildClassUsesBaseBaseIsVirtualChildHidesBase()
         {
             var testCode = @"
@@ -187,6 +229,342 @@ public class FooChild : Foo
         }
 
         [TestMethod]
+        public async Task TestChildClassUsesBaseMethodMethodWithSameNameButDifferentParametersExist()
+        {
+            var testCode = @"
+public class Foo
+{
+    protected  void Bar()
+    {
+
+    }
+}
+
+public class FooChild : Foo
+{
+    protected  void Baz()
+    {
+        base.Bar();
+    }
+    protected  void Bar(string param)
+    {
+
+    }
+}";
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "A call to a member from an inherited class begins with ‘base.’, and the local class does not contain an override or implementation of the member",
+                    Severity =  DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 14, 9)
+                        }
+                }
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+        }
+
+        [TestMethod]
+        public async Task TestChildClassUsesBaseMethodMethodWithSameNameButDifferentParameterType()
+        {
+            var testCode = @"
+public class Foo
+{
+    protected  void Bar(string s)
+    {
+
+    }
+}
+
+public class FooChild : Foo
+{
+    protected  void Baz()
+    {
+        base.Bar("""");
+    }
+    protected  void Bar(long l)
+    {
+
+    }
+}";
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "A call to a member from an inherited class begins with ‘base.’, and the local class does not contain an override or implementation of the member",
+                    Severity =  DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 14, 9)
+                        }
+                }
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+        }
+
+        [TestMethod]
+        public async Task TestChildClassUsesBaseMethodMethodWithSameNameRefUsed()
+        {
+            var testCode = @"
+public class Foo
+{
+    protected  void Bar(string s)
+    {
+
+    }
+}
+
+public class FooChild : Foo
+{
+    protected  void Baz()
+    {
+        base.Bar("""");
+    }
+    protected  void Bar(ref string s)
+    {
+
+    }
+}";
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "A call to a member from an inherited class begins with ‘base.’, and the local class does not contain an override or implementation of the member",
+                    Severity =  DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 14, 9)
+                        }
+                }
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+        }
+
+        [TestMethod]
+        public async Task TestChildClassUsesBaseMethodMethodWithSameNameOutUsed()
+        {
+            var testCode = @"
+public class Foo
+{
+    protected  void Bar(string s)
+    {
+
+    }
+}
+
+public class FooChild : Foo
+{
+    protected  void Baz()
+    {
+        base.Bar("""");
+    }
+    protected  void Bar(out string s)
+    {
+        s = string.Empty;
+    }
+}";
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "A call to a member from an inherited class begins with ‘base.’, and the local class does not contain an override or implementation of the member",
+                    Severity =  DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 14, 9)
+                        }
+                }
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+        }
+
+        [TestMethod]
+        public async Task TestChildClassUsesBaseMethodOverrideWithDifferentParametersExists()
+        {
+            var testCode = @"
+public class Foo
+{
+    protected virtual void Bar()
+    {
+
+    }
+}
+
+public class FooChild : Foo
+{
+    protected  void Baz()
+    {
+        base.Bar();
+    }
+    protected override  void Bar(string param)
+    {
+
+    }
+}";
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "A call to a member from an inherited class begins with ‘base.’, and the local class does not contain an override or implementation of the member",
+                    Severity =  DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 14, 9)
+                        }
+                }
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+        }
+
+        [TestMethod]
+        public async Task TestChildClassUsesBaseMethodOverrideWithRefExists()
+        {
+            var testCode = @"
+public class Foo
+{
+    protected virtual void Bar(string s, int i)
+    {
+
+    }
+}
+
+public class FooChild : Foo
+{
+    protected  void Baz()
+    {
+        base.Bar(string.Empty, 5);
+    }
+    protected override  void Bar(ref string s, int i)
+    {
+
+    }
+}";
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "A call to a member from an inherited class begins with ‘base.’, and the local class does not contain an override or implementation of the member",
+                    Severity =  DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 14, 9)
+                        }
+                }
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+        }
+
+        [TestMethod]
+        public async Task TestChildClassUsesBaseMethodOverrideWithOutExists()
+        {
+            var testCode = @"
+public class Foo
+{
+    protected virtual void Bar(string s, int i)
+    {
+
+    }
+}
+
+public class FooChild : Foo
+{
+    protected  void Baz()
+    {
+        base.Bar(string.Empty, 5);
+    }
+    protected override  void Bar(out string s, int i)
+    {
+        s = string.Empty;
+    }
+}";
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "A call to a member from an inherited class begins with ‘base.’, and the local class does not contain an override or implementation of the member",
+                    Severity =  DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 14, 9)
+                        }
+                }
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+        }
+
+        [TestMethod]
+        public async Task TestChildClassUsesBaseMethodOverrideWithDifferentParameterTypeExists()
+        {
+            var testCode = @"
+public class Foo
+{
+    protected virtual void Bar(string s, int i)
+    {
+
+    }
+}
+
+public class FooChild : Foo
+{
+    protected  void Baz()
+    {
+        base.Bar(string.Empty, 5);
+    }
+    protected override  void Bar(int i, string s)
+    {
+
+    }
+}";
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "A call to a member from an inherited class begins with ‘base.’, and the local class does not contain an override or implementation of the member",
+                    Severity =  DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 14, 9)
+                        }
+                }
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+        }
+
+        [TestMethod]
         public async Task TestChildClassUsesBaseOverrideExists()
         {
             var testCode = @"
@@ -211,6 +589,63 @@ public class FooChild : Foo
 }";
 
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+
+        }
+
+        [TestMethod]
+        public async Task TestChildClassUsesBaseWithFewParametersOverrideExists()
+        {
+            var testCode = @"
+public class Foo
+{
+    protected virtual void Bar(string s, int i)
+    {
+
+    }
+}
+
+public class FooChild : Foo
+{
+    protected override void Baz()
+    {
+        base.Bar(string.Empty,5);
+    }
+    protected override void Bar(string s, int i)
+    {
+
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+
+        }
+
+        [TestMethod]
+        public async Task TestChildClassUsesBaseWithFewParametersHidingMethodExists()
+        {
+            var testCode = @"
+public class Foo
+{
+    protected void Bar(string s, ref int i)
+    {
+
+    }
+}
+
+public class FooChild : Foo
+{
+    protected override void Baz()
+    {
+        base.Bar(string.Empty,5);
+    }
+    protected  void Bar(string s, ref int i)
+    {
+
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+
         }
 
         [TestMethod]
@@ -237,6 +672,112 @@ public class FooChild : Foo
         get;set;
     }
 }";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestChildEventNoOverride()
+        {
+            var testCode = @"
+public class Foo
+{
+    protected event Action MyEvent;
+}
+
+public class FooChild : Foo
+{
+    protected override void Baz()
+    {
+        if(base.MyEvent != null)
+        {
+
+        }
+    }
+}";
+
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "A call to a member from an inherited class begins with ‘base.’, and the local class does not contain an override or implementation of the member",
+                    Severity =  DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 11, 12)
+                        }
+                }
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestChildEventOverrideExists()
+        {
+            var testCode = @"
+public class Foo
+{
+    protected virtual event Action MyEvent;
+}
+
+public class FooChild : Foo
+{
+    protected override event Action MyEvent;
+
+    protected override void Baz()
+    {
+        if(base.MyEvent != null)
+        {
+
+        }
+    }
+}";
+
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestChildEventHidingEventExists()
+        {
+            var testCode = @"
+public class Foo
+{
+    protected virtual event Action MyEvent;
+}
+
+public class FooChild : Foo
+{
+    protected new event Action MyEvent;
+
+    protected override void Baz()
+    {
+        if(base.MyEvent != null)
+        {
+
+        }
+    }
+}";
+
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestStruct()
+        {
+            var testCode = @"
+public struct S
+{
+    public string Baz()
+    {
+        return base.ToString();
+    }
+}";
+
 
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }

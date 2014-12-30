@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using StyleCop.Analyzers.Helpers;
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
@@ -66,6 +67,15 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
+        private ClassHelper _classHelper = new ClassHelper();
+
+        private static SymbolKind[] nonMethodKinds = new[]
+        {
+            SymbolKind.Property,
+            SymbolKind.Field,
+            SymbolKind.Event
+        };
+
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -97,24 +107,23 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
-            if (!ContainsBaseMember(memberAccessExpression, classDeclarationSyntax))
+            var symbolInfo = context.SemanticModel.GetSymbolInfo(memberAccessExpression);
+
+            if (symbolInfo.Symbol != null)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, baseExpressionSyntax.GetLocation()));
+                if (nonMethodKinds.Any(k => k == symbolInfo.Symbol.Kind) && ! _classHelper.ContainsBaseMemberByName(classDeclarationSyntax, context.SemanticModel, memberAccessExpression.Name.Identifier.Text))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, baseExpressionSyntax.GetLocation()));
+                }
+
+                if (symbolInfo.Symbol.Kind == SymbolKind.Method && ! _classHelper.ContainsOverrideOrHidingMethod(classDeclarationSyntax, context.SemanticModel, (IMethodSymbol)symbolInfo.Symbol))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, baseExpressionSyntax.GetLocation()));
+                }
             }
         }
 
-        private static bool ContainsBaseMember(MemberAccessExpressionSyntax memberAccessExpression,
-            ClassDeclarationSyntax classDeclarationSyntax)
-        {
-            var memberName = memberAccessExpression.Name.Identifier.Text;
-
-            var containsBaseMember = classDeclarationSyntax.ChildNodes()
-                .OfType<MemberDeclarationSyntax>()
-                .SelectMany(m => m.ChildTokens().Where(c => c.CSharpKind() == SyntaxKind.IdentifierToken))
-                .Any(i => i.Text == memberName);
-            return containsBaseMember;
-        }
-
+        
         private ClassDeclarationSyntax GetParentClass(BaseExpressionSyntax baseExpressionSyntax)
         {
             SyntaxNode parent = baseExpressionSyntax;
