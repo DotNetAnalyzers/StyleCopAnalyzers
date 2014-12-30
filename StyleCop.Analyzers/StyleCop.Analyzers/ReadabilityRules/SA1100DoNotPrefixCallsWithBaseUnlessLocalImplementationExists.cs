@@ -1,8 +1,15 @@
-﻿namespace StyleCop.Analyzers.ReadabilityRules
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using StyleCop.Analyzers.Helpers;
+
+namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using System.Linq;
 
     /// <summary>
     /// A call to a member from an inherited class begins with <c>base.</c>, and the local class does not contain an
@@ -49,7 +56,7 @@
     {
         public const string DiagnosticId = "SA1100";
         internal const string Title = "Do not prefix calls with base unless local implementation exists";
-        internal const string MessageFormat = "TODO: Message format";
+        internal const string MessageFormat = "A call to a member from an inherited class begins with ‘base.’, and the local class does not contain an override or implementation of the member";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
         internal const string Description = "A call to a member from an inherited class begins with 'base.', and the local class does not contain an override or implementation of the member.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1100.html";
@@ -59,6 +66,15 @@
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
+
+        private ClassHelper _classHelper = new ClassHelper();
+
+        private static SymbolKind[] nonMethodKinds = new[]
+        {
+            SymbolKind.Property,
+            SymbolKind.Field,
+            SymbolKind.Event
+        };
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
@@ -72,7 +88,57 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(AnalyzeBaseExpression, SyntaxKind.BaseExpression);
+        }
+
+        private void AnalyzeBaseExpression(SyntaxNodeAnalysisContext context)
+        {
+            var baseExpressionSyntax = (BaseExpressionSyntax) context.Node;
+
+            var classDeclarationSyntax = GetParentClass(baseExpressionSyntax);
+            if (classDeclarationSyntax == null)
+            {
+                return;
+            }
+
+            var memberAccessExpression = baseExpressionSyntax.Parent as MemberAccessExpressionSyntax;
+            if (memberAccessExpression == null)
+            {
+                return;
+            }
+
+            var symbolInfo = context.SemanticModel.GetSymbolInfo(memberAccessExpression);
+
+            if (symbolInfo.Symbol != null)
+            {
+                if (nonMethodKinds.Any(k => k == symbolInfo.Symbol.Kind) && ! _classHelper.ContainsBaseMemberByName(classDeclarationSyntax, context.SemanticModel, memberAccessExpression.Name.Identifier.Text))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, baseExpressionSyntax.GetLocation()));
+                }
+
+                if (symbolInfo.Symbol.Kind == SymbolKind.Method && ! _classHelper.ContainsOverrideOrHidingMethod(classDeclarationSyntax, context.SemanticModel, (IMethodSymbol)symbolInfo.Symbol))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, baseExpressionSyntax.GetLocation()));
+                }
+            }
+        }
+
+        
+        private ClassDeclarationSyntax GetParentClass(BaseExpressionSyntax baseExpressionSyntax)
+        {
+            SyntaxNode parent = baseExpressionSyntax;
+            while (parent.CSharpKind() != SyntaxKind.CompilationUnit && parent != null)
+            {
+                if (parent.CSharpKind() == SyntaxKind.ClassDeclaration)
+                {
+                    return (ClassDeclarationSyntax) parent;
+                   
+                }
+
+                parent = parent.Parent;
+            }
+
+            return null;
         }
     }
 }
