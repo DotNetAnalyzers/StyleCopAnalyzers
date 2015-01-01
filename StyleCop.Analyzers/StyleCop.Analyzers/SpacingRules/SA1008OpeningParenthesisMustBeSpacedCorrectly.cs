@@ -126,6 +126,7 @@
                     case SyntaxKind.SizeOfKeyword:
                     case SyntaxKind.TypeOfKeyword:
                     case SyntaxKind.UncheckedKeyword:
+                    case SyntaxKind.NewKeyword:
                         allowLeadingNoSpace = true;
                         allowLeadingSpace = false;
                         // allow these to be reported as SA1000
@@ -136,11 +137,6 @@
                     case SyntaxKind.CommaToken:
                         allowLeadingNoSpace = false;
                         allowLeadingSpace = true;
-                        break;
-                    case SyntaxKind.NewKeyword:
-                        // Constructor constraints are handled by SA1000
-                        allowLeadingSpace = true;
-                        allowLeadingNoSpace = true;
                         break;
                     default:
                         if (precedingToken.Parent is BinaryExpressionSyntax

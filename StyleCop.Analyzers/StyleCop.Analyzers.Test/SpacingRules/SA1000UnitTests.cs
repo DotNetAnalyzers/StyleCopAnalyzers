@@ -1122,26 +1122,7 @@ default :
 
 }";
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "The keyword 'new' must be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 1, 31)
-                            }
-                    }
-                };
-
-
-            await VerifyCSharpDiagnosticAsync(statementWithoutSpace, expected, CancellationToken.None);
+            await VerifyCSharpDiagnosticAsync(statementWithoutSpace, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
