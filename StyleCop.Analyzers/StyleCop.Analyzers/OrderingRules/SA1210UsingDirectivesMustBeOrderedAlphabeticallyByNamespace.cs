@@ -58,6 +58,9 @@
             SemanticModel semanticModel = context.SemanticModel;
             INamespaceSymbol namespaceSymbol;
             string topLevelNamespace = GetTopLevelNamespace(semanticModel, syntax, out namespaceSymbol, context.CancellationToken);
+            if (namespaceSymbol == null)
+                return;
+
             bool systemNamespace = "System".Equals(topLevelNamespace, StringComparison.Ordinal);
             string fullyQualifiedNamespace = namespaceSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
 
@@ -84,7 +87,7 @@
 
                 INamespaceSymbol precedingNamespaceSymbol;
                 string precedingTopLevelNamespace = GetTopLevelNamespace(semanticModel, usingDirective, out precedingNamespaceSymbol, context.CancellationToken);
-                if (precedingTopLevelNamespace == null)
+                if (precedingTopLevelNamespace == null || precedingNamespaceSymbol == null)
                     continue;
 
                 // compare System namespaces to each other, and non-System namespaces to each other
