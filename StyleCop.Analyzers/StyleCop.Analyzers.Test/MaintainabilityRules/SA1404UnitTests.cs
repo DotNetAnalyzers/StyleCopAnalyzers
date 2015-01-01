@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using StyleCop.Analyzers.MaintainabilityRules;
 using TestHelper;
+using System;
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
@@ -201,6 +202,43 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestDiagnosticDoesNotThrowNullReferenceForWrongConstantType()
+        {
+            var testCode = @"public class Foo
+{
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = 5)]
+    public string Bar()
+    {
+
+    }
+}";
+
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Code analysis suppression must have justification",
+                    Severity = DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 4, 66)
+                        }
+                }
+            };
+            try
+            {
+                await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            }
+            catch (NullReferenceException)
+            {
+                Assert.Fail("Diagnostic threw NullReferenceException");
+            }
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
