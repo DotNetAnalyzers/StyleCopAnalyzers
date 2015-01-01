@@ -126,6 +126,7 @@
                 case SyntaxKind.SizeOfKeyword:
                 case SyntaxKind.TypeOfKeyword:
                 case SyntaxKind.UncheckedKeyword:
+                case SyntaxKind.NewKeyword:
                     allowLeadingNoSpace = true;
                     allowLeadingSpace = false;
                     // allow these to be reported as SA1000
@@ -137,7 +138,6 @@
                     allowLeadingNoSpace = false;
                     allowLeadingSpace = true;
                     break;
-
                 default:
                     if (precedingToken.Parent is BinaryExpressionSyntax
                         || precedingToken.Parent is AssignmentExpressionSyntax
