@@ -62,6 +62,19 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeAction(HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
             context.RegisterSyntaxNodeAction(HandleInvocationExpression, SyntaxKind.InvocationExpression);
             context.RegisterSyntaxNodeAction(HandleObjectCreationExpression, SyntaxKind.ObjectCreationExpression);
+            context.RegisterSyntaxNodeAction(HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
+        }
+
+        private void HandleIndexerDeclaration(SyntaxNodeAnalysisContext obj)
+        {
+            var indexerDeclaration = (IndexerDeclarationSyntax) obj.Node;
+
+            if (indexerDeclaration.ThisKeyword.IsMissing == false &&
+                indexerDeclaration.ParameterList.IsMissing == false &&
+                indexerDeclaration.ParameterList.OpenBracketToken.IsMissing == false)
+            {
+                CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(obj, indexerDeclaration.ParameterList.OpenBracketToken, indexerDeclaration.ThisKeyword);
+            }
         }
 
         private void HandleObjectCreationExpression(SyntaxNodeAnalysisContext context)

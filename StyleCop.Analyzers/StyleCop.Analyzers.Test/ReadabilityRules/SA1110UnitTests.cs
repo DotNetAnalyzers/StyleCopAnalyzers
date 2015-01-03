@@ -339,6 +339,58 @@ class Foo
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
+        [TestMethod]
+        public async Task TestIndexerDeclarationOpeningBracketInTheNextLine()
+        {
+            var testCode = @"
+class Foo
+{
+    internal string this
+    [int index]
+    {
+        get
+        {
+            return string.Empty;
+        }
+    }
+}";
+
+            var expected = new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                        Message = "The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the method or indexer name.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 5, 5)
+                            }
+                    }
+                };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestIndexerDeclarationOpeningBracketInTheSameLine()
+        {
+            var testCode = @"
+class Foo
+{
+    internal string this[int index]
+    {
+        get
+        {
+            return string.Empty;
+        }
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1110OpeningParenthesisMustBeOnDeclarationLine();
