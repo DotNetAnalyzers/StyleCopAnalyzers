@@ -1,4 +1,8 @@
-﻿namespace StyleCop.Analyzers.ReadabilityRules
+﻿using System.Linq;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
@@ -24,7 +28,7 @@
     {
         public const string DiagnosticId = "SA1112";
         internal const string Title = "Closing parenthesis must be on line of opening parenthesis";
-        internal const string MessageFormat = "TODO: Message format";
+        internal const string MessageFormat = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the opening bracket when the element does not take any parameters.";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
         internal const string Description = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the opening bracket when the element does not take any parameters.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1112.html";
@@ -47,7 +51,106 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeAction(HandleInvocationExpression, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeAction(HandleObjectCreationExpression, SyntaxKind.ObjectCreationExpression);
+            context.RegisterSyntaxNodeAction(HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
         }
+
+        private void HandleIndexerDeclaration(SyntaxNodeAnalysisContext obj)
+        {
+            var indexerDeclaration = (IndexerDeclarationSyntax)obj.Node;
+
+            if (indexerDeclaration.ParameterList.IsMissing ||
+                indexerDeclaration.ParameterList.Parameters.Count > 0)
+            {
+                return;
+            }
+
+            if (indexerDeclaration.ParameterList.CloseBracketToken.IsMissing == false &&
+                indexerDeclaration.ParameterList.OpenBracketToken.IsMissing == false)
+            {
+                CheckIfLocationOfOpenAndCloseTokensAreTheSame(obj, indexerDeclaration.ParameterList.OpenBracketToken, indexerDeclaration.ParameterList.CloseBracketToken);
+            }
+        }
+
+        private void HandleObjectCreationExpression(SyntaxNodeAnalysisContext context)
+        {
+            var objectCreation = (ObjectCreationExpressionSyntax)context.Node;
+            if (objectCreation.ArgumentList.IsMissing ||
+                objectCreation.ArgumentList.Arguments.Count > 0)
+            {
+                return;
+            }
+
+            if (objectCreation.ArgumentList.OpenParenToken.IsMissing == false &&
+                    objectCreation.ArgumentList.CloseParenToken.IsMissing == false)
+                {
+                    CheckIfLocationOfOpenAndCloseTokensAreTheSame(context,
+                        objectCreation.ArgumentList.OpenParenToken, objectCreation.ArgumentList.CloseParenToken);
+                }
+        }
+
+        private void HandleInvocationExpression(SyntaxNodeAnalysisContext context)
+        {
+            var invocationExpression = (InvocationExpressionSyntax) context.Node;
+            if (invocationExpression.ArgumentList.IsMissing ||
+                invocationExpression.ArgumentList.Arguments.Count > 0)
+            {
+                return;
+            }
+
+            if (invocationExpression.ArgumentList.OpenParenToken.IsMissing == false &&
+                invocationExpression.ArgumentList.CloseParenToken.IsMissing == false)
+            {
+                CheckIfLocationOfOpenAndCloseTokensAreTheSame(context,
+                    invocationExpression.ArgumentList.OpenParenToken, invocationExpression.ArgumentList.CloseParenToken);
+            }
+
+        }
+
+        private void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var constructotDeclarationSyntax = (ConstructorDeclarationSyntax)context.Node;
+            HandleBaseMethodDeclaration(context, constructotDeclarationSyntax);
+        }
+
+        private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var methodDeclaration = (MethodDeclarationSyntax)context.Node;
+            HandleBaseMethodDeclaration(context, methodDeclaration);
+        }
+
+        private static void HandleBaseMethodDeclaration(SyntaxNodeAnalysisContext context,
+            BaseMethodDeclarationSyntax baseMethodDeclarationSyntax)
+        {
+            var parameterListSyntax =
+                baseMethodDeclarationSyntax.ChildNodes().OfType<ParameterListSyntax>().SingleOrDefault();
+
+            if (parameterListSyntax != null && parameterListSyntax.Parameters.Count == 0)
+            {
+
+                if (parameterListSyntax.OpenParenToken.IsMissing == false && parameterListSyntax.CloseParenToken.IsMissing == false)
+                {
+                    CheckIfLocationOfOpenAndCloseTokensAreTheSame(context, parameterListSyntax.OpenParenToken, parameterListSyntax.CloseParenToken);
+                }
+            }
+        }
+
+        private static void CheckIfLocationOfOpenAndCloseTokensAreTheSame(SyntaxNodeAnalysisContext context,
+            SyntaxToken openToken, SyntaxToken closeToken)
+        {
+            var closeParenLocation = closeToken.GetLocation();
+            var closeParenLine = closeParenLocation.GetLineSpan();
+            var openParenLine = openToken.GetLocation().GetLineSpan();
+            if (closeParenLine.IsValid &&
+                openParenLine.IsValid &&
+                openParenLine.StartLinePosition.Line != closeParenLine.StartLinePosition.Line)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, closeParenLocation));
+            }
+        }
+
     }
 }
