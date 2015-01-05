@@ -95,7 +95,10 @@
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MaintainabilityRules\FileMayOnlyContainTestBase.cs" />
     <Compile Include="MaintainabilityRules\SA1401UnitTests.cs" />
+    <Compile Include="MaintainabilityRules\SA1402UnitTests.cs" />
+    <Compile Include="MaintainabilityRules\SA1403UnitTests.cs" />
     <Compile Include="SpacingRules\NumberSignSpacingTestBase.cs" />
     <Compile Include="SpacingRules\SA1000UnitTests.cs" />
     <Compile Include="SpacingRules\SA1021UnitTests.cs" />
