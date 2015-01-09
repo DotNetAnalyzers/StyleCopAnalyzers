@@ -63,6 +63,25 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeAction(HandleInvocationExpression, SyntaxKind.InvocationExpression);
             context.RegisterSyntaxNodeAction(HandleObjectCreationExpression, SyntaxKind.ObjectCreationExpression);
             context.RegisterSyntaxNodeAction(HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
+            context.RegisterSyntaxNodeAction(HandleElementAccessExpression, SyntaxKind.ElementAccessExpression);
+        }
+
+        private void HandleElementAccessExpression(SyntaxNodeAnalysisContext context)
+        {
+            var symbol = context.SemanticModel.GetSymbolInfo(((ElementAccessExpressionSyntax)context.Node).Expression).Symbol;
+            var parameterSymbol = symbol as IParameterSymbol;
+
+            if (parameterSymbol != null && parameterSymbol.IsThis)
+            {
+                var elementAccess = (ElementAccessExpressionSyntax)context.Node;
+
+                var thisExpression = elementAccess.Expression as ThisExpressionSyntax;
+
+                if (thisExpression != null  && !elementAccess.ArgumentList.OpenBracketToken.IsMissing)
+                {
+                    CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(context, elementAccess.ArgumentList.OpenBracketToken, thisExpression.Token);
+                }
+            }
         }
 
         private void HandleIndexerDeclaration(SyntaxNodeAnalysisContext obj)
