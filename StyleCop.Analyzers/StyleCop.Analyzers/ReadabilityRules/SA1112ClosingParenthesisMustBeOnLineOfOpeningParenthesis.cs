@@ -1,12 +1,11 @@
-﻿using System.Linq;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-
-namespace StyleCop.Analyzers.ReadabilityRules
+﻿namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
     /// The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or
@@ -55,24 +54,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeAction(HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
             context.RegisterSyntaxNodeAction(HandleInvocationExpression, SyntaxKind.InvocationExpression);
             context.RegisterSyntaxNodeAction(HandleObjectCreationExpression, SyntaxKind.ObjectCreationExpression);
-            context.RegisterSyntaxNodeAction(HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
-        }
-
-        private void HandleIndexerDeclaration(SyntaxNodeAnalysisContext obj)
-        {
-            var indexerDeclaration = (IndexerDeclarationSyntax)obj.Node;
-
-            if (indexerDeclaration.ParameterList.IsMissing ||
-                indexerDeclaration.ParameterList.Parameters.Count > 0)
-            {
-                return;
-            }
-
-            if (indexerDeclaration.ParameterList.CloseBracketToken.IsMissing == false &&
-                indexerDeclaration.ParameterList.OpenBracketToken.IsMissing == false)
-            {
-                CheckIfLocationOfOpenAndCloseTokensAreTheSame(obj, indexerDeclaration.ParameterList.OpenBracketToken, indexerDeclaration.ParameterList.CloseBracketToken);
-            }
         }
 
         private void HandleObjectCreationExpression(SyntaxNodeAnalysisContext context)

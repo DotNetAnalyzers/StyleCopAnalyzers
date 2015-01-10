@@ -282,40 +282,6 @@ class Foo
         }
 
         [TestMethod]
-        public async Task TestIndexerWithNoParametersClosingParanthesisOnTheNextLine()
-        {
-            var testCode = @"
-class Foo
-{
-    public int this[
-]
-    {
-        get
-        {
-            return 1;
-        }    
-    }
-}";
-
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the opening bracket when the element does not take any parameters.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 5, 1)
-                            }
-                    }
-                };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-        }
-
-        [TestMethod]
         public async Task TestIndexerWithParametersClosingParanthesisOnTheNextLine()
         {
             var testCode = @"
@@ -323,24 +289,6 @@ class Foo
 {
     public int this[int index
 ]
-    {
-        get
-        {
-            return 1;
-        }    
-    }
-}";
-
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
-        }
-
-        [TestMethod]
-        public async Task TestIndexeNoParametersClosingParanthesisOnTheSameLine()
-        {
-            var testCode = @"
-class Foo
-{
-    public int this[]
     {
         get
         {
