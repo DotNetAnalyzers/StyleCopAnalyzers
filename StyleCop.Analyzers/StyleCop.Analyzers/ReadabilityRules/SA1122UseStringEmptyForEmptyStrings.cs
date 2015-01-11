@@ -3,6 +3,13 @@
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using System;
+
+
+
+
 
     /// <summary>
     /// The C# code includes an empty string, written as <c>""</c>.
@@ -26,13 +33,13 @@
     {
         public const string DiagnosticId = "SA1122";
         internal const string Title = "Use string.Empty for empty strings";
-        internal const string MessageFormat = "TODO: Message format";
+        internal const string MessageFormat = "Use string.Empty for empty strings";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
         internal const string Description = "The C# code includes an empty string, written as \"\".";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1122.html";
 
         public static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
@@ -49,7 +56,44 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(HandleStringLiteral, SyntaxKind.StringLiteralExpression);
+        }
+
+        private void HandleStringLiteral(SyntaxNodeAnalysisContext context)
+        {
+            LiteralExpressionSyntax literalExpression = context.Node as LiteralExpressionSyntax;
+
+            if (literalExpression != null)
+            {
+                var token = literalExpression.Token;
+                if (token.IsKind(SyntaxKind.StringLiteralToken))
+                {
+                    if (HasToBeConstant(literalExpression))
+                        return;
+
+                    if (token.ValueText == string.Empty)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, literalExpression.GetLocation()));
+                    }
+                }
+            }
+        }
+
+        private bool HasToBeConstant(LiteralExpressionSyntax literalExpression)
+        {
+            if (literalExpression.Parent.IsKind(SyntaxKind.AttributeArgument))
+                return true;
+            var fieldDeclarationSyntax = FindFieldDeclarationSyntax(literalExpression);
+            return fieldDeclarationSyntax != null && fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.ConstKeyword);
+        }
+
+        private FieldDeclarationSyntax FindFieldDeclarationSyntax(SyntaxNode node)
+        {
+            if (node == null)
+                return null;
+            if (node is FieldDeclarationSyntax)
+                return node as FieldDeclarationSyntax;
+            return FindFieldDeclarationSyntax(node.Parent);
         }
     }
 }

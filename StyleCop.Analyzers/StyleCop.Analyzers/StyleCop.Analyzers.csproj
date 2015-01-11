@@ -170,6 +170,7 @@
     <Compile Include="ReadabilityRules\SA1118ParameterMustNotSpanMultipleLines.cs" />
     <Compile Include="ReadabilityRules\SA1120CommentsMustContainText.cs" />
     <Compile Include="ReadabilityRules\SA1121UseBuiltInTypeAlias.cs" />
+    <Compile Include="ReadabilityRules\SA1122CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1122UseStringEmptyForEmptyStrings.cs" />
     <Compile Include="ReadabilityRules\SA1123DoNotPlaceRegionsWithinElements.cs" />
     <Compile Include="ReadabilityRules\SA1124DoNotUseRegions.cs" />
