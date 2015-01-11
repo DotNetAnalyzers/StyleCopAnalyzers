@@ -7,6 +7,9 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
+
+
+
     /// <summary>
     /// The code uses one of the basic C# types, but does not use the built-in alias for the type.
     /// </summary>
@@ -124,7 +127,7 @@
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1121.html";
 
         public static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
