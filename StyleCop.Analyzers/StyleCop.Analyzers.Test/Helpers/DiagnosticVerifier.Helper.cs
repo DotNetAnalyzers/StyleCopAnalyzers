@@ -18,6 +18,7 @@ namespace TestHelper
     public abstract partial class DiagnosticVerifier
     {
         private static readonly MetadataReference CorlibReference = MetadataReference.CreateFromAssembly(typeof(object).Assembly);
+        private static readonly MetadataReference SystemReference = MetadataReference.CreateFromAssembly(typeof(System.Diagnostics.Debug).Assembly);
         private static readonly MetadataReference SystemCoreReference = MetadataReference.CreateFromAssembly(typeof(Enumerable).Assembly);
         private static readonly MetadataReference CSharpSymbolsReference = MetadataReference.CreateFromAssembly(typeof(CSharpCompilation).Assembly);
         private static readonly MetadataReference CodeAnalysisReference = MetadataReference.CreateFromAssembly(typeof(Compilation).Assembly);
@@ -173,6 +174,7 @@ namespace TestHelper
                 .CurrentSolution
                 .AddProject(projectId, TestProjectName, TestProjectName, language)
                 .AddMetadataReference(projectId, CorlibReference)
+                .AddMetadataReference(projectId, SystemReference)
                 .AddMetadataReference(projectId, SystemCoreReference)
                 .AddMetadataReference(projectId, CSharpSymbolsReference)
                 .AddMetadataReference(projectId, CodeAnalysisReference);

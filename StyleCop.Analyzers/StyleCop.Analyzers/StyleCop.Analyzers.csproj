@@ -118,6 +118,7 @@
     <Compile Include="MaintainabilityRules\SA1409RemoveUnnecessaryCode.cs" />
     <Compile Include="MaintainabilityRules\SA1410RemoveDelegateParenthesisWhenPossible.cs" />
     <Compile Include="MaintainabilityRules\SA1411AttributeConstructorMustNotUseUnnecessaryParenthesis.cs" />
+    <Compile Include="MaintainabilityRules\SystemDiagnosticsDebugDiagnosticBase.cs" />
     <Compile Include="NamingRules\SA1300ElementMustBeginWithUpperCaseLetter.cs" />
     <Compile Include="NamingRules\SA1301ElementMustBeginWithLowerCaseLetter.cs" />
     <Compile Include="NamingRules\SA1302InterfaceNamesMustBeginWithI.cs" />
