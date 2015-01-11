@@ -96,7 +96,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MaintainabilityRules\DebugMessagesUnitTestsBase.cs" />
+    <Compile Include="MaintainabilityRules\FileMayOnlyContainTestBase.cs" />
     <Compile Include="MaintainabilityRules\SA1401UnitTests.cs" />
+    <Compile Include="MaintainabilityRules\SA1402UnitTests.cs" />
+    <Compile Include="MaintainabilityRules\SA1403UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1404UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1405UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1406UnitTests.cs" />
