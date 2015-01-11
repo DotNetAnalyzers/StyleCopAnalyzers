@@ -85,7 +85,18 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                         }
                 }
             };
+
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"public class Foo
+{
+    public void Bar()
+    {
+        int x = 1 + (1 * 1);
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -112,7 +123,18 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                         }
                 }
             };
+
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"public class Foo
+{
+    public void Bar()
+    {
+        int x = (1 * 1) + 1;
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -176,7 +198,18 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                         }
                 }
             };
+
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"public class Foo
+{
+    public void Bar()
+    {
+        int x = (1 * 1) + (1 * 1);
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -214,7 +247,18 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                         }
                 }
             };
+
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"public class Foo
+{
+    public void Bar()
+    {
+        int x = 1 << (1 + (1 * 1));
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -226,6 +270,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     {
         int x = 1 * 1 + 1 * 1;
         int y = 5 + y * b / 6 % z - 2;
+        // the following test makes sure the code fix doesn't alter spacing
+        int z = z ? 4*3+-1 :false;
     }
 }";
             var fixedCode = @"public class Foo
@@ -234,6 +280,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     {
         int x = (1 * 1) + (1 * 1);
         int y = 5 + ((y * b / 6) % z) - 2;
+        // the following test makes sure the code fix doesn't alter spacing
+        int z = z ? (4*3)+-1 :false;
     }
 }";
 
