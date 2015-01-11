@@ -54,8 +54,37 @@
                     }
                 };
 
-            await VerifyCSharpDiagnosticAsync(string.Format(testCode, useVerbatimLiteral ? "@" : ""), expected, CancellationToken.None);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, useVerbatimLiteral ? "@" : string.Empty), expected, CancellationToken.None);
         }
+        private async Task TestLocalStringLiteral(bool useVerbatimLiteral, bool isConst)
+        {
+            var testCode = @"public class Foo
+{{
+    public {1}
+string test = {0}"""";
+}}";
+
+            DiagnosticResult[] expected;
+
+            expected =
+                new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                        Message = "Use string.Empty for empty strings",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 4, 15)
+                            }
+                    }
+                };
+
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, useVerbatimLiteral ? "@" : string.Empty, isConst ? "const" : string.Empty), isConst ? EmptyDiagnosticResults : expected, CancellationToken.None);
+        }
+
         public async Task TestWhitespaceStringLiteral(bool useVerbatimLiteral)
         {
             var testCode = @"public class Foo
@@ -65,8 +94,24 @@
         string test = {0}""  "";
     }}
 }}";
-            await VerifyCSharpDiagnosticAsync(string.Format(testCode, useVerbatimLiteral ? "@" : ""), EmptyDiagnosticResults, CancellationToken.None);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, useVerbatimLiteral ? "@" : string.Empty), EmptyDiagnosticResults, CancellationToken.None);
         }
+
+        
+        private async Task TestAttributeStringLiteral(bool useVerbatimLiteral)
+        {
+            var testCode = @"using System.Diagnostics.CodeAnalysis;
+public class Foo
+{{
+    [System.Diagnostics.CodeAnalysis.SuppressMessage({0}"""", 
+                                                    Justification = {0}"""")]
+    public void Bar()
+    {{
+    }}
+}}";
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, useVerbatimLiteral ? "@" : string.Empty), EmptyDiagnosticResults, CancellationToken.None);
+        }
+
         public async Task TestNullInMethod()
         {
             var testCode = @"public class Foo
@@ -96,7 +141,7 @@
     }
 }";
 
-            await VerifyCSharpFixAsync(string.Format(oldSource, useVerbatimLiteral ? "@" : ""), newSource);
+            await VerifyCSharpFixAsync(string.Format(oldSource, useVerbatimLiteral ? "@" : string.Empty), newSource);
         }
 
         [TestMethod]
@@ -132,6 +177,42 @@
         public async Task TestLiteralInMethod()
         {
             await TestEmptyStringLiteral(false);
+        }
+
+        [TestMethod]
+        public async Task TestLocalStringLiteralVerbatim()
+        {
+            await TestLocalStringLiteral(true, false);
+        }
+
+        [TestMethod]
+        public async Task TestLocalStringLiteral()
+        {
+            await TestLocalStringLiteral(false, false);
+        }
+
+        [TestMethod]
+        public async Task TestConstStringLiteralVerbatim()
+        {
+            await TestLocalStringLiteral(true, true);
+        }
+
+        [TestMethod]
+        public async Task TestConstStringLiteral()
+        {
+            await TestLocalStringLiteral(false, true);
+        }
+
+        [TestMethod]
+        public async Task TestAttributeStringLiteralVerbatim()
+        {
+            await TestAttributeStringLiteral(true);
+        }
+
+        [TestMethod]
+        public async Task TestAttributeStringLiteral()
+        {
+            await TestAttributeStringLiteral(false);
         }
 
         [TestMethod]

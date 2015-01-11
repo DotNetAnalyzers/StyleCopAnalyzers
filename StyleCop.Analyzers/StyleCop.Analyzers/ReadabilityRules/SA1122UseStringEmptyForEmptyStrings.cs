@@ -5,6 +5,8 @@
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using System;
+
 
 
 
@@ -66,12 +68,32 @@
                 var token = literalExpression.Token;
                 if (token.IsKind(SyntaxKind.StringLiteralToken))
                 {
+                    if (HasToBeConstant(literalExpression))
+                        return;
+
                     if (token.ValueText == string.Empty)
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, literalExpression.GetLocation()));
                     }
                 }
             }
+        }
+
+        private bool HasToBeConstant(LiteralExpressionSyntax literalExpression)
+        {
+            if (literalExpression.Parent.IsKind(SyntaxKind.AttributeArgument))
+                return true;
+            var fieldDeclarationSyntax = FindFieldDeclarationSyntax(literalExpression);
+            return fieldDeclarationSyntax != null && fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.ConstKeyword);
+        }
+
+        private FieldDeclarationSyntax FindFieldDeclarationSyntax(SyntaxNode node)
+        {
+            if (node == null)
+                return null;
+            if (node is FieldDeclarationSyntax)
+                return node as FieldDeclarationSyntax;
+            return FindFieldDeclarationSyntax(node.Parent);
         }
     }
 }
