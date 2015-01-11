@@ -1,84 +1,40 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using StyleCop.Analyzers.MaintainabilityRules;
-using TestHelper;
-
-namespace StyleCop.Analyzers.Test.MaintainabilityRules
+﻿namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using StyleCop.Analyzers.MaintainabilityRules;
+    using TestHelper;
+
     [TestClass]
-    public class SA1405UnitTests : CodeFixVerifier
+    public class SA1405UnitTests : DebugMessagesUnitTestsBase
     {
-        private const string DiagnosticId = SA1405DebugAssertMustProvideMessageText.DiagnosticId;
-        protected static readonly DiagnosticResult[] EmptyDiagnosticResults = { };
-
-        [TestMethod]
-        public async Task TestEmptySource()
+        protected override string DiagnosticId
         {
-            var testCode = @"";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            get
+            {
+                return SA1405DebugAssertMustProvideMessageText.DiagnosticId;
+            }
         }
 
-        [TestMethod]
-        public async Task TestWhitespaceMessage()
+        protected override string MethodName
         {
-            var testCode = @"using System.Diagnostics;
-public class Foo
-{
-    public void Bar()
-    {
-        Debug.Assert(true != false, ""     "");
-    }
-}";
-
-            var expected = new[]
+            get
             {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Debug.Assert must provide message text",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 9)
-                        }
-                }
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+                return nameof(Debug.Assert);
+            }
         }
 
-        [TestMethod]
-        public async Task TestNullMessage()
+        protected override IEnumerable<string> InitialArguments
         {
-            var testCode = @"using System.Diagnostics;
-public class Foo
-{
-    public void Bar()
-    {
-        Debug.Assert(true != false, null);
-    }
-}";
-
-            var expected = new[]
+            get
             {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Debug.Assert must provide message text",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 9)
-                        }
-                }
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+                yield return "true";
+            }
         }
 
         [TestMethod]
@@ -89,7 +45,7 @@ public class Foo
 {
     public void Bar()
     {
-        Debug.Assert(true != false);
+        Debug.Assert(true);
     }
 }";
 
@@ -98,7 +54,7 @@ public class Foo
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Debug.Assert must provide message text",
+                    Message = string.Format("Debug.Assert must provide message text", MethodName),
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -109,75 +65,6 @@ public class Foo
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-        }
-
-        [TestMethod]
-        public async Task TestConstantMessage()
-        {
-            var testCode = @"using System.Diagnostics;
-public class Foo
-{
-    public void Bar()
-    {
-        Debug.Assert(true != false, ""A message"");
-    }
-}";
-
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
-        }
-
-        [TestMethod]
-        public async Task TestNotConstantMessage()
-        {
-            var testCode = @"using System.Diagnostics;
-public class Foo
-{
-    public void Bar()
-    {
-        Debug.Assert(true != false, message);
-    }
-}";
-
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
-        }
-
-        [TestMethod]
-        public async Task TestWrongDebugClass()
-        {
-            var testCode = @"
-public class Foo
-{
-    public void Bar()
-    {
-        string message = ""A message"";
-        Debug.Assert(true != false, message);
-    }
-}
-class Debug
-{
-    public static void Assert(bool b, string s)
-    {
-
-    }
-}
-";
-
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
-        }
-
-        [TestMethod]
-        public async Task TestWrongMethod()
-        {
-            var testCode = @"using System.Diagnostics;
-public class Foo
-{
-    public void Bar()
-    {
-        Debug.Write(null);
-    }
-}";
-
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

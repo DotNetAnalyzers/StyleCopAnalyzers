@@ -95,6 +95,7 @@
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MaintainabilityRules\DebugMessagesUnitTestsBase.cs" />
     <Compile Include="MaintainabilityRules\SA1401UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1405UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1406UnitTests.cs" />
