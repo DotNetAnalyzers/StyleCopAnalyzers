@@ -99,6 +99,7 @@
     <Compile Include="MaintainabilityRules\SA1401UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1405UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1406UnitTests.cs" />
+    <Compile Include="ReadabilityRules\SA1122UnitTests.cs" />
     <Compile Include="SpacingRules\NumberSignSpacingTestBase.cs" />
     <Compile Include="SpacingRules\SA1000UnitTests.cs" />
     <Compile Include="SpacingRules\SA1021UnitTests.cs" />
