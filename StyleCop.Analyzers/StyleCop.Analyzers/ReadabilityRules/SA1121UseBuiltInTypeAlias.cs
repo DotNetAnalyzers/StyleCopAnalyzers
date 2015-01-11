@@ -3,6 +3,8 @@
     using System;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -116,7 +118,7 @@
     {
         public const string DiagnosticId = "SA1121";
         internal const string Title = "Use built-in type alias";
-        internal const string MessageFormat = "TODO: Message format";
+        internal const string MessageFormat = "Use built-in type alias";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
         internal const string Description = "The code uses one of the basic C# types, but does not use the built-in alias for the type.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1121.html";
@@ -139,7 +141,75 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(HandleIdentifierNameSyntax, SyntaxKind.IdentifierName);
+        }
+
+        private void HandleIdentifierNameSyntax(SyntaxNodeAnalysisContext context)
+        {
+            IdentifierNameSyntax identifierNameSyntax = context.Node as IdentifierNameSyntax;
+            if (identifierNameSyntax == null)
+                return;
+
+            if (identifierNameSyntax.Identifier.IsMissing)
+                return;
+
+            switch (identifierNameSyntax.Identifier.Text)
+            {
+            case nameof(Boolean):
+            case nameof(Byte):
+            case nameof(Char):
+            case nameof(Decimal):
+            case nameof(Double):
+            case nameof(Int16):
+            case nameof(Int32):
+            case nameof(Int64):
+            case nameof(Object):
+            case nameof(SByte):
+            case nameof(Single):
+            case nameof(String):
+            case nameof(UInt16):
+            case nameof(UInt32):
+            case nameof(UInt64):
+                break;
+
+            default:
+                return;
+            }
+
+            if (identifierNameSyntax.FirstAncestorOrSelf<UsingDirectiveSyntax>() != null)
+                return;
+
+            SemanticModel semanticModel = context.SemanticModel;
+            INamedTypeSymbol symbol = semanticModel.GetSymbolInfo(identifierNameSyntax, context.CancellationToken).Symbol as INamedTypeSymbol;
+            switch (symbol?.SpecialType)
+            {
+            case SpecialType.System_Boolean:
+            case SpecialType.System_Byte:
+            case SpecialType.System_Char:
+            case SpecialType.System_Decimal:
+            case SpecialType.System_Double:
+            case SpecialType.System_Int16:
+            case SpecialType.System_Int32:
+            case SpecialType.System_Int64:
+            case SpecialType.System_Object:
+            case SpecialType.System_SByte:
+            case SpecialType.System_Single:
+            case SpecialType.System_String:
+            case SpecialType.System_UInt16:
+            case SpecialType.System_UInt32:
+            case SpecialType.System_UInt64:
+                break;
+
+            default:
+                return;
+            }
+
+            SyntaxNode locationNode = identifierNameSyntax;
+            if (identifierNameSyntax.Parent is QualifiedNameSyntax)
+                locationNode = identifierNameSyntax.Parent;
+
+            // Use built-in type alias
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, locationNode.GetLocation()));
         }
     }
 }
