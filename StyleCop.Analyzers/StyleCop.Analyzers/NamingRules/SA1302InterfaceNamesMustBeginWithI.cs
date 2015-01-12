@@ -1,7 +1,10 @@
 ﻿namespace StyleCop.Analyzers.NamingRules
 {
+    using System;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -22,7 +25,7 @@
     {
         public const string DiagnosticId = "SA1302";
         internal const string Title = "Interface names must begin with I";
-        internal const string MessageFormat = "TODO: Message format";
+        internal const string MessageFormat = "Interface names must begin with I.";
         internal const string Category = "StyleCop.CSharp.NamingRules";
         internal const string Description = "The name of a C# interface does not begin with the capital letter I.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1302.html";
@@ -45,7 +48,24 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(HandleInterfaceDeclarationSyntax, SyntaxKind.InterfaceDeclaration);
+        }
+
+        private void HandleInterfaceDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        {
+            var interfaceDeclaration = (InterfaceDeclarationSyntax) context.Node;
+
+            var namedSymbol = context.SemanticModel.GetDeclaredSymbol(context.Node) as INamedTypeSymbol;
+
+            if (namedSymbol == null || namedSymbol.TypeKind != TypeKind.Interface)
+            {
+                return;
+            }
+
+            if (namedSymbol.Name != null && !namedSymbol.Name.StartsWith("I", StringComparison.Ordinal))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, interfaceDeclaration.Identifier.GetLocation()));
+            }
         }
     }
 }
