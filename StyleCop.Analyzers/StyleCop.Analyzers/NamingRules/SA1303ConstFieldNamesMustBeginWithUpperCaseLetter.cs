@@ -1,6 +1,7 @@
 ﻿namespace StyleCop.Analyzers.NamingRules
 {
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -22,7 +23,7 @@
     {
         public const string DiagnosticId = "SA1303";
         internal const string Title = "Const field names must begin with upper-case letter";
-        internal const string MessageFormat = "TODO: Message format";
+        internal const string MessageFormat = "Const field names must begin with upper-case letter.";
         internal const string Category = "StyleCop.CSharp.NamingRules";
         internal const string Description = "The name of a constant C# field must begin with an upper-case letter.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1303.html";
@@ -45,7 +46,24 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSymbolAction(HandleFieldDeclaration , SymbolKind.Field);
+        }
+
+        private void HandleFieldDeclaration(SymbolAnalysisContext context)
+        {
+            var symbol = context.Symbol as IFieldSymbol;
+
+            if (symbol == null || !symbol.IsConst)
+            {
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(symbol.Name) && 
+                char.IsLower(symbol.Name[0]) && 
+                symbol.Locations.Any())
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, symbol.Locations[0]));
+            }
         }
     }
 }
