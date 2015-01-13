@@ -1,6 +1,7 @@
 ﻿namespace StyleCop.Analyzers.NamingRules
 {
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -22,13 +23,16 @@
     {
         public const string DiagnosticId = "SA1304";
         internal const string Title = "Non-private readonly fields must begin with upper-case letter";
-        internal const string MessageFormat = "TODO: Message format";
+        internal const string MessageFormat = "Non-private readonly fields must begin with upper-case letter.";
         internal const string Category = "StyleCop.CSharp.NamingRules";
+
         internal const string Description = "The name of a non-private readonly C# field must being with an upper-case letter.";
+
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1304.html";
 
         public static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning,
+                AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
@@ -36,16 +40,31 @@
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get
-            {
-                return _supportedDiagnostics;
-            }
+            get { return _supportedDiagnostics; }
         }
 
-        /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSymbolAction(HandleFieldDeclaration, SymbolKind.Field);
+        }
+
+        private void HandleFieldDeclaration(SymbolAnalysisContext context)
+        {
+            var symbol = context.Symbol as IFieldSymbol;
+
+            if (symbol == null || 
+                !symbol.IsReadOnly || 
+                symbol.DeclaredAccessibility == Accessibility.Private)
+            {
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(symbol.Name) &&
+                char.IsLower(symbol.Name[0]) &&
+                symbol.Locations.Any())
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, symbol.Locations[0]));
+            }
         }
     }
 }
