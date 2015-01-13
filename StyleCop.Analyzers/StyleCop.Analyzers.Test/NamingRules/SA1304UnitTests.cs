@@ -59,6 +59,43 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [TestMethod]
+        public async Task TestProtectedReadonlyFieldStartingWithLowerCase()
+        {
+            var testCode = @"public class Foo
+{
+    protected readonly string bar = ""baz"";
+}";
+
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Non-private readonly fields must begin with upper-case letter.",
+                    Severity = DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 3, 31)
+                        }
+                }
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestProtectedReadonlyFieldStartingWithUpperCase()
+        {
+            var testCode = @"public class Foo
+{
+    protected readonly string Bar = ""baz"";
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
         public async Task TestInternalReadonlyFieldStartingWithLowerCase()
         {
             var testCode = @"public class Foo
