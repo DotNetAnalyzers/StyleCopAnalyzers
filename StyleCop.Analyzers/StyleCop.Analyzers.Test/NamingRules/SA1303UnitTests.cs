@@ -26,7 +26,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
         {
             var testCode = @"public class Foo
 {
-    public const string bar;
+    public const string bar = ""baz"";
 }";
 
             var expected = new[]
@@ -52,7 +52,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
         {
             var testCode = @"public class Foo
 {
-    public const string Bar;
+    public const string Bar = ""baz"";
 }";
 
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
@@ -63,7 +63,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
         {
             var testCode = @"public class Foo
 {
-    public string bar;
+    public string bar = ""baz"";
 }";
 
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
