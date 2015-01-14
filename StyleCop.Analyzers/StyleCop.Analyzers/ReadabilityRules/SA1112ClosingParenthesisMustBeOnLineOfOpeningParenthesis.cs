@@ -65,8 +65,8 @@
                 return;
             }
 
-            if (objectCreation.ArgumentList.OpenParenToken.IsMissing == false &&
-                    objectCreation.ArgumentList.CloseParenToken.IsMissing == false)
+            if (!objectCreation.ArgumentList.OpenParenToken.IsMissing &&
+                    !objectCreation.ArgumentList.CloseParenToken.IsMissing)
                 {
                     CheckIfLocationOfOpenAndCloseTokensAreTheSame(context,
                         objectCreation.ArgumentList.OpenParenToken, objectCreation.ArgumentList.CloseParenToken);
@@ -77,13 +77,13 @@
         {
             var invocationExpression = (InvocationExpressionSyntax) context.Node;
             if (invocationExpression.ArgumentList.IsMissing ||
-                invocationExpression.ArgumentList.Arguments.Count > 0)
+                invocationExpression.ArgumentList.Arguments.Any())
             {
                 return;
             }
 
-            if (invocationExpression.ArgumentList.OpenParenToken.IsMissing == false &&
-                invocationExpression.ArgumentList.CloseParenToken.IsMissing == false)
+            if (!invocationExpression.ArgumentList.OpenParenToken.IsMissing &&
+                !invocationExpression.ArgumentList.CloseParenToken.IsMissing)
             {
                 CheckIfLocationOfOpenAndCloseTokensAreTheSame(context,
                     invocationExpression.ArgumentList.OpenParenToken, invocationExpression.ArgumentList.CloseParenToken);
@@ -107,12 +107,13 @@
             BaseMethodDeclarationSyntax baseMethodDeclarationSyntax)
         {
             var parameterListSyntax =
-                baseMethodDeclarationSyntax.ChildNodes().OfType<ParameterListSyntax>().SingleOrDefault();
+                baseMethodDeclarationSyntax.ParameterList;
 
-            if (parameterListSyntax != null && parameterListSyntax.Parameters.Count == 0)
+            if (parameterListSyntax != null && !parameterListSyntax.Parameters.Any())
             {
 
-                if (parameterListSyntax.OpenParenToken.IsMissing == false && parameterListSyntax.CloseParenToken.IsMissing == false)
+                if (!parameterListSyntax.OpenParenToken.IsMissing && 
+                    !parameterListSyntax.CloseParenToken.IsMissing)
                 {
                     CheckIfLocationOfOpenAndCloseTokensAreTheSame(context, parameterListSyntax.OpenParenToken, parameterListSyntax.CloseParenToken);
                 }
