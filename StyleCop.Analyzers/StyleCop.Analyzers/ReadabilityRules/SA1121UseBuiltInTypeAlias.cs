@@ -7,6 +7,9 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
+
+
+
     /// <summary>
     /// The code uses one of the basic C# types, but does not use the built-in alias for the type.
     /// </summary>
@@ -124,7 +127,7 @@
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1121.html";
 
         public static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
@@ -147,7 +150,7 @@
         private void HandleIdentifierNameSyntax(SyntaxNodeAnalysisContext context)
         {
             IdentifierNameSyntax identifierNameSyntax = context.Node as IdentifierNameSyntax;
-            if (identifierNameSyntax == null)
+            if (identifierNameSyntax == null || identifierNameSyntax.IsVar)
                 return;
 
             if (identifierNameSyntax.Identifier.IsMissing)
@@ -155,25 +158,25 @@
 
             switch (identifierNameSyntax.Identifier.Text)
             {
-            case nameof(Boolean):
-            case nameof(Byte):
-            case nameof(Char):
-            case nameof(Decimal):
-            case nameof(Double):
-            case nameof(Int16):
-            case nameof(Int32):
-            case nameof(Int64):
-            case nameof(Object):
-            case nameof(SByte):
-            case nameof(Single):
-            case nameof(String):
-            case nameof(UInt16):
-            case nameof(UInt32):
-            case nameof(UInt64):
-                break;
+            case "bool":
+            case "byte":
+            case "char":
+            case "decimal":
+            case "double":
+            case "short":
+            case "int":
+            case "long":
+            case "object":
+            case "sbyte":
+            case "float":
+            case "string":
+            case "ushort":
+            case "uint":
+            case "ulong":
+                return;
 
             default:
-                return;
+                break;
             }
 
             if (identifierNameSyntax.FirstAncestorOrSelf<UsingDirectiveSyntax>() != null)
@@ -181,6 +184,7 @@
 
             SemanticModel semanticModel = context.SemanticModel;
             INamedTypeSymbol symbol = semanticModel.GetSymbolInfo(identifierNameSyntax, context.CancellationToken).Symbol as INamedTypeSymbol;
+
             switch (symbol?.SpecialType)
             {
             case SpecialType.System_Boolean:
