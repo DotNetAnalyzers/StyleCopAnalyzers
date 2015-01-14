@@ -19,5 +19,26 @@
 
             return false;
         }
+
+        internal bool IsContainedInNativeMethodsClass(INamedTypeSymbol type)
+        {
+            if(IsNativeMethodsClass(type))
+            {
+                return true;
+            }
+
+            INamedTypeSymbol typeSymbol = type;
+            while((typeSymbol = typeSymbol.ContainingType) != null)
+            {
+                if(IsNativeMethodsClass(typeSymbol))
+                {
+                    return true;
+                }
+
+                
+            }
+
+            return false;
+        }
     }
 }

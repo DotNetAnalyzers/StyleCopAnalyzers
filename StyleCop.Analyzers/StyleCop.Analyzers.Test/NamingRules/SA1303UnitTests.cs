@@ -70,6 +70,37 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [TestMethod]
+        public async Task TestConstFieldStatingWithLowerCaseInnerClassInNativeMethods()
+        {
+            var testCode = @"public class NativeMethods    
+{        
+    public class Foo
+    {
+        public const string bar = ""baz"";
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestConstFieldStatingWithLowerCaseInnerInnerClassInNativeMethods()
+        {
+            var testCode = @"public class NativeMethods    
+{        
+    public class Foo
+    {
+        public class FooInner
+        {
+            public const string bar = ""baz"";
+        }
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
         public async Task TestConstFieldStatingWithLowerCaseNativeMethodsIncorrectName()
         {
             var testCode = @"public class MyNativeMethodsClass    
@@ -88,6 +119,42 @@ namespace StyleCop.Analyzers.Test.NamingRules
                         new[]
                         {
                             new DiagnosticResultLocation("Test0.cs", 3, 25)
+                        }
+                }
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestConstFieldStatingWithLowerCaseInnerInnerClassInNativeMethodsIncorrectName()
+        {
+            var testCode = @"
+namespace Test
+{
+   public class NativeMethodsClass    
+   {        
+       public class Foo
+       {
+           public class FooInner
+           {
+               public const string bar = ""baz"";
+           }
+       }
+   }
+}";
+
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Const field names must begin with upper-case letter.",
+                    Severity = DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 10, 36)
                         }
                 }
             };

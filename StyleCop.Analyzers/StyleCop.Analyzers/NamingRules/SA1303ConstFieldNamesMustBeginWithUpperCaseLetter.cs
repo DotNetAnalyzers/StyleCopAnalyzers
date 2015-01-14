@@ -61,7 +61,7 @@
                 return;
             }
 
-            if(namedTypeHelpers.IsNativeMethodsClass(symbol.ContainingType))
+            if(namedTypeHelpers.IsContainedInNativeMethodsClass(symbol.ContainingType))
             {
                 return;
             }
