@@ -10,9 +10,9 @@ using TestHelper;
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     [TestClass]
-    public class SA1407UnitTests : CodeFixVerifier
+    public class SA1408UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1407ArithmeticExpressionsMustDeclarePrecedence.DiagnosticId;
+        private const string DiagnosticId = SA1408ConditionalExpressionsMustDeclarePrecedence.DiagnosticId;
         protected static readonly DiagnosticResult[] EmptyDiagnosticResults = { };
 
         [TestMethod]
@@ -23,52 +23,39 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [TestMethod]
-        public async Task TestAdditionAndSubtraction()
+        public async Task TestOr()
         {
             var testCode = @"public class Foo
 {
     public void Bar()
     {
-        int x = 1 - 1 + 1 - 1;
+        bool x = true || false || true || false;
     }
 }";
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
-        public async Task TestMultiplicationAndDivision()
+        public async Task TestAnd()
         {
             var testCode = @"public class Foo
 {
     public void Bar()
     {
-        int x = 1 / 1 * 1 / 1;
+        bool x = true && false && true && false;
     }
 }";
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
-        public async Task TestLeftShiftRightShift()
+        public async Task TestOrAndAnd()
         {
             var testCode = @"public class Foo
 {
     public void Bar()
     {
-        int x = 1 >> 1 << 1 >> 1;
-    }
-}";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
-        }
-
-        [TestMethod]
-        public async Task TestAdditionMultiplication()
-        {
-            var testCode = @"public class Foo
-{
-    public void Bar()
-    {
-        int x = 1 + 1 * 1;
+        bool x = true || false && true;
     }
 }";
             var expected = new[]
@@ -76,169 +63,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Arithmetic expressions must declare precedence",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 21)
-                        }
-                }
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-
-            var fixedCode = @"public class Foo
-{
-    public void Bar()
-    {
-        int x = 1 + (1 * 1);
-    }
-}";
-
-            await VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
-        }
-
-        [TestMethod]
-        public async Task TestMultiplicationAddition()
-        {
-            var testCode = @"public class Foo
-{
-    public void Bar()
-    {
-        int x = 1 * 1 + 1;
-    }
-}";
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Arithmetic expressions must declare precedence",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 17)
-                        }
-                }
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-
-            var fixedCode = @"public class Foo
-{
-    public void Bar()
-    {
-        int x = (1 * 1) + 1;
-    }
-}";
-
-            await VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
-        }
-
-        [TestMethod]
-        public async Task TestAdditionMultiplicationParenthesized()
-        {
-            var testCode = @"public class Foo
-{
-    public void Bar()
-    {
-        int x = 1 + (1 * 1);
-    }
-}";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
-        }
-
-        [TestMethod]
-        public async Task TestMultiplicationAdditionParenthesized()
-        {
-            var testCode = @"public class Foo
-{
-    public void Bar()
-    {
-        int x = (1 * 1) * 1;
-    }
-}";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
-        }
-
-        [TestMethod]
-        public async Task TestMultipleViolations()
-        {
-            var testCode = @"public class Foo
-{
-    public void Bar()
-    {
-        int x = 1 * 1 + 1 * 1;
-    }
-}";
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Arithmetic expressions must declare precedence",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 17)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Arithmetic expressions must declare precedence",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 25)
-                        }
-                }
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-
-            var fixedCode = @"public class Foo
-{
-    public void Bar()
-    {
-        int x = (1 * 1) + (1 * 1);
-    }
-}";
-
-            await VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
-        }
-
-        [TestMethod]
-        public async Task TestSubViolations()
-        {
-            var testCode = @"public class Foo
-{
-    public void Bar()
-    {
-        int x = 1 << 1 + 1 * 1;
-    }
-}";
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Arithmetic expressions must declare precedence",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 22)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Arithmetic expressions must declare precedence",
+                    Message = "Conditional expressions must declare precedence",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -254,7 +79,120 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     public void Bar()
     {
-        int x = 1 << (1 + (1 * 1));
+        bool x = true || (false && true);
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestAndAndOr()
+        {
+            var testCode = @"public class Foo
+{
+    public void Bar()
+    {
+        bool x = true && false || true;
+    }
+}";
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Conditional expressions must declare precedence",
+                    Severity = DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 5, 18)
+                        }
+                }
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"public class Foo
+{
+    public void Bar()
+    {
+        bool x = (true && false) || true;
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestOrAndAndParenthesized()
+        {
+            var testCode = @"public class Foo
+{
+    public void Bar()
+    {
+        bool x = (true || false) && true;
+    }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TesAndAndOrParenthesized()
+        {
+            var testCode = @"public class Foo
+{
+    public void Bar()
+    {
+        bool x = (true && false) || true;
+    }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestMultipleViolations()
+        {
+            var testCode = @"public class Foo
+{
+    public void Bar()
+    {
+        bool x = true && false || true && false;
+    }
+}";
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Conditional expressions must declare precedence",
+                    Severity = DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 5, 18)
+                        }
+                },
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Conditional expressions must declare precedence",
+                    Severity = DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 5, 35)
+                        }
+                }
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"public class Foo
+{
+    public void Bar()
+    {
+        bool x = (true && false) || (true && false);
     }
 }";
 
@@ -268,20 +206,20 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     public void Bar()
     {
-        int x = 1 * 1 + 1 * 1;
-        int y = 5 + y * b / 6 % z - 2;
+        bool x = true && false || true && false;
+        bool y = true || y && b && c;
         // the following test makes sure the code fix doesn't alter spacing
-        int z = z ? 4*3+-1 :false;
+        bool z = z ? true&&true||false :false;
     }
 }";
             var fixedCode = @"public class Foo
 {
     public void Bar()
     {
-        int x = (1 * 1) + (1 * 1);
-        int y = 5 + ((y * b / 6) % z) - 2;
+        bool x = (true && false) || (true && false);
+        bool y = true || (y && b && c);
         // the following test makes sure the code fix doesn't alter spacing
-        int z = z ? (4*3)+-1 :false;
+        bool z = z ? (true&&true)||false :false;
     }
 }";
 
@@ -290,7 +228,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new SA1407ArithmeticExpressionsMustDeclarePrecedence();
+            return new SA1408ConditionalExpressionsMustDeclarePrecedence();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
