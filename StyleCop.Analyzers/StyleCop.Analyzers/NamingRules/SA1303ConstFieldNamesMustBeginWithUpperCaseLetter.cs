@@ -4,6 +4,7 @@
     using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The name of a constant C# field must begin with an upper-case letter.
@@ -27,6 +28,8 @@
         internal const string Category = "StyleCop.CSharp.NamingRules";
         internal const string Description = "The name of a constant C# field must begin with an upper-case letter.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1303.html";
+
+        private NamedTypeHelpers namedTypeHelpers = new NamedTypeHelpers();
 
         public static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
@@ -54,6 +57,11 @@
             var symbol = context.Symbol as IFieldSymbol;
 
             if (symbol == null || !symbol.IsConst)
+            {
+                return;
+            }
+
+            if(namedTypeHelpers.IsNativeMethodsClass(symbol.ContainingType))
             {
                 return;
             }

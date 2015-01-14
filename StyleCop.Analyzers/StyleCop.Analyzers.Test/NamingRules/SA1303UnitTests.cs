@@ -48,6 +48,54 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [TestMethod]
+        public async Task TestConstFieldStatingWithLowerCaseNativeMethodsExampleOne()
+        {
+            var testCode = @"public class NativeMethods    
+{        
+    public const string bar = ""baz"";
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestConstFieldStatingWithLowerCaseNativeMethodsExampleTwo()
+        {
+            var testCode = @"public class MyNativeMethods    
+{        
+    public const string bar = ""baz"";
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestConstFieldStatingWithLowerCaseNativeMethodsIncorrectName()
+        {
+            var testCode = @"public class MyNativeMethodsClass    
+{        
+    public const string bar = ""baz"";
+}";
+
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Const field names must begin with upper-case letter.",
+                    Severity = DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 3, 25)
+                        }
+                }
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
         public async Task TestConstFieldStatingWithUpperCase()
         {
             var testCode = @"public class Foo
