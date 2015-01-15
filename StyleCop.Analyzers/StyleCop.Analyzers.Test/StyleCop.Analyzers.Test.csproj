@@ -108,6 +108,7 @@
     <Compile Include="MaintainabilityRules\SA1408UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1410UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1411UnitTests.cs" />
+    <Compile Include="NamingRules\SA1303UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1121UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1122UnitTests.cs" />
     <Compile Include="SpacingRules\NumberSignSpacingTestBase.cs" />
