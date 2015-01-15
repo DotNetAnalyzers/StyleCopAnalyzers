@@ -3,6 +3,8 @@
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
     /// A C# statement contains parenthesis which are unnecessary and should be removed.
@@ -37,13 +39,15 @@
     {
         public const string DiagnosticId = "SA1119";
         internal const string Title = "Statement must not use unnecessary parenthesis";
-        internal const string MessageFormat = "TODO: Message format";
+        internal const string MessageFormat = "Statement must not use unnecessary parenthesis";
         internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
         internal const string Description = "A C# statement contains parenthesis which are unnecessary and should be removed.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1119.html";
 
         public static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink, customTags: new[] { WellKnownDiagnosticTags.Unnecessary });
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+        public static readonly DiagnosticDescriptor ParenthesisDescriptor =
+            new DiagnosticDescriptor(DiagnosticId + "_p", Title, MessageFormat, Category, DiagnosticSeverity.Hidden, true, Description, HelpLink, customTags: new[] { WellKnownDiagnosticTags.Unnecessary, WellKnownDiagnosticTags.NotConfigurable });
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
@@ -60,7 +64,75 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(HandleParenthesizedExpressionn, SyntaxKind.ParenthesizedExpression);
+        }
+
+        private void HandleParenthesizedExpressionn(SyntaxNodeAnalysisContext context)
+        {
+            var node = context.Node as ParenthesizedExpressionSyntax;
+
+            if (node != null && node.Expression != null)
+            {
+                if (!(node.Expression is BinaryExpressionSyntax)
+                    && !(node.Expression is AssignmentExpressionSyntax)
+                    && !(node.Expression is PrefixUnaryExpressionSyntax)
+                    && !(node.Expression is PostfixUnaryExpressionSyntax)
+                    && !node.Expression.IsKind(SyntaxKind.CastExpression)
+                    && !node.Expression.IsKind(SyntaxKind.ConditionalExpression)
+                    && !node.Expression.IsKind(SyntaxKind.IsExpression)
+                    && !node.Expression.IsKind(SyntaxKind.SimpleLambdaExpression)
+                    && !node.Expression.IsKind(SyntaxKind.ParenthesizedLambdaExpression)
+                    && !node.Expression.IsKind(SyntaxKind.ArrayCreationExpression)
+                    && !node.Expression.IsKind(SyntaxKind.CoalesceExpression)
+                    && !node.Expression.IsKind(SyntaxKind.QueryExpression)
+                    && !node.IsKind(SyntaxKind.ConstructorDeclaration))
+                {
+                    ReportDiagnostic(context, node);
+                }
+                else
+                {
+                    if (!(node.Parent is ExpressionSyntax) 
+                        || node.Parent is CheckedExpressionSyntax 
+                        || node.Parent is MemberAccessExpressionSyntax)
+                    {
+                        var memberAccess = node.Parent as MemberAccessExpressionSyntax;
+                        if (memberAccess != null)
+                        {
+                            if (memberAccess.Expression != node)
+                            {
+                                ReportDiagnostic(context, node);
+                            }
+                        }
+                        else
+                        {
+                            ReportDiagnostic(context, node);
+                        }
+                    }
+                    else
+                    {
+                        EqualsValueClauseSyntax equalsValue = node.Parent as EqualsValueClauseSyntax;
+                        if (equalsValue != null && equalsValue.Value == node)
+                        {
+                            ReportDiagnostic(context, node);
+                        }
+                        else
+                        {
+                            AssignmentExpressionSyntax assignValue = node.Parent as AssignmentExpressionSyntax;
+                            if (assignValue != null)
+                            {
+                                ReportDiagnostic(context, node);
+                            }
+                            }
+                        }
+                    }
+                }
+            }
+
+        private static void ReportDiagnostic(SyntaxNodeAnalysisContext context, ParenthesizedExpressionSyntax node)
+        {
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, node.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(ParenthesisDescriptor, node.OpenParenToken.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(ParenthesisDescriptor, node.CloseParenToken.GetLocation()));
         }
     }
 }

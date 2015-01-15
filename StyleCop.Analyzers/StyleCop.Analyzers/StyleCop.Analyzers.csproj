@@ -105,6 +105,7 @@
     <Compile Include="LayoutRules\SA1516ElementsMustBeSeparatedByBlankLine.cs" />
     <Compile Include="LayoutRules\SA1517CodeMustNotContainBlankLinesAtStartOfFile.cs" />
     <Compile Include="LayoutRules\SA1518CodeMustNotContainBlankLinesAtEndOfFile.cs" />
+    <Compile Include="MaintainabilityRules\SA1119CodeFixProvider.cs" />
     <Compile Include="MaintainabilityRules\SA1119StatementMustNotUseUnnecessaryParenthesis.cs" />
     <Compile Include="MaintainabilityRules\SA1400AccessModifierMustBeDeclared.cs" />
     <Compile Include="MaintainabilityRules\SA1401FieldsMustBePrivate.cs" />
