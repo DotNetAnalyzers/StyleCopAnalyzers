@@ -3,9 +3,9 @@
     using System;
     using Microsoft.CodeAnalysis;
 
-    internal class NamedTypeHelpers
+    internal static class NamedTypeHelpers
     {
-        internal bool IsNativeMethodsClass(INamedTypeSymbol type)
+        internal static bool IsNativeMethodsClass(INamedTypeSymbol type)
         {
             if(type == null || type.TypeKind != TypeKind.Class)
             {
@@ -20,7 +20,7 @@
             return false;
         }
 
-        internal bool IsContainedInNativeMethodsClass(INamedTypeSymbol type)
+        internal static bool IsContainedInNativeMethodsClass(INamedTypeSymbol type)
         {
             if(IsNativeMethodsClass(type))
             {
