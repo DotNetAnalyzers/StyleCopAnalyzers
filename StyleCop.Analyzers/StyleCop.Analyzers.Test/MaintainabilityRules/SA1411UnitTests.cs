@@ -36,7 +36,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [TestMethod]
-        public async Task TesNonEmptyParameterList()
+        public async Task TestNonEmptyParameterList()
         {
             var testCode = @"public class Foo
 {
@@ -49,7 +49,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [TestMethod]
-        public async Task TesNonEmptyParameterListNamedArgument()
+        public async Task TestNonEmptyParameterListNamedArgument()
         {
             var testCode = @"public class Foo
 {

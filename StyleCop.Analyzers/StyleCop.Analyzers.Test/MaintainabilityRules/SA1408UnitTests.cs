@@ -138,7 +138,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [TestMethod]
-        public async Task TesAndAndOrParenthesized()
+        public async Task TestAndAndOrParenthesized()
         {
             var testCode = @"public class Foo
 {
