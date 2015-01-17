@@ -53,7 +53,7 @@
 
                     var newSyntaxRoot = syntaxRoot.ReplaceNode(node, newNode);
 
-                    context.RegisterFix(CodeAction.Create("Replace with \{newNode}", context.Document.WithSyntaxRoot(newSyntaxRoot)), diagnostic);
+                    context.RegisterFix(CodeAction.Create($"Replace with {newNode}", context.Document.WithSyntaxRoot(newSyntaxRoot)), diagnostic);
                 }
             }
         }
