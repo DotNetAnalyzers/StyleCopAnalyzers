@@ -29,8 +29,6 @@
         internal const string Description = "The name of a constant C# field must begin with an upper-case letter.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1303.html";
 
-        private NamedTypeHelpers namedTypeHelpers = new NamedTypeHelpers();
-
         public static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
@@ -61,7 +59,7 @@
                 return;
             }
 
-            if(namedTypeHelpers.IsContainedInNativeMethodsClass(symbol.ContainingType))
+            if(NamedTypeHelpers.IsContainedInNativeMethodsClass(symbol.ContainingType))
             {
                 return;
             }
