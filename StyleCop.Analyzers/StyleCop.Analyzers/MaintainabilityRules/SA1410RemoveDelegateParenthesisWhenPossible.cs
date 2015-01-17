@@ -2,6 +2,8 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -30,13 +32,13 @@
     {
         public const string DiagnosticId = "SA1410";
         internal const string Title = "Remove delegate parenthesis when possible";
-        internal const string MessageFormat = "TODO: Message format";
+        internal const string MessageFormat = "Remove delegate parenthesis when possible";
         internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
         internal const string Description = "A call to a C# anonymous method does not contain any method parameters, yet the statement still includes parenthesis.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1410.html";
 
         public static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
@@ -53,7 +55,25 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(HandleAnonymousMethodExpressionSyntax, SyntaxKind.AnonymousMethodExpression);
+        }
+
+        private void HandleAnonymousMethodExpressionSyntax(SyntaxNodeAnalysisContext context)
+        {
+            AnonymousMethodExpressionSyntax syntax = context.Node as AnonymousMethodExpressionSyntax;
+            if (syntax == null)
+                return;
+
+            // ignore if no parameter list exists
+            if (syntax.ParameterList == null)
+                return;
+
+            // ignore if parameter list is not empty
+            if (syntax.ParameterList.Parameters.Count > 0)
+                return;
+
+            // Remove delegate parenthesis when possible
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.ParameterList.GetLocation()));
         }
     }
 }

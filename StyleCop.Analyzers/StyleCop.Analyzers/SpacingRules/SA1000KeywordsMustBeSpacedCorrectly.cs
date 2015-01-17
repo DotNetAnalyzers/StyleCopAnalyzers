@@ -146,9 +146,9 @@
             if (token.IsMissing)
                 return;
 
-            // if the next token is [, then treat as disallowed
+            // if the next token is [ or (, then treat as disallowed
             SyntaxToken nextToken = token.GetNextToken();
-            if (nextToken.IsKind(SyntaxKind.OpenBracketToken))
+            if (nextToken.IsKind(SyntaxKind.OpenBracketToken) || nextToken.IsKind(SyntaxKind.OpenParenToken))
             {
                 if (token.Parent.IsKind(SyntaxKind.ImplicitArrayCreationExpression))
                 {

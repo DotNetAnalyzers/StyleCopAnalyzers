@@ -3,6 +3,8 @@
     using System;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -18,7 +20,7 @@
     {
         public const string DiagnosticId = "SA1125";
         internal const string Title = "Use shorthand for nullable types";
-        internal const string MessageFormat = "TODO: Message format";
+        internal const string MessageFormat = "Use shorthand for nullable types";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
         internal const string Description = "The Nullable<T> type has been defined not using the C# shorthand. For example, Nullable<DateTime> has been used instead of the preferred DateTime?";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1125.html";
@@ -41,7 +43,32 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(HandleGenericNameSyntax, SyntaxKind.GenericName);
+        }
+
+        private void HandleGenericNameSyntax(SyntaxNodeAnalysisContext context)
+        {
+            GenericNameSyntax genericNameSyntax = context.Node as GenericNameSyntax;
+            if (genericNameSyntax == null)
+                return;
+
+            if (genericNameSyntax.Identifier.IsMissing || genericNameSyntax.Identifier.Text != "Nullable")
+                return;
+
+            if (genericNameSyntax.FirstAncestorOrSelf<UsingDirectiveSyntax>() != null)
+                return;
+
+            SemanticModel semanticModel = context.SemanticModel;
+            INamedTypeSymbol symbol = semanticModel.GetSymbolInfo(genericNameSyntax, context.CancellationToken).Symbol as INamedTypeSymbol;
+            if (symbol?.OriginalDefinition?.SpecialType != SpecialType.System_Nullable_T)
+                return;
+
+            SyntaxNode locationNode = genericNameSyntax;
+            if (genericNameSyntax.Parent is QualifiedNameSyntax)
+                locationNode = genericNameSyntax.Parent;
+
+            // Use shorthand for nullable types
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, locationNode.GetLocation()));
         }
     }
 }

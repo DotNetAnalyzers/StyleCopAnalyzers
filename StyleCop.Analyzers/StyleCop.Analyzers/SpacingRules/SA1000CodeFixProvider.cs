@@ -53,7 +53,7 @@
                 case SyntaxKind.NewKeyword:
                     {
                         SyntaxToken nextToken = token.GetNextToken();
-                        if (nextToken.IsKind(SyntaxKind.OpenBracketToken))
+                        if (nextToken.IsKind(SyntaxKind.OpenBracketToken) || nextToken.IsKind(SyntaxKind.OpenParenToken))
                             isAddingSpace = false;
                     }
 

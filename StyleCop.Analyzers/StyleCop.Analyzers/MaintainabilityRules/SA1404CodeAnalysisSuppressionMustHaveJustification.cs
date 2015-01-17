@@ -4,6 +4,10 @@
     using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+
 
     /// <summary>
     /// A Code Analysis SuppressMessage attribute does not include a justification.
@@ -26,13 +30,13 @@
     {
         public const string DiagnosticId = "SA1404";
         internal const string Title = "Code analysis suppression must have justification";
-        internal const string MessageFormat = "TODO: Message format";
+        internal const string MessageFormat = "Code analysis suppression must have justification";
         internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
         internal const string Description = "A Code Analysis SuppressMessage attribute does not include a justification.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1404.html";
 
         public static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
@@ -49,7 +53,45 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(HandleAttributeNode, SyntaxKind.Attribute);
+        }
+
+        private void HandleAttributeNode(SyntaxNodeAnalysisContext context)
+        {
+            var attribute = context.Node as AttributeSyntax;
+            if(attribute != null)
+            {
+                SymbolInfo symbolInfo = context.SemanticModel.GetSymbolInfo(attribute);
+                ISymbol symbol = symbolInfo.Symbol;
+                if(symbol != null)
+                {
+                    var suppressMessageType = context.SemanticModel.Compilation.GetTypeByMetadataName(typeof(SuppressMessageAttribute).FullName);
+                    if (symbol.ContainingType == suppressMessageType)
+                    {
+
+                        foreach (var argument in attribute.ArgumentList.ChildNodes())
+                        {
+                            var attributeArgument = argument as AttributeArgumentSyntax;
+                            if (attributeArgument?.NameEquals?.Name?.ToString() == nameof(SuppressMessageAttribute.Justification))
+                            {
+                                // Check if the justification is not empty
+
+                                var value = context.SemanticModel.GetConstantValue(attributeArgument.Expression);
+
+                                // If value does not have a value the expression is not constant -> Compilation error
+                                if (!value.HasValue || !string.IsNullOrWhiteSpace(value.Value as string))
+                                    return;
+
+                                // Empty, Whitespace or null justification provided
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptor, attributeArgument.GetLocation()));
+                                return;
+                            }
+                        }
+                        // No justification set
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, attribute.GetLocation()));
+                    }
+                }
+            }
         }
     }
 }

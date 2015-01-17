@@ -1,8 +1,10 @@
 ﻿namespace StyleCop.Analyzers.NamingRules
 {
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The name of a constant C# field must begin with an upper-case letter.
@@ -22,10 +24,12 @@
     {
         public const string DiagnosticId = "SA1303";
         internal const string Title = "Const field names must begin with upper-case letter";
-        internal const string MessageFormat = "TODO: Message format";
+        internal const string MessageFormat = "Const field names must begin with upper-case letter.";
         internal const string Category = "StyleCop.CSharp.NamingRules";
         internal const string Description = "The name of a constant C# field must begin with an upper-case letter.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1303.html";
+
+        private NamedTypeHelpers namedTypeHelpers = new NamedTypeHelpers();
 
         public static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
@@ -45,7 +49,29 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSymbolAction(HandleFieldDeclaration , SymbolKind.Field);
+        }
+
+        private void HandleFieldDeclaration(SymbolAnalysisContext context)
+        {
+            var symbol = context.Symbol as IFieldSymbol;
+
+            if (symbol == null || !symbol.IsConst)
+            {
+                return;
+            }
+
+            if(namedTypeHelpers.IsContainedInNativeMethodsClass(symbol.ContainingType))
+            {
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(symbol.Name) && 
+                char.IsLower(symbol.Name[0]) && 
+                symbol.Locations.Any())
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, symbol.Locations[0]));
+            }
         }
     }
 }
