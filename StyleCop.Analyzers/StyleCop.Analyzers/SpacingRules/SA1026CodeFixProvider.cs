@@ -46,7 +46,7 @@
                 if (token.IsMissing)
                     continue;
 
-                SyntaxToken corrected = token.WithoutTrailingWhitespace().WithoutElasticTrivia();
+                SyntaxToken corrected = token.WithoutTrailingWhitespace().WithoutFormatting();
                 Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
                 context.RegisterFix(CodeAction.Create("Remove space", updatedDocument), diagnostic);
             }

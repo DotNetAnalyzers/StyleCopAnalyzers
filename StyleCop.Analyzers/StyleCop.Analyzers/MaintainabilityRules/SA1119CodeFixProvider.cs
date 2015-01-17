@@ -58,7 +58,7 @@
                     var newNode = syntax.Expression
                         .WithLeadingTrivia(leadingTrivia)
                         .WithTrailingTrivia(trailingTrivia)
-                        .WithoutElasticTrivia();
+                        .WithoutFormatting();
 
                     var newSyntaxRoot = syntaxRoot.ReplaceNode(syntax, newNode);
 

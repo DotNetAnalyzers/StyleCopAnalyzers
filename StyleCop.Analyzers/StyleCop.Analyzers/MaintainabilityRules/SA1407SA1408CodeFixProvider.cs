@@ -63,7 +63,7 @@
                     var newNode = SyntaxFactory.ParenthesizedExpression(syntax.WithoutLeadingTrivia().WithoutTrailingTrivia())
                         .WithLeadingTrivia(leadingTrivia)
                         .WithTrailingTrivia(trailingTrivia)
-                        .WithoutElasticTrivia();
+                        .WithoutFormatting();
 
                     var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken);
 

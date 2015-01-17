@@ -76,7 +76,7 @@
                     var newNode = SyntaxFactory.PredefinedType(SyntaxFactory.Token(_predefinedSpecialTypes[specialType]))
                         .WithLeadingTrivia(node.GetLeadingTrivia())
                         .WithTrailingTrivia(node.GetTrailingTrivia())
-                        .WithoutElasticTrivia();
+                        .WithoutFormatting();
                     var newRoot = root.ReplaceNode(node, newNode);
 
                     context.RegisterFix(CodeAction.Create("Replace with built-in type", context.Document.WithSyntaxRoot(newRoot)), diagnostic);

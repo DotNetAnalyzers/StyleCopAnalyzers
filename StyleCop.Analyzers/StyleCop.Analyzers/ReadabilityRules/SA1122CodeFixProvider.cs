@@ -50,7 +50,7 @@
                     var identifierNameSyntax = SyntaxFactory.IdentifierName(nameof(String.Empty));
                     var stringKeyword = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.StringKeyword));
                     var newNode = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, stringKeyword, identifierNameSyntax)
-                        .WithoutElasticTrivia();
+                        .WithoutFormatting();
 
                     var newSyntaxRoot = syntaxRoot.ReplaceNode(node, newNode);
 

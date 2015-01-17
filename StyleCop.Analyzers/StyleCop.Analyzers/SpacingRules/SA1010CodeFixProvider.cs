@@ -56,14 +56,14 @@
                     SyntaxToken precedingToken = token.GetPreviousToken();
                     if (precedingToken.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
                     {
-                        SyntaxToken corrected = precedingToken.WithoutTrailingWhitespace().WithoutElasticTrivia();
+                        SyntaxToken corrected = precedingToken.WithoutTrailingWhitespace().WithoutFormatting();
                         replacements[precedingToken] = corrected;
                     }
                 }
 
                 if (!token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia) && token.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
                 {
-                    SyntaxToken corrected = token.WithoutTrailingWhitespace().WithoutElasticTrivia();
+                    SyntaxToken corrected = token.WithoutTrailingWhitespace().WithoutFormatting();
                     replacements[token] = corrected;
                 }
 

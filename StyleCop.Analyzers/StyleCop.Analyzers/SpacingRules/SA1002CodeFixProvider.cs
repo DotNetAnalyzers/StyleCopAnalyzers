@@ -66,7 +66,7 @@
                     SyntaxToken precedingToken = token.GetPreviousToken();
                     if (precedingToken.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
                     {
-                        SyntaxToken corrected = precedingToken.WithoutLeadingWhitespace().WithoutElasticTrivia();
+                        SyntaxToken corrected = precedingToken.WithoutLeadingWhitespace().WithoutFormatting();
                         replacements[precedingToken] = corrected;
                     }
                 }
@@ -77,7 +77,7 @@
                     SyntaxToken corrected =
                         intermediate
                         .WithTrailingTrivia(intermediate.TrailingTrivia.Insert(0, SyntaxFactory.Whitespace(" ")))
-                        .WithoutElasticTrivia();
+                        .WithoutFormatting();
                     replacements[token] = corrected;
                 }
 

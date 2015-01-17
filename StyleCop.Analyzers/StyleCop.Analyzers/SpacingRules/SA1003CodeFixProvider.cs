@@ -87,14 +87,14 @@
                         SyntaxToken correctedOperator =
                             correctedOperatorNoSpace
                             .WithTrailingTrivia(correctedOperatorNoSpace.TrailingTrivia.Insert(0, SyntaxFactory.Whitespace(" ")))
-                            .WithoutElasticTrivia();
+                            .WithoutFormatting();
                         replacements[token] = correctedOperator;
                     }
                 }
                 else if (token.Parent is PrefixUnaryExpressionSyntax)
                 {
                     // do not include a space after (includes new line characters)
-                    SyntaxToken correctedOperatorNoSpace = token.WithoutTrailingWhitespace(removeEndOfLineTrivia: true).WithoutElasticTrivia();
+                    SyntaxToken correctedOperatorNoSpace = token.WithoutTrailingWhitespace(removeEndOfLineTrivia: true).WithoutFormatting();
                     replacements[token] = correctedOperatorNoSpace;
                 }
 

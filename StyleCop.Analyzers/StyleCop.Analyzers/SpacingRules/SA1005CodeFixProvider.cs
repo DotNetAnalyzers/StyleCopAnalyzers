@@ -53,7 +53,7 @@
                     continue;
 
                 string correctedText = "// " + text.Substring(2);
-                SyntaxTrivia corrected = SyntaxFactory.Comment(correctedText).WithoutElasticTrivia();
+                SyntaxTrivia corrected = SyntaxFactory.Comment(correctedText).WithoutFormatting();
                 Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceTrivia(trivia, corrected));
                 context.RegisterFix(CodeAction.Create("Insert space", updatedDocument), diagnostic);
             }
