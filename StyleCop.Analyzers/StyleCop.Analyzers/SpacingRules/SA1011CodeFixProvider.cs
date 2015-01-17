@@ -56,7 +56,7 @@
                     SyntaxToken precedingToken = token.GetPreviousToken();
                     if (precedingToken.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
                     {
-                        SyntaxToken corrected = precedingToken.WithoutTrailingWhitespace();
+                        SyntaxToken corrected = precedingToken.WithoutTrailingWhitespace().WithoutElasticTrivia();
                         replacements[precedingToken] = corrected;
                     }
                 }
@@ -93,7 +93,7 @@
 
                     if (!ignoreTrailingWhitespace)
                     {
-                        SyntaxToken corrected = token.WithoutTrailingWhitespace();
+                        SyntaxToken corrected = token.WithoutTrailingWhitespace().WithoutElasticTrivia();
                         replacements[token] = corrected;
                     }
                 }

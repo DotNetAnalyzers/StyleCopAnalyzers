@@ -55,7 +55,7 @@
                 if (!previousToken.HasTrailingTrivia)
                     continue;
 
-                SyntaxToken corrected = previousToken.WithoutTrailingWhitespace();
+                SyntaxToken corrected = previousToken.WithoutTrailingWhitespace().WithoutElasticTrivia();
                 Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(previousToken, corrected));
                 context.RegisterFix(CodeAction.Create("Remove space", updatedDocument), diagnostic);
             }

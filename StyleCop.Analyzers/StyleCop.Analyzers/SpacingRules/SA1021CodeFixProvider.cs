@@ -68,21 +68,24 @@
 
                     if (followsSpecialCharacter && precededBySpace)
                     {
-                        SyntaxToken correctedPreceding = precedingToken.WithoutTrailingWhitespace();
+                        SyntaxToken correctedPreceding = precedingToken.WithoutTrailingWhitespace().WithoutElasticTrivia();
                         replacements.Add(precedingToken, correctedPreceding);
                     }
                     else if (!followsSpecialCharacter && !precededBySpace)
                     {
                         SyntaxToken correctedPreceding = precedingToken.WithoutTrailingWhitespace();
                         SyntaxTrivia whitespace = SyntaxFactory.Whitespace(" ");
-                        correctedPreceding = correctedPreceding.WithTrailingTrivia(correctedPreceding.TrailingTrivia.Add(whitespace));
+                        correctedPreceding =
+                            correctedPreceding
+                            .WithTrailingTrivia(correctedPreceding.TrailingTrivia.Add(whitespace))
+                            .WithoutElasticTrivia();
                         replacements.Add(precedingToken, correctedPreceding);
                     }
                 }
 
                 if (token.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia) || token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia))
                 {
-                    SyntaxToken corrected = token.WithoutTrailingWhitespace(removeEndOfLineTrivia: true);
+                    SyntaxToken corrected = token.WithoutTrailingWhitespace(removeEndOfLineTrivia: true).WithoutElasticTrivia();
                     replacements.Add(token, corrected);
                 }
 

@@ -1,6 +1,5 @@
 ﻿namespace StyleCop.Analyzers.MaintainabilityRules
 {
-    using System;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
@@ -9,7 +8,7 @@
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-
+    using StyleCop.Analyzers.SpacingRules;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1407ArithmeticExpressionsMustDeclarePrecedence"/>.
@@ -62,7 +61,9 @@
                     var trailingTrivia = syntax.GetTrailingTrivia();
 
                     var newNode = SyntaxFactory.ParenthesizedExpression(syntax.WithoutLeadingTrivia().WithoutTrailingTrivia())
-                        .WithLeadingTrivia(leadingTrivia).WithTrailingTrivia(trailingTrivia);
+                        .WithLeadingTrivia(leadingTrivia)
+                        .WithTrailingTrivia(trailingTrivia)
+                        .WithoutElasticTrivia();
 
                     var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken);
 

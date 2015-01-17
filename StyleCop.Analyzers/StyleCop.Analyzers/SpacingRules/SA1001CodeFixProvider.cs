@@ -76,7 +76,7 @@
                     SyntaxToken precedingToken = token.GetPreviousToken();
                     if (precedingToken.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
                     {
-                        SyntaxToken corrected = precedingToken.WithoutLeadingWhitespace();
+                        SyntaxToken corrected = precedingToken.WithoutLeadingWhitespace().WithoutElasticTrivia();
                         replacements[precedingToken] = corrected;
                     }
                 }
@@ -84,7 +84,10 @@
                 if (missingFollowingSpace)
                 {
                     SyntaxToken intermediate = token.WithoutTrailingWhitespace();
-                    SyntaxToken corrected = intermediate.WithTrailingTrivia(intermediate.TrailingTrivia.Insert(0, SyntaxFactory.Whitespace(" ")));
+                    SyntaxToken corrected =
+                        intermediate
+                        .WithTrailingTrivia(intermediate.TrailingTrivia.Insert(0, SyntaxFactory.Whitespace(" ")))
+                        .WithoutElasticTrivia();
                     replacements[token] = corrected;
                 }
 

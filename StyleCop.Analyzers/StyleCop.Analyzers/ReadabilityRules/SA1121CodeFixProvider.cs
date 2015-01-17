@@ -3,12 +3,12 @@
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using StyleCop.Analyzers.SpacingRules;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1121UseBuiltInTypeAlias"/>.
@@ -75,7 +75,8 @@
                     SpecialType specialType = typeInfo.Value.Type.SpecialType;
                     var newNode = SyntaxFactory.PredefinedType(SyntaxFactory.Token(_predefinedSpecialTypes[specialType]))
                         .WithLeadingTrivia(node.GetLeadingTrivia())
-                        .WithTrailingTrivia(node.GetTrailingTrivia());
+                        .WithTrailingTrivia(node.GetTrailingTrivia())
+                        .WithoutElasticTrivia();
                     var newRoot = root.ReplaceNode(node, newNode);
 
                     context.RegisterFix(CodeAction.Create("Replace with built-in type", context.Document.WithSyntaxRoot(newRoot)), diagnostic);

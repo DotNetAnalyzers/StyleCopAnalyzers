@@ -84,14 +84,17 @@
                     if (!token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia))
                     {
                         SyntaxToken correctedOperatorNoSpace = token.WithoutTrailingWhitespace();
-                        SyntaxToken correctedOperator = correctedOperatorNoSpace.WithTrailingTrivia(correctedOperatorNoSpace.TrailingTrivia.Insert(0, SyntaxFactory.Whitespace(" ")));
+                        SyntaxToken correctedOperator =
+                            correctedOperatorNoSpace
+                            .WithTrailingTrivia(correctedOperatorNoSpace.TrailingTrivia.Insert(0, SyntaxFactory.Whitespace(" ")))
+                            .WithoutElasticTrivia();
                         replacements[token] = correctedOperator;
                     }
                 }
                 else if (token.Parent is PrefixUnaryExpressionSyntax)
                 {
                     // do not include a space after (includes new line characters)
-                    SyntaxToken correctedOperatorNoSpace = token.WithoutTrailingWhitespace(removeEndOfLineTrivia: true);
+                    SyntaxToken correctedOperatorNoSpace = token.WithoutTrailingWhitespace(removeEndOfLineTrivia: true).WithoutElasticTrivia();
                     replacements[token] = correctedOperatorNoSpace;
                 }
 

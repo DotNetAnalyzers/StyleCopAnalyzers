@@ -3,6 +3,7 @@
     using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class SpacingExtensions
     {
@@ -37,6 +38,37 @@
                 trivia = trivia.Where(i => !i.IsKind(SyntaxKind.EndOfLineTrivia));
 
             return SyntaxFactory.TriviaList(trivia);
+        }
+
+        public static TNode WithoutElasticTrivia<TNode>(this TNode node)
+            where TNode : SyntaxNode
+        {
+            return node.ReplaceTrivia(node.DescendantTrivia(), RemoveElasticAnnotation);
+        }
+
+        public static SyntaxToken WithoutElasticTrivia(this SyntaxToken token)
+        {
+            SyntaxTriviaList newLeadingTrivia = token.LeadingTrivia.Select(WithoutElasticTrivia).ToSyntaxTriviaList();
+            SyntaxTriviaList newTrailingTrivia = token.TrailingTrivia.Select(WithoutElasticTrivia).ToSyntaxTriviaList();
+            return token.WithLeadingTrivia(newLeadingTrivia).WithTrailingTrivia(newTrailingTrivia);
+        }
+
+        public static SyntaxTrivia WithoutElasticTrivia(this SyntaxTrivia trivia)
+        {
+            if (trivia.HasStructure)
+            {
+                return SyntaxFactory.Trivia(((StructuredTriviaSyntax)trivia.GetStructure()).WithoutElasticTrivia())
+                    .WithoutAnnotations(SyntaxAnnotation.ElasticAnnotation);
+            }
+            else
+            {
+                return trivia.WithoutAnnotations(SyntaxAnnotation.ElasticAnnotation);
+            }
+        }
+
+        private static SyntaxTrivia RemoveElasticAnnotation(SyntaxTrivia originalTrivia, SyntaxTrivia rewrittenTrivia)
+        {
+            return rewrittenTrivia.WithoutElasticTrivia();
         }
     }
 }
