@@ -942,6 +942,36 @@ default :
         }
 
         [TestMethod]
+        public async Task TestNameofStatement()
+        {
+            string statementWithoutSpace = @"string x = nameof(x);";
+
+            string statementWithSpace = @"string x = nameof (x);";
+
+            await TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
+
+            DiagnosticResult[] expected;
+
+            expected =
+                new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                        Message = "The keyword 'nameof' must not be followed by a space.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 7, 24)
+                            }
+                    }
+                };
+
+            await TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
+        }
+
+        [TestMethod]
         public async Task TestSizeofStatement()
         {
             string statementWithoutSpace = @"int x = sizeof(int);";
