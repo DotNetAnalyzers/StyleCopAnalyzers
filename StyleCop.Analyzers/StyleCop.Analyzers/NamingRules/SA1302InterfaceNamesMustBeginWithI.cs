@@ -1,4 +1,6 @@
-﻿namespace StyleCop.Analyzers.NamingRules
+﻿using StyleCop.Analyzers.Helpers;
+
+namespace StyleCop.Analyzers.NamingRules
 {
     using System;
     using System.Collections.Immutable;
@@ -36,6 +38,8 @@
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
+        private NamedTypeHelpers namedTypeHelpers = new NamedTypeHelpers();
+
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -58,6 +62,11 @@
             var namedSymbol = context.SemanticModel.GetDeclaredSymbol(context.Node) as INamedTypeSymbol;
 
             if (namedSymbol == null || namedSymbol.TypeKind != TypeKind.Interface)
+            {
+                return;
+            }
+
+            if (namedTypeHelpers.IsContainedInNativeMethodsClass(namedSymbol.ContainingType))
             {
                 return;
             }

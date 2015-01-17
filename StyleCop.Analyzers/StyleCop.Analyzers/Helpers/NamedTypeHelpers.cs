@@ -22,6 +22,11 @@
 
         internal bool IsContainedInNativeMethodsClass(INamedTypeSymbol type)
         {
+            if (type == null)
+            {
+                return false;
+            }
+
             if(IsNativeMethodsClass(type))
             {
                 return true;

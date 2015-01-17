@@ -127,6 +127,69 @@ public class Bar
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
+        [TestMethod]
+        public async Task TestComInterfaceInNativeMethodsClass()
+        {
+            var testCode = @"
+public class NativeMethods
+{
+    [ComImport]
+    public interface FileOpenDialog
+    {
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestComInterfaceInNativeMethodsClassWithIncorrectName()
+        {
+            var testCode = @"
+public class NativeMethodsClass
+{
+    [ComImport]
+    public interface FileOpenDialog
+    {
+    }
+}";
+
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Interface names must begin with I.",
+                    Severity = DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 5, 22)
+                        }
+                }
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestComInterfaceInInnerClassInNativeMethodsClass()
+        {
+            var testCode = @"
+public class MyNativeMethods
+{
+    public class FileOperations
+    {
+        [ComImport]
+        public interface FileOpenDialog111
+        {
+        }
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1302InterfaceNamesMustBeginWithI();
