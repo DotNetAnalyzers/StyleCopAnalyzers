@@ -153,14 +153,14 @@ public class Foo
 {
     public void Bar()
     {
-        string test = ""\{""""}"";
+        string test = $""{""""}"";
     }
 }";
             string newSource = @"public class Foo
 {
     public void Bar()
     {
-        string test = ""\{string.Empty}"";
+        string test = $""{string.Empty}"";
     }
 }";
 

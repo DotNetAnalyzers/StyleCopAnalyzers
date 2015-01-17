@@ -86,7 +86,7 @@
                     if (token.HasTrailingTrivia)
                         continue;
 
-                    SyntaxTrivia whitespace = SyntaxFactory.Whitespace(" ");
+                    SyntaxTrivia whitespace = SyntaxFactory.Whitespace(" ").WithoutFormatting();
                     SyntaxToken corrected = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, whitespace));
                     Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
                     context.RegisterFix(CodeAction.Create("Fix spacing", updatedDocument), diagnostic);
@@ -96,7 +96,7 @@
                     if (!token.HasTrailingTrivia)
                         continue;
 
-                    SyntaxToken corrected = token.WithoutTrailingWhitespace();
+                    SyntaxToken corrected = token.WithoutTrailingWhitespace().WithoutFormatting();
                     Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
                     context.RegisterFix(CodeAction.Create("Fix spacing", updatedDocument), diagnostic);
                 }
