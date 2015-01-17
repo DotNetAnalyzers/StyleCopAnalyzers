@@ -71,11 +71,21 @@
 
                 case SyntaxKind.CheckedKeyword:
                 case SyntaxKind.DefaultKeyword:
+                case SyntaxKind.NameOfKeyword:
                 case SyntaxKind.SizeOfKeyword:
                 case SyntaxKind.TypeOfKeyword:
                 case SyntaxKind.UncheckedKeyword:
                     isAddingSpace = false;
                     break;
+
+                case SyntaxKind.IdentifierToken:
+                    if (token.Text == "nameof")
+                    {
+                        // SA1000 would only have been reported for a nameof expression. No need to verify.
+                        goto case SyntaxKind.NameOfKeyword;
+                    }
+
+                    continue;
 
                 default:
                     break;
