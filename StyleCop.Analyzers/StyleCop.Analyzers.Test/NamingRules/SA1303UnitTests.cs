@@ -174,6 +174,17 @@ namespace Test
         }
 
         [TestMethod]
+        public async Task TestConstFieldStatingWithUnderscore()
+        {
+            var testCode = @"public class Foo
+{
+    public const string _Bar = ""baz"";
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
         public async Task TestFieldWhichIsNotConstStatingWithLowerCase()
         {
             var testCode = @"public class Foo
