@@ -68,27 +68,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private void HandleElementAccessExpression(SyntaxNodeAnalysisContext context)
         {
-            var symbol = context.SemanticModel.GetSymbolInfo(((ElementAccessExpressionSyntax) context.Node).Expression).Symbol;
-            var declaredSymbol = context.SemanticModel.GetDeclaredSymbol(((ElementAccessExpressionSyntax)context.Node).Expression);
-            var localSymbol = symbol as ILocalSymbol;
-            var parameterSymbol = symbol as IParameterSymbol;
-            var fieldSymbol = symbol as IFieldSymbol;
-            var propertySymbol = symbol as IPropertySymbol;
-            var methodSymbol = symbol as IMethodSymbol;
+            var tyleSymbol = context.SemanticModel.GetTypeInfo(((ElementAccessExpressionSyntax)context.Node).Expression);
 
-            var i = context.SemanticModel.GetIndexerGroup(((ElementAccessExpressionSyntax) context.Node).Expression);
-
-            //TODO: if it's indexer should be moved as a extension/helper
-            if ((localSymbol != null && localSymbol.Type.TypeKind != TypeKind.Array) ||
-                (fieldSymbol != null && fieldSymbol.Type.TypeKind != TypeKind.Array) ||
-                (propertySymbol != null && propertySymbol.Type.TypeKind != TypeKind.Array) ||
-                (methodSymbol != null && methodSymbol.ReturnType.TypeKind != TypeKind.Array) ||
-                (parameterSymbol != null && (parameterSymbol.IsThis || parameterSymbol.Type.TypeKind != TypeKind.Array)))
+            if ((tyleSymbol.Type != null && tyleSymbol.Type.TypeKind != TypeKind.Array) )
             {
 
                 var elementAccess = (ElementAccessExpressionSyntax)context.Node;
 
-                if (elementAccess.ArgumentList.IsMissing || elementAccess.ArgumentList.Arguments.Count == 0)
+                if (elementAccess.ArgumentList.IsMissing || !elementAccess.ArgumentList.Arguments.Any())
                 {
                     return;
                 }
@@ -97,7 +84,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     .Arguments
                     .Last();
 
-                if (elementAccess.ArgumentList.CloseBracketToken.IsMissing == false && lastArgument.IsMissing == false)
+                if (!elementAccess.ArgumentList.CloseBracketToken.IsMissing && !lastArgument.IsMissing)
                 {
                     CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(context, lastArgument,
                         elementAccess.ArgumentList.CloseBracketToken);
@@ -122,7 +109,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var invocationExpression = (InvocationExpressionSyntax) context.Node;
 
             if (invocationExpression.ArgumentList.IsMissing ||
-                invocationExpression.ArgumentList.Arguments.Count == 0)
+                !invocationExpression.ArgumentList.Arguments.Any())
             {
                 return;
             }
@@ -131,8 +118,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 .Arguments
                 .Last();
 
-            if (invocationExpression.ArgumentList.CloseParenToken.IsMissing == false &&
-                lastArgument.IsMissing == false)
+            if (!invocationExpression.ArgumentList.CloseParenToken.IsMissing &&
+                !lastArgument.IsMissing)
             {
                 CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(context, lastArgument,
                     invocationExpression.ArgumentList.CloseParenToken);
@@ -141,10 +128,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private void HandleObjectCreationExpression(SyntaxNodeAnalysisContext context)
         {
-            var objectCreation = (ObjectCreationExpressionSyntax)context.Node;
+            var objectCreation = (ObjectCreationExpressionSyntax) context.Node;
 
             if (objectCreation.ArgumentList.IsMissing ||
-           objectCreation.ArgumentList.Arguments.Count == 0)
+                !objectCreation.ArgumentList.Arguments.Any())
             {
                 return;
             }
@@ -153,13 +140,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 .Arguments
                 .Last();
 
-            if (objectCreation.ArgumentList.CloseParenToken.IsMissing == false &&
-                    lastArgument.IsMissing == false)
-                {
+            if (!objectCreation.ArgumentList.CloseParenToken.IsMissing &&
+                !lastArgument.IsMissing)
+            {
                 CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(context, lastArgument,
                     objectCreation.ArgumentList.CloseParenToken);
             }
-            
+
         }
 
 
@@ -167,8 +154,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var indexerDeclaration = (IndexerDeclarationSyntax)context.Node;
 
-            if (indexerDeclaration.ParameterList.IsMissing == false &&
-                indexerDeclaration.ParameterList.Parameters.Count == 0)
+            if (!indexerDeclaration.ParameterList.IsMissing &&
+                !indexerDeclaration.ParameterList.Parameters.Any())
             {
                 return;
             }
@@ -187,7 +174,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             BaseMethodDeclarationSyntax baseMethodDeclarationSyntax)
         {
             if (baseMethodDeclarationSyntax.ParameterList.IsMissing ||
-                baseMethodDeclarationSyntax.ParameterList.Parameters.Count == 0)
+                !baseMethodDeclarationSyntax.ParameterList.Parameters.Any())
             {
                 return;
             }

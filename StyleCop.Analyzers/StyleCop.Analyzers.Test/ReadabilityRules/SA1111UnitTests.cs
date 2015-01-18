@@ -340,7 +340,7 @@ class Foo
 
     public void Baz()
     {
-        new Foo(string.Empty
+        var f = new Foo(string.Empty
 );
     }
 }";
@@ -376,7 +376,7 @@ class Foo
 
     public void Baz()
     {
-        new Foo(string.Empty,
+        var f = new Foo(string.Empty,
             5
 );
     }
@@ -413,7 +413,7 @@ class Foo
 
     public void Baz()
     {
-        new Foo(string.Empty,
+        var f = new Foo(string.Empty,
             5);
     }
 }";
@@ -434,7 +434,7 @@ class Foo
 
     public void Baz()
     {
-        new Foo(
+        var f = new Foo(
 );
     }
 }";
@@ -577,7 +577,7 @@ class Foo
 {
     public void Test()
     {
-        var list = new List<int>();
+        var list = new System.Collections.Generic.List<int>();
         var i = list[1
 ];
     }
@@ -607,7 +607,7 @@ class Foo
             var testCode = @"
 class Foo
 {
-    private List<int> list = new List<int>();
+    private System.Collections.Generic.List<int> list = new System.Collections.Generic.List<int>();
 
     public void Test()
     {
@@ -640,7 +640,7 @@ class Foo
             var testCode = @"
 class Foo
 {
-    private List<int> List2 {get;set;}
+    private System.Collections.Generic.List<int> List2 {get;set;}
 
     public void Test()
     {
@@ -738,9 +738,9 @@ class Foo
             var testCode = @"
 class Foo
 {
-    public List<int> Get()
+    public System.Collections.Generic.List<int> Get()
     {
-        return new List<int>();
+        return new System.Collections.Generic.List<int>();
     }
     public void Test()
     {
@@ -773,7 +773,7 @@ class Foo
             var testCode = @"
 class Bar
 {
-    public List<int> MyLyst {get;set;}
+    public System.Collections.Generic.List<int> MyLyst {get;set;}
 }
 class Foo
 {
@@ -795,7 +795,7 @@ class Foo
                         Locations =
                             new[]
                             {
-                                new DiagnosticResultLocation("Test0.cs", 11, 1)
+                                new DiagnosticResultLocation("Test0.cs", 12, 1)
                             }
                     }
                 };
