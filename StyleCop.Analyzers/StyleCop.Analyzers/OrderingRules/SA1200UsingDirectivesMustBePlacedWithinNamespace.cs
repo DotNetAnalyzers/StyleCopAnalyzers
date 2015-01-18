@@ -1,6 +1,7 @@
 ﻿namespace StyleCop.Analyzers.OrderingRules
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -171,16 +172,48 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleUsingDirectiveSyntax, SyntaxKind.UsingDirective);
+            context.RegisterSyntaxNodeAction(HandleCompilationUnitSyntax, SyntaxKind.CompilationUnit);
         }
 
-        private void HandleUsingDirectiveSyntax(SyntaxNodeAnalysisContext context)
+        private void HandleCompilationUnitSyntax(SyntaxNodeAnalysisContext context)
         {
-            if (context.Node.Parent is NamespaceDeclarationSyntax)
+            CompilationUnitSyntax syntax = context.Node as CompilationUnitSyntax;
+            if (syntax == null)
                 return;
 
-            // Using directive must appear within a namespace declaration
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation()));
+            List<SyntaxNode> usingDirectives = new List<SyntaxNode>();
+            foreach (SyntaxNode child in syntax.ChildNodes())
+            {
+                switch (child.CSharpKind())
+                {
+                case SyntaxKind.ClassDeclaration:
+                case SyntaxKind.InterfaceDeclaration:
+                case SyntaxKind.EnumDeclaration:
+                case SyntaxKind.StructDeclaration:
+                case SyntaxKind.DelegateDeclaration:
+                    // Suppress SA1200 if file contains a type in the global namespace
+                    return;
+
+                case SyntaxKind.AttributeList:
+                    // suppress SA1200 if file contains an attribute in the global namespace
+                    return;
+
+                case SyntaxKind.UsingDirective:
+                    usingDirectives.Add(child);
+                    continue;
+
+                case SyntaxKind.ExternAliasDirective:
+                case SyntaxKind.NamespaceDeclaration:
+                default:
+                    continue;
+                }
+            }
+
+            foreach (var directive in usingDirectives)
+            {
+                // Using directive must appear within a namespace declaration
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, directive.GetLocation()));
+            }
         }
     }
 }
