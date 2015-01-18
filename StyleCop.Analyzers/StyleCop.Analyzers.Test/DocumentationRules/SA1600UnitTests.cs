@@ -335,10 +335,7 @@ public interface InterfaceName
 {{
 
     
-    string MemberName
-    {
-        add; remove;
-    }
+    event System.Action MemberName;
 }}";
             var testCodeWithDocumentation = @"    /// <summary>
     /// A summary
@@ -347,10 +344,7 @@ public interface InterfaceName
 {{
     /// <summary>A summary.</summary>
     
-    string MemberName
-    {
-        add; remove;
-    }
+    event System.Action MemberName;
 }}";
 
 
@@ -367,7 +361,19 @@ public interface InterfaceName
                         Locations =
                             new[]
                             {
-                                new DiagnosticResultLocation("Test0.cs", 8, 12)
+                                new DiagnosticResultLocation("Test0.cs", 8, 25)
+                            }
+                    },
+                    // Workaround because the diagnostic is called twice for the SyntaxNode
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                        Message = "Elements must be documented",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 8, 25)
                             }
                     }
                 };
@@ -558,7 +564,7 @@ public class OuterClass
 {{
 
     {0}
-    string this {{ get {{ return ""; }} set {{ }} }}
+    string this[string key] {{ get {{ return ""; }} set {{ }} }}
 }}";
             var testCodeWithDocumentation = @"    /// <summary>
     /// A summary
@@ -567,7 +573,7 @@ public class OuterClass
 {{
     /// <summary>A summary.</summary>
     {0}
-    string this {{ get {{ return ""; }} set {{ }} }}
+    string this[string key] {{ get {{ return ""; }} set {{ }} }}
 }}";
 
             DiagnosticResult[] expected;
@@ -598,7 +604,7 @@ public class OuterClass
     /// </summary>
 public class OuterClass
 {{
-    event System.Action _myEvent;
+    System.Action _myEvent;
 
     {0}
     event System.Action MyEvent
@@ -618,7 +624,7 @@ public class OuterClass
     /// </summary>
 public class OuterClass
 {{
-    event System.Action _myEvent;
+    System.Action _myEvent;
     /// <summary>A summary.</summary>
     {0}
     event System.Action MyEvent
