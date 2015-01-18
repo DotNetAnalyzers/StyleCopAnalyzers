@@ -22,7 +22,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [TestMethod]
-        public async Task TestConstFieldStatingWithLowerCase()
+        public async Task TestConstFieldStartingWithLowerCase()
         {
             var testCode = @"public class Foo
 {
@@ -48,7 +48,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [TestMethod]
-        public async Task TestConstFieldStatingWithLowerCaseNativeMethodsExampleOne()
+        public async Task TestConstFieldStartingWithLowerCaseNativeMethodsExampleOne()
         {
             var testCode = @"public class NativeMethods    
 {        
@@ -59,7 +59,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [TestMethod]
-        public async Task TestConstFieldStatingWithLowerCaseNativeMethodsExampleTwo()
+        public async Task TestConstFieldStartingWithLowerCaseNativeMethodsExampleTwo()
         {
             var testCode = @"public class MyNativeMethods    
 {        
@@ -70,7 +70,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [TestMethod]
-        public async Task TestConstFieldStatingWithLowerCaseInnerClassInNativeMethods()
+        public async Task TestConstFieldStartingWithLowerCaseInnerClassInNativeMethods()
         {
             var testCode = @"public class NativeMethods    
 {        
@@ -84,7 +84,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [TestMethod]
-        public async Task TestConstFieldStatingWithLowerCaseInnerInnerClassInNativeMethods()
+        public async Task TestConstFieldStartingWithLowerCaseInnerInnerClassInNativeMethods()
         {
             var testCode = @"public class NativeMethods    
 {        
@@ -101,7 +101,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [TestMethod]
-        public async Task TestConstFieldStatingWithLowerCaseNativeMethodsIncorrectName()
+        public async Task TestConstFieldStartingWithLowerCaseNativeMethodsIncorrectName()
         {
             var testCode = @"public class MyNativeMethodsClass    
 {        
@@ -127,7 +127,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [TestMethod]
-        public async Task TestConstFieldStatingWithLowerCaseInnerInnerClassInNativeMethodsIncorrectName()
+        public async Task TestConstFieldStartingWithLowerCaseInnerInnerClassInNativeMethodsIncorrectName()
         {
             var testCode = @"
 namespace Test
@@ -163,7 +163,7 @@ namespace Test
         }
 
         [TestMethod]
-        public async Task TestConstFieldStatingWithUpperCase()
+        public async Task TestConstFieldStartingWithUpperCase()
         {
             var testCode = @"public class Foo
 {
@@ -174,7 +174,19 @@ namespace Test
         }
 
         [TestMethod]
-        public async Task TestFieldWhichIsNotConstStatingWithLowerCase()
+        public async Task TestConstFieldStartingWithUnderscore()
+        {
+            var testCode = @"public class Foo
+{
+    public const string _Bar = ""baz"";
+}";
+
+            // Fields starting with an underscore are reported as SA1309
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestFieldWhichIsNotConstStartingWithLowerCase()
         {
             var testCode = @"public class Foo
 {
