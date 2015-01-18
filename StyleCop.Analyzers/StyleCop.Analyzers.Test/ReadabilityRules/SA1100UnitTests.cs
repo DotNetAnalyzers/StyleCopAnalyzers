@@ -43,7 +43,7 @@ public class FooChild : Foo
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A call to a member from an inherited class begins with ‘base.’, and the local class does not contain an override or implementation of the member",
+                    Message = "Do not prefix calls with base unless local implementation exists",
                     Severity =  DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -81,7 +81,7 @@ public class FooChild : Foo
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A call to a member from an inherited class begins with ‘base.’, and the local class does not contain an override or implementation of the member",
+                    Message = "Do not prefix calls with base unless local implementation exists",
                     Severity =  DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -150,7 +150,7 @@ public class FooChild : Foo
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A call to a member from an inherited class begins with ‘base.’, and the local class does not contain an override or implementation of the member",
+                    Message = "Do not prefix calls with base unless local implementation exists",
                     Severity =  DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -215,7 +215,7 @@ public class FooChild : Foo
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A call to a member from an inherited class begins with ‘base.’, and the local class does not contain an override or implementation of the member",
+                    Message = "Do not prefix calls with base unless local implementation exists",
                     Severity =  DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -256,7 +256,7 @@ public class FooChild : Foo
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A call to a member from an inherited class begins with ‘base.’, and the local class does not contain an override or implementation of the member",
+                    Message = "Do not prefix calls with base unless local implementation exists",
                     Severity =  DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -298,7 +298,7 @@ public class FooChild : Foo
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A call to a member from an inherited class begins with ‘base.’, and the local class does not contain an override or implementation of the member",
+                    Message = "Do not prefix calls with base unless local implementation exists",
                     Severity =  DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -340,7 +340,7 @@ public class FooChild : Foo
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A call to a member from an inherited class begins with ‘base.’, and the local class does not contain an override or implementation of the member",
+                    Message = "Do not prefix calls with base unless local implementation exists",
                     Severity =  DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -382,7 +382,7 @@ public class FooChild : Foo
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A call to a member from an inherited class begins with ‘base.’, and the local class does not contain an override or implementation of the member",
+                    Message = "Do not prefix calls with base unless local implementation exists",
                     Severity =  DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -424,7 +424,7 @@ public class FooChild : Foo
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A call to a member from an inherited class begins with ‘base.’, and the local class does not contain an override or implementation of the member",
+                    Message = "Do not prefix calls with base unless local implementation exists",
                     Severity =  DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -466,7 +466,7 @@ public class FooChild : Foo
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A call to a member from an inherited class begins with ‘base.’, and the local class does not contain an override or implementation of the member",
+                    Message = "Do not prefix calls with base unless local implementation exists",
                     Severity =  DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -508,7 +508,7 @@ public class FooChild : Foo
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A call to a member from an inherited class begins with ‘base.’, and the local class does not contain an override or implementation of the member",
+                    Message = "Do not prefix calls with base unless local implementation exists",
                     Severity =  DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -550,7 +550,7 @@ public class FooChild : Foo
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A call to a member from an inherited class begins with ‘base.’, and the local class does not contain an override or implementation of the member",
+                    Message = "Do not prefix calls with base unless local implementation exists",
                     Severity =  DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -701,7 +701,7 @@ public class FooChild : Foo
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A call to a member from an inherited class begins with ‘base.’, and the local class does not contain an override or implementation of the member",
+                    Message = "Do not prefix calls with base unless local implementation exists",
                     Severity =  DiagnosticSeverity.Warning,
                     Locations =
                         new[]

@@ -56,7 +56,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     {
         public const string DiagnosticId = "SA1100";
         internal const string Title = "Do not prefix calls with base unless local implementation exists";
-        internal const string MessageFormat = "A call to a member from an inherited class begins with ‘base.’, and the local class does not contain an override or implementation of the member";
+        internal const string MessageFormat = "Do not prefix calls with base unless local implementation exists";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
         internal const string Description = "A call to a member from an inherited class begins with 'base.', and the local class does not contain an override or implementation of the member.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1100.html";
