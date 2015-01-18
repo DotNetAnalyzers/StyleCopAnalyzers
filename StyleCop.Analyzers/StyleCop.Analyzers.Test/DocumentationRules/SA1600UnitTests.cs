@@ -771,17 +771,6 @@ public class OuterClass
                             {
                                 new DiagnosticResultLocation("Test0.cs", 8, 19)
                             }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Elements must be documented",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 19)
-                            }
                     }
                 };
 
