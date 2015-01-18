@@ -35,7 +35,7 @@ public interface Foo
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Interface names must begin with I.",
+                    Message = "Interface names must begin with I",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -61,7 +61,7 @@ public interface iFoo
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Interface names must begin with I.",
+                    Message = "Interface names must begin with I",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -90,7 +90,7 @@ public class Bar
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Interface names must begin with I.",
+                    Message = "Interface names must begin with I",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -159,7 +159,7 @@ public class NativeMethodsClass
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Interface names must begin with I.",
+                    Message = "Interface names must begin with I",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
