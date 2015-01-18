@@ -1,17 +1,13 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using StyleCop.Analyzers.ReadabilityRules;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using TestHelper;
-
-namespace StyleCop.Analyzers.Test.ReadabilityRules
+﻿namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using StyleCop.Analyzers.ReadabilityRules;
+    using TestHelper;
+
     [TestClass]
     public class SA1100UnitTests : CodeFixVerifier
     {
@@ -778,8 +774,22 @@ public struct S
     }
 }";
 
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Do not prefix calls with base unless local implementation exists",
+                    Severity =  DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 6, 16)
+                        }
+                }
+            };
 
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
