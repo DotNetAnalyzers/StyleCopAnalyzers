@@ -33,7 +33,7 @@
 /// <summary>
 /// Some Documentation
 /// </summary>
-public partial {0} Foo
+public partial {0} TypeName
 {{
 }}";
             await VerifyCSharpDiagnosticAsync(string.Format(testCode, "class"), EmptyDiagnosticResults, CancellationToken.None);
@@ -46,7 +46,7 @@ public partial {0} Foo
         {
             var testCode = @"
 public partial {0}
-Foo
+TypeName
 {{
 }}";
 
@@ -80,7 +80,7 @@ Foo
 /// 
 /// </summary>
 public partial {0} 
-Foo
+TypeName
 {{
 }}";
 
@@ -113,12 +113,12 @@ Foo
 /// <summary>
 /// Some Documentation
 /// </summary>
-public partial class Foo
+public partial class TypeName
 {{
     /// <summary>
     /// Some Documentation
     /// </summary>
-    partial void Foo();
+    partial void MemberName();
 }}";
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
@@ -130,9 +130,9 @@ public partial class Foo
 /// <summary>
 /// Some Documentation
 /// </summary>
-public partial class Foo
+public partial class TypeName
 {{
-    partial void Foo();
+    partial void MemberName();
 }}";
 
             DiagnosticResult[] expected;
@@ -163,12 +163,12 @@ public partial class Foo
 /// <summary>
 /// Some Documentation
 /// </summary>
-public partial class Foo
+public partial class TypeName
 {{
     /// <summary>
     /// 
     /// </summary>
-    partial void Foo();
+    partial void MemberName();
 }}";
 
             DiagnosticResult[] expected;

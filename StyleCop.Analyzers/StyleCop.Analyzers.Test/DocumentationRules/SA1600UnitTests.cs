@@ -30,12 +30,12 @@
         {
             var testCodeWithoutDocumentation = @"
 {0} {1}
-Foo
+TypeName
 {{
 }}";
             var testCodeWithDocumentation = @"/// <summary> A summary. </summary>
 {0} {1}
-Foo
+TypeName
 {{
 }}";
 
@@ -69,7 +69,7 @@ public class OuterClass
 {{
 
     {0} {1}
-    Foo
+    TypeName
     {{
     }}
 }}";
@@ -80,7 +80,7 @@ public class OuterClass
 {{
     /// <summary>A summary.</summary>
     {0} {1}
-    Foo
+    TypeName
     {{
     }}
 }}";
@@ -110,12 +110,12 @@ public class OuterClass
         {
             var testCodeWithoutDocumentation = @"
 {0} delegate void
-Foo()
+DelegateName()
 {{
 }}";
             var testCodeWithDocumentation = @"/// <summary> A summary. </summary>
 {0} delegate void
-Foo()
+DelegateName()
 {{
 }}";
 
@@ -149,7 +149,7 @@ public class OuterClass
 {{
 
     {0} delegate void
-    Foo()
+    DelegateName()
     {{
     }}
 }}";
@@ -160,7 +160,7 @@ public class OuterClass
 {{
     /// <summary>A summary.</summary>
     {0} delegate void
-    Foo()
+    DelegateName()
     {{
     }}
 }}";
@@ -195,7 +195,7 @@ public class OuterClass
 {{
 
     {0} void
-    Foo()
+    MemberName()
     {{
     }}
 }}";
@@ -206,7 +206,7 @@ public class OuterClass
 {{
     /// <summary>A summary.</summary>
     {0} void
-    Foo()
+    MemberName()
     {{
     }}
 }}";
@@ -237,22 +237,22 @@ public class OuterClass
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
     /// </summary>
-public interface Interface
+public interface InterfaceName
 {{
 
     void
-    Foo()
+    MemberName()
     {{
     }}
 }}";
             var testCodeWithDocumentation = @"    /// <summary>
     /// A summary
     /// </summary>
-public interface Interface
+public interface InterfaceName
 {{
     /// <summary>A summary.</summary>
     void
-    Foo()
+    MemberName()
     {
     }
 }}";
@@ -283,11 +283,11 @@ public interface Interface
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
     /// </summary>
-public interface Interface
+public interface InterfaceName
 {{
 
     
-    string Foo
+    string MemberName
     {
         get; set;
     }
@@ -295,11 +295,11 @@ public interface Interface
             var testCodeWithDocumentation = @"    /// <summary>
     /// A summary
     /// </summary>
-public interface Interface
+public interface InterfaceName
 {{
     /// <summary>A summary.</summary>
     
-    string Foo
+    string MemberName
     {
         get; set;
     }
@@ -331,11 +331,11 @@ public interface Interface
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
     /// </summary>
-public interface Interface
+public interface InterfaceName
 {{
 
     
-    string Foo
+    string MemberName
     {
         add; remove;
     }
@@ -343,11 +343,11 @@ public interface Interface
             var testCodeWithDocumentation = @"    /// <summary>
     /// A summary
     /// </summary>
-public interface Interface
+public interface InterfaceName
 {{
     /// <summary>A summary.</summary>
     
-    string Foo
+    string MemberName
     {
         add; remove;
     }
@@ -380,20 +380,20 @@ public interface Interface
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
     /// </summary>
-public interface Interface
+public interface InterfaceName
 {{
 
     string
-    this[string foo] { get; set; }
+    this[string key] { get; set; }
 }}";
             var testCodeWithDocumentation = @"    /// <summary>
     /// A summary
     /// </summary>
-public interface Interface
+public interface InterfaceName
 {{
     /// <summary>A summary.</summary>
     string
-    this[string foo] { get; set; }
+    this[string key] { get; set; }
 }}";
 
             DiagnosticResult[] expected;
@@ -516,7 +516,7 @@ public class OuterClass
 {{
 
     {0}
-    string Foo {{ get; set; }}
+    string MemberName {{ get; set; }}
 }}";
             var testCodeWithDocumentation = @"    /// <summary>
     /// A summary
@@ -525,7 +525,7 @@ public class OuterClass
 {{
     /// <summary>A summary.</summary>
     {0}
-    string Foo {{ get; set; }}
+    string MemberName {{ get; set; }}
 }}";
 
             DiagnosticResult[] expected;
