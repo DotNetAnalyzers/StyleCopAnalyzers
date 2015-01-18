@@ -1101,6 +1101,66 @@ public namespace {0}
             }
         }
 
+        [TestMethod]
+        public async Task TestNameOf()
+        {
+            string testCode = @"
+namespace Foo
+{{
+    public class Foo
+    {{
+        public void Bar()
+        {{
+            string test = nameof({0});
+        }}
+    }}
+}}
+";
+            foreach (var item in _allTypes)
+            {
+                await VerifyCSharpDiagnosticAsync(string.Format(testCode, "System." + item.Item2), EmptyDiagnosticResults, CancellationToken.None);
+            }
+        }
+
+        [TestMethod]
+        public async Task TestNameOfInnerMethod()
+        {
+            string testCode = @"
+namespace Foo
+{{
+    public class Foo
+    {{
+        public void Bar()
+        {{
+            string test = nameof({0}.ToString);
+        }}
+    }}
+}}
+";
+            DiagnosticResult[] expected;
+
+            expected =
+                new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                        Message = "Use built-in type alias",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 8, 41)
+                            }
+                    }
+                };
+            foreach (var item in _allTypes)
+            {
+                await VerifyCSharpDiagnosticAsync(string.Format(testCode, "System." + item.Item2), expected, CancellationToken.None);
+                await VerifyCSharpDiagnosticAsync(string.Format(testCode, item.Item1), EmptyDiagnosticResults, CancellationToken.None);
+            }
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1121UseBuiltInTypeAlias();
