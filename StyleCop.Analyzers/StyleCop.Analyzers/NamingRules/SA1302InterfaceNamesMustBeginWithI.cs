@@ -38,8 +38,6 @@ namespace StyleCop.Analyzers.NamingRules
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
-        private NamedTypeHelpers namedTypeHelpers = new NamedTypeHelpers();
-
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -58,20 +56,16 @@ namespace StyleCop.Analyzers.NamingRules
         private void HandleInterfaceDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
             var interfaceDeclaration = (InterfaceDeclarationSyntax) context.Node;
+            if (interfaceDeclaration.Identifier.IsMissing)
+                return;
 
-            var namedSymbol = context.SemanticModel.GetDeclaredSymbol(context.Node) as INamedTypeSymbol;
-
-            if (namedSymbol == null || namedSymbol.TypeKind != TypeKind.Interface)
+            if (NamedTypeHelpers.IsContainedInNativeMethodsClass(interfaceDeclaration))
             {
                 return;
             }
 
-            if (namedTypeHelpers.IsContainedInNativeMethodsClass(namedSymbol.ContainingType))
-            {
-                return;
-            }
-
-            if (namedSymbol.Name != null && !namedSymbol.Name.StartsWith("I", StringComparison.Ordinal))
+            string name = interfaceDeclaration.Identifier.ValueText;
+            if (name != null && !name.StartsWith("I", StringComparison.Ordinal))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, interfaceDeclaration.Identifier.GetLocation()));
             }
