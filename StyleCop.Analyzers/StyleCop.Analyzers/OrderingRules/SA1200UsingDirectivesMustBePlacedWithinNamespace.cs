@@ -176,8 +176,36 @@
 
         private void HandleUsingDirectiveSyntax(SyntaxNodeAnalysisContext context)
         {
-            if (context.Node.Parent is NamespaceDeclarationSyntax)
+            var parent = context.Node.Parent;
+            if (parent == null)
                 return;
+
+            if (parent is NamespaceDeclarationSyntax)
+                return;
+
+            foreach (SyntaxNode child in parent.ChildNodes())
+            {
+                switch (child.CSharpKind())
+                {
+                case SyntaxKind.ClassDeclaration:
+                case SyntaxKind.InterfaceDeclaration:
+                case SyntaxKind.EnumDeclaration:
+                case SyntaxKind.StructDeclaration:
+                case SyntaxKind.DelegateDeclaration:
+                    // Suppress SA1200 if file contains a type in the global namespace
+                    return;
+
+                case SyntaxKind.AttributeList:
+                    // suppress SA1200 if file contains an attribute in the global namespace
+                    return;
+
+                case SyntaxKind.ExternAliasDirective:
+                case SyntaxKind.UsingDirective:
+                case SyntaxKind.NamespaceDeclaration:
+                default:
+                    continue;
+                }
+            }
 
             // Using directive must appear within a namespace declaration
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation()));
