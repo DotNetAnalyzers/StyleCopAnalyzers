@@ -34,7 +34,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Non-private readonly fields must begin with upper-case letter.",
+                    Message = "Non-private readonly fields must begin with upper-case letter",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -46,7 +46,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Non-private readonly fields must begin with upper-case letter.",
+                    Message = "Non-private readonly fields must begin with upper-case letter",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -83,7 +83,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Non-private readonly fields must begin with upper-case letter.",
+                    Message = "Non-private readonly fields must begin with upper-case letter",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -95,7 +95,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Non-private readonly fields must begin with upper-case letter.",
+                    Message = "Non-private readonly fields must begin with upper-case letter",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -132,7 +132,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Non-private readonly fields must begin with upper-case letter.",
+                    Message = "Non-private readonly fields must begin with upper-case letter",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -144,7 +144,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Non-private readonly fields must begin with upper-case letter.",
+                    Message = "Non-private readonly fields must begin with upper-case letter",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
