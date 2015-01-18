@@ -1,8 +1,10 @@
 ﻿namespace StyleCop.Analyzers.NamingRules
 {
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The name of a constant C# field must begin with an upper-case letter.
@@ -22,13 +24,13 @@
     {
         public const string DiagnosticId = "SA1303";
         internal const string Title = "Const field names must begin with upper-case letter";
-        internal const string MessageFormat = "TODO: Message format";
+        internal const string MessageFormat = "Const field names must begin with upper-case letter.";
         internal const string Category = "StyleCop.CSharp.NamingRules";
         internal const string Description = "The name of a constant C# field must begin with an upper-case letter.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1303.html";
 
         public static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
@@ -45,7 +47,36 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSymbolAction(HandleFieldDeclaration , SymbolKind.Field);
+        }
+
+        private void HandleFieldDeclaration(SymbolAnalysisContext context)
+        {
+            var symbol = context.Symbol as IFieldSymbol;
+
+            if (symbol == null || !symbol.IsConst)
+            {
+                return;
+            }
+
+            if(NamedTypeHelpers.IsContainedInNativeMethodsClass(symbol.ContainingType))
+            {
+                return;
+            }
+
+            // This code uses char.IsLower(...) instead of !char.IsUpper(...) for all of the following reasons:
+            //  1. Fields starting with `_` should be reported as SA1309 instead of this diagnostic
+            //  2. Foreign languages may not have upper case variants for certain characters
+            //  3. This diagnostic appears targeted for "English" identifiers.
+            //
+            // See DotNetAnalyzers/StyleCopAnalyzers#369 for additional information:
+            // https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/369
+            if (!string.IsNullOrEmpty(symbol.Name) &&
+                char.IsLower(symbol.Name[0]) &&
+                symbol.Locations.Any())
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, symbol.Locations[0]));
+            }
         }
     }
 }

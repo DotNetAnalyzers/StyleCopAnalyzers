@@ -86,6 +86,7 @@
     <Compile Include="DocumentationRules\SA1648InheritDocMustBeUsedWithInheritingClass.cs" />
     <Compile Include="DocumentationRules\SA1649FileHeaderFileNameDocumentationMustMatchTypeName.cs" />
     <Compile Include="DocumentationRules\SA1650ElementDocumentationMustBeSpelledCorrectly.cs" />
+    <Compile Include="Helpers\NamedTypeHelpers.cs" />
     <Compile Include="LayoutRules\SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine.cs" />
     <Compile Include="LayoutRules\SA1501StatementMustNotBeOnASingleLine.cs" />
     <Compile Include="LayoutRules\SA1502ElementMustNotBeOnASingleLine.cs" />
@@ -105,6 +106,7 @@
     <Compile Include="LayoutRules\SA1516ElementsMustBeSeparatedByBlankLine.cs" />
     <Compile Include="LayoutRules\SA1517CodeMustNotContainBlankLinesAtStartOfFile.cs" />
     <Compile Include="LayoutRules\SA1518CodeMustNotContainBlankLinesAtEndOfFile.cs" />
+    <Compile Include="MaintainabilityRules\SA1119CodeFixProvider.cs" />
     <Compile Include="MaintainabilityRules\SA1119StatementMustNotUseUnnecessaryParenthesis.cs" />
     <Compile Include="MaintainabilityRules\SA1400AccessModifierMustBeDeclared.cs" />
     <Compile Include="MaintainabilityRules\SA1401FieldsMustBePrivate.cs" />
@@ -114,10 +116,13 @@
     <Compile Include="MaintainabilityRules\SA1405DebugAssertMustProvideMessageText.cs" />
     <Compile Include="MaintainabilityRules\SA1406DebugFailMustProvideMessageText.cs" />
     <Compile Include="MaintainabilityRules\SA1407ArithmeticExpressionsMustDeclarePrecedence.cs" />
+    <Compile Include="MaintainabilityRules\SA1407SA1408CodeFixProvider.cs" />
     <Compile Include="MaintainabilityRules\SA1408ConditionalExpressionsMustDeclarePrecedence.cs" />
     <Compile Include="MaintainabilityRules\SA1409RemoveUnnecessaryCode.cs" />
     <Compile Include="MaintainabilityRules\SA1410RemoveDelegateParenthesisWhenPossible.cs" />
+    <Compile Include="MaintainabilityRules\SA1410SA1411CodeFixProvider.cs" />
     <Compile Include="MaintainabilityRules\SA1411AttributeConstructorMustNotUseUnnecessaryParenthesis.cs" />
+    <Compile Include="MaintainabilityRules\SystemDiagnosticsDebugDiagnosticBase.cs" />
     <Compile Include="NamingRules\SA1300ElementMustBeginWithUpperCaseLetter.cs" />
     <Compile Include="NamingRules\SA1301ElementMustBeginWithLowerCaseLetter.cs" />
     <Compile Include="NamingRules\SA1302InterfaceNamesMustBeginWithI.cs" />
@@ -167,7 +172,9 @@
     <Compile Include="ReadabilityRules\SA1117ParametersMustBeOnSameLineOrSeparateLines.cs" />
     <Compile Include="ReadabilityRules\SA1118ParameterMustNotSpanMultipleLines.cs" />
     <Compile Include="ReadabilityRules\SA1120CommentsMustContainText.cs" />
+    <Compile Include="ReadabilityRules\SA1121CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1121UseBuiltInTypeAlias.cs" />
+    <Compile Include="ReadabilityRules\SA1122CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1122UseStringEmptyForEmptyStrings.cs" />
     <Compile Include="ReadabilityRules\SA1123DoNotPlaceRegionsWithinElements.cs" />
     <Compile Include="ReadabilityRules\SA1124DoNotUseRegions.cs" />
@@ -234,20 +241,16 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CodeAnalysis">
-      <HintPath>..\..\packages\Microsoft.CodeAnalysis.Common.1.0.0-beta1-20141031-01\lib\portable-net45+win8\Microsoft.CodeAnalysis.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\packages\Microsoft.CodeAnalysis.Common.1.0.0.0-beta2\lib\portable-net45+win8\Microsoft.CodeAnalysis.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.CSharp">
-      <HintPath>..\..\packages\Microsoft.CodeAnalysis.CSharp.1.0.0-beta1-20141031-01\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\packages\Microsoft.CodeAnalysis.CSharp.1.0.0.0-beta2\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.CSharp.Workspaces">
-      <HintPath>..\..\packages\Microsoft.CodeAnalysis.CSharp.Workspaces.1.0.0-beta1-20141031-01\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.Workspaces.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\packages\Microsoft.CodeAnalysis.CSharp.Workspaces.1.0.0.0-beta2\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.Workspaces.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.Workspaces">
-      <HintPath>..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.0.0-beta1-20141031-01\lib\portable-net45+win8\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.0.0.0-beta2\lib\portable-net45+win8\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
     </Reference>
     <Reference Include="System.Collections.Immutable">
       <HintPath>..\..\packages\System.Collections.Immutable.1.1.32-beta\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>

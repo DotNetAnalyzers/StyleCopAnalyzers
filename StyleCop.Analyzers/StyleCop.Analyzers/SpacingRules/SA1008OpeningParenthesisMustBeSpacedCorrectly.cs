@@ -123,6 +123,8 @@
 
                 case SyntaxKind.CheckedKeyword:
                 case SyntaxKind.DefaultKeyword:
+                case SyntaxKind.NameOfKeyword:
+                case SyntaxKind.NewKeyword:
                 case SyntaxKind.SizeOfKeyword:
                 case SyntaxKind.TypeOfKeyword:
                 case SyntaxKind.UncheckedKeyword:
@@ -137,6 +139,19 @@
                     allowLeadingNoSpace = false;
                     allowLeadingSpace = true;
                     break;
+
+                case SyntaxKind.IdentifierToken:
+                    if (precedingToken.Text == "nameof")
+                    {
+                        if (precedingToken.Parent is IdentifierNameSyntax && precedingToken.Parent.Parent is InvocationExpressionSyntax)
+                        {
+                            // allow this to be reported as SA1000
+                            // TODO: this code should not ignore nameof(...) which is not actually a Name Of Expression
+                            goto case SyntaxKind.NameOfKeyword;
+                        }
+                    }
+
+                    goto default;
 
                 default:
                     if (precedingToken.Parent is BinaryExpressionSyntax
