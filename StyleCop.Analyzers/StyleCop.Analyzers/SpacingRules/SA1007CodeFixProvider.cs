@@ -50,7 +50,7 @@
                     continue;
 
                 SyntaxTrivia whitespace = SyntaxFactory.Whitespace(" ");
-                SyntaxToken corrected = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, whitespace));
+                SyntaxToken corrected = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, whitespace)).WithoutFormatting();
                 Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
                 context.RegisterFix(CodeAction.Create("Insert space", updatedDocument), diagnostic);
             }

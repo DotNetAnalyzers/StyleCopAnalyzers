@@ -2,7 +2,10 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A field name in C# is prefixed with <c>m_</c> or <c>s_</c>.
@@ -28,7 +31,7 @@
     {
         public const string DiagnosticId = "SA1308";
         internal const string Title = "Variable names must not be prefixed";
-        internal const string MessageFormat = "TODO: Message format";
+        internal const string MessageFormat = "Field '{0}' must not begin with the prefix '{1}'";
         internal const string Category = "StyleCop.CSharp.NamingRules";
         internal const string Description = "A field name in C# is prefixed with 'm_' or 's_'.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1308.html";
@@ -51,7 +54,36 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(HandleFieldDeclarationSyntax, SyntaxKind.FieldDeclaration);
+        }
+
+        private void HandleFieldDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        {
+            FieldDeclarationSyntax syntax = (FieldDeclarationSyntax)context.Node;
+            if (NamedTypeHelpers.IsContainedInNativeMethodsClass(syntax))
+                return;
+
+            var variables = syntax.Declaration?.Variables;
+            if (variables == null)
+                return;
+
+            foreach (VariableDeclaratorSyntax variableDeclarator in variables.Value)
+            {
+                if (variableDeclarator == null)
+                    continue;
+
+                var identifier = variableDeclarator.Identifier;
+                if (identifier.IsMissing)
+                    continue;
+
+                if (!identifier.ValueText.StartsWith("m_") && !identifier.ValueText.StartsWith("s_"))
+                    continue;
+
+                // Field '{name}' must not begin with the prefix '{prefix}'
+                string name = identifier.ValueText;
+                string prefix = name.Substring(0, 2);
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), name, prefix));
+            }
         }
     }
 }

@@ -29,10 +29,8 @@
         internal const string Description = "The name of a constant C# field must begin with an upper-case letter.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1303.html";
 
-        private NamedTypeHelpers namedTypeHelpers = new NamedTypeHelpers();
-
         public static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
@@ -61,13 +59,20 @@
                 return;
             }
 
-            if(namedTypeHelpers.IsContainedInNativeMethodsClass(symbol.ContainingType))
+            if(NamedTypeHelpers.IsContainedInNativeMethodsClass(symbol.ContainingType))
             {
                 return;
             }
 
-            if (!string.IsNullOrEmpty(symbol.Name) && 
-                char.IsLower(symbol.Name[0]) && 
+            // This code uses char.IsLower(...) instead of !char.IsUpper(...) for all of the following reasons:
+            //  1. Fields starting with `_` should be reported as SA1309 instead of this diagnostic
+            //  2. Foreign languages may not have upper case variants for certain characters
+            //  3. This diagnostic appears targeted for "English" identifiers.
+            //
+            // See DotNetAnalyzers/StyleCopAnalyzers#369 for additional information:
+            // https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/369
+            if (!string.IsNullOrEmpty(symbol.Name) &&
+                char.IsLower(symbol.Name[0]) &&
                 symbol.Locations.Any())
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, symbol.Locations[0]));

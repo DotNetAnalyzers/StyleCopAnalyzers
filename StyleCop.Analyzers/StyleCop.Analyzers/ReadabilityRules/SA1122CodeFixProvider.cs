@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.ReadabilityRules
 {
+    using System;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
@@ -7,8 +8,7 @@
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
-    using System;
-
+    using StyleCop.Analyzers.SpacingRules;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1000KeywordsMustBeSpacedCorrectly"/>.
@@ -49,11 +49,12 @@
                 {
                     var identifierNameSyntax = SyntaxFactory.IdentifierName(nameof(String.Empty));
                     var stringKeyword = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.StringKeyword));
-                    var newNode = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, stringKeyword, identifierNameSyntax);
+                    var newNode = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, stringKeyword, identifierNameSyntax)
+                        .WithoutFormatting();
 
                     var newSyntaxRoot = syntaxRoot.ReplaceNode(node, newNode);
 
-                    context.RegisterFix(CodeAction.Create("Replace with \{newNode}", context.Document.WithSyntaxRoot(newSyntaxRoot)), diagnostic);
+                    context.RegisterFix(CodeAction.Create($"Replace with {newNode}", context.Document.WithSyntaxRoot(newSyntaxRoot)), diagnostic);
                 }
             }
         }

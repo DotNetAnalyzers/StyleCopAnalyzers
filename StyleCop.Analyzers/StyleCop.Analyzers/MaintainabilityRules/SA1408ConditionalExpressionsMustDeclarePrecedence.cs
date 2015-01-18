@@ -91,18 +91,23 @@
                     // Check if the operations are of the same kind
 
                     var left = (BinaryExpressionSyntax)binSyntax.Left;
+                    if (left.OperatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken) || left.OperatorToken.IsKind(SyntaxKind.BarBarToken))
+                    {
 
-                    if (!IsSameFamily(binSyntax.OperatorToken, left.OperatorToken))
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, left.GetLocation()));
+                        if (!IsSameFamily(binSyntax.OperatorToken, left.OperatorToken))
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, left.GetLocation()));
+                    }
                 }
                 if (binSyntax.Right is BinaryExpressionSyntax)
                 {
                     // Check if the operations are of the same kind
 
                     var right = (BinaryExpressionSyntax)binSyntax.Right;
-
-                    if (!IsSameFamily(binSyntax.OperatorToken, right.OperatorToken))
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, right.GetLocation()));
+                    if (right.OperatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken) || right.OperatorToken.IsKind(SyntaxKind.BarBarToken))
+                    {
+                        if (!IsSameFamily(binSyntax.OperatorToken, right.OperatorToken))
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, right.GetLocation()));
+                    }
                 }
             }
         }
