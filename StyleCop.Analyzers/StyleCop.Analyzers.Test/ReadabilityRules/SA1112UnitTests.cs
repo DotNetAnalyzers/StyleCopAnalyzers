@@ -41,7 +41,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "Closing parenthesis must be on line of opening parenthesis.",
+                        Message = "Closing parenthesis must be on line of opening parenthesis",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -104,7 +104,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "Closing parenthesis must be on line of opening parenthesis.",
+                        Message = "Closing parenthesis must be on line of opening parenthesis",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -168,7 +168,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "Closing parenthesis must be on line of opening parenthesis.",
+                        Message = "Closing parenthesis must be on line of opening parenthesis",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -230,7 +230,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "Closing parenthesis must be on line of opening parenthesis.",
+                        Message = "Closing parenthesis must be on line of opening parenthesis",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]

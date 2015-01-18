@@ -27,7 +27,7 @@
     {
         public const string DiagnosticId = "SA1112";
         internal const string Title = "Closing parenthesis must be on line of opening parenthesis";
-        internal const string MessageFormat = "Closing parenthesis must be on line of opening parenthesis.";
+        internal const string MessageFormat = "Closing parenthesis must be on line of opening parenthesis";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
         internal const string Description = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the opening bracket when the element does not take any parameters.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1112.html";
