@@ -463,6 +463,50 @@ public class OuterClass
             await VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None);
         }
 
+        private async Task TestDestructorDeclarationDocumentation(bool requiresDiagnostic, bool hasDocumentation)
+        {
+            var testCodeWithoutDocumentation = @"    /// <summary>
+    /// A summary
+    /// </summary>
+public class OuterClass
+{{
+
+    ~OuterClass()
+    {{
+    }}
+}}";
+            var testCodeWithDocumentation = @"    /// <summary>
+    /// A summary
+    /// </summary>
+public class OuterClass
+{{
+    /// <summary>A summary.</summary>
+    ~OuterClass()
+    {{
+    }}
+}}";
+
+            DiagnosticResult[] expected;
+
+            expected =
+                new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                        Message = "Elements must be documented",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 7, 6)
+                            }
+                    }
+                };
+
+            await VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None);
+        }
+
         private async Task TestPropertyDeclarationDocumentation(string modifiers, bool requiresDiagnostic, bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"    /// <summary>
@@ -880,6 +924,18 @@ public class OuterClass
             await TestConstructorDeclarationDocumentation("internal", false, true);
             await TestConstructorDeclarationDocumentation("protected internal", false, true);
             await TestConstructorDeclarationDocumentation("public", false, true);
+        }
+
+        [TestMethod]
+        public async Task TestDestructorWithoutDocumentation()
+        {
+            await TestDestructorDeclarationDocumentation(true, false);
+        }
+
+        [TestMethod]
+        public async Task TestDestructorWithDocumentation()
+        {
+            await TestDestructorDeclarationDocumentation(false, true);
         }
 
         [TestMethod]

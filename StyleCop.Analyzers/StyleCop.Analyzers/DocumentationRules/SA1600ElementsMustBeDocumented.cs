@@ -56,6 +56,7 @@
             context.RegisterSyntaxNodeAction(HandleTypeDeclaration, SyntaxKind.EnumDeclaration);
             context.RegisterSyntaxNodeAction(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
             context.RegisterSyntaxNodeAction(HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeAction(HandleDestructorDeclaration, SyntaxKind.DestructorDeclaration);
             context.RegisterSyntaxNodeAction(HandlePropertyDeclaration, SyntaxKind.PropertyDeclaration);
             context.RegisterSyntaxNodeAction(HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
             context.RegisterSyntaxNodeAction(HandleFieldDeclaration, SyntaxKind.FieldDeclaration);
@@ -103,6 +104,19 @@
             ConstructorDeclarationSyntax declaration = context.Node as ConstructorDeclarationSyntax;
 
             if (declaration != null && NeedsComment(declaration.Modifiers, SyntaxKind.PrivateKeyword))
+            {
+                if (!XmlCommentHelper.HasDocumentation(declaration))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
+                }
+            }
+        }
+
+        private void HandleDestructorDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            DestructorDeclarationSyntax declaration = context.Node as DestructorDeclarationSyntax;
+
+            if (declaration != null)
             {
                 if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
