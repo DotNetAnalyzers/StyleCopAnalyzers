@@ -85,7 +85,7 @@
             MethodDeclarationSyntax declaration = context.Node as MethodDeclarationSyntax;
             SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
 
-            if (IsDeclaredInInterface(declaration) || declaration.ExplicitInterfaceSpecifier != null)
+            if (IsInterfaceMemberDeclaration(declaration) || declaration.ExplicitInterfaceSpecifier != null)
             {
                 defaultVisibility = SyntaxKind.PublicKeyword;
             }
@@ -130,7 +130,7 @@
             PropertyDeclarationSyntax declaration = context.Node as PropertyDeclarationSyntax;
             SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
 
-            if (IsDeclaredInInterface(declaration) || declaration.ExplicitInterfaceSpecifier != null)
+            if (IsInterfaceMemberDeclaration(declaration) || declaration.ExplicitInterfaceSpecifier != null)
             {
                 defaultVisibility = SyntaxKind.PublicKeyword;
             }
@@ -151,7 +151,7 @@
             IndexerDeclarationSyntax declaration = context.Node as IndexerDeclarationSyntax;
             SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
 
-            if (IsDeclaredInInterface(declaration) || declaration.ExplicitInterfaceSpecifier != null)
+            if (IsInterfaceMemberDeclaration(declaration) || declaration.ExplicitInterfaceSpecifier != null)
             {
                 defaultVisibility = SyntaxKind.PublicKeyword;
             }
@@ -222,7 +222,7 @@
             EventFieldDeclarationSyntax declaration = context.Node as EventFieldDeclarationSyntax;
             SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
 
-            if (IsDeclaredInInterface(declaration))
+            if (IsInterfaceMemberDeclaration(declaration))
             {
                 defaultVisibility = SyntaxKind.PublicKeyword;
             }
@@ -265,17 +265,9 @@
             return delegateDeclaration?.Parent is BaseTypeDeclarationSyntax;
         }
 
-        private bool IsDeclaredInInterface(SyntaxNode parent)
+        private bool IsInterfaceMemberDeclaration(SyntaxNode declaration)
         {
-            if (parent == null)
-            {
-                return false;
-            }
-            if (parent is InterfaceDeclarationSyntax)
-            {
-                return true;
-            }
-            return IsDeclaredInInterface(parent.Parent);
+            return declaration?.Parent is InterfaceDeclarationSyntax;
         }
     }
 }
