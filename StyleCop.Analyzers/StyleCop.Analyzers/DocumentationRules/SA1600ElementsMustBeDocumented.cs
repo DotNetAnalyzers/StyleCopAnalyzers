@@ -56,6 +56,7 @@
             context.RegisterSyntaxNodeAction(HandleTypeDeclaration, SyntaxKind.EnumDeclaration);
             context.RegisterSyntaxNodeAction(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
             context.RegisterSyntaxNodeAction(HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeAction(HandleDestructorDeclaration, SyntaxKind.DestructorDeclaration);
             context.RegisterSyntaxNodeAction(HandlePropertyDeclaration, SyntaxKind.PropertyDeclaration);
             context.RegisterSyntaxNodeAction(HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
             context.RegisterSyntaxNodeAction(HandleFieldDeclaration, SyntaxKind.FieldDeclaration);
@@ -68,7 +69,7 @@
         {
             BaseTypeDeclarationSyntax declaration = context.Node as BaseTypeDeclarationSyntax;
 
-            bool isNestedInClassOrStruct = IsNestedInClassOrStructRecursive(declaration.Parent);
+            bool isNestedInClassOrStruct = IsNestedType(declaration);
 
             if (declaration != null && NeedsComment(declaration.Modifiers, isNestedInClassOrStruct ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword))
             {
@@ -84,7 +85,7 @@
             MethodDeclarationSyntax declaration = context.Node as MethodDeclarationSyntax;
             SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
 
-            if (IsDeclaredInInterface(declaration))
+            if (IsInterfaceMemberDeclaration(declaration) || declaration.ExplicitInterfaceSpecifier != null)
             {
                 defaultVisibility = SyntaxKind.PublicKeyword;
             }
@@ -111,12 +112,25 @@
             }
         }
 
+        private void HandleDestructorDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            DestructorDeclarationSyntax declaration = context.Node as DestructorDeclarationSyntax;
+
+            if (declaration != null)
+            {
+                if (!XmlCommentHelper.HasDocumentation(declaration))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
+                }
+            }
+        }
+
         private void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
         {
             PropertyDeclarationSyntax declaration = context.Node as PropertyDeclarationSyntax;
             SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
 
-            if (IsDeclaredInInterface(declaration))
+            if (IsInterfaceMemberDeclaration(declaration) || declaration.ExplicitInterfaceSpecifier != null)
             {
                 defaultVisibility = SyntaxKind.PublicKeyword;
             }
@@ -137,7 +151,7 @@
             IndexerDeclarationSyntax declaration = context.Node as IndexerDeclarationSyntax;
             SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
 
-            if (IsDeclaredInInterface(declaration))
+            if (IsInterfaceMemberDeclaration(declaration) || declaration.ExplicitInterfaceSpecifier != null)
             {
                 defaultVisibility = SyntaxKind.PublicKeyword;
             }
@@ -173,7 +187,7 @@
         {
             DelegateDeclarationSyntax declaration = context.Node as DelegateDeclarationSyntax;
 
-            bool isNestedInClassOrStruct = IsNestedInClassOrStructRecursive(declaration.Parent);
+            bool isNestedInClassOrStruct = IsNestedType(declaration);
 
             if (declaration != null && NeedsComment(declaration.Modifiers, isNestedInClassOrStruct ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword))
             {
@@ -189,7 +203,7 @@
             EventDeclarationSyntax declaration = context.Node as EventDeclarationSyntax;
             SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
 
-            if (IsDeclaredInInterface(declaration))
+            if (declaration.ExplicitInterfaceSpecifier != null)
             {
                 defaultVisibility = SyntaxKind.PublicKeyword;
             }
@@ -206,9 +220,16 @@
         private void HandleEventFieldDeclaration(SyntaxNodeAnalysisContext context)
         {
             EventFieldDeclarationSyntax declaration = context.Node as EventFieldDeclarationSyntax;
+            SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
+
+            if (IsInterfaceMemberDeclaration(declaration))
+            {
+                defaultVisibility = SyntaxKind.PublicKeyword;
+            }
+
             var variableDeclaration = declaration?.Declaration;
 
-            if (variableDeclaration != null && NeedsComment(declaration.Modifiers, SyntaxKind.PrivateKeyword))
+            if (variableDeclaration != null && NeedsComment(declaration.Modifiers, defaultVisibility))
             {
                 if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
@@ -234,30 +255,19 @@
                 && !modifiers.Any(SyntaxKind.PartialKeyword);
         }
 
-        private bool IsNestedInClassOrStructRecursive(SyntaxNode parent)
+        private bool IsNestedType(BaseTypeDeclarationSyntax typeDeclaration)
         {
-            if (parent == null)
-            {
-                return false;
-            }
-            if (parent is BaseTypeDeclarationSyntax)
-            {
-                return true;
-            }
-            return IsNestedInClassOrStructRecursive(parent.Parent);
+            return typeDeclaration?.Parent is BaseTypeDeclarationSyntax;
         }
 
-        private bool IsDeclaredInInterface(SyntaxNode parent)
+        private bool IsNestedType(DelegateDeclarationSyntax delegateDeclaration)
         {
-            if (parent == null)
-            {
-                return false;
-            }
-            if (parent is InterfaceDeclarationSyntax)
-            {
-                return true;
-            }
-            return IsDeclaredInInterface(parent.Parent);
+            return delegateDeclaration?.Parent is BaseTypeDeclarationSyntax;
+        }
+
+        private bool IsInterfaceMemberDeclaration(SyntaxNode declaration)
+        {
+            return declaration?.Parent is InterfaceDeclarationSyntax;
         }
     }
 }

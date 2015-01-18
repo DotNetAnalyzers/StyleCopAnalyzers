@@ -33,7 +33,7 @@
 /// <summary>
 /// Some Documentation
 /// </summary>
-enum Foo
+enum TypeName
 {{
     /// <summary>
     /// Some Documentation
@@ -47,7 +47,7 @@ enum Foo
         public async Task TestEnumWithoutDocumentation()
         {
             var testCode = @"
-enum Foo
+enum TypeName
 {{
     Bar
 }}";
@@ -79,7 +79,7 @@ enum Foo
 /// <summary>
 /// Some Documentation
 /// </summary>
-enum Foo
+enum TypeName
 {{
     /// <summary>
     /// 
