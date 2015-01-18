@@ -49,7 +49,9 @@
         private void AnalyzeField(SymbolAnalysisContext symbolAnalysisContext)
         {
             var fieldDeclarationSyntax = (IFieldSymbol)symbolAnalysisContext.Symbol;
-            if (!IsFieldPrivate(fieldDeclarationSyntax) && IsParentAClass(fieldDeclarationSyntax))
+            if (!IsFieldPrivate(fieldDeclarationSyntax) &&
+                IsParentAClass(fieldDeclarationSyntax) &&
+                !fieldDeclarationSyntax.IsConst)
             {
                 symbolAnalysisContext.ReportDiagnostic(Diagnostic.Create(Descriptor, fieldDeclarationSyntax.Locations[0]));
             }
