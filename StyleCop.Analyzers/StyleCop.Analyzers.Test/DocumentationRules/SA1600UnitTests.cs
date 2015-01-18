@@ -248,7 +248,7 @@ public interface Interface
             var testCodeWithDocumentation = @"    /// <summary>
     /// A summary
     /// </summary>
-public interace Interface
+public interface Interface
 {{
     /// <summary>A summary.</summary>
     void
@@ -295,7 +295,7 @@ public interface Interface
             var testCodeWithDocumentation = @"    /// <summary>
     /// A summary
     /// </summary>
-public interace Interface
+public interface Interface
 {{
     /// <summary>A summary.</summary>
     
@@ -343,7 +343,7 @@ public interface Interface
             var testCodeWithDocumentation = @"    /// <summary>
     /// A summary
     /// </summary>
-public interace Interface
+public interface Interface
 {{
     /// <summary>A summary.</summary>
     
@@ -389,7 +389,7 @@ public interface Interface
             var testCodeWithDocumentation = @"    /// <summary>
     /// A summary
     /// </summary>
-public interace Interface
+public interface Interface
 {{
     /// <summary>A summary.</summary>
     string
