@@ -241,6 +241,15 @@
                 {
                     break;
                 }
+                if(node is MemberAccessExpressionSyntax)
+                {
+                    var memberAccessExpression = node as MemberAccessExpressionSyntax;
+                    if(memberAccessExpression.Name != identifierNameSyntax)
+                    {
+                        // nameof(object.ToString) is valid
+                        return false;
+                    }
+                }
 
                 if (!(node is MemberAccessExpressionSyntax
                     || node is ArgumentSyntax
