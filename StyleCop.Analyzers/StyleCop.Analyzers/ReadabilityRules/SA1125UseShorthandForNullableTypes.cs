@@ -55,6 +55,11 @@
             if (genericNameSyntax.Identifier.IsMissing || genericNameSyntax.Identifier.Text != "Nullable")
                 return;
 
+            // This covers the specific form in an XML comment which cannot be simplified
+            if (genericNameSyntax.Parent is NameMemberCrefSyntax)
+                return;
+
+            // The shorthand syntax is not available in using directives (covers standard, alias, and static)
             if (genericNameSyntax.FirstAncestorOrSelf<UsingDirectiveSyntax>() != null)
                 return;
 
