@@ -69,7 +69,7 @@
         {
             BaseTypeDeclarationSyntax declaration = context.Node as BaseTypeDeclarationSyntax;
 
-            bool isNestedInClassOrStruct = IsNestedInClassOrStructRecursive(declaration.Parent);
+            bool isNestedInClassOrStruct = IsNestedType(declaration);
 
             if (declaration != null && NeedsComment(declaration.Modifiers, isNestedInClassOrStruct ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword))
             {
@@ -187,7 +187,7 @@
         {
             DelegateDeclarationSyntax declaration = context.Node as DelegateDeclarationSyntax;
 
-            bool isNestedInClassOrStruct = IsNestedInClassOrStructRecursive(declaration.Parent);
+            bool isNestedInClassOrStruct = IsNestedType(declaration);
 
             if (declaration != null && NeedsComment(declaration.Modifiers, isNestedInClassOrStruct ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword))
             {
@@ -248,17 +248,14 @@
                 && !modifiers.Any(SyntaxKind.PartialKeyword);
         }
 
-        private bool IsNestedInClassOrStructRecursive(SyntaxNode parent)
+        private bool IsNestedType(BaseTypeDeclarationSyntax typeDeclaration)
         {
-            if (parent == null)
-            {
-                return false;
-            }
-            if (parent is BaseTypeDeclarationSyntax)
-            {
-                return true;
-            }
-            return IsNestedInClassOrStructRecursive(parent.Parent);
+            return typeDeclaration?.Parent is BaseTypeDeclarationSyntax;
+        }
+
+        private bool IsNestedType(DelegateDeclarationSyntax delegateDeclaration)
+        {
+            return delegateDeclaration?.Parent is BaseTypeDeclarationSyntax;
         }
 
         private bool IsDeclaredInInterface(SyntaxNode parent)
