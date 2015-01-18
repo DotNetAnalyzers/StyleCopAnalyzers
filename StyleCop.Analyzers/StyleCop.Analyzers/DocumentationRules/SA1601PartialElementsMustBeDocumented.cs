@@ -91,13 +91,13 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleClassDeclaration, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeAction(HandleClassDeclaration, SyntaxKind.InterfaceDeclaration);
-            context.RegisterSyntaxNodeAction(HandleClassDeclaration, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeAction(HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeAction(HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeAction(HandleTypeDeclaration, SyntaxKind.StructDeclaration);
             context.RegisterSyntaxNodeAction(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
         }
 
-        private void HandleClassDeclaration(SyntaxNodeAnalysisContext context)
+        private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
             TypeDeclarationSyntax typeDeclaration = context.Node as TypeDeclarationSyntax;
             if (typeDeclaration != null)
