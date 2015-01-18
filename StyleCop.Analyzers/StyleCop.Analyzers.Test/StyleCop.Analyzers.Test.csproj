@@ -103,6 +103,7 @@
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DocumentationRules\SA1603UnitTests.cs" />
     <Compile Include="MaintainabilityRules\DebugMessagesUnitTestsBase.cs" />
     <Compile Include="MaintainabilityRules\FileMayOnlyContainTestBase.cs" />
     <Compile Include="MaintainabilityRules\SA1119UnitTests.cs" />
