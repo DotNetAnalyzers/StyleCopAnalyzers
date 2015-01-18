@@ -201,14 +201,8 @@
         private void HandleEventDeclaration(SyntaxNodeAnalysisContext context)
         {
             EventDeclarationSyntax declaration = context.Node as EventDeclarationSyntax;
-            SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
 
-            if (IsDeclaredInInterface(declaration))
-            {
-                defaultVisibility = SyntaxKind.PublicKeyword;
-            }
-
-            if (declaration != null && NeedsComment(declaration.Modifiers, defaultVisibility))
+            if (declaration != null && NeedsComment(declaration.Modifiers, SyntaxKind.PrivateKeyword))
             {
                 if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
@@ -220,9 +214,16 @@
         private void HandleEventFieldDeclaration(SyntaxNodeAnalysisContext context)
         {
             EventFieldDeclarationSyntax declaration = context.Node as EventFieldDeclarationSyntax;
+            SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
+
+            if (IsDeclaredInInterface(declaration))
+            {
+                defaultVisibility = SyntaxKind.PublicKeyword;
+            }
+
             var variableDeclaration = declaration?.Declaration;
 
-            if (variableDeclaration != null && NeedsComment(declaration.Modifiers, SyntaxKind.PrivateKeyword))
+            if (variableDeclaration != null && NeedsComment(declaration.Modifiers, defaultVisibility))
             {
                 if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
