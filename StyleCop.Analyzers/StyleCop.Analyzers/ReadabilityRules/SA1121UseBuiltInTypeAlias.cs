@@ -213,7 +213,7 @@
                 locationNode = identifierNameSyntax.Parent;
 
             // Allow nameof
-            if(IsInNameOfExpression(identifierNameSyntax, semanticModel))
+            if(IsNameInNameOfExpression(identifierNameSyntax))
             {
                 return;
             }
@@ -222,52 +222,28 @@
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, locationNode.GetLocation()));
         }
 
-        private bool IsInNameOfExpression(IdentifierNameSyntax identifierNameSyntax, SemanticModel semanticModel)
+        private bool IsNameInNameOfExpression(IdentifierNameSyntax identifierNameSyntax)
         {
-            // we search the syntax tree bottom up and search for a InvokationExpression which is named "nameof"
-            // because nameof(object.ToString) is valid we are only allowing MemberAccessExpressionSyntax, ArgumentSyntax and ArgumentListSyntax nodes
-            // when we search. If we find a InvokationExpressionSyntax we try to get the constant value for it. because nameof expressions
-            // are the only InvokationExpressionSyntax which can be evaluated at compile time we found a nameof(<identifierNameSyntax>) expression.
-            SyntaxNode node = identifierNameSyntax;
-            while (true)
-            {
-                node = node.Parent;
+            // The only time a type name can appear as an argument is for the invocation expression created for the
+            // nameof keyword. This assumption is the foundation of the following simple analysis algorithm.
 
-                if(node == null)
-                {
-                    return false;
-                }
-                if (node is InvocationExpressionSyntax)
-                {
-                    break;
-                }
-                if(node is MemberAccessExpressionSyntax)
-                {
-                    var memberAccessExpression = node as MemberAccessExpressionSyntax;
-                    if(memberAccessExpression.Name != identifierNameSyntax)
-                    {
-                        // nameof(object.ToString) is valid
-                        return false;
-                    }
-                }
-
-                if (!(node is MemberAccessExpressionSyntax
-                    || node is ArgumentSyntax
-                    || node is ArgumentListSyntax))
-                {
-                    return false;
-                }
-            }
-
-            InvocationExpressionSyntax invokation = node as InvocationExpressionSyntax;
-
-            if(invokation == null || invokation.Expression.ToString() != "nameof")
-            {
+            if (identifierNameSyntax.Parent == null)
                 return false;
+
+            // This covers the case nameof(Int32)
+            if (identifierNameSyntax.Parent is ArgumentSyntax)
+                return true;
+
+            // This covers the case nameof(System.Int32)
+            if (identifierNameSyntax.Parent.IsKind(SyntaxKind.SimpleMemberAccessExpression))
+            {
+                // This final check ensures that we don't consider nameof(System.Int32.ToString) the same as
+                // nameof(System.Int32)
+                if (identifierNameSyntax.Parent.Parent is ArgumentSyntax)
+                    return true;
             }
 
-            var constantValue = semanticModel.GetConstantValue(invokation);
-            return constantValue.HasValue;
+            return false;
         }
     }
 }
