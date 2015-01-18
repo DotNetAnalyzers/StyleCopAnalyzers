@@ -27,23 +27,26 @@
         }
 
         [TestMethod]
-        public async Task TestPartialClassWithDocumentation()
+        public async Task TestPartialTypeWithDocumentation()
         {
             var testCode = @"
 /// <summary>
 /// Some Documentation
 /// </summary>
-public partial class Foo
+public partial {0} Foo
 {{
 }}";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, "class"), EmptyDiagnosticResults, CancellationToken.None);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, "struct"), EmptyDiagnosticResults, CancellationToken.None);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, "interface"), EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
-        public async Task TestPartialClassWithoutDocumentation()
+        public async Task TestPartialTypeWithoutDocumentation()
         {
             var testCode = @"
-public partial class Foo
+public partial {0}
+Foo
 {{
 }}";
 
@@ -55,16 +58,18 @@ public partial class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "Partial elements must have a non empty documentation",
+                        Message = "Partial elements must be documented",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
                             {
-                                new DiagnosticResultLocation("Test0.cs", 2, 22)
+                                new DiagnosticResultLocation("Test0.cs", 3, 1)
                             }
                     }
                 };
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, "class"), expected, CancellationToken.None);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, "struct"), expected, CancellationToken.None);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, "interface"), expected, CancellationToken.None);
         }
 
         [TestMethod]
@@ -74,7 +79,8 @@ public partial class Foo
 /// <summary>
 /// 
 /// </summary>
-public partial class Foo
+public partial {0} 
+Foo
 {{
 }}";
 
@@ -86,16 +92,18 @@ public partial class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "Partial elements must have a non empty documentation",
+                        Message = "Partial elements must be documented",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
                             {
-                                new DiagnosticResultLocation("Test0.cs", 5, 22)
+                                new DiagnosticResultLocation("Test0.cs", 6, 1)
                             }
                     }
                 };
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, "class"), expected, CancellationToken.None);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, "struct"), expected, CancellationToken.None);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, "interface"), expected, CancellationToken.None);
         }
 
         [TestMethod]
@@ -135,7 +143,7 @@ public partial class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "Partial elements must have a non empty documentation",
+                        Message = "Partial elements must be documented",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -171,7 +179,7 @@ public partial class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "Partial elements must have a non empty documentation",
+                        Message = "Partial elements must be documented",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]

@@ -60,7 +60,7 @@ enum Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "Enumeration items must have a non empty documentation",
+                        Message = "Enumeration items must be documented",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -95,7 +95,7 @@ enum Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "Enumeration items must have a non empty documentation",
+                        Message = "Enumeration items must be documented",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]

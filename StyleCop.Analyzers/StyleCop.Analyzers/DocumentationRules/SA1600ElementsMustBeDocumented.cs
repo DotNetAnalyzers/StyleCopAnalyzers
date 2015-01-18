@@ -27,7 +27,7 @@
     {
         public const string DiagnosticId = "SA1600";
         internal const string Title = "Elements must be documented";
-        internal const string MessageFormat = "Elements must must have a non empty documentation";
+        internal const string MessageFormat = "Elements must be documented";
         internal const string Category = "StyleCop.CSharp.Documentation";
         internal const string Description = "A C# code element is missing a documentation header.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1600.html";
@@ -68,13 +68,11 @@
         {
             BaseTypeDeclarationSyntax declaration = context.Node as BaseTypeDeclarationSyntax;
 
-            bool isDefinedInClassOrStruct = IsDefinedInClassOrStructRecursive(declaration.Parent);
+            bool isNestedInClassOrStruct = IsNestedInClassOrStructRecursive(declaration.Parent);
 
-            if (declaration != null && NeedsComment(declaration.Modifiers, isDefinedInClassOrStruct ? SyntaxKind.PrivateKeyword : SyntaxKind.PublicKeyword))
+            if (declaration != null && NeedsComment(declaration.Modifiers, isNestedInClassOrStruct ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword))
             {
-                var leadingTrivia = declaration.GetLeadingTrivia();
-                var commentTrivia = leadingTrivia.FirstOrDefault(x => x.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia));
-                if (XmlCommentHelper.IsMissingOrEmpty(commentTrivia))
+                if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
                 }
@@ -84,12 +82,16 @@
         private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
             MethodDeclarationSyntax declaration = context.Node as MethodDeclarationSyntax;
+            SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
 
-            if (declaration != null && NeedsComment(declaration.Modifiers, SyntaxKind.PrivateKeyword))
+            if (IsDeclaredInInterface(declaration))
             {
-                var leadingTrivia = declaration.GetLeadingTrivia();
-                var commentTrivia = leadingTrivia.FirstOrDefault(x => x.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia));
-                if (XmlCommentHelper.IsMissingOrEmpty(commentTrivia))
+                defaultVisibility = SyntaxKind.PublicKeyword;
+            }
+
+            if (declaration != null && NeedsComment(declaration.Modifiers, defaultVisibility))
+            {
+                if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
                 }
@@ -102,9 +104,7 @@
 
             if (declaration != null && NeedsComment(declaration.Modifiers, SyntaxKind.PrivateKeyword))
             {
-                var leadingTrivia = declaration.GetLeadingTrivia();
-                var commentTrivia = leadingTrivia.FirstOrDefault(x => x.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia));
-                if (XmlCommentHelper.IsMissingOrEmpty(commentTrivia))
+                if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
                 }
@@ -114,12 +114,16 @@
         private void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
         {
             PropertyDeclarationSyntax declaration = context.Node as PropertyDeclarationSyntax;
+            SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
 
-            if (declaration != null && NeedsComment(declaration.Modifiers, SyntaxKind.PrivateKeyword))
+            if (IsDeclaredInInterface(declaration))
             {
-                var leadingTrivia = declaration.GetLeadingTrivia();
-                var commentTrivia = leadingTrivia.FirstOrDefault(x => x.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia));
-                if (XmlCommentHelper.IsMissingOrEmpty(commentTrivia))
+                defaultVisibility = SyntaxKind.PublicKeyword;
+            }
+
+            if (declaration != null && NeedsComment(declaration.Modifiers, defaultVisibility))
+            {
+                if (!XmlCommentHelper.HasDocumentation(declaration))
                 { 
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
                 }
@@ -131,12 +135,16 @@
         private void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)
         {
             IndexerDeclarationSyntax declaration = context.Node as IndexerDeclarationSyntax;
+            SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
 
-            if (declaration != null && NeedsComment(declaration.Modifiers, SyntaxKind.PrivateKeyword))
+            if (IsDeclaredInInterface(declaration))
             {
-                var leadingTrivia = declaration.GetLeadingTrivia();
-                var commentTrivia = leadingTrivia.FirstOrDefault(x => x.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia));
-                if (XmlCommentHelper.IsMissingOrEmpty(commentTrivia))
+                defaultVisibility = SyntaxKind.PublicKeyword;
+            }
+
+            if (declaration != null && NeedsComment(declaration.Modifiers, defaultVisibility))
+            {
+                if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.ThisKeyword.GetLocation()));
                 }
@@ -150,14 +158,12 @@
 
             if (variableDeclaration != null && NeedsComment(declaration.Modifiers, SyntaxKind.PrivateKeyword))
             {
-                var leadingTrivia = declaration.GetLeadingTrivia();
-                var commentTrivia = leadingTrivia.FirstOrDefault(x => x.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia));
-                if (XmlCommentHelper.IsMissingOrEmpty(commentTrivia))
+                if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
                     var locations = variableDeclaration.Variables.Select(v => v.Identifier.GetLocation()).ToArray();
-                    if (locations.Length > 0)
+                    foreach (var location in locations)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, locations.First()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
                     }
                 }
             }
@@ -167,13 +173,11 @@
         {
             DelegateDeclarationSyntax declaration = context.Node as DelegateDeclarationSyntax;
 
-            bool isDefinedInClassOrStruct = IsDefinedInClassOrStructRecursive(declaration.Parent);
+            bool isNestedInClassOrStruct = IsNestedInClassOrStructRecursive(declaration.Parent);
 
-            if (declaration != null && NeedsComment(declaration.Modifiers, isDefinedInClassOrStruct ? SyntaxKind.PrivateKeyword : SyntaxKind.PublicKeyword))
+            if (declaration != null && NeedsComment(declaration.Modifiers, isNestedInClassOrStruct ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword))
             {
-                var leadingTrivia = declaration.GetLeadingTrivia();
-                var commentTrivia = leadingTrivia.FirstOrDefault(x => x.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia));
-                if (XmlCommentHelper.IsMissingOrEmpty(commentTrivia))
+                if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
                 }
@@ -183,12 +187,16 @@
         private void HandleEventDeclaration(SyntaxNodeAnalysisContext context)
         {
             EventDeclarationSyntax declaration = context.Node as EventDeclarationSyntax;
+            SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
 
-            if (declaration != null && NeedsComment(declaration.Modifiers, SyntaxKind.PrivateKeyword))
+            if (IsDeclaredInInterface(declaration))
             {
-                var leadingTrivia = declaration.GetLeadingTrivia();
-                var commentTrivia = leadingTrivia.FirstOrDefault(x => x.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia));
-                if (XmlCommentHelper.IsMissingOrEmpty(commentTrivia))
+                defaultVisibility = SyntaxKind.PublicKeyword;
+            }
+
+            if (declaration != null && NeedsComment(declaration.Modifiers, defaultVisibility))
+            {
+                if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
                 }
@@ -202,14 +210,12 @@
 
             if (variableDeclaration != null && NeedsComment(declaration.Modifiers, SyntaxKind.PrivateKeyword))
             {
-                var leadingTrivia = declaration.GetLeadingTrivia();
-                var commentTrivia = leadingTrivia.FirstOrDefault(x => x.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia));
-                if (XmlCommentHelper.IsMissingOrEmpty(commentTrivia))
+                if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
                     var locations = variableDeclaration.Variables.Select(v => v.Identifier.GetLocation()).ToArray();
-                    if (locations.Length > 0)
+                    foreach (var location in locations)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, locations.First()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
                     }
                 }
             }
@@ -228,7 +234,7 @@
                 && !modifiers.Any(SyntaxKind.PartialKeyword);
         }
 
-        private bool IsDefinedInClassOrStructRecursive(SyntaxNode parent)
+        private bool IsNestedInClassOrStructRecursive(SyntaxNode parent)
         {
             if (parent == null)
             {
@@ -238,7 +244,20 @@
             {
                 return true;
             }
-            return IsDefinedInClassOrStructRecursive(parent.Parent);
+            return IsNestedInClassOrStructRecursive(parent.Parent);
+        }
+
+        private bool IsDeclaredInInterface(SyntaxNode parent)
+        {
+            if (parent == null)
+            {
+                return false;
+            }
+            if (parent is InterfaceDeclarationSyntax)
+            {
+                return true;
+            }
+            return IsDeclaredInInterface(parent.Parent);
         }
     }
 }

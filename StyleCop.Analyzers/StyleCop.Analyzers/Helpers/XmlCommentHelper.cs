@@ -1,11 +1,11 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
-using System.Runtime.CompilerServices;
-using System.Text;
-
-namespace StyleCop.Analyzers.Helpers
+﻿namespace StyleCop.Analyzers.Helpers
 {
+    using System.Linq;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+
     /// <summary>
     /// Provides helper methods to work with Xml comments
     /// </summary>
@@ -115,6 +115,24 @@ namespace StyleCop.Analyzers.Helpers
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Checks if a specific SyntaxNode has documentation in it's leading trivia.
+        /// </summary>
+        /// <param name="node">The syntax node that should be checked.</param>
+        /// <returns>true if the node has documentation, false otherwise.</returns>
+        internal static bool HasDocumentation(SyntaxNode node)
+        {
+            var leadingTrivia = node.GetLeadingTrivia();
+            var commentTrivia = leadingTrivia.FirstOrDefault(x => x.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia));
+            if(!IsMissingOrEmpty(commentTrivia))
+            {
+                return true;
+            }
+            commentTrivia = leadingTrivia.FirstOrDefault(x => x.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia));
+
+            return !IsMissingOrEmpty(commentTrivia);
         }
     }
 }

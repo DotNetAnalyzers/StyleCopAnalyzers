@@ -68,7 +68,7 @@
     {
         public const string DiagnosticId = "SA1601";
         internal const string Title = "Partial elements must be documented";
-        internal const string MessageFormat = "Partial elements must have a non empty documentation";
+        internal const string MessageFormat = "Partial elements must be documented";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "A C# partial element is missing a documentation header.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1601.html";
@@ -92,21 +92,21 @@
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterSyntaxNodeAction(HandleClassDeclaration, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeAction(HandleClassDeclaration, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeAction(HandleClassDeclaration, SyntaxKind.StructDeclaration);
             context.RegisterSyntaxNodeAction(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
         }
 
         private void HandleClassDeclaration(SyntaxNodeAnalysisContext context)
         {
-            ClassDeclarationSyntax classDeclaration = context.Node as ClassDeclarationSyntax;
-            if (classDeclaration != null)
+            TypeDeclarationSyntax typeDeclaration = context.Node as TypeDeclarationSyntax;
+            if (typeDeclaration != null)
             {
-                if (classDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+                if (typeDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
                 {
-                    var leadingTrivia = classDeclaration.GetLeadingTrivia();
-                    var commentTrivia = leadingTrivia.FirstOrDefault(x => x.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia));
-                    if (XmlCommentHelper.IsMissingOrEmpty(commentTrivia))
+                    if (!XmlCommentHelper.HasDocumentation(typeDeclaration))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, classDeclaration.Identifier.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, typeDeclaration.Identifier.GetLocation()));
                     }
                 }
             }
@@ -119,9 +119,7 @@
             {
                 if (methodDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
                 {
-                    var leadingTrivia = methodDeclaration.GetLeadingTrivia();
-                    var commentTrivia = leadingTrivia.FirstOrDefault(x => x.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia));
-                    if (XmlCommentHelper.IsMissingOrEmpty(commentTrivia))
+                    if (!XmlCommentHelper.HasDocumentation(methodDeclaration))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, methodDeclaration.Identifier.GetLocation()));
                     }

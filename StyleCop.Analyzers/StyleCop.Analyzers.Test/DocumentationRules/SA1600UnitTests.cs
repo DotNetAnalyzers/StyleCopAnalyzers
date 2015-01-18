@@ -47,7 +47,7 @@ Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "Elements must must have a non empty documentation",
+                        Message = "Elements must be documented",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -93,7 +93,7 @@ public class OuterClass
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "Elements must must have a non empty documentation",
+                        Message = "Elements must be documented",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -127,7 +127,7 @@ Foo()
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "Elements must must have a non empty documentation",
+                        Message = "Elements must be documented",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -173,7 +173,7 @@ public class OuterClass
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "Elements must must have a non empty documentation",
+                        Message = "Elements must be documented",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -219,7 +219,7 @@ public class OuterClass
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "Elements must must have a non empty documentation",
+                        Message = "Elements must be documented",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -230,6 +230,191 @@ public class OuterClass
                 };
 
             await VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        private async Task TestInterfaceMethodDeclarationDocumentation(bool hasDocumentation)
+        {
+            var testCodeWithoutDocumentation = @"    /// <summary>
+    /// A summary
+    /// </summary>
+public interface Interface
+{{
+
+    void
+    Foo()
+    {{
+    }}
+}}";
+            var testCodeWithDocumentation = @"    /// <summary>
+    /// A summary
+    /// </summary>
+public interace Interface
+{{
+    /// <summary>A summary.</summary>
+    void
+    Foo()
+    {
+    }
+}}";
+
+            DiagnosticResult[] expected;
+
+            expected =
+                new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                        Message = "Elements must be documented",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 8, 5)
+                            }
+                    }
+                };
+
+            await VerifyCSharpDiagnosticAsync(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, !hasDocumentation ? expected : EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        private async Task TestInterfacePropertyDeclarationDocumentation(bool hasDocumentation)
+        {
+            var testCodeWithoutDocumentation = @"    /// <summary>
+    /// A summary
+    /// </summary>
+public interface Interface
+{{
+
+    
+    string Foo
+    {
+        get; set;
+    }
+}}";
+            var testCodeWithDocumentation = @"    /// <summary>
+    /// A summary
+    /// </summary>
+public interace Interface
+{{
+    /// <summary>A summary.</summary>
+    
+    string Foo
+    {
+        get; set;
+    }
+}}";
+
+            DiagnosticResult[] expected;
+
+            expected =
+                new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                        Message = "Elements must be documented",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 8, 12)
+                            }
+                    }
+                };
+
+            await VerifyCSharpDiagnosticAsync(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, !hasDocumentation ? expected : EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        private async Task TestInterfaceEventDeclarationDocumentation(bool hasDocumentation)
+        {
+            var testCodeWithoutDocumentation = @"    /// <summary>
+    /// A summary
+    /// </summary>
+public interface Interface
+{{
+
+    
+    string Foo
+    {
+        add; remove;
+    }
+}}";
+            var testCodeWithDocumentation = @"    /// <summary>
+    /// A summary
+    /// </summary>
+public interace Interface
+{{
+    /// <summary>A summary.</summary>
+    
+    string Foo
+    {
+        add; remove;
+    }
+}}";
+
+
+            DiagnosticResult[] expected;
+
+            expected =
+                new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                        Message = "Elements must be documented",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 8, 12)
+                            }
+                    }
+                };
+
+            await VerifyCSharpDiagnosticAsync(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, !hasDocumentation ? expected : EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        private async Task TestInterfaceIndexerDeclarationDocumentation(bool hasDocumentation)
+        {
+            var testCodeWithoutDocumentation = @"    /// <summary>
+    /// A summary
+    /// </summary>
+public interface Interface
+{{
+
+    string
+    this[string foo] { get; set; }
+}}";
+            var testCodeWithDocumentation = @"    /// <summary>
+    /// A summary
+    /// </summary>
+public interace Interface
+{{
+    /// <summary>A summary.</summary>
+    string
+    this[string foo] { get; set; }
+}}";
+
+            DiagnosticResult[] expected;
+
+            expected =
+                new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                        Message = "Elements must be documented",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 8, 5)
+                            }
+                    }
+                };
+
+            await VerifyCSharpDiagnosticAsync(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, !hasDocumentation ? expected : EmptyDiagnosticResults, CancellationToken.None);
         }
 
         private async Task TestConstructorDeclarationDocumentation(string modifiers, bool requiresDiagnostic, bool hasDocumentation)
@@ -265,7 +450,7 @@ public class OuterClass
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "Elements must must have a non empty documentation",
+                        Message = "Elements must be documented",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -307,7 +492,7 @@ public class OuterClass
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "Elements must must have a non empty documentation",
+                        Message = "Elements must be documented",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -349,7 +534,7 @@ public class OuterClass
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "Elements must must have a non empty documentation",
+                        Message = "Elements must be documented",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -413,7 +598,7 @@ public class OuterClass
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "Elements must must have a non empty documentation",
+                        Message = "Elements must be documented",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -455,7 +640,7 @@ public class OuterClass
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "Elements must must have a non empty documentation",
+                        Message = "Elements must be documented",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -466,7 +651,7 @@ public class OuterClass
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "Elements must must have a non empty documentation",
+                        Message = "Elements must be documented",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -508,7 +693,7 @@ public class OuterClass
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "Elements must must have a non empty documentation",
+                        Message = "Elements must be documented",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -519,7 +704,7 @@ public class OuterClass
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "Elements must must have a non empty documentation",
+                        Message = "Elements must be documented",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -530,7 +715,7 @@ public class OuterClass
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "Elements must must have a non empty documentation",
+                        Message = "Elements must be documented",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -658,6 +843,8 @@ public class OuterClass
             await TestMethodDeclarationDocumentation("internal", true, false);
             await TestMethodDeclarationDocumentation("protected internal", true, false);
             await TestMethodDeclarationDocumentation("public", true, false);
+
+            await TestInterfaceMethodDeclarationDocumentation(false);
         }
 
         [TestMethod]
@@ -669,6 +856,8 @@ public class OuterClass
             await TestMethodDeclarationDocumentation("internal", false, true);
             await TestMethodDeclarationDocumentation("protected internal", false, true);
             await TestMethodDeclarationDocumentation("public", false, true);
+
+            await TestInterfaceMethodDeclarationDocumentation(true);
         }
 
         [TestMethod]
@@ -724,6 +913,8 @@ public class OuterClass
             await TestPropertyDeclarationDocumentation("internal", true, false);
             await TestPropertyDeclarationDocumentation("protected internal", true, false);
             await TestPropertyDeclarationDocumentation("public", true, false);
+
+            await TestInterfacePropertyDeclarationDocumentation(false);
         }
 
         [TestMethod]
@@ -735,6 +926,8 @@ public class OuterClass
             await TestPropertyDeclarationDocumentation("internal", false, true);
             await TestPropertyDeclarationDocumentation("protected internal", false, true);
             await TestPropertyDeclarationDocumentation("public", false, true);
+
+            await TestInterfacePropertyDeclarationDocumentation(true);
         }
 
         [TestMethod]
@@ -746,6 +939,8 @@ public class OuterClass
             await TestIndexerDeclarationDocumentation("internal", true, false);
             await TestIndexerDeclarationDocumentation("protected internal", true, false);
             await TestIndexerDeclarationDocumentation("public", true, false);
+
+            await TestInterfaceIndexerDeclarationDocumentation(false);
         }
 
         [TestMethod]
@@ -757,6 +952,8 @@ public class OuterClass
             await TestIndexerDeclarationDocumentation("internal", false, true);
             await TestIndexerDeclarationDocumentation("protected internal", false, true);
             await TestIndexerDeclarationDocumentation("public", false, true);
+
+            await TestInterfaceIndexerDeclarationDocumentation(true);
         }
 
         [TestMethod]
@@ -768,6 +965,8 @@ public class OuterClass
             await TestEventDeclarationDocumentation("internal", true, false);
             await TestEventDeclarationDocumentation("protected internal", true, false);
             await TestEventDeclarationDocumentation("public", true, false);
+
+            await TestInterfaceEventDeclarationDocumentation(false);
         }
 
         [TestMethod]
@@ -779,6 +978,8 @@ public class OuterClass
             await TestEventDeclarationDocumentation("internal", false, true);
             await TestEventDeclarationDocumentation("protected internal", false, true);
             await TestEventDeclarationDocumentation("public", false, true);
+
+            await TestInterfaceEventDeclarationDocumentation(true);
         }
 
         [TestMethod]
@@ -826,7 +1027,7 @@ public class OuterClass
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "Elements must must have a non empty documentation",
+                        Message = "Elements must be documented",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -864,7 +1065,7 @@ public class OuterClass
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "Elements must must have a non empty documentation",
+                        Message = "Elements must be documented",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -885,6 +1086,17 @@ public class OuterClass
 public class OuterClass
 {
 }";
+
+            await VerifyCSharpDiagnosticAsync(testCodeWithDocumentation, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestMultiLineDocumentation()
+        {
+            var testCodeWithDocumentation = @"/**
+ * <summary>This is a documentation comment summary.</summary>
+ */
+public void SomeMethod() { }";
 
             await VerifyCSharpDiagnosticAsync(testCodeWithDocumentation, EmptyDiagnosticResults, CancellationToken.None);
         }

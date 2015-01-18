@@ -39,7 +39,7 @@
     {
         public const string DiagnosticId = "SA1602";
         internal const string Title = "Enumeration items must be documented";
-        internal const string MessageFormat = "Enumeration items must have a non empty documentation";
+        internal const string MessageFormat = "Enumeration items must be documented";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "An item within a C# enumeration is missing an Xml documentation header.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1602.html";
@@ -70,12 +70,10 @@
             EnumMemberDeclarationSyntax enumMemberDeclaration = context.Node as EnumMemberDeclarationSyntax;
             if (enumMemberDeclaration != null)
             {
-                    var leadingTrivia = enumMemberDeclaration.GetLeadingTrivia();
-                    var commentTrivia = leadingTrivia.FirstOrDefault(x => x.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia));
-                    if (XmlCommentHelper.IsMissingOrEmpty(commentTrivia))
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, enumMemberDeclaration.Identifier.GetLocation()));
-                    }
+                if (!XmlCommentHelper.HasDocumentation(enumMemberDeclaration))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, enumMemberDeclaration.Identifier.GetLocation()));
+                }
             }
         }
     }
