@@ -207,13 +207,58 @@
             default:
                 return;
             }
-
+            
             SyntaxNode locationNode = identifierNameSyntax;
             if (identifierNameSyntax.Parent is QualifiedNameSyntax)
                 locationNode = identifierNameSyntax.Parent;
 
+            // Allow nameof
+            if(IsInNameOfExpression(identifierNameSyntax, semanticModel))
+            {
+                return;
+            }
+
             // Use built-in type alias
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, locationNode.GetLocation()));
+        }
+
+        private bool IsInNameOfExpression(IdentifierNameSyntax identifierNameSyntax, SemanticModel semanticModel)
+        {
+            // we search the syntax tree bottom up and search for a InvokationExpression which is named "nameof"
+            // because nameof(object.ToString) is valid we are only allowing MemberAccessExpressionSyntax, ArgumentSyntax and ArgumentListSyntax nodes
+            // when we search. If we find a InvokationExpressionSyntax we try to get the constant value for it. because nameof expressions
+            // are the only InvokationExpressionSyntax which can be evaluated at compile time we found a nameof(<identifierNameSyntax>) expression.
+            SyntaxNode node = identifierNameSyntax;
+            while (true)
+            {
+                node = node.Parent;
+
+                if(node == null)
+                {
+                    return false;
+                }
+                if (node is InvocationExpressionSyntax)
+                {
+                    break;
+                }
+
+                if (!(node is MemberAccessExpressionSyntax
+                    || node is ArgumentSyntax
+                    || node is ArgumentListSyntax))
+                {
+                    return false;
+                }
+            }
+
+            InvocationExpressionSyntax invokation = node as InvocationExpressionSyntax;
+
+            if(invokation == null || invokation.Expression.ToString() != "nameof")
+            {
+                return false;
+            }
+
+            var constantValue = semanticModel.GetConstantValue(invokation);
+            return constantValue.HasValue;
         }
     }
 }
