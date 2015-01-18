@@ -138,6 +138,33 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [TestMethod]
+        public async Task TestOrAndEqualsParenthesized()
+        {
+            var testCode = @"public class Foo
+{
+    public void Bar()
+    {
+        bool x = true || (false == true);
+    }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestAndAndEquals()
+        {
+            var testCode = @"public class Foo
+{
+    public void Bar()
+    {
+        bool x = true && false == true;
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
         public async Task TestAndAndOrParenthesized()
         {
             var testCode = @"public class Foo
