@@ -55,6 +55,10 @@
             if (genericNameSyntax.Identifier.IsMissing || genericNameSyntax.Identifier.Text != "Nullable")
                 return;
 
+            // The shorthand syntax is not available for the unbound generic form, e.g. typeof(Nullable<>)
+            if (genericNameSyntax?.TypeArgumentList?.Arguments.Count == 0)
+                return;
+
             // This covers the specific form in an XML comment which cannot be simplified
             if (genericNameSyntax.Parent is NameMemberCrefSyntax)
                 return;
