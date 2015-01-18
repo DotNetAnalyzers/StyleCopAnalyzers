@@ -3,7 +3,10 @@
     using System.Collections.Immutable;
     using System.Linq;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The name of a non-private readonly C# field must begin with an upper-case letter.
@@ -23,7 +26,7 @@
     {
         public const string DiagnosticId = "SA1304";
         internal const string Title = "Non-private readonly fields must begin with upper-case letter";
-        internal const string MessageFormat = "Non-private readonly fields must begin with upper-case letter.";
+        internal const string MessageFormat = "Non-private readonly fields must begin with upper-case letter";
         internal const string Category = "StyleCop.CSharp.NamingRules";
 
         internal const string Description = "The name of a non-private readonly C# field must being with an upper-case letter.";
@@ -43,27 +46,51 @@
             get { return _supportedDiagnostics; }
         }
 
+        /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSymbolAction(HandleFieldDeclaration, SymbolKind.Field);
+            context.RegisterSyntaxNodeAction(HandleFieldDeclarationSyntax, SyntaxKind.FieldDeclaration);
         }
 
-        private void HandleFieldDeclaration(SymbolAnalysisContext context)
+        private void HandleFieldDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            var symbol = context.Symbol as IFieldSymbol;
+            FieldDeclarationSyntax syntax = (FieldDeclarationSyntax)context.Node;
+            if (NamedTypeHelpers.IsContainedInNativeMethodsClass(syntax))
+                return;
 
-            if (symbol == null || 
-                !symbol.IsReadOnly || 
-                symbol.DeclaredAccessibility == Accessibility.Private)
+            if (!syntax.Modifiers.Any(SyntaxKind.ReadOnlyKeyword))
             {
+                // this analyzer only applies to readonly fields
                 return;
             }
 
-            if (!string.IsNullOrEmpty(symbol.Name) &&
-                char.IsLower(symbol.Name[0]) &&
-                symbol.Locations.Any())
+            if (!syntax.Modifiers.Any(SyntaxKind.PublicKeyword)
+                && !syntax.Modifiers.Any(SyntaxKind.ProtectedKeyword)
+                && !syntax.Modifiers.Any(SyntaxKind.InternalKeyword))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, symbol.Locations[0]));
+                // this analyzer only applies to non-private fields
+                return;
+            }
+
+            var variables = syntax.Declaration?.Variables;
+            if (variables == null)
+                return;
+
+            foreach (VariableDeclaratorSyntax variableDeclarator in variables.Value)
+            {
+                if (variableDeclarator == null)
+                    continue;
+
+                var identifier = variableDeclarator.Identifier;
+                if (identifier.IsMissing)
+                    continue;
+
+                string name = identifier.ValueText;
+                if (string.IsNullOrEmpty(name) || !char.IsLower(name[0]))
+                    continue;
+
+                // Non-private readonly fields must begin with upper-case letter.
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation()));
             }
         }
     }

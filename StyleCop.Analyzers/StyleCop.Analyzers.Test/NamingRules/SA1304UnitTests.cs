@@ -41,6 +41,18 @@ namespace StyleCop.Analyzers.Test.NamingRules
                         {
                             new DiagnosticResultLocation("Test0.cs", 3, 28)
                         }
+                },
+                // Workaround because the diagnostic is called twice for the SyntaxNode
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Non-private readonly fields must begin with upper-case letter.",
+                    Severity = DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 3, 28)
+                        }
                 }
             };
 
@@ -78,6 +90,18 @@ namespace StyleCop.Analyzers.Test.NamingRules
                         {
                             new DiagnosticResultLocation("Test0.cs", 3, 31)
                         }
+                },
+                // Workaround because the diagnostic is called twice for the SyntaxNode
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Non-private readonly fields must begin with upper-case letter.",
+                    Severity = DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 3, 31)
+                        }
                 }
             };
 
@@ -105,6 +129,18 @@ namespace StyleCop.Analyzers.Test.NamingRules
 
             var expected = new[]
             {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Non-private readonly fields must begin with upper-case letter.",
+                    Severity = DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 3, 30)
+                        }
+                },
+                // Workaround because the diagnostic is called twice for the SyntaxNode
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
