@@ -1,6 +1,7 @@
 ﻿namespace StyleCop.Analyzers.OrderingRules
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -171,19 +172,17 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleUsingDirectiveSyntax, SyntaxKind.UsingDirective);
+            context.RegisterSyntaxNodeAction(HandleCompilationUnitSyntax, SyntaxKind.CompilationUnit);
         }
 
-        private void HandleUsingDirectiveSyntax(SyntaxNodeAnalysisContext context)
+        private void HandleCompilationUnitSyntax(SyntaxNodeAnalysisContext context)
         {
-            var parent = context.Node.Parent;
-            if (parent == null)
+            CompilationUnitSyntax syntax = context.Node as CompilationUnitSyntax;
+            if (syntax == null)
                 return;
 
-            if (parent is NamespaceDeclarationSyntax)
-                return;
-
-            foreach (SyntaxNode child in parent.ChildNodes())
+            List<SyntaxNode> usingDirectives = new List<SyntaxNode>();
+            foreach (SyntaxNode child in syntax.ChildNodes())
             {
                 switch (child.CSharpKind())
                 {
@@ -199,16 +198,22 @@
                     // suppress SA1200 if file contains an attribute in the global namespace
                     return;
 
-                case SyntaxKind.ExternAliasDirective:
                 case SyntaxKind.UsingDirective:
+                    usingDirectives.Add(child);
+                    continue;
+
+                case SyntaxKind.ExternAliasDirective:
                 case SyntaxKind.NamespaceDeclaration:
                 default:
                     continue;
                 }
             }
 
-            // Using directive must appear within a namespace declaration
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation()));
+            foreach (var directive in usingDirectives)
+            {
+                // Using directive must appear within a namespace declaration
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, directive.GetLocation()));
+            }
         }
     }
 }
