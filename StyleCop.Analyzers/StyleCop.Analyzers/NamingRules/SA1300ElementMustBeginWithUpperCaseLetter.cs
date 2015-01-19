@@ -6,6 +6,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The name of a C# element does not begin with an upper-case letter.
@@ -177,25 +178,10 @@
             if (char.IsUpper(identifier.Text[0]))
                 return;
 
-            if (IsIgnored(context.Node))
+            if (NamedTypeHelpers.IsContainedInNativeMethodsClass(context.Node))
                 return;
 
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), identifier.Text));
-        }
-
-        private bool IsIgnored(SyntaxNode node)
-        {
-            ClassDeclarationSyntax containingClass = node.Parent.FirstAncestorOrSelf<ClassDeclarationSyntax>();
-            if (containingClass == null)
-                return false;
-
-            if (containingClass.Identifier.IsMissing)
-                return IsIgnored(containingClass);
-
-            if (containingClass.Identifier.Text.EndsWith("NativeMethods", StringComparison.Ordinal))
-                return true;
-
-            return IsIgnored(containingClass);
         }
     }
 }
