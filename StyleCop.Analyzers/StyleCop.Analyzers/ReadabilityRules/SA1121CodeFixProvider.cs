@@ -74,8 +74,7 @@
                 {
                     SpecialType specialType = typeInfo.Value.Type.SpecialType;
                     var newNode = SyntaxFactory.PredefinedType(SyntaxFactory.Token(_predefinedSpecialTypes[specialType]))
-                        .WithLeadingTrivia(node.GetLeadingTrivia())
-                        .WithTrailingTrivia(node.GetTrailingTrivia())
+                        .WithTriviaFrom(node)
                         .WithoutFormatting();
                     var newRoot = root.ReplaceNode(node, newNode);
 

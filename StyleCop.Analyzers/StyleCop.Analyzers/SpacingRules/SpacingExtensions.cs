@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.SpacingRules
 {
+    using System;
     using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
@@ -40,6 +41,48 @@
                 trivia = trivia.Where(i => !i.IsKind(SyntaxKind.EndOfLineTrivia));
 
             return SyntaxFactory.TriviaList(trivia);
+        }
+
+        /// <summary>
+        /// Replaces the leading and trailing trivia associated with <paramref name="targetNode"/> with the trivia from
+        /// <paramref name="node"/>.
+        /// </summary>
+        /// <typeparam name="TNode">The type of syntax node to apply the trivia to.</typeparam>
+        /// <param name="targetNode">The syntax node to update.</param>
+        /// <param name="node">The syntax node with the desired leading and trailing trivia.</param>
+        /// <returns>A copy of <paramref name="targetNode"/> with the leading and trailing trivia replaced with the
+        /// trivia from <paramref name="node"/>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <para>If <paramref name="targetNode"/> is <see langword="null"/>.</para>
+        /// <para>-or-</para>
+        /// <para>If <paramref name="node"/> is <see langword="null"/>.</para>
+        /// </exception>
+        public static TNode WithTriviaFrom<TNode>(this TNode targetNode, SyntaxNode node)
+            where TNode : SyntaxNode
+        {
+            if (targetNode == null)
+                throw new ArgumentNullException(nameof(targetNode));
+            if (node == null)
+                throw new ArgumentNullException(nameof(node));
+
+            return targetNode
+                .WithLeadingTrivia(node.GetLeadingTrivia())
+                .WithTrailingTrivia(node.GetTrailingTrivia());
+        }
+
+        /// <summary>
+        /// Replaces the leading and trailing trivia associated with <paramref name="targetToken"/> with the trivia from
+        /// <paramref name="token"/>.
+        /// </summary>
+        /// <param name="targetToken">The syntax token to update.</param>
+        /// <param name="token">The syntax token with the desired leading and trailing trivia.</param>
+        /// <returns>A copy of <paramref name="targetToken"/> with the leading and trailing trivia replaced with the
+        /// trivia from <paramref name="token"/>.</returns>
+        public static SyntaxToken WithTriviaFrom(this SyntaxToken targetToken, SyntaxToken token)
+        {
+            return targetToken
+                .WithLeadingTrivia(token.LeadingTrivia)
+                .WithTrailingTrivia(token.TrailingTrivia);
         }
 
         /// <summary>

@@ -57,12 +57,8 @@
                 BinaryExpressionSyntax syntax = node as BinaryExpressionSyntax;
                 if (syntax != null)
                 {
-                    var leadingTrivia = syntax.GetLeadingTrivia();
-                    var trailingTrivia = syntax.GetTrailingTrivia();
-
                     var newNode = SyntaxFactory.ParenthesizedExpression(syntax.WithoutLeadingTrivia().WithoutTrailingTrivia())
-                        .WithLeadingTrivia(leadingTrivia)
-                        .WithTrailingTrivia(trailingTrivia)
+                        .WithTriviaFrom(syntax)
                         .WithoutFormatting();
 
                     var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken);
