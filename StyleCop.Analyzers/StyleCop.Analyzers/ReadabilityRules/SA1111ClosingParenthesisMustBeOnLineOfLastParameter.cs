@@ -72,10 +72,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             if ((tyleSymbol.Type != null && tyleSymbol.Type.TypeKind != TypeKind.Array) )
             {
-
                 var elementAccess = (ElementAccessExpressionSyntax)context.Node;
 
-                if (elementAccess.ArgumentList.IsMissing || !elementAccess.ArgumentList.Arguments.Any())
+                if (elementAccess.ArgumentList == null ||
+                    elementAccess.ArgumentList.IsMissing || 
+                    !elementAccess.ArgumentList.Arguments.Any())
                 {
                     return;
                 }
@@ -108,7 +109,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var invocationExpression = (InvocationExpressionSyntax) context.Node;
 
-            if (invocationExpression.ArgumentList.IsMissing ||
+            if (invocationExpression.ArgumentList == null ||
+                invocationExpression.ArgumentList.IsMissing ||
                 !invocationExpression.ArgumentList.Arguments.Any())
             {
                 return;
@@ -130,7 +132,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var objectCreation = (ObjectCreationExpressionSyntax) context.Node;
 
-            if (objectCreation.ArgumentList.IsMissing ||
+            if (objectCreation.ArgumentList == null ||
+                objectCreation.ArgumentList.IsMissing ||
                 !objectCreation.ArgumentList.Arguments.Any())
             {
                 return;
@@ -154,7 +157,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var indexerDeclaration = (IndexerDeclarationSyntax)context.Node;
 
-            if (!indexerDeclaration.ParameterList.IsMissing &&
+            if (indexerDeclaration.ParameterList == null ||
+                !indexerDeclaration.ParameterList.IsMissing &&
                 !indexerDeclaration.ParameterList.Parameters.Any())
             {
                 return;
@@ -173,7 +177,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static void HandleBaseMethodDeclaration(SyntaxNodeAnalysisContext context,
             BaseMethodDeclarationSyntax baseMethodDeclarationSyntax)
         {
-            if (baseMethodDeclarationSyntax.ParameterList.IsMissing ||
+            if (baseMethodDeclarationSyntax.ParameterList == null ||
+                baseMethodDeclarationSyntax.ParameterList.IsMissing ||
                 !baseMethodDeclarationSyntax.ParameterList.Parameters.Any())
             {
                 return;
