@@ -283,6 +283,58 @@ public delegate void test();
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
+
+        [TestMethod]
+        public async Task TestUpperCaseEventField()
+        {
+            var testCode = @"public class TestClass
+{
+    public delegate void Test();
+    public event Test TestEvent;
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestLowerCaseEventField()
+        {
+            var testCode = @"public class TestClass
+{
+    public delegate void Test();
+    public event Test testEvent;
+}";
+
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = string.Format(Message, "testEvent"),
+                    Severity = DiagnosticSeverity.Warning,
+                    Locations =
+                    new []
+                    {
+                        new DiagnosticResultLocation("Test0.cs", 4, 23)
+                    }
+                },
+                // Workaround because the diagnostic is called twice for the SyntaxNode
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = string.Format(Message, "testEvent"),
+                    Severity = DiagnosticSeverity.Warning,
+                    Locations =
+                    new []
+                    {
+                        new DiagnosticResultLocation("Test0.cs", 4, 23)
+                    }
+                }
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
         [TestMethod]
         public async Task TestUpperCaseMethod()
         {

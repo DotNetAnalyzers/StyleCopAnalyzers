@@ -62,6 +62,7 @@
             context.RegisterSyntaxNodeAction(HandleStructDeclarationSyntax, SyntaxKind.StructDeclaration);
             context.RegisterSyntaxNodeAction(HandleDelegateDeclarationSyntax, SyntaxKind.DelegateDeclaration);
             context.RegisterSyntaxNodeAction(HandleEventDeclarationSyntax, SyntaxKind.EventDeclaration);
+            context.RegisterSyntaxNodeAction(HandleEventFieldDeclarationSyntax, SyntaxKind.EventFieldDeclaration);
             context.RegisterSyntaxNodeAction(HandleMethodDeclarationSyntax, SyntaxKind.MethodDeclaration);
             context.RegisterSyntaxNodeAction(HandlePropertyDeclarationSyntax, SyntaxKind.PropertyDeclaration);
         }
@@ -118,6 +119,22 @@
         private void HandleEventDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
             CheckElementNameToken(context, ((EventDeclarationSyntax)context.Node).Identifier);
+        }
+
+        private void HandleEventFieldDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        {
+            EventFieldDeclarationSyntax eventFieldDeclarationSyntax = (EventFieldDeclarationSyntax)context.Node;
+            VariableDeclarationSyntax variableDeclarationSyntax = eventFieldDeclarationSyntax.Declaration;
+            if (variableDeclarationSyntax == null || variableDeclarationSyntax.IsMissing)
+                return;
+
+            foreach (var declarator in variableDeclarationSyntax.Variables)
+            {
+                if (declarator == null || declarator.IsMissing)
+                    continue;
+
+                CheckElementNameToken(context, declarator.Identifier);
+            }
         }
 
         private void HandleMethodDeclarationSyntax(SyntaxNodeAnalysisContext context)
