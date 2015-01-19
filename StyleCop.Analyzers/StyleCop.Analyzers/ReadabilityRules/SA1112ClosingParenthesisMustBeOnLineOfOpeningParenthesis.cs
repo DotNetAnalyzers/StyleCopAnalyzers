@@ -59,7 +59,8 @@
         private void HandleObjectCreationExpression(SyntaxNodeAnalysisContext context)
         {
             var objectCreation = (ObjectCreationExpressionSyntax)context.Node;
-            if (objectCreation.ArgumentList.IsMissing ||
+            if (objectCreation.ArgumentList == null ||
+                objectCreation.ArgumentList.IsMissing ||
                 objectCreation.ArgumentList.Arguments.Count > 0)
             {
                 return;
@@ -76,7 +77,8 @@
         private void HandleInvocationExpression(SyntaxNodeAnalysisContext context)
         {
             var invocationExpression = (InvocationExpressionSyntax)context.Node;
-            if (invocationExpression.ArgumentList.IsMissing ||
+            if (invocationExpression.ArgumentList == null ||
+                invocationExpression.ArgumentList.IsMissing ||
                 invocationExpression.ArgumentList.Arguments.Any())
             {
                 return;

@@ -85,6 +85,7 @@
                     && !node.Expression.IsKind(SyntaxKind.ArrayCreationExpression)
                     && !node.Expression.IsKind(SyntaxKind.CoalesceExpression)
                     && !node.Expression.IsKind(SyntaxKind.QueryExpression)
+                    && !node.Expression.IsKind(SyntaxKind.AwaitExpression)
                     && !node.IsKind(SyntaxKind.ConstructorDeclaration))
                 {
                     ReportDiagnostic(context, node);

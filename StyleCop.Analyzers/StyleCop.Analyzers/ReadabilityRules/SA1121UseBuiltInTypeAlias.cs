@@ -212,8 +212,38 @@
             if (identifierNameSyntax.Parent is QualifiedNameSyntax)
                 locationNode = identifierNameSyntax.Parent;
 
+            // Allow nameof
+            if (IsNameInNameOfExpression(identifierNameSyntax))
+            {
+                return;
+            }
+
             // Use built-in type alias
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, locationNode.GetLocation()));
+        }
+
+        private bool IsNameInNameOfExpression(IdentifierNameSyntax identifierNameSyntax)
+        {
+            // The only time a type name can appear as an argument is for the invocation expression created for the
+            // nameof keyword. This assumption is the foundation of the following simple analysis algorithm.
+
+            if (identifierNameSyntax.Parent == null)
+                return false;
+
+            // This covers the case nameof(Int32)
+            if (identifierNameSyntax.Parent is ArgumentSyntax)
+                return true;
+
+            // This covers the case nameof(System.Int32)
+            if (identifierNameSyntax.Parent.IsKind(SyntaxKind.SimpleMemberAccessExpression))
+            {
+                // This final check ensures that we don't consider nameof(System.Int32.ToString) the same as
+                // nameof(System.Int32)
+                if (identifierNameSyntax.Parent.Parent is ArgumentSyntax)
+                    return true;
+            }
+
+            return false;
         }
     }
 }

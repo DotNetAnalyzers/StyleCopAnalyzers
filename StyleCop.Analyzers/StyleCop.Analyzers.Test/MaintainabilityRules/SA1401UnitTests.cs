@@ -95,6 +95,16 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
+        [TestMethod]
+        public async Task TestClassWithConstField()
+        {
+            var testCode = @"public class Foo
+{
+    public const string bar = ""qwe"";
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1401FieldsMustBePrivate();

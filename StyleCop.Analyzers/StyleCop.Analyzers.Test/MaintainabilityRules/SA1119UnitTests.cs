@@ -1786,6 +1786,19 @@
         }
 
         [TestMethod]
+        public async Task TestAwaitInner()
+        {
+            var testCode = @"public class Foo
+{
+    public async void Bar()
+    {
+        var x = (await System.Threading.Tasks.Task.Delay(10).ContinueWith(() => System.Threading.Tasks.Task.FromResult(1))).ToString();
+    }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
         public async Task TestBinary()
         {
             var testCode = @"public class Foo

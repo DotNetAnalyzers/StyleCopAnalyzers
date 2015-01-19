@@ -1,8 +1,13 @@
 ﻿namespace StyleCop.Analyzers.DocumentationRules
 {
+    using System.Linq;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Helpers;
+
 
     /// <summary>
     /// A C# partial element is missing a documentation header.
@@ -63,13 +68,13 @@
     {
         public const string DiagnosticId = "SA1601";
         internal const string Title = "Partial elements must be documented";
-        internal const string MessageFormat = "TODO: Message format";
+        internal const string MessageFormat = "Partial elements must be documented";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "A C# partial element is missing a documentation header.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1601.html";
 
         public static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
@@ -86,7 +91,40 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeAction(HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeAction(HandleTypeDeclaration, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeAction(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
+        }
+
+        private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            TypeDeclarationSyntax typeDeclaration = context.Node as TypeDeclarationSyntax;
+            if (typeDeclaration != null)
+            {
+                if (typeDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+                {
+                    if (!XmlCommentHelper.HasDocumentation(typeDeclaration))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, typeDeclaration.Identifier.GetLocation()));
+                    }
+                }
+            }
+        }
+
+        private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            MethodDeclarationSyntax methodDeclaration = context.Node as MethodDeclarationSyntax;
+            if (methodDeclaration != null)
+            {
+                if (methodDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+                {
+                    if (!XmlCommentHelper.HasDocumentation(methodDeclaration))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, methodDeclaration.Identifier.GetLocation()));
+                    }
+                }
+            }
         }
     }
 }

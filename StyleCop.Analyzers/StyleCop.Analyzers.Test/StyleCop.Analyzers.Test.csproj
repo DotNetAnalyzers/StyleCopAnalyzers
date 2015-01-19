@@ -103,6 +103,9 @@
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DocumentationRules\SA1602UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1601UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1600UnitTests.cs" />
     <Compile Include="MaintainabilityRules\DebugMessagesUnitTestsBase.cs" />
     <Compile Include="MaintainabilityRules\FileMayOnlyContainTestBase.cs" />
     <Compile Include="MaintainabilityRules\SA1119UnitTests.cs" />
@@ -120,6 +123,7 @@
     <Compile Include="NamingRules\SA1302UnitTests.cs" />
     <Compile Include="NamingRules\SA1303UnitTests.cs" />
     <Compile Include="NamingRules\SA1304UnitTests.cs" />
+    <Compile Include="ReadabilityRules\SA1100UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1112UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1121UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1122UnitTests.cs" />

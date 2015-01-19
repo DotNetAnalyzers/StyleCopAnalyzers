@@ -107,6 +107,20 @@
                 precedesStickyCharacter = true;
                 break;
 
+            case SyntaxKind.QuestionToken:
+                if (nextToken.Parent.IsKind(SyntaxKind.ConditionalAccessExpression))
+                {
+                    // allow a space for this case, but only if the ')' character is the last on the line
+                    allowEndOfLine = true;
+                    precedesStickyCharacter = true;
+                }
+                else
+                {
+                    precedesStickyCharacter = false;
+                }
+
+                break;
+
             case SyntaxKind.PlusToken:
                 precedesStickyCharacter = nextToken.Parent.IsKind(SyntaxKind.UnaryPlusExpression);
                 // this will be reported as SA1022
