@@ -89,9 +89,8 @@
             var tree = context.Node.SyntaxTree;
             var root = tree.GetRoot(context.CancellationToken);
 
-            var testThisToken = SyntaxFactory.Token(baseExpressionSyntax.Token.LeadingTrivia, SyntaxKind.ThisKeyword, baseExpressionSyntax.Token.TrailingTrivia);
-            var testExpression = SyntaxFactory.ThisExpression(testThisToken).WithLeadingTrivia(baseExpressionSyntax.GetLeadingTrivia()).WithTrailingTrivia(baseExpressionSyntax.GetTrailingTrivia());
-            var testTree = tree.WithRootAndOptions(root.ReplaceNode(baseExpressionSyntax, testExpression.WithoutFormatting()), tree.Options);
+            var testExpression = SyntaxFactory.ThisExpression().WithTriviaFrom(baseExpressionSyntax).WithoutFormatting();
+            var testTree = tree.WithRootAndOptions(root.ReplaceNode(baseExpressionSyntax, testExpression), tree.Options);
             var testCompilation = context.SemanticModel.Compilation.ReplaceSyntaxTree(tree, testTree);
 
             var testSemanticModel = testCompilation.GetSemanticModel(testTree);
