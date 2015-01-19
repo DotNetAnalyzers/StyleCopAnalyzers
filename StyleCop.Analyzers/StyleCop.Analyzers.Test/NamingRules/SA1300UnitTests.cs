@@ -90,6 +90,29 @@
         }
 
         [TestMethod]
+        public async Task TestUpperCaseInterface()
+        {
+            var testCode = @"public interface Test
+{
+
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestLowerCaseInterface()
+        {
+            var testCode = @"public interface test
+{
+
+}";
+
+            // Reported as SA1302
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
         public async Task TestUpperCaseStruct()
         {
             var testCode = @"public struct Test 

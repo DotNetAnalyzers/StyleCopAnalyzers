@@ -53,6 +53,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            // Note: Interfaces are handled by SA1302
             // Note: Fields are handled by SA1303 through SA1311
 
             context.RegisterSyntaxNodeAction(HandleNamespaceDeclarationSyntax, SyntaxKind.NamespaceDeclaration);
