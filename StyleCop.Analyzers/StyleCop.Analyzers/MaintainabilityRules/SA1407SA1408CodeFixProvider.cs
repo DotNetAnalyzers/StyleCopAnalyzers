@@ -57,7 +57,7 @@
                 BinaryExpressionSyntax syntax = node as BinaryExpressionSyntax;
                 if (syntax != null)
                 {
-                    var newNode = SyntaxFactory.ParenthesizedExpression(syntax.WithoutLeadingTrivia().WithoutTrailingTrivia())
+                    var newNode = SyntaxFactory.ParenthesizedExpression(syntax.WithoutTrivia())
                         .WithTriviaFrom(syntax)
                         .WithoutFormatting();
 

@@ -44,6 +44,32 @@
         }
 
         /// <summary>
+        /// Removes the leading and trailing trivia associated with a syntax node.
+        /// </summary>
+        /// <typeparam name="TNode">The type of syntax node to remove trivia from.</typeparam>
+        /// <param name="node">The syntax node to remove trivia from.</param>
+        /// <returns>A copy of the input syntax node with leading and trailing trivia removed.</returns>
+        /// <exception cref="ArgumentNullException">If <paramref name="node"/> is <see langword="null"/>.</exception>
+        public static TNode WithoutTrivia<TNode>(this TNode node)
+            where TNode : SyntaxNode
+        {
+            if (node == null)
+                throw new ArgumentNullException(nameof(node));
+
+            return node.WithoutLeadingTrivia().WithoutTrailingTrivia();
+        }
+
+        /// <summary>
+        /// Removes the leading and trailing trivia associated with a syntax token.
+        /// </summary>
+        /// <param name="token">The syntax token to remove trivia from.</param>
+        /// <returns>A copy of the input syntax token with leading and trailing trivia removed.</returns>
+        public static SyntaxToken WithoutTrivia(this SyntaxToken token)
+        {
+            return token.WithLeadingTrivia(default(SyntaxTriviaList)).WithTrailingTrivia(default(SyntaxTriviaList));
+        }
+
+        /// <summary>
         /// Replaces the leading and trailing trivia associated with <paramref name="targetNode"/> with the trivia from
         /// <paramref name="node"/>.
         /// </summary>
