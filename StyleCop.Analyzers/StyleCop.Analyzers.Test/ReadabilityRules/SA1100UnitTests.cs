@@ -1,4 +1,6 @@
-﻿namespace StyleCop.Analyzers.Test.ReadabilityRules
+﻿using Microsoft.CodeAnalysis.CodeFixes;
+
+namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
@@ -50,6 +52,24 @@ public class FooChild : Foo
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedTest = @"
+public class Foo
+{
+    protected virtual void Bar()
+    {
+
+    }
+}
+
+public class FooChild : Foo
+{
+    protected override void Baz()
+    {
+        this.Bar();
+    }
+}";
+            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -88,6 +108,24 @@ public class FooChild : Foo
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedTest = @"
+public class Foo
+{
+    protected void Bar()
+    {
+
+    }
+}
+
+public class FooChild : Foo
+{
+    protected override void Baz()
+    {
+        this.Bar();
+    }
+}";
+            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -157,6 +195,28 @@ public class FooChild : Foo
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedTest = @"
+public class Foo
+{
+    protected  void Bar()
+    {
+
+    }
+}
+
+public class FooChild : Foo
+{
+    protected  void Baz()
+    {
+        this.Bar();
+    }
+    protected  void Bar(string param)
+    {
+
+    }
+}";
+            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -222,6 +282,24 @@ public class FooChild : Foo
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedTest = @"
+public class Foo
+{
+    protected virtual string Bar
+    {
+        get;set;
+    }
+}
+
+public class FooChild : Foo
+{
+    protected override void Baz()
+    {
+        var s = this.Bar;
+    }
+}";
+            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -264,6 +342,27 @@ public class FooChild : Foo
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
+            var fixedTest = @"
+public class Foo
+{
+    protected  void Bar()
+    {
+
+    }
+}
+
+public class FooChild : Foo
+{
+    protected  void Baz()
+    {
+        this.Bar();
+    }
+    protected  void Bar(string param)
+    {
+
+    }
+}";
+            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -306,6 +405,27 @@ public class FooChild : Foo
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
+            var fixedTest = @"
+public class Foo
+{
+    protected  void Bar(string s)
+    {
+
+    }
+}
+
+public class FooChild : Foo
+{
+    protected  void Baz()
+    {
+        this.Bar("""");
+    }
+    protected  void Bar(long l)
+    {
+
+    }
+}";
+            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -348,6 +468,27 @@ public class FooChild : Foo
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
+            var fixedTest = @"
+public class Foo
+{
+    protected  void Bar(string s)
+    {
+
+    }
+}
+
+public class FooChild : Foo
+{
+    protected  void Baz()
+    {
+        this.Bar("""");
+    }
+    protected  void Bar(ref string s)
+    {
+
+    }
+}";
+            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -390,6 +531,27 @@ public class FooChild : Foo
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
+            var fixedTest = @"
+public class Foo
+{
+    protected  void Bar(string s)
+    {
+
+    }
+}
+
+public class FooChild : Foo
+{
+    protected  void Baz()
+    {
+        this.Bar("""");
+    }
+    protected  void Bar(out string s)
+    {
+        s = string.Empty;
+    }
+}";
+            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -432,6 +594,27 @@ public class FooChild : Foo
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
+            var fixedTest = @"
+public class Foo
+{
+    protected virtual void Bar()
+    {
+
+    }
+}
+
+public class FooChild : Foo
+{
+    protected  void Baz()
+    {
+        this.Bar();
+    }
+    protected override  void Bar(string param)
+    {
+
+    }
+}";
+            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -474,6 +657,27 @@ public class FooChild : Foo
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
+            var fixedTest = @"
+public class Foo
+{
+    protected virtual void Bar(string s, int i)
+    {
+
+    }
+}
+
+public class FooChild : Foo
+{
+    protected  void Baz()
+    {
+        this.Bar(string.Empty, 5);
+    }
+    protected override  void Bar(ref string s, int i)
+    {
+
+    }
+}";
+            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -516,6 +720,27 @@ public class FooChild : Foo
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
+            var fixedTest = @"
+public class Foo
+{
+    protected virtual void Bar(string s, int i)
+    {
+
+    }
+}
+
+public class FooChild : Foo
+{
+    protected  void Baz()
+    {
+        this.Bar(string.Empty, 5);
+    }
+    protected override  void Bar(out string s, int i)
+    {
+        s = string.Empty;
+    }
+}";
+            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -558,6 +783,27 @@ public class FooChild : Foo
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
+            var fixedTest = @"
+public class Foo
+{
+    protected virtual void Bar(string s, int i)
+    {
+
+    }
+}
+
+public class FooChild : Foo
+{
+    protected  void Baz()
+    {
+        this.Bar(string.Empty, 5);
+    }
+    protected override  void Bar(int i, string s)
+    {
+
+    }
+}";
+            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -708,6 +954,24 @@ public class FooChild : Foo
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedTest = @"
+public class Foo
+{
+    protected event Action MyEvent;
+}
+
+public class FooChild : Foo
+{
+    protected override void Baz()
+    {
+        if(this.MyEvent != null)
+        {
+
+        }
+    }
+}";
+            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -790,11 +1054,113 @@ public struct S
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedTest = @"
+public struct S
+{
+    public string Baz()
+    {
+        return this.ToString();
+    }
+}";
+            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestChildClassUsesBaseButNoOverrideTwoIssues()
+        {
+            var testCode = @"
+public class Foo
+{
+    protected virtual void Bar()
+    {
+
+    }
+
+    protected virtual void Bar2()
+    {
+
+    }
+}
+
+public class FooChild : Foo
+{
+    protected override void Baz()
+    {
+        base.Bar();
+    }
+
+    protected override void Baz2()
+    {
+        base.Bar2();
+    }
+}";
+
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Do not prefix calls with base unless local implementation exists",
+                    Severity =  DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 19, 9)
+                        }
+                },
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Do not prefix calls with base unless local implementation exists",
+                    Severity =  DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 24, 9)
+                        }
+                }
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedTest = @"
+public class Foo
+{
+    protected virtual void Bar()
+    {
+
+    }
+
+    protected virtual void Bar2()
+    {
+
+    }
+}
+
+public class FooChild : Foo
+{
+    protected override void Baz()
+    {
+        this.Bar();
+    }
+
+    protected override void Baz2()
+    {
+        this.Bar2();
+    }
+}";
+            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists();
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1100CodeFixProvider();
         }
     }
 }
