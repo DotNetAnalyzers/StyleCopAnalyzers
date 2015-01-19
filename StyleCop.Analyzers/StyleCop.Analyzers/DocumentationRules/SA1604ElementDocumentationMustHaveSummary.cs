@@ -2,7 +2,9 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+
 
     /// <summary>
     /// The XML header documentation for a C# element is missing a <c>&lt;summary&gt;</c> tag.
@@ -18,15 +20,14 @@
     /// tag.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1604ElementDocumentationMustHaveSummary : DiagnosticAnalyzer
+    public class SA1604ElementDocumentationMustHaveSummary : ElementDocumentationSummaryBase
     {
         public const string DiagnosticId = "SA1604";
         internal const string Title = "Element documentation must have summary";
-        internal const string MessageFormat = "TODO: Message format";
+        internal const string MessageFormat = "Element documentation must have summary";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "The XML header documentation for a C# element is missing a <summary> tag.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1604.html";
-
         public static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
@@ -42,10 +43,23 @@
             }
         }
 
-        /// <inheritdoc/>
-        public override void Initialize(AnalysisContext context)
+        protected internal override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlElementSyntax syntax, Location diagnosticLocation)
         {
-            // TODO: Implement analysis
+            if(syntax == null)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, diagnosticLocation));
+            }
+        }
+
+        protected internal override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlElementSyntax syntax, Location[] diagnosticLocations)
+        {
+            if (syntax == null)
+            {
+                foreach (var location in diagnosticLocations)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                }
+            }
         }
     }
 }
