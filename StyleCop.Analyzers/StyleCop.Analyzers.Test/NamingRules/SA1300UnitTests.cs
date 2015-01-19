@@ -412,22 +412,8 @@ readonly string test;
 public string test;
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = string.Format(Message, "test"),
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                    new []
-                    {
-                        new DiagnosticResultLocation("Test0.cs", 3, 15)
-                    }
-                }
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            // Handled by SA1307
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -438,22 +424,8 @@ public string test;
 internal string test;
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = string.Format(Message, "test"),
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                    new []
-                    {
-                        new DiagnosticResultLocation("Test0.cs", 3, 17)
-                    }
-                }
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            // Handled by SA1307
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -464,22 +436,8 @@ internal string test;
 const string test;
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = string.Format(Message, "test"),
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                    new []
-                    {
-                        new DiagnosticResultLocation("Test0.cs", 3, 14)
-                    }
-                }
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            // Reported as SA1303
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -501,22 +459,8 @@ public string test;
 protected readonly string test;
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = string.Format(Message, "test"),
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                    new []
-                    {
-                        new DiagnosticResultLocation("Test0.cs", 3, 27)
-                    }
-                }
-            };
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            // Handled by SA1304
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

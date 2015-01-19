@@ -53,6 +53,8 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            // Note: Fields are handled by SA1303 through SA1311
+
             context.RegisterSyntaxNodeAction(HandleNamespaceDeclarationSyntax, SyntaxKind.NamespaceDeclaration);
             context.RegisterSyntaxNodeAction(HandleClassDeclarationSyntax, SyntaxKind.ClassDeclaration);
             context.RegisterSyntaxNodeAction(HandleEnumDeclarationSyntax, SyntaxKind.EnumDeclaration);
@@ -61,7 +63,6 @@
             context.RegisterSyntaxNodeAction(HandleEventDeclarationSyntax, SyntaxKind.EventDeclaration);
             context.RegisterSyntaxNodeAction(HandleMethodDeclarationSyntax, SyntaxKind.MethodDeclaration);
             context.RegisterSyntaxNodeAction(HandlePropertyDeclarationSyntax, SyntaxKind.PropertyDeclaration);
-            context.RegisterSyntaxNodeAction(HandleFieldDeclarationSyntax, SyntaxKind.FieldDeclaration);
         }
 
         private void HandleNamespaceDeclarationSyntax(SyntaxNodeAnalysisContext context)
@@ -126,45 +127,6 @@
         private void HandlePropertyDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
             CheckElementNameToken(context, ((PropertyDeclarationSyntax)context.Node).Identifier);
-        }
-
-        private void HandleFieldDeclarationSyntax(SyntaxNodeAnalysisContext context)
-        {
-            FieldDeclarationSyntax fieldDeclarationSyntax = (FieldDeclarationSyntax)context.Node;
-            VariableDeclarationSyntax variableDeclarationSyntax = fieldDeclarationSyntax.Declaration;
-            if (variableDeclarationSyntax == null || variableDeclarationSyntax.IsMissing)
-                return;
-
-            bool? checkName = null;
-            if (fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.PublicKeyword)
-                || fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.ConstKeyword))
-            {
-                checkName = true;
-            }
-
-            if (!checkName.HasValue)
-            {
-                if (fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.ProtectedKeyword))
-                {
-                    if (fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.ReadOnlyKeyword))
-                        checkName = true;
-                }
-                else if (fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.InternalKeyword))
-                {
-                    checkName = true;
-                }
-            }
-
-            if (!(checkName ?? false))
-                return;
-
-            foreach (var declarator in variableDeclarationSyntax.Variables)
-            {
-                if (declarator == null || declarator.IsMissing)
-                    continue;
-
-                CheckElementNameToken(context, declarator.Identifier);
-            }
         }
 
         private void CheckElementNameToken(SyntaxNodeAnalysisContext context, SyntaxToken identifier)
