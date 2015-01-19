@@ -171,6 +171,33 @@ public class Foo { }";
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
+        [TestMethod]
+        public async Task TestElementMissingEndTag()
+        {
+            var testCode = @"
+/// <summary>a
+public class Foo { }";
+
+            DiagnosticResult[] expected;
+
+            expected =
+                new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                        Message = "The documentation header is composed of invalid Xml: The Xml tag 'summary' is not closed.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 2, 5)
+                            }
+                    }
+                };
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1603DocumentationMustContainValidXml();

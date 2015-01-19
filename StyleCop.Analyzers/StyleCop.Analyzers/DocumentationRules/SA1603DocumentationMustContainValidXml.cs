@@ -70,19 +70,26 @@
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, xmlElementSyntax.StartTag.GetLocation(), "Xml element start tag is missing a '>'."));
                 }
-
-                if (xmlElementSyntax.EndTag.LessThanSlashToken.IsMissing)
+                if (xmlElementSyntax.EndTag.IsMissing)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, xmlElementSyntax.EndTag.GetLocation(), "Xml element end tag is missing a '</'."));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, xmlElementSyntax.StartTag.GetLocation(), $"The Xml tag '{xmlElementSyntax.StartTag.Name}' is not closed."));
                 }
+                else
+                {
+                    if (xmlElementSyntax.EndTag.LessThanSlashToken.IsMissing)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, xmlElementSyntax.EndTag.GetLocation(), "Xml element end tag is missing a '</'."));
+                    }
 
-                if (xmlElementSyntax.EndTag.GreaterThanToken.IsMissing)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, xmlElementSyntax.EndTag.GetLocation(), "Xml element end tag is missing a '>'."));
-                }
-                if (xmlElementSyntax.StartTag.Name.ToString() != xmlElementSyntax.EndTag.Name.ToString())
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, xmlElementSyntax.StartTag.GetLocation(), new[] { xmlElementSyntax.EndTag.GetLocation() }, $"The '{xmlElementSyntax.StartTag.Name}' start tag does not match the end tag of '{xmlElementSyntax.EndTag.Name}'."));
+                    if (xmlElementSyntax.EndTag.GreaterThanToken.IsMissing)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, xmlElementSyntax.EndTag.GetLocation(), "Xml element end tag is missing a '>'."));
+                    }
+
+                    if (xmlElementSyntax.StartTag.Name.ToString() != xmlElementSyntax.EndTag.Name.ToString())
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, xmlElementSyntax.StartTag.GetLocation(), new[] { xmlElementSyntax.EndTag.GetLocation() }, $"The '{xmlElementSyntax.StartTag.Name}' start tag does not match the end tag of '{xmlElementSyntax.EndTag.Name}'."));
+                    }
                 }
 
                 IEnumerable<SyntaxTrivia> skippedTokens = xmlElementSyntax.StartTag.DescendantTrivia()
