@@ -1,6 +1,5 @@
 ﻿namespace StyleCop.Analyzers.NamingRules
 {
-    using System;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -152,16 +151,22 @@
             if (identifier.IsMissing)
                 return;
 
-            if (string.IsNullOrEmpty(identifier.Text))
+            if (string.IsNullOrEmpty(identifier.ValueText))
                 return;
 
-            if (char.IsUpper(identifier.Text[0]))
+            // This code uses char.IsLower(...) instead of !char.IsUpper(...) for all of the following reasons:
+            //  1. Foreign languages may not have upper case variants for certain characters
+            //  2. This diagnostic appears targeted for "English" identifiers.
+            //
+            // See DotNetAnalyzers/StyleCopAnalyzers#369 for additional information:
+            // https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/369
+            if (!char.IsLower(identifier.ValueText[0]) && identifier.ValueText[0] != '_')
                 return;
 
             if (NamedTypeHelpers.IsContainedInNativeMethodsClass(context.Node))
                 return;
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), identifier.Text));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), identifier.ValueText));
         }
     }
 }
