@@ -47,6 +47,16 @@
             await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
         }
 
+        private async Task TestTypeWithInheritedDocumentation(string typeName)
+        {
+            var testCode = @"
+/// <inheritdoc/>
+{0} TypeName
+{{
+}}";
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
+        }
+
         private async Task TestTypeWithoutDocumentation(string typeName)
         {
             var testCode = @"
@@ -98,6 +108,30 @@ TypeName
         public async Task TestInterfaceWithDocumentation()
         {
             await TestTypeWithDocumentation("interface");
+        }
+
+        [TestMethod]
+        public async Task TestEnumWithInheritedDocumentation()
+        {
+            await TestTypeWithInheritedDocumentation("enum");
+        }
+
+        [TestMethod]
+        public async Task TestClassWithInheritedDocumentation()
+        {
+            await TestTypeWithInheritedDocumentation("class");
+        }
+
+        [TestMethod]
+        public async Task TestStructWithInheritedDocumentation()
+        {
+            await TestTypeWithInheritedDocumentation("struct");
+        }
+
+        [TestMethod]
+        public async Task TestInterfaceWithInheritedDocumentation()
+        {
+            await TestTypeWithInheritedDocumentation("interface");
         }
 
         [TestMethod]
@@ -170,6 +204,16 @@ TypeName();";
         }
 
         [TestMethod]
+        public async Task TestDelegateWithInheritedDocumentation()
+        {
+            var testCode = @"
+/// <inheritdoc/>
+public delegate 
+TypeName();";
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
         public async Task TestDelegateWithoutDocumentation()
         {
             var testCode = @"
@@ -223,6 +267,21 @@ public class ClassName
     /// <summary>
     ///
     /// </summary>
+    public void Test() { }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestMethodWithInheritedDocumentation()
+        {
+            var testCode = @"
+/// <summary>
+/// 
+/// </summary>
+public class ClassName
+{
+    /// <inheritdoc/>
     public void Test() { }
 }";
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
@@ -293,6 +352,21 @@ public class ClassName
         }
 
         [TestMethod]
+        public async Task TestConstructorWithInheritedDocumentation()
+        {
+            var testCode = @"
+/// <summary>
+/// 
+/// </summary>
+public class ClassName
+{
+    /// <inheritdoc/>
+    public ClassName() { }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
         public async Task TestConstructorWithoutDocumentation()
         {
             var testCode = @"
@@ -357,6 +431,21 @@ public class ClassName
         }
 
         [TestMethod]
+        public async Task TestDestructorWithInheritedDocumentation()
+        {
+            var testCode = @"
+/// <summary>
+/// 
+/// </summary>
+public class ClassName
+{
+    /// <inheritdoc/>
+    ~ClassName() { }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
         public async Task TestDestructorWithoutDocumentation()
         {
             var testCode = @"
@@ -401,6 +490,21 @@ public class ClassName
     /// <summary>
     ///
     /// </summary>
+    public ClassName Property { get; set; }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestPropertyWithInheritedDocumentation()
+        {
+            var testCode = @"
+/// <summary>
+/// 
+/// </summary>
+public class ClassName
+{
+    /// <inheritdoc/>
     public ClassName Property { get; set; }
 }";
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
@@ -471,6 +575,21 @@ public class ClassName
         }
 
         [TestMethod]
+        public async Task TestIndexerWithInheritedDocumentation()
+        {
+            var testCode = @"
+/// <summary>
+/// 
+/// </summary>
+public class ClassName
+{
+    /// <inheritdoc/>
+    public ClassName this[string t] { get { return null; } }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
         public async Task TestIndexerNoDocumentation()
         {
             var testCode = @"
@@ -529,6 +648,21 @@ public class ClassName
     /// <summary>
     ///
     /// </summary>
+    public ClassName Foo;
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestFieldWithInheritedDocumentation()
+        {
+            var testCode = @"
+/// <summary>
+/// 
+/// </summary>
+public class ClassName
+{
+    /// <inheritdoc/>
     public ClassName Foo;
 }";
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
@@ -610,6 +744,21 @@ public class ClassName
         }
 
         [TestMethod]
+        public async Task TestEventWithInheritedDocumentation()
+        {
+            var testCode = @"
+/// <summary>
+/// 
+/// </summary>
+public class ClassName
+{
+    /// <inheritdoc/>
+    public event System.Action Foo;
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
         public async Task TestEventNoDocumentation()
         {
             var testCode = @"
@@ -679,6 +828,21 @@ public interface InterfaceName
     /// <summary>
     ///
     /// </summary>
+    event System.Action Foo { add; remove; }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestEventPropertyWithInheritedDocumentation()
+        {
+            var testCode = @"
+/// <summary>
+/// 
+/// </summary>
+public interface InterfaceName
+{
+    /// <inheritdoc/>
     event System.Action Foo { add; remove; }
 }";
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);

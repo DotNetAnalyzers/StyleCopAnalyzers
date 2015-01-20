@@ -43,7 +43,7 @@
             }
         }
 
-        protected internal override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlElementSyntax syntax, Location[] diagnosticLocations)
+        protected internal override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location[] diagnosticLocations)
         {
             if (syntax == null)
             {

@@ -9,7 +9,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 {
     public abstract class ElementDocumentationSummaryBase : DiagnosticAnalyzer
     {
-        abstract protected internal void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlElementSyntax syntax, params Location[] diagnosticLocations);
+        abstract protected internal void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, params Location[] diagnosticLocations);
 
         public override void Initialize(AnalysisContext context)
         {
@@ -28,9 +28,14 @@ namespace StyleCop.Analyzers.DocumentationRules
             context.RegisterSyntaxNodeAction(HandleFieldDeclaration, SyntaxKind.EventFieldDeclaration);
         }
 
-        private static XmlElementSyntax GetTopLevelElement(DocumentationCommentTriviaSyntax syntax, string tagName)
+        private static XmlNodeSyntax GetTopLevelElement(DocumentationCommentTriviaSyntax syntax, string tagName)
         {
-            return syntax.Content.OfType<XmlElementSyntax>().FirstOrDefault(element => string.Equals(element.StartTag.Name.ToString(), tagName));
+            XmlElementSyntax elementSyntax = syntax.Content.OfType<XmlElementSyntax>().FirstOrDefault(element => string.Equals(element.StartTag.Name.ToString(), tagName));
+            if (elementSyntax != null)
+                return elementSyntax;
+
+            XmlEmptyElementSyntax emptyElementSyntax = syntax.Content.OfType<XmlEmptyElementSyntax>().FirstOrDefault(element => string.Equals(element.Name.ToString(), tagName));
+            return emptyElementSyntax;
         }
 
         private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
@@ -138,6 +143,12 @@ namespace StyleCop.Analyzers.DocumentationRules
             if (documentation == null)
             {
                 // missing documentation is reported by SA1600, SA1601, and SA1602
+                return;
+            }
+
+            if (GetTopLevelElement(documentation, XmlCommentHelper.InheritdocXmlTag) != null)
+            {
+                // Ignore nodes with an <inheritdoc/> tag.
                 return;
             }
 

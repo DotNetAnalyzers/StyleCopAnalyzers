@@ -59,6 +59,16 @@ partial {0} TypeName
             await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
         }
 
+        private async Task TestTypeWithInheritedDocumentation(string typeName)
+        {
+            var testCode = @"
+/// <inheritdoc/>
+partial {0} TypeName
+{{
+}}";
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
+        }
+
         private async Task TestTypeWithoutDocumentation(string typeName)
         {
             var testCode = @"
@@ -122,6 +132,24 @@ TypeName
         public async Task TestInterfaceWithContentDocumentation()
         {
             await TestTypeWithContentDocumentation("interface");
+        }
+
+        [TestMethod]
+        public async Task TestClassWithInheritedDocumentation()
+        {
+            await TestTypeWithInheritedDocumentation("class");
+        }
+
+        [TestMethod]
+        public async Task TestStructWithInheritedDocumentation()
+        {
+            await TestTypeWithInheritedDocumentation("struct");
+        }
+
+        [TestMethod]
+        public async Task TestInterfaceWithInheritedDocumentation()
+        {
+            await TestTypeWithInheritedDocumentation("interface");
         }
 
         [TestMethod]
@@ -209,6 +237,21 @@ public class ClassName
     /// <content>
     ///
     /// </content>
+    partial void Test();
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestMethodWithInheritedDocumentation()
+        {
+            var testCode = @"
+/// <summary>
+/// 
+/// </summary>
+public class ClassName
+{
+    /// <inheritdoc/>
     partial void Test();
 }";
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);

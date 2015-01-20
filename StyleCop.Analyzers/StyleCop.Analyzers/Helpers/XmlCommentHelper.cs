@@ -13,7 +13,7 @@
     {
         internal const string SummaryXmlTag = "summary";
         internal const string ContentXmlTag = "content";
-
+        internal const string InheritdocXmlTag = "inheritdoc";
 
         /// <summary>
         /// This helper is used by documentation diagnostics to check if a xml comment should be considered empty.
