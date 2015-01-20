@@ -68,9 +68,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private void HandleElementAccessExpression(SyntaxNodeAnalysisContext context)
         {
-            var tyleSymbol = context.SemanticModel.GetTypeInfo(((ElementAccessExpressionSyntax)context.Node).Expression);
+            var typeSymbol = context.SemanticModel.GetTypeInfo(((ElementAccessExpressionSyntax)context.Node).Expression);
 
-            if ((tyleSymbol.Type != null && tyleSymbol.Type.TypeKind != TypeKind.Array) )
+            if (typeSymbol.Type != null && typeSymbol.Type.TypeKind != TypeKind.Array )
             {
                 var elementAccess = (ElementAccessExpressionSyntax)context.Node;
 
