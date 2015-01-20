@@ -1,8 +1,11 @@
 ﻿namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Immutable;
+    using Helpers;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+
 
     /// <summary>
     /// The <c>&lt;summary&gt;</c> or <c>&lt;content&gt;</c> tag within the documentation header for a C# code element
@@ -61,11 +64,11 @@
     /// SDK documentation tools.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1607PartialElementDocumentationMustHaveSummaryText : DiagnosticAnalyzer
+    public class SA1607PartialElementDocumentationMustHaveSummaryText : PartialElementDocumentationSummaryBase
     {
         public const string DiagnosticId = "SA1607";
         internal const string Title = "Partial element documentation must have summary text";
-        internal const string MessageFormat = "TODO: Message format";
+        internal const string MessageFormat = "Partial element documentation must have summary text";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "The <summary> or <content> tag within the documentation header for a C# code element is empty.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1607.html";
@@ -85,10 +88,18 @@
             }
         }
 
-        /// <inheritdoc/>
-        public override void Initialize(AnalysisContext context)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location[] diagnosticLocations)
         {
-            // TODO: Implement analysis
+            if (syntax != null)
+            {
+                if (XmlCommentHelper.IsConsideredEmpty(syntax))
+                {
+                    foreach (var location in diagnosticLocations)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                    }
+                }
+            }
         }
     }
 }

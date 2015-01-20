@@ -2,7 +2,10 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
+
 
     /// <summary>
     /// The <c>&lt;summary&gt;</c> tag within the documentation header for a C# code element is empty.
@@ -18,11 +21,11 @@
     /// <c>&lt;summary&gt;</c> tag which does not contain a description of the element.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1606ElementDocumentationMustHaveSummaryText : DiagnosticAnalyzer
+    public class SA1606ElementDocumentationMustHaveSummaryText : ElementDocumentationSummaryBase
     {
         public const string DiagnosticId = "SA1606";
         internal const string Title = "Element documentation must have summary text";
-        internal const string MessageFormat = "TODO: Message format";
+        internal const string MessageFormat = "Element documentation must have summary text";
         internal const string Category = "StyleCop.CSharp.DocumentationRules";
         internal const string Description = "The <summary> tag within the documentation header for a C# code element is empty.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1606.html";
@@ -42,10 +45,18 @@
             }
         }
 
-        /// <inheritdoc/>
-        public override void Initialize(AnalysisContext context)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location[] diagnosticLocations)
         {
-            // TODO: Implement analysis
+            if (syntax != null)
+            {
+                if (XmlCommentHelper.IsConsideredEmpty(syntax))
+                {
+                    foreach (var location in diagnosticLocations)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                    }
+                }
+            }
         }
     }
 }

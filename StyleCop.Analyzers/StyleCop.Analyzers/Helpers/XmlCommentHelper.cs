@@ -11,6 +11,10 @@
     /// </summary>
     internal static class XmlCommentHelper
     {
+        internal const string SummaryXmlTag = "summary";
+        internal const string ContentXmlTag = "content";
+        internal const string InheritdocXmlTag = "inheritdoc";
+
         /// <summary>
         /// This helper is used by documentation diagnostics to check if a xml comment should be considered empty.
         /// A comment is empty if 
@@ -124,15 +128,35 @@
         /// <returns>true if the node has documentation, false otherwise.</returns>
         internal static bool HasDocumentation(SyntaxNode node)
         {
-            var leadingTrivia = node.GetLeadingTrivia();
-            var commentTrivia = leadingTrivia.FirstOrDefault(x => x.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia));
-            if(!IsMissingOrEmpty(commentTrivia))
-            {
-                return true;
-            }
-            commentTrivia = leadingTrivia.FirstOrDefault(x => x.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia));
+            var commentTrivia = GetCommentTrivia(node);
 
             return !IsMissingOrEmpty(commentTrivia);
+        }
+
+        internal static DocumentationCommentTriviaSyntax GetDocumentationStructure(SyntaxNode node)
+        {
+            if(node == null)
+            {
+                return null;
+            }
+
+            var commentTrivia = GetCommentTrivia(node);
+
+            if (!commentTrivia.HasStructure)
+                return null;
+
+            return commentTrivia.GetStructure() as DocumentationCommentTriviaSyntax;
+        }
+
+        private static SyntaxTrivia GetCommentTrivia(SyntaxNode node)
+        {
+            var leadingTrivia = node.GetLeadingTrivia();
+            var commentTrivia = leadingTrivia.FirstOrDefault(x => x.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia));
+            if (commentTrivia != default(SyntaxTrivia))
+            {
+                return commentTrivia;
+            }
+            return leadingTrivia.FirstOrDefault(x => x.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia));
         }
     }
 }
