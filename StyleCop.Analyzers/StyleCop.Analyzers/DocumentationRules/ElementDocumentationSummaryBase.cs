@@ -9,7 +9,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 {
     public abstract class ElementDocumentationSummaryBase : DiagnosticAnalyzer
     {
-        abstract protected internal void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, params Location[] diagnosticLocations);
+        abstract protected void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, params Location[] diagnosticLocations);
 
         public override void Initialize(AnalysisContext context)
         {

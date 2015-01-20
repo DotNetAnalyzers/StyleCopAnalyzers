@@ -11,7 +11,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 {
     public abstract class PartialElementDocumentationSummaryBase : DiagnosticAnalyzer
     {
-        abstract internal protected void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, params Location[] diagnosticLocations);
+        abstract protected void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, params Location[] diagnosticLocations);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
