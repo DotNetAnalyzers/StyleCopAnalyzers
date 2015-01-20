@@ -22,40 +22,55 @@ namespace StyleCop.Analyzers.DocumentationRules
             context.RegisterSyntaxNodeAction(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
         }
 
+        private static XmlElementSyntax GetTopLevelElement(DocumentationCommentTriviaSyntax syntax, string tagName)
+        {
+            return syntax.Content.OfType<XmlElementSyntax>().FirstOrDefault(element => string.Equals(element.StartTag.Name.ToString(), tagName));
+        }
+
         private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
             var node = context.Node as BaseTypeDeclarationSyntax;
+            if (node == null || node.Identifier.IsMissing)
+                return;
 
             if (!node.Modifiers.Any(SyntaxKind.PartialKeyword))
             {
+                // non-elements are handled by ElementDocumentationSummaryBase
                 return;
             }
 
-            var documentation = XmlCommentHelper.GetDocumentationStructure(node);
-            if (documentation != null)
-            {
-                var xmlElement = documentation.Content.OfType<XmlElementSyntax>().FirstOrDefault(x => x.StartTag.Name.ToString() == XmlCommentHelper.SummaryXmlTag || x.StartTag.Name.ToString() == XmlCommentHelper.ContentXmlTag);
-
-                HandleXmlElement(context, xmlElement, node.Identifier.GetLocation());
-            }
+            HandleDeclaration(context, node, node.Identifier.GetLocation());
         }
 
         private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
             var node = context.Node as MethodDeclarationSyntax;
+            if (node == null || node.Identifier.IsMissing)
+                return;
 
             if (!node.Modifiers.Any(SyntaxKind.PartialKeyword))
             {
+                // non-partial elements are handled by ElementDocumentationSummaryBase
                 return;
             }
 
-            var documentation = XmlCommentHelper.GetDocumentationStructure(node);
-            if (documentation != null)
-            {
-                var xmlElement = documentation.Content.OfType<XmlElementSyntax>().FirstOrDefault(x => x.StartTag.Name.ToString() == XmlCommentHelper.SummaryXmlTag || x.StartTag.Name.ToString() == XmlCommentHelper.ContentXmlTag);
+            HandleDeclaration(context, node, node.Identifier.GetLocation());
+        }
 
-                HandleXmlElement(context, xmlElement, node.Identifier.GetLocation());
+        private void HandleDeclaration(SyntaxNodeAnalysisContext context, SyntaxNode node, params Location[] locations)
+        {
+            var documentation = XmlCommentHelper.GetDocumentationStructure(node);
+            if (documentation == null)
+            {
+                // missing documentation is reported by SA1600, SA1601, and SA1602
+                return;
             }
+
+            var xmlElement = GetTopLevelElement(documentation, XmlCommentHelper.SummaryXmlTag);
+            if (xmlElement == null)
+                xmlElement = GetTopLevelElement(documentation, XmlCommentHelper.ContentXmlTag);
+
+            HandleXmlElement(context, xmlElement, locations);
         }
     }
 }
