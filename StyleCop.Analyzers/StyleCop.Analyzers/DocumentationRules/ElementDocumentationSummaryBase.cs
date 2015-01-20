@@ -9,15 +9,14 @@ namespace StyleCop.Analyzers.DocumentationRules
 {
     public abstract class ElementDocumentationSummaryBase : DiagnosticAnalyzer
     {
-        abstract protected internal void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlElementSyntax syntax, Location diagnosticLocation);
-        abstract protected internal void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlElementSyntax syntax, Location[] diagnosticLocations);
+        abstract protected internal void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlElementSyntax syntax, params Location[] diagnosticLocations);
 
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleMemberDeclaration, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeAction(HandleMemberDeclaration, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeAction(HandleMemberDeclaration, SyntaxKind.InterfaceDeclaration);
-            context.RegisterSyntaxNodeAction(HandleMemberDeclaration, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeAction(HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeAction(HandleTypeDeclaration, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeAction(HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeAction(HandleTypeDeclaration, SyntaxKind.EnumDeclaration);
             context.RegisterSyntaxNodeAction(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
             context.RegisterSyntaxNodeAction(HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
             context.RegisterSyntaxNodeAction(HandleDestructorDeclaration, SyntaxKind.DestructorDeclaration);
@@ -29,7 +28,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             context.RegisterSyntaxNodeAction(HandleFieldDeclaration, SyntaxKind.EventFieldDeclaration);
         }
 
-        private void HandleMemberDeclaration(SyntaxNodeAnalysisContext context)
+        private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
             var node = context.Node as BaseTypeDeclarationSyntax;
 

@@ -11,19 +11,18 @@ namespace StyleCop.Analyzers.DocumentationRules
 {
     public abstract class PartialElementDocumentationSummaryBase : DiagnosticAnalyzer
     {
-        abstract protected void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlElementSyntax syntax, Location diagnosticLocation);
-        abstract protected void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlElementSyntax syntax, Location[] diagnosticLocations);
+        abstract protected void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlElementSyntax syntax, params Location[] diagnosticLocations);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleMemberDeclaration, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeAction(HandleMemberDeclaration, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeAction(HandleMemberDeclaration, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeAction(HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeAction(HandleTypeDeclaration, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeAction(HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
             context.RegisterSyntaxNodeAction(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
         }
 
-        private void HandleMemberDeclaration(SyntaxNodeAnalysisContext context)
+        private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
             var node = context.Node as BaseTypeDeclarationSyntax;
 

@@ -105,7 +105,7 @@
   <ItemGroup>
     <Compile Include="DocumentationRules\SA1607UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1605UnitTests.cs" />
-    <Compile Include="DocumentationRules\SA1606UnitTestsy.cs" />
+    <Compile Include="DocumentationRules\SA1606UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1604UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1602UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1601UnitTests.cs" />

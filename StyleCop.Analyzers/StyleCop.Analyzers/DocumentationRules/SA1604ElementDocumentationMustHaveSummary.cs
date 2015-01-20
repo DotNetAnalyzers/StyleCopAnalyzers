@@ -43,14 +43,6 @@
             }
         }
 
-        protected internal override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlElementSyntax syntax, Location diagnosticLocation)
-        {
-            if(syntax == null)
-            {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, diagnosticLocation));
-            }
-        }
-
         protected internal override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlElementSyntax syntax, Location[] diagnosticLocations)
         {
             if (syntax == null)
