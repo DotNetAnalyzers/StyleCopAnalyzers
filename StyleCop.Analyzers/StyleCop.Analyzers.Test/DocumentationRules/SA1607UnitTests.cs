@@ -222,12 +222,6 @@ TypeName
         }
 
         [TestMethod]
-        public async Task TestEnumNoDocumentation()
-        {
-            await TestTypeNoDocumentation("enum");
-        }
-
-        [TestMethod]
         public async Task TestClassNoDocumentation()
         {
             await TestTypeNoDocumentation("class");
