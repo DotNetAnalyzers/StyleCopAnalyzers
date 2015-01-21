@@ -65,6 +65,29 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeAction(HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
             context.RegisterSyntaxNodeAction(HandleElementAccessExpression, SyntaxKind.ElementAccessExpression);
             context.RegisterSyntaxNodeAction(HandleDelegateDeclarationExpression, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeAction(HandleAttribute, SyntaxKind.Attribute);
+        }
+
+        private void HandleAttribute(SyntaxNodeAnalysisContext context)
+        {
+            var attribute = (AttributeSyntax) context.Node;
+
+            if (attribute.ArgumentList == null ||
+                !attribute.ArgumentList.IsMissing &&
+                !attribute.ArgumentList.Arguments.Any())
+            {
+                return;
+            }
+
+            var lastArgument = attribute.ArgumentList
+                .Arguments
+                .Last();
+
+            if (!attribute.ArgumentList.CloseParenToken.IsMissing)
+            {
+                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(context, lastArgument,
+                    attribute.ArgumentList.CloseParenToken);
+            }
         }
 
         private void HandleDelegateDeclarationExpression(SyntaxNodeAnalysisContext context)
