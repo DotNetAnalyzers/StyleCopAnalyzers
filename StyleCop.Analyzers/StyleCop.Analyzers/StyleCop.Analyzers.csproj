@@ -33,6 +33,13 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\StyleCop.Analyzers.xml</DocumentationFile>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile Condition="'$(KeyConfiguration)' == 'Final'">..\..\build\keys\StyleCopAnalyzers.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile Condition="'$(KeyConfiguration)' != 'Final'">..\..\build\keys\StyleCopAnalyzers.dev.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="AnalyzerConstants.cs" />
     <Compile Include="DocumentationRules\PartialElementDocumentationSummaryBase.cs" />
@@ -230,11 +237,17 @@
     <Compile Include="SpacingRules\SpacingExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Diagnostic.nuspec">
+    <None Include="..\..\build\keys\StyleCopAnalyzers.dev.snk">
+      <Link>StyleCopAnalyzers.dev.snk</Link>
+    </None>
+    <None Include="..\..\build\keys\StyleCopAnalyzers.snk">
+      <Link>StyleCopAnalyzers.snk</Link>
+    </None>
+    <None Include="packages.config" />
+    <None Include="StyleCop.Analyzers.nuspec">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="packages.config" />
     <None Include="tools\install.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

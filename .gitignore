@@ -9,3 +9,5 @@ packages/
 *.suo
 *.user
 TestResults/
+.nuget/NuGet.exe
+build/nuget/
