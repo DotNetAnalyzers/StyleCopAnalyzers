@@ -8,6 +8,7 @@
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using SpacingRules;
 
     [ExportCodeFixProvider(nameof(SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists), LanguageNames.CSharp)]
     [Shared]
@@ -36,11 +37,14 @@
                     return;
                 }
 
-                var thisExpressionSyntax = SyntaxFactory.ThisExpression();
+                var thisExpressionSyntax = SyntaxFactory.ThisExpression()
+                    .WithTriviaFrom(node)
+                    .WithoutFormatting();
 
                 var newSyntaxRoot = root.ReplaceNode(node, thisExpressionSyntax);
 
-                context.RegisterFix(CodeAction.Create("Replace with this", context.Document.WithSyntaxRoot(newSyntaxRoot)), diagnostic);
+                context.RegisterFix(
+                    CodeAction.Create("Replace with this", context.Document.WithSyntaxRoot(newSyntaxRoot)), diagnostic);
             }
         }
     }

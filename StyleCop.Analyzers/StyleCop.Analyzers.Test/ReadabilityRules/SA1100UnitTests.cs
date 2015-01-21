@@ -30,7 +30,7 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected override void Baz()
+    protected void Baz()
     {
         base.Bar();
     }
@@ -64,7 +64,7 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected override void Baz()
+    protected void Baz()
     {
         this.Bar();
     }
@@ -86,7 +86,7 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected override void Baz()
+    protected void Baz()
     {
         base.Bar();
     }
@@ -120,7 +120,7 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected override void Baz()
+    protected void Baz()
     {
         this.Bar();
     }
@@ -134,7 +134,7 @@ public class FooChild : Foo
             var testCode = @"
 public class Foo
 {
-    protected  void Bar()
+    protected virtual void Bar()
     {
 
     }
@@ -146,7 +146,7 @@ public class FooChild : Foo
     {
         base.Bar();
     }
-    protected  void Bar()
+    protected void Bar()
     {
 
     }
@@ -161,7 +161,7 @@ public class FooChild : Foo
             var testCode = @"
 public class Foo
 {
-    protected  void Bar()
+    protected void Bar()
     {
 
     }
@@ -169,11 +169,11 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected  void Baz()
+    protected void Baz()
     {
         base.Bar();
     }
-    protected  void Bar(string param)
+    protected void Bar(string param)
     {
 
     }
@@ -199,7 +199,7 @@ public class FooChild : Foo
             var fixedTest = @"
 public class Foo
 {
-    protected  void Bar()
+    protected void Bar()
     {
 
     }
@@ -207,11 +207,11 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected  void Baz()
+    protected void Baz()
     {
         this.Bar();
     }
-    protected  void Bar(string param)
+    protected void Bar(string param)
     {
 
     }
@@ -237,7 +237,7 @@ public class FooChild : Foo
     {
         base.Bar();
     }
-    protected  void Bar()
+    protected void Bar()
     {
 
     }
@@ -260,7 +260,7 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected override void Baz()
+    protected void Baz()
     {
         var s = base.Bar;
     }
@@ -294,7 +294,7 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected override void Baz()
+    protected void Baz()
     {
         var s = this.Bar;
     }
@@ -308,7 +308,7 @@ public class FooChild : Foo
             var testCode = @"
 public class Foo
 {
-    protected  void Bar()
+    protected void Bar()
     {
 
     }
@@ -316,11 +316,11 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected  void Baz()
+    protected void Baz()
     {
         base.Bar();
     }
-    protected  void Bar(string param)
+    protected void Bar(string param)
     {
 
     }
@@ -345,7 +345,7 @@ public class FooChild : Foo
             var fixedTest = @"
 public class Foo
 {
-    protected  void Bar()
+    protected void Bar()
     {
 
     }
@@ -353,11 +353,11 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected  void Baz()
+    protected void Baz()
     {
         this.Bar();
     }
-    protected  void Bar(string param)
+    protected void Bar(string param)
     {
 
     }
@@ -371,7 +371,7 @@ public class FooChild : Foo
             var testCode = @"
 public class Foo
 {
-    protected  void Bar(string s)
+    protected void Bar(string s)
     {
 
     }
@@ -379,11 +379,11 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected  void Baz()
+    protected void Baz()
     {
         base.Bar("""");
     }
-    protected  void Bar(long l)
+    protected void Bar(long l)
     {
 
     }
@@ -408,7 +408,7 @@ public class FooChild : Foo
             var fixedTest = @"
 public class Foo
 {
-    protected  void Bar(string s)
+    protected void Bar(string s)
     {
 
     }
@@ -416,11 +416,11 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected  void Baz()
+    protected void Baz()
     {
         this.Bar("""");
     }
-    protected  void Bar(long l)
+    protected void Bar(long l)
     {
 
     }
@@ -434,7 +434,7 @@ public class FooChild : Foo
             var testCode = @"
 public class Foo
 {
-    protected  void Bar(string s)
+    protected void Bar(string s)
     {
 
     }
@@ -442,11 +442,11 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected  void Baz()
+    protected void Baz()
     {
         base.Bar("""");
     }
-    protected  void Bar(ref string s)
+    protected void Bar(ref string s)
     {
 
     }
@@ -471,7 +471,7 @@ public class FooChild : Foo
             var fixedTest = @"
 public class Foo
 {
-    protected  void Bar(string s)
+    protected void Bar(string s)
     {
 
     }
@@ -479,11 +479,11 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected  void Baz()
+    protected void Baz()
     {
         this.Bar("""");
     }
-    protected  void Bar(ref string s)
+    protected void Bar(ref string s)
     {
 
     }
@@ -497,7 +497,7 @@ public class FooChild : Foo
             var testCode = @"
 public class Foo
 {
-    protected  void Bar(string s)
+    protected void Bar(string s)
     {
 
     }
@@ -505,11 +505,11 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected  void Baz()
+    protected void Baz()
     {
         base.Bar("""");
     }
-    protected  void Bar(out string s)
+    protected void Bar(out string s)
     {
         s = string.Empty;
     }
@@ -534,7 +534,7 @@ public class FooChild : Foo
             var fixedTest = @"
 public class Foo
 {
-    protected  void Bar(string s)
+    protected void Bar(string s)
     {
 
     }
@@ -542,11 +542,11 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected  void Baz()
+    protected void Baz()
     {
         this.Bar("""");
     }
-    protected  void Bar(out string s)
+    protected void Bar(out string s)
     {
         s = string.Empty;
     }
@@ -568,11 +568,11 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected  void Baz()
+    protected void Baz()
     {
         base.Bar();
     }
-    protected override  void Bar(string param)
+    protected void Bar(string param)
     {
 
     }
@@ -605,11 +605,11 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected  void Baz()
+    protected void Baz()
     {
         this.Bar();
     }
-    protected override  void Bar(string param)
+    protected void Bar(string param)
     {
 
     }
@@ -631,11 +631,11 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected  void Baz()
+    protected void Baz()
     {
         base.Bar(string.Empty, 5);
     }
-    protected override  void Bar(ref string s, int i)
+    protected void Bar(ref string s, int i)
     {
 
     }
@@ -668,11 +668,11 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected  void Baz()
+    protected void Baz()
     {
         this.Bar(string.Empty, 5);
     }
-    protected override  void Bar(ref string s, int i)
+    protected void Bar(ref string s, int i)
     {
 
     }
@@ -698,7 +698,7 @@ public class FooChild : Foo
     {
         base.Bar(string.Empty, 5);
     }
-    protected override  void Bar(out string s, int i)
+    protected void Bar(out string s, int i)
     {
         s = string.Empty;
     }
@@ -735,7 +735,7 @@ public class FooChild : Foo
     {
         this.Bar(string.Empty, 5);
     }
-    protected override  void Bar(out string s, int i)
+    protected void Bar(out string s, int i)
     {
         s = string.Empty;
     }
@@ -761,7 +761,7 @@ public class FooChild : Foo
     {
         base.Bar(string.Empty, 5);
     }
-    protected override  void Bar(int i, string s)
+    protected void Bar(int i, string s)
     {
 
     }
@@ -798,7 +798,7 @@ public class FooChild : Foo
     {
         this.Bar(string.Empty, 5);
     }
-    protected override  void Bar(int i, string s)
+    protected void Bar(int i, string s)
     {
 
     }
@@ -880,7 +880,7 @@ public class FooChild : Foo
     {
         base.Bar(string.Empty,5);
     }
-    protected  void Bar(string s, ref int i)
+    protected void Bar(string s, ref int i)
     {
 
     }
@@ -929,7 +929,7 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected override void Baz()
+    protected void Baz()
     {
         if(base.MyEvent != null)
         {
@@ -963,7 +963,7 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected override void Baz()
+    protected void Baz()
     {
         if(this.MyEvent != null)
         {
@@ -987,7 +987,7 @@ public class FooChild : Foo
 {
     protected override event Action MyEvent;
 
-    protected override void Baz()
+    protected void Baz()
     {
         if(base.MyEvent != null)
         {
@@ -1013,7 +1013,7 @@ public class FooChild : Foo
 {
     protected new event Action MyEvent;
 
-    protected override void Baz()
+    protected void Baz()
     {
         if(base.MyEvent != null)
         {
@@ -1085,12 +1085,12 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected override void Baz()
+    protected void Baz()
     {
         base.Bar();
     }
 
-    protected override void Baz2()
+    protected void Baz2()
     {
         base.Bar2();
     }
@@ -1140,14 +1140,124 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected override void Baz()
+    protected void Baz()
     {
         this.Bar();
     }
 
-    protected override void Baz2()
+    protected void Baz2()
     {
         this.Bar2();
+    }
+}";
+            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestChildClassUsesBaseWithExtraLinesButNoOverrideTwoIssues()
+        {
+            var testCode = @"
+public class Foo
+{
+    protected virtual void Bar()
+    {
+
+    }
+}
+
+public class FooChild : Foo
+{
+    protected void Baz()
+    {
+        base
+
+        .Bar();
+    }
+}";
+
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Do not prefix calls with base unless local implementation exists",
+                    Severity =  DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 14, 9)
+                        }
+                }
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedTest = @"
+public class Foo
+{
+    protected virtual void Bar()
+    {
+
+    }
+}
+
+public class FooChild : Foo
+{
+    protected void Baz()
+    {
+        this
+
+        .Bar();
+    }
+}";
+            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestChildClassUsesBaseWithPreprocessorDirectivesButNoOverrideTwoIssues()
+        {
+            var testCode = @"
+public class Foo
+{
+    protected void Baz()
+    {
+        #if true
+                base
+        #else
+            this
+        #endif
+        .ToString();
+    }
+}";
+
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Do not prefix calls with base unless local implementation exists",
+                    Severity =  DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 7, 17)
+                        }
+                }
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedTest = @"
+public class Foo
+{
+    protected void Baz()
+    {
+        #if true
+                this
+        #else
+            this
+        #endif
+        .ToString();
     }
 }";
             await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
