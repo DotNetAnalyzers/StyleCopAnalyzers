@@ -1,6 +1,8 @@
 ﻿namespace StyleCop.Analyzers.Helpers
 {
+    using System;
     using System.Linq;
+    using System.Text;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -14,6 +16,9 @@
         internal const string SummaryXmlTag = "summary";
         internal const string ContentXmlTag = "content";
         internal const string InheritdocXmlTag = "inheritdoc";
+        internal const string SeeXmlTag = "see";
+        internal const string CrefArgumentName = "cref";
+
 
         /// <summary>
         /// This helper is used by documentation diagnostics to check if a xml comment should be considered empty.
@@ -146,6 +151,33 @@
                 return null;
 
             return commentTrivia.GetStructure() as DocumentationCommentTriviaSyntax;
+        }
+
+        internal static XmlNodeSyntax GetTopLevelElement(DocumentationCommentTriviaSyntax syntax, string tagName)
+        {
+            XmlElementSyntax elementSyntax = syntax.Content.OfType<XmlElementSyntax>().FirstOrDefault(element => string.Equals(element.StartTag.Name.ToString(), tagName));
+            if (elementSyntax != null)
+                return elementSyntax;
+
+            XmlEmptyElementSyntax emptyElementSyntax = syntax.Content.OfType<XmlEmptyElementSyntax>().FirstOrDefault(element => string.Equals(element.Name.ToString(), tagName));
+            return emptyElementSyntax;
+        }
+
+        internal static string GetText(XmlTextSyntax textElement)
+        {
+            if(textElement == null)
+            {
+                return null;
+            }
+
+            StringBuilder stringBuilder = new StringBuilder();
+
+            foreach (var item in textElement.TextTokens)
+            {
+                stringBuilder.Append(item);
+            }
+
+            return stringBuilder.ToString();
         }
 
         private static SyntaxTrivia GetCommentTrivia(SyntaxNode node)

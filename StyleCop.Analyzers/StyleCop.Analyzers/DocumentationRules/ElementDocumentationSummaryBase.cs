@@ -28,16 +28,6 @@ namespace StyleCop.Analyzers.DocumentationRules
             context.RegisterSyntaxNodeAction(HandleFieldDeclaration, SyntaxKind.EventFieldDeclaration);
         }
 
-        private static XmlNodeSyntax GetTopLevelElement(DocumentationCommentTriviaSyntax syntax, string tagName)
-        {
-            XmlElementSyntax elementSyntax = syntax.Content.OfType<XmlElementSyntax>().FirstOrDefault(element => string.Equals(element.StartTag.Name.ToString(), tagName));
-            if (elementSyntax != null)
-                return elementSyntax;
-
-            XmlEmptyElementSyntax emptyElementSyntax = syntax.Content.OfType<XmlEmptyElementSyntax>().FirstOrDefault(element => string.Equals(element.Name.ToString(), tagName));
-            return emptyElementSyntax;
-        }
-
         private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
             var node = context.Node as BaseTypeDeclarationSyntax;
@@ -146,13 +136,13 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            if (GetTopLevelElement(documentation, XmlCommentHelper.InheritdocXmlTag) != null)
+            if (XmlCommentHelper.GetTopLevelElement(documentation, XmlCommentHelper.InheritdocXmlTag) != null)
             {
                 // Ignore nodes with an <inheritdoc/> tag.
                 return;
             }
 
-            var summaryXmlElement = GetTopLevelElement(documentation, XmlCommentHelper.SummaryXmlTag);
+            var summaryXmlElement = XmlCommentHelper.GetTopLevelElement(documentation, XmlCommentHelper.SummaryXmlTag);
             HandleXmlElement(context, summaryXmlElement, locations);
         }
     }
