@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="StyleCop.Analyzers.Vsix.Microsoft.416b84e3-1209-4931-b87f-23a070f39c2d" Version="1.0" Language="en-US" Publisher="Sam Harwell"/>
-    <DisplayName>StyleCop.Analyzers.Vsix</DisplayName>
-    <Description xml:space="preserve">This is a sample diagnostic extension for the .NET Compiler Platform ("Roslyn").</Description>
+    <Identity Id="StyleCop.Analyzers.Tvl.416b84e3-1209-4931-b87f-23a070f39c2d" Version="1.0.0" Language="en-US" Publisher="Sam Harwell et. al."/>
+    <DisplayName>StyleCop Analyzers</DisplayName>
+    <Description xml:space="preserve">An implementation of StyleCop's rules using Roslyn analyzers and code fixes</Description>
   </Metadata>
   <Installation>
     <InstallationTarget Version="[14.0,]" Id="Microsoft.VisualStudio.Pro" />
