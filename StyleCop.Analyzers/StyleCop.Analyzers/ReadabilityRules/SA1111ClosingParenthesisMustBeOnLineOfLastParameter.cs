@@ -202,7 +202,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var closeParenLine = closeParenLocation.GetLineSpan();
             if (lastParameterLine.IsValid &&
                 closeParenLine.IsValid &&
-                closeParenLine.StartLinePosition.Line != lastParameterLine.StartLinePosition.Line)
+                closeParenLine.StartLinePosition.Line != lastParameterLine.EndLinePosition.Line)
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, closeParenLocation));
             }

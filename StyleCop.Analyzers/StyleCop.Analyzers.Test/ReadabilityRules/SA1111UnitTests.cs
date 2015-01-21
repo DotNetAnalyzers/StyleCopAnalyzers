@@ -249,6 +249,27 @@ class Foo
         }
 
         [TestMethod]
+        public async Task TestMethodCallWithOneParameterThatSpansTwoLinesClosingParanthesisOnTheSameLineAsTheLastParameter()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar(string s)
+    {
+
+    }
+
+    public void Baz()
+    {
+        Bar(string
+.Empty);
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
         public async Task TestMethodCallWithTwoParametersClosingParanthesisOnTheNextLineAsTheLastParameter()
         {
             var testCode = @"
@@ -362,6 +383,7 @@ class Foo
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
+
 
         [TestMethod]
         public async Task TestConstructorCallWithTwoParametersClosingParanthesisOnTheNextLineAsTheLastParameter()
