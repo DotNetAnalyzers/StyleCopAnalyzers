@@ -951,6 +951,81 @@ public class Foo
         }
 
         [TestMethod]
+        public async Task TestAnonymousMethodLastParameterOnThePreviousLineAsClosingParenthesis()
+        {
+            var testCode = @"
+public class Foo
+{
+    public void Bar()
+    {
+        Action<string,string> del = 
+        delegate(string s, string s2
+        )
+        {
+
+        };
+    }
+);
+}";
+
+            var expected = new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 8, 9)
+                            }
+                    }
+                };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestAnonymousMethodLastParameterOnTheSameLineAsClosingParenthesis()
+        {
+            var testCode = @"
+public class Foo
+{
+    public void Bar()
+    {
+        Action<string,string> del = 
+        delegate(string s, string s2)
+        {
+
+        };
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestAnonymousMethodNoParameters()
+        {
+            var testCode = @"
+public class Foo
+{
+    public void Bar()
+    {
+            Action del = 
+                delegate(
+)
+                {
+
+                };
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
         public async Task TestAttributeLastParameterOnThePreviousLineAsClosingParenthesis()
         {
             var testCode = @"
