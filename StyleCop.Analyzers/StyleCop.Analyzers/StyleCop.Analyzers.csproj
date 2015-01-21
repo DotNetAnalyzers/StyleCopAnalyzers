@@ -155,6 +155,7 @@
     <Compile Include="OrderingRules\SA1214StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements.cs" />
     <Compile Include="OrderingRules\SA1215InstanceReadonlyElementsMustAppearBeforeInstanceNonReadonlyElements.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReadabilityRules\SA1100CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists.cs" />
     <Compile Include="ReadabilityRules\SA1101PrefixLocalCallsWithThis.cs" />
     <Compile Include="ReadabilityRules\SA1102QueryClauseMustFollowPreviousClause.cs" />
