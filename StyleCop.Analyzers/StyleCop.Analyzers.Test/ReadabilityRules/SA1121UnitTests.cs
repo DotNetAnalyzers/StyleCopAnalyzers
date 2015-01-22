@@ -945,18 +945,6 @@ public class Foo
                             {
                                 new DiagnosticResultLocation("Test0.cs", 6, 5)
                             }
-                    },
-                // Workaround because the diagnostic is called twice for the SyntaxNode
-                new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Use built-in type alias",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 5)
-                            }
                     }
                 };
 
@@ -1006,18 +994,6 @@ public class Foo
                 new[]
                 {
                     new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Use built-in type alias",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 5)
-                            }
-                    },
-                // Workaround because the diagnostic is called twice for the SyntaxNode
-                new DiagnosticResult
                     {
                         Id = DiagnosticId,
                         Message = "Use built-in type alias",
