@@ -49,11 +49,11 @@
     public class SA1503CurlyBracketsMustNotBeOmitted : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1503";
-        internal const string Title = "Curly brackets must not be omitted";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.LayoutRules";
-        internal const string Description = "The opening and closing curly brackets for a C# statement have been omitted.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1503.html";
+        private const string Title = "Curly brackets must not be omitted";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.LayoutRules";
+        private const string Description = "The opening and closing curly brackets for a C# statement have been omitted.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1503.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);

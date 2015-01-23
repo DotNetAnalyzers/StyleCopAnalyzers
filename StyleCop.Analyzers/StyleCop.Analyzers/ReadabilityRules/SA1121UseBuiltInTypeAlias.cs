@@ -120,11 +120,11 @@
     public class SA1121UseBuiltInTypeAlias : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1121";
-        internal const string Title = "Use built-in type alias";
-        internal const string MessageFormat = "Use built-in type alias";
-        internal const string Category = "StyleCop.CSharp.ReadabilityRules";
-        internal const string Description = "The code uses one of the basic C# types, but does not use the built-in alias for the type.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1121.html";
+        private const string Title = "Use built-in type alias";
+        private const string MessageFormat = "Use built-in type alias";
+        private const string Category = "StyleCop.CSharp.ReadabilityRules";
+        private const string Description = "The code uses one of the basic C# types, but does not use the built-in alias for the type.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1121.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);

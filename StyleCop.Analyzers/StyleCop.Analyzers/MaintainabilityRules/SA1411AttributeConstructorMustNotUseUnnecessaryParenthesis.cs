@@ -27,11 +27,11 @@
     public class SA1411AttributeConstructorMustNotUseUnnecessaryParenthesis : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1411";
-        internal const string Title = "Attribute constructor must not use unnecessary parenthesis";
-        internal const string MessageFormat = "Attribute constructor must not use unnecessary parenthesis";
-        internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
-        internal const string Description = "TODO.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1411.html";
+        private const string Title = "Attribute constructor must not use unnecessary parenthesis";
+        private const string MessageFormat = "Attribute constructor must not use unnecessary parenthesis";
+        private const string Category = "StyleCop.CSharp.MaintainabilityRules";
+        private const string Description = "TODO.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1411.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);

@@ -30,11 +30,11 @@
     public class SA1309FieldNamesMustNotBeginWithUnderscore : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1309";
-        internal const string Title = "Field names must not begin with underscore";
-        internal const string MessageFormat = "Field '{0}' must not begin with an underscore";
-        internal const string Category = "StyleCop.CSharp.NamingRules";
-        internal const string Description = "A field name in C# begins with an underscore.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1309.html";
+        private const string Title = "Field names must not begin with underscore";
+        private const string MessageFormat = "Field '{0}' must not begin with an underscore";
+        private const string Category = "StyleCop.CSharp.NamingRules";
+        private const string Description = "A field name in C# begins with an underscore.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1309.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);

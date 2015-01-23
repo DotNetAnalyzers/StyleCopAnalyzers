@@ -30,11 +30,11 @@
     public class SA1103QueryClausesMustBeOnSeparateLinesOrAllOnOneLine : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1103";
-        internal const string Title = "Query clauses must be on separate lines or all on one line";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.ReadabilityRules";
-        internal const string Description = "The clauses within a C# query expression are not all placed on the same line, and each clause is not placed on its own line.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1103.html";
+        private const string Title = "Query clauses must be on separate lines or all on one line";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.ReadabilityRules";
+        private const string Description = "The clauses within a C# query expression are not all placed on the same line, and each clause is not placed on its own line.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1103.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);

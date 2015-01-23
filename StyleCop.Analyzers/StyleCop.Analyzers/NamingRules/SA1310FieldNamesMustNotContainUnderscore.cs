@@ -26,11 +26,11 @@
     public class SA1310FieldNamesMustNotContainUnderscore : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1310";
-        internal const string Title = "Field names must not contain underscore";
-        internal const string MessageFormat = "Field '{0}' must not contain an underscore";
-        internal const string Category = "StyleCop.CSharp.NamingRules";
-        internal const string Description = "A field name in C# contains an underscore.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1310.html";
+        private const string Title = "Field names must not contain underscore";
+        private const string MessageFormat = "Field '{0}' must not contain an underscore";
+        private const string Category = "StyleCop.CSharp.NamingRules";
+        private const string Description = "A field name in C# contains an underscore.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1310.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);

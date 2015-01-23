@@ -22,11 +22,11 @@
     public class SA1611ElementParametersMustBeDocumented : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1611";
-        internal const string Title = "Element parameters must be documented";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "A C# method, constructor, delegate or indexer element is missing documentation for one or more of its parameters.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1611.html";
+        private const string Title = "Element parameters must be documented";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "A C# method, constructor, delegate or indexer element is missing documentation for one or more of its parameters.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1611.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);

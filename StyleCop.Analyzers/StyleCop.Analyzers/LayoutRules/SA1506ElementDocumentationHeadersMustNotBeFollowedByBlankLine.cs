@@ -33,11 +33,11 @@
     public class SA1506ElementDocumentationHeadersMustNotBeFollowedByBlankLine : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1506";
-        internal const string Title = "Element documentation headers must not be followed by blank line";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.LayoutRules";
-        internal const string Description = "An element documentation header above a C# element is followed by a blank line.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1506.html";
+        private const string Title = "Element documentation headers must not be followed by blank line";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.LayoutRules";
+        private const string Description = "An element documentation header above a C# element is followed by a blank line.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1506.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);

@@ -31,11 +31,11 @@
     public class SA1410RemoveDelegateParenthesisWhenPossible : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1410";
-        internal const string Title = "Remove delegate parenthesis when possible";
-        internal const string MessageFormat = "Remove delegate parenthesis when possible";
-        internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
-        internal const string Description = "A call to a C# anonymous method does not contain any method parameters, yet the statement still includes parenthesis.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1410.html";
+        private const string Title = "Remove delegate parenthesis when possible";
+        private const string MessageFormat = "Remove delegate parenthesis when possible";
+        private const string Category = "StyleCop.CSharp.MaintainabilityRules";
+        private const string Description = "A call to a C# anonymous method does not contain any method parameters, yet the statement still includes parenthesis.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1410.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);

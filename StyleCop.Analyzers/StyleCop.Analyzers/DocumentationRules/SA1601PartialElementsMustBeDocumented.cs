@@ -67,11 +67,11 @@
     public class SA1601PartialElementsMustBeDocumented : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1601";
-        internal const string Title = "Partial elements must be documented";
-        internal const string MessageFormat = "Partial elements must be documented";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "A C# partial element is missing a documentation header.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1601.html";
+        private const string Title = "Partial elements must be documented";
+        private const string MessageFormat = "Partial elements must be documented";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "A C# partial element is missing a documentation header.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1601.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);

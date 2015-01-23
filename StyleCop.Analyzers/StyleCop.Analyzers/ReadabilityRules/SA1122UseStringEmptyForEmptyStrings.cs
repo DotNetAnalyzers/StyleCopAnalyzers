@@ -32,11 +32,11 @@
     public class SA1122UseStringEmptyForEmptyStrings : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1122";
-        internal const string Title = "Use string.Empty for empty strings";
-        internal const string MessageFormat = "Use string.Empty for empty strings";
-        internal const string Category = "StyleCop.CSharp.ReadabilityRules";
-        internal const string Description = "The C# code includes an empty string, written as \"\".";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1122.html";
+        private const string Title = "Use string.Empty for empty strings";
+        private const string MessageFormat = "Use string.Empty for empty strings";
+        private const string Category = "StyleCop.CSharp.ReadabilityRules";
+        private const string Description = "The C# code includes an empty string, written as \"\".";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1122.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);

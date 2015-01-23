@@ -38,11 +38,11 @@
     public class SA1602EnumerationItemsMustBeDocumented : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1602";
-        internal const string Title = "Enumeration items must be documented";
-        internal const string MessageFormat = "Enumeration items must be documented";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "An item within a C# enumeration is missing an Xml documentation header.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1602.html";
+        private const string Title = "Enumeration items must be documented";
+        private const string MessageFormat = "Enumeration items must be documented";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "An item within a C# enumeration is missing an Xml documentation header.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1602.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);

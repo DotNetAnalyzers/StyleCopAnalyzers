@@ -42,11 +42,11 @@
     public class SA1108BlockStatementsMustNotContainEmbeddedComments : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1108";
-        internal const string Title = "Block statements must not contain embedded comments";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.ReadabilityRules";
-        internal const string Description = "A C# statement contains a comment between the declaration of the statement and the opening curly bracket of the statement.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1108.html";
+        private const string Title = "Block statements must not contain embedded comments";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.ReadabilityRules";
+        private const string Description = "A C# statement contains a comment between the declaration of the statement and the opening curly bracket of the statement.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1108.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);

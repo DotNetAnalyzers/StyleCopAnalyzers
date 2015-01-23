@@ -35,11 +35,11 @@
     public class SA1638FileHeaderFileNameDocumentationMustMatchFileName : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1638";
-        internal const string Title = "File header file name documentation must match file name";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "The file tag within the file header at the top of a C# code file does not contain the name of the file.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1638.html";
+        private const string Title = "File header file name documentation must match file name";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "The file tag within the file header at the top of a C# code file does not contain the name of the file.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1638.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);

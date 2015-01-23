@@ -38,11 +38,11 @@
     public class SA1119StatementMustNotUseUnnecessaryParenthesis : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1119";
-        internal const string Title = "Statement must not use unnecessary parenthesis";
-        internal const string MessageFormat = "Statement must not use unnecessary parenthesis";
-        internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
-        internal const string Description = "A C# statement contains parenthesis which are unnecessary and should be removed.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1119.html";
+        private const string Title = "Statement must not use unnecessary parenthesis";
+        private const string MessageFormat = "Statement must not use unnecessary parenthesis";
+        private const string Category = "StyleCop.CSharp.MaintainabilityRules";
+        private const string Description = "A C# statement contains parenthesis which are unnecessary and should be removed.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1119.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);

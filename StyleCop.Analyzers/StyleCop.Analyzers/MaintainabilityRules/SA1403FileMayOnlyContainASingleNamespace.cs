@@ -21,11 +21,11 @@
     public class SA1403FileMayOnlyContainASingleNamespace : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1403";
-        internal const string Title = "File may only contain a single namespace";
-        internal const string MessageFormat = "File may only contain a single namespace";
-        internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
-        internal const string Description = "A C# code file contains more than one namespace.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1403.html";
+        private const string Title = "File may only contain a single namespace";
+        private const string MessageFormat = "File may only contain a single namespace";
+        private const string Category = "StyleCop.CSharp.MaintainabilityRules";
+        private const string Description = "A C# code file contains more than one namespace.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1403.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);

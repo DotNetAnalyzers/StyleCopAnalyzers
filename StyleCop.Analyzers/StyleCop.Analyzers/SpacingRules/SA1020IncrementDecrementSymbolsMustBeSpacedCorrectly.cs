@@ -19,11 +19,11 @@
     public class SA1020IncrementDecrementSymbolsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1020";
-        internal const string Title = "Increment decrement symbols must be spaced correctly";
-        internal const string MessageFormat = "{0} symbol '{1}' must not be {2} by a space.";
-        internal const string Category = "StyleCop.CSharp.SpacingRules";
-        internal const string Description = "An increment or decrement symbol within a C# element is not spaced correctly.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1020.html";
+        private const string Title = "Increment decrement symbols must be spaced correctly";
+        private const string MessageFormat = "{0} symbol '{1}' must not be {2} by a space.";
+        private const string Category = "StyleCop.CSharp.SpacingRules";
+        private const string Description = "An increment or decrement symbol within a C# element is not spaced correctly.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1020.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);

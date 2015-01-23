@@ -21,11 +21,11 @@
     public class SA1406DebugFailMustProvideMessageText : SystemDiagnosticsDebugDiagnosticBase
     {
         public const string DiagnosticId = "SA1406";
-        internal const string Title = "Debug.Fail must provide message text";
-        internal const string MessageFormat = "Debug.Fail must provide message text";
-        internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
-        internal const string Description = "A call to Debug.Fail in C# code does not include a descriptive message.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1406.html";
+        private const string Title = "Debug.Fail must provide message text";
+        private const string MessageFormat = "Debug.Fail must provide message text";
+        private const string Category = "StyleCop.CSharp.MaintainabilityRules";
+        private const string Description = "A call to Debug.Fail in C# code does not include a descriptive message.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1406.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);

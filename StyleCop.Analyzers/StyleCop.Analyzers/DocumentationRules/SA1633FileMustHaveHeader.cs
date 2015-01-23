@@ -66,11 +66,11 @@
     public class SA1633FileMustHaveHeader : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1633";
-        internal const string Title = "File must have header";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "A C# code file is missing a standard file header.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1633.html";
+        private const string Title = "File must have header";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "A C# code file is missing a standard file header.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1633.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);

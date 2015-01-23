@@ -67,11 +67,11 @@
     public class SA1607PartialElementDocumentationMustHaveSummaryText : PartialElementDocumentationSummaryBase
     {
         public const string DiagnosticId = "SA1607";
-        internal const string Title = "Partial element documentation must have summary text";
-        internal const string MessageFormat = "Partial element documentation must have summary text";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "The <summary> or <content> tag within the documentation header for a C# code element is empty.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1607.html";
+        private const string Title = "Partial element documentation must have summary text";
+        private const string MessageFormat = "Partial element documentation must have summary text";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "The <summary> or <content> tag within the documentation header for a C# code element is empty.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1607.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);

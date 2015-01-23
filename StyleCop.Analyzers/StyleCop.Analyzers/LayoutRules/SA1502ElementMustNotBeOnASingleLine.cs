@@ -32,11 +32,11 @@
     public class SA1502ElementMustNotBeOnASingleLine : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1502";
-        internal const string Title = "Element must not be on a single line";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.LayoutRules";
-        internal const string Description = "A C# element containing opening and closing curly brackets is written completely on a single line.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1502.html";
+        private const string Title = "Element must not be on a single line";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.LayoutRules";
+        private const string Description = "A C# element containing opening and closing curly brackets is written completely on a single line.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1502.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);

@@ -65,11 +65,11 @@
     public class SA1512SingleLineCommentsMustNotBeFollowedByBlankLine : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1512";
-        internal const string Title = "Single-line comments must not be followed by blank line";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.LayoutRules";
-        internal const string Description = "A single-line comment within C# code is followed by a blank line.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1512.html";
+        private const string Title = "Single-line comments must not be followed by blank line";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.LayoutRules";
+        private const string Description = "A single-line comment within C# code is followed by a blank line.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1512.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);

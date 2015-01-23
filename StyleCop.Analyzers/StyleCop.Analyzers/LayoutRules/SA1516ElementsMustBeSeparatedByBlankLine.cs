@@ -49,11 +49,11 @@
     public class SA1516ElementsMustBeSeparatedByBlankLine : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1516";
-        internal const string Title = "Elements must be separated by blank line";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.LayoutRules";
-        internal const string Description = "Adjacent C# elements are not separated by a blank line.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1516.html";
+        private const string Title = "Elements must be separated by blank line";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.LayoutRules";
+        private const string Description = "Adjacent C# elements are not separated by a blank line.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1516.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);

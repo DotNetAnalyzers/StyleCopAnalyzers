@@ -35,11 +35,11 @@
     public class SA1213EventAccessorsMustFollowOrder : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1213";
-        internal const string Title = "Event accessors must follow order";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.OrderingRules";
-        internal const string Description = "An add accessor appears after a remove accessor within an event.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1213.html";
+        private const string Title = "Event accessors must follow order";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.OrderingRules";
+        private const string Description = "An add accessor appears after a remove accessor within an event.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1213.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);

@@ -169,11 +169,11 @@
     public class SA1624PropertySummaryDocumentationMustOmitSetAccessorWithRestrictedAccess : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1624";
-        internal const string Title = "Property summary documentation must omit set accessor with restricted access";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "The documentation text within a C# property's <summary> tag takes into account all of the accessors within the property, but one of the accessors has limited access.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1624.html";
+        private const string Title = "Property summary documentation must omit set accessor with restricted access";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "The documentation text within a C# property's <summary> tag takes into account all of the accessors within the property, but one of the accessors has limited access.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1624.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);

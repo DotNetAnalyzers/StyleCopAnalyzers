@@ -33,11 +33,11 @@
     public class SA1637FileHeaderMustContainFileName : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1637";
-        internal const string Title = "File header must contain file name";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "The file header at the top of a C# code file is missing the file name.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1637.html";
+        private const string Title = "File header must contain file name";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "The file header at the top of a C# code file is missing the file name.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1637.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);

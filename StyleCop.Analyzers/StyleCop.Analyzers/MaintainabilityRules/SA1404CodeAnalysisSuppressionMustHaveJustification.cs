@@ -29,11 +29,11 @@
     public class SA1404CodeAnalysisSuppressionMustHaveJustification : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1404";
-        internal const string Title = "Code analysis suppression must have justification";
-        internal const string MessageFormat = "Code analysis suppression must have justification";
-        internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
-        internal const string Description = "A Code Analysis SuppressMessage attribute does not include a justification.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1404.html";
+        private const string Title = "Code analysis suppression must have justification";
+        private const string MessageFormat = "Code analysis suppression must have justification";
+        private const string Category = "StyleCop.CSharp.MaintainabilityRules";
+        private const string Description = "A Code Analysis SuppressMessage attribute does not include a justification.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1404.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
