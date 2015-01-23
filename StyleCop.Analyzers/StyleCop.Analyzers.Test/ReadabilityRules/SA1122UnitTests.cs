@@ -21,7 +21,7 @@
         [TestMethod]
         public async Task TestEmptySource()
         {
-            var testCode = @"";
+            var testCode = string.Empty;
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
         private async Task TestEmptyStringLiteral(bool useVerbatimLiteral)
