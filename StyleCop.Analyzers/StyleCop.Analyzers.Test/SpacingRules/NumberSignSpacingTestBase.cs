@@ -10,8 +10,6 @@
 
     public abstract class NumberSignSpacingTestBase : CodeFixVerifier
     {
-        protected static readonly DiagnosticResult[] EmptyDiagnosticResults = { };
-
         protected abstract string Sign
         {
             get;

@@ -10,8 +10,6 @@
 
     public abstract class DebugMessagesUnitTestsBase : CodeFixVerifier
     {
-        protected static readonly DiagnosticResult[] EmptyDiagnosticResults = { };
-
         protected abstract string DiagnosticId
         {
             get;

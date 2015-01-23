@@ -19,8 +19,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             }
         }
 
-        protected static readonly DiagnosticResult[] EmptyDiagnosticResults = { };
-
         [TestMethod]
         public async Task TestEmptySource()
         {

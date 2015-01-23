@@ -13,7 +13,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     public class SA1411UnitTests : CodeFixVerifier
     {
         private const string DiagnosticId = SA1411AttributeConstructorMustNotUseUnnecessaryParenthesis.DiagnosticId;
-        protected static readonly DiagnosticResult[] EmptyDiagnosticResults = { };
 
         [TestMethod]
         public async Task TestEmptySource()

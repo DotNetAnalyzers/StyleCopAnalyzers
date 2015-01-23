@@ -12,8 +12,6 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     public class SA1112UnitTests : CodeFixVerifier
     {
 
-        protected static readonly DiagnosticResult[] EmptyDiagnosticResults = { };
-
         public string DiagnosticId { get; } = SA1112ClosingParenthesisMustBeOnLineOfOpeningParenthesis.DiagnosticId;
 
         [TestMethod]

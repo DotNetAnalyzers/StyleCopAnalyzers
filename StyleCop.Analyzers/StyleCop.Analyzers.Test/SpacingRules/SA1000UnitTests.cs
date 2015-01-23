@@ -16,8 +16,6 @@
     [TestClass]
     public class SA1000UnitTests : CodeFixVerifier
     {
-        protected static readonly DiagnosticResult[] EmptyDiagnosticResults = { };
-
         public string DiagnosticId { get; } = SA1000KeywordsMustBeSpacedCorrectly.DiagnosticId;
 
         [TestMethod]

@@ -12,7 +12,6 @@ namespace StyleCop.Analyzers.Test.NamingRules
     public class SA1304UnitTests : CodeFixVerifier
     {
         private const string DiagnosticId = SA1304NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter.DiagnosticId;
-        protected static readonly DiagnosticResult[] EmptyDiagnosticResults = { };
 
         [TestMethod]
         public async Task TestEmptySource()

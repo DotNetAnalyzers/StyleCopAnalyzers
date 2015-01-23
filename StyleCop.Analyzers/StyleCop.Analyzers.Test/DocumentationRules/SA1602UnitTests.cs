@@ -15,8 +15,6 @@
     [TestClass]
     public class SA1602UnitTests : CodeFixVerifier
     {
-        protected static readonly DiagnosticResult[] EmptyDiagnosticResults = { };
-
         public string DiagnosticId { get; } = SA1602EnumerationItemsMustBeDocumented.DiagnosticId;
 
         [TestMethod]

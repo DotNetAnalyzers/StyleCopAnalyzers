@@ -13,7 +13,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     public class SA1410UnitTests : CodeFixVerifier
     {
         private const string DiagnosticId = SA1410RemoveDelegateParenthesisWhenPossible.DiagnosticId;
-        protected static readonly DiagnosticResult[] EmptyDiagnosticResults = { };
 
         [TestMethod]
         public async Task TestEmptySource()
