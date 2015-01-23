@@ -30,7 +30,7 @@
         internal const string Description = "A C# statement contains a region tag between the declaration of the statement and the opening curly bracket of the statement.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1109.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

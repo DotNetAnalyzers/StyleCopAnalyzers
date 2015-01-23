@@ -28,7 +28,7 @@
         internal const string Description = "A <param> tag within a C# element's documentation header is missing a name attribute containing the name of the parameter.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1613.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

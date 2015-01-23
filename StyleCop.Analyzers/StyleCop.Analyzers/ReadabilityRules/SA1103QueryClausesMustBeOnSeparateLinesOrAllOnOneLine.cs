@@ -36,7 +36,7 @@
         internal const string Description = "The clauses within a C# query expression are not all placed on the same line, and each clause is not placed on its own line.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1103.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

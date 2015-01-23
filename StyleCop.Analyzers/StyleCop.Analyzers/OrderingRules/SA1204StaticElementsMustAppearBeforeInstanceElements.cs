@@ -22,7 +22,7 @@
         internal const string Description = "A static element is positioned beneath an instance element of the same type.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1204.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

@@ -21,7 +21,7 @@
         internal const string Description = "An instance readonly element is positioned beneath an instance non-readonly element of the same type.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1215.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

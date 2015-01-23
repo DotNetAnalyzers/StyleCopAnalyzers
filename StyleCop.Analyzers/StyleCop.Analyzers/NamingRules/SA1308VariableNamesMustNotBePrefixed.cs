@@ -36,7 +36,7 @@
         internal const string Description = "A field name in C# is prefixed with 'm_' or 's_'.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1308.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

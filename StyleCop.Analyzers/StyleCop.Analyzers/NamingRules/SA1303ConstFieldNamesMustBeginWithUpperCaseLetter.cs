@@ -29,7 +29,7 @@
         internal const string Description = "The name of a constant C# field must begin with an upper-case letter.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1303.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

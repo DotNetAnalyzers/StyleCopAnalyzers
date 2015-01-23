@@ -38,7 +38,7 @@
         internal const string Description = "The C# code includes an empty string, written as \"\".";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1122.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

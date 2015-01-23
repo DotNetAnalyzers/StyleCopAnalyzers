@@ -37,7 +37,7 @@
         internal const string Description = "The file header at the top of a C# code file is missing a copyright tag.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1634.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

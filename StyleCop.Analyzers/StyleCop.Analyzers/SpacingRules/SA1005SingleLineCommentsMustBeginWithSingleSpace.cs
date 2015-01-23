@@ -52,7 +52,7 @@
         internal const string Description = "A single-line comment within a C# code file does not begin with a single space.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1005.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

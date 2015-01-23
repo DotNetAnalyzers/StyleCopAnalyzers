@@ -44,9 +44,9 @@
         internal const string Description = "A C# statement contains parenthesis which are unnecessary and should be removed.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1119.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
-        public static readonly DiagnosticDescriptor ParenthesisDescriptor =
+        private static readonly DiagnosticDescriptor ParenthesisDescriptor =
             new DiagnosticDescriptor(DiagnosticId + "_p", Title, MessageFormat, Category, DiagnosticSeverity.Hidden, true, Description, HelpLink, customTags: new[] { WellKnownDiagnosticTags.Unnecessary, WellKnownDiagnosticTags.NotConfigurable });
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

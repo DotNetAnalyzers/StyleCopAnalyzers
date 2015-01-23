@@ -27,7 +27,7 @@
         internal const string Description = "A call to Debug.Fail in C# code does not include a descriptive message.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1406.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

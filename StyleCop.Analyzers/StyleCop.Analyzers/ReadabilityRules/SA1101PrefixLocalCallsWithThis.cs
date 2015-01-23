@@ -34,7 +34,7 @@
         internal const string Description = "A call to an instance member of the local class or a base class is not prefixed with 'this.', within a C# code file.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1101.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

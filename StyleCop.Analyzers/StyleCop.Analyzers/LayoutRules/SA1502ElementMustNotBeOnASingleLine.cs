@@ -38,7 +38,7 @@
         internal const string Description = "A C# element containing opening and closing curly brackets is written completely on a single line.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1502.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

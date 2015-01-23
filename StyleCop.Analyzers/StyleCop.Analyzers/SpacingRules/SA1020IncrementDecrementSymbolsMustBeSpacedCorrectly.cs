@@ -25,7 +25,7 @@
         internal const string Description = "An increment or decrement symbol within a C# element is not spaced correctly.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1020.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

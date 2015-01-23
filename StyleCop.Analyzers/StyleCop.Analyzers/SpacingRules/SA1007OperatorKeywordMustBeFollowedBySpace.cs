@@ -29,7 +29,7 @@
         internal const string Description = "The operator keyword within a C# operator overload method is not followed by any whitespace.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1007.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

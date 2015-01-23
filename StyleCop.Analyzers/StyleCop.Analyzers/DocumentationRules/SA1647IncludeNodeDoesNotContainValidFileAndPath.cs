@@ -39,7 +39,7 @@
         internal const string Description = "An include tag within an XML documentation header does not contain valid file and path attribute.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1647.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

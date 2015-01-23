@@ -36,7 +36,7 @@
         internal const string Description = "A C# query clause does not begin on the same line as the previous clause, or on the next line.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1102.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

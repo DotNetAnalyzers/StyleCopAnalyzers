@@ -48,7 +48,7 @@
         internal const string Description = "The parameters to a C# method or indexer call or declaration are not all on the same line or each on a separate line.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1117.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

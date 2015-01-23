@@ -33,7 +33,7 @@
         internal const string Description = "TODO.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1411.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

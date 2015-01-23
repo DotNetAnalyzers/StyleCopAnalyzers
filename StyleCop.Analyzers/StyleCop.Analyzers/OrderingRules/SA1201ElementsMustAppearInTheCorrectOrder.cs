@@ -105,7 +105,7 @@
         internal const string Description = "An element within a C# code file is out of order in relation to the other elements in the code.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1201.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

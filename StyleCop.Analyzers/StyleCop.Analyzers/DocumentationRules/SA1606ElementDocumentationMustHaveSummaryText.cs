@@ -30,7 +30,7 @@
         internal const string Description = "The <summary> tag within the documentation header for a C# code element is empty.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1606.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

@@ -51,7 +51,7 @@
         internal const string Description = "The XML documentation header for a C# finalizer does not contain the appropriate summary text.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1643.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

@@ -40,7 +40,7 @@
         internal const string Description = "A section of the XML header documentation for a C# element does not begin with a capital letter.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1628.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

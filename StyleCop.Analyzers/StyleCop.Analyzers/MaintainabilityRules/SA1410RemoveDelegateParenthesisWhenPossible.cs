@@ -37,7 +37,7 @@
         internal const string Description = "A call to a C# anonymous method does not contain any method parameters, yet the statement still includes parenthesis.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1410.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
