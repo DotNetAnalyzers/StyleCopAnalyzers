@@ -364,18 +364,6 @@ public interface InterfaceName
                             {
                                 new DiagnosticResultLocation("Test0.cs", 8, 25)
                             }
-                    },
-                    // Workaround because the diagnostic is called twice for the SyntaxNode
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Elements must be documented",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 25)
-                            }
                     }
                 };
 
@@ -707,17 +695,6 @@ public class OuterClass
                             {
                                 new DiagnosticResultLocation("Test0.cs", 8, 19)
                             }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Elements must be documented",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 19)
-                            }
                     }
                 };
 
@@ -750,17 +727,6 @@ public class OuterClass
             expected =
                 new[]
                 {
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Elements must be documented",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 19)
-                            }
-                    },
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,

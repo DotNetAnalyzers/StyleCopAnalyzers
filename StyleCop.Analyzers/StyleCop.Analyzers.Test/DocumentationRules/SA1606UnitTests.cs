@@ -726,17 +726,6 @@ public class ClassName
                             {
                                 new DiagnosticResultLocation("Test0.cs", 10, 22)
                             }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Element documentation must have summary text",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 10, 22)
-                            }
                     }
                 };
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
@@ -808,17 +797,6 @@ public class ClassName
             expected =
                 new[]
                 {
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Element documentation must have summary text",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 10, 32)
-                            }
-                    },
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
