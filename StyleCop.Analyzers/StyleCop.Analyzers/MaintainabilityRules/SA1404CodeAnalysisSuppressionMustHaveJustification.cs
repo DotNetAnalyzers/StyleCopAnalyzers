@@ -59,11 +59,11 @@
         private void HandleAttributeNode(SyntaxNodeAnalysisContext context)
         {
             var attribute = context.Node as AttributeSyntax;
-            if(attribute != null)
+            if (attribute != null)
             {
                 SymbolInfo symbolInfo = context.SemanticModel.GetSymbolInfo(attribute);
                 ISymbol symbol = symbolInfo.Symbol;
-                if(symbol != null)
+                if (symbol != null)
                 {
                     var suppressMessageType = context.SemanticModel.Compilation.GetTypeByMetadataName(typeof(SuppressMessageAttribute).FullName);
                     if (symbol.ContainingType == suppressMessageType)
