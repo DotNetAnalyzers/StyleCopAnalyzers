@@ -81,12 +81,49 @@
 
         private async Task TestConstructorCorrectDocumentation(string modifiers, string part1, string part2, string part3, bool generic)
         {
+            // First test it all on one line
             var testCode = @"namespace FooNamespace
 {{
     public class Foo{0}
     {{
         /// <summary>
         /// {2}<see cref=""Foo{1}""/>{3}{4}
+        /// </summary>
+        {5} Foo()
+        {{
+
+        }}
+    }}
+}}";
+
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3, modifiers), EmptyDiagnosticResults, CancellationToken.None);
+
+            // Then test splitting after the <see> element
+            testCode = @"namespace FooNamespace
+{{
+    public class Foo{0}
+    {{
+        /// <summary>
+        /// {2}<see cref=""Foo{1}""/>
+        /// {3}{4}
+        /// </summary>
+        {5} Foo()
+        {{
+
+        }}
+    }}
+}}";
+
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3, modifiers), EmptyDiagnosticResults, CancellationToken.None);
+
+            // Then test splitting before the <see> element
+            testCode = @"namespace FooNamespace
+{{
+    public class Foo{0}
+    {{
+        /// <summary>
+        /// {2}
+        /// <see cref=""Foo{1}""/>{3}{4}
         /// </summary>
         {5} Foo()
         {{

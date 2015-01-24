@@ -251,7 +251,15 @@
 
         private static bool TextPartsMatch(string firstText, string secondText, XmlTextSyntax firstTextPart, XmlTextSyntax secondTextPart)
         {
-            return firstText == XmlCommentHelper.GetText(firstTextPart).TrimStart() && XmlCommentHelper.GetText(secondTextPart).StartsWith(secondText);
+            string firstTextPartText = XmlCommentHelper.GetText(firstTextPart, normalizeWhitespace: true);
+            if (firstText != firstTextPartText.TrimStart())
+                return false;
+
+            string secondTextPartText = XmlCommentHelper.GetText(secondTextPart, normalizeWhitespace: true);
+            if (!secondTextPartText.StartsWith(secondText))
+                return false;
+
+            return true;
         }
 
         private static bool TypeParameterNamesMatch(ClassDeclarationSyntax classDeclarationSyntax, TypeSyntax name)
