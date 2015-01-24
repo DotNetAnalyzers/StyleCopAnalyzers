@@ -67,6 +67,26 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeAction(HandleDelegateDeclarationExpression, SyntaxKind.DelegateDeclaration);
             context.RegisterSyntaxNodeAction(HandleAttribute, SyntaxKind.Attribute);
             context.RegisterSyntaxNodeAction(HandleAnonymousMethod, SyntaxKind.AnonymousMethodExpression);
+            context.RegisterSyntaxNodeAction(HandleAttributeList, SyntaxKind.AttributeList);
+        }
+
+        private void HandleAttributeList(SyntaxNodeAnalysisContext context)
+        {
+            var attributeList = (AttributeListSyntax)context.Node;
+
+            if (!attributeList.Attributes.Any())
+            {
+                return;
+            }
+
+            var lastAttribute = attributeList.Attributes
+                                .Last();
+
+            if (!attributeList.CloseBracketToken.IsMissing)
+            {
+                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(context, lastAttribute,
+                    attributeList.CloseBracketToken);
+            }
         }
 
         private void HandleAnonymousMethod(SyntaxNodeAnalysisContext context)
