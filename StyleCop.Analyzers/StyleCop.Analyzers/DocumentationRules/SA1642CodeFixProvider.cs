@@ -98,7 +98,7 @@
             list = list.Add(XmlNewLine());
             list = list.Add(this.CreateTextSyntax(preText).WithLeadingTrivia(XmlLineStart()));
             list = list.Add(CreateSeeSyntax(identifierName));
-            list = list.Add(CreateTextSyntax(postText + "."));
+            list = list.Add(CreateTextSyntax(postText.EndsWith(".") ? postText : (postText + ".")));
 
             return list;
         }
