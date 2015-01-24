@@ -40,7 +40,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -73,7 +73,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -135,7 +135,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -168,7 +168,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -235,7 +235,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -293,7 +293,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -371,7 +371,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -409,7 +409,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -485,7 +485,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -521,7 +521,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -578,7 +578,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -610,7 +610,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -643,7 +643,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -676,7 +676,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -707,7 +707,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -741,7 +741,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -776,7 +776,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -812,7 +812,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -844,7 +844,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -876,7 +876,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -917,7 +917,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -960,7 +960,7 @@ public class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -1019,7 +1019,7 @@ public class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -1087,7 +1087,7 @@ public class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -1098,7 +1098,7 @@ public class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -1150,7 +1150,7 @@ public class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -1207,7 +1207,7 @@ public class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -1274,7 +1274,7 @@ public class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -1311,7 +1311,7 @@ namespace Test
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -1374,7 +1374,7 @@ public class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -1405,7 +1405,7 @@ public class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Message = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]

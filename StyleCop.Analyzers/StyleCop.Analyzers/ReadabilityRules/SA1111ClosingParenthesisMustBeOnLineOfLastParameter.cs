@@ -35,9 +35,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
     {
         public const string DiagnosticId = "SA1111";
         internal const string Title = "Closing parenthesis must be on line of last parameter";
-        internal const string MessageFormat = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.";
+        internal const string MessageFormat = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
-        internal const string Description = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.";
+        internal const string Description = "The closing parenthesis/bracket in a call to/ delcaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1111.html";
 
         public static readonly DiagnosticDescriptor Descriptor =
