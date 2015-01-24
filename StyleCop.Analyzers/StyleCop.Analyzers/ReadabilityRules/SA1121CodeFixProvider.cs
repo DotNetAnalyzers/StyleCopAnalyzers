@@ -70,7 +70,7 @@
 
                 var typeInfo = semanticModel?.GetTypeInfo(node);
 
-                if(typeInfo?.Type != null)
+                if (typeInfo?.Type != null)
                 {
                     SpecialType specialType = typeInfo.Value.Type.SpecialType;
                     var newNode = SyntaxFactory.PredefinedType(SyntaxFactory.Token(_predefinedSpecialTypes[specialType]))

@@ -43,13 +43,13 @@
     public class SA1407ArithmeticExpressionsMustDeclarePrecedence : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1407";
-        internal const string Title = "Arithmetic expressions must declare precedence";
-        internal const string MessageFormat = "Arithmetic expressions must declare precedence";
-        internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
-        internal const string Description = "A C# statement contains a complex arithmetic expression which omits parenthesis around operators.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1407.html";
+        private const string Title = "Arithmetic expressions must declare precedence";
+        private const string MessageFormat = "Arithmetic expressions must declare precedence";
+        private const string Category = "StyleCop.CSharp.MaintainabilityRules";
+        private const string Description = "A C# statement contains a complex arithmetic expression which omits parenthesis around operators.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1407.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

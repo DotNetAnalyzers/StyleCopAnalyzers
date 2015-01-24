@@ -12,12 +12,11 @@ namespace StyleCop.Analyzers.Test.NamingRules
     public class SA1303UnitTests : CodeFixVerifier
     {
         private const string DiagnosticId = SA1303ConstFieldNamesMustBeginWithUpperCaseLetter.DiagnosticId;
-        protected static readonly DiagnosticResult[] EmptyDiagnosticResults = { };
 
         [TestMethod]
         public async Task TestEmptySource()
         {
-            var testCode = @"";
+            var testCode = string.Empty;
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 

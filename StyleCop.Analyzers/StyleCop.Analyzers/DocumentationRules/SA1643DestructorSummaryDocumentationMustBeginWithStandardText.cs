@@ -45,13 +45,13 @@
     public class SA1643DestructorSummaryDocumentationMustBeginWithStandardText : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1643";
-        internal const string Title = "Destructor summary documentation must begin with standard text";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "The XML documentation header for a C# finalizer does not contain the appropriate summary text.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1643.html";
+        private const string Title = "Destructor summary documentation must begin with standard text";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "The XML documentation header for a C# finalizer does not contain the appropriate summary text.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1643.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

@@ -19,13 +19,13 @@
     public class SA1125UseShorthandForNullableTypes : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1125";
-        internal const string Title = "Use shorthand for nullable types";
-        internal const string MessageFormat = "Use shorthand for nullable types";
-        internal const string Category = "StyleCop.CSharp.ReadabilityRules";
-        internal const string Description = "The Nullable<T> type has been defined not using the C# shorthand. For example, Nullable<DateTime> has been used instead of the preferred DateTime?";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1125.html";
+        private const string Title = "Use shorthand for nullable types";
+        private const string MessageFormat = "Use shorthand for nullable types";
+        private const string Category = "StyleCop.CSharp.ReadabilityRules";
+        private const string Description = "The Nullable<T> type has been defined not using the C# shorthand. For example, Nullable<DateTime> has been used instead of the preferred DateTime?";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1125.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

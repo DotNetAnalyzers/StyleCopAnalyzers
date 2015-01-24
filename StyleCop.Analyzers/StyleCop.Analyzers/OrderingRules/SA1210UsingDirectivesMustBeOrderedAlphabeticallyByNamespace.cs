@@ -22,13 +22,13 @@
     public class SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1210";
-        internal const string Title = "Using directives must be ordered alphabetically by namespace";
-        internal const string MessageFormat = "Using directive for '{0}' must appear before directive for '{1}'";
-        internal const string Category = "StyleCop.CSharp.OrderingRules";
-        internal const string Description = "The using directives within a C# code file are not sorted alphabetically by namespace.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1210.html";
+        private const string Title = "Using directives must be ordered alphabetically by namespace";
+        private const string MessageFormat = "Using directive for '{0}' must appear before directive for '{1}'";
+        private const string Category = "StyleCop.CSharp.OrderingRules";
+        private const string Description = "The using directives within a C# code file are not sorted alphabetically by namespace.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1210.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

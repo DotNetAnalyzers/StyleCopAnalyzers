@@ -46,13 +46,13 @@
     public class SA1005SingleLineCommentsMustBeginWithSingleSpace : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1005";
-        internal const string Title = "Single line comments must begin with single space";
-        internal const string MessageFormat = "Single line comment must begin with a space.";
-        internal const string Category = "StyleCop.CSharp.SpacingRules";
-        internal const string Description = "A single-line comment within a C# code file does not begin with a single space.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1005.html";
+        private const string Title = "Single line comments must begin with single space";
+        private const string MessageFormat = "Single line comment must begin with a space.";
+        private const string Category = "StyleCop.CSharp.SpacingRules";
+        private const string Description = "A single-line comment within a C# code file does not begin with a single space.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1005.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

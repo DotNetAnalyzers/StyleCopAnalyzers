@@ -51,13 +51,13 @@
     public class SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1100";
-        internal const string Title = "Do not prefix calls with base unless local implementation exists";
-        internal const string MessageFormat = "Do not prefix calls with base unless local implementation exists";
-        internal const string Category = "StyleCop.CSharp.ReadabilityRules";
-        internal const string Description = "A call to a member from an inherited class begins with 'base.', and the local class does not contain an override or implementation of the member.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1100.html";
+        private const string Title = "Do not prefix calls with base unless local implementation exists";
+        private const string MessageFormat = "Do not prefix calls with base unless local implementation exists";
+        private const string Category = "StyleCop.CSharp.ReadabilityRules";
+        private const string Description = "A call to a member from an inherited class begins with 'base.', and the local class does not contain an override or implementation of the member.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1100.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

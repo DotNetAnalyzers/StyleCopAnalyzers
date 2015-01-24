@@ -27,13 +27,13 @@
     public class SA1206DeclarationKeywordsMustFollowOrder : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1206";
-        internal const string Title = "Declaration keywords must follow order";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.OrderingRules";
-        internal const string Description = "The keywords within the declaration of an element do not follow a standard ordering scheme.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1206.html";
+        private const string Title = "Declaration keywords must follow order";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.OrderingRules";
+        private const string Description = "The keywords within the declaration of an element do not follow a standard ordering scheme.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1206.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

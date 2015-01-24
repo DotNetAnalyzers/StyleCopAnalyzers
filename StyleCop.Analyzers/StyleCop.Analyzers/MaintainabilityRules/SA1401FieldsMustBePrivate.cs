@@ -19,13 +19,13 @@
     public class SA1401FieldsMustBePrivate : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1401";
-        internal const string Title = "Fields must be private";
-        internal const string MessageFormat = "Field must be private";
-        internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
-        internal const string Description = "A field within a C# class has an access modifier other than private.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1401.html";
+        private const string Title = "Fields must be private";
+        private const string MessageFormat = "Field must be private";
+        private const string Category = "StyleCop.CSharp.MaintainabilityRules";
+        private const string Description = "A field within a C# class has an access modifier other than private.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1401.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

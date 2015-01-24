@@ -26,13 +26,13 @@
     public class SA1402FileMayOnlyContainASingleClass : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1402";
-        internal const string Title = "File may only contain a single class";
-        internal const string MessageFormat = "File may only contain a single class";
-        internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
-        internal const string Description = "A C# code file contains more than one unique class.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1402.html";
+        private const string Title = "File may only contain a single class";
+        private const string MessageFormat = "File may only contain a single class";
+        private const string Category = "StyleCop.CSharp.MaintainabilityRules";
+        private const string Description = "A C# code file contains more than one unique class.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1402.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

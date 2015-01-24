@@ -26,13 +26,13 @@
     public class SA1405DebugAssertMustProvideMessageText : SystemDiagnosticsDebugDiagnosticBase
     {
         public const string DiagnosticId = "SA1405";
-        internal const string Title = "Debug.Assert must provide message text";
-        internal const string MessageFormat = "Debug.Assert must provide message text";
-        internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
-        internal const string Description = "A call to Debug.Assert in C# code does not include a descriptive message.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1405.html";
+        private const string Title = "Debug.Assert must provide message text";
+        private const string MessageFormat = "Debug.Assert must provide message text";
+        private const string Category = "StyleCop.CSharp.MaintainabilityRules";
+        private const string Description = "A call to Debug.Assert in C# code does not include a descriptive message.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1405.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

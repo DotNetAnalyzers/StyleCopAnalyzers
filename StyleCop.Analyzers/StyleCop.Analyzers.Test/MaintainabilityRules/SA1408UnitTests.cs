@@ -13,12 +13,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     public class SA1408UnitTests : CodeFixVerifier
     {
         private const string DiagnosticId = SA1408ConditionalExpressionsMustDeclarePrecedence.DiagnosticId;
-        protected static readonly DiagnosticResult[] EmptyDiagnosticResults = { };
 
         [TestMethod]
         public async Task TestEmptySource()
         {
-            var testCode = @"";
+            var testCode = string.Empty;
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 

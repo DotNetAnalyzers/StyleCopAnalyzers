@@ -29,13 +29,13 @@
     public class SA1404CodeAnalysisSuppressionMustHaveJustification : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1404";
-        internal const string Title = "Code analysis suppression must have justification";
-        internal const string MessageFormat = "Code analysis suppression must have justification";
-        internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
-        internal const string Description = "A Code Analysis SuppressMessage attribute does not include a justification.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1404.html";
+        private const string Title = "Code analysis suppression must have justification";
+        private const string MessageFormat = "Code analysis suppression must have justification";
+        private const string Category = "StyleCop.CSharp.MaintainabilityRules";
+        private const string Description = "A Code Analysis SuppressMessage attribute does not include a justification.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1404.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
@@ -59,11 +59,11 @@
         private void HandleAttributeNode(SyntaxNodeAnalysisContext context)
         {
             var attribute = context.Node as AttributeSyntax;
-            if(attribute != null)
+            if (attribute != null)
             {
                 SymbolInfo symbolInfo = context.SemanticModel.GetSymbolInfo(attribute);
                 ISymbol symbol = symbolInfo.Symbol;
-                if(symbol != null)
+                if (symbol != null)
                 {
                     var suppressMessageType = context.SemanticModel.Compilation.GetTypeByMetadataName(typeof(SuppressMessageAttribute).FullName);
                     if (symbol.ContainingType == suppressMessageType)

@@ -15,14 +15,12 @@
     [TestClass]
     public class SA1601UnitTests : CodeFixVerifier
     {
-        protected static readonly DiagnosticResult[] EmptyDiagnosticResults = { };
-
         public string DiagnosticId { get; } = SA1601PartialElementsMustBeDocumented.DiagnosticId;
 
         [TestMethod]
         public async Task TestEmptySource()
         {
-            var testCode = @"";
+            var testCode = string.Empty;
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 

@@ -23,12 +23,12 @@
     public class SA1604ElementDocumentationMustHaveSummary : ElementDocumentationSummaryBase
     {
         public const string DiagnosticId = "SA1604";
-        internal const string Title = "Element documentation must have summary";
-        internal const string MessageFormat = "Element documentation must have summary";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "The XML header documentation for a C# element is missing a <summary> tag.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1604.html";
-        public static readonly DiagnosticDescriptor Descriptor =
+        private const string Title = "Element documentation must have summary";
+        private const string MessageFormat = "Element documentation must have summary";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "The XML header documentation for a C# element is missing a <summary> tag.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1604.html";
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

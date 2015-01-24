@@ -148,13 +148,13 @@
     public class SA1200UsingDirectivesMustBePlacedWithinNamespace : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1200";
-        internal const string Title = "Using directives must be placed within namespace";
-        internal const string MessageFormat = "Using directive must appear within a namespace declaration";
-        internal const string Category = "StyleCop.CSharp.OrderingRules";
-        internal const string Description = "A C# using directive is placed outside of a namespace element.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1200.html";
+        private const string Title = "Using directives must be placed within namespace";
+        private const string MessageFormat = "Using directive must appear within a namespace declaration";
+        private const string Category = "StyleCop.CSharp.OrderingRules";
+        private const string Description = "A C# using directive is placed outside of a namespace element.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1200.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

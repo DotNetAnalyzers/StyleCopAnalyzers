@@ -35,13 +35,13 @@
     public class SA1212PropertyAccessorsMustFollowOrder : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1212";
-        internal const string Title = "Property accessors must follow order";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.OrderingRules";
-        internal const string Description = "A get accessor appears after a set accessor within a property or indexer.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1212.html";
+        private const string Title = "Property accessors must follow order";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.OrderingRules";
+        private const string Description = "A get accessor appears after a set accessor within a property or indexer.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1212.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

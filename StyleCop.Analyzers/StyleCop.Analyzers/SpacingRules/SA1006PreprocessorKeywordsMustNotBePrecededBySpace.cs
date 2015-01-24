@@ -26,13 +26,13 @@
     public class SA1006PreprocessorKeywordsMustNotBePrecededBySpace : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1006";
-        internal const string Title = "Preprocessor keywords must not be preceded by space";
-        internal const string MessageFormat = "Preprocessor keyword '{0}' must not be preceded by a space.";
-        internal const string Category = "StyleCop.CSharp.SpacingRules";
-        internal const string Description = "A C# preprocessor-type keyword is preceded by space.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1006.html";
+        private const string Title = "Preprocessor keywords must not be preceded by space";
+        private const string MessageFormat = "Preprocessor keyword '{0}' must not be preceded by a space.";
+        private const string Category = "StyleCop.CSharp.SpacingRules";
+        private const string Description = "A C# preprocessor-type keyword is preceded by space.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1006.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

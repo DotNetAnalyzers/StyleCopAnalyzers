@@ -34,13 +34,13 @@
     public class SA1509OpeningCurlyBracketsMustNotBePrecededByBlankLine : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1509";
-        internal const string Title = "Opening curly brackets must not be preceded by blank line";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.LayoutRules";
-        internal const string Description = "An opening curly bracket within a C# element, statement, or expression is preceded by a blank line.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1509.html";
+        private const string Title = "Opening curly brackets must not be preceded by blank line";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.LayoutRules";
+        private const string Description = "An opening curly bracket within a C# element, statement, or expression is preceded by a blank line.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1509.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

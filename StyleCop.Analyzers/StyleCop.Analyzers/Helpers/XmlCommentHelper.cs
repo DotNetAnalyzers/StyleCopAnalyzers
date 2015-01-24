@@ -135,7 +135,7 @@
 
         internal static DocumentationCommentTriviaSyntax GetDocumentationStructure(SyntaxNode node)
         {
-            if(node == null)
+            if (node == null)
             {
                 return null;
             }

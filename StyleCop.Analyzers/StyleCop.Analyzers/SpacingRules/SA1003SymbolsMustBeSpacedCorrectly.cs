@@ -40,13 +40,13 @@
     public class SA1003SymbolsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1003";
-        internal const string Title = "Symbols must be spaced correctly";
-        internal const string MessageFormat = "Operator '{0}' must {1}.";
-        internal const string Category = "StyleCop.CSharp.SpacingRules";
-        internal const string Description = "The spacing around an operator symbol is incorrect, within a C# code file.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1003.html";
+        private const string Title = "Symbols must be spaced correctly";
+        private const string MessageFormat = "Operator '{0}' must {1}.";
+        private const string Category = "StyleCop.CSharp.SpacingRules";
+        private const string Description = "The spacing around an operator symbol is incorrect, within a C# code file.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1003.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

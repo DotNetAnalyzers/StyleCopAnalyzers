@@ -25,15 +25,15 @@
     public class SA1304NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1304";
-        internal const string Title = "Non-private readonly fields must begin with upper-case letter";
-        internal const string MessageFormat = "Non-private readonly fields must begin with upper-case letter";
-        internal const string Category = "StyleCop.CSharp.NamingRules";
+        private const string Title = "Non-private readonly fields must begin with upper-case letter";
+        private const string MessageFormat = "Non-private readonly fields must begin with upper-case letter";
+        private const string Category = "StyleCop.CSharp.NamingRules";
 
-        internal const string Description = "The name of a non-private readonly C# field must being with an upper-case letter.";
+        private const string Description = "The name of a non-private readonly C# field must being with an upper-case letter.";
 
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1304.html";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1304.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning,
                 true, Description, HelpLink);
 

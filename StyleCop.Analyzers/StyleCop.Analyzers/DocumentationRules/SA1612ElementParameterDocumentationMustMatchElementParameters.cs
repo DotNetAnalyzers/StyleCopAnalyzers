@@ -22,13 +22,13 @@
     public class SA1612ElementParameterDocumentationMustMatchElementParameters : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1612";
-        internal const string Title = "Element parameter documentation must match element parameters";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "The documentation describing the parameters to a C# method, constructor, delegate or indexer element does not match the actual parameters on the element.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1612.html";
+        private const string Title = "Element parameter documentation must match element parameters";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "The documentation describing the parameters to a C# method, constructor, delegate or indexer element does not match the actual parameters on the element.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1612.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

@@ -30,13 +30,13 @@
     public class SA1111ClosingParenthesisMustBeOnLineOfLastParameter : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1111";
-        internal const string Title = "Closing parenthesis must be on line of last parameter";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.ReadabilityRules";
-        internal const string Description = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1111.html";
+        private const string Title = "Closing parenthesis must be on line of last parameter";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.ReadabilityRules";
+        private const string Description = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1111.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

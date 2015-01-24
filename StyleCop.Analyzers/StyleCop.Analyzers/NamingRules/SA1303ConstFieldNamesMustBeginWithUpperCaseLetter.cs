@@ -23,13 +23,13 @@
     public class SA1303ConstFieldNamesMustBeginWithUpperCaseLetter : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1303";
-        internal const string Title = "Const field names must begin with upper-case letter";
-        internal const string MessageFormat = "Const field names must begin with upper-case letter.";
-        internal const string Category = "StyleCop.CSharp.NamingRules";
-        internal const string Description = "The name of a constant C# field must begin with an upper-case letter.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1303.html";
+        private const string Title = "Const field names must begin with upper-case letter";
+        private const string MessageFormat = "Const field names must begin with upper-case letter.";
+        private const string Category = "StyleCop.CSharp.NamingRules";
+        private const string Description = "The name of a constant C# field must begin with an upper-case letter.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1303.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
@@ -59,7 +59,7 @@
                 return;
             }
 
-            if(NamedTypeHelpers.IsContainedInNativeMethodsClass(symbol.ContainingType))
+            if (NamedTypeHelpers.IsContainedInNativeMethodsClass(symbol.ContainingType))
             {
                 return;
             }

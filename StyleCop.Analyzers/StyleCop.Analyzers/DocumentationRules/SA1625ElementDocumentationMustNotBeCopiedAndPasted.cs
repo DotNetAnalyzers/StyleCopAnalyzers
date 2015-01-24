@@ -53,13 +53,13 @@
     public class SA1625ElementDocumentationMustNotBeCopiedAndPasted : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1625";
-        internal const string Title = "Element documentation must not be copied and pasted";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "The Xml documentation for a C# element contains two or more identical entries, indicating that the documentation has been copied and pasted. This can sometimes indicate invalid or poorly written documentation.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1625.html";
+        private const string Title = "Element documentation must not be copied and pasted";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "The Xml documentation for a C# element contains two or more identical entries, indicating that the documentation has been copied and pasted. This can sometimes indicate invalid or poorly written documentation.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1625.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

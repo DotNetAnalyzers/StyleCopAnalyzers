@@ -14,7 +14,6 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     public class SA1100UnitTests : CodeFixVerifier
     {
         private const string DiagnosticId = SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists.DiagnosticId;
-        protected static readonly DiagnosticResult[] EmptyDiagnosticResults = { };
 
         [TestMethod]
         public async Task TestChildClassUsesBaseButNoOverride()

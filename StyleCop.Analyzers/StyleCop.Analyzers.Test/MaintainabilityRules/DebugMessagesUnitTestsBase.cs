@@ -10,8 +10,6 @@
 
     public abstract class DebugMessagesUnitTestsBase : CodeFixVerifier
     {
-        protected static readonly DiagnosticResult[] EmptyDiagnosticResults = { };
-
         protected abstract string DiagnosticId
         {
             get;
@@ -30,7 +28,7 @@
         [TestMethod]
         public async Task TestEmptySource()
         {
-            var testCode = @"";
+            var testCode = string.Empty;
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 

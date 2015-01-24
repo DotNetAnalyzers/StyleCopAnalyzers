@@ -8,12 +8,12 @@
     {
         internal static bool IsNativeMethodsClass(INamedTypeSymbol type)
         {
-            if(type == null || type.TypeKind != TypeKind.Class)
+            if (type == null || type.TypeKind != TypeKind.Class)
             {
                 return false;
             }
 
-            if(type.Name != null && type.Name.EndsWith("NativeMethods", StringComparison.Ordinal))
+            if (type.Name != null && type.Name.EndsWith("NativeMethods", StringComparison.Ordinal))
             {
                 return true;
             }
@@ -37,15 +37,15 @@
                 return false;
             }
 
-            if(IsNativeMethodsClass(type))
+            if (IsNativeMethodsClass(type))
             {
                 return true;
             }
 
             INamedTypeSymbol typeSymbol = type;
-            while((typeSymbol = typeSymbol.ContainingType) != null)
+            while ((typeSymbol = typeSymbol.ContainingType) != null)
             {
-                if(IsNativeMethodsClass(typeSymbol))
+                if (IsNativeMethodsClass(typeSymbol))
                 {
                     return true;
                 }

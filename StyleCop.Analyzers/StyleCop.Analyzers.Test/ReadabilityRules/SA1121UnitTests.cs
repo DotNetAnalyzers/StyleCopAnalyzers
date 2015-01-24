@@ -53,8 +53,6 @@
         static readonly Tuple<string, string>[] _allTypes = _referenceTypes.Concat(_valueTypes).ToArray();
 
 
-        protected static readonly DiagnosticResult[] EmptyDiagnosticResults = { };
-
         public string DiagnosticId { get; } = SA1121UseBuiltInTypeAlias.DiagnosticId;
 
         private async Task TestCases(Func<string, string, Task> func, Tuple<string, string>[] types)
@@ -128,7 +126,7 @@
         [TestMethod]
         public async Task TestEmptySource()
         {
-            var testCode = @"";
+            var testCode = string.Empty;
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
