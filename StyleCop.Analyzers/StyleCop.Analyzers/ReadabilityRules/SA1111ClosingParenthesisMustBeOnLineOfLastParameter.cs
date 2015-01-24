@@ -69,6 +69,34 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeAction(HandleAnonymousMethod, SyntaxKind.AnonymousMethodExpression);
             context.RegisterSyntaxNodeAction(HandleAttributeList, SyntaxKind.AttributeList);
             context.RegisterSyntaxNodeAction(HandleParenthesizedLambdaExpression, SyntaxKind.ParenthesizedLambdaExpression);
+            context.RegisterSyntaxNodeAction(HandleArrayCreation, SyntaxKind.ArrayCreationExpression);
+        }
+
+        private void HandleArrayCreation(SyntaxNodeAnalysisContext context)
+        {
+            var arrayCreation = (ArrayCreationExpressionSyntax) context.Node;
+
+            if (arrayCreation.Type == null)
+            {
+                return;
+            }
+
+            foreach (var arrayRankSpecifierSyntax in arrayCreation.Type.RankSpecifiers)
+            {
+                if (!arrayRankSpecifierSyntax.Sizes.Any())
+                {
+                    continue;
+                }
+
+                var lastSize = arrayRankSpecifierSyntax.Sizes
+                    .Last();
+
+                if (!arrayRankSpecifierSyntax.CloseBracketToken.IsMissing)
+                {
+                    CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(context, lastSize,
+                        arrayRankSpecifierSyntax.CloseBracketToken);
+                }
+            }
         }
 
         private void HandleParenthesizedLambdaExpression(SyntaxNodeAnalysisContext context)
@@ -180,28 +208,23 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private void HandleElementAccessExpression(SyntaxNodeAnalysisContext context)
         {
-            var typeSymbol = context.SemanticModel.GetTypeInfo(((ElementAccessExpressionSyntax)context.Node).Expression);
+            var elementAccess = (ElementAccessExpressionSyntax) context.Node;
 
-            if (typeSymbol.Type != null && typeSymbol.Type.TypeKind != TypeKind.Array )
+            if (elementAccess.ArgumentList == null ||
+                elementAccess.ArgumentList.IsMissing ||
+                !elementAccess.ArgumentList.Arguments.Any())
             {
-                var elementAccess = (ElementAccessExpressionSyntax)context.Node;
+                return;
+            }
 
-                if (elementAccess.ArgumentList == null ||
-                    elementAccess.ArgumentList.IsMissing || 
-                    !elementAccess.ArgumentList.Arguments.Any())
-                {
-                    return;
-                }
+            var lastArgument = elementAccess.ArgumentList
+                .Arguments
+                .Last();
 
-                var lastArgument = elementAccess.ArgumentList
-                    .Arguments
-                    .Last();
-
-                if (!elementAccess.ArgumentList.CloseBracketToken.IsMissing && !lastArgument.IsMissing)
-                {
-                    CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(context, lastArgument,
-                        elementAccess.ArgumentList.CloseBracketToken);
-                }
+            if (!elementAccess.ArgumentList.CloseBracketToken.IsMissing && !lastArgument.IsMissing)
+            {
+                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(context, lastArgument,
+                    elementAccess.ArgumentList.CloseBracketToken);
             }
         }
 
