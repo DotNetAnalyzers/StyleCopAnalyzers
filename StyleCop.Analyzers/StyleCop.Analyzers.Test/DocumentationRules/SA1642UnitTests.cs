@@ -150,9 +150,22 @@
         }
 
         [TestMethod]
+        public async Task TestPrivateConstructorCorrectDocumentationSimpleVariation()
+        {
+            await TestConstructorCorrectDocumentationSimple("private", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], false);
+        }
+
+        [TestMethod]
         public async Task TestPrivateConstructorCorrectDocumentationCustomized()
         {
             await TestConstructorCorrectDocumentationCustomized("private", PrivateConstructorStandardText[0], PrivateConstructorStandardText[1], false);
+        }
+
+
+        [TestMethod]
+        public async Task TestPrivateConstructorCorrectDocumentationCustomizedVariation()
+        {
+            await TestConstructorCorrectDocumentationCustomized("private", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], false);
         }
 
         [TestMethod]
@@ -162,9 +175,21 @@
         }
 
         [TestMethod]
+        public async Task TestPrivateConstructorCorrectDocumentationGenericSimpleVariation()
+        {
+            await TestConstructorCorrectDocumentationSimple("private", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true);
+        }
+
+        [TestMethod]
         public async Task TestPrivateConstructorCorrectDocumentationGenericCustomized()
         {
             await TestConstructorCorrectDocumentationCustomized("private", PrivateConstructorStandardText[0], PrivateConstructorStandardText[1], true);
+        }
+
+        [TestMethod]
+        public async Task TestPrivateConstructorCorrectDocumentationGenericCustomizedVariation()
+        {
+            await TestConstructorCorrectDocumentationCustomized("private", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true);
         }
 
         [TestMethod]

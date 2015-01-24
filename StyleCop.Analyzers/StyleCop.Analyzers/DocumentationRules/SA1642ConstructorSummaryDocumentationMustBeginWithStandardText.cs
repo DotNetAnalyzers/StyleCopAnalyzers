@@ -132,19 +132,20 @@
 
             if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword))
             {
-                HandleConstructorDeclaration(context, StaticConstructorStandardText[0], StaticConstructorStandardText[1]);
+                HandleConstructorDeclaration(context, StaticConstructorStandardText);
             }
             else if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.PrivateKeyword))
             {
-                HandleConstructorDeclaration(context, PrivateConstructorStandardText[0], PrivateConstructorStandardText[1]);
+                // Allow both the default text for private and non-private constructors to be allowed here
+                HandleConstructorDeclaration(context, PrivateConstructorStandardText, NonPrivateConstructorStandardText);
             }
             else
             {
-                HandleConstructorDeclaration(context, NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1]);
+                HandleConstructorDeclaration(context, NonPrivateConstructorStandardText);
             }
         }
 
-        private void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context, string firstTextPart, string secondTextPart)
+        private void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context, params ImmutableArray<string>[] allowedTextParts)
         {
             var constructorDeclarationSyntax = context.Node as ConstructorDeclarationSyntax;
 
@@ -172,7 +173,7 @@
                                 var firstText = XmlCommentHelper.GetText(firstTextPartSyntax);
                                 var secondText = XmlCommentHelper.GetText(secondTextParSyntaxt);
 
-                                if (TextPartsMatch(firstTextPart, secondTextPart, firstTextPartSyntax, secondTextParSyntaxt)
+                                if (allowedTextParts.Any(textParts => TextPartsMatch(textParts[0], textParts[1], firstTextPartSyntax, secondTextParSyntaxt))
                                 && SeeTagIsCorrect(classReferencePart, constructorDeclarationSyntax))
                                 {
                                     // We found a correct standard text
