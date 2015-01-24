@@ -165,7 +165,7 @@
 
         internal static string GetText(XmlTextSyntax textElement)
         {
-            if(textElement == null)
+            if (textElement == null)
             {
                 return null;
             }

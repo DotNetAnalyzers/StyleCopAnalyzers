@@ -8,6 +8,7 @@
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using StyleCop.Analyzers.DocumentationRules;
     using TestHelper;
+    using static StyleCop.Analyzers.DocumentationRules.SA1642ConstructorSummaryDocumentationMustBeginWithStandardText;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1642ConstructorSummaryDocumentationMustBeginWithStandardText"/>-
@@ -15,18 +16,12 @@
     [TestClass]
     public class SA1642UnitTests : CodeFixVerifier
     {
-        protected static readonly DiagnosticResult[] EmptyDiagnosticResults = { };
-        internal static string[] NonPrivateConstructorStandardText = new string[] { "Initializes a new instance of the ", " class." };
-        internal static string[] PrivateConstructorStandardText = new string[] { "Prevents a default instance of the ", " class from being created." };
-        internal static string[] StaticConstructorStandardText = new string[] { "Initializes static members of the ", " class." };
-
-
         public string DiagnosticId { get; } = SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.DiagnosticId;
 
         [TestMethod]
         public async Task TestEmptySource()
         {
-            var testCode = @"";
+            var testCode = string.Empty;
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 

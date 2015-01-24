@@ -101,9 +101,9 @@
         internal const string Description = "The XML documentation header for a C# constructor does not contain the appropriate summary text.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1642.html";
 
-        internal static string[] NonPrivateConstructorStandardText = new string[] { "Initializes a new instance of the ", " class." };
-        internal static string[] PrivateConstructorStandardText = new string[] { "Prevents a default instance of the ", " class from being created." };
-        internal static string[] StaticConstructorStandardText = new string[] { "Initializes static members of the ", " class." };
+        public static ImmutableArray<string> NonPrivateConstructorStandardText { get; } = ImmutableArray.Create("Initializes a new instance of the ", " class.");
+        public static ImmutableArray<string> PrivateConstructorStandardText { get; } = ImmutableArray.Create("Prevents a default instance of the ", " class from being created.");
+        public static ImmutableArray<string> StaticConstructorStandardText { get; } = ImmutableArray.Create("Initializes static members of the ", " class.");
 
         public static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
