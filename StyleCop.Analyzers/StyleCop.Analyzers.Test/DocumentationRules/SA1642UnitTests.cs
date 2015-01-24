@@ -79,14 +79,34 @@
             await TestEmptyConstructor("static");
         }
 
-        private async Task TestConstructorCorrectDocumentation(string modifiers, string part1, string part2, bool generic)
+        private async Task TestConstructorCorrectDocumentationSimple(string modifiers, string part1, string part2, bool generic)
         {
             var testCode = @"namespace FooNamespace
 {{
     public class Foo{0}
     {{
         /// <summary>
-        /// {2}<see cref=""Foo{1}""/>{3}
+        /// {2}<see cref=""Foo{1}""/>{3}.
+        /// </summary>
+        {4} Foo()
+        {{
+
+        }}
+    }}
+}}";
+
+
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, modifiers), EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        private async Task TestConstructorCorrectDocumentationCustomized(string modifiers, string part1, string part2, bool generic)
+        {
+            var testCode = @"namespace FooNamespace
+{{
+    public class Foo{0}
+    {{
+        /// <summary>
+        /// {2}<see cref=""Foo{1}""/>{3} with A and B.
         /// </summary>
         {4} Foo()
         {{
@@ -100,39 +120,75 @@
         }
 
         [TestMethod]
-        public async Task TestNonPrivateConstructorCorrectDocumentation()
+        public async Task TestNonPrivateConstructorCorrectDocumentationSimple()
         {
-            await TestConstructorCorrectDocumentation("public", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], false);
+            await TestConstructorCorrectDocumentationSimple("public", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], false);
         }
 
         [TestMethod]
-        public async Task TestNonPrivateConstructorCorrectDocumentationGeneric()
+        public async Task TestNonPrivateConstructorCorrectDocumentationCustomized()
         {
-            await TestConstructorCorrectDocumentation("public", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true);
+            await TestConstructorCorrectDocumentationCustomized("public", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], false);
         }
 
         [TestMethod]
-        public async Task TestPrivateConstructorCorrectDocumentation()
+        public async Task TestNonPrivateConstructorCorrectDocumentationGenericSimple()
         {
-            await TestConstructorCorrectDocumentation("private", PrivateConstructorStandardText[0], PrivateConstructorStandardText[1], false);
+            await TestConstructorCorrectDocumentationSimple("public", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true);
         }
 
         [TestMethod]
-        public async Task TestPrivateConstructorCorrectDocumentationGeneric()
+        public async Task TestNonPrivateConstructorCorrectDocumentationGenericCustomized()
         {
-            await TestConstructorCorrectDocumentation("private", PrivateConstructorStandardText[0], PrivateConstructorStandardText[1], true);
+            await TestConstructorCorrectDocumentationCustomized("public", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true);
         }
 
         [TestMethod]
-        public async Task TestStaticConstructorCorrectDocumentation()
+        public async Task TestPrivateConstructorCorrectDocumentationSimple()
         {
-            await TestConstructorCorrectDocumentation("static", StaticConstructorStandardText[0], StaticConstructorStandardText[1], false);
+            await TestConstructorCorrectDocumentationSimple("private", PrivateConstructorStandardText[0], PrivateConstructorStandardText[1], false);
         }
 
         [TestMethod]
-        public async Task TestStaticConstructorCorrectDocumentationGeneric()
+        public async Task TestPrivateConstructorCorrectDocumentationCustomized()
         {
-            await TestConstructorCorrectDocumentation("static", StaticConstructorStandardText[0], StaticConstructorStandardText[1], true);
+            await TestConstructorCorrectDocumentationCustomized("private", PrivateConstructorStandardText[0], PrivateConstructorStandardText[1], false);
+        }
+
+        [TestMethod]
+        public async Task TestPrivateConstructorCorrectDocumentationGenericSimple()
+        {
+            await TestConstructorCorrectDocumentationSimple("private", PrivateConstructorStandardText[0], PrivateConstructorStandardText[1], true);
+        }
+
+        [TestMethod]
+        public async Task TestPrivateConstructorCorrectDocumentationGenericCustomized()
+        {
+            await TestConstructorCorrectDocumentationCustomized("private", PrivateConstructorStandardText[0], PrivateConstructorStandardText[1], true);
+        }
+
+        [TestMethod]
+        public async Task TestStaticConstructorCorrectDocumentationSimple()
+        {
+            await TestConstructorCorrectDocumentationSimple("static", StaticConstructorStandardText[0], StaticConstructorStandardText[1], false);
+        }
+
+        [TestMethod]
+        public async Task TestStaticConstructorCorrectDocumentationCustomized()
+        {
+            await TestConstructorCorrectDocumentationCustomized("static", StaticConstructorStandardText[0], StaticConstructorStandardText[1], false);
+        }
+
+        [TestMethod]
+        public async Task TestStaticConstructorCorrectDocumentationGenericSimple()
+        {
+            await TestConstructorCorrectDocumentationSimple("static", StaticConstructorStandardText[0], StaticConstructorStandardText[1], true);
+        }
+
+        [TestMethod]
+        public async Task TestStaticConstructorCorrectDocumentationGenericCustomized()
+        {
+            await TestConstructorCorrectDocumentationCustomized("static", StaticConstructorStandardText[0], StaticConstructorStandardText[1], true);
         }
 
         private async Task TestConstructorMissingDocumentation(string modifiers, string part1, string part2, bool generic)
@@ -179,7 +235,7 @@
     public class Foo{0}
     {{
         /// <summary>
-        /// {2}<see cref=""Foo{1}""/>{3}
+        /// {2}<see cref=""Foo{1}""/>{3}.
         /// </summary>
         {4} 
         Foo()
