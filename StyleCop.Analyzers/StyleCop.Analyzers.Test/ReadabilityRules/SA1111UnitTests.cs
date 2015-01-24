@@ -1141,6 +1141,74 @@ public class Foo
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
+        [TestMethod]
+        public async Task TestEventLastParameterOnThePreviousLineAsClosingParenthesis()
+        {
+            var testCode = @"
+public class Foo
+{
+    private event Action<int, int> MyEvent;
+
+    public void Bar()
+    {
+        MyEvent(1,2
+);
+    }
+);
+}";
+
+            var expected = new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 9, 1)
+                            }
+                    }
+                };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestEventLastParameterOnTheSameLineAsClosingParenthesis()
+        {
+            var testCode = @"
+public class Foo
+{
+    private event Action<int, int> MyEvent;
+
+    public void Bar()
+    {
+        MyEvent(1,2);
+    }
+);
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestEventNoParameters()
+        {
+            var testCode = @"
+public class Foo
+{
+    private event Action MyEvent;
+
+    public void Bar()
+    {
+        MyEvent();
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1111ClosingParenthesisMustBeOnLineOfLastParameter();
