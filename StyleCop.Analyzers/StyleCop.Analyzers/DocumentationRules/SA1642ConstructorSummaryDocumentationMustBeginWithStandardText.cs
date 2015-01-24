@@ -154,19 +154,23 @@
 
             if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword))
             {
-                HandleConstructorDeclaration(context, StaticConstructorStandardText[0], StaticConstructorStandardText[1]);
+                HandleConstructorDeclaration(context, StaticConstructorStandardText[0], StaticConstructorStandardText[1], true);
             }
             else if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.PrivateKeyword))
             {
-                HandleConstructorDeclaration(context, PrivateConstructorStandardText[0], PrivateConstructorStandardText[1]);
+                if (HandleConstructorDeclaration(context, PrivateConstructorStandardText[0], PrivateConstructorStandardText[1], false) != MatchResult.FoundMatch)
+                {
+                    // also allow the non-private wording for private constructors
+                    HandleConstructorDeclaration(context, NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true);
+                }
             }
             else
             {
-                HandleConstructorDeclaration(context, NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1]);
+                HandleConstructorDeclaration(context, NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true);
             }
         }
 
-        private MatchResult HandleConstructorDeclaration(SyntaxNodeAnalysisContext context, string firstTextPart, string secondTextPart)
+        private MatchResult HandleConstructorDeclaration(SyntaxNodeAnalysisContext context, string firstTextPart, string secondTextPart, bool reportDiagnostic)
         {
             var constructorDeclarationSyntax = context.Node as ConstructorDeclarationSyntax;
             if (constructorDeclarationSyntax == null)
@@ -203,7 +207,8 @@
                 }
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, summaryElement.GetLocation()));
+            if (reportDiagnostic)
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, summaryElement.GetLocation()));
 
             // TODO: be more specific about the type of error when possible
             return MatchResult.None;

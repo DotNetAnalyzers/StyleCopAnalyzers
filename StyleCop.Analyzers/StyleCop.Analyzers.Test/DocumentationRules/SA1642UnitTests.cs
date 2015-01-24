@@ -139,9 +139,33 @@
         }
 
         [TestMethod]
+        public async Task TestPrivateConstructorCorrectDocumentation_NonPrivateSimple()
+        {
+            await TestConstructorCorrectDocumentationSimple("private", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], false);
+        }
+
+        [TestMethod]
+        public async Task TestPrivateConstructorCorrectDocumentation_NonPrivateCustomized()
+        {
+            await TestConstructorCorrectDocumentationCustomized("private", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], false);
+        }
+
+        [TestMethod]
         public async Task TestPrivateConstructorCorrectDocumentationGeneric()
         {
             await TestConstructorCorrectDocumentation("private", PrivateConstructorStandardText[0], PrivateConstructorStandardText[1], string.Empty, true);
+        }
+
+        [TestMethod]
+        public async Task TestPrivateConstructorCorrectDocumentationGeneric_NonPrivateSimple()
+        {
+            await TestConstructorCorrectDocumentationSimple("private", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true);
+        }
+
+        [TestMethod]
+        public async Task TestPrivateConstructorCorrectDocumentationGeneric_NonPrivateCustomized()
+        {
+            await TestConstructorCorrectDocumentationCustomized("private", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true);
         }
 
         [TestMethod]
@@ -230,13 +254,13 @@
         [TestMethod]
         public async Task TestPrivateConstructorMissingDocumentation()
         {
-            await TestConstructorMissingDocumentation("private", PrivateConstructorStandardText[0], PrivateConstructorStandardText[1], false);
+            await TestConstructorMissingDocumentation("private", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], false);
         }
 
         [TestMethod]
         public async Task TestPrivateConstructorMissingDocumentationGeneric()
         {
-            await TestConstructorMissingDocumentation("private", PrivateConstructorStandardText[0], PrivateConstructorStandardText[1], true);
+            await TestConstructorMissingDocumentation("private", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true);
         }
 
         [TestMethod]

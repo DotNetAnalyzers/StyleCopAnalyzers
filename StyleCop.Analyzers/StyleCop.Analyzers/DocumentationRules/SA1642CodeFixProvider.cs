@@ -61,7 +61,9 @@
                 }
                 else if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.PrivateKeyword))
                 {
-                    standardText = SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.PrivateConstructorStandardText;
+                    // Prefer to insert the "non-private" wording, even though both are considered acceptable by the
+                    // diagnostic. https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/413
+                    standardText = SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.NonPrivateConstructorStandardText;
                 }
                 else
                 {
