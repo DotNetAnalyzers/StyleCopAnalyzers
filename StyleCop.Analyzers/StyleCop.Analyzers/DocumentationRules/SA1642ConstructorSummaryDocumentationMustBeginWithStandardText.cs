@@ -1,8 +1,15 @@
 ﻿namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Helpers;
+    using System;
+
+
 
     /// <summary>
     /// The XML documentation header for a C# constructor does not contain the appropriate summary text.
@@ -89,13 +96,17 @@
     {
         public const string DiagnosticId = "SA1642";
         private const string Title = "Constructor summary documentation must begin with standard text";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "Constructor summary documentation must begin with standard text";
         private const string Category = "StyleCop.CSharp.DocumentationRules";
         private const string Description = "The XML documentation header for a C# constructor does not contain the appropriate summary text.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1642.html";
 
+        public static ImmutableArray<string> NonPrivateConstructorStandardText { get; } = ImmutableArray.Create("Initializes a new instance of the ", " class");
+        public static ImmutableArray<string> PrivateConstructorStandardText { get; } = ImmutableArray.Create("Prevents a default instance of the ", " class from being created.");
+        public static ImmutableArray<string> StaticConstructorStandardText { get; } = ImmutableArray.Create("Initializes static members of the ", " class.");
+
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
@@ -112,7 +123,124 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
+        }
+
+        private void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var constructorDeclarationSyntax = context.Node as ConstructorDeclarationSyntax;
+
+            if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword))
+            {
+                HandleConstructorDeclaration(context, StaticConstructorStandardText[0], StaticConstructorStandardText[1]);
+            }
+            else if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.PrivateKeyword))
+            {
+                HandleConstructorDeclaration(context, PrivateConstructorStandardText[0], PrivateConstructorStandardText[1]);
+            }
+            else
+            {
+                HandleConstructorDeclaration(context, NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1]);
+            }
+        }
+
+        private void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context, string firstTextPart, string secondTextPart)
+        {
+            var constructorDeclarationSyntax = context.Node as ConstructorDeclarationSyntax;
+
+            if (constructorDeclarationSyntax != null)
+            {
+                var documentationStructure = XmlCommentHelper.GetDocumentationStructure(constructorDeclarationSyntax);
+
+                if (documentationStructure != null)
+                {
+                    var summaryElement = XmlCommentHelper.GetTopLevelElement(documentationStructure, XmlCommentHelper.SummaryXmlTag) as XmlElementSyntax;
+
+                    if (summaryElement != null)
+                    {
+                        // Check if the summary content could be a correct standard text
+                        if (summaryElement.Content.Count >= 3)
+                        {
+                            // Standard text has the form <part1><see><part2>
+                            var firstTextPartSyntax = summaryElement.Content[0] as XmlTextSyntax;
+                            var classReferencePart = summaryElement.Content[1] as XmlEmptyElementSyntax;
+                            var secondTextParSyntaxt = summaryElement.Content[2] as XmlTextSyntax;
+
+                            if (firstTextPartSyntax != null && classReferencePart != null && secondTextParSyntaxt != null)
+                            {
+                                // Check text parts
+                                var firstText = XmlCommentHelper.GetText(firstTextPartSyntax);
+                                var secondText = XmlCommentHelper.GetText(secondTextParSyntaxt);
+
+                                if (TextPartsMatch(firstTextPart, secondTextPart, firstTextPartSyntax, secondTextParSyntaxt)
+                                && SeeTagIsCorrect(classReferencePart, constructorDeclarationSyntax))
+                                {
+                                    // We found a correct standard text
+                                    return;
+                                }
+                            }
+                        }
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, summaryElement.GetLocation()));
+                    }
+                }
+            }
+        }
+
+        private bool SeeTagIsCorrect(XmlEmptyElementSyntax classReferencePart, ConstructorDeclarationSyntax constructorDeclarationSyntax)
+        {
+            if (classReferencePart.Name.ToString() == XmlCommentHelper.SeeXmlTag)
+            {
+                XmlCrefAttributeSyntax crefAttribute = classReferencePart.Attributes.OfType<XmlCrefAttributeSyntax>().FirstOrDefault();
+
+                if (crefAttribute != null)
+                {
+                    NameMemberCrefSyntax nameMember = crefAttribute.Cref as NameMemberCrefSyntax;
+
+                    if (nameMember != null && nameMember.Parameters == null)
+                    {
+                        ClassDeclarationSyntax classDeclarationSyntax = constructorDeclarationSyntax.FirstAncestorOrSelf<ClassDeclarationSyntax>();
+
+                        if (classDeclarationSyntax != null
+                            && classDeclarationSyntax.Identifier.ToString() == GetName(nameMember.Name))
+                        {
+                            // Check if type parameters are called the same
+                            if (TypeParameterNamesMatch(classDeclarationSyntax, nameMember.Name))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private string GetName(TypeSyntax name)
+        {
+            return (name as SimpleNameSyntax).Identifier.ToString() ?? name.ToString();
+        }
+
+        private static bool TextPartsMatch(string firstText, string secondText, XmlTextSyntax firstTextPart, XmlTextSyntax secondTextPart)
+        {
+            return firstText == XmlCommentHelper.GetText(firstTextPart).TrimStart() && XmlCommentHelper.GetText(secondTextPart).StartsWith(secondText);
+        }
+
+        private static bool TypeParameterNamesMatch(ClassDeclarationSyntax classDeclarationSyntax, TypeSyntax name)
+        {
+            var genericName = name as GenericNameSyntax;
+            if (genericName != null)
+            {
+                var genericNameArgumentNames = genericName.TypeArgumentList.Arguments.Cast<SimpleNameSyntax>().Select(p => p.Identifier.ToString());
+                var classParameterNames = classDeclarationSyntax.TypeParameterList?.Parameters.Select(p => p.Identifier.ToString()) ?? Enumerable.Empty<string>();
+                // Make sure the names match up
+                return genericNameArgumentNames.SequenceEqual(classParameterNames);
+            }
+            else
+            {
+                return classDeclarationSyntax.TypeParameterList == null
+                    || !classDeclarationSyntax.TypeParameterList.Parameters.Any();
+            }
         }
     }
 }
