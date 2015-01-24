@@ -2,7 +2,10 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The name of a C# element does not begin with an upper-case letter.
@@ -26,13 +29,13 @@
     {
         public const string DiagnosticId = "SA1300";
         private const string Title = "Element must begin with upper-case letter";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "Element '{0}' must begin with an uppercase letter";
         private const string Category = "StyleCop.CSharp.NamingRules";
         private const string Description = "The name of a C# element does not begin with an upper-case letter.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1300.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
@@ -49,7 +52,121 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            // Note: Interfaces are handled by SA1302
+            // Note: Fields are handled by SA1303 through SA1311
+
+            context.RegisterSyntaxNodeAction(HandleNamespaceDeclarationSyntax, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeAction(HandleClassDeclarationSyntax, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeAction(HandleEnumDeclarationSyntax, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeAction(HandleStructDeclarationSyntax, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeAction(HandleDelegateDeclarationSyntax, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeAction(HandleEventDeclarationSyntax, SyntaxKind.EventDeclaration);
+            context.RegisterSyntaxNodeAction(HandleEventFieldDeclarationSyntax, SyntaxKind.EventFieldDeclaration);
+            context.RegisterSyntaxNodeAction(HandleMethodDeclarationSyntax, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(HandlePropertyDeclarationSyntax, SyntaxKind.PropertyDeclaration);
+        }
+
+        private void HandleNamespaceDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        {
+            NameSyntax nameSyntax = ((NamespaceDeclarationSyntax)context.Node).Name;
+            CheckNameSyntax(context, nameSyntax);
+        }
+
+        private void CheckNameSyntax(SyntaxNodeAnalysisContext context, NameSyntax nameSyntax)
+        {
+            if (nameSyntax == null || nameSyntax.IsMissing)
+                return;
+
+            QualifiedNameSyntax qualifiedNameSyntax = nameSyntax as QualifiedNameSyntax;
+            if (qualifiedNameSyntax != null)
+            {
+                CheckNameSyntax(context, qualifiedNameSyntax.Left);
+                CheckNameSyntax(context, qualifiedNameSyntax.Right);
+                return;
+            }
+
+            SimpleNameSyntax simpleNameSyntax = nameSyntax as SimpleNameSyntax;
+            if (simpleNameSyntax != null)
+            {
+                CheckElementNameToken(context, simpleNameSyntax.Identifier);
+                return;
+            }
+
+            // TODO: any other cases?
+        }
+
+        private void HandleClassDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        {
+            CheckElementNameToken(context, ((ClassDeclarationSyntax)context.Node).Identifier);
+        }
+
+        private void HandleEnumDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        {
+            CheckElementNameToken(context, ((EnumDeclarationSyntax)context.Node).Identifier);
+        }
+
+        private void HandleStructDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        {
+            CheckElementNameToken(context, ((StructDeclarationSyntax)context.Node).Identifier);
+        }
+
+        private void HandleDelegateDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        {
+            CheckElementNameToken(context, ((DelegateDeclarationSyntax)context.Node).Identifier);
+        }
+
+        private void HandleEventDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        {
+            CheckElementNameToken(context, ((EventDeclarationSyntax)context.Node).Identifier);
+        }
+
+        private void HandleEventFieldDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        {
+            EventFieldDeclarationSyntax eventFieldDeclarationSyntax = (EventFieldDeclarationSyntax)context.Node;
+            VariableDeclarationSyntax variableDeclarationSyntax = eventFieldDeclarationSyntax.Declaration;
+            if (variableDeclarationSyntax == null || variableDeclarationSyntax.IsMissing)
+                return;
+
+            foreach (var declarator in variableDeclarationSyntax.Variables)
+            {
+                if (declarator == null || declarator.IsMissing)
+                    continue;
+
+                CheckElementNameToken(context, declarator.Identifier);
+            }
+        }
+
+        private void HandleMethodDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        {
+            CheckElementNameToken(context, ((MethodDeclarationSyntax)context.Node).Identifier);
+        }
+
+        private void HandlePropertyDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        {
+            CheckElementNameToken(context, ((PropertyDeclarationSyntax)context.Node).Identifier);
+        }
+
+        private void CheckElementNameToken(SyntaxNodeAnalysisContext context, SyntaxToken identifier)
+        {
+            if (identifier.IsMissing)
+                return;
+
+            if (string.IsNullOrEmpty(identifier.ValueText))
+                return;
+
+            // This code uses char.IsLower(...) instead of !char.IsUpper(...) for all of the following reasons:
+            //  1. Foreign languages may not have upper case variants for certain characters
+            //  2. This diagnostic appears targeted for "English" identifiers.
+            //
+            // See DotNetAnalyzers/StyleCopAnalyzers#369 for additional information:
+            // https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/369
+            if (!char.IsLower(identifier.ValueText[0]) && identifier.ValueText[0] != '_')
+                return;
+
+            if (NamedTypeHelpers.IsContainedInNativeMethodsClass(context.Node))
+                return;
+
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), identifier.ValueText));
         }
     }
 }

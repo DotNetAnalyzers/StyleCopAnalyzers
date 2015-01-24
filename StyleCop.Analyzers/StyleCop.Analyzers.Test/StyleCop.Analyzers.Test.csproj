@@ -125,6 +125,7 @@
     <Compile Include="MaintainabilityRules\SA1408UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1410UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1411UnitTests.cs" />
+    <Compile Include="NamingRules\SA1300UnitTests.cs" />
     <Compile Include="NamingRules\SA1302UnitTests.cs" />
     <Compile Include="NamingRules\SA1303UnitTests.cs" />
     <Compile Include="NamingRules\SA1304UnitTests.cs" />
