@@ -68,6 +68,29 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeAction(HandleAttribute, SyntaxKind.Attribute);
             context.RegisterSyntaxNodeAction(HandleAnonymousMethod, SyntaxKind.AnonymousMethodExpression);
             context.RegisterSyntaxNodeAction(HandleAttributeList, SyntaxKind.AttributeList);
+            context.RegisterSyntaxNodeAction(HandleParenthesizedLambdaExpression, SyntaxKind.ParenthesizedLambdaExpression);
+        }
+
+        private void HandleParenthesizedLambdaExpression(SyntaxNodeAnalysisContext context)
+        {
+            var lambdaExpressionSyntax = (ParenthesizedLambdaExpressionSyntax)context.Node;
+
+            if (lambdaExpressionSyntax.ParameterList == null ||
+                !lambdaExpressionSyntax.ParameterList.IsMissing &&
+                !lambdaExpressionSyntax.ParameterList.Parameters.Any())
+            {
+                return;
+            }
+
+            var lastParameter = lambdaExpressionSyntax.ParameterList
+                .Parameters
+                .Last();
+
+            if (!lambdaExpressionSyntax.ParameterList.CloseParenToken.IsMissing)
+            {
+                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(context, lastParameter,
+                    lambdaExpressionSyntax.ParameterList.CloseParenToken);
+            }
         }
 
         private void HandleAttributeList(SyntaxNodeAnalysisContext context)

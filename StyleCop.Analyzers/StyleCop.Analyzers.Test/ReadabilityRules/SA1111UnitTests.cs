@@ -1154,7 +1154,6 @@ public class Foo
         MyEvent(1,2
 );
     }
-);
 }";
 
             var expected = new[]
@@ -1187,7 +1186,6 @@ public class Foo
     {
         MyEvent(1,2);
     }
-);
 }";
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
@@ -1203,6 +1201,109 @@ public class Foo
     public void Bar()
     {
         MyEvent();
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestLambdaExpressionLastParameterOnThePreviousLineAsClosingParenthesis()
+        {
+            var testCode = @"
+public class Foo
+{
+    public void Bar()
+    {
+        Action<string,string> act = (string s, string s2
+) =>
+        {
+                    
+        };
+    }
+);";
+
+            var expected = new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 7, 1)
+                            }
+                    }
+                };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestLambdaExpressionInsideWhereLastParameterOnThePreviousLineAsClosingParenthesis()
+        {
+            var testCode = @"
+namespace Test
+{
+    using System.Linq;
+
+    public class Foo
+    {
+        public void Bar()
+        {
+            var arr = new int[0];
+            var r = arr.Where((int a
+                ) => a > 0);
+        }
+    }
+}";
+
+            var expected = new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                        Message = "The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the last parameter.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 12, 17)
+                            }
+                    }
+                };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestLambdaExpressionLastParameterOnTheSameLineAsClosingParenthesis()
+        {
+            var testCode = @"
+public class Foo
+{
+    public void Bar()
+    {
+        Action<string,string> act = (string s, string s2) =>
+        {
+                    
+        };
+    }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestLambdaExpressionNoParameters()
+        {
+            var testCode = @"
+public class Foo
+{
+    public void Bar()
+    {
+        Action a = () => { };
     }
 }";
 
