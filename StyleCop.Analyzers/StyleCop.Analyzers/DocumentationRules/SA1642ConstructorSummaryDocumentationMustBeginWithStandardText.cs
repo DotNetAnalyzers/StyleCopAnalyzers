@@ -111,6 +111,28 @@
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
+        /// <summary>
+        /// Describes the result of matching a summary element to a specific desired wording.
+        /// </summary>
+        public enum MatchResult
+        {
+            /// <summary>
+            /// The analysis could not be completed due to errors in the syntax tree or a comment structure which was
+            /// not accounted for.
+            /// </summary>
+            Unknown = -1,
+
+            /// <summary>
+            /// No complete or partial match was found.
+            /// </summary>
+            None,
+
+            /// <summary>
+            /// A match to the expected text was found.
+            /// </summary>
+            FoundMatch,
+        }
+
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -132,58 +154,64 @@
 
             if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword))
             {
-                HandleConstructorDeclaration(context, StaticConstructorStandardText[0], StaticConstructorStandardText[1]);
+                HandleConstructorDeclaration(context, StaticConstructorStandardText[0], StaticConstructorStandardText[1], true);
             }
             else if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.PrivateKeyword))
             {
-                HandleConstructorDeclaration(context, PrivateConstructorStandardText[0], PrivateConstructorStandardText[1]);
+                if (HandleConstructorDeclaration(context, PrivateConstructorStandardText[0], PrivateConstructorStandardText[1], false) != MatchResult.FoundMatch)
+                {
+                    // also allow the non-private wording for private constructors
+                    HandleConstructorDeclaration(context, NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true);
+                }
             }
             else
             {
-                HandleConstructorDeclaration(context, NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1]);
+                HandleConstructorDeclaration(context, NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true);
             }
         }
 
-        private void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context, string firstTextPart, string secondTextPart)
+        private MatchResult HandleConstructorDeclaration(SyntaxNodeAnalysisContext context, string firstTextPart, string secondTextPart, bool reportDiagnostic)
         {
             var constructorDeclarationSyntax = context.Node as ConstructorDeclarationSyntax;
+            if (constructorDeclarationSyntax == null)
+                return MatchResult.Unknown;
 
-            if (constructorDeclarationSyntax != null)
+            var documentationStructure = XmlCommentHelper.GetDocumentationStructure(constructorDeclarationSyntax);
+            if (documentationStructure == null)
+                return MatchResult.Unknown;
+
+            var summaryElement = XmlCommentHelper.GetTopLevelElement(documentationStructure, XmlCommentHelper.SummaryXmlTag) as XmlElementSyntax;
+            if (summaryElement == null)
+                return MatchResult.Unknown;
+
+            // Check if the summary content could be a correct standard text
+            if (summaryElement.Content.Count >= 3)
             {
-                var documentationStructure = XmlCommentHelper.GetDocumentationStructure(constructorDeclarationSyntax);
+                // Standard text has the form <part1><see><part2>
+                var firstTextPartSyntax = summaryElement.Content[0] as XmlTextSyntax;
+                var classReferencePart = summaryElement.Content[1] as XmlEmptyElementSyntax;
+                var secondTextParSyntaxt = summaryElement.Content[2] as XmlTextSyntax;
 
-                if (documentationStructure != null)
+                if (firstTextPartSyntax != null && classReferencePart != null && secondTextParSyntaxt != null)
                 {
-                    var summaryElement = XmlCommentHelper.GetTopLevelElement(documentationStructure, XmlCommentHelper.SummaryXmlTag) as XmlElementSyntax;
+                    // Check text parts
+                    var firstText = XmlCommentHelper.GetText(firstTextPartSyntax);
+                    var secondText = XmlCommentHelper.GetText(secondTextParSyntaxt);
 
-                    if (summaryElement != null)
+                    if (TextPartsMatch(firstTextPart, secondTextPart, firstTextPartSyntax, secondTextParSyntaxt)
+                        && SeeTagIsCorrect(classReferencePart, constructorDeclarationSyntax))
                     {
-                        // Check if the summary content could be a correct standard text
-                        if (summaryElement.Content.Count >= 3)
-                        {
-                            // Standard text has the form <part1><see><part2>
-                            var firstTextPartSyntax = summaryElement.Content[0] as XmlTextSyntax;
-                            var classReferencePart = summaryElement.Content[1] as XmlEmptyElementSyntax;
-                            var secondTextParSyntaxt = summaryElement.Content[2] as XmlTextSyntax;
-
-                            if (firstTextPartSyntax != null && classReferencePart != null && secondTextParSyntaxt != null)
-                            {
-                                // Check text parts
-                                var firstText = XmlCommentHelper.GetText(firstTextPartSyntax);
-                                var secondText = XmlCommentHelper.GetText(secondTextParSyntaxt);
-
-                                if (TextPartsMatch(firstTextPart, secondTextPart, firstTextPartSyntax, secondTextParSyntaxt)
-                                && SeeTagIsCorrect(classReferencePart, constructorDeclarationSyntax))
-                                {
-                                    // We found a correct standard text
-                                    return;
-                                }
-                            }
-                        }
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, summaryElement.GetLocation()));
+                        // We found a correct standard text
+                        return MatchResult.FoundMatch;
                     }
                 }
             }
+
+            if (reportDiagnostic)
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, summaryElement.GetLocation()));
+
+            // TODO: be more specific about the type of error when possible
+            return MatchResult.None;
         }
 
         private bool SeeTagIsCorrect(XmlEmptyElementSyntax classReferencePart, ConstructorDeclarationSyntax constructorDeclarationSyntax)
@@ -223,7 +251,15 @@
 
         private static bool TextPartsMatch(string firstText, string secondText, XmlTextSyntax firstTextPart, XmlTextSyntax secondTextPart)
         {
-            return firstText == XmlCommentHelper.GetText(firstTextPart).TrimStart() && XmlCommentHelper.GetText(secondTextPart).StartsWith(secondText);
+            string firstTextPartText = XmlCommentHelper.GetText(firstTextPart, normalizeWhitespace: true);
+            if (firstText != firstTextPartText.TrimStart())
+                return false;
+
+            string secondTextPartText = XmlCommentHelper.GetText(secondTextPart, normalizeWhitespace: true);
+            if (!secondTextPartText.StartsWith(secondText))
+                return false;
+
+            return true;
         }
 
         private static bool TypeParameterNamesMatch(ClassDeclarationSyntax classDeclarationSyntax, TypeSyntax name)

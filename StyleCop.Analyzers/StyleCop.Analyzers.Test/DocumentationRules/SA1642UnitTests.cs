@@ -79,44 +79,70 @@
             await TestEmptyConstructor("static");
         }
 
-        private async Task TestConstructorCorrectDocumentationSimple(string modifiers, string part1, string part2, bool generic)
+        private async Task TestConstructorCorrectDocumentation(string modifiers, string part1, string part2, string part3, bool generic)
         {
+            // First test it all on one line
             var testCode = @"namespace FooNamespace
 {{
     public class Foo{0}
     {{
         /// <summary>
-        /// {2}<see cref=""Foo{1}""/>{3}.
+        /// {2}<see cref=""Foo{1}""/>{3}{4}
         /// </summary>
-        {4} Foo()
+        {5} Foo()
         {{
 
         }}
     }}
 }}";
 
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3, modifiers), EmptyDiagnosticResults, CancellationToken.None);
 
-            await VerifyCSharpDiagnosticAsync(string.Format(testCode, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, modifiers), EmptyDiagnosticResults, CancellationToken.None);
+            // Then test splitting after the <see> element
+            testCode = @"namespace FooNamespace
+{{
+    public class Foo{0}
+    {{
+        /// <summary>
+        /// {2}<see cref=""Foo{1}""/>
+        /// {3}{4}
+        /// </summary>
+        {5} Foo()
+        {{
+
+        }}
+    }}
+}}";
+
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3, modifiers), EmptyDiagnosticResults, CancellationToken.None);
+
+            // Then test splitting before the <see> element
+            testCode = @"namespace FooNamespace
+{{
+    public class Foo{0}
+    {{
+        /// <summary>
+        /// {2}
+        /// <see cref=""Foo{1}""/>{3}{4}
+        /// </summary>
+        {5} Foo()
+        {{
+
+        }}
+    }}
+}}";
+
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3, modifiers), EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        private async Task TestConstructorCorrectDocumentationSimple(string modifiers, string part1, string part2, bool generic)
+        {
+            await TestConstructorCorrectDocumentation(modifiers, part1, part2, ".", generic);
         }
 
         private async Task TestConstructorCorrectDocumentationCustomized(string modifiers, string part1, string part2, bool generic)
         {
-            var testCode = @"namespace FooNamespace
-{{
-    public class Foo{0}
-    {{
-        /// <summary>
-        /// {2}<see cref=""Foo{1}""/>{3} with A and B.
-        /// </summary>
-        {4} Foo()
-        {{
-
-        }}
-    }}
-}}";
-
-
-            await VerifyCSharpDiagnosticAsync(string.Format(testCode, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, modifiers), EmptyDiagnosticResults, CancellationToken.None);
+            await TestConstructorCorrectDocumentation(modifiers, part1, part2, " with A and B.", generic);
         }
 
         [TestMethod]
@@ -144,51 +170,51 @@
         }
 
         [TestMethod]
-        public async Task TestPrivateConstructorCorrectDocumentationSimple()
+        public async Task TestPrivateConstructorCorrectDocumentation()
         {
-            await TestConstructorCorrectDocumentationSimple("private", PrivateConstructorStandardText[0], PrivateConstructorStandardText[1], false);
+            await TestConstructorCorrectDocumentation("private", PrivateConstructorStandardText[0], PrivateConstructorStandardText[1], string.Empty, false);
         }
 
         [TestMethod]
-        public async Task TestPrivateConstructorCorrectDocumentationCustomized()
+        public async Task TestPrivateConstructorCorrectDocumentation_NonPrivateSimple()
         {
-            await TestConstructorCorrectDocumentationCustomized("private", PrivateConstructorStandardText[0], PrivateConstructorStandardText[1], false);
+            await TestConstructorCorrectDocumentationSimple("private", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], false);
         }
 
         [TestMethod]
-        public async Task TestPrivateConstructorCorrectDocumentationGenericSimple()
+        public async Task TestPrivateConstructorCorrectDocumentation_NonPrivateCustomized()
         {
-            await TestConstructorCorrectDocumentationSimple("private", PrivateConstructorStandardText[0], PrivateConstructorStandardText[1], true);
+            await TestConstructorCorrectDocumentationCustomized("private", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], false);
         }
 
         [TestMethod]
-        public async Task TestPrivateConstructorCorrectDocumentationGenericCustomized()
+        public async Task TestPrivateConstructorCorrectDocumentationGeneric()
         {
-            await TestConstructorCorrectDocumentationCustomized("private", PrivateConstructorStandardText[0], PrivateConstructorStandardText[1], true);
+            await TestConstructorCorrectDocumentation("private", PrivateConstructorStandardText[0], PrivateConstructorStandardText[1], string.Empty, true);
         }
 
         [TestMethod]
-        public async Task TestStaticConstructorCorrectDocumentationSimple()
+        public async Task TestPrivateConstructorCorrectDocumentationGeneric_NonPrivateSimple()
         {
-            await TestConstructorCorrectDocumentationSimple("static", StaticConstructorStandardText[0], StaticConstructorStandardText[1], false);
+            await TestConstructorCorrectDocumentationSimple("private", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true);
         }
 
         [TestMethod]
-        public async Task TestStaticConstructorCorrectDocumentationCustomized()
+        public async Task TestPrivateConstructorCorrectDocumentationGeneric_NonPrivateCustomized()
         {
-            await TestConstructorCorrectDocumentationCustomized("static", StaticConstructorStandardText[0], StaticConstructorStandardText[1], false);
+            await TestConstructorCorrectDocumentationCustomized("private", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true);
         }
 
         [TestMethod]
-        public async Task TestStaticConstructorCorrectDocumentationGenericSimple()
+        public async Task TestStaticConstructorCorrectDocumentation()
         {
-            await TestConstructorCorrectDocumentationSimple("static", StaticConstructorStandardText[0], StaticConstructorStandardText[1], true);
+            await TestConstructorCorrectDocumentation("static", StaticConstructorStandardText[0], StaticConstructorStandardText[1], string.Empty, false);
         }
 
         [TestMethod]
-        public async Task TestStaticConstructorCorrectDocumentationGenericCustomized()
+        public async Task TestStaticConstructorCorrectDocumentationGeneric()
         {
-            await TestConstructorCorrectDocumentationCustomized("static", StaticConstructorStandardText[0], StaticConstructorStandardText[1], true);
+            await TestConstructorCorrectDocumentation("static", StaticConstructorStandardText[0], StaticConstructorStandardText[1], string.Empty, true);
         }
 
         private async Task TestConstructorMissingDocumentation(string modifiers, string part1, string part2, bool generic)
@@ -235,16 +261,18 @@
     public class Foo{0}
     {{
         /// <summary>
-        /// {2}<see cref=""Foo{1}""/>{3}.
+        /// {2}<see cref=""Foo{1}""/>{3}{4}
         /// </summary>
-        {4} 
+        {5} 
         Foo()
         {{
 
         }}
     }}
 }}";
-            fixedCode = string.Format(fixedCode, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, modifiers);
+
+            string part3 = part2.EndsWith(".") ? string.Empty : ".";
+            fixedCode = string.Format(fixedCode, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3, modifiers);
             await VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
@@ -263,13 +291,13 @@
         [TestMethod]
         public async Task TestPrivateConstructorMissingDocumentation()
         {
-            await TestConstructorMissingDocumentation("private", PrivateConstructorStandardText[0], PrivateConstructorStandardText[1], false);
+            await TestConstructorMissingDocumentation("private", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], false);
         }
 
         [TestMethod]
         public async Task TestPrivateConstructorMissingDocumentationGeneric()
         {
-            await TestConstructorMissingDocumentation("private", PrivateConstructorStandardText[0], PrivateConstructorStandardText[1], true);
+            await TestConstructorMissingDocumentation("private", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true);
         }
 
         [TestMethod]

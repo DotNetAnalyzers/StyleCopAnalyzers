@@ -1,12 +1,11 @@
 ﻿namespace StyleCop.Analyzers.Helpers
 {
-    using System;
     using System.Linq;
     using System.Text;
+    using System.Text.RegularExpressions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-
 
     /// <summary>
     /// Provides helper methods to work with Xml comments
@@ -165,6 +164,11 @@
 
         internal static string GetText(XmlTextSyntax textElement)
         {
+            return GetText(textElement, false);
+        }
+
+        internal static string GetText(XmlTextSyntax textElement, bool normalizeWhitespace)
+        {
             if (textElement == null)
             {
                 return null;
@@ -177,7 +181,11 @@
                 stringBuilder.Append(item);
             }
 
-            return stringBuilder.ToString();
+            string result = stringBuilder.ToString();
+            if (normalizeWhitespace)
+                result = Regex.Replace(result, @"\s+", " ");
+
+            return result;
         }
 
         private static SyntaxTrivia GetCommentTrivia(SyntaxNode node)
