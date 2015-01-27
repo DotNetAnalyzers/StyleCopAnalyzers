@@ -132,7 +132,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             IdentifierNameSyntax identifierNameSyntax = null;
             if (qualifiedNameSyntax != null)
             {
-                identifierNameSyntax = qualifiedNameSyntax.DescendantNodes().OfType<IdentifierNameSyntax>().FirstOrDefault();
+                identifierNameSyntax = qualifiedNameSyntax.DescendantNodes().OfType<IdentifierNameSyntax>().LastOrDefault();
             }
             else
             {
