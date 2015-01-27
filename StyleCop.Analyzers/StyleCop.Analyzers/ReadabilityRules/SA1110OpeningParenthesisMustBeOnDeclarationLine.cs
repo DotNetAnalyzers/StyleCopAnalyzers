@@ -64,6 +64,34 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeAction(HandleObjectCreationExpression, SyntaxKind.ObjectCreationExpression);
             context.RegisterSyntaxNodeAction(HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
             context.RegisterSyntaxNodeAction(HandleElementAccessExpression, SyntaxKind.ElementAccessExpression);
+            context.RegisterSyntaxNodeAction(HandleAttribute, SyntaxKind.Attribute);
+        }
+
+        private void HandleAttribute(SyntaxNodeAnalysisContext context)
+        {
+            var attribute = (AttributeSyntax) context.Node;
+
+            var qualifiedNameSyntax = attribute.ChildNodes().OfType<QualifiedNameSyntax>().FirstOrDefault();
+            IdentifierNameSyntax identifierNameSyntax = null;
+            if (qualifiedNameSyntax != null)
+            {
+                identifierNameSyntax = qualifiedNameSyntax.DescendantNodes().OfType<IdentifierNameSyntax>().LastOrDefault();
+            }
+            else
+            {
+                identifierNameSyntax = attribute.DescendantNodes().OfType<IdentifierNameSyntax>().FirstOrDefault();
+            }
+
+            if (identifierNameSyntax != null)
+            {
+                if (attribute.ArgumentList != null &&
+                    !attribute.ArgumentList.OpenParenToken.IsMissing &&
+                    !identifierNameSyntax.Identifier.IsMissing)
+                {
+                    CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(context,
+                        attribute.ArgumentList.OpenParenToken, identifierNameSyntax.Identifier);
+                }
+            }
         }
 
         private void HandleElementAccessExpression(SyntaxNodeAnalysisContext context)
