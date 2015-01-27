@@ -1075,11 +1075,14 @@ public class Foo
         public async Task TestAttributeLastParameterOnThePreviousLineAsClosingParenthesis()
         {
             var testCode = @"
+public class Foo
+{
 [Conditional(""DEBUG""
 ), Conditional(""TEST1""
 )]
-public class Foo
-{
+    public void Baz()
+    {
+    }
 }";
 
             var expected = new[]
@@ -1092,7 +1095,7 @@ public class Foo
                         Locations =
                             new[]
                             {
-                                new DiagnosticResultLocation("Test0.cs", 3, 1)
+                                new DiagnosticResultLocation("Test0.cs", 5, 1)
                             }
                     },
                     new DiagnosticResult
@@ -1103,7 +1106,7 @@ public class Foo
                         Locations =
                             new[]
                             {
-                                new DiagnosticResultLocation("Test0.cs", 4, 1)
+                                new DiagnosticResultLocation("Test0.cs", 6, 1)
                             }
                     }
                 };
@@ -1115,16 +1118,20 @@ public class Foo
         public async Task TestAttributeLastParameterOnTheSameLineAsClosingParenthesis()
         {
             var testCode = @"
-[Conditional(""DEBUG""), Conditional(""TEST1"")]
 public class Foo
 {
+[Conditional(""DEBUG""), Conditional(""TEST1"")]
+    public void Baz()
+    {
+
+    }
 }";
 
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
-        public async Task TestAttributenNoParameters()
+        public async Task TestAttributeNoParameters()
         {
             var testCode = @"
 [System.Serializable]
@@ -1176,7 +1183,7 @@ public class Foo
         }
 
         [TestMethod]
-        public async Task TestAttributenOneParameterOnTheSameLineAsClosingBracket()
+        public async Task TestAttributeOneParameterOnTheSameLineAsClosingBracket()
         {
             var testCode = @"
 [System.Serializable]
