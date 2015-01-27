@@ -33,13 +33,13 @@
     public class SA1647IncludeNodeDoesNotContainValidFileAndPath : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1647";
-        internal const string Title = "Include node does not contain valid file and path";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "An include tag within an XML documentation header does not contain valid file and path attribute.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1647.html";
+        private const string Title = "Include node does not contain valid file and path";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "An include tag within an XML documentation header does not contain valid file and path attribute.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1647.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

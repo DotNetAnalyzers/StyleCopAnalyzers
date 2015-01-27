@@ -17,13 +17,13 @@
     public class SA1400AccessModifierMustBeDeclared : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1400";
-        internal const string Title = "Access modifier must be declared";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.Maintainability";
-        internal const string Description = "The access modifier for a C# element has not been explicitly defined.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1400.html";
+        private const string Title = "Access modifier must be declared";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.Maintainability";
+        private const string Description = "The access modifier for a C# element has not been explicitly defined.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1400.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

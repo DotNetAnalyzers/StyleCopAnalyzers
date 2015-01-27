@@ -3,6 +3,12 @@
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using System.Diagnostics;
+
+
+
 
     /// <summary>
     /// A call to <see cref="O:System.Diagnostics.Debug.Assert"/> in C# code does not include a descriptive message.
@@ -17,17 +23,17 @@
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1405DebugAssertMustProvideMessageText : DiagnosticAnalyzer
+    public class SA1405DebugAssertMustProvideMessageText : SystemDiagnosticsDebugDiagnosticBase
     {
         public const string DiagnosticId = "SA1405";
-        internal const string Title = "Debug.Assert must provide message text";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
-        internal const string Description = "A call to Debug.Assert in C# code does not include a descriptive message.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1405.html";
+        private const string Title = "Debug.Assert must provide message text";
+        private const string MessageFormat = "Debug.Assert must provide message text";
+        private const string Category = "StyleCop.CSharp.MaintainabilityRules";
+        private const string Description = "A call to Debug.Assert in C# code does not include a descriptive message.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1405.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+        private static readonly DiagnosticDescriptor Descriptor =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
@@ -44,7 +50,12 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(HandleMethodCall, SyntaxKind.InvocationExpression);
+        }
+
+        private void HandleMethodCall(SyntaxNodeAnalysisContext context)
+        {
+            HandleMethodCall(context, nameof(Debug.Assert), 1, Descriptor);
         }
     }
 }

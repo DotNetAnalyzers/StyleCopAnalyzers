@@ -72,7 +72,7 @@ namespace TestHelper
         {
             get
             {
-                return this.Locations.Length > 0 ? this.Locations[0].Path : "";
+                return this.Locations.Length > 0 ? this.Locations[0].Path : string.Empty;
             }
         }
 

@@ -15,6 +15,8 @@ namespace TestHelper
     /// </summary>
     public abstract partial class DiagnosticVerifier
     {
+        protected static DiagnosticResult[] EmptyDiagnosticResults { get; } = { };
+
         #region To be implemented by Test classes
         /// <summary>
         /// Get the C# analyzer being tested - to be implemented in non-abstract class.

@@ -12,12 +12,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     public class SA1401UnitTests : CodeFixVerifier
     {
         private const string DiagnosticId = SA1401FieldsMustBePrivate.DiagnosticId;
-        protected static readonly DiagnosticResult[] EmptyDiagnosticResults = { };
 
         [TestMethod]
         public async Task TestEmptySource()
         {
-            var testCode = @"";
+            var testCode = string.Empty;
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
@@ -92,6 +91,16 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     public string bar;
 }";
 
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestClassWithConstField()
+        {
+            var testCode = @"public class Foo
+{
+    public const string bar = ""qwe"";
+}";
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 

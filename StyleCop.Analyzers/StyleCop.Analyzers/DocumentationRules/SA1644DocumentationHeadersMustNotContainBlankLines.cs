@@ -56,13 +56,13 @@
     public class SA1644DocumentationHeadersMustNotContainBlankLines : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1644";
-        internal const string Title = "Documentation headers must not contain blank lines";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "A section within the XML documentation header for a C# element contains blank lines.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1644.html";
+        private const string Title = "Documentation headers must not contain blank lines";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "A section within the XML documentation header for a C# element contains blank lines.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1644.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

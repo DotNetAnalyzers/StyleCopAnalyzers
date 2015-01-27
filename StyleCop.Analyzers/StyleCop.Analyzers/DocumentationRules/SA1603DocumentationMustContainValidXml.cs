@@ -21,13 +21,13 @@
     public class SA1603DocumentationMustContainValidXml : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1603";
-        internal const string Title = "Documentation must contain valid XML";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "The XML within a C# element’s document header is badly formed.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1603.html";
+        private const string Title = "Documentation must contain valid XML";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "The XML within a C# element’s document header is badly formed.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1603.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

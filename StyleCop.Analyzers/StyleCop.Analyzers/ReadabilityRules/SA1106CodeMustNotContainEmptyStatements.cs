@@ -15,13 +15,13 @@
     public class SA1106CodeMustNotContainEmptyStatements : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1106";
-        internal const string Title = "Code must not contain empty statements";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.ReadabilityRules";
-        internal const string Description = "The C# code contains an extra semicolon.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1106.html";
+        private const string Title = "Code must not contain empty statements";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.ReadabilityRules";
+        private const string Description = "The C# code contains an extra semicolon.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1106.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink, customTags: new[] { WellKnownDiagnosticTags.Unnecessary });
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

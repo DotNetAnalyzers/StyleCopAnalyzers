@@ -1,7 +1,12 @@
-﻿namespace StyleCop.Analyzers.NamingRules
+﻿using StyleCop.Analyzers.Helpers;
+
+namespace StyleCop.Analyzers.NamingRules
 {
+    using System;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -21,14 +26,14 @@
     public class SA1302InterfaceNamesMustBeginWithI : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1302";
-        internal const string Title = "Interface names must begin with I";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.NamingRules";
-        internal const string Description = "The name of a C# interface does not begin with the capital letter I.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1302.html";
+        private const string Title = "Interface names must begin with I";
+        private const string MessageFormat = "Interface names must begin with I";
+        private const string Category = "StyleCop.CSharp.NamingRules";
+        private const string Description = "The name of a C# interface does not begin with the capital letter I.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1302.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+        private static readonly DiagnosticDescriptor Descriptor =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
@@ -45,7 +50,25 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(HandleInterfaceDeclarationSyntax, SyntaxKind.InterfaceDeclaration);
+        }
+
+        private void HandleInterfaceDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        {
+            var interfaceDeclaration = (InterfaceDeclarationSyntax) context.Node;
+            if (interfaceDeclaration.Identifier.IsMissing)
+                return;
+
+            if (NamedTypeHelpers.IsContainedInNativeMethodsClass(interfaceDeclaration))
+            {
+                return;
+            }
+
+            string name = interfaceDeclaration.Identifier.ValueText;
+            if (name != null && !name.StartsWith("I", StringComparison.Ordinal))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, interfaceDeclaration.Identifier.GetLocation()));
+            }
         }
     }
 }

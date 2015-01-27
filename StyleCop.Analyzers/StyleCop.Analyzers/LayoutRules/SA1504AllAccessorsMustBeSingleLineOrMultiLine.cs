@@ -56,13 +56,13 @@
     public class SA1504AllAccessorsMustBeSingleLineOrMultiLine : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1504";
-        internal const string Title = "All accessors must be single-line or multi-line";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.LayoutRules";
-        internal const string Description = "Within a C# property, indexer or event, at least one of the child accessors is written on a single line, and at least one of the child accessors is written across multiple lines.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1504.html";
+        private const string Title = "All accessors must be single-line or multi-line";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.LayoutRules";
+        private const string Description = "Within a C# property, indexer or event, at least one of the child accessors is written on a single line, and at least one of the child accessors is written across multiple lines.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1504.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

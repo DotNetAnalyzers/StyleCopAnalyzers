@@ -21,13 +21,13 @@
     public class SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1026";
-        internal const string Title = "Code must not contain space after new keyword in implicitly typed array allocation";
-        internal const string MessageFormat = "The keyword 'new' must not be followed by a space.";
-        internal const string Category = "StyleCop.CSharp.SpacingRules";
-        internal const string Description = "An implicitly typed new array allocation within a C# code file is not spaced correctly.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1026.html";
+        private const string Title = "Code must not contain space after new keyword in implicitly typed array allocation";
+        private const string MessageFormat = "The keyword 'new' must not be followed by a space.";
+        private const string Category = "StyleCop.CSharp.SpacingRules";
+        private const string Description = "An implicitly typed new array allocation within a C# code file is not spaced correctly.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1026.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

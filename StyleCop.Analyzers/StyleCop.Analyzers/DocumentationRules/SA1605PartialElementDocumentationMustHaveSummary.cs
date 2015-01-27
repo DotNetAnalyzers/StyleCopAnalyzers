@@ -1,8 +1,13 @@
 ﻿namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Helpers;
+
 
     /// <summary>
     /// The <c>&lt;summary&gt;</c> or <c>&lt;content&gt;</c> tag within the documentation header for a C# code element
@@ -61,17 +66,17 @@
     /// SDK documentation tools.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1605PartialElementDocumentationMustHaveSummary : DiagnosticAnalyzer
+    public class SA1605PartialElementDocumentationMustHaveSummary : PartialElementDocumentationSummaryBase
     {
         public const string DiagnosticId = "SA1605";
-        internal const string Title = "Partial element documentation must have summary";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "The <summary> or <content> tag within the documentation header for a C# code element is missing or empty.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1605.html";
+        private const string Title = "Partial element documentation must have summary";
+        private const string MessageFormat = "Partial element documentation must have summary";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "The <summary> or <content> tag within the documentation header for a C# code element is missing or empty.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1605.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+        private static readonly DiagnosticDescriptor Descriptor =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
@@ -85,10 +90,15 @@
             }
         }
 
-        /// <inheritdoc/>
-        public override void Initialize(AnalysisContext context)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location[] diagnosticLocations)
         {
-            // TODO: Implement analysis
+            if (syntax == null)
+            {
+                foreach (var location in diagnosticLocations)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                }
+            }
         }
     }
 }

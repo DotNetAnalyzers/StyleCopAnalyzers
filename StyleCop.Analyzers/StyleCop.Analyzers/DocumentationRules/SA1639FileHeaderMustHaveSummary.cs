@@ -36,13 +36,13 @@
     public class SA1639FileHeaderMustHaveSummary : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1639";
-        internal const string Title = "File header must have summary";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "The file header at the top of a C# code file does not contain a filled-in summary tag.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1639.html";
+        private const string Title = "File header must have summary";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "The file header at the top of a C# code file does not contain a filled-in summary tag.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1639.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

@@ -18,13 +18,13 @@
     public class SA1001CommasMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1001";
-        internal const string Title = "Commas must be spaced correctly";
-        internal const string MessageFormat = "Commas must{0} be {1} by a space.";
-        internal const string Category = "StyleCop.CSharp.SpacingRules";
-        internal const string Description = "The spacing around a comma is incorrect, within a C# code file.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1001.html";
+        private const string Title = "Commas must be spaced correctly";
+        private const string MessageFormat = "Commas must{0} be {1} by a space.";
+        private const string Category = "StyleCop.CSharp.SpacingRules";
+        private const string Description = "The spacing around a comma is incorrect, within a C# code file.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1001.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

@@ -189,13 +189,13 @@
     public class SA1623PropertySummaryDocumentationMustMatchAccessors : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1623";
-        internal const string Title = "Property summary documentation must match accessors";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "The documentation text within a C# property’s &lt;summary&gt; tag does not match the accessors within the property.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1623.html";
+        private const string Title = "Property summary documentation must match accessors";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "The documentation text within a C# property’s &lt;summary&gt; tag does not match the accessors within the property.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1623.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
