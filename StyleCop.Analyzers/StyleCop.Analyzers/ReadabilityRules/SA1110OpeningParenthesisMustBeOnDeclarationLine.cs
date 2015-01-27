@@ -88,9 +88,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var indexerDeclaration = (IndexerDeclarationSyntax) obj.Node;
 
-            if (indexerDeclaration.ThisKeyword.IsMissing == false &&
-                indexerDeclaration.ParameterList.IsMissing == false &&
-                indexerDeclaration.ParameterList.OpenBracketToken.IsMissing == false)
+            if (!indexerDeclaration.ThisKeyword.IsMissing &&
+                indexerDeclaration.ParameterList != null &&
+                !indexerDeclaration.ParameterList.IsMissing &&
+                !indexerDeclaration.ParameterList.OpenBracketToken.IsMissing)
             {
                 CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(obj, indexerDeclaration.ParameterList.OpenBracketToken, indexerDeclaration.ThisKeyword);
             }
@@ -112,8 +113,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             if (identifierNameSyntax != null)
             {
-                if (objectCreation.ArgumentList.OpenParenToken.IsMissing == false &&
-                    identifierNameSyntax.Identifier.IsMissing == false)
+                if (objectCreation.ArgumentList != null &&
+                    !objectCreation.ArgumentList.OpenParenToken.IsMissing &&
+                    !identifierNameSyntax.Identifier.IsMissing)
                 {
                     CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(context,
                         objectCreation.ArgumentList.OpenParenToken, identifierNameSyntax.Identifier);
@@ -127,8 +129,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var identifierNameSyntax = invocationExpression.DescendantNodes().OfType<IdentifierNameSyntax>().FirstOrDefault();
             if (identifierNameSyntax != null)
             {
-                if (invocationExpression.ArgumentList.OpenParenToken.IsMissing == false &&
-                    identifierNameSyntax.Identifier.IsMissing == false)
+                if (invocationExpression.ArgumentList != null &&
+                    !invocationExpression.ArgumentList.OpenParenToken.IsMissing &&
+                    !identifierNameSyntax.Identifier.IsMissing)
                 {
                     CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(context,
                         invocationExpression.ArgumentList.OpenParenToken, identifierNameSyntax.Identifier);
@@ -155,19 +158,17 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 baseMethodDeclarationSyntax.ChildTokens()
                     .Where(t => t.CSharpKind() == SyntaxKind.IdentifierToken)
                     .ToList();
-            var parameterListSyntax = baseMethodDeclarationSyntax.ChildNodes().OfType<ParameterListSyntax>().SingleOrDefault();
+            var parameterListSyntax = baseMethodDeclarationSyntax.ParameterList;
 
             if (identifierTokens.Any() && parameterListSyntax != null)
             {
                 var identifierToken = identifierTokens.First();
-                var openParenTokens =
-                    parameterListSyntax.ChildTokens()
-                        .Where(t => t.CSharpKind() == SyntaxKind.OpenParenToken)
-                        .ToList();
+                var openParenToken =
+                    parameterListSyntax.OpenParenToken;
 
-                if (openParenTokens.Any())
+                if (!openParenToken.IsMissing)
                 {
-                    CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(context, openParenTokens.First(), identifierToken);
+                    CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(context, openParenToken, identifierToken);
                 }
             }
         }
