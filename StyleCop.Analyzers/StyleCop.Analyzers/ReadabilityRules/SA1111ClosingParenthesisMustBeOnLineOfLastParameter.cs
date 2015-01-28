@@ -101,8 +101,9 @@
         {
             var lambdaExpressionSyntax = (ParenthesizedLambdaExpressionSyntax)context.Node;
 
-            if (lambdaExpressionSyntax.ParameterList == null
-                || (!lambdaExpressionSyntax.ParameterList.IsMissing && !lambdaExpressionSyntax.ParameterList.Parameters.Any()))
+            if (lambdaExpressionSyntax.ParameterList == null || 
+                lambdaExpressionSyntax.ParameterList.IsMissing || 
+                !lambdaExpressionSyntax.ParameterList.Parameters.Any())
             {
                 return;
             }
@@ -141,8 +142,9 @@
         {
             var anonymousMethod = (AnonymousMethodExpressionSyntax) context.Node;
 
-            if (anonymousMethod.ParameterList == null
-                || (!anonymousMethod.ParameterList.IsMissing && !anonymousMethod.ParameterList.Parameters.Any()))
+            if (anonymousMethod.ParameterList == null || 
+                anonymousMethod.ParameterList.IsMissing || 
+                !anonymousMethod.ParameterList.Parameters.Any())
             {
                 return;
             }
@@ -162,8 +164,9 @@
         {
             var attribute = (AttributeSyntax) context.Node;
 
-            if (attribute.ArgumentList == null
-                || (!attribute.ArgumentList.IsMissing && !attribute.ArgumentList.Arguments.Any()))
+            if (attribute.ArgumentList == null || 
+                attribute.ArgumentList.IsMissing || 
+                !attribute.ArgumentList.Arguments.Any())
             {
                 return;
             }
@@ -183,8 +186,9 @@
         {
             var delegateDeclaration = (DelegateDeclarationSyntax) context.Node;
 
-            if (delegateDeclaration.ParameterList == null
-                || (!delegateDeclaration.ParameterList.IsMissing && !delegateDeclaration.ParameterList.Parameters.Any()))
+            if (delegateDeclaration.ParameterList == null || 
+                delegateDeclaration.ParameterList.IsMissing || 
+                !delegateDeclaration.ParameterList.Parameters.Any())
             {
                 return;
             }
@@ -286,8 +290,9 @@
         {
             var indexerDeclaration = (IndexerDeclarationSyntax)context.Node;
 
-            if (indexerDeclaration.ParameterList == null
-                || (!indexerDeclaration.ParameterList.IsMissing && !indexerDeclaration.ParameterList.Parameters.Any()))
+            if (indexerDeclaration.ParameterList == null || 
+                indexerDeclaration.ParameterList.IsMissing || 
+                !indexerDeclaration.ParameterList.Parameters.Any())
             {
                 return;
             }
