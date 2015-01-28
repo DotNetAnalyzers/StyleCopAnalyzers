@@ -105,6 +105,7 @@
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DocumentationRules\SA1608UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1642UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1607UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1605UnitTests.cs" />
