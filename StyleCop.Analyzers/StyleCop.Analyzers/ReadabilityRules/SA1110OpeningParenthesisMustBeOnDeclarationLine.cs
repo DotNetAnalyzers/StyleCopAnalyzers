@@ -154,7 +154,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private void HandleInvocationExpression(SyntaxNodeAnalysisContext context)
         {
             var invocationExpression = (InvocationExpressionSyntax) context.Node;
-            var identifierNameSyntax = invocationExpression.DescendantNodes().OfType<IdentifierNameSyntax>().FirstOrDefault();
+            var identifierNameSyntax = invocationExpression.DescendantNodes().OfType<IdentifierNameSyntax>().LastOrDefault();
             if (identifierNameSyntax != null)
             {
                 if (invocationExpression.ArgumentList != null &&

@@ -275,6 +275,26 @@ class Foo
         }
 
         [TestMethod]
+        public async Task TestStaticMethodCallOpeningBracketInTheNextLineAsClassName()
+        {
+            var testCode = @"
+class Foo
+{
+    public static void Baz()
+    {
+    }
+
+    public void Bar()
+    {
+        Foo.
+Baz();
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
         public async Task TestConstructorCallOpeningBracketInTheNextLine()
         {
             var testCode = @"
