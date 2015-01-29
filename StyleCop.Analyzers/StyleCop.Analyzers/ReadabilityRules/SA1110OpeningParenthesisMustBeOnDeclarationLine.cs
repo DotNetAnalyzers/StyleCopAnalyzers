@@ -66,6 +66,21 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeAction(HandleElementAccessExpression, SyntaxKind.ElementAccessExpression);
             context.RegisterSyntaxNodeAction(HandleAttribute, SyntaxKind.Attribute);
             context.RegisterSyntaxNodeAction(HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeAction(HandleAnonymousMethod, SyntaxKind.AnonymousMethodExpression);
+        }
+
+        private void HandleAnonymousMethod(SyntaxNodeAnalysisContext context)
+        {
+            var anonymousMethod = (AnonymousMethodExpressionSyntax)context.Node;
+
+            if (anonymousMethod.DelegateKeyword.IsMissing ||
+                anonymousMethod.ParameterList.IsMissing ||
+                anonymousMethod.ParameterList.OpenParenToken.IsMissing)
+            {
+                return;
+            }
+
+            CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(context,anonymousMethod.ParameterList.OpenParenToken, anonymousMethod.DelegateKeyword);
         }
 
         private void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
