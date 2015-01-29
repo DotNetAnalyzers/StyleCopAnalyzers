@@ -105,14 +105,18 @@
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DocumentationRules\SA1642UnitTests.cs" />
-    <Compile Include="DocumentationRules\SA1607UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1600UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1601UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1602UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1604UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1605UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1606UnitTests.cs" />
-    <Compile Include="DocumentationRules\SA1604UnitTests.cs" />
-    <Compile Include="DocumentationRules\SA1602UnitTests.cs" />
-    <Compile Include="DocumentationRules\SA1601UnitTests.cs" />
-    <Compile Include="DocumentationRules\SA1600UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1607UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1608UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1642UnitTests.cs" />
+    <Compile Include="Helpers\CodeFixVerifier.Helper.cs" />
+    <Compile Include="Helpers\DiagnosticResult.cs" />
+    <Compile Include="Helpers\DiagnosticVerifier.Helper.cs" />
     <Compile Include="MaintainabilityRules\DebugMessagesUnitTestsBase.cs" />
     <Compile Include="MaintainabilityRules\FileMayOnlyContainTestBase.cs" />
     <Compile Include="MaintainabilityRules\SA1119UnitTests.cs" />
@@ -130,6 +134,7 @@
     <Compile Include="NamingRules\SA1302UnitTests.cs" />
     <Compile Include="NamingRules\SA1303UnitTests.cs" />
     <Compile Include="NamingRules\SA1304UnitTests.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReadabilityRules\SA1100UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1111UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1112UnitTests.cs" />
@@ -141,10 +146,6 @@
     <Compile Include="SpacingRules\SA1022UnitTests.cs" />
     <Compile Include="Verifiers\CodeFixVerifier.cs" />
     <Compile Include="Verifiers\DiagnosticVerifier.cs" />
-    <Compile Include="Helpers\CodeFixVerifier.Helper.cs" />
-    <Compile Include="Helpers\DiagnosticResult.cs" />
-    <Compile Include="Helpers\DiagnosticVerifier.Helper.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
