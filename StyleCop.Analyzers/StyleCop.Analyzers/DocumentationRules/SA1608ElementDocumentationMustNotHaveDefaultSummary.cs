@@ -72,7 +72,7 @@
 
                     if (textElement != null)
                     {
-                        string text = XmlCommentHelper.GetText(textElement);
+                        string text = XmlCommentHelper.GetText(textElement, true);
 
                         if (!string.IsNullOrEmpty(text))
                         {

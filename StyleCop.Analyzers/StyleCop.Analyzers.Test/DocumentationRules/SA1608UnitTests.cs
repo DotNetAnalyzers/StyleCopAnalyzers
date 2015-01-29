@@ -230,6 +230,38 @@ public class ClassName
                 };
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
+
+        [TestMethod]
+        public async Task TestClassWithDefaultDocumentationMultipleWhitespaces()
+        {
+            var testCode = @"
+/// <summary>
+/// Summary           description 
+/// for the      ClassName class.
+/// </summary>
+public class ClassName
+{
+}";
+
+            DiagnosticResult[] expected;
+
+            expected =
+                new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                        Message = "Element documentation must not have default summary",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 2, 5)
+                            }
+                    }
+                };
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1608ElementDocumentationMustNotHaveDefaultSummary();
