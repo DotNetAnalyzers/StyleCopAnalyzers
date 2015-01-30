@@ -85,7 +85,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             if (!firstSize.OpenBracketToken.IsMissing)
             {
-                CheckIfLocationOfElementTypeAndOpenTokenAreTheSame(context, firstSize.OpenBracketToken, array.Type.ElementType);
+                CheckIfLocationOfExpressionAndOpenTokenAreTheSame(context, firstSize.OpenBracketToken, array.Type.ElementType);
             }
         }
 
@@ -145,20 +145,17 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private void HandleElementAccessExpression(SyntaxNodeAnalysisContext context)
         {
-            var symbol = context.SemanticModel.GetSymbolInfo(((ElementAccessExpressionSyntax)context.Node).Expression).Symbol;
-            var parameterSymbol = symbol as IParameterSymbol;
+            var elementAccess = (ElementAccessExpressionSyntax) context.Node;
 
-            if (parameterSymbol != null && parameterSymbol.IsThis)
+            if (elementAccess.Expression == null ||
+                elementAccess.ArgumentList.IsMissing ||
+                elementAccess.ArgumentList.OpenBracketToken.IsMissing)
             {
-                var elementAccess = (ElementAccessExpressionSyntax)context.Node;
-
-                var thisExpression = elementAccess.Expression as ThisExpressionSyntax;
-
-                if (thisExpression != null  && !elementAccess.ArgumentList.OpenBracketToken.IsMissing)
-                {
-                    CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(context, elementAccess.ArgumentList.OpenBracketToken, thisExpression.Token);
-                }
+                return;
             }
+
+            CheckIfLocationOfExpressionAndOpenTokenAreTheSame(context,
+                elementAccess.ArgumentList.OpenBracketToken, elementAccess.Expression);
         }
 
         private void HandleIndexerDeclaration(SyntaxNodeAnalysisContext obj)
@@ -264,10 +261,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
-        private static void CheckIfLocationOfElementTypeAndOpenTokenAreTheSame(SyntaxNodeAnalysisContext context,
-    SyntaxToken openToken, TypeSyntax typeSyntax)
+        private static void CheckIfLocationOfExpressionAndOpenTokenAreTheSame(SyntaxNodeAnalysisContext context,
+    SyntaxToken openToken, ExpressionSyntax expression)
         {
-            var identifierLine = typeSyntax.GetLocation().GetLineSpan();
+            var identifierLine = expression.GetLocation().GetLineSpan();
             var openParenLocation = openToken.GetLocation();
             var openParenLine = openParenLocation.GetLineSpan();
             if (identifierLine.IsValid &&
