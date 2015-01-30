@@ -67,6 +67,26 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeAction(HandleAttribute, SyntaxKind.Attribute);
             context.RegisterSyntaxNodeAction(HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
             context.RegisterSyntaxNodeAction(HandleAnonymousMethod, SyntaxKind.AnonymousMethodExpression);
+            context.RegisterSyntaxNodeAction(HandleArrayCreation, SyntaxKind.ArrayCreationExpression);
+        }
+
+        private void HandleArrayCreation(SyntaxNodeAnalysisContext context)
+        {
+            var array = (ArrayCreationExpressionSyntax) context.Node;
+
+            if (array.Type.IsMissing ||
+                array.Type.ElementType == null ||
+                !array.Type.RankSpecifiers.Any())
+            {
+                return;
+            }
+
+            var firstSize = array.Type.RankSpecifiers.First();
+
+            if (!firstSize.OpenBracketToken.IsMissing)
+            {
+                CheckIfLocationOfElementTypeAndOpenTokenAreTheSame(context, firstSize.OpenBracketToken, array.Type.ElementType);
+            }
         }
 
         private void HandleAnonymousMethod(SyntaxNodeAnalysisContext context)
@@ -234,6 +254,20 @@ namespace StyleCop.Analyzers.ReadabilityRules
             SyntaxToken openToken, SyntaxToken identifierToken)
         {
             var identifierLine = identifierToken.GetLocation().GetLineSpan();
+            var openParenLocation = openToken.GetLocation();
+            var openParenLine = openParenLocation.GetLineSpan();
+            if (identifierLine.IsValid &&
+                openParenLine.IsValid &&
+                openParenLine.StartLinePosition.Line != identifierLine.StartLinePosition.Line)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, openParenLocation));
+            }
+        }
+
+        private static void CheckIfLocationOfElementTypeAndOpenTokenAreTheSame(SyntaxNodeAnalysisContext context,
+    SyntaxToken openToken, TypeSyntax typeSyntax)
+        {
+            var identifierLine = typeSyntax.GetLocation().GetLineSpan();
             var openParenLocation = openToken.GetLocation();
             var openParenLine = openParenLocation.GetLineSpan();
             if (identifierLine.IsValid &&
