@@ -21,13 +21,13 @@
     public class SA1618GenericTypeParametersMustBeDocumented : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1618";
-        internal const string Title = "Generic type parameters must be documented";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "A generic C# element is missing documentation for one or more of its generic type parameters.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1618.html";
+        private const string Title = "Generic type parameters must be documented";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "A generic C# element is missing documentation for one or more of its generic type parameters.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1618.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

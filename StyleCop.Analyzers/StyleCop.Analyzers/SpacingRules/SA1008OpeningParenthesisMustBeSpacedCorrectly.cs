@@ -22,13 +22,13 @@
     public class SA1008OpeningParenthesisMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1008";
-        internal const string Title = "Opening parenthesis must be spaced correctly";
-        internal const string MessageFormat = "Opening parenthesis must{0} be {1} by a space.";
-        internal const string Category = "StyleCop.CSharp.SpacingRules";
-        internal const string Description = "An opening parenthesis within a C# statement is not spaced correctly.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1008.html";
+        private const string Title = "Opening parenthesis must be spaced correctly";
+        private const string MessageFormat = "Opening parenthesis must{0} be {1} by a space.";
+        private const string Category = "StyleCop.CSharp.SpacingRules";
+        private const string Description = "An opening parenthesis within a C# statement is not spaced correctly.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1008.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
@@ -123,6 +123,8 @@
 
                 case SyntaxKind.CheckedKeyword:
                 case SyntaxKind.DefaultKeyword:
+                case SyntaxKind.NameOfKeyword:
+                case SyntaxKind.NewKeyword:
                 case SyntaxKind.SizeOfKeyword:
                 case SyntaxKind.TypeOfKeyword:
                 case SyntaxKind.UncheckedKeyword:
@@ -137,6 +139,19 @@
                     allowLeadingNoSpace = false;
                     allowLeadingSpace = true;
                     break;
+
+                case SyntaxKind.IdentifierToken:
+                    if (precedingToken.Text == "nameof")
+                    {
+                        if (precedingToken.Parent is IdentifierNameSyntax && precedingToken.Parent.Parent is InvocationExpressionSyntax)
+                        {
+                            // allow this to be reported as SA1000
+                            // TODO: this code should not ignore nameof(...) which is not actually a Name Of Expression
+                            goto case SyntaxKind.NameOfKeyword;
+                        }
+                    }
+
+                    goto default;
 
                 default:
                     if (precedingToken.Parent is BinaryExpressionSyntax

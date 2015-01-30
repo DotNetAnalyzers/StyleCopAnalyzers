@@ -23,13 +23,13 @@
     public class SA1007OperatorKeywordMustBeFollowedBySpace : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1007";
-        internal const string Title = "Operator keyword must be followed by space";
-        internal const string MessageFormat = "Operator keyword must be followed by a space.";
-        internal const string Category = "StyleCop.CSharp.SpacingRules";
-        internal const string Description = "The operator keyword within a C# operator overload method is not followed by any whitespace.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1007.html";
+        private const string Title = "Operator keyword must be followed by space";
+        private const string MessageFormat = "Operator keyword must be followed by a space.";
+        private const string Category = "StyleCop.CSharp.SpacingRules";
+        private const string Description = "The operator keyword within a C# operator overload method is not followed by any whitespace.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1007.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

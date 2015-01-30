@@ -35,13 +35,13 @@
     public class SA1629DocumentationTextMustEndWithAPeriod : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1629";
-        internal const string Title = "Documentation text must end with a period";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "A section of the XML header documentation for a C# element does not end with a period.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1629.html";
+        private const string Title = "Documentation text must end with a period";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "A section of the XML header documentation for a C# element does not end with a period.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1629.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

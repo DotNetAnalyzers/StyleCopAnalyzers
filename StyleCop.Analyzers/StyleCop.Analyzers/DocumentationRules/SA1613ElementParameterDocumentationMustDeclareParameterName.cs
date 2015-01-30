@@ -22,13 +22,13 @@
     public class SA1613ElementParameterDocumentationMustDeclareParameterName : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1613";
-        internal const string Title = "Element parameter documentation must declare parameter name";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "A <param> tag within a C# element's documentation header is missing a name attribute containing the name of the parameter.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1613.html";
+        private const string Title = "Element parameter documentation must declare parameter name";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "A <param> tag within a C# element's documentation header is missing a name attribute containing the name of the parameter.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1613.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

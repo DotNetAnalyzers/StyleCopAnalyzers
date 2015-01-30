@@ -21,13 +21,13 @@
     public class SA1615ElementReturnValueMustBeDocumented : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1615";
-        internal const string Title = "Element return value must be documented";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "A C# element is missing documentation for its return value.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1615.html";
+        private const string Title = "Element return value must be documented";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "A C# element is missing documentation for its return value.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1615.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

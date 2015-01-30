@@ -49,13 +49,13 @@
     public class SA1409RemoveUnnecessaryCode : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1409";
-        internal const string Title = "Remove unnecessary code";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
-        internal const string Description = "A C# file contains code which is unnecessary and can be removed without changing the overall logic of the code.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1409.html";
+        private const string Title = "Remove unnecessary code";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.MaintainabilityRules";
+        private const string Description = "A C# file contains code which is unnecessary and can be removed without changing the overall logic of the code.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1409.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink, customTags: new[] { WellKnownDiagnosticTags.Unnecessary });
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =

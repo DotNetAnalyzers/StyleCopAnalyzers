@@ -1,8 +1,15 @@
 ﻿namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using System;
+
+
+
 
     /// <summary>
     /// A C# statement contains a complex arithmetic expression which omits parenthesis around operators.
@@ -36,14 +43,14 @@
     public class SA1407ArithmeticExpressionsMustDeclarePrecedence : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1407";
-        internal const string Title = "Arithmetic expressions must declare precedence";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
-        internal const string Description = "A C# statement contains a complex arithmetic expression which omits parenthesis around operators.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1407.html";
+        private const string Title = "Arithmetic expressions must declare precedence";
+        private const string MessageFormat = "Arithmetic expressions must declare precedence";
+        private const string Category = "StyleCop.CSharp.MaintainabilityRules";
+        private const string Description = "A C# statement contains a complex arithmetic expression which omits parenthesis around operators.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1407.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+        private static readonly DiagnosticDescriptor Descriptor =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
@@ -60,7 +67,53 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(HandleMathExpression, SyntaxKind.AddExpression);
+            context.RegisterSyntaxNodeAction(HandleMathExpression, SyntaxKind.SubtractExpression);
+            context.RegisterSyntaxNodeAction(HandleMathExpression, SyntaxKind.MultiplyExpression);
+            context.RegisterSyntaxNodeAction(HandleMathExpression, SyntaxKind.DivideExpression);
+            context.RegisterSyntaxNodeAction(HandleMathExpression, SyntaxKind.ModuloExpression);
+            context.RegisterSyntaxNodeAction(HandleMathExpression, SyntaxKind.LeftShiftExpression);
+            context.RegisterSyntaxNodeAction(HandleMathExpression, SyntaxKind.RightShiftExpression);
+        }
+
+        private void HandleMathExpression(SyntaxNodeAnalysisContext context)
+        {
+            BinaryExpressionSyntax binSyntax = context.Node as BinaryExpressionSyntax;
+
+            if (binSyntax != null)
+            {
+                if (binSyntax.Left is BinaryExpressionSyntax)
+                {
+                    // Check if the operations are of the same kind
+
+                    var left = (BinaryExpressionSyntax)binSyntax.Left;
+
+                    if (!IsSameFamily(binSyntax.OperatorToken, left.OperatorToken))
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, left.GetLocation()));
+                }
+                if (binSyntax.Right is BinaryExpressionSyntax)
+                {
+                    // Check if the operations are of the same kind
+
+                    var right = (BinaryExpressionSyntax)binSyntax.Right;
+
+                    if (!IsSameFamily(binSyntax.OperatorToken, right.OperatorToken))
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, right.GetLocation()));
+                }
+            }
+        }
+
+        private bool IsSameFamily(SyntaxToken operatorToken1, SyntaxToken operatorToken2)
+        {
+            bool isSameFamily = false;
+            isSameFamily |= (operatorToken1.IsKind(SyntaxKind.PlusToken) || operatorToken1.IsKind(SyntaxKind.MinusToken))
+                && (operatorToken2.IsKind(SyntaxKind.PlusToken) || operatorToken2.IsKind(SyntaxKind.MinusToken));
+            isSameFamily |= (operatorToken1.IsKind(SyntaxKind.AsteriskToken) || operatorToken1.IsKind(SyntaxKind.SlashToken))
+                && (operatorToken2.IsKind(SyntaxKind.AsteriskToken) || operatorToken2.IsKind(SyntaxKind.SlashToken));
+            isSameFamily |= (operatorToken1.IsKind(SyntaxKind.LessThanLessThanToken) || operatorToken1.IsKind(SyntaxKind.GreaterThanGreaterThanToken))
+                && (operatorToken2.IsKind(SyntaxKind.LessThanLessThanToken) || operatorToken2.IsKind(SyntaxKind.GreaterThanGreaterThanToken));
+
+            return isSameFamily;
         }
     }
 }

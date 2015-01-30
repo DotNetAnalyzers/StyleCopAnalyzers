@@ -16,14 +16,12 @@
     [TestClass]
     public class SA1000UnitTests : CodeFixVerifier
     {
-        protected static readonly DiagnosticResult[] EmptyDiagnosticResults = { };
-
         public string DiagnosticId { get; } = SA1000KeywordsMustBeSpacedCorrectly.DiagnosticId;
 
         [TestMethod]
         public async Task TestEmptySource()
         {
-            var testCode = @"";
+            var testCode = string.Empty;
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
@@ -834,11 +832,16 @@ select z;";
         }
 
         [TestMethod]
-        [Ignore]
-        public void TestYieldStatement()
+        public async Task TestYieldStatement()
         {
-            // There is no way to have a 'yield' keyword which is not followed by a space.
-            Assert.Inconclusive("Not yet implemented.");
+            // There is no way to have a 'yield' keyword which is not followed by a space. All we need to do is verify
+            // that no diagnostic is reported for its use with a space.
+
+            string statementWithSpace = @"yield return 3;";
+            await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+
+            string statementWithSpace2 = @"yield break;";
+            await TestKeywordStatement(statementWithSpace2, EmptyDiagnosticResults, statementWithSpace2);
         }
 
         [TestMethod]
@@ -934,6 +937,36 @@ default :
                             new[]
                             {
                                 new DiagnosticResultLocation("Test0.cs", 7, 21)
+                            }
+                    }
+                };
+
+            await TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
+        }
+
+        [TestMethod]
+        public async Task TestNameofStatement()
+        {
+            string statementWithoutSpace = @"string x = nameof(x);";
+
+            string statementWithSpace = @"string x = nameof (x);";
+
+            await TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
+
+            DiagnosticResult[] expected;
+
+            expected =
+                new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                        Message = "The keyword 'nameof' must not be followed by a space.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 7, 24)
                             }
                     }
                 };
@@ -1102,6 +1135,210 @@ default :
 
             // this case is handled by SA1026, so it shouldn't be reported here
             await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+        }
+
+        [TestMethod]
+        public async Task TestNewConstructorContraintStatement_Type()
+        {
+            string statementWithSpace = @"public class Foo<T> where T : new ()
+{
+}";
+
+            string statementWithoutSpace = @"public class Foo<T> where T : new()
+{
+}";
+
+            await VerifyCSharpDiagnosticAsync(statementWithoutSpace, EmptyDiagnosticResults, CancellationToken.None);
+
+            DiagnosticResult[] expected;
+
+            expected =
+                new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                        Message = "The keyword 'new' must not be followed by a space.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 7, 43)
+                            }
+                    }
+                };
+
+            await TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
+        }
+
+        [TestMethod]
+        public async Task TestNewConstructorContraintStatement_TypeWithMultipleConstraints()
+        {
+            string statementWithSpace = @"public class Foo<T> where T : X, new ()
+{
+}";
+
+            string statementWithoutSpace = @"public class Foo<T> where T : X, new()
+{
+}";
+
+            await VerifyCSharpDiagnosticAsync(statementWithoutSpace, EmptyDiagnosticResults, CancellationToken.None);
+
+            DiagnosticResult[] expected;
+
+            expected =
+                new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                        Message = "The keyword 'new' must not be followed by a space.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 7, 46)
+                            }
+                    }
+                };
+
+            await TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
+        }
+
+        [TestMethod]
+        public async Task TestNewConstructorContraintStatement_TypeWithClassConstraints()
+        {
+            string statementWithSpace = @"public class Foo<T> where T : class, new ()
+{
+}";
+
+            string statementWithoutSpace = @"public class Foo<T> where T : class, new()
+{
+}";
+
+            await VerifyCSharpDiagnosticAsync(statementWithoutSpace, EmptyDiagnosticResults, CancellationToken.None);
+
+            DiagnosticResult[] expected;
+
+            expected =
+                new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                        Message = "The keyword 'new' must not be followed by a space.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 7, 50)
+                            }
+                    }
+                };
+
+            await TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
+        }
+
+        [TestMethod]
+        public async Task TestNewConstructorContraintStatement_Method()
+        {
+            string statementWithSpace = @"public void Foo<T>() where T : new ()
+{
+}";
+
+            string statementWithoutSpace = @"public void Foo<T>() where T : new()
+{
+}";
+
+            await VerifyCSharpDiagnosticAsync(statementWithoutSpace, EmptyDiagnosticResults, CancellationToken.None);
+
+            DiagnosticResult[] expected;
+
+            expected =
+                new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                        Message = "The keyword 'new' must not be followed by a space.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 7, 44)
+                            }
+                    }
+                };
+
+            await TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
+        }
+
+        [TestMethod]
+        public async Task TestNewConstructorContraintStatement_MethodWithMultipleConstraints()
+        {
+            string statementWithSpace = @"public void Foo<T>() where T : X, new ()
+{
+}";
+
+            string statementWithoutSpace = @"public void Foo<T>() where T : X, new()
+{
+}";
+
+            await VerifyCSharpDiagnosticAsync(statementWithoutSpace, EmptyDiagnosticResults, CancellationToken.None);
+
+            DiagnosticResult[] expected;
+
+            expected =
+                new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                        Message = "The keyword 'new' must not be followed by a space.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 7, 47)
+                            }
+                    }
+                };
+
+            await TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
+        }
+
+        [TestMethod]
+        public async Task TestNewConstructorContraintStatement_MethodWithClassConstraints()
+        {
+            string statementWithSpace = @"public void Foo<T>() where T : class, new ()
+{
+}";
+
+            string statementWithoutSpace = @"public void Foo<T>() where T : class, new()
+{
+}";
+
+            await VerifyCSharpDiagnosticAsync(statementWithoutSpace, EmptyDiagnosticResults, CancellationToken.None);
+
+            DiagnosticResult[] expected;
+
+            expected =
+                new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                        Message = "The keyword 'new' must not be followed by a space.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 7, 51)
+                            }
+                    }
+                };
+
+            await TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
         }
 
         [TestMethod]

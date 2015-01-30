@@ -55,7 +55,7 @@
                 if (!precedingToken.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
                     continue;
 
-                SyntaxToken corrected = precedingToken.WithoutTrailingWhitespace();
+                SyntaxToken corrected = precedingToken.WithoutTrailingWhitespace().WithoutFormatting();
                 SyntaxNode transformed = root.ReplaceToken(precedingToken, corrected);
                 Document updatedDocument = context.Document.WithSyntaxRoot(transformed);
                 context.RegisterFix(CodeAction.Create("Fix spacing", updatedDocument), diagnostic);

@@ -51,7 +51,7 @@
                 if (!hashToken.IsKind(SyntaxKind.HashToken))
                     continue;
 
-                SyntaxToken corrected = hashToken.WithoutTrailingWhitespace();
+                SyntaxToken corrected = hashToken.WithoutTrailingWhitespace().WithoutFormatting();
                 Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(hashToken, corrected));
                 context.RegisterFix(CodeAction.Create("Remove space", updatedDocument), diagnostic);
             }
