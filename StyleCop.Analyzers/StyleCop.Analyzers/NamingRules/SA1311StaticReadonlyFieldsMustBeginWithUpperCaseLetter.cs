@@ -1,10 +1,11 @@
-﻿using System.Linq;
-
-namespace StyleCop.Analyzers.NamingRules
+﻿namespace StyleCop.Analyzers.NamingRules
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+
 
     /// <summary>
     /// The name of a static readonly field does not begin with an upper-case letter.
@@ -17,16 +18,16 @@ namespace StyleCop.Analyzers.NamingRules
     public class SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1311";
-        internal const string Title = "Static readonly fields must begin with upper-case letter";
-        internal const string MessageFormat = "Static readonly fields must begin with upper-case letter.";
-        internal const string Category = "StyleCop.CSharp.NamingRules";
+        private const string Title = "Static readonly fields must begin with upper-case letter";
+        private const string MessageFormat = "Static readonly fields must begin with upper-case letter.";
+        private const string Category = "StyleCop.CSharp.NamingRules";
 
-        internal const string Description =
+        private const string Description =
             "The name of a static readonly field does not begin with an upper-case letter.";
 
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1311.html";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1311.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning,
                 AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
@@ -42,25 +43,41 @@ namespace StyleCop.Analyzers.NamingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSymbolAction(HandleFieldDeclaration, SymbolKind.Field);
+            context.RegisterSyntaxNodeAction(HandleFieldDeclarationm, SyntaxKind.FieldDeclaration);
         }
 
-        private void HandleFieldDeclaration(SymbolAnalysisContext context)
+        private void HandleFieldDeclarationm(SyntaxNodeAnalysisContext context)
         {
-            var symbol = context.Symbol as IFieldSymbol;
-
-            if (symbol == null ||
-                !symbol.IsReadOnly ||
-                !symbol.IsStatic)
+            var fieldDeclaration = context.Node as FieldDeclarationSyntax;
+            if (fieldDeclaration == null)
             {
                 return;
             }
 
-            if (!string.IsNullOrEmpty(symbol.Name) &&
-                char.IsLower(symbol.Name[0]) &&
-                symbol.Locations.Any())
+            if(!fieldDeclaration.Modifiers.Any(SyntaxKind.StaticKeyword) ||
+               !fieldDeclaration.Modifiers.Any(SyntaxKind.ReadOnlyKeyword))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, symbol.Locations[0]));
+                return;
+            }
+
+            var variables = fieldDeclaration.Declaration?.Variables;
+            if (variables == null)
+                return;
+
+            foreach (VariableDeclaratorSyntax variableDeclarator in variables.Value)
+            {
+                if (variableDeclarator == null)
+                    continue;
+
+                var identifier = variableDeclarator.Identifier;
+                if (identifier.IsMissing)
+                    continue;
+
+                string name = identifier.ValueText;
+                if (string.IsNullOrEmpty(name) || !char.IsLower(name[0]))
+                    continue;
+
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation()));
             }
         }
     }
