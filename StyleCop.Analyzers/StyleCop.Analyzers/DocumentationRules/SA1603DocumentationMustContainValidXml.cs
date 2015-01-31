@@ -1,7 +1,11 @@
 ﻿namespace StyleCop.Analyzers.DocumentationRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -22,13 +26,13 @@
     {
         public const string DiagnosticId = "SA1603";
         private const string Title = "Documentation must contain valid XML";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "The documentation header is composed of invalid XML: {0}";
         private const string Category = "StyleCop.CSharp.DocumentationRules";
         private const string Description = "The XML within a C# element’s document header is badly formed.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1603.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
@@ -45,7 +49,110 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(HandleXmlElement, SyntaxKind.XmlElement);
+            context.RegisterSyntaxNodeAction(HandleXmlEmptyElement, SyntaxKind.XmlEmptyElement);
+            context.RegisterSyntaxNodeAction(HandleXmlCDataSection, SyntaxKind.XmlCDataSection);
+        }
+
+        private void HandleXmlElement(SyntaxNodeAnalysisContext context)
+        {
+            var xmlElementSyntax = context.Node as XmlElementSyntax;
+
+            if (xmlElementSyntax != null)
+            {
+                if (xmlElementSyntax.StartTag.LessThanToken.IsMissing)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, xmlElementSyntax.StartTag.GetLocation(), "XML element start tag is missing a '<'."));
+                }
+
+                if (xmlElementSyntax.StartTag.GreaterThanToken.IsMissing)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, xmlElementSyntax.StartTag.GetLocation(), "XML element start tag is missing a '>'."));
+                }
+                if (xmlElementSyntax.EndTag.IsMissing)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, xmlElementSyntax.StartTag.GetLocation(), $"The XML tag '{xmlElementSyntax.StartTag.Name}' is not closed."));
+                }
+                else
+                {
+                    if (xmlElementSyntax.EndTag.LessThanSlashToken.IsMissing)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, xmlElementSyntax.EndTag.GetLocation(), "XML element end tag is missing a '</'."));
+                    }
+
+                    if (xmlElementSyntax.EndTag.GreaterThanToken.IsMissing)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, xmlElementSyntax.EndTag.GetLocation(), "XML element end tag is missing a '>'."));
+                    }
+
+                    if (xmlElementSyntax.StartTag.Name.ToString() != xmlElementSyntax.EndTag.Name.ToString())
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, xmlElementSyntax.StartTag.GetLocation(), new[] { xmlElementSyntax.EndTag.GetLocation() }, $"The '{xmlElementSyntax.StartTag.Name}' start tag does not match the end tag of '{xmlElementSyntax.EndTag.Name}'."));
+                    }
+                }
+
+                IEnumerable<SyntaxTrivia> skippedTokens = xmlElementSyntax.StartTag.DescendantTrivia()
+                    .Concat(xmlElementSyntax.EndTag.DescendantTrivia())
+                    .Where(trivia => trivia.IsKind(SyntaxKind.SkippedTokensTrivia));
+
+                foreach (var item in skippedTokens)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, item.GetLocation(), "Invalid token."));
+                }
+            }
+        }
+
+        private void HandleXmlCDataSection(SyntaxNodeAnalysisContext context)
+        {
+            var xmlCDataSection = context.Node as XmlCDataSectionSyntax;
+
+            if (xmlCDataSection != null)
+            {
+                if (xmlCDataSection.StartCDataToken.IsMissing)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, xmlCDataSection.GetLocation(), "XML CDATA section is missing a start token."));
+                }
+
+                if (xmlCDataSection.EndCDataToken.IsMissing)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, xmlCDataSection.GetLocation(), "XML CDATA section is missing an end token."));
+                }
+
+                IEnumerable<SyntaxTrivia> skippedTokens = xmlCDataSection.StartCDataToken.GetAllTrivia()
+                    .Concat(xmlCDataSection.EndCDataToken.GetAllTrivia())
+                    .Where(trivia => trivia.IsKind(SyntaxKind.SkippedTokensTrivia));
+
+                foreach (var item in skippedTokens)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, item.GetLocation(), "Invalid token."));
+                }
+            }
+        }
+
+        private void HandleXmlEmptyElement(SyntaxNodeAnalysisContext context)
+        {
+            var xmlEmptyElement = context.Node as XmlEmptyElementSyntax;
+
+            if (xmlEmptyElement != null)
+            {
+                if (xmlEmptyElement.LessThanToken.IsMissing)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, xmlEmptyElement.GetLocation(), "XML empty element is missing a '<'."));
+                }
+
+                if (xmlEmptyElement.SlashGreaterThanToken.IsMissing)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, xmlEmptyElement.GetLocation(), "XML empty element is missing a '/>'."));
+                }
+
+                IEnumerable<SyntaxTrivia> skippedTokens = xmlEmptyElement.DescendantTrivia()
+                    .Where(trivia => trivia.IsKind(SyntaxKind.SkippedTokensTrivia));
+
+                foreach (var item in skippedTokens)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, item.GetLocation(), "Invalid token."));
+                }
+            }
         }
     }
 }
