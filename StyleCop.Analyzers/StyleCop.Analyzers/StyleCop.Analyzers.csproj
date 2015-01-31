@@ -148,6 +148,7 @@
     <Compile Include="NamingRules\SA1308VariableNamesMustNotBePrefixed.cs" />
     <Compile Include="NamingRules\SA1309FieldNamesMustNotBeginWithUnderscore.cs" />
     <Compile Include="NamingRules\SA1310FieldNamesMustNotContainUnderscore.cs" />
+    <Compile Include="NamingRules\SA1311CodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter.cs" />
     <Compile Include="OrderingRules\SA1200UsingDirectivesMustBePlacedWithinNamespace.cs" />
     <Compile Include="OrderingRules\SA1201ElementsMustAppearInTheCorrectOrder.cs" />
