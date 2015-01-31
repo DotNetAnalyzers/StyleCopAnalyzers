@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using StyleCop.Analyzers.MaintainabilityRules;
@@ -45,6 +46,53 @@ public interface Foo
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"
+public interface IFoo
+{
+}";
+
+            await VerifyCSharpFixAsync(testCode, fixedCode);
+        }
+
+        [TestMethod]
+        public async Task TestInterfaceDeclarationDoesNotStartWithIPlusInterfaceUsed()
+        {
+            var testCode = @"
+public interface Foo
+{
+}
+public class Bar : Foo
+{
+}";
+
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Interface names must begin with I",
+                    Severity = DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 2, 18)
+                        }
+                }
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"
+public interface IFoo
+{
+}
+public class Bar : IFoo
+{
+}";
+
+
+            await VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
         [TestMethod]
@@ -71,6 +119,13 @@ public interface iFoo
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"
+public interface IiFoo
+{
+}";
+
+            await VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
         [TestMethod]
@@ -169,6 +224,17 @@ public class NativeMethodsClass
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"
+public class NativeMethodsClass
+{
+    [ComImport]
+    public interface IFileOpenDialog
+    {
+    }
+}";
+
+            await VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
         [TestMethod]
@@ -192,6 +258,11 @@ public class MyNativeMethods
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1302InterfaceNamesMustBeginWithI();
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1302CodeFixProvider();
         }
     }
 }
