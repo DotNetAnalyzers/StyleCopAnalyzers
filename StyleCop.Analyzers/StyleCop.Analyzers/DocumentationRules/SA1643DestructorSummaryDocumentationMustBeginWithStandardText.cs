@@ -2,6 +2,8 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -42,11 +44,11 @@
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1643DestructorSummaryDocumentationMustBeginWithStandardText : DiagnosticAnalyzer
+    public class SA1643DestructorSummaryDocumentationMustBeginWithStandardText : StandardTextDiagnosticBase
     {
         public const string DiagnosticId = "SA1643";
         private const string Title = "Destructor summary documentation must begin with standard text";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "Destructor summary documentation must begin with standard text";
         private const string Category = "StyleCop.CSharp.DocumentationRules";
         private const string Description = "The XML documentation header for a C# finalizer does not contain the appropriate summary text.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1643.html";
@@ -57,6 +59,8 @@
         private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
+        public static ImmutableArray<string> DestructorStandardText { get; } = ImmutableArray.Create("Finalizes an instance of the ", " class.");
+        
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -67,9 +71,29 @@
         }
 
         /// <inheritdoc/>
+        protected override DiagnosticDescriptor DiagnosticDescriptor
+        {
+            get
+            {
+                return Descriptor;
+            }
+        }
+
+
+        /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(HandleDestructor, SyntaxKind.DestructorDeclaration);
+        }
+
+        private void HandleDestructor(SyntaxNodeAnalysisContext context)
+        {
+            var destructorDeclaration = context.Node as DestructorDeclarationSyntax;
+
+            if (destructorDeclaration != null)
+            {
+                HandleDeclaration(context, DestructorStandardText[0], DestructorStandardText[1], true);
+            }
         }
     }
 }

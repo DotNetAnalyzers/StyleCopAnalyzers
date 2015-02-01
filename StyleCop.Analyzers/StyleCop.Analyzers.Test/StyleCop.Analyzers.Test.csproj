@@ -115,6 +115,7 @@
     <Compile Include="DocumentationRules\SA1607UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1608UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1642UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1643UnitTests.cs" />
     <Compile Include="Helpers\CodeFixVerifier.Helper.cs" />
     <Compile Include="Helpers\DiagnosticResult.cs" />
     <Compile Include="Helpers\DiagnosticVerifier.Helper.cs" />
