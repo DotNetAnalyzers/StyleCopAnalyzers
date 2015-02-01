@@ -180,6 +180,10 @@
 
                     break;
 
+                case SyntaxKind.PartialKeyword:
+                    // the access modifier might be declared on another part, which isn't handled at this time
+                    return;
+
                 default:
                     break;
                 }

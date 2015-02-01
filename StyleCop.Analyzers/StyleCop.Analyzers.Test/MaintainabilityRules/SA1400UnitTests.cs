@@ -60,6 +60,24 @@
         }
 
         [TestMethod]
+        public async Task TestPartialClassDeclarationAsync()
+        {
+            await TestTypeDeclarationAsync("partial class", warning: false);
+        }
+
+        [TestMethod]
+        public async Task TestPartialClassDeclarationWithAttributesAsync()
+        {
+            await TestTypeDeclarationWithAttributesAsync("partial class", warning: false);
+        }
+
+        [TestMethod]
+        public async Task TestPartialClassDeclarationWithDirectivesAsync()
+        {
+            await TestTypeDeclarationWithDirectivesAsync("partial class", warning: false);
+        }
+
+        [TestMethod]
         public async Task TestInterfaceDeclarationAsync()
         {
             await TestTypeDeclarationAsync("interface");
@@ -96,6 +114,24 @@
         }
 
         [TestMethod]
+        public async Task TestPartialInterfaceDeclarationAsync()
+        {
+            await TestTypeDeclarationAsync("partial interface", warning: false);
+        }
+
+        [TestMethod]
+        public async Task TestPartialInterfaceDeclarationWithAttributesAsync()
+        {
+            await TestTypeDeclarationWithAttributesAsync("partial interface", warning: false);
+        }
+
+        [TestMethod]
+        public async Task TestPartialInterfaceDeclarationWithDirectivesAsync()
+        {
+            await TestTypeDeclarationWithDirectivesAsync("partial interface", warning: false);
+        }
+
+        [TestMethod]
         public async Task TestStructDeclarationAsync()
         {
             await TestTypeDeclarationAsync("struct");
@@ -129,6 +165,24 @@
         public async Task TestNestedStructDeclarationWithDirectivesAsync()
         {
             await TestNestedTypeDeclarationWithDirectivesAsync("struct");
+        }
+
+        [TestMethod]
+        public async Task TestPartialStructDeclarationAsync()
+        {
+            await TestTypeDeclarationAsync("partial struct", warning: false);
+        }
+
+        [TestMethod]
+        public async Task TestPartialStructDeclarationWithAttributesAsync()
+        {
+            await TestTypeDeclarationWithAttributesAsync("partial struct", warning: false);
+        }
+
+        [TestMethod]
+        public async Task TestPartialStructDeclarationWithDirectivesAsync()
+        {
+            await TestTypeDeclarationWithDirectivesAsync("partial struct", warning: false);
         }
 
         [TestMethod]
@@ -320,19 +374,37 @@
         [TestMethod]
         public async Task TestInterfaceMethodDeclarationAsync()
         {
-            await TestNestedDeclarationAsync("private", "MemberName", "void MemberName", "  ( int\n parameter\n ) { }", containingType: "interface", warning: false);
+            await TestNestedDeclarationAsync("private", "MemberName", "void MemberName", "  ( int\n parameter\n );", containingType: "interface", warning: false);
         }
 
         [TestMethod]
         public async Task TestInterfaceMethodDeclarationWithAttributesAsync()
         {
-            await TestNestedDeclarationWithAttributesAsync("private", "MemberName", "void MemberName", "  ( int\n parameter\n ) { }", containingType: "interface", warning: false);
+            await TestNestedDeclarationWithAttributesAsync("private", "MemberName", "void MemberName", "  ( int\n parameter\n );", containingType: "interface", warning: false);
         }
 
         [TestMethod]
         public async Task TestInterfaceMethodDeclarationWithDirectivesAsync()
         {
-            await TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "void MemberName", "  ( int\n parameter\n ) { }", containingType: "interface", warning: false);
+            await TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "void MemberName", "  ( int\n parameter\n );", containingType: "interface", warning: false);
+        }
+
+        [TestMethod]
+        public async Task TestPartialMethodDeclarationAsync()
+        {
+            await TestNestedDeclarationAsync("private", "MemberName", "partial void MemberName", "  ( int\n parameter\n );", containingType: "partial class", warning: false);
+        }
+
+        [TestMethod]
+        public async Task TestPartialMethodDeclarationWithAttributesAsync()
+        {
+            await TestNestedDeclarationWithAttributesAsync("private", "MemberName", "partial void MemberName", "  ( int\n parameter\n );", containingType: "partial class", warning: false);
+        }
+
+        [TestMethod]
+        public async Task TestPartialMethodDeclarationWithDirectivesAsync()
+        {
+            await TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "partial void MemberName", "  ( int\n parameter\n );", containingType: "partial class", warning: false);
         }
 
         #endregion
@@ -635,34 +707,34 @@
 
         #endregion
 
-        private async Task TestTypeDeclarationAsync(string keyword)
+        private async Task TestTypeDeclarationAsync(string keyword, bool warning = true)
         {
-            await TestDeclarationAsync("internal", "TypeName", $"{keyword} TypeName", "{\n}");
+            await TestDeclarationAsync("internal", "TypeName", $"{keyword} TypeName", "{\n}", warning: warning);
         }
 
-        private async Task TestTypeDeclarationWithAttributesAsync(string keyword)
+        private async Task TestTypeDeclarationWithAttributesAsync(string keyword, bool warning = true)
         {
-            await TestDeclarationWithAttributesAsync("internal", "TypeName", $"{keyword} TypeName", "{\n}");
+            await TestDeclarationWithAttributesAsync("internal", "TypeName", $"{keyword} TypeName", "{\n}", warning: warning);
         }
 
-        private async Task TestTypeDeclarationWithDirectivesAsync(string keyword)
+        private async Task TestTypeDeclarationWithDirectivesAsync(string keyword, bool warning = true)
         {
-            await TestDeclarationWithDirectivesAsync("internal", "TypeName", $"{keyword} TypeName", "{\n}");
+            await TestDeclarationWithDirectivesAsync("internal", "TypeName", $"{keyword} TypeName", "{\n}", warning: warning);
         }
 
-        private async Task TestNestedTypeDeclarationAsync(string keyword)
+        private async Task TestNestedTypeDeclarationAsync(string keyword, bool warning = true)
         {
-            await TestNestedDeclarationAsync("private", "TypeName", $"{keyword} TypeName", "{\n}");
+            await TestNestedDeclarationAsync("private", "TypeName", $"{keyword} TypeName", "{\n}", warning: warning);
         }
 
-        private async Task TestNestedTypeDeclarationWithAttributesAsync(string keyword)
+        private async Task TestNestedTypeDeclarationWithAttributesAsync(string keyword, bool warning = true)
         {
-            await TestNestedDeclarationWithAttributesAsync("private", "TypeName", $"{keyword} TypeName", "{\n}");
+            await TestNestedDeclarationWithAttributesAsync("private", "TypeName", $"{keyword} TypeName", "{\n}", warning: warning);
         }
 
-        private async Task TestNestedTypeDeclarationWithDirectivesAsync(string keyword)
+        private async Task TestNestedTypeDeclarationWithDirectivesAsync(string keyword, bool warning = true)
         {
-            await TestNestedDeclarationWithDirectivesAsync("private", "TypeName", $"{keyword} TypeName", "{\n}");
+            await TestNestedDeclarationWithDirectivesAsync("private", "TypeName", $"{keyword} TypeName", "{\n}", warning: warning);
         }
 
         private async Task TestDeclarationAsync(string modifier, string identifier, string keywordLine, string linesAfter, string elementName = null, bool warning = true)
