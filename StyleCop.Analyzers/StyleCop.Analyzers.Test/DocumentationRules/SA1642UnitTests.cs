@@ -319,7 +319,7 @@
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1642CodeFixProvider();
+            return new SA1642SA1643CodeFixProvider();
         }
     }
 }
