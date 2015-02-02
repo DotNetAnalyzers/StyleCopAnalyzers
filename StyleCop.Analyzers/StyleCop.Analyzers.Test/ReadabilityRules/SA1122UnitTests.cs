@@ -58,8 +58,11 @@
         {
             var testCode = @"public class Foo
 {{
-    public {1}
+    public void Bar()
+    {{
+        {1}
 string test = {0}"""";
+    }}
 }}";
 
             DiagnosticResult[] expected;
@@ -75,7 +78,7 @@ string test = {0}"""";
                         Locations =
                             new[]
                             {
-                                new DiagnosticResultLocation("Test0.cs", 4, 15)
+                                new DiagnosticResultLocation("Test0.cs", 6, 15)
                             }
                     }
                 };
