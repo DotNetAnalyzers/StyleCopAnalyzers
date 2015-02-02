@@ -11,6 +11,8 @@
 
     internal sealed class SA1407SA1408FixAllProvider : FixAllProvider
     {
+        private static readonly SyntaxAnnotation NeedsParenthesisAnnotation = new SyntaxAnnotation("StyleCop.NeedsParenthesis");
+
         public override async Task<CodeAction> GetFixAsync(FixAllContext fixAllContext)
         {
             switch (fixAllContext.Scope)
@@ -73,7 +75,7 @@
                 if (node.IsMissing)
                     continue;
 
-                root = root.ReplaceNode(node, node.WithAdditionalAnnotations(new SyntaxAnnotation("StyleCop.NeedsParenthesis")));
+                root = root.ReplaceNode(node, node.WithAdditionalAnnotations(NeedsParenthesisAnnotation));
             }
 
             // Add parenthesis
@@ -88,9 +90,9 @@
 
             node = node.ReplaceNodes(node.ChildNodes(), (a, b) => AddParenthesisRecursive(b));
 
-            if (node.HasAnnotations("StyleCop.NeedsParenthesis"))
+            if (node.HasAnnotations(NeedsParenthesisAnnotation.Kind))
             {
-                BinaryExpressionSyntax syntax = node.WithoutAnnotations("StyleCop.NeedsParenthesis") as BinaryExpressionSyntax;
+                BinaryExpressionSyntax syntax = node.WithoutAnnotations(NeedsParenthesisAnnotation.Kind) as BinaryExpressionSyntax;
                 if (syntax != null)
                 {
                     var newNode = SyntaxFactory.ParenthesizedExpression(syntax.WithoutTrivia())
