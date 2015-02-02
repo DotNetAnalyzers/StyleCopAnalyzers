@@ -11,17 +11,19 @@
 
     internal sealed class SA1407SA1408FixAllProvider : FixAllProvider
     {
+        private static readonly SyntaxAnnotation NeedsParenthesisAnnotation = new SyntaxAnnotation("StyleCop.NeedsParenthesis");
+
         public override async Task<CodeAction> GetFixAsync(FixAllContext fixAllContext)
         {
             switch (fixAllContext.Scope)
             {
             case FixAllScope.Document:
-                var newRoot = await FixAllInDocument(fixAllContext, fixAllContext.Document);
-                return CodeAction.Create("Add parenthesis", fixAllContext.Document.WithSyntaxRoot(newRoot));
+                var newRoot = await FixAllInDocumentAsync(fixAllContext, fixAllContext.Document);
+                return CodeAction.Create("Add parentheses", fixAllContext.Document.WithSyntaxRoot(newRoot));
 
             case FixAllScope.Project:
                 Solution solution = await GetProjectFixesAsync(fixAllContext, fixAllContext.Project);
-                return CodeAction.Create("Add parenthesis", solution);
+                return CodeAction.Create("Add parentheses", solution);
 
             case FixAllScope.Solution:
                 var newSolution = fixAllContext.Solution;
@@ -30,7 +32,7 @@
                 {
                     newSolution = await GetProjectFixesAsync(fixAllContext, newSolution.GetProject(projectIds[i]));
                 }
-                return CodeAction.Create("Add parenthesis", newSolution);
+                return CodeAction.Create("Add parentheses", newSolution);
 
             case FixAllScope.Custom:
             default:
@@ -45,7 +47,7 @@
             List<Task<SyntaxNode>> newDocuments = new List<Task<SyntaxNode>>(oldDocuments.Length);
             foreach (var document in oldDocuments)
             {
-                newDocuments.Add(FixAllInDocument(fixAllContext, document));
+                newDocuments.Add(FixAllInDocumentAsync(fixAllContext, document));
             }
             for (int i = 0; i < oldDocuments.Length; i++)
             {
@@ -56,7 +58,7 @@
             return solution;
         }
 
-        private async Task<SyntaxNode> FixAllInDocument(FixAllContext fixAllContext, Document document)
+        private async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
         {
             var diagnostics = await fixAllContext.GetDiagnosticsAsync(document);
 
@@ -73,35 +75,25 @@
                 if (node.IsMissing)
                     continue;
 
-                root = root.ReplaceNode(node, node.WithAdditionalAnnotations(new SyntaxAnnotation("StyleCop.NeedsParenthesis")));
+                root = root.ReplaceNode(node, node.WithAdditionalAnnotations(NeedsParenthesisAnnotation));
             }
 
-            // Add parenthesis
-            return AddParenthesisRecursive(root);
+            return root.ReplaceNodes(root.GetAnnotatedNodes(NeedsParenthesisAnnotation), AddParentheses);
         }
 
-        private SyntaxNode AddParenthesisRecursive(SyntaxNode node)
+        private SyntaxNode AddParentheses(SyntaxNode originalNode, SyntaxNode rewrittenNode)
         {
-            var newChildNodes = new List<SyntaxNode>();
+            BinaryExpressionSyntax syntax = rewrittenNode as BinaryExpressionSyntax;
+            if (syntax == null)
+                return rewrittenNode;
 
-            var childNodes = node.ChildNodes();
+            BinaryExpressionSyntax trimmedSyntax = syntax
+                .WithoutTrivia()
+                .WithoutAnnotations(NeedsParenthesisAnnotation.Kind);
 
-            node = node.ReplaceNodes(node.ChildNodes(), (a, b) => AddParenthesisRecursive(b));
-
-            if (node.HasAnnotations("StyleCop.NeedsParenthesis"))
-            {
-                BinaryExpressionSyntax syntax = node.WithoutAnnotations("StyleCop.NeedsParenthesis") as BinaryExpressionSyntax;
-                if (syntax != null)
-                {
-                    var newNode = SyntaxFactory.ParenthesizedExpression(syntax.WithoutTrivia())
-                        .WithTriviaFrom(syntax)
-                        .WithoutFormatting();
-
-                    return newNode;
-                }
-            }
-
-            return node;
+            return SyntaxFactory.ParenthesizedExpression(trimmedSyntax)
+                .WithTriviaFrom(syntax)
+                .WithoutFormatting();
         }
     }
 }
