@@ -81,19 +81,47 @@
 
         private bool HasToBeConstant(LiteralExpressionSyntax literalExpression)
         {
-            if (literalExpression.Parent.IsKind(SyntaxKind.AttributeArgument))
+            ExpressionSyntax outermostExpression = FindOutermostExpression(literalExpression);
+
+            if (outermostExpression.Parent.IsKind(SyntaxKind.AttributeArgument))
                 return true;
-            var fieldDeclarationSyntax = FindFieldDeclarationSyntax(literalExpression);
-            return fieldDeclarationSyntax != null && fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.ConstKeyword);
+
+            EqualsValueClauseSyntax equalsValueClause = outermostExpression.Parent as EqualsValueClauseSyntax;
+            if (equalsValueClause != null)
+            {
+                ParameterSyntax parameterSyntax = equalsValueClause.Parent as ParameterSyntax;
+                if (parameterSyntax != null)
+                    return true;
+
+                VariableDeclaratorSyntax variableDeclaratorSyntax = equalsValueClause.Parent as VariableDeclaratorSyntax;
+                VariableDeclarationSyntax variableDeclarationSyntax = variableDeclaratorSyntax.Parent as VariableDeclarationSyntax;
+                if (variableDeclaratorSyntax == null || variableDeclarationSyntax == null)
+                    return false;
+
+                FieldDeclarationSyntax fieldDeclarationSyntax = variableDeclarationSyntax.Parent as FieldDeclarationSyntax;
+                if (fieldDeclarationSyntax != null && fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.ConstKeyword))
+                    return true;
+
+                LocalDeclarationStatementSyntax localDeclarationStatementSyntax = variableDeclarationSyntax.Parent as LocalDeclarationStatementSyntax;
+                if (localDeclarationStatementSyntax != null && localDeclarationStatementSyntax.Modifiers.Any(SyntaxKind.ConstKeyword))
+                    return true;
+            }
+
+            return false;
         }
 
-        private FieldDeclarationSyntax FindFieldDeclarationSyntax(SyntaxNode node)
+        private ExpressionSyntax FindOutermostExpression(ExpressionSyntax node)
         {
-            if (node == null)
-                return null;
-            if (node is FieldDeclarationSyntax)
-                return node as FieldDeclarationSyntax;
-            return FindFieldDeclarationSyntax(node.Parent);
+            while (true)
+            {
+                ExpressionSyntax parent = node.Parent as ExpressionSyntax;
+                if (parent == null)
+                    break;
+
+                node = parent;
+            }
+
+            return node;
         }
     }
 }
