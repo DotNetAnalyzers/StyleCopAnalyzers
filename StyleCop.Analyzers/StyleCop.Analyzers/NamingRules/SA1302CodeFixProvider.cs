@@ -6,8 +6,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Rename;
+    using StyleCop.Analyzers.Helpers;
 
     [ExportCodeFixProvider(nameof(SA1302CodeFixProvider), LanguageNames.CSharp)]
     [Shared]
@@ -30,34 +29,14 @@
                 if (!diagnostic.Id.Equals(SA1302InterfaceNamesMustBeginWithI.DiagnosticId))
                     continue;
 
-                var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-                var node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true,
-                    findInsideTrivia: true);
-                if (node.IsMissing)
-                {
+                var document = context.Document;
+                var root = await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+                var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
+                if (token.IsMissing)
                     continue;
-                }
 
-                var interfaceDeclaration = node as InterfaceDeclarationSyntax;
-                if (interfaceDeclaration == null)
-                {
-                    return;
-                }
-
-                var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken);
-
-                var symbol = semanticModel?.GetDeclaredSymbol(interfaceDeclaration, context.CancellationToken) as ITypeSymbol;
-                if (symbol == null || string.IsNullOrEmpty(symbol.Name))
-                {
-                    continue;
-                }
-
-                var newName = "I" + symbol.Name;
-
-                var solution = context.Document.Project.Solution;
-                var newSolution = await Renamer.RenameSymbolAsync(solution, symbol, newName, solution.Workspace.Options);
-
-                context.RegisterFix(CodeAction.Create("Change interface name to " + newName + ".", newSolution), diagnostic);
+                var newName = "I" + token.ValueText;
+                context.RegisterFix(CodeAction.Create($"Rename interface to '{newName}'", cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken)), diagnostic);
             }
         }
     }
