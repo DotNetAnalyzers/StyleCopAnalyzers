@@ -16,7 +16,7 @@
             switch (fixAllContext.Scope)
             {
             case FixAllScope.Document:
-                var newRoot = await FixAllInDocument(fixAllContext, fixAllContext.Document);
+                var newRoot = await FixAllInDocumentAsync(fixAllContext, fixAllContext.Document);
                 return CodeAction.Create("Add parenthesis", fixAllContext.Document.WithSyntaxRoot(newRoot));
 
             case FixAllScope.Project:
@@ -45,7 +45,7 @@
             List<Task<SyntaxNode>> newDocuments = new List<Task<SyntaxNode>>(oldDocuments.Length);
             foreach (var document in oldDocuments)
             {
-                newDocuments.Add(FixAllInDocument(fixAllContext, document));
+                newDocuments.Add(FixAllInDocumentAsync(fixAllContext, document));
             }
             for (int i = 0; i < oldDocuments.Length; i++)
             {
@@ -56,7 +56,7 @@
             return solution;
         }
 
-        private async Task<SyntaxNode> FixAllInDocument(FixAllContext fixAllContext, Document document)
+        private async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
         {
             var diagnostics = await fixAllContext.GetDiagnosticsAsync(document);
 
