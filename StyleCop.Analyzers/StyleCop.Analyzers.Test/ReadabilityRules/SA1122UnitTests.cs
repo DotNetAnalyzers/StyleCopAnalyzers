@@ -110,6 +110,19 @@ public class Foo
             await VerifyCSharpDiagnosticAsync(string.Format(testCode, useVerbatimLiteral ? "@" : string.Empty), EmptyDiagnosticResults, CancellationToken.None);
         }
 
+        private async Task TestDefaultParameterStringLiteral(bool useVerbatimLiteral)
+        {
+            var testCode = @"using System.Diagnostics.CodeAnalysis;
+public class Foo
+{{
+    public void Bar(string value = {0}"""")
+    {{
+    }}
+}}";
+
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, useVerbatimLiteral ? "@" : string.Empty), EmptyDiagnosticResults, CancellationToken.None);
+        }
+
         public async Task TestNullInMethod()
         {
             var testCode = @"public class Foo
@@ -211,6 +224,18 @@ public class Foo
         public async Task TestAttributeStringLiteral()
         {
             await TestAttributeStringLiteral(false);
+        }
+
+        [TestMethod]
+        public async Task TestDefaultParameterStringLiteralVerbatim()
+        {
+            await TestDefaultParameterStringLiteral(true);
+        }
+
+        [TestMethod]
+        public async Task TestDefaultParameterStringLiteral()
+        {
+            await TestDefaultParameterStringLiteral(false);
         }
 
         [TestMethod]
