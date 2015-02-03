@@ -52,7 +52,7 @@
                 var newSyntaxRoot = root.ReplaceNode(node, thisExpressionSyntax);
 
                 context.RegisterFix(
-                    CodeAction.Create("Replace with this", context.Document.WithSyntaxRoot(newSyntaxRoot)), diagnostic);
+                    CodeAction.Create("Replace 'base.' with 'this.'", context.Document.WithSyntaxRoot(newSyntaxRoot)), diagnostic);
             }
         }
     }
