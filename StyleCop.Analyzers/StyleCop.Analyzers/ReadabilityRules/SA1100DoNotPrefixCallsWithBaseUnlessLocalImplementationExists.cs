@@ -85,26 +85,18 @@
             if (targetSymbol.Symbol == null)
                 return;
 
-            // Replace the 'base.' with 'this.' and analyze the symbol again
-            var tree = context.Node.SyntaxTree;
-            var root = tree.GetRoot(context.CancellationToken);
-
-            var testExpression = SyntaxFactory.ThisExpression().WithTriviaFrom(baseExpressionSyntax).WithoutFormatting();
-            var testTree = tree.WithRootAndOptions(root.ReplaceNode(baseExpressionSyntax, testExpression), tree.Options);
-            var testCompilation = context.SemanticModel.Compilation.ReplaceSyntaxTree(tree, testTree);
-
-            var testSemanticModel = testCompilation.GetSemanticModel(testTree);
-            var testRoot = testSemanticModel.SyntaxTree.GetRoot(context.CancellationToken);
-            var testToken = testRoot.FindToken(context.Node.GetLocation().SourceSpan.Start);
-            var testNode = testToken.Parent;
-            var testSymbol = testSemanticModel.GetSymbolInfo(testNode.Parent, context.CancellationToken);
-            if (testSymbol.Symbol == null)
+            var memberAccessExpression = baseExpressionSyntax.Parent as MemberAccessExpressionSyntax;
+            if (memberAccessExpression == null)
                 return;
 
-            // If 'this.' caused the expression to resolve to a different symbol, then 'base.' is required
-            string baseContainerName = targetSymbol.Symbol.ContainingType?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-            string thisContainerName = testSymbol.Symbol.ContainingType?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-            if (baseContainerName != thisContainerName)
+            // make sure to evaluate the complete invocation expression if this is a call, or overload resolution will fail
+            ExpressionSyntax speculativeExpression = memberAccessExpression.WithExpression(SyntaxFactory.ThisExpression());
+            InvocationExpressionSyntax invocationExpression = memberAccessExpression.Parent as InvocationExpressionSyntax;
+            if (invocationExpression != null)
+                speculativeExpression = invocationExpression.WithExpression(speculativeExpression);
+
+            var speculativeSymbol = context.SemanticModel.GetSpeculativeSymbolInfo(memberAccessExpression.SpanStart, speculativeExpression, SpeculativeBindingOption.BindAsExpression);
+            if (speculativeSymbol.Symbol != targetSymbol.Symbol)
                 return;
 
             // Do not prefix calls with base unless local implementation exists
