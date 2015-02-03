@@ -15,7 +15,7 @@
     public class SA1100CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> _fixableDiagnostics =
-    ImmutableArray.Create(SA1110OpeningParenthesisMustBeOnDeclarationLine.DiagnosticId);
+            ImmutableArray.Create(SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists.DiagnosticId);
 
         public override ImmutableArray<string> GetFixableDiagnosticIds()
         {
