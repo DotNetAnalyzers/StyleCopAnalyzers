@@ -15,13 +15,21 @@
     public class SA1100CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> _fixableDiagnostics =
-    ImmutableArray.Create(SA1110OpeningParenthesisMustBeOnDeclarationLine.DiagnosticId);
+            ImmutableArray.Create(SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists.DiagnosticId);
 
+        /// <inheritdoc/>
         public override ImmutableArray<string> GetFixableDiagnosticIds()
         {
             return _fixableDiagnostics;
         }
 
+        /// <inheritdoc/>
+        public override FixAllProvider GetFixAllProvider()
+        {
+            return WellKnownFixAllProviders.BatchFixer;
+        }
+
+        /// <inheritdoc/>
         public override async Task ComputeFixesAsync(CodeFixContext context)
         {
             foreach (var diagnostic in context.Diagnostics)
@@ -44,7 +52,7 @@
                 var newSyntaxRoot = root.ReplaceNode(node, thisExpressionSyntax);
 
                 context.RegisterFix(
-                    CodeAction.Create("Replace with this", context.Document.WithSyntaxRoot(newSyntaxRoot)), diagnostic);
+                    CodeAction.Create("Replace 'base.' with 'this.'", context.Document.WithSyntaxRoot(newSyntaxRoot)), diagnostic);
             }
         }
     }
