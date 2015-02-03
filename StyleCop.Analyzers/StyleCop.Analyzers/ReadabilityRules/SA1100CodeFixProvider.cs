@@ -17,11 +17,19 @@
         private static readonly ImmutableArray<string> _fixableDiagnostics =
             ImmutableArray.Create(SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists.DiagnosticId);
 
+        /// <inheritdoc/>
         public override ImmutableArray<string> GetFixableDiagnosticIds()
         {
             return _fixableDiagnostics;
         }
 
+        /// <inheritdoc/>
+        public override FixAllProvider GetFixAllProvider()
+        {
+            return WellKnownFixAllProviders.BatchFixer;
+        }
+
+        /// <inheritdoc/>
         public override async Task ComputeFixesAsync(CodeFixContext context)
         {
             foreach (var diagnostic in context.Diagnostics)
