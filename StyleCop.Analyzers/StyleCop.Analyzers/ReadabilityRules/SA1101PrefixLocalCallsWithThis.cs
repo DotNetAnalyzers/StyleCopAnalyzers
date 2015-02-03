@@ -2,6 +2,8 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -29,7 +31,7 @@
     {
         public const string DiagnosticId = "SA1101";
         private const string Title = "Prefix local calls with this";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "Prefix local calls with this";
         private const string Category = "StyleCop.CSharp.ReadabilityRules";
         private const string Description = "A call to an instance member of the local class or a base class is not prefixed with 'this.', within a C# code file.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1101.html";
@@ -52,7 +54,100 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(HandleMemberAccessExpression, SyntaxKind.SimpleMemberAccessExpression);
+            context.RegisterSyntaxNodeAction(HandleIdentifierName, SyntaxKind.IdentifierName);
+        }
+
+        /// <summary>
+        /// <see cref="SyntaxKind.SimpleMemberAccessExpression"/> is handled separately so only <c>X</c> is evaluated in
+        /// the expression <c>X.Y.Z.A.B.C</c>.
+        /// </summary>
+        private void HandleMemberAccessExpression(SyntaxNodeAnalysisContext context)
+        {
+            MemberAccessExpressionSyntax syntax = (MemberAccessExpressionSyntax)context.Node;
+            IdentifierNameSyntax nameExpression = syntax.Expression as IdentifierNameSyntax;
+            HandleIdentifierNameImpl(context, nameExpression);
+        }
+
+        private void HandleIdentifierName(SyntaxNodeAnalysisContext context)
+        {
+            switch (context.Node?.Parent?.CSharpKind() ?? SyntaxKind.None)
+            {
+            case SyntaxKind.SimpleMemberAccessExpression:
+                // this is handled separately
+                return;
+
+            case SyntaxKind.PointerMemberAccessExpression:
+                // this doesn't need to be handled
+                return;
+
+            case SyntaxKind.QualifiedCref:
+            case SyntaxKind.NameMemberCref:
+                // documentation comments don't use 'this.'
+                return;
+
+            case SyntaxKind.SimpleAssignmentExpression:
+                if (((AssignmentExpressionSyntax)context.Node.Parent).Left == context.Node
+                    && (context.Node.Parent.Parent?.IsKind(SyntaxKind.ObjectInitializerExpression) ?? true))
+                {
+                    // Handle 'X' in:
+                    //   new TypeName() { X = 3 }
+                    return;
+                }
+
+                break;
+
+            case SyntaxKind.NameEquals:
+                if (((NameEqualsSyntax)context.Node.Parent).Name != context.Node)
+                    break;
+
+                switch (context.Node?.Parent?.Parent?.CSharpKind() ?? SyntaxKind.None)
+                {
+                case SyntaxKind.AttributeArgument:
+                case SyntaxKind.AnonymousObjectMemberDeclarator:
+                    return;
+
+                default:
+                    break;
+                }
+
+                break;
+
+            default:
+                break;
+            }
+
+            HandleIdentifierNameImpl(context, (IdentifierNameSyntax)context.Node);
+        }
+
+        private void HandleIdentifierNameImpl(SyntaxNodeAnalysisContext context, IdentifierNameSyntax nameExpression)
+        {
+            if (nameExpression == null)
+                return;
+
+            SymbolInfo symbolInfo = context.SemanticModel.GetSymbolInfo(nameExpression, context.CancellationToken);
+            ISymbol symbol = symbolInfo.Symbol;
+            if (symbol == null)
+                return;
+
+            if (symbol is ITypeSymbol)
+                return;
+
+            if (symbol.IsStatic)
+                return;
+
+            if (!(symbol.ContainingSymbol is ITypeSymbol))
+            {
+                // covers local variables, parameters, etc.
+                return;
+            }
+
+            IMethodSymbol methodSymbol = symbol as IMethodSymbol;
+            if (methodSymbol != null && methodSymbol.MethodKind == MethodKind.Constructor)
+                return;
+
+            // Prefix local calls with this
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, nameExpression.GetLocation()));
         }
     }
 }

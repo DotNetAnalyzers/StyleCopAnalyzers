@@ -172,6 +172,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReadabilityRules\SA1100CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists.cs" />
+    <Compile Include="ReadabilityRules\SA1101CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1101PrefixLocalCallsWithThis.cs" />
     <Compile Include="ReadabilityRules\SA1102QueryClauseMustFollowPreviousClause.cs" />
     <Compile Include="ReadabilityRules\SA1103QueryClausesMustBeOnSeparateLinesOrAllOnOneLine.cs" />
