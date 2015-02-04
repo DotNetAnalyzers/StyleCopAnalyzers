@@ -1023,6 +1023,59 @@ public class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
+        [Fact]
+        public async Task TestNoLeadingTrivia()
+        {
+            var testCode = @"public class Foo
+{
+    public string Bar()
+    {
+        string foo = """";
+        return(foo);
+    }
+}";
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 15),
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 15),
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 19)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"public class Foo
+{
+    public string Bar()
+    {
+        string foo = """";
+        return foo;
+    }
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+        }
+
+        [Fact]
+        public async Task TestCodeFixDoesNotRemoveSpaces()
+        {
+            var testCode = @"public class Foo
+{
+    public string Bar()
+    {
+        string foo = """";
+        return     (     foo     )     ;
+    }
+}";
+            var fixedCode = @"public class Foo
+{
+    public string Bar()
+    {
+        string foo = """";
+        return          foo          ;
+    }
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1119StatementMustNotUseUnnecessaryParenthesis();
