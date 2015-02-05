@@ -45,7 +45,7 @@
         private async Task TestEmptyConstructor(string modifiers)
         {
             var testCode = @"namespace FooNamespace
-{
+{{
     public class Foo<TFoo, TBar>
     {{
         /// 
@@ -58,7 +58,7 @@
         }}
     }}
 }}";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -319,7 +319,7 @@
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1642CodeFixProvider();
+            return new SA1642SA1643CodeFixProvider();
         }
     }
 }
