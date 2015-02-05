@@ -1,14 +1,13 @@
-﻿using System.Collections.Immutable;
-using System.Composition;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeActions;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Rename;
-
-namespace StyleCop.Analyzers.NamingRules
+﻿namespace StyleCop.Analyzers.NamingRules
 {
+    using System.Collections.Immutable;
+    using System.Composition;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CodeActions;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Helpers;
+
     [ExportCodeFixProvider(nameof(SA1309CodeFixProvider), LanguageNames.CSharp)]
     [Shared]
     public class SA1309CodeFixProvider : CodeFixProvider
@@ -23,6 +22,12 @@ namespace StyleCop.Analyzers.NamingRules
         }
 
         /// <inheritdoc/>
+        public override FixAllProvider GetFixAllProvider()
+        {
+            return WellKnownFixAllProviders.BatchFixer;
+        }
+
+        /// <inheritdoc/>
         public override async Task ComputeFixesAsync(CodeFixContext context)
         {
             foreach (var diagnostic in context.Diagnostics)
@@ -30,40 +35,18 @@ namespace StyleCop.Analyzers.NamingRules
                 if (!diagnostic.Id.Equals(SA1309FieldNamesMustNotBeginWithUnderscore.DiagnosticId))
                     continue;
 
-                var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-                var node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true,
-                    findInsideTrivia: true);
-                if (node.IsMissing)
-                {
+                var document = context.Document;
+                var root = await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+                var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
+                if (token.IsMissing)
                     continue;
-                }
 
-                var variable = node as VariableDeclaratorSyntax;
-                if (variable == null)
+                if (!string.IsNullOrEmpty(token.ValueText))
                 {
-                    return;
-                }
-
-                var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken);
-
-                var symbol = semanticModel?.GetDeclaredSymbol(variable, context.CancellationToken) as IFieldSymbol;
-                if (symbol == null || string.IsNullOrEmpty(symbol.Name))
-                {
-                    continue;
-                }
-
-                if (symbol.Name.StartsWith("_"))
-                {
-                    var newName = symbol.Name.Substring(1);
-
-                    var solution = context.Document.Project.Solution;
-                    var newSolution =
-                        await Renamer.RenameSymbolAsync(solution, symbol, newName, solution.Workspace.Options);
-
-                    context.RegisterFix(CodeAction.Create("Change field name to " + newName + ".", newSolution),
-                        diagnostic);
+                    var newName = token.ValueText.Substring(1);
+                    context.RegisterFix(CodeAction.Create($"Rename field to '{newName}'", cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken)),diagnostic);
                 }
             }
-        }
+        } 
     }
 }
