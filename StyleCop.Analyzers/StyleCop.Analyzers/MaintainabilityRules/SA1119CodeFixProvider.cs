@@ -3,6 +3,7 @@
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
@@ -37,36 +38,47 @@
         }
 
         /// <inheritdoc/>
-        public override async Task ComputeFixesAsync(CodeFixContext context)
+        public override Task ComputeFixesAsync(CodeFixContext context)
         {
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1119StatementMustNotUseUnnecessaryParenthesis.DiagnosticId))
                     continue;
 
-                var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-                SyntaxNode node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true, findInsideTrivia: true);
-                if (node.IsMissing)
-                    continue;
-                ParenthesizedExpressionSyntax syntax = node as ParenthesizedExpressionSyntax;
-                if (syntax != null)
-                {
-                    var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken);
-                    var leadingTrivia = syntax.OpenParenToken.GetAllTrivia().Concat(syntax.Expression.GetLeadingTrivia());
-                    var trailingTrivia = syntax.Expression.GetTrailingTrivia().Concat(syntax.CloseParenToken.GetAllTrivia());
-
-                    var newNode = syntax.Expression
-                        .WithLeadingTrivia(leadingTrivia)
-                        .WithTrailingTrivia(trailingTrivia)
-                        .WithoutFormatting();
-
-                    var newSyntaxRoot = syntaxRoot.ReplaceNode(syntax, newNode);
-
-                    var changedDocument = context.Document.WithSyntaxRoot(newSyntaxRoot);
-
-                    context.RegisterFix(CodeAction.Create("Remove parenthesis", changedDocument), diagnostic);
-                }
+                context.RegisterFix(CodeAction.Create("Remove parenthesis", cancellationToken => ComputeChangedDocumentAsync(context, diagnostic, cancellationToken)), diagnostic);
             }
+
+            return Task.FromResult(default(object));
+        }
+
+        private async Task<Document> ComputeChangedDocumentAsync(CodeFixContext context, Diagnostic diagnostic, CancellationToken cancellationToken)
+        {
+            var root = await context.Document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            SyntaxNode node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true, findInsideTrivia: true);
+            if (node.IsMissing)
+                return context.Document;
+
+            ParenthesizedExpressionSyntax syntax = node as ParenthesizedExpressionSyntax;
+            if (syntax != null)
+            {
+                var syntaxRoot = await context.Document.GetSyntaxRootAsync(cancellationToken);
+                var leadingTrivia = syntax.OpenParenToken.GetAllTrivia().Concat(syntax.Expression.GetLeadingTrivia());
+                var trailingTrivia = syntax.Expression.GetTrailingTrivia().Concat(syntax.CloseParenToken.GetAllTrivia());
+
+                var newNode = syntax.Expression
+                    .WithLeadingTrivia(leadingTrivia)
+                    .WithTrailingTrivia(trailingTrivia)
+                    .WithoutFormatting();
+
+                var newSyntaxRoot = syntaxRoot.ReplaceNode(syntax, newNode);
+
+                var changedDocument = context.Document.WithSyntaxRoot(newSyntaxRoot);
+
+                return changedDocument;
+            }
+
+            // no changes were made
+            return context.Document;
         }
     }
 }
