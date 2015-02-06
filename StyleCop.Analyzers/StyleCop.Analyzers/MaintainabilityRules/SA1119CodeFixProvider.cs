@@ -7,9 +7,9 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Formatting;
-    using StyleCop.Analyzers.SpacingRules;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1407ArithmeticExpressionsMustDeclarePrecedence"/>.
@@ -52,13 +52,16 @@
                 if (syntax != null)
                 {
                     var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken);
-                    var leadingTrivia = syntax.OpenParenToken.GetAllTrivia().Concat(syntax.Expression.GetLeadingTrivia());
+                    var leadingTrivia = syntax.OpenParenToken.GetAllTrivia().Concat(syntax.Expression.GetLeadingTrivia()).ToImmutableList();
                     var trailingTrivia = syntax.Expression.GetTrailingTrivia().Concat(syntax.CloseParenToken.GetAllTrivia());
+
+                    // Add an leading elastic marker so that Roslyn figures out if a whitespace is missing without parenthesis.
+                    // This does not remove whitespaces
+                    leadingTrivia = leadingTrivia.Add(SyntaxFactory.ElasticMarker);
 
                     var newNode = syntax.Expression
                         .WithLeadingTrivia(leadingTrivia)
-                        .WithTrailingTrivia(trailingTrivia)
-                        .WithoutFormatting();
+                        .WithTrailingTrivia(trailingTrivia);
 
                     var newSyntaxRoot = syntaxRoot.ReplaceNode(syntax, newNode);
 
