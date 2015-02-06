@@ -8,6 +8,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Formatting;
     using StyleCop.Analyzers.SpacingRules;
@@ -71,6 +72,11 @@
                     .WithoutFormatting();
 
                 var newSyntaxRoot = syntaxRoot.ReplaceNode(syntax, newNode);
+                if (!newSyntaxRoot.SyntaxTree.IsEquivalentTo(SyntaxFactory.ParseSyntaxTree(newSyntaxRoot.ToFullString())))
+                {
+                    newNode = newNode.WithLeadingTrivia(newNode.GetLeadingTrivia().Add(SyntaxFactory.Whitespace(" ", false)));
+                    newSyntaxRoot = syntaxRoot.ReplaceNode(syntax, newNode);
+                }
 
                 var changedDocument = context.Document.WithSyntaxRoot(newSyntaxRoot);
 
