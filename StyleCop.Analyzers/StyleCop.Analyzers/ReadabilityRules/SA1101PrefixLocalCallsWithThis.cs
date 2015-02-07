@@ -129,25 +129,39 @@
                 return;
 
             SymbolInfo symbolInfo = context.SemanticModel.GetSymbolInfo(nameExpression, context.CancellationToken);
-            ISymbol symbol = symbolInfo.Symbol;
-            if (symbol == null)
-                return;
-
-            if (symbol is ITypeSymbol)
-                return;
-
-            if (symbol.IsStatic)
-                return;
-
-            if (!(symbol.ContainingSymbol is ITypeSymbol))
+            ImmutableArray<ISymbol> symbolsToAnalyze;
+            if (symbolInfo.Symbol != null)
             {
-                // covers local variables, parameters, etc.
+                symbolsToAnalyze = ImmutableArray.Create(symbolInfo.Symbol);
+            }
+            else if (symbolInfo.CandidateReason == CandidateReason.MemberGroup)
+            {
+                // analyze the complete set of candidates, and use 'this.' if it applies to all
+                symbolsToAnalyze = symbolInfo.CandidateSymbols;
+            }
+            else
+            {
                 return;
             }
 
-            IMethodSymbol methodSymbol = symbol as IMethodSymbol;
-            if (methodSymbol != null && methodSymbol.MethodKind == MethodKind.Constructor)
-                return;
+            foreach (ISymbol symbol in symbolsToAnalyze)
+            {
+                if (symbol is ITypeSymbol)
+                    return;
+
+                if (symbol.IsStatic)
+                    return;
+
+                if (!(symbol.ContainingSymbol is ITypeSymbol))
+                {
+                    // covers local variables, parameters, etc.
+                    return;
+                }
+
+                IMethodSymbol methodSymbol = symbol as IMethodSymbol;
+                if (methodSymbol != null && methodSymbol.MethodKind == MethodKind.Constructor)
+                    return;
+            }
 
             // Prefix local calls with this
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, nameExpression.GetLocation()));
