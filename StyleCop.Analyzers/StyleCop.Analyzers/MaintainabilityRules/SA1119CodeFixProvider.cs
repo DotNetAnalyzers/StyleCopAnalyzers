@@ -12,7 +12,7 @@
     using StyleCop.Analyzers.SpacingRules;
 
     /// <summary>
-    /// Implements a code fix for <see cref="SA1407ArithmeticExpressionsMustDeclarePrecedence"/>.
+    /// Implements a code fix for <see cref="SA1119StatementMustNotUseUnnecessaryParenthesis"/>.
     /// </summary>
     /// <remarks>
     /// <para>To fix a violation of this rule, insert parenthesis within the arithmetic expression to declare the precedence of the operations.</para>
