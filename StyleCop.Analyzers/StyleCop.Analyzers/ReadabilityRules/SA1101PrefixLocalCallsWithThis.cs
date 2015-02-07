@@ -125,6 +125,9 @@
             if (nameExpression == null)
                 return;
 
+            if (!HasThis(nameExpression))
+                return;
+
             SymbolInfo symbolInfo = context.SemanticModel.GetSymbolInfo(nameExpression, context.CancellationToken);
             ISymbol symbol = symbolInfo.Symbol;
             if (symbol == null)
@@ -148,6 +151,51 @@
 
             // Prefix local calls with this
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, nameExpression.GetLocation()));
+        }
+
+        private bool HasThis(SyntaxNode node)
+        {
+            for (; node != null; node = node.Parent)
+            {
+                switch (node.CSharpKind())
+                {
+                case SyntaxKind.ClassDeclaration:
+                case SyntaxKind.InterfaceDeclaration:
+                case SyntaxKind.StructDeclaration:
+                case SyntaxKind.DelegateDeclaration:
+                case SyntaxKind.EnumDeclaration:
+                case SyntaxKind.NamespaceDeclaration:
+                    return false;
+
+                case SyntaxKind.FieldDeclaration:
+                case SyntaxKind.EventFieldDeclaration:
+                    return false;
+
+                case SyntaxKind.MultiLineDocumentationCommentTrivia:
+                case SyntaxKind.SingleLineDocumentationCommentTrivia:
+                    return false;
+
+                case SyntaxKind.EventDeclaration:
+                case SyntaxKind.PropertyDeclaration:
+                case SyntaxKind.IndexerDeclaration:
+                    BasePropertyDeclarationSyntax basePropertySyntax = (BasePropertyDeclarationSyntax)node;
+                    return !basePropertySyntax.Modifiers.Any(SyntaxKind.StaticKeyword);
+
+                case SyntaxKind.ConstructorDeclaration:
+                case SyntaxKind.DestructorDeclaration:
+                case SyntaxKind.MethodDeclaration:
+                    BaseMethodDeclarationSyntax baseMethodSyntax = (BaseMethodDeclarationSyntax)node;
+                    return !baseMethodSyntax.Modifiers.Any(SyntaxKind.StaticKeyword);
+
+                case SyntaxKind.Attribute:
+                    return false;
+
+                default:
+                    continue;
+                }
+            }
+
+            return false;
         }
     }
 }
