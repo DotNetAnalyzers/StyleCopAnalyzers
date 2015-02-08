@@ -13,7 +13,8 @@
     using SpacingRules;
 
     /// <summary>
-    /// Implements a code fix for <see cref="SA1642ConstructorSummaryDocumentationMustBeginWithStandardText"/>.
+    /// Implements a code fix for <see cref="SA1642ConstructorSummaryDocumentationMustBeginWithStandardText"/>
+    /// and <see cref="SA1643DestructorSummaryDocumentationMustBeginWithStandardText"/>.
     /// </summary>
     /// <remarks>
     /// <para>To fix a violation of this rule, add the standard documentation text.

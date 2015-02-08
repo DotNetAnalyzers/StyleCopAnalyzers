@@ -11,7 +11,7 @@
     using StyleCop.Analyzers.SpacingRules;
 
     /// <summary>
-    /// Implements a code fix for <see cref="SA1000KeywordsMustBeSpacedCorrectly"/>.
+    /// Implements a code fix for <see cref="SA1122UseStringEmptyForEmptyStrings"/>.
     /// </summary>
     /// <remarks>
     /// <para>To fix a violation of this rule, add or remove a space after the keyword, according to the description
