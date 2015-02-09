@@ -1,5 +1,6 @@
-﻿namespace StyleCop.Analyzers.MaintainabilityRules
+﻿namespace StyleCop.Analyzers.Helpers
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -9,9 +10,24 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using SpacingRules;
 
-    internal sealed class SA1407SA1408FixAllProvider : FixAllProvider
+    internal sealed class RobustFixAllProvider : FixAllProvider
     {
-        private static readonly SyntaxAnnotation NeedsParenthesisAnnotation = new SyntaxAnnotation("StyleCop.NeedsParenthesis");
+        private static readonly SyntaxAnnotation Annotation = new SyntaxAnnotation("StyleCop.Annotations.FixAllAnnotation");
+
+        private string codeActionText;
+
+        private Func<SyntaxNode, SyntaxNode, SyntaxNode> replaceNode;
+
+        public RobustFixAllProvider(string codeActionText, Func<SyntaxNode, SyntaxNode, SyntaxNode> replaceNode)
+        {
+            if (replaceNode == null)
+            {
+                throw new ArgumentNullException(nameof(replaceNode));
+            }
+
+            this.codeActionText = codeActionText;
+            this.replaceNode = replaceNode;
+        }
 
         public override async Task<CodeAction> GetFixAsync(FixAllContext fixAllContext)
         {
@@ -19,11 +35,11 @@
             {
             case FixAllScope.Document:
                 var newRoot = await FixAllInDocumentAsync(fixAllContext, fixAllContext.Document);
-                return CodeAction.Create("Add parentheses", fixAllContext.Document.WithSyntaxRoot(newRoot));
+                return CodeAction.Create(codeActionText, fixAllContext.Document.WithSyntaxRoot(newRoot));
 
             case FixAllScope.Project:
                 Solution solution = await GetProjectFixesAsync(fixAllContext, fixAllContext.Project);
-                return CodeAction.Create("Add parentheses", solution);
+                return CodeAction.Create(codeActionText, solution);
 
             case FixAllScope.Solution:
                 var newSolution = fixAllContext.Solution;
@@ -32,7 +48,7 @@
                 {
                     newSolution = await GetProjectFixesAsync(fixAllContext, newSolution.GetProject(projectIds[i]));
                 }
-                return CodeAction.Create("Add parentheses", newSolution);
+                return CodeAction.Create(codeActionText, newSolution);
 
             case FixAllScope.Custom:
             default:
@@ -66,8 +82,8 @@
 
             var root = await newDocument.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
 
-            // First annotate all expressions that need parenthesis with a temporary annotation.
-            // With this annotation we can find the nodes that need parenthesis even if
+            // First annotate all expressions that have to be replaced with a temporary annotation.
+            // With this annotation we can find the nodes even if
             // the source span changes.
             foreach (var diagnostic in diagnostics)
             {
@@ -75,25 +91,10 @@
                 if (node.IsMissing)
                     continue;
 
-                root = root.ReplaceNode(node, node.WithAdditionalAnnotations(NeedsParenthesisAnnotation));
+                root = root.ReplaceNode(node, node.WithAdditionalAnnotations(Annotation));
             }
 
-            return root.ReplaceNodes(root.GetAnnotatedNodes(NeedsParenthesisAnnotation), AddParentheses);
-        }
-
-        private SyntaxNode AddParentheses(SyntaxNode originalNode, SyntaxNode rewrittenNode)
-        {
-            BinaryExpressionSyntax syntax = rewrittenNode as BinaryExpressionSyntax;
-            if (syntax == null)
-                return rewrittenNode;
-
-            BinaryExpressionSyntax trimmedSyntax = syntax
-                .WithoutTrivia()
-                .WithoutAnnotations(NeedsParenthesisAnnotation.Kind);
-
-            return SyntaxFactory.ParenthesizedExpression(trimmedSyntax)
-                .WithTriviaFrom(syntax)
-                .WithoutFormatting();
+            return root.ReplaceNodes(root.GetAnnotatedNodes(Annotation), (s1, s2) => replaceNode(s1.WithoutAnnotations(Annotation), s2.WithoutAnnotations(Annotation)));
         }
     }
 }
