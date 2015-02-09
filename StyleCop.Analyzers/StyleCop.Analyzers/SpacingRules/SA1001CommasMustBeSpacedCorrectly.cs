@@ -87,9 +87,8 @@
             }
 
             bool hasPrecedingSpace = false;
-            if (!token.HasLeadingTrivia)
+            if (!token.IsFirstTokenOnLine(context.CancellationToken))
             {
-                // only the first token on the line has leading trivia, and those are ignored
                 SyntaxToken precedingToken = token.GetPreviousToken();
                 if (precedingToken.HasTrailingTrivia)
                     hasPrecedingSpace = true;
