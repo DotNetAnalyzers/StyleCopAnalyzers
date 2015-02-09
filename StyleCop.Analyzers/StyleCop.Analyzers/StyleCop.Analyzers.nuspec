@@ -11,7 +11,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>An implementation of StyleCop's rules using Roslyn analyzers and code fixes</description>
     <releaseNotes>https://github.com/DotNetAnalyzers/StyleCopAnalyzers/releases/${version}</releaseNotes>
-    <copyright>Copyright Sam Harwell 2014</copyright>
+    <copyright>Copyright Sam Harwell 2015</copyright>
     <tags>StyleCop DotNetAnalyzers Roslyn Diagnostic Analyzer</tags>
   </metadata>
   <files>
