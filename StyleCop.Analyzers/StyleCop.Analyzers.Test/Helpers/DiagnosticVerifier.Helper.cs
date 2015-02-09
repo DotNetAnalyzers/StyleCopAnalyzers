@@ -207,8 +207,7 @@ namespace TestHelper
             {
                 return Combine(obj.Descriptor,
                          Combine(obj.Location.GetHashCode(),
-                          Combine(obj.Severity.GetHashCode(), obj.WarningLevel)
-                        ));
+                          Combine(obj.Severity.GetHashCode(), obj.WarningLevel)));
             }
 
             int Combine<T>(T newKeyPart, int currentKey) where T : class
