@@ -8,6 +8,7 @@
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.SpacingRules;
 
     /// <summary>
@@ -30,9 +31,24 @@
         }
 
         /// <inheritdoc/>
+        /// 
         public override FixAllProvider GetFixAllProvider()
         {
-            return new SA1407SA1408FixAllProvider();
+            return new RobustFixAllProvider("Add parenthesis", AddParenthesis);
+        }
+        
+        private SyntaxNode AddParenthesis(SyntaxNode originalNode, SyntaxNode rewrittenNode)
+        {
+            BinaryExpressionSyntax syntax = rewrittenNode as BinaryExpressionSyntax;
+            if (syntax == null)
+                return rewrittenNode;
+
+            BinaryExpressionSyntax trimmedSyntax = syntax
+                .WithoutTrivia();
+
+            return SyntaxFactory.ParenthesizedExpression(trimmedSyntax)
+                .WithTriviaFrom(syntax)
+                .WithoutFormatting();
         }
 
         /// <inheritdoc/>
