@@ -21,7 +21,7 @@
     [Shared]
     public class SA1121CodeFixProvider : CodeFixProvider
     {
-        static readonly Dictionary<SpecialType, SyntaxKind> _predefinedSpecialTypes = new Dictionary<SpecialType, SyntaxKind>
+        private static readonly Dictionary<SpecialType, SyntaxKind> _predefinedSpecialTypes = new Dictionary<SpecialType, SyntaxKind>
         {
             [SpecialType.System_Boolean] = SyntaxKind.BoolKeyword,
             [SpecialType.System_Byte] = SyntaxKind.ByteKeyword,

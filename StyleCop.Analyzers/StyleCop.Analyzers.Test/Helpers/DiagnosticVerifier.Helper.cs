@@ -195,7 +195,7 @@ namespace TestHelper
         /// A little helper to be able to use Enumerable.Distinct. Currently Roslyn does have a bug so that Diagnostic.GetHashCode()
         /// is not implemented correctly. <see href="https://github.com/dotnet/roslyn/issues/57"/>.
         /// </summary>
-        struct DiagnosticEqualityComparer : IEqualityComparer<Diagnostic>
+        private struct DiagnosticEqualityComparer : IEqualityComparer<Diagnostic>
         {
             public bool Equals(Diagnostic x, Diagnostic y)
             {
@@ -210,7 +210,7 @@ namespace TestHelper
                           Combine(obj.Severity.GetHashCode(), obj.WarningLevel)));
             }
 
-            int Combine<T>(T newKeyPart, int currentKey) where T : class
+            private int Combine<T>(T newKeyPart, int currentKey) where T : class
             {
                 int hash = unchecked(currentKey * (int)0xA5555529);
 
@@ -221,7 +221,7 @@ namespace TestHelper
 
                 return hash;
             }
-            int Combine(int newKey, int currentKey)
+            private int Combine(int newKey, int currentKey)
             {
                 return unchecked((currentKey * (int)0xA5555529) + newKey);
             }

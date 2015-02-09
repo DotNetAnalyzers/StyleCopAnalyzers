@@ -18,12 +18,12 @@
     [TestClass]
     public class SA1121UnitTests : CodeFixVerifier
     {
-        static readonly Tuple<string, string>[] _referenceTypes = new Tuple<string, string>[]
+        private static readonly Tuple<string, string>[] _referenceTypes = new Tuple<string, string>[]
         {
             new Tuple<string,string>("object", nameof(Object)),
             new Tuple<string,string>("string", nameof(String))
         };
-        static readonly Tuple<string, string>[] _valueTypes = new Tuple<string, string>[]
+        private static readonly Tuple<string, string>[] _valueTypes = new Tuple<string, string>[]
         {
             new Tuple<string,string>("bool", nameof(Boolean)),
             new Tuple<string,string>("byte", nameof(Byte)),
@@ -39,7 +39,7 @@
             new Tuple<string,string>("uint", nameof(UInt32)),
             new Tuple<string,string>("ulong", nameof(UInt64))
         };
-        static readonly Tuple<string, string>[] _enumBaseTypes = new Tuple<string, string>[]
+        private static readonly Tuple<string, string>[] _enumBaseTypes = new Tuple<string, string>[]
         {
             new Tuple<string,string>("byte", nameof(Byte)),
             new Tuple<string,string>("short", nameof(Int16)),
@@ -50,7 +50,7 @@
             new Tuple<string,string>("uint", nameof(UInt32)),
             new Tuple<string,string>("ulong", nameof(UInt64))
         };
-        static readonly Tuple<string, string>[] _allTypes = _referenceTypes.Concat(_valueTypes).ToArray();
+        private static readonly Tuple<string, string>[] _allTypes = _referenceTypes.Concat(_valueTypes).ToArray();
 
 
         public string DiagnosticId { get; } = SA1121UseBuiltInTypeAlias.DiagnosticId;
