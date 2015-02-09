@@ -23,7 +23,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\StyleCop.Analyzers.xml</DocumentationFile>
-    <CodeAnalysisRuleSet>StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,7 +33,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\StyleCop.Analyzers.xml</DocumentationFile>
-    <CodeAnalysisRuleSet>StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -254,12 +254,14 @@
     <None Include="..\..\build\keys\StyleCopAnalyzers.snk">
       <Link>StyleCopAnalyzers.snk</Link>
     </None>
+    <None Include="..\StyleCop.Analyzers.ruleset">
+      <Link>StyleCop.Analyzers.ruleset</Link>
+    </None>
     <None Include="packages.config" />
     <None Include="StyleCop.Analyzers.nuspec">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="StyleCop.Analyzers.ruleset" />
     <None Include="tools\install.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
