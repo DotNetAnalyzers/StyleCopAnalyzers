@@ -70,16 +70,11 @@
             if (token.Parent.CSharpKind() != SyntaxKind.NullableType)
                 return;
 
-            bool hasPrecedingSpace = false;
-            if (!token.HasLeadingTrivia)
-            {
-                // only the first token on the line has leading trivia, and those are ignored
-                SyntaxToken precedingToken = token.GetPreviousToken();
-                if (precedingToken.HasTrailingTrivia)
-                    hasPrecedingSpace = true;
-            }
+            if (token.IsFirstTokenOnLine(context.CancellationToken))
+                return;
 
-            if (hasPrecedingSpace)
+            SyntaxToken precedingToken = token.GetPreviousToken();
+            if (precedingToken.HasTrailingTrivia)
             {
                 // nullable type symbol must not be preceded by a space
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));
