@@ -26,7 +26,7 @@
     <Prefer32Bit>false</Prefer32Bit>
     <DocumentationFile>bin\Debug\StyleCop.Analyzers.Test.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
-    <CodeAnalysisRuleSet>StyleCop.Analyzers.Test.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -38,7 +38,7 @@
     <Prefer32Bit>false</Prefer32Bit>
     <DocumentationFile>bin\Release\StyleCop.Analyzers.Test.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
-    <CodeAnalysisRuleSet>StyleCop.Analyzers.Test.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CodeAnalysis, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -156,8 +156,10 @@
     <Compile Include="Verifiers\DiagnosticVerifier.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\StyleCop.Analyzers.ruleset">
+      <Link>StyleCop.Analyzers.ruleset</Link>
+    </None>
     <None Include="packages.config" />
-    <None Include="StyleCop.Analyzers.Test.ruleset" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\StyleCop.Analyzers\StyleCop.Analyzers.csproj">
