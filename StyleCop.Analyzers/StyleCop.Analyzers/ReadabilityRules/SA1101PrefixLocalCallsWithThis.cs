@@ -113,6 +113,10 @@
 
                 break;
 
+            case SyntaxKind.MemberBindingExpression:
+                // this doesn't need to be handled
+                return;
+
             default:
                 break;
             }

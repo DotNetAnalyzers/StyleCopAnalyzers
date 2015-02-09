@@ -121,6 +121,10 @@
                     BaseInstanceFieldName = BaseInstanceFieldName,
                     BaseInstancePropertyName = BaseInstancePropertyName,
                 }
+
+                // the following line is a regression test for #464
+                // https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/464
+                var conditional = this?.BaseInstanceFieldName;
             }
         }
         ";
@@ -232,6 +236,10 @@
                     BaseInstanceFieldName = this.BaseInstanceFieldName,
                     BaseInstancePropertyName = this.BaseInstancePropertyName,
                 }
+
+                // the following line is a regression test for #464
+                // https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/464
+                var conditional = this?.BaseInstanceFieldName;
             }
         }
         ";
