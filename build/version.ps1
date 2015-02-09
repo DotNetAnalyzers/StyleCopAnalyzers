@@ -1,1 +1,1 @@
-$Version = "1.0.0-alpha002"
+$Version = "1.0.0-dev"
