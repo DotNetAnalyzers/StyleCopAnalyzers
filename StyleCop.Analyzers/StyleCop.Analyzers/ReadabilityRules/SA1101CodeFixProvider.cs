@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.ReadabilityRules
 {
+    using System;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
@@ -9,6 +10,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using SpacingRules;
+    using StyleCop.Analyzers.Helpers;
 
     [ExportCodeFixProvider(nameof(SA1101PrefixLocalCallsWithThis), LanguageNames.CSharp)]
     [Shared]
@@ -26,8 +28,19 @@
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return WellKnownFixAllProviders.BatchFixer;
+            return new RobustFixAllProvider("Prefix reference with 'this.'", Prefix);
         }
+
+        private SyntaxNode Prefix(SyntaxNode originalNode, SyntaxNode rewrittenNode)
+        {
+            var qualifiedExpression =
+                      SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.ThisExpression(), rewrittenNode.WithoutTrivia().WithoutFormatting() as SimpleNameSyntax)
+                      .WithTriviaFrom(rewrittenNode)
+                      .WithoutFormatting();
+
+            return qualifiedExpression;
+        }
+
 
         /// <inheritdoc/>
         public override async Task ComputeFixesAsync(CodeFixContext context)
