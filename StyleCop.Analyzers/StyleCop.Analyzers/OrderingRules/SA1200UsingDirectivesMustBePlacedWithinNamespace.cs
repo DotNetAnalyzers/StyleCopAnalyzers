@@ -172,7 +172,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleCompilationUnitSyntax, SyntaxKind.CompilationUnit);
+            context.RegisterSyntaxNodeAction(this.HandleCompilationUnitSyntax, SyntaxKind.CompilationUnit);
         }
 
         private void HandleCompilationUnitSyntax(SyntaxNodeAnalysisContext context)

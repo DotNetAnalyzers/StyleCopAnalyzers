@@ -47,7 +47,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSymbolAction(HandleFieldDeclaration, SymbolKind.Field);
+            context.RegisterSymbolAction(this.HandleFieldDeclaration, SymbolKind.Field);
         }
 
         private void HandleFieldDeclaration(SymbolAnalysisContext context)

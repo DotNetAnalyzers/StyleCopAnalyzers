@@ -55,21 +55,21 @@
             // Note: Interfaces are handled by SA1302
             // Note: Fields are handled by SA1303 through SA1311
 
-            context.RegisterSyntaxNodeAction(HandleNamespaceDeclarationSyntax, SyntaxKind.NamespaceDeclaration);
-            context.RegisterSyntaxNodeAction(HandleClassDeclarationSyntax, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeAction(HandleEnumDeclarationSyntax, SyntaxKind.EnumDeclaration);
-            context.RegisterSyntaxNodeAction(HandleStructDeclarationSyntax, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeAction(HandleDelegateDeclarationSyntax, SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeAction(HandleEventDeclarationSyntax, SyntaxKind.EventDeclaration);
-            context.RegisterSyntaxNodeAction(HandleEventFieldDeclarationSyntax, SyntaxKind.EventFieldDeclaration);
-            context.RegisterSyntaxNodeAction(HandleMethodDeclarationSyntax, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeAction(HandlePropertyDeclarationSyntax, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleNamespaceDeclarationSyntax, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleClassDeclarationSyntax, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleEnumDeclarationSyntax, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleStructDeclarationSyntax, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleDelegateDeclarationSyntax, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleEventDeclarationSyntax, SyntaxKind.EventDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleEventFieldDeclarationSyntax, SyntaxKind.EventFieldDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleMethodDeclarationSyntax, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandlePropertyDeclarationSyntax, SyntaxKind.PropertyDeclaration);
         }
 
         private void HandleNamespaceDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
             NameSyntax nameSyntax = ((NamespaceDeclarationSyntax)context.Node).Name;
-            CheckNameSyntax(context, nameSyntax);
+            this.CheckNameSyntax(context, nameSyntax);
         }
 
         private void CheckNameSyntax(SyntaxNodeAnalysisContext context, NameSyntax nameSyntax)
@@ -80,15 +80,15 @@
             QualifiedNameSyntax qualifiedNameSyntax = nameSyntax as QualifiedNameSyntax;
             if (qualifiedNameSyntax != null)
             {
-                CheckNameSyntax(context, qualifiedNameSyntax.Left);
-                CheckNameSyntax(context, qualifiedNameSyntax.Right);
+                this.CheckNameSyntax(context, qualifiedNameSyntax.Left);
+                this.CheckNameSyntax(context, qualifiedNameSyntax.Right);
                 return;
             }
 
             SimpleNameSyntax simpleNameSyntax = nameSyntax as SimpleNameSyntax;
             if (simpleNameSyntax != null)
             {
-                CheckElementNameToken(context, simpleNameSyntax.Identifier);
+                this.CheckElementNameToken(context, simpleNameSyntax.Identifier);
                 return;
             }
 
@@ -97,27 +97,27 @@
 
         private void HandleClassDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            CheckElementNameToken(context, ((ClassDeclarationSyntax)context.Node).Identifier);
+            this.CheckElementNameToken(context, ((ClassDeclarationSyntax)context.Node).Identifier);
         }
 
         private void HandleEnumDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            CheckElementNameToken(context, ((EnumDeclarationSyntax)context.Node).Identifier);
+            this.CheckElementNameToken(context, ((EnumDeclarationSyntax)context.Node).Identifier);
         }
 
         private void HandleStructDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            CheckElementNameToken(context, ((StructDeclarationSyntax)context.Node).Identifier);
+            this.CheckElementNameToken(context, ((StructDeclarationSyntax)context.Node).Identifier);
         }
 
         private void HandleDelegateDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            CheckElementNameToken(context, ((DelegateDeclarationSyntax)context.Node).Identifier);
+            this.CheckElementNameToken(context, ((DelegateDeclarationSyntax)context.Node).Identifier);
         }
 
         private void HandleEventDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            CheckElementNameToken(context, ((EventDeclarationSyntax)context.Node).Identifier);
+            this.CheckElementNameToken(context, ((EventDeclarationSyntax)context.Node).Identifier);
         }
 
         private void HandleEventFieldDeclarationSyntax(SyntaxNodeAnalysisContext context)
@@ -132,18 +132,18 @@
                 if (declarator == null || declarator.IsMissing)
                     continue;
 
-                CheckElementNameToken(context, declarator.Identifier);
+                this.CheckElementNameToken(context, declarator.Identifier);
             }
         }
 
         private void HandleMethodDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            CheckElementNameToken(context, ((MethodDeclarationSyntax)context.Node).Identifier);
+            this.CheckElementNameToken(context, ((MethodDeclarationSyntax)context.Node).Identifier);
         }
 
         private void HandlePropertyDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            CheckElementNameToken(context, ((PropertyDeclarationSyntax)context.Node).Identifier);
+            this.CheckElementNameToken(context, ((PropertyDeclarationSyntax)context.Node).Identifier);
         }
 
         private void CheckElementNameToken(SyntaxNodeAnalysisContext context, SyntaxToken identifier)

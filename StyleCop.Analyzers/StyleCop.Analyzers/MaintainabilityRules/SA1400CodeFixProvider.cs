@@ -51,59 +51,59 @@
                 switch (declarationNode.CSharpKind())
                 {
                 case SyntaxKind.ClassDeclaration:
-                    updatedDeclarationNode = HandleClassDeclaration((ClassDeclarationSyntax)declarationNode);
+                    updatedDeclarationNode = this.HandleClassDeclaration((ClassDeclarationSyntax)declarationNode);
                     break;
 
                 case SyntaxKind.InterfaceDeclaration:
-                    updatedDeclarationNode = HandleInterfaceDeclaration((InterfaceDeclarationSyntax)declarationNode);
+                    updatedDeclarationNode = this.HandleInterfaceDeclaration((InterfaceDeclarationSyntax)declarationNode);
                     break;
 
                 case SyntaxKind.EnumDeclaration:
-                    updatedDeclarationNode = HandleEnumDeclaration((EnumDeclarationSyntax)declarationNode);
+                    updatedDeclarationNode = this.HandleEnumDeclaration((EnumDeclarationSyntax)declarationNode);
                     break;
 
                 case SyntaxKind.StructDeclaration:
-                    updatedDeclarationNode = HandleStructDeclaration((StructDeclarationSyntax)declarationNode);
+                    updatedDeclarationNode = this.HandleStructDeclaration((StructDeclarationSyntax)declarationNode);
                     break;
 
                 case SyntaxKind.DelegateDeclaration:
-                    updatedDeclarationNode = HandleDelegateDeclaration((DelegateDeclarationSyntax)declarationNode);
+                    updatedDeclarationNode = this.HandleDelegateDeclaration((DelegateDeclarationSyntax)declarationNode);
                     break;
 
                 case SyntaxKind.EventDeclaration:
-                    updatedDeclarationNode = HandleEventDeclaration((EventDeclarationSyntax)declarationNode);
+                    updatedDeclarationNode = this.HandleEventDeclaration((EventDeclarationSyntax)declarationNode);
                     break;
 
                 case SyntaxKind.EventFieldDeclaration:
-                    updatedDeclarationNode = HandleEventFieldDeclaration((EventFieldDeclarationSyntax)declarationNode);
+                    updatedDeclarationNode = this.HandleEventFieldDeclaration((EventFieldDeclarationSyntax)declarationNode);
                     break;
 
                 case SyntaxKind.MethodDeclaration:
-                    updatedDeclarationNode = HandleMethodDeclaration((MethodDeclarationSyntax)declarationNode);
+                    updatedDeclarationNode = this.HandleMethodDeclaration((MethodDeclarationSyntax)declarationNode);
                     break;
 
                 case SyntaxKind.PropertyDeclaration:
-                    updatedDeclarationNode = HandlePropertyDeclaration((PropertyDeclarationSyntax)declarationNode);
+                    updatedDeclarationNode = this.HandlePropertyDeclaration((PropertyDeclarationSyntax)declarationNode);
                     break;
 
                 case SyntaxKind.FieldDeclaration:
-                    updatedDeclarationNode = HandleFieldDeclaration((FieldDeclarationSyntax)declarationNode);
+                    updatedDeclarationNode = this.HandleFieldDeclaration((FieldDeclarationSyntax)declarationNode);
                     break;
 
                 case SyntaxKind.OperatorDeclaration:
-                    updatedDeclarationNode = HandleOperatorDeclaration((OperatorDeclarationSyntax)declarationNode);
+                    updatedDeclarationNode = this.HandleOperatorDeclaration((OperatorDeclarationSyntax)declarationNode);
                     break;
 
                 case SyntaxKind.ConversionOperatorDeclaration:
-                    updatedDeclarationNode = HandleConversionOperatorDeclaration((ConversionOperatorDeclarationSyntax)declarationNode);
+                    updatedDeclarationNode = this.HandleConversionOperatorDeclaration((ConversionOperatorDeclarationSyntax)declarationNode);
                     break;
 
                 case SyntaxKind.IndexerDeclaration:
-                    updatedDeclarationNode = HandleIndexerDeclaration((IndexerDeclarationSyntax)declarationNode);
+                    updatedDeclarationNode = this.HandleIndexerDeclaration((IndexerDeclarationSyntax)declarationNode);
                     break;
 
                 case SyntaxKind.ConstructorDeclaration:
-                    updatedDeclarationNode = HandleConstructorDeclaration((ConstructorDeclarationSyntax)declarationNode);
+                    updatedDeclarationNode = this.HandleConstructorDeclaration((ConstructorDeclarationSyntax)declarationNode);
                     break;
 
                 default:

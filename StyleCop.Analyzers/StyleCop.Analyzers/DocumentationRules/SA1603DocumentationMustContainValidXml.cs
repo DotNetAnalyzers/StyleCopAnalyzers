@@ -49,9 +49,9 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleXmlElement, SyntaxKind.XmlElement);
-            context.RegisterSyntaxNodeAction(HandleXmlEmptyElement, SyntaxKind.XmlEmptyElement);
-            context.RegisterSyntaxNodeAction(HandleXmlCDataSection, SyntaxKind.XmlCDataSection);
+            context.RegisterSyntaxNodeAction(this.HandleXmlElement, SyntaxKind.XmlElement);
+            context.RegisterSyntaxNodeAction(this.HandleXmlEmptyElement, SyntaxKind.XmlEmptyElement);
+            context.RegisterSyntaxNodeAction(this.HandleXmlCDataSection, SyntaxKind.XmlCDataSection);
         }
 
         private void HandleXmlElement(SyntaxNodeAnalysisContext context)

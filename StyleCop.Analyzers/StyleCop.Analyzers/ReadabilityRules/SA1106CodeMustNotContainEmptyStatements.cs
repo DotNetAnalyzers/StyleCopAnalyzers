@@ -41,7 +41,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleEmptyStatementSyntax, SyntaxKind.EmptyStatement);
+            context.RegisterSyntaxNodeAction(this.HandleEmptyStatementSyntax, SyntaxKind.EmptyStatement);
         }
 
         private void HandleEmptyStatementSyntax(SyntaxNodeAnalysisContext context)

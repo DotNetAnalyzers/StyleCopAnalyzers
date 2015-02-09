@@ -16,10 +16,10 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeAction(HandleTypeDeclaration, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeAction(HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
-            context.RegisterSyntaxNodeAction(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleTypeDeclaration, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
         }
 
         private static XmlNodeSyntax GetTopLevelElement(DocumentationCommentTriviaSyntax syntax, string tagName)
@@ -44,7 +44,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            HandleDeclaration(context, node, node.Identifier.GetLocation());
+            this.HandleDeclaration(context, node, node.Identifier.GetLocation());
         }
 
         private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
@@ -59,7 +59,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            HandleDeclaration(context, node, node.Identifier.GetLocation());
+            this.HandleDeclaration(context, node, node.Identifier.GetLocation());
         }
 
         private void HandleDeclaration(SyntaxNodeAnalysisContext context, SyntaxNode node, params Location[] locations)
@@ -81,7 +81,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             if (xmlElement == null)
                 xmlElement = GetTopLevelElement(documentation, XmlCommentHelper.ContentXmlTag);
 
-            HandleXmlElement(context, xmlElement, locations);
+            this.HandleXmlElement(context, xmlElement, locations);
         }
     }
 }

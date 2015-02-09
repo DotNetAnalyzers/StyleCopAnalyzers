@@ -43,14 +43,14 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSymbolAction(AnalyzeField, SymbolKind.Field);
+            context.RegisterSymbolAction(this.AnalyzeField, SymbolKind.Field);
         }
 
         private void AnalyzeField(SymbolAnalysisContext symbolAnalysisContext)
         {
             var fieldDeclarationSyntax = (IFieldSymbol)symbolAnalysisContext.Symbol;
-            if (!IsFieldPrivate(fieldDeclarationSyntax) &&
-                IsParentAClass(fieldDeclarationSyntax) &&
+            if (!this.IsFieldPrivate(fieldDeclarationSyntax) &&
+                this.IsParentAClass(fieldDeclarationSyntax) &&
                 !fieldDeclarationSyntax.IsConst)
             {
                 symbolAnalysisContext.ReportDiagnostic(Diagnostic.Create(Descriptor, fieldDeclarationSyntax.Locations[0]));

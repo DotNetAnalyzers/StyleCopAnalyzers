@@ -41,7 +41,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleFieldDeclarationm, SyntaxKind.FieldDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleFieldDeclarationm, SyntaxKind.FieldDeclaration);
         }
 
         private void HandleFieldDeclarationm(SyntaxNodeAnalysisContext context)

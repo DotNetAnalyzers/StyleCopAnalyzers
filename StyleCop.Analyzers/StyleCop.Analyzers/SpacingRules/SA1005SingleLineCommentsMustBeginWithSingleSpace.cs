@@ -70,7 +70,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(HandleSyntaxTree);
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -81,7 +81,7 @@
                 switch (trivia.CSharpKind())
                 {
                 case SyntaxKind.SingleLineCommentTrivia:
-                    HandleSingleLineCommentTrivia(context, trivia);
+                    this.HandleSingleLineCommentTrivia(context, trivia);
                     break;
 
                 default:

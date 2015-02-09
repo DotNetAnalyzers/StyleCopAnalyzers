@@ -45,7 +45,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(HandleSyntaxTree);
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -56,7 +56,7 @@
                 switch (token.CSharpKind())
                 {
                 case SyntaxKind.NewKeyword:
-                    HandleNewKeywordToken(context, token);
+                    this.HandleNewKeywordToken(context, token);
                     break;
 
                 default:
@@ -73,7 +73,7 @@
             if (!token.Parent.IsKind(SyntaxKind.ImplicitArrayCreationExpression))
                 return;
 
-            HandleDisallowedSpaceToken(context, token);
+            this.HandleDisallowedSpaceToken(context, token);
         }
 
         private void HandleDisallowedSpaceToken(SyntaxTreeAnalysisContext context, SyntaxToken token)

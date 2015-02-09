@@ -54,8 +54,8 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleMemberAccessExpression, SyntaxKind.SimpleMemberAccessExpression);
-            context.RegisterSyntaxNodeAction(HandleIdentifierName, SyntaxKind.IdentifierName);
+            context.RegisterSyntaxNodeAction(this.HandleMemberAccessExpression, SyntaxKind.SimpleMemberAccessExpression);
+            context.RegisterSyntaxNodeAction(this.HandleIdentifierName, SyntaxKind.IdentifierName);
         }
 
         /// <summary>
@@ -66,7 +66,7 @@
         {
             MemberAccessExpressionSyntax syntax = (MemberAccessExpressionSyntax)context.Node;
             IdentifierNameSyntax nameExpression = syntax.Expression as IdentifierNameSyntax;
-            HandleIdentifierNameImpl(context, nameExpression);
+            this.HandleIdentifierNameImpl(context, nameExpression);
         }
 
         private void HandleIdentifierName(SyntaxNodeAnalysisContext context)
@@ -121,7 +121,7 @@
                 break;
             }
 
-            HandleIdentifierNameImpl(context, (IdentifierNameSyntax)context.Node);
+            this.HandleIdentifierNameImpl(context, (IdentifierNameSyntax)context.Node);
         }
 
         private void HandleIdentifierNameImpl(SyntaxNodeAnalysisContext context, IdentifierNameSyntax nameExpression)
@@ -129,7 +129,7 @@
             if (nameExpression == null)
                 return;
 
-            if (!HasThis(nameExpression))
+            if (!this.HasThis(nameExpression))
                 return;
 
             SymbolInfo symbolInfo = context.SemanticModel.GetSymbolInfo(nameExpression, context.CancellationToken);

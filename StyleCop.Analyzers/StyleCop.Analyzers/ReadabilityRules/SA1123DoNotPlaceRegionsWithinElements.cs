@@ -44,7 +44,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(HandleSyntaxTree);
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -55,7 +55,7 @@
                 switch (trivia.CSharpKind())
                 {
                 case SyntaxKind.RegionDirectiveTrivia:
-                    HandleRegionDirectiveTrivia(context, trivia);
+                    this.HandleRegionDirectiveTrivia(context, trivia);
                     break;
 
                 default:

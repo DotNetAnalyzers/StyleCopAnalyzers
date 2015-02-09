@@ -45,13 +45,13 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleMethodCall, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeAction(this.HandleMethodCall, SyntaxKind.InvocationExpression);
         }
 
         private void HandleMethodCall(SyntaxNodeAnalysisContext context)
         {
             // Debug.Fail is not availible in a portable library. So no nameof(Debug.Fail) here
-            HandleMethodCall(context, "Fail", 0, Descriptor);
+            this.HandleMethodCall(context, "Fail", 0, Descriptor);
         }
     }
 }

@@ -43,7 +43,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(HandleSyntaxTree);
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -55,7 +55,7 @@
                 {
                 case SyntaxKind.MinusMinusToken:
                 case SyntaxKind.PlusPlusToken:
-                    HandleIncrementDecrementToken(context, token);
+                    this.HandleIncrementDecrementToken(context, token);
                     break;
 
                 default:

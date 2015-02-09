@@ -62,7 +62,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleEnumMember, SyntaxKind.EnumMemberDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleEnumMember, SyntaxKind.EnumMemberDeclaration);
         }
 
         private void HandleEnumMember(SyntaxNodeAnalysisContext context)

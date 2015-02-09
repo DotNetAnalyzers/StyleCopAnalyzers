@@ -83,7 +83,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleDestructor, SyntaxKind.DestructorDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleDestructor, SyntaxKind.DestructorDeclaration);
         }
 
         private void HandleDestructor(SyntaxNodeAnalysisContext context)
@@ -92,7 +92,7 @@
 
             if (destructorDeclaration != null)
             {
-                HandleDeclaration(context, DestructorStandardText[0], DestructorStandardText[1], true);
+                this.HandleDeclaration(context, DestructorStandardText[0], DestructorStandardText[1], true);
             }
         }
     }

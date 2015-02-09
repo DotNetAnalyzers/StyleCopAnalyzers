@@ -20,7 +20,7 @@
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -29,7 +29,7 @@
             var testCode = @"
 /// Foo
 public class Foo { }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -38,7 +38,7 @@ public class Foo { }";
             var testCode = @"
 /// <summary/>
 public class Foo { }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -47,7 +47,7 @@ public class Foo { }";
             var testCode = @"
 /// <summary></summary>
 public class Foo { }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -56,7 +56,7 @@ public class Foo { }";
             var testCode = @"
 /// <![CDATA[Foo]]>
 public class Foo { }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -73,7 +73,7 @@ public class Foo { }";
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The documentation header is composed of invalid XML: Invalid token.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -83,7 +83,7 @@ public class Foo { }";
                             }
                     }
                 };
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
         [TestMethod]
@@ -100,7 +100,7 @@ public class Foo { }";
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The documentation header is composed of invalid XML: Invalid token.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -110,7 +110,7 @@ public class Foo { }";
                             }
                     }
                 };
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
         [TestMethod]
@@ -127,7 +127,7 @@ public class Foo { }";
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The documentation header is composed of invalid XML: Invalid token.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -137,7 +137,7 @@ public class Foo { }";
                             }
                     }
                 };
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
         [TestMethod]
@@ -154,7 +154,7 @@ public class Foo { }";
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The documentation header is composed of invalid XML: The 'summary' start tag does not match the end tag of 'sumary'.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -165,7 +165,7 @@ public class Foo { }";
                             }
                     }
                 };
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
         [TestMethod]
@@ -182,7 +182,7 @@ public class Foo { }";
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The documentation header is composed of invalid XML: The XML tag 'summary' is not closed.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -192,7 +192,7 @@ public class Foo { }";
                             }
                     }
                 };
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

@@ -56,7 +56,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleStringLiteral, SyntaxKind.StringLiteralExpression);
+            context.RegisterSyntaxNodeAction(this.HandleStringLiteral, SyntaxKind.StringLiteralExpression);
         }
 
         private void HandleStringLiteral(SyntaxNodeAnalysisContext context)
@@ -68,7 +68,7 @@
                 var token = literalExpression.Token;
                 if (token.IsKind(SyntaxKind.StringLiteralToken))
                 {
-                    if (HasToBeConstant(literalExpression))
+                    if (this.HasToBeConstant(literalExpression))
                         return;
 
                     if (token.ValueText == string.Empty)
@@ -81,7 +81,7 @@
 
         private bool HasToBeConstant(LiteralExpressionSyntax literalExpression)
         {
-            ExpressionSyntax outermostExpression = FindOutermostExpression(literalExpression);
+            ExpressionSyntax outermostExpression = this.FindOutermostExpression(literalExpression);
 
             if (outermostExpression.Parent.IsKind(SyntaxKind.AttributeArgument))
                 return true;

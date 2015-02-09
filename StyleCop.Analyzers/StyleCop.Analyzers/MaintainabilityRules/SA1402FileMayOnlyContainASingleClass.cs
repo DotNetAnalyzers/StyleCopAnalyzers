@@ -50,7 +50,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(HandleSyntaxTree);
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
         }
 
         private async void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -73,7 +73,7 @@
                         {
                             continue;
                         }
-                        var location = GetClassLocation(node);
+                        var location = this.GetClassLocation(node);
                         if (location != null)
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));

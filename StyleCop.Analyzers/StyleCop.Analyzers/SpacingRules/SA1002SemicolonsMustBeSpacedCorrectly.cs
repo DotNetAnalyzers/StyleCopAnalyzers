@@ -42,7 +42,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(HandleSyntaxTree);
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -53,7 +53,7 @@
                 switch (token.CSharpKind())
                 {
                 case SyntaxKind.SemicolonToken:
-                    HandleSemicolonToken(context, token);
+                    this.HandleSemicolonToken(context, token);
                     break;
 
                 default:

@@ -53,7 +53,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleAttributeNode, SyntaxKind.Attribute);
+            context.RegisterSyntaxNodeAction(this.HandleAttributeNode, SyntaxKind.Attribute);
         }
 
         private void HandleAttributeNode(SyntaxNodeAnalysisContext context)

@@ -104,14 +104,14 @@
             }
             else
             {
-                identifierName = SyntaxFactory.GenericName(identifier.WithoutTrivia(), ParameterToArgumentListSyntax(typeParameters));
+                identifierName = SyntaxFactory.GenericName(identifier.WithoutTrivia(), this.ParameterToArgumentListSyntax(typeParameters));
             }
             var list = new SyntaxList<XmlNodeSyntax>();
 
             list = list.Add(XmlNewLine());
             list = list.Add(this.CreateTextSyntax(preText).WithLeadingTrivia(XmlLineStart()));
-            list = list.Add(CreateSeeSyntax(identifierName));
-            list = list.Add(CreateTextSyntax(postText.EndsWith(".") ? postText : (postText + ".")));
+            list = list.Add(this.CreateSeeSyntax(identifierName));
+            list = list.Add(this.CreateTextSyntax(postText.EndsWith(".") ? postText : (postText + ".")));
 
             return list;
         }

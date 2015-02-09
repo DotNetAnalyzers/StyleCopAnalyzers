@@ -50,12 +50,12 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleMethodCall, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeAction(this.HandleMethodCall, SyntaxKind.InvocationExpression);
         }
 
         private void HandleMethodCall(SyntaxNodeAnalysisContext context)
         {
-            HandleMethodCall(context, nameof(Debug.Assert), 1, Descriptor);
+            this.HandleMethodCall(context, nameof(Debug.Assert), 1, Descriptor);
         }
     }
 }

@@ -205,9 +205,9 @@ namespace TestHelper
 
             public int GetHashCode(Diagnostic obj)
             {
-                return Combine(obj.Descriptor,
-                         Combine(obj.Location.GetHashCode(),
-                          Combine(obj.Severity.GetHashCode(), obj.WarningLevel)));
+                return this.Combine(obj.Descriptor,
+                         this.Combine(obj.Location.GetHashCode(),
+                          this.Combine(obj.Severity.GetHashCode(), obj.WarningLevel)));
             }
 
             private int Combine<T>(T newKeyPart, int currentKey) where T : class

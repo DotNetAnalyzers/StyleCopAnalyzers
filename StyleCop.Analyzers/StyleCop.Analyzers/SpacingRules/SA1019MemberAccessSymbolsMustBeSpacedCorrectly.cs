@@ -40,7 +40,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(HandleSyntaxTree);
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -51,12 +51,12 @@
                 switch (token.CSharpKind())
                 {
                 case SyntaxKind.DotToken:
-                    HandleDotToken(context, token);
+                    this.HandleDotToken(context, token);
                     break;
 
                 // This case handles the new ?. and ?[ operators
                 case SyntaxKind.QuestionToken:
-                    HandleQuestionToken(context, token);
+                    this.HandleQuestionToken(context, token);
                     break;
 
                 default:
@@ -70,7 +70,7 @@
             if (token.IsMissing)
                 return;
 
-            HandleMemberAccessSymbol(context, token);
+            this.HandleMemberAccessSymbol(context, token);
         }
 
         private void HandleQuestionToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
@@ -81,7 +81,7 @@
             if (!token.Parent.IsKind(SyntaxKind.ConditionalAccessExpression))
                 return;
 
-            HandleMemberAccessSymbol(context, token);
+            this.HandleMemberAccessSymbol(context, token);
         }
 
         private void HandleMemberAccessSymbol(SyntaxTreeAnalysisContext context, SyntaxToken token)

@@ -55,7 +55,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleAnonymousMethodExpressionSyntax, SyntaxKind.AnonymousMethodExpression);
+            context.RegisterSyntaxNodeAction(this.HandleAnonymousMethodExpressionSyntax, SyntaxKind.AnonymousMethodExpression);
         }
 
         private void HandleAnonymousMethodExpressionSyntax(SyntaxNodeAnalysisContext context)

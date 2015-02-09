@@ -144,7 +144,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleIdentifierNameSyntax, SyntaxKind.IdentifierName);
+            context.RegisterSyntaxNodeAction(this.HandleIdentifierNameSyntax, SyntaxKind.IdentifierName);
         }
 
         private void HandleIdentifierNameSyntax(SyntaxNodeAnalysisContext context)
@@ -213,7 +213,7 @@
                 locationNode = identifierNameSyntax.Parent;
 
             // Allow nameof
-            if (IsNameInNameOfExpression(identifierNameSyntax))
+            if (this.IsNameInNameOfExpression(identifierNameSyntax))
             {
                 return;
             }

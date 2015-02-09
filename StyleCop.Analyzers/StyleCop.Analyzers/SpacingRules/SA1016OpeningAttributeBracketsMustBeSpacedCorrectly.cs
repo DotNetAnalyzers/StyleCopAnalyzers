@@ -43,7 +43,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(HandleSyntaxTree);
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -54,7 +54,7 @@
                 switch (token.CSharpKind())
                 {
                 case SyntaxKind.OpenBracketToken:
-                    HandleOpenBracketToken(context, token);
+                    this.HandleOpenBracketToken(context, token);
                     break;
 
                 default:

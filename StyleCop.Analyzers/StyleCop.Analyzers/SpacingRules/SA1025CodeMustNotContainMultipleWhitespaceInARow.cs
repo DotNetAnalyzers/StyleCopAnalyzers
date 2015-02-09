@@ -42,7 +42,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(HandleSyntaxTree);
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -53,7 +53,7 @@
                 switch (trivia.CSharpKind())
                 {
                 case SyntaxKind.WhitespaceTrivia:
-                    HandleWhitespaceTrivia(context, trivia);
+                    this.HandleWhitespaceTrivia(context, trivia);
                     break;
 
                 default:

@@ -35,7 +35,7 @@
             string statementWithoutSpace = @"f(a,b);";
             string statementWithSpace = @"f(a, b);";
 
-            await TestCommaInStatementOrDecl(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestCommaInStatementOrDecl(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
             DiagnosticResult[] expected;
 
@@ -44,7 +44,7 @@
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "Commas must be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -56,7 +56,7 @@
                 };
 
 
-            await TestCommaInStatementOrDecl(statementWithoutSpace, expected, statementWithSpace);
+            await this.TestCommaInStatementOrDecl(statementWithoutSpace, expected, statementWithSpace);
         }
 
         [TestMethod]
@@ -72,7 +72,7 @@
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "Commas must not be preceded by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -84,7 +84,7 @@
                 };
 
 
-            await TestCommaInStatementOrDecl(spaceBeforeComma, expected, spaceOnlyAfterComma);
+            await this.TestCommaInStatementOrDecl(spaceBeforeComma, expected, spaceOnlyAfterComma);
         }
 
         [TestMethod]
@@ -100,7 +100,7 @@
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "Commas must not be preceded by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -111,7 +111,7 @@
                     },
                 };
 
-            await TestCommaInStatementOrDecl(spaceBeforeComma, expected, spaceOnlyAfterComma);
+            await this.TestCommaInStatementOrDecl(spaceBeforeComma, expected, spaceOnlyAfterComma);
         }
 
         [TestMethod]
@@ -119,21 +119,21 @@
         {
             string statement = @"f(a,
               b);";
-            await TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
+            await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
         }
 
         [TestMethod]
         public async Task TestFirstCommaInLine()
         {
             string statement = $"f(a{Environment.NewLine}, b);";
-            await TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
+            await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
         }
 
         [TestMethod]
         public async Task TestCommentBeforeFirstCommaInLine()
         {
             string statement = $"f(a // comment{Environment.NewLine}, b);";
-            await TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
+            await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
         }
 
         [TestMethod]
@@ -149,7 +149,7 @@
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "Commas must not be preceded by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -160,14 +160,14 @@
                     },
                 };
 
-            await TestCommaInStatementOrDecl(statement, expected, fixedStatement);
+            await this.TestCommaInStatementOrDecl(statement, expected, fixedStatement);
         }
 
         [TestMethod]
         public async Task TestCommaFollowedByAngleBracketInFuncType()
         {
             string statement = @"var a = typeof(System.Func<,>);";
-            await TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
+            await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
         }
 
         [TestMethod]
@@ -183,7 +183,7 @@
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "Commas must not be preceded by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -194,14 +194,14 @@
                     },
                 };
 
-            await TestCommaInStatementOrDecl(statement, expected, fixedStatement);
+            await this.TestCommaInStatementOrDecl(statement, expected, fixedStatement);
         }
 
         [TestMethod]
         public async Task TestCommaFollowedByCommaInFuncType()
         {
             string statement = @"var a = typeof(System.Func<,,>);";
-            await TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
+            await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
         }
 
         private async Task TestCommaInStatementOrDecl(string originalStatement, DiagnosticResult[] expected, string fixedStatement)
@@ -220,8 +220,8 @@
             string originalCode = string.Format(template, originalStatement);
             string fixedCode = string.Format(template, fixedStatement);
 
-            await VerifyCSharpDiagnosticAsync(originalCode, expected, CancellationToken.None);
-            await VerifyCSharpFixAsync(originalCode, fixedCode, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(originalCode, expected, CancellationToken.None);
+            await this.VerifyCSharpFixAsync(originalCode, fixedCode, cancellationToken: CancellationToken.None);
         }
     }
 }

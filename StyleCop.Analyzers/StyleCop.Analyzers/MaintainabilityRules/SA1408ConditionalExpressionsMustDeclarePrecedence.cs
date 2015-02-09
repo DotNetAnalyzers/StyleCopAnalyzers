@@ -76,8 +76,8 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleLogicalExpression, SyntaxKind.LogicalAndExpression);
-            context.RegisterSyntaxNodeAction(HandleLogicalExpression, SyntaxKind.LogicalOrExpression);
+            context.RegisterSyntaxNodeAction(this.HandleLogicalExpression, SyntaxKind.LogicalAndExpression);
+            context.RegisterSyntaxNodeAction(this.HandleLogicalExpression, SyntaxKind.LogicalOrExpression);
         }
 
         private void HandleLogicalExpression(SyntaxNodeAnalysisContext context)
@@ -94,7 +94,7 @@
                     if (left.OperatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken) || left.OperatorToken.IsKind(SyntaxKind.BarBarToken))
                     {
 
-                        if (!IsSameFamily(binSyntax.OperatorToken, left.OperatorToken))
+                        if (!this.IsSameFamily(binSyntax.OperatorToken, left.OperatorToken))
                             context.ReportDiagnostic(Diagnostic.Create(Descriptor, left.GetLocation()));
                     }
                 }
@@ -105,7 +105,7 @@
                     var right = (BinaryExpressionSyntax)binSyntax.Right;
                     if (right.OperatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken) || right.OperatorToken.IsKind(SyntaxKind.BarBarToken))
                     {
-                        if (!IsSameFamily(binSyntax.OperatorToken, right.OperatorToken))
+                        if (!this.IsSameFamily(binSyntax.OperatorToken, right.OperatorToken))
                             context.ReportDiagnostic(Diagnostic.Create(Descriptor, right.GetLocation()));
                     }
                 }

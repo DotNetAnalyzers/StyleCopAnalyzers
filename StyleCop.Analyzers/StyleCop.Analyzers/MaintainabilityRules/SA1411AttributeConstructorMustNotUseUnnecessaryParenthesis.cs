@@ -51,7 +51,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleAttributeArgumentListSyntax, SyntaxKind.AttributeArgumentList);
+            context.RegisterSyntaxNodeAction(this.HandleAttributeArgumentListSyntax, SyntaxKind.AttributeArgumentList);
         }
 
         private void HandleAttributeArgumentListSyntax(SyntaxNodeAnalysisContext context)

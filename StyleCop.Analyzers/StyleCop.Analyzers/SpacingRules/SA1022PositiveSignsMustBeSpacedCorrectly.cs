@@ -45,7 +45,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(HandleSyntaxTree);
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -56,7 +56,7 @@
                 switch (token.CSharpKind())
                 {
                 case SyntaxKind.PlusToken:
-                    HandlePlusToken(context, token);
+                    this.HandlePlusToken(context, token);
                     break;
 
                 default:
