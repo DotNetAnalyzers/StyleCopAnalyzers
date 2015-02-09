@@ -20,35 +20,35 @@
     {
         private static readonly Tuple<string, string>[] _referenceTypes = new Tuple<string, string>[]
         {
-            new Tuple<string,string>("object", nameof(Object)),
-            new Tuple<string,string>("string", nameof(String))
+            new Tuple<string, string>("object", nameof(Object)),
+            new Tuple<string, string>("string", nameof(String))
         };
         private static readonly Tuple<string, string>[] _valueTypes = new Tuple<string, string>[]
         {
-            new Tuple<string,string>("bool", nameof(Boolean)),
-            new Tuple<string,string>("byte", nameof(Byte)),
-            new Tuple<string,string>("char", nameof(Char)),
-            new Tuple<string,string>("decimal", nameof(Decimal)),
-            new Tuple<string,string>("double", nameof(Double)),
-            new Tuple<string,string>("short", nameof(Int16)),
-            new Tuple<string,string>("int", nameof(Int32)),
-            new Tuple<string,string>("long", nameof(Int64)),
-            new Tuple<string,string>("sbyte", nameof(SByte)),
-            new Tuple<string,string>("float", nameof(Single)),
-            new Tuple<string,string>("ushort", nameof(UInt16)),
-            new Tuple<string,string>("uint", nameof(UInt32)),
-            new Tuple<string,string>("ulong", nameof(UInt64))
+            new Tuple<string, string>("bool", nameof(Boolean)),
+            new Tuple<string, string>("byte", nameof(Byte)),
+            new Tuple<string, string>("char", nameof(Char)),
+            new Tuple<string, string>("decimal", nameof(Decimal)),
+            new Tuple<string, string>("double", nameof(Double)),
+            new Tuple<string, string>("short", nameof(Int16)),
+            new Tuple<string, string>("int", nameof(Int32)),
+            new Tuple<string, string>("long", nameof(Int64)),
+            new Tuple<string, string>("sbyte", nameof(SByte)),
+            new Tuple<string, string>("float", nameof(Single)),
+            new Tuple<string, string>("ushort", nameof(UInt16)),
+            new Tuple<string, string>("uint", nameof(UInt32)),
+            new Tuple<string, string>("ulong", nameof(UInt64))
         };
         private static readonly Tuple<string, string>[] _enumBaseTypes = new Tuple<string, string>[]
         {
-            new Tuple<string,string>("byte", nameof(Byte)),
-            new Tuple<string,string>("short", nameof(Int16)),
-            new Tuple<string,string>("int", nameof(Int32)),
-            new Tuple<string,string>("long", nameof(Int64)),
-            new Tuple<string,string>("sbyte", nameof(SByte)),
-            new Tuple<string,string>("ushort", nameof(UInt16)),
-            new Tuple<string,string>("uint", nameof(UInt32)),
-            new Tuple<string,string>("ulong", nameof(UInt64))
+            new Tuple<string, string>("byte", nameof(Byte)),
+            new Tuple<string, string>("short", nameof(Int16)),
+            new Tuple<string, string>("int", nameof(Int32)),
+            new Tuple<string, string>("long", nameof(Int64)),
+            new Tuple<string, string>("sbyte", nameof(SByte)),
+            new Tuple<string, string>("ushort", nameof(UInt16)),
+            new Tuple<string, string>("uint", nameof(UInt32)),
+            new Tuple<string, string>("ulong", nameof(UInt64))
         };
         private static readonly Tuple<string, string>[] _allTypes = _referenceTypes.Concat(_valueTypes).ToArray();
 

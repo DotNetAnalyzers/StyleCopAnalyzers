@@ -32,7 +32,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             var testCode = @"%1 Foo
 {
 }";
-            await VerifyCSharpDiagnosticAsync(testCode.Replace("%1",Keyword), EmptyDiagnosticResults, CancellationToken.None);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("%1", Keyword), EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]

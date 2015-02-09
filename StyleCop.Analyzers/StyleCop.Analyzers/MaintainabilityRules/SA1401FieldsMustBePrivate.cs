@@ -43,7 +43,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSymbolAction(AnalyzeField,SymbolKind.Field);
+            context.RegisterSymbolAction(AnalyzeField, SymbolKind.Field);
         }
 
         private void AnalyzeField(SymbolAnalysisContext symbolAnalysisContext)
