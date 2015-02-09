@@ -269,6 +269,22 @@
         }
 
         [TestMethod]
+        public async Task TestMemberAccessExpressions()
+        {
+            string code = @"class Foo
+{
+    public string Bar {get; set; }
+    void Main()
+    {
+        var foo = new Foo();
+        string bar = foo?.Bar;
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(code, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
         public async Task TestPrefixLocalCallsWithThisCodeFix()
         {
             await VerifyCSharpFixAsync(ReferenceCode, FixedCode, cancellationToken: CancellationToken.None);

@@ -78,6 +78,7 @@
                 return;
 
             case SyntaxKind.PointerMemberAccessExpression:
+            case SyntaxKind.MemberBindingExpression:
                 // this doesn't need to be handled
                 return;
 
