@@ -21,7 +21,7 @@
     [Shared]
     public class SA1121CodeFixProvider : CodeFixProvider
     {
-        private static readonly Dictionary<SpecialType, SyntaxKind> _predefinedSpecialTypes = new Dictionary<SpecialType, SyntaxKind>
+        private static readonly Dictionary<SpecialType, SyntaxKind> predefinedSpecialTypes = new Dictionary<SpecialType, SyntaxKind>
         {
             [SpecialType.System_Boolean] = SyntaxKind.BoolKeyword,
             [SpecialType.System_Byte] = SyntaxKind.ByteKeyword,
@@ -39,13 +39,13 @@
             [SpecialType.System_UInt32] = SyntaxKind.UIntKeyword,
             [SpecialType.System_UInt64] = SyntaxKind.ULongKeyword
         };
-        private static readonly ImmutableArray<string> _fixableDiagnostics =
+        private static readonly ImmutableArray<string> fixableDiagnostics =
             ImmutableArray.Create(SA1121UseBuiltInTypeAlias.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> GetFixableDiagnosticIds()
         {
-            return _fixableDiagnostics;
+            return fixableDiagnostics;
         }
 
         /// <inheritdoc/>
@@ -73,7 +73,7 @@
                 if (typeInfo?.Type != null)
                 {
                     SpecialType specialType = typeInfo.Value.Type.SpecialType;
-                    var newNode = SyntaxFactory.PredefinedType(SyntaxFactory.Token(_predefinedSpecialTypes[specialType]))
+                    var newNode = SyntaxFactory.PredefinedType(SyntaxFactory.Token(predefinedSpecialTypes[specialType]))
                         .WithTriviaFrom(node)
                         .WithoutFormatting();
                     var newRoot = root.ReplaceNode(node, newNode);

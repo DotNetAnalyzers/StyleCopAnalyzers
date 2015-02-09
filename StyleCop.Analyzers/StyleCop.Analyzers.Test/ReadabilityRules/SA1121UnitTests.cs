@@ -18,12 +18,12 @@
     [TestClass]
     public class SA1121UnitTests : CodeFixVerifier
     {
-        private static readonly Tuple<string, string>[] _referenceTypes = new Tuple<string, string>[]
+        private static readonly Tuple<string, string>[] referenceTypes = new Tuple<string, string>[]
         {
             new Tuple<string, string>("object", nameof(Object)),
             new Tuple<string, string>("string", nameof(String))
         };
-        private static readonly Tuple<string, string>[] _valueTypes = new Tuple<string, string>[]
+        private static readonly Tuple<string, string>[] valueTypes = new Tuple<string, string>[]
         {
             new Tuple<string, string>("bool", nameof(Boolean)),
             new Tuple<string, string>("byte", nameof(Byte)),
@@ -39,7 +39,7 @@
             new Tuple<string, string>("uint", nameof(UInt32)),
             new Tuple<string, string>("ulong", nameof(UInt64))
         };
-        private static readonly Tuple<string, string>[] _enumBaseTypes = new Tuple<string, string>[]
+        private static readonly Tuple<string, string>[] enumBaseTypes = new Tuple<string, string>[]
         {
             new Tuple<string, string>("byte", nameof(Byte)),
             new Tuple<string, string>("short", nameof(Int16)),
@@ -50,7 +50,7 @@
             new Tuple<string, string>("uint", nameof(UInt32)),
             new Tuple<string, string>("ulong", nameof(UInt64))
         };
-        private static readonly Tuple<string, string>[] _allTypes = _referenceTypes.Concat(_valueTypes).ToArray();
+        private static readonly Tuple<string, string>[] allTypes = referenceTypes.Concat(valueTypes).ToArray();
 
 
         public string DiagnosticId { get; } = SA1121UseBuiltInTypeAlias.DiagnosticId;
@@ -84,42 +84,42 @@
 
         private async Task TestAllCases(Func<string, string, Task> func)
         {
-            await this.TestCases(func, _allTypes);
+            await this.TestCases(func, allTypes);
         }
 
         private async Task VerifyAllFixes(string testSource)
         {
-            await this.VerifyFixes(testSource, _allTypes);
+            await this.VerifyFixes(testSource, allTypes);
         }
 
         private async Task TestEnumTypeCases(Func<string, string, Task> func)
         {
-            await this.TestCases(func, _enumBaseTypes);
+            await this.TestCases(func, enumBaseTypes);
         }
 
         private async Task VerifyEnumTypeFixes(string testSource)
         {
-            await this.VerifyFixes(testSource, _allTypes);
+            await this.VerifyFixes(testSource, allTypes);
         }
 
         private async Task TestValueTypeCases(Func<string, string, Task> func)
         {
-            await this.TestCases(func, _valueTypes);
+            await this.TestCases(func, valueTypes);
         }
 
         private async Task VerifyValueTypeFixes(string testSource)
         {
-            await this.VerifyFixes(testSource, _allTypes);
+            await this.VerifyFixes(testSource, allTypes);
         }
 
         private async Task TestReferenceTypeCases(Func<string, string, Task> func)
         {
-            await this.TestCases(func, _referenceTypes);
+            await this.TestCases(func, referenceTypes);
         }
 
         private async Task VerifyReferenceTypeFixes(string testSource)
         {
-            await this.VerifyFixes(testSource, _referenceTypes);
+            await this.VerifyFixes(testSource, referenceTypes);
         }
 
 
@@ -1045,7 +1045,7 @@ public class Foo
 }}
 public class {0} {{}}
 ";
-            foreach (var item in _allTypes)
+            foreach (var item in allTypes)
             {
                 await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "@" + item.Item1), EmptyDiagnosticResults, CancellationToken.None);
                 await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, item.Item2), EmptyDiagnosticResults, CancellationToken.None);
@@ -1068,7 +1068,7 @@ public namespace {0}
         public class Bar {{ }}
 }}
 ";
-            foreach (var item in _allTypes)
+            foreach (var item in allTypes)
             {
                 await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "@" + item.Item1), EmptyDiagnosticResults, CancellationToken.None);
                 await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, item.Item2), EmptyDiagnosticResults, CancellationToken.None);
@@ -1090,7 +1090,7 @@ namespace Foo
     }}
 }}
 ";
-            foreach (var item in _allTypes)
+            foreach (var item in allTypes)
             {
                 await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "System." + item.Item2), EmptyDiagnosticResults, CancellationToken.None);
             }
@@ -1128,7 +1128,7 @@ namespace Foo
                             }
                     }
                 };
-            foreach (var item in _allTypes)
+            foreach (var item in allTypes)
             {
                 await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "System." + item.Item2), expected, CancellationToken.None);
                 await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, item.Item1), EmptyDiagnosticResults, CancellationToken.None);
