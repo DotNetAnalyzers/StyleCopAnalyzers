@@ -53,7 +53,7 @@
                     var secondText = XmlCommentHelper.GetText(secondTextParSyntaxt);
 
                     if (TextPartsMatch(firstTextPart, secondTextPart, firstTextPartSyntax, secondTextParSyntaxt)
-                        && SeeTagIsCorrect(classReferencePart, declarationSyntax))
+                        && this.SeeTagIsCorrect(classReferencePart, declarationSyntax))
                     {
                         // We found a correct standard text
                         return MatchResult.FoundMatch;
@@ -62,7 +62,7 @@
             }
 
             if (reportDiagnostic)
-                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptor, summaryElement.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(this.DiagnosticDescriptor, summaryElement.GetLocation()));
 
             // TODO: be more specific about the type of error when possible
             return MatchResult.None;
@@ -83,7 +83,7 @@
                         ClassDeclarationSyntax classDeclarationSyntax = constructorDeclarationSyntax.FirstAncestorOrSelf<ClassDeclarationSyntax>();
 
                         if (classDeclarationSyntax != null
-                            && classDeclarationSyntax.Identifier.ToString() == GetName(nameMember.Name))
+                            && classDeclarationSyntax.Identifier.ToString() == this.GetName(nameMember.Name))
                         {
                             // Check if type parameters are called the same
                             if (TypeParameterNamesMatch(classDeclarationSyntax, nameMember.Name))

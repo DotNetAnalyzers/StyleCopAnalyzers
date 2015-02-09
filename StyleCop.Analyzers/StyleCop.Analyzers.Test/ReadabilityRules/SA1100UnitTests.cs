@@ -50,7 +50,7 @@ public class FooChild : Foo
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             var fixedTest = @"
 public class Foo
@@ -68,7 +68,7 @@ public class FooChild : Foo
         this.Bar();
     }
 }";
-            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -106,7 +106,7 @@ public class FooChild : Foo
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             var fixedTest = @"
 public class Foo
@@ -124,7 +124,7 @@ public class FooChild : Foo
         this.Bar();
     }
 }";
-            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -151,7 +151,7 @@ public class FooChild : Foo
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -193,7 +193,7 @@ public class FooChild : Foo
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             var fixedTest = @"
 public class Foo
@@ -215,7 +215,7 @@ public class FooChild : Foo
 
     }
 }";
-            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -242,7 +242,7 @@ public class FooChild : Foo
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -280,7 +280,7 @@ public class FooChild : Foo
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             var fixedTest = @"
 public class Foo
@@ -298,7 +298,7 @@ public class FooChild : Foo
         var s = this.Bar;
     }
 }";
-            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -339,7 +339,7 @@ public class FooChild : Foo
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             var fixedTest = @"
 public class Foo
@@ -361,7 +361,7 @@ public class FooChild : Foo
 
     }
 }";
-            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -402,7 +402,7 @@ public class FooChild : Foo
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             var fixedTest = @"
 public class Foo
@@ -424,7 +424,7 @@ public class FooChild : Foo
 
     }
 }";
-            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -465,7 +465,7 @@ public class FooChild : Foo
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             var fixedTest = @"
 public class Foo
@@ -487,7 +487,7 @@ public class FooChild : Foo
 
     }
 }";
-            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -528,7 +528,7 @@ public class FooChild : Foo
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             var fixedTest = @"
 public class Foo
@@ -550,7 +550,7 @@ public class FooChild : Foo
         s = string.Empty;
     }
 }";
-            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -591,7 +591,7 @@ public class FooChild : Foo
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             var fixedTest = @"
 public class Foo
@@ -613,7 +613,7 @@ public class FooChild : Foo
 
     }
 }";
-            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -654,7 +654,7 @@ public class FooChild : Foo
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             var fixedTest = @"
 public class Foo
@@ -676,7 +676,7 @@ public class FooChild : Foo
 
     }
 }";
-            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -717,7 +717,7 @@ public class FooChild : Foo
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             var fixedTest = @"
 public class Foo
@@ -739,7 +739,7 @@ public class FooChild : Foo
         s = string.Empty;
     }
 }";
-            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -780,7 +780,7 @@ public class FooChild : Foo
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             var fixedTest = @"
 public class Foo
@@ -802,7 +802,7 @@ public class FooChild : Foo
 
     }
 }";
-            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -829,7 +829,7 @@ public class FooChild : Foo
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
 
         }
 
@@ -857,7 +857,7 @@ public class FooChild : Foo
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
 
         }
 
@@ -885,7 +885,7 @@ public class FooChild : Foo
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
 
         }
 
@@ -914,7 +914,7 @@ public class FooChild : Foo
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -952,7 +952,7 @@ public class FooChild : Foo
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             var fixedTest = @"
 public class Foo
@@ -970,7 +970,7 @@ public class FooChild : Foo
         }
     }
 }";
-            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -996,7 +996,7 @@ public class FooChild : Foo
 }";
 
 
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -1022,7 +1022,7 @@ public class FooChild : Foo
 }";
 
 
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -1052,7 +1052,7 @@ public struct S
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             var fixedTest = @"
 public struct S
@@ -1062,7 +1062,7 @@ public struct S
         return this.ToString();
     }
 }";
-            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -1121,7 +1121,7 @@ public class FooChild : Foo
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             var fixedTest = @"
 public class Foo
@@ -1149,7 +1149,7 @@ public class FooChild : Foo
         this.Bar2();
     }
 }";
-            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -1189,7 +1189,7 @@ public class FooChild : Foo
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             var fixedTest = @"
 public class Foo
@@ -1209,7 +1209,7 @@ public class FooChild : Foo
         .Bar();
     }
 }";
-            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -1244,7 +1244,7 @@ public class Foo
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             var fixedTest = @"
 public class Foo
@@ -1259,7 +1259,7 @@ public class Foo
         .ToString();
     }
 }";
-            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

@@ -53,8 +53,8 @@ public class Foo
             {
                 new DiagnosticResult
                 {
-                    Id = DiagnosticId,
-                    Message = string.Format("Debug.Assert must provide message text", MethodName),
+                    Id = this.DiagnosticId,
+                    Message = string.Format("Debug.Assert must provide message text", this.MethodName),
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -64,7 +64,7 @@ public class Foo
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

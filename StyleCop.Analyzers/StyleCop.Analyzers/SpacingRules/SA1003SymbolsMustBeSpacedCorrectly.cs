@@ -49,7 +49,7 @@
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -57,14 +57,14 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(HandleSyntaxTree);
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -74,18 +74,18 @@
             {
                 if (SyntaxFacts.IsBinaryExpressionOperatorToken(token.CSharpKind()) && token.Parent is BinaryExpressionSyntax)
                 {
-                    HandleBinaryExpressionOperatorToken(context, token);
+                    this.HandleBinaryExpressionOperatorToken(context, token);
                 }
                 else if (SyntaxFacts.IsPrefixUnaryExpressionOperatorToken(token.CSharpKind()) && token.Parent is PrefixUnaryExpressionSyntax)
                 {
-                    HandlePrefixUnaryExpressionOperatorToken(context, token);
+                    this.HandlePrefixUnaryExpressionOperatorToken(context, token);
                 }
             }
         }
 
         private void HandleBinaryExpressionOperatorToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
-            HandleOperatorToken(context, token, true);
+            this.HandleOperatorToken(context, token, true);
         }
 
         private void HandlePrefixUnaryExpressionOperatorToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
@@ -95,7 +95,7 @@
             if (token.Parent?.Parent is PrefixUnaryExpressionSyntax)
                 return;
 
-            HandleOperatorToken(context, token, false);
+            this.HandleOperatorToken(context, token, false);
         }
 
         private void HandleOperatorToken(SyntaxTreeAnalysisContext context, SyntaxToken token, bool isBinaryExpressionOperator)

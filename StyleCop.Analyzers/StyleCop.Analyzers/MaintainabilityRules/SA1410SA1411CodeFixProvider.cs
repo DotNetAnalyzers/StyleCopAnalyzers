@@ -21,14 +21,14 @@
     [Shared]
     public class SA1410SA1411CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> _fixableDiagnostics =
+        private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1410RemoveDelegateParenthesisWhenPossible.DiagnosticId,
                 SA1411AttributeConstructorMustNotUseUnnecessaryParenthesis.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> GetFixableDiagnosticIds()
         {
-            return _fixableDiagnostics;
+            return FixableDiagnostics;
         }
 
         /// <inheritdoc/>
@@ -42,7 +42,7 @@
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!GetFixableDiagnosticIds().Contains(diagnostic.Id))
+                if (!this.GetFixableDiagnosticIds().Contains(diagnostic.Id))
                     continue;
 
                 var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);

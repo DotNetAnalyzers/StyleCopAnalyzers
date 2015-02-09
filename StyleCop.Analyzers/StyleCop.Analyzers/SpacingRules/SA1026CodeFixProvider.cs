@@ -18,13 +18,13 @@
     [Shared]
     public class SA1026CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> _fixableDiagnostics =
+        private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> GetFixableDiagnosticIds()
         {
-            return _fixableDiagnostics;
+            return FixableDiagnostics;
         }
 
         /// <inheritdoc/>

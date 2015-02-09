@@ -109,7 +109,7 @@
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
         
         /// <inheritdoc/>
@@ -117,7 +117,7 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
@@ -133,7 +133,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
         }
 
         private void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
@@ -142,19 +142,19 @@
 
             if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword))
             {
-                HandleDeclaration(context, StaticConstructorStandardText[0], StaticConstructorStandardText[1], true);
+                this.HandleDeclaration(context, StaticConstructorStandardText[0], StaticConstructorStandardText[1], true);
             }
             else if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.PrivateKeyword))
             {
-                if (HandleDeclaration(context, PrivateConstructorStandardText[0], PrivateConstructorStandardText[1], false) != MatchResult.FoundMatch)
+                if (this.HandleDeclaration(context, PrivateConstructorStandardText[0], PrivateConstructorStandardText[1], false) != MatchResult.FoundMatch)
                 {
                     // also allow the non-private wording for private constructors
-                    HandleDeclaration(context, NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true);
+                    this.HandleDeclaration(context, NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true);
                 }
             }
             else
             {
-                HandleDeclaration(context, NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true);
+                this.HandleDeclaration(context, NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true);
             }
         }
     }

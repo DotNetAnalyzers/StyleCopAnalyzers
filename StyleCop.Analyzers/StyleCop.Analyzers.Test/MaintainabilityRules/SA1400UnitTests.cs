@@ -20,241 +20,241 @@
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
         public async Task TestClassDeclarationAsync()
         {
-            await TestTypeDeclarationAsync("class");
+            await this.TestTypeDeclarationAsync("class");
         }
 
         [TestMethod]
         public async Task TestClassDeclarationWithAttributesAsync()
         {
-            await TestTypeDeclarationWithAttributesAsync("class");
+            await this.TestTypeDeclarationWithAttributesAsync("class");
         }
 
         [TestMethod]
         public async Task TestClassDeclarationWithDirectivesAsync()
         {
-            await TestTypeDeclarationWithDirectivesAsync("class");
+            await this.TestTypeDeclarationWithDirectivesAsync("class");
         }
 
         [TestMethod]
         public async Task TestNestedClassDeclarationAsync()
         {
-            await TestNestedTypeDeclarationAsync("class");
+            await this.TestNestedTypeDeclarationAsync("class");
         }
 
         [TestMethod]
         public async Task TestNestedClassDeclarationWithAttributesAsync()
         {
-            await TestNestedTypeDeclarationWithAttributesAsync("class");
+            await this.TestNestedTypeDeclarationWithAttributesAsync("class");
         }
 
         [TestMethod]
         public async Task TestNestedClassDeclarationWithDirectivesAsync()
         {
-            await TestNestedTypeDeclarationWithDirectivesAsync("class");
+            await this.TestNestedTypeDeclarationWithDirectivesAsync("class");
         }
 
         [TestMethod]
         public async Task TestPartialClassDeclarationAsync()
         {
-            await TestTypeDeclarationAsync("partial class", warning: false);
+            await this.TestTypeDeclarationAsync("partial class", warning: false);
         }
 
         [TestMethod]
         public async Task TestPartialClassDeclarationWithAttributesAsync()
         {
-            await TestTypeDeclarationWithAttributesAsync("partial class", warning: false);
+            await this.TestTypeDeclarationWithAttributesAsync("partial class", warning: false);
         }
 
         [TestMethod]
         public async Task TestPartialClassDeclarationWithDirectivesAsync()
         {
-            await TestTypeDeclarationWithDirectivesAsync("partial class", warning: false);
+            await this.TestTypeDeclarationWithDirectivesAsync("partial class", warning: false);
         }
 
         [TestMethod]
         public async Task TestInterfaceDeclarationAsync()
         {
-            await TestTypeDeclarationAsync("interface");
+            await this.TestTypeDeclarationAsync("interface");
         }
 
         [TestMethod]
         public async Task TestInterfaceDeclarationWithAttributesAsync()
         {
-            await TestTypeDeclarationWithAttributesAsync("interface");
+            await this.TestTypeDeclarationWithAttributesAsync("interface");
         }
 
         [TestMethod]
         public async Task TestInterfaceDeclarationWithDirectivesAsync()
         {
-            await TestTypeDeclarationWithDirectivesAsync("interface");
+            await this.TestTypeDeclarationWithDirectivesAsync("interface");
         }
 
         [TestMethod]
         public async Task TestNestedInterfaceDeclarationAsync()
         {
-            await TestNestedTypeDeclarationAsync("interface");
+            await this.TestNestedTypeDeclarationAsync("interface");
         }
 
         [TestMethod]
         public async Task TestNestedInterfaceDeclarationWithAttributesAsync()
         {
-            await TestNestedTypeDeclarationWithAttributesAsync("interface");
+            await this.TestNestedTypeDeclarationWithAttributesAsync("interface");
         }
 
         [TestMethod]
         public async Task TestNestedInterfaceDeclarationWithDirectivesAsync()
         {
-            await TestNestedTypeDeclarationWithDirectivesAsync("interface");
+            await this.TestNestedTypeDeclarationWithDirectivesAsync("interface");
         }
 
         [TestMethod]
         public async Task TestPartialInterfaceDeclarationAsync()
         {
-            await TestTypeDeclarationAsync("partial interface", warning: false);
+            await this.TestTypeDeclarationAsync("partial interface", warning: false);
         }
 
         [TestMethod]
         public async Task TestPartialInterfaceDeclarationWithAttributesAsync()
         {
-            await TestTypeDeclarationWithAttributesAsync("partial interface", warning: false);
+            await this.TestTypeDeclarationWithAttributesAsync("partial interface", warning: false);
         }
 
         [TestMethod]
         public async Task TestPartialInterfaceDeclarationWithDirectivesAsync()
         {
-            await TestTypeDeclarationWithDirectivesAsync("partial interface", warning: false);
+            await this.TestTypeDeclarationWithDirectivesAsync("partial interface", warning: false);
         }
 
         [TestMethod]
         public async Task TestStructDeclarationAsync()
         {
-            await TestTypeDeclarationAsync("struct");
+            await this.TestTypeDeclarationAsync("struct");
         }
 
         [TestMethod]
         public async Task TestStructDeclarationWithAttributesAsync()
         {
-            await TestTypeDeclarationWithAttributesAsync("struct");
+            await this.TestTypeDeclarationWithAttributesAsync("struct");
         }
 
         [TestMethod]
         public async Task TestStructDeclarationWithDirectivesAsync()
         {
-            await TestTypeDeclarationWithDirectivesAsync("struct");
+            await this.TestTypeDeclarationWithDirectivesAsync("struct");
         }
 
         [TestMethod]
         public async Task TestNestedStructDeclarationAsync()
         {
-            await TestNestedTypeDeclarationAsync("struct");
+            await this.TestNestedTypeDeclarationAsync("struct");
         }
 
         [TestMethod]
         public async Task TestNestedStructDeclarationWithAttributesAsync()
         {
-            await TestNestedTypeDeclarationWithAttributesAsync("struct");
+            await this.TestNestedTypeDeclarationWithAttributesAsync("struct");
         }
 
         [TestMethod]
         public async Task TestNestedStructDeclarationWithDirectivesAsync()
         {
-            await TestNestedTypeDeclarationWithDirectivesAsync("struct");
+            await this.TestNestedTypeDeclarationWithDirectivesAsync("struct");
         }
 
         [TestMethod]
         public async Task TestPartialStructDeclarationAsync()
         {
-            await TestTypeDeclarationAsync("partial struct", warning: false);
+            await this.TestTypeDeclarationAsync("partial struct", warning: false);
         }
 
         [TestMethod]
         public async Task TestPartialStructDeclarationWithAttributesAsync()
         {
-            await TestTypeDeclarationWithAttributesAsync("partial struct", warning: false);
+            await this.TestTypeDeclarationWithAttributesAsync("partial struct", warning: false);
         }
 
         [TestMethod]
         public async Task TestPartialStructDeclarationWithDirectivesAsync()
         {
-            await TestTypeDeclarationWithDirectivesAsync("partial struct", warning: false);
+            await this.TestTypeDeclarationWithDirectivesAsync("partial struct", warning: false);
         }
 
         [TestMethod]
         public async Task TestEnumDeclarationAsync()
         {
-            await TestTypeDeclarationAsync("enum");
+            await this.TestTypeDeclarationAsync("enum");
         }
 
         [TestMethod]
         public async Task TestEnumDeclarationWithAttributesAsync()
         {
-            await TestTypeDeclarationWithAttributesAsync("enum");
+            await this.TestTypeDeclarationWithAttributesAsync("enum");
         }
 
         [TestMethod]
         public async Task TestEnumDeclarationWithDirectivesAsync()
         {
-            await TestTypeDeclarationWithDirectivesAsync("enum");
+            await this.TestTypeDeclarationWithDirectivesAsync("enum");
         }
 
         [TestMethod]
         public async Task TestNestedEnumDeclarationAsync()
         {
-            await TestNestedTypeDeclarationAsync("enum");
+            await this.TestNestedTypeDeclarationAsync("enum");
         }
 
         [TestMethod]
         public async Task TestNestedEnumDeclarationWithAttributesAsync()
         {
-            await TestNestedTypeDeclarationWithAttributesAsync("enum");
+            await this.TestNestedTypeDeclarationWithAttributesAsync("enum");
         }
 
         [TestMethod]
         public async Task TestNestedEnumDeclarationWithDirectivesAsync()
         {
-            await TestNestedTypeDeclarationWithDirectivesAsync("enum");
+            await this.TestNestedTypeDeclarationWithDirectivesAsync("enum");
         }
 
         [TestMethod]
         public async Task TestDelegateDeclarationAsync()
         {
-            await TestDeclarationAsync("internal", "TypeName", "delegate int TypeName", "  ( int\n parameter\n );");
+            await this.TestDeclarationAsync("internal", "TypeName", "delegate int TypeName", "  ( int\n parameter\n );");
         }
 
         [TestMethod]
         public async Task TestDelegateDeclarationWithAttributesAsync()
         {
-            await TestDeclarationWithAttributesAsync("internal", "TypeName", "delegate int TypeName", "  ( int\n parameter\n );");
+            await this.TestDeclarationWithAttributesAsync("internal", "TypeName", "delegate int TypeName", "  ( int\n parameter\n );");
         }
 
         [TestMethod]
         public async Task TestDelegateDeclarationWithDirectivesAsync()
         {
-            await TestDeclarationWithDirectivesAsync("internal", "TypeName", "delegate int TypeName", "  ( int\n parameter\n );");
+            await this.TestDeclarationWithDirectivesAsync("internal", "TypeName", "delegate int TypeName", "  ( int\n parameter\n );");
         }
 
         [TestMethod]
         public async Task TestNestedDelegateDeclarationAsync()
         {
-            await TestNestedDeclarationAsync("private", "TypeName", "delegate int TypeName", "  ( int\n parameter\n );");
+            await this.TestNestedDeclarationAsync("private", "TypeName", "delegate int TypeName", "  ( int\n parameter\n );");
         }
 
         [TestMethod]
         public async Task TestNestedDelegateDeclarationWithAttributesAsync()
         {
-            await TestNestedDeclarationWithAttributesAsync("private", "TypeName", "delegate int TypeName", "  ( int\n parameter\n );");
+            await this.TestNestedDeclarationWithAttributesAsync("private", "TypeName", "delegate int TypeName", "  ( int\n parameter\n );");
         }
 
         [TestMethod]
         public async Task TestNestedDelegateDeclarationWithDirectivesAsync()
         {
-            await TestNestedDeclarationWithDirectivesAsync("private", "TypeName", "delegate int TypeName", "  ( int\n parameter\n );");
+            await this.TestNestedDeclarationWithDirectivesAsync("private", "TypeName", "delegate int TypeName", "  ( int\n parameter\n );");
         }
 
         #region EventDeclarationSyntax
@@ -262,55 +262,55 @@
         [TestMethod]
         public async Task TestEventDeclarationAsync()
         {
-            await TestNestedDeclarationAsync("private", "MemberName", "event EventHandler MemberName", "{ add { } remove { } }");
+            await this.TestNestedDeclarationAsync("private", "MemberName", "event EventHandler MemberName", "{ add { } remove { } }");
         }
 
         [TestMethod]
         public async Task TestEventDeclarationWithAttributesAsync()
         {
-            await TestNestedDeclarationWithAttributesAsync("private", "MemberName", "event EventHandler MemberName", "{ add { } remove { } }");
+            await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "event EventHandler MemberName", "{ add { } remove { } }");
         }
 
         [TestMethod]
         public async Task TestEventDeclarationWithDirectivesAsync()
         {
-            await TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "event EventHandler MemberName", "{ add { } remove { } }");
+            await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "event EventHandler MemberName", "{ add { } remove { } }");
         }
 
         [TestMethod]
         public async Task TestStaticEventDeclarationAsync()
         {
-            await TestNestedDeclarationAsync("private", "MemberName", "static event EventHandler MemberName", "{ add { } remove { } }");
+            await this.TestNestedDeclarationAsync("private", "MemberName", "static event EventHandler MemberName", "{ add { } remove { } }");
         }
 
         [TestMethod]
         public async Task TestStaticEventDeclarationWithAttributesAsync()
         {
-            await TestNestedDeclarationWithAttributesAsync("private", "MemberName", "static event EventHandler MemberName", "{ add { } remove { } }");
+            await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "static event EventHandler MemberName", "{ add { } remove { } }");
         }
 
         [TestMethod]
         public async Task TestStaticEventDeclarationWithDirectivesAsync()
         {
-            await TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "static event EventHandler MemberName", "{ add { } remove { } }");
+            await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "static event EventHandler MemberName", "{ add { } remove { } }");
         }
 
         [TestMethod]
         public async Task TestExplicitInterfaceEventDeclarationAsync()
         {
-            await TestNestedDeclarationAsync("private", "MemberName", "event EventHandler IInterface.MemberName", "{ add { } remove { } }", warning: false);
+            await this.TestNestedDeclarationAsync("private", "MemberName", "event EventHandler IInterface.MemberName", "{ add { } remove { } }", warning: false);
         }
 
         [TestMethod]
         public async Task TestExplicitInterfaceEventDeclarationWithAttributesAsync()
         {
-            await TestNestedDeclarationWithAttributesAsync("private", "MemberName", "event EventHandler IInterface.MemberName", "{ add { } remove { } }", warning: false);
+            await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "event EventHandler IInterface.MemberName", "{ add { } remove { } }", warning: false);
         }
 
         [TestMethod]
         public async Task TestExplicitInterfaceEventDeclarationWithDirectivesAsync()
         {
-            await TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "event EventHandler IInterface.MemberName", "{ add { } remove { } }", warning: false);
+            await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "event EventHandler IInterface.MemberName", "{ add { } remove { } }", warning: false);
         }
 
         #endregion
@@ -320,91 +320,91 @@
         [TestMethod]
         public async Task TestMethodDeclarationAsync()
         {
-            await TestNestedDeclarationAsync("private", "MemberName", "void MemberName", "  ( int\n parameter\n ) { }");
+            await this.TestNestedDeclarationAsync("private", "MemberName", "void MemberName", "  ( int\n parameter\n ) { }");
         }
 
         [TestMethod]
         public async Task TestMethodDeclarationWithAttributesAsync()
         {
-            await TestNestedDeclarationWithAttributesAsync("private", "MemberName", "void MemberName", "  ( int\n parameter\n ) { }");
+            await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "void MemberName", "  ( int\n parameter\n ) { }");
         }
 
         [TestMethod]
         public async Task TestMethodDeclarationWithDirectivesAsync()
         {
-            await TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "void MemberName", "  ( int\n parameter\n ) { }");
+            await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "void MemberName", "  ( int\n parameter\n ) { }");
         }
 
         [TestMethod]
         public async Task TestStaticMethodDeclarationAsync()
         {
-            await TestNestedDeclarationAsync("private", "MemberName", "static void MemberName", "  ( int\n parameter\n ) { }");
+            await this.TestNestedDeclarationAsync("private", "MemberName", "static void MemberName", "  ( int\n parameter\n ) { }");
         }
 
         [TestMethod]
         public async Task TestStaticMethodDeclarationWithAttributesAsync()
         {
-            await TestNestedDeclarationWithAttributesAsync("private", "MemberName", "static void MemberName", "  ( int\n parameter\n ) { }");
+            await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "static void MemberName", "  ( int\n parameter\n ) { }");
         }
 
         [TestMethod]
         public async Task TestStaticMethodDeclarationWithDirectivesAsync()
         {
-            await TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "static void MemberName", "  ( int\n parameter\n ) { }");
+            await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "static void MemberName", "  ( int\n parameter\n ) { }");
         }
 
         [TestMethod]
         public async Task TestExplicitInterfaceMethodDeclarationAsync()
         {
-            await TestNestedDeclarationAsync("private", "MemberName", "void IInterface.MemberName", "  ( int\n parameter\n ) { }", warning: false);
+            await this.TestNestedDeclarationAsync("private", "MemberName", "void IInterface.MemberName", "  ( int\n parameter\n ) { }", warning: false);
         }
 
         [TestMethod]
         public async Task TestExplicitInterfaceMethodDeclarationWithAttributesAsync()
         {
-            await TestNestedDeclarationWithAttributesAsync("private", "MemberName", "void IInterface.MemberName", "  ( int\n parameter\n ) { }", warning: false);
+            await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "void IInterface.MemberName", "  ( int\n parameter\n ) { }", warning: false);
         }
 
         [TestMethod]
         public async Task TestExplicitInterfaceMethodDeclarationWithDirectivesAsync()
         {
-            await TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "void IInterface.MemberName", "  ( int\n parameter\n ) { }", warning: false);
+            await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "void IInterface.MemberName", "  ( int\n parameter\n ) { }", warning: false);
         }
 
         [TestMethod]
         public async Task TestInterfaceMethodDeclarationAsync()
         {
-            await TestNestedDeclarationAsync("private", "MemberName", "void MemberName", "  ( int\n parameter\n );", containingType: "interface", warning: false);
+            await this.TestNestedDeclarationAsync("private", "MemberName", "void MemberName", "  ( int\n parameter\n );", containingType: "interface", warning: false);
         }
 
         [TestMethod]
         public async Task TestInterfaceMethodDeclarationWithAttributesAsync()
         {
-            await TestNestedDeclarationWithAttributesAsync("private", "MemberName", "void MemberName", "  ( int\n parameter\n );", containingType: "interface", warning: false);
+            await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "void MemberName", "  ( int\n parameter\n );", containingType: "interface", warning: false);
         }
 
         [TestMethod]
         public async Task TestInterfaceMethodDeclarationWithDirectivesAsync()
         {
-            await TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "void MemberName", "  ( int\n parameter\n );", containingType: "interface", warning: false);
+            await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "void MemberName", "  ( int\n parameter\n );", containingType: "interface", warning: false);
         }
 
         [TestMethod]
         public async Task TestPartialMethodDeclarationAsync()
         {
-            await TestNestedDeclarationAsync("private", "MemberName", "partial void MemberName", "  ( int\n parameter\n );", containingType: "partial class", warning: false);
+            await this.TestNestedDeclarationAsync("private", "MemberName", "partial void MemberName", "  ( int\n parameter\n );", containingType: "partial class", warning: false);
         }
 
         [TestMethod]
         public async Task TestPartialMethodDeclarationWithAttributesAsync()
         {
-            await TestNestedDeclarationWithAttributesAsync("private", "MemberName", "partial void MemberName", "  ( int\n parameter\n );", containingType: "partial class", warning: false);
+            await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "partial void MemberName", "  ( int\n parameter\n );", containingType: "partial class", warning: false);
         }
 
         [TestMethod]
         public async Task TestPartialMethodDeclarationWithDirectivesAsync()
         {
-            await TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "partial void MemberName", "  ( int\n parameter\n );", containingType: "partial class", warning: false);
+            await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "partial void MemberName", "  ( int\n parameter\n );", containingType: "partial class", warning: false);
         }
 
         #endregion
@@ -414,73 +414,73 @@
         [TestMethod]
         public async Task TestPropertyDeclarationAsync()
         {
-            await TestNestedDeclarationAsync("private", "MemberName", "EventHandler MemberName", "{ get; set; }");
+            await this.TestNestedDeclarationAsync("private", "MemberName", "EventHandler MemberName", "{ get; set; }");
         }
 
         [TestMethod]
         public async Task TestPropertyDeclarationWithAttributesAsync()
         {
-            await TestNestedDeclarationWithAttributesAsync("private", "MemberName", "EventHandler MemberName", "{ get; set; }");
+            await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "EventHandler MemberName", "{ get; set; }");
         }
 
         [TestMethod]
         public async Task TestPropertyDeclarationWithDirectivesAsync()
         {
-            await TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "EventHandler MemberName", "{ get; set; }");
+            await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "EventHandler MemberName", "{ get; set; }");
         }
 
         [TestMethod]
         public async Task TestStaticPropertyDeclarationAsync()
         {
-            await TestNestedDeclarationAsync("private", "MemberName", "static EventHandler MemberName", "{ get; set; }");
+            await this.TestNestedDeclarationAsync("private", "MemberName", "static EventHandler MemberName", "{ get; set; }");
         }
 
         [TestMethod]
         public async Task TestStaticPropertyDeclarationWithAttributesAsync()
         {
-            await TestNestedDeclarationWithAttributesAsync("private", "MemberName", "static EventHandler MemberName", "{ get; set; }");
+            await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "static EventHandler MemberName", "{ get; set; }");
         }
 
         [TestMethod]
         public async Task TestStaticPropertyDeclarationWithDirectivesAsync()
         {
-            await TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "static EventHandler MemberName", "{ get; set; }");
+            await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "static EventHandler MemberName", "{ get; set; }");
         }
 
         [TestMethod]
         public async Task TestExplicitInterfacePropertyDeclarationAsync()
         {
-            await TestNestedDeclarationAsync("private", "MemberName", "EventHandler IInterface.MemberName", "{ get; set; }", warning: false);
+            await this.TestNestedDeclarationAsync("private", "MemberName", "EventHandler IInterface.MemberName", "{ get; set; }", warning: false);
         }
 
         [TestMethod]
         public async Task TestExplicitInterfacePropertyDeclarationWithAttributesAsync()
         {
-            await TestNestedDeclarationWithAttributesAsync("private", "MemberName", "EventHandler IInterface.MemberName", "{ get; set; }", warning: false);
+            await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "EventHandler IInterface.MemberName", "{ get; set; }", warning: false);
         }
 
         [TestMethod]
         public async Task TestExplicitInterfacePropertyDeclarationWithDirectivesAsync()
         {
-            await TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "EventHandler IInterface.MemberName", "{ get; set; }", warning: false);
+            await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "EventHandler IInterface.MemberName", "{ get; set; }", warning: false);
         }
 
         [TestMethod]
         public async Task TestInterfacePropertyDeclarationAsync()
         {
-            await TestNestedDeclarationAsync("private", "MemberName", "EventHandler MemberName", "{ get; set; }", containingType: "interface", warning: false);
+            await this.TestNestedDeclarationAsync("private", "MemberName", "EventHandler MemberName", "{ get; set; }", containingType: "interface", warning: false);
         }
 
         [TestMethod]
         public async Task TestInterfacePropertyDeclarationWithAttributesAsync()
         {
-            await TestNestedDeclarationWithAttributesAsync("private", "MemberName", "EventHandler MemberName", "{ get; set; }", containingType: "interface", warning: false);
+            await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "EventHandler MemberName", "{ get; set; }", containingType: "interface", warning: false);
         }
 
         [TestMethod]
         public async Task TestInterfacePropertyDeclarationWithDirectivesAsync()
         {
-            await TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "EventHandler MemberName", "{ get; set; }", containingType: "interface", warning: false);
+            await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "EventHandler MemberName", "{ get; set; }", containingType: "interface", warning: false);
         }
 
         #endregion
@@ -490,55 +490,55 @@
         [TestMethod]
         public async Task TestEventFieldDeclarationAsync()
         {
-            await TestNestedDeclarationAsync("private", "MemberName", "event EventHandler MemberName", ", AnotherMemberName;");
+            await this.TestNestedDeclarationAsync("private", "MemberName", "event EventHandler MemberName", ", AnotherMemberName;");
         }
 
         [TestMethod]
         public async Task TestEventFieldDeclarationWithAttributesAsync()
         {
-            await TestNestedDeclarationWithAttributesAsync("private", "MemberName", "event EventHandler MemberName", ", AnotherMemberName;");
+            await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "event EventHandler MemberName", ", AnotherMemberName;");
         }
 
         [TestMethod]
         public async Task TestEventFieldDeclarationWithDirectivesAsync()
         {
-            await TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "event EventHandler MemberName", ", AnotherMemberName;");
+            await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "event EventHandler MemberName", ", AnotherMemberName;");
         }
 
         [TestMethod]
         public async Task TestStaticEventFieldDeclarationAsync()
         {
-            await TestNestedDeclarationAsync("private", "MemberName", "static event EventHandler MemberName", ", AnotherMemberName;");
+            await this.TestNestedDeclarationAsync("private", "MemberName", "static event EventHandler MemberName", ", AnotherMemberName;");
         }
 
         [TestMethod]
         public async Task TestStaticEventFieldDeclarationWithAttributesAsync()
         {
-            await TestNestedDeclarationWithAttributesAsync("private", "MemberName", "static event EventHandler MemberName", ", AnotherMemberName;");
+            await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "static event EventHandler MemberName", ", AnotherMemberName;");
         }
 
         [TestMethod]
         public async Task TestStaticEventFieldDeclarationWithDirectivesAsync()
         {
-            await TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "static event EventHandler MemberName", ", AnotherMemberName;");
+            await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "static event EventHandler MemberName", ", AnotherMemberName;");
         }
 
         [TestMethod]
         public async Task TestInterfaceEventFieldDeclarationAsync()
         {
-            await TestNestedDeclarationAsync("private", "MemberName", "event EventHandler MemberName", ", AnotherMemberName;", containingType: "interface", warning: false);
+            await this.TestNestedDeclarationAsync("private", "MemberName", "event EventHandler MemberName", ", AnotherMemberName;", containingType: "interface", warning: false);
         }
 
         [TestMethod]
         public async Task TestInterfaceEventFieldDeclarationWithAttributesAsync()
         {
-            await TestNestedDeclarationWithAttributesAsync("private", "MemberName", "event EventHandler MemberName", ", AnotherMemberName;", containingType: "interface", warning: false);
+            await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "event EventHandler MemberName", ", AnotherMemberName;", containingType: "interface", warning: false);
         }
 
         [TestMethod]
         public async Task TestInterfaceEventFieldDeclarationWithDirectivesAsync()
         {
-            await TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "event EventHandler MemberName", ", AnotherMemberName;", containingType: "interface", warning: false);
+            await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "event EventHandler MemberName", ", AnotherMemberName;", containingType: "interface", warning: false);
         }
 
         #endregion
@@ -548,37 +548,37 @@
         [TestMethod]
         public async Task TestFieldDeclarationAsync()
         {
-            await TestNestedDeclarationAsync("private", "MemberName", "System.EventHandler MemberName", ", AnotherMemberName;");
+            await this.TestNestedDeclarationAsync("private", "MemberName", "System.EventHandler MemberName", ", AnotherMemberName;");
         }
 
         [TestMethod]
         public async Task TestFieldDeclarationWithAttributesAsync()
         {
-            await TestNestedDeclarationWithAttributesAsync("private", "MemberName", "System.EventHandler MemberName", ", AnotherMemberName;");
+            await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "System.EventHandler MemberName", ", AnotherMemberName;");
         }
 
         [TestMethod]
         public async Task TestFieldDeclarationWithDirectivesAsync()
         {
-            await TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "System.EventHandler MemberName", ", AnotherMemberName;");
+            await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "System.EventHandler MemberName", ", AnotherMemberName;");
         }
 
         [TestMethod]
         public async Task TestStaticFieldDeclarationAsync()
         {
-            await TestNestedDeclarationAsync("private", "MemberName", "static System.EventHandler MemberName", ", AnotherMemberName;");
+            await this.TestNestedDeclarationAsync("private", "MemberName", "static System.EventHandler MemberName", ", AnotherMemberName;");
         }
 
         [TestMethod]
         public async Task TestStaticFieldDeclarationWithAttributesAsync()
         {
-            await TestNestedDeclarationWithAttributesAsync("private", "MemberName", "static System.EventHandler MemberName", ", AnotherMemberName;");
+            await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "static System.EventHandler MemberName", ", AnotherMemberName;");
         }
 
         [TestMethod]
         public async Task TestStaticFieldDeclarationWithDirectivesAsync()
         {
-            await TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "static System.EventHandler MemberName", ", AnotherMemberName;");
+            await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "static System.EventHandler MemberName", ", AnotherMemberName;");
         }
 
         #endregion
@@ -588,19 +588,19 @@
         [TestMethod]
         public async Task TestOperatorDeclarationAsync()
         {
-            await TestNestedDeclarationAsync("public", "+", "static OuterTypeName operator +", "  ( OuterTypeName x,OuterTypeName  y ) { throw new System.Exception(); }", elementName: "op_Addition");
+            await this.TestNestedDeclarationAsync("public", "+", "static OuterTypeName operator +", "  ( OuterTypeName x,OuterTypeName  y ) { throw new System.Exception(); }", elementName: "op_Addition");
         }
 
         [TestMethod]
         public async Task TestOperatorDeclarationWithAttributesAsync()
         {
-            await TestNestedDeclarationWithAttributesAsync("public", "+", "static OuterTypeName operator +", "  ( OuterTypeName x,OuterTypeName  y ) { throw new System.Exception(); }", elementName: "op_Addition");
+            await this.TestNestedDeclarationWithAttributesAsync("public", "+", "static OuterTypeName operator +", "  ( OuterTypeName x,OuterTypeName  y ) { throw new System.Exception(); }", elementName: "op_Addition");
         }
 
         [TestMethod]
         public async Task TestOperatorDeclarationWithDirectivesAsync()
         {
-            await TestNestedDeclarationWithDirectivesAsync("public", "+", "static OuterTypeName operator +", "  ( OuterTypeName x,OuterTypeName  y ) { throw new System.Exception(); }", elementName: "op_Addition");
+            await this.TestNestedDeclarationWithDirectivesAsync("public", "+", "static OuterTypeName operator +", "  ( OuterTypeName x,OuterTypeName  y ) { throw new System.Exception(); }", elementName: "op_Addition");
         }
 
         #endregion
@@ -610,19 +610,19 @@
         [TestMethod]
         public async Task TestConversionOperatorDeclarationAsync()
         {
-            await TestNestedDeclarationAsync("public", "bool", "static explicit operator bool", "  ( OuterTypeName x ) { throw new System.Exception(); }", elementName: "op_Explicit");
+            await this.TestNestedDeclarationAsync("public", "bool", "static explicit operator bool", "  ( OuterTypeName x ) { throw new System.Exception(); }", elementName: "op_Explicit");
         }
 
         [TestMethod]
         public async Task TestConversionOperatorDeclarationWithAttributesAsync()
         {
-            await TestNestedDeclarationWithAttributesAsync("public", "bool", "static explicit operator bool", "  ( OuterTypeName x ) { throw new System.Exception(); }", elementName: "op_Explicit");
+            await this.TestNestedDeclarationWithAttributesAsync("public", "bool", "static explicit operator bool", "  ( OuterTypeName x ) { throw new System.Exception(); }", elementName: "op_Explicit");
         }
 
         [TestMethod]
         public async Task TestConversionOperatorDeclarationWithDirectivesAsync()
         {
-            await TestNestedDeclarationWithDirectivesAsync("public", "bool", "static explicit operator bool", "  ( OuterTypeName x ) { throw new System.Exception(); }", elementName: "op_Explicit");
+            await this.TestNestedDeclarationWithDirectivesAsync("public", "bool", "static explicit operator bool", "  ( OuterTypeName x ) { throw new System.Exception(); }", elementName: "op_Explicit");
         }
 
         #endregion
@@ -632,37 +632,37 @@
         [TestMethod]
         public async Task TestIndexerDeclarationAsync()
         {
-            await TestNestedDeclarationAsync("private", "this", "EventHandler this[int", " index ] { get { throw new System.Exception(); } set { throw new System.Exception(); } }", elementName: "this[]");
+            await this.TestNestedDeclarationAsync("private", "this", "EventHandler this[int", " index ] { get { throw new System.Exception(); } set { throw new System.Exception(); } }", elementName: "this[]");
         }
 
         [TestMethod]
         public async Task TestIndexerDeclarationWithAttributesAsync()
         {
-            await TestNestedDeclarationWithAttributesAsync("private", "this", "EventHandler this[int", " index ] { get { throw new System.Exception(); } set { throw new System.Exception(); } }", elementName: "this[]");
+            await this.TestNestedDeclarationWithAttributesAsync("private", "this", "EventHandler this[int", " index ] { get { throw new System.Exception(); } set { throw new System.Exception(); } }", elementName: "this[]");
         }
 
         [TestMethod]
         public async Task TestIndexerDeclarationWithDirectivesAsync()
         {
-            await TestNestedDeclarationWithDirectivesAsync("private", "this", "EventHandler this[int", " index ] { get { throw new System.Exception(); } set { throw new System.Exception(); } }", elementName: "this[]");
+            await this.TestNestedDeclarationWithDirectivesAsync("private", "this", "EventHandler this[int", " index ] { get { throw new System.Exception(); } set { throw new System.Exception(); } }", elementName: "this[]");
         }
 
         [TestMethod]
         public async Task TestExplicitInterfaceIndexerDeclarationAsync()
         {
-            await TestNestedDeclarationAsync("private", "this", "EventHandler IInterface.this[int", " index ] { get { throw new System.Exception(); } set { throw new System.Exception(); } }", warning: false);
+            await this.TestNestedDeclarationAsync("private", "this", "EventHandler IInterface.this[int", " index ] { get { throw new System.Exception(); } set { throw new System.Exception(); } }", warning: false);
         }
 
         [TestMethod]
         public async Task TestExplicitInterfaceIndexerDeclarationWithAttributesAsync()
         {
-            await TestNestedDeclarationWithAttributesAsync("private", "this", "EventHandler IInterface.this[int", " index ] { get { throw new System.Exception(); } set { throw new System.Exception(); } }", warning: false);
+            await this.TestNestedDeclarationWithAttributesAsync("private", "this", "EventHandler IInterface.this[int", " index ] { get { throw new System.Exception(); } set { throw new System.Exception(); } }", warning: false);
         }
 
         [TestMethod]
         public async Task TestExplicitInterfaceIndexerDeclarationWithDirectivesAsync()
         {
-            await TestNestedDeclarationWithDirectivesAsync("private", "this", "EventHandler IInterface.this[int", " index ] { get { throw new System.Exception(); } set { throw new System.Exception(); } }", warning: false);
+            await this.TestNestedDeclarationWithDirectivesAsync("private", "this", "EventHandler IInterface.this[int", " index ] { get { throw new System.Exception(); } set { throw new System.Exception(); } }", warning: false);
         }
 
         #endregion
@@ -672,69 +672,69 @@
         [TestMethod]
         public async Task TestConstructorDeclarationAsync()
         {
-            await TestNestedDeclarationAsync("private", "OuterTypeName", "OuterTypeName(", " ) { }", elementName: ".ctor");
+            await this.TestNestedDeclarationAsync("private", "OuterTypeName", "OuterTypeName(", " ) { }", elementName: ".ctor");
         }
 
         [TestMethod]
         public async Task TestConstructorDeclarationWithAttributesAsync()
         {
-            await TestNestedDeclarationWithAttributesAsync("private", "OuterTypeName", "OuterTypeName(", " ) { }", elementName: ".ctor");
+            await this.TestNestedDeclarationWithAttributesAsync("private", "OuterTypeName", "OuterTypeName(", " ) { }", elementName: ".ctor");
         }
 
         [TestMethod]
         public async Task TestConstructorDeclarationWithDirectivesAsync()
         {
-            await TestNestedDeclarationWithDirectivesAsync("private", "OuterTypeName", "OuterTypeName(", " ) { }", elementName: ".ctor");
+            await this.TestNestedDeclarationWithDirectivesAsync("private", "OuterTypeName", "OuterTypeName(", " ) { }", elementName: ".ctor");
         }
 
         [TestMethod]
         public async Task TestStaticConstructorDeclarationAsync()
         {
-            await TestNestedDeclarationAsync("private", "OuterTypeName", "static OuterTypeName(", " ) { }", warning: false);
+            await this.TestNestedDeclarationAsync("private", "OuterTypeName", "static OuterTypeName(", " ) { }", warning: false);
         }
 
         [TestMethod]
         public async Task TestStaticConstructorDeclarationWithAttributesAsync()
         {
-            await TestNestedDeclarationWithAttributesAsync("private", "OuterTypeName", "static OuterTypeName(", " ) { }", warning: false);
+            await this.TestNestedDeclarationWithAttributesAsync("private", "OuterTypeName", "static OuterTypeName(", " ) { }", warning: false);
         }
 
         [TestMethod]
         public async Task TestStaticConstructorDeclarationWithDirectivesAsync()
         {
-            await TestNestedDeclarationWithDirectivesAsync("private", "OuterTypeName", "static OuterTypeName(", " ) { }", warning: false);
+            await this.TestNestedDeclarationWithDirectivesAsync("private", "OuterTypeName", "static OuterTypeName(", " ) { }", warning: false);
         }
 
         #endregion
 
         private async Task TestTypeDeclarationAsync(string keyword, bool warning = true)
         {
-            await TestDeclarationAsync("internal", "TypeName", $"{keyword} TypeName", "{\n}", warning: warning);
+            await this.TestDeclarationAsync("internal", "TypeName", $"{keyword} TypeName", "{\n}", warning: warning);
         }
 
         private async Task TestTypeDeclarationWithAttributesAsync(string keyword, bool warning = true)
         {
-            await TestDeclarationWithAttributesAsync("internal", "TypeName", $"{keyword} TypeName", "{\n}", warning: warning);
+            await this.TestDeclarationWithAttributesAsync("internal", "TypeName", $"{keyword} TypeName", "{\n}", warning: warning);
         }
 
         private async Task TestTypeDeclarationWithDirectivesAsync(string keyword, bool warning = true)
         {
-            await TestDeclarationWithDirectivesAsync("internal", "TypeName", $"{keyword} TypeName", "{\n}", warning: warning);
+            await this.TestDeclarationWithDirectivesAsync("internal", "TypeName", $"{keyword} TypeName", "{\n}", warning: warning);
         }
 
         private async Task TestNestedTypeDeclarationAsync(string keyword, bool warning = true)
         {
-            await TestNestedDeclarationAsync("private", "TypeName", $"{keyword} TypeName", "{\n}", warning: warning);
+            await this.TestNestedDeclarationAsync("private", "TypeName", $"{keyword} TypeName", "{\n}", warning: warning);
         }
 
         private async Task TestNestedTypeDeclarationWithAttributesAsync(string keyword, bool warning = true)
         {
-            await TestNestedDeclarationWithAttributesAsync("private", "TypeName", $"{keyword} TypeName", "{\n}", warning: warning);
+            await this.TestNestedDeclarationWithAttributesAsync("private", "TypeName", $"{keyword} TypeName", "{\n}", warning: warning);
         }
 
         private async Task TestNestedTypeDeclarationWithDirectivesAsync(string keyword, bool warning = true)
         {
-            await TestNestedDeclarationWithDirectivesAsync("private", "TypeName", $"{keyword} TypeName", "{\n}", warning: warning);
+            await this.TestNestedDeclarationWithDirectivesAsync("private", "TypeName", $"{keyword} TypeName", "{\n}", warning: warning);
         }
 
         private async Task TestDeclarationAsync(string modifier, string identifier, string keywordLine, string linesAfter, string elementName = null, bool warning = true)
@@ -745,7 +745,7 @@
 
             if (!warning)
             {
-                await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+                await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
                 return;
             }
 
@@ -764,13 +764,13 @@
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             var fixedTestCode = $@"
  {Tab} {modifier} {keywordLine}
 {linesAfter}";
 
-            await VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
         }
 
         private async Task TestDeclarationWithAttributesAsync(string modifier, string identifier, string keywordLine, string linesAfter, string elementName = null, bool warning = true)
@@ -782,7 +782,7 @@
 
             if (!warning)
             {
-                await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+                await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
                 return;
             }
 
@@ -801,14 +801,14 @@
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             var fixedTestCode = $@"
   [Serializable]
  {Tab} {modifier} {keywordLine}
 {linesAfter}";
 
-            await VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
         }
 
         private async Task TestDeclarationWithDirectivesAsync(string modifier, string identifier, string keywordLine, string linesAfter, string elementName = null, bool warning = true)
@@ -821,7 +821,7 @@
 
             if (!warning)
             {
-                await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+                await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
                 return;
             }
 
@@ -840,7 +840,7 @@
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             var fixedTestCode = $@"
  #  if true
@@ -848,7 +848,7 @@
 # endif
 {linesAfter}";
 
-            await VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
         }
 
         private async Task TestNestedDeclarationAsync(string modifier, string identifier, string keywordLine, string linesAfter, string containingType = "class", string elementName = null, bool warning = true)
@@ -860,7 +860,7 @@ public {containingType} OuterTypeName {{
 
             if (!warning)
             {
-                await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+                await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
                 return;
             }
 
@@ -879,14 +879,14 @@ public {containingType} OuterTypeName {{
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             var fixedTestCode = $@"
 public {containingType} OuterTypeName {{
  {Tab} {modifier} {keywordLine}
 {linesAfter} }}";
 
-            await VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
         }
 
         private async Task TestNestedDeclarationWithAttributesAsync(string modifier, string identifier, string keywordLine, string linesAfter, string containingType = "class", string elementName = null, bool warning = true)
@@ -899,7 +899,7 @@ public {containingType} OuterTypeName {{
 
             if (!warning)
             {
-                await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+                await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
                 return;
             }
 
@@ -918,7 +918,7 @@ public {containingType} OuterTypeName {{
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             var fixedTestCode = $@"
 public {containingType} OuterTypeName {{
@@ -926,7 +926,7 @@ public {containingType} OuterTypeName {{
  {Tab} {modifier} {keywordLine}
 {linesAfter} }}";
 
-            await VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
         }
 
         private async Task TestNestedDeclarationWithDirectivesAsync(string modifier, string identifier, string keywordLine, string linesAfter, string containingType = "class", string elementName = null, bool warning = true)
@@ -940,7 +940,7 @@ public {containingType} OuterTypeName {{
 
             if (!warning)
             {
-                await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+                await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
                 return;
             }
 
@@ -959,7 +959,7 @@ public {containingType} OuterTypeName {{
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             var fixedTestCode = $@"
 public {containingType} OuterTypeName {{
@@ -968,7 +968,7 @@ public {containingType} OuterTypeName {{
 # endif
 {linesAfter} }}";
 
-            await VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

@@ -18,7 +18,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -31,7 +31,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         bool x = true || false || true || false;
     }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -44,7 +44,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         bool x = true && false && true && false;
     }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -72,7 +72,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             var fixedCode = @"public class Foo
 {
@@ -82,7 +82,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -110,7 +110,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             var fixedCode = @"public class Foo
 {
@@ -120,7 +120,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -133,7 +133,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         bool x = (true || false) && true;
     }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -146,7 +146,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         bool x = true || (false == true);
     }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -160,7 +160,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -173,7 +173,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         bool x = (true && false) || true;
     }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -212,7 +212,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             var fixedCode = @"public class Foo
 {
@@ -222,7 +222,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -249,7 +249,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

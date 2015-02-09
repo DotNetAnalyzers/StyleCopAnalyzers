@@ -20,13 +20,13 @@
     [Shared]
     public class SA1005CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> _fixableDiagnostics =
+        private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1005SingleLineCommentsMustBeginWithSingleSpace.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> GetFixableDiagnosticIds()
         {
-            return _fixableDiagnostics;
+            return FixableDiagnostics;
         }
 
         /// <inheritdoc/>

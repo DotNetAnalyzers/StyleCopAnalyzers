@@ -24,13 +24,13 @@
     [Shared]
     public class SA1642SA1643CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> _fixableDiagnostics =
+        private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.DiagnosticId, SA1643DestructorSummaryDocumentationMustBeginWithStandardText.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> GetFixableDiagnosticIds()
         {
-            return _fixableDiagnostics;
+            return FixableDiagnostics;
         }
 
         /// <inheritdoc/>
@@ -44,7 +44,7 @@
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!_fixableDiagnostics.Contains(diagnostic.Id))
+                if (!FixableDiagnostics.Contains(diagnostic.Id))
                     continue;
 
                 var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
@@ -104,14 +104,14 @@
             }
             else
             {
-                identifierName = SyntaxFactory.GenericName(identifier.WithoutTrivia(), ParameterToArgumentListSyntax(typeParameters));
+                identifierName = SyntaxFactory.GenericName(identifier.WithoutTrivia(), this.ParameterToArgumentListSyntax(typeParameters));
             }
             var list = new SyntaxList<XmlNodeSyntax>();
 
             list = list.Add(XmlNewLine());
             list = list.Add(this.CreateTextSyntax(preText).WithLeadingTrivia(XmlLineStart()));
-            list = list.Add(CreateSeeSyntax(identifierName));
-            list = list.Add(CreateTextSyntax(postText.EndsWith(".") ? postText : (postText + ".")));
+            list = list.Add(this.CreateSeeSyntax(identifierName));
+            list = list.Add(this.CreateTextSyntax(postText.EndsWith(".") ? postText : (postText + ".")));
 
             return list;
         }

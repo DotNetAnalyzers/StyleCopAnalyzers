@@ -264,22 +264,22 @@
         {
             var expected = new[]
             {
-                CreateDiagnosticResult(90, 36),
-                CreateDiagnosticResult(94, 36),
-                CreateDiagnosticResult(96, 36),
-                CreateDiagnosticResult(98, 36),
-                CreateDiagnosticResult(100, 36),
-                CreateDiagnosticResult(105, 45),
-                CreateDiagnosticResult(106, 48),
+                this.CreateDiagnosticResult(90, 36),
+                this.CreateDiagnosticResult(94, 36),
+                this.CreateDiagnosticResult(96, 36),
+                this.CreateDiagnosticResult(98, 36),
+                this.CreateDiagnosticResult(100, 36),
+                this.CreateDiagnosticResult(105, 45),
+                this.CreateDiagnosticResult(106, 48),
             };
 
-            await VerifyCSharpDiagnosticAsync(ReferenceCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(ReferenceCode, expected, CancellationToken.None);
         }
 
         [TestMethod]
         public async Task TestPrefixLocalCallsWithThisCodeFix()
         {
-            await VerifyCSharpFixAsync(ReferenceCode, FixedCode, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(ReferenceCode, FixedCode, cancellationToken: CancellationToken.None);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

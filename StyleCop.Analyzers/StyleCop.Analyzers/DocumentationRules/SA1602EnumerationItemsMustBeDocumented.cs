@@ -47,7 +47,7 @@
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -55,14 +55,14 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleEnumMember, SyntaxKind.EnumMemberDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleEnumMember, SyntaxKind.EnumMemberDeclaration);
         }
 
         private void HandleEnumMember(SyntaxNodeAnalysisContext context)

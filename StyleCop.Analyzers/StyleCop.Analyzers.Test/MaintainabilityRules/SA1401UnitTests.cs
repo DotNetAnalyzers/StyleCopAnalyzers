@@ -17,7 +17,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -43,7 +43,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
         [TestMethod]
@@ -69,7 +69,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
         [TestMethod]
@@ -80,7 +80,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     string bar;
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -91,7 +91,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     public string bar;
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -101,7 +101,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     public const string bar = ""qwe"";
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

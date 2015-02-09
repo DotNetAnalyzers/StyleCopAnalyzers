@@ -18,7 +18,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -31,7 +31,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     {
     }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -44,7 +44,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     {
     }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -57,7 +57,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     {
     }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -85,7 +85,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
         [TestMethod]
@@ -124,7 +124,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
         [TestMethod]
@@ -146,7 +146,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await VerifyCSharpFixAsync(oldSource, newSource, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(oldSource, newSource, cancellationToken: CancellationToken.None);
         }
 
         [TestMethod]
@@ -168,7 +168,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await VerifyCSharpFixAsync(oldSource, newSource, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(oldSource, newSource, cancellationToken: CancellationToken.None);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

@@ -56,7 +56,7 @@
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         public static ImmutableArray<string> DestructorStandardText { get; } = ImmutableArray.Create("Finalizes an instance of the ", " class.");
@@ -66,7 +66,7 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
@@ -83,7 +83,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleDestructor, SyntaxKind.DestructorDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleDestructor, SyntaxKind.DestructorDeclaration);
         }
 
         private void HandleDestructor(SyntaxNodeAnalysisContext context)
@@ -92,7 +92,7 @@
 
             if (destructorDeclaration != null)
             {
-                HandleDeclaration(context, DestructorStandardText[0], DestructorStandardText[1], true);
+                this.HandleDeclaration(context, DestructorStandardText[0], DestructorStandardText[1], true);
             }
         }
     }

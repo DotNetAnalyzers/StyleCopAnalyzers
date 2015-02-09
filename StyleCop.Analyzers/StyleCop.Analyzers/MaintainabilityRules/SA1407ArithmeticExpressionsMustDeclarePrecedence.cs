@@ -52,7 +52,7 @@
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -60,20 +60,20 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleMathExpression, SyntaxKind.AddExpression);
-            context.RegisterSyntaxNodeAction(HandleMathExpression, SyntaxKind.SubtractExpression);
-            context.RegisterSyntaxNodeAction(HandleMathExpression, SyntaxKind.MultiplyExpression);
-            context.RegisterSyntaxNodeAction(HandleMathExpression, SyntaxKind.DivideExpression);
-            context.RegisterSyntaxNodeAction(HandleMathExpression, SyntaxKind.ModuloExpression);
-            context.RegisterSyntaxNodeAction(HandleMathExpression, SyntaxKind.LeftShiftExpression);
-            context.RegisterSyntaxNodeAction(HandleMathExpression, SyntaxKind.RightShiftExpression);
+            context.RegisterSyntaxNodeAction(this.HandleMathExpression, SyntaxKind.AddExpression);
+            context.RegisterSyntaxNodeAction(this.HandleMathExpression, SyntaxKind.SubtractExpression);
+            context.RegisterSyntaxNodeAction(this.HandleMathExpression, SyntaxKind.MultiplyExpression);
+            context.RegisterSyntaxNodeAction(this.HandleMathExpression, SyntaxKind.DivideExpression);
+            context.RegisterSyntaxNodeAction(this.HandleMathExpression, SyntaxKind.ModuloExpression);
+            context.RegisterSyntaxNodeAction(this.HandleMathExpression, SyntaxKind.LeftShiftExpression);
+            context.RegisterSyntaxNodeAction(this.HandleMathExpression, SyntaxKind.RightShiftExpression);
         }
 
         private void HandleMathExpression(SyntaxNodeAnalysisContext context)
@@ -88,7 +88,7 @@
 
                     var left = (BinaryExpressionSyntax)binSyntax.Left;
 
-                    if (!IsSameFamily(binSyntax.OperatorToken, left.OperatorToken))
+                    if (!this.IsSameFamily(binSyntax.OperatorToken, left.OperatorToken))
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, left.GetLocation()));
                 }
                 if (binSyntax.Right is BinaryExpressionSyntax)
@@ -97,7 +97,7 @@
 
                     var right = (BinaryExpressionSyntax)binSyntax.Right;
 
-                    if (!IsSameFamily(binSyntax.OperatorToken, right.OperatorToken))
+                    if (!this.IsSameFamily(binSyntax.OperatorToken, right.OperatorToken))
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, right.GetLocation()));
                 }
             }

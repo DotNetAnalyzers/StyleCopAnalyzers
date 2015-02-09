@@ -36,7 +36,7 @@
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -44,14 +44,14 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleAttributeArgumentListSyntax, SyntaxKind.AttributeArgumentList);
+            context.RegisterSyntaxNodeAction(this.HandleAttributeArgumentListSyntax, SyntaxKind.AttributeArgumentList);
         }
 
         private void HandleAttributeArgumentListSyntax(SyntaxNodeAnalysisContext context)

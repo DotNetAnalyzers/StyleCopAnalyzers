@@ -37,19 +37,19 @@
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning,
                 true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return _supportedDiagnostics; }
+            get { return supportedDiagnostics; }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleFieldDeclarationSyntax, SyntaxKind.FieldDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleFieldDeclarationSyntax, SyntaxKind.FieldDeclaration);
         }
 
         private void HandleFieldDeclarationSyntax(SyntaxNodeAnalysisContext context)

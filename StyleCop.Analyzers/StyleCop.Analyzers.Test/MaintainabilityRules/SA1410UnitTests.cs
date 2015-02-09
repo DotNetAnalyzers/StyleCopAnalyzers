@@ -18,7 +18,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -31,7 +31,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         System.Func<int> getRandomNumber = delegate { return 3; };
     }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -44,7 +44,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         System.Func<int, int> getNumber = delegate (int i) { return i; };
     }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -72,7 +72,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
         [TestMethod]
@@ -94,7 +94,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await VerifyCSharpFixAsync(oldSource, newSource, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(oldSource, newSource, cancellationToken: CancellationToken.None);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

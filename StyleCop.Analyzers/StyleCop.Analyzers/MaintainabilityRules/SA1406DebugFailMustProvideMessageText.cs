@@ -30,7 +30,7 @@
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -38,20 +38,20 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleMethodCall, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeAction(this.HandleMethodCall, SyntaxKind.InvocationExpression);
         }
 
         private void HandleMethodCall(SyntaxNodeAnalysisContext context)
         {
             // Debug.Fail is not availible in a portable library. So no nameof(Debug.Fail) here
-            HandleMethodCall(context, "Fail", 0, Descriptor);
+            this.HandleMethodCall(context, "Fail", 0, Descriptor);
         }
     }
 }

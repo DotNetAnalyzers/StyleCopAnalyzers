@@ -18,11 +18,11 @@
             switch (fixAllContext.Scope)
             {
             case FixAllScope.Document:
-                var newRoot = await FixAllInDocumentAsync(fixAllContext, fixAllContext.Document);
+                var newRoot = await this.FixAllInDocumentAsync(fixAllContext, fixAllContext.Document);
                 return CodeAction.Create("Add parentheses", fixAllContext.Document.WithSyntaxRoot(newRoot));
 
             case FixAllScope.Project:
-                Solution solution = await GetProjectFixesAsync(fixAllContext, fixAllContext.Project);
+                Solution solution = await this.GetProjectFixesAsync(fixAllContext, fixAllContext.Project);
                 return CodeAction.Create("Add parentheses", solution);
 
             case FixAllScope.Solution:
@@ -30,7 +30,7 @@
                 var projectIds = newSolution.ProjectIds;
                 for (int i = 0; i < projectIds.Count; i++)
                 {
-                    newSolution = await GetProjectFixesAsync(fixAllContext, newSolution.GetProject(projectIds[i]));
+                    newSolution = await this.GetProjectFixesAsync(fixAllContext, newSolution.GetProject(projectIds[i]));
                 }
                 return CodeAction.Create("Add parentheses", newSolution);
 
@@ -47,7 +47,7 @@
             List<Task<SyntaxNode>> newDocuments = new List<Task<SyntaxNode>>(oldDocuments.Length);
             foreach (var document in oldDocuments)
             {
-                newDocuments.Add(FixAllInDocumentAsync(fixAllContext, document));
+                newDocuments.Add(this.FixAllInDocumentAsync(fixAllContext, document));
             }
             for (int i = 0; i < oldDocuments.Length; i++)
             {
@@ -78,7 +78,7 @@
                 root = root.ReplaceNode(node, node.WithAdditionalAnnotations(NeedsParenthesisAnnotation));
             }
 
-            return root.ReplaceNodes(root.GetAnnotatedNodes(NeedsParenthesisAnnotation), AddParentheses);
+            return root.ReplaceNodes(root.GetAnnotatedNodes(NeedsParenthesisAnnotation), this.AddParentheses);
         }
 
         private SyntaxNode AddParentheses(SyntaxNode originalNode, SyntaxNode rewrittenNode)

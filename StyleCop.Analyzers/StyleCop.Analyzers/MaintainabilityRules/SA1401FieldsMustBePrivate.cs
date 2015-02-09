@@ -28,7 +28,7 @@
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -36,21 +36,21 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSymbolAction(AnalyzeField,SymbolKind.Field);
+            context.RegisterSymbolAction(this.AnalyzeField, SymbolKind.Field);
         }
 
         private void AnalyzeField(SymbolAnalysisContext symbolAnalysisContext)
         {
             var fieldDeclarationSyntax = (IFieldSymbol)symbolAnalysisContext.Symbol;
-            if (!IsFieldPrivate(fieldDeclarationSyntax) &&
-                IsParentAClass(fieldDeclarationSyntax) &&
+            if (!this.IsFieldPrivate(fieldDeclarationSyntax) &&
+                this.IsParentAClass(fieldDeclarationSyntax) &&
                 !fieldDeclarationSyntax.IsConst)
             {
                 symbolAnalysisContext.ReportDiagnostic(Diagnostic.Create(Descriptor, fieldDeclarationSyntax.Locations[0]));

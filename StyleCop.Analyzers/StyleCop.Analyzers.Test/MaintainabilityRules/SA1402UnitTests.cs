@@ -45,7 +45,7 @@ public partial class Foo
 
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
 
         }
 
@@ -64,8 +64,8 @@ public partial class Bar
             {
                 new DiagnosticResult
                 {
-                    Id = DiagnosticId,
-                    Message = Message,
+                    Id = this.DiagnosticId,
+                    Message = this.Message,
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -75,7 +75,7 @@ public partial class Bar
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
         }
 
@@ -90,7 +90,7 @@ public partial class Bar
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
 
         }
     }

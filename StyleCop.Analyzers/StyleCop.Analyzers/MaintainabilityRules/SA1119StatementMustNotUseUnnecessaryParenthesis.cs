@@ -49,7 +49,7 @@
         private static readonly DiagnosticDescriptor ParenthesisDescriptor =
             new DiagnosticDescriptor(DiagnosticId + "_p", Title, MessageFormat, Category, DiagnosticSeverity.Hidden, true, Description, HelpLink, customTags: new[] { WellKnownDiagnosticTags.Unnecessary, WellKnownDiagnosticTags.NotConfigurable });
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -57,14 +57,14 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleParenthesizedExpressionn, SyntaxKind.ParenthesizedExpression);
+            context.RegisterSyntaxNodeAction(this.HandleParenthesizedExpressionn, SyntaxKind.ParenthesizedExpression);
         }
 
         private void HandleParenthesizedExpressionn(SyntaxNodeAnalysisContext context)

@@ -41,7 +41,7 @@
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -49,25 +49,25 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeAction(HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
-            context.RegisterSyntaxNodeAction(HandleInvocationExpression, SyntaxKind.InvocationExpression);
-            context.RegisterSyntaxNodeAction(HandleObjectCreationExpression, SyntaxKind.ObjectCreationExpression);
-            context.RegisterSyntaxNodeAction(HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
-            context.RegisterSyntaxNodeAction(HandleElementAccessExpression, SyntaxKind.ElementAccessExpression);
-            context.RegisterSyntaxNodeAction(HandleDelegateDeclarationExpression, SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeAction(HandleAttribute, SyntaxKind.Attribute);
-            context.RegisterSyntaxNodeAction(HandleAnonymousMethod, SyntaxKind.AnonymousMethodExpression);
-            context.RegisterSyntaxNodeAction(HandleAttributeList, SyntaxKind.AttributeList);
-            context.RegisterSyntaxNodeAction(HandleParenthesizedLambdaExpression, SyntaxKind.ParenthesizedLambdaExpression);
-            context.RegisterSyntaxNodeAction(HandleArrayCreation, SyntaxKind.ArrayCreationExpression);
+            context.RegisterSyntaxNodeAction(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleInvocationExpression, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeAction(this.HandleObjectCreationExpression, SyntaxKind.ObjectCreationExpression);
+            context.RegisterSyntaxNodeAction(this.HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleElementAccessExpression, SyntaxKind.ElementAccessExpression);
+            context.RegisterSyntaxNodeAction(this.HandleDelegateDeclarationExpression, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleAttribute, SyntaxKind.Attribute);
+            context.RegisterSyntaxNodeAction(this.HandleAnonymousMethod, SyntaxKind.AnonymousMethodExpression);
+            context.RegisterSyntaxNodeAction(this.HandleAttributeList, SyntaxKind.AttributeList);
+            context.RegisterSyntaxNodeAction(this.HandleParenthesizedLambdaExpression, SyntaxKind.ParenthesizedLambdaExpression);
+            context.RegisterSyntaxNodeAction(this.HandleArrayCreation, SyntaxKind.ArrayCreationExpression);
         }
 
         private void HandleArrayCreation(SyntaxNodeAnalysisContext context)

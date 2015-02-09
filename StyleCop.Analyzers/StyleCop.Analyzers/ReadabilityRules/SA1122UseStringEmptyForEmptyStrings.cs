@@ -41,7 +41,7 @@
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -49,14 +49,14 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleStringLiteral, SyntaxKind.StringLiteralExpression);
+            context.RegisterSyntaxNodeAction(this.HandleStringLiteral, SyntaxKind.StringLiteralExpression);
         }
 
         private void HandleStringLiteral(SyntaxNodeAnalysisContext context)
@@ -68,7 +68,7 @@
                 var token = literalExpression.Token;
                 if (token.IsKind(SyntaxKind.StringLiteralToken))
                 {
-                    if (HasToBeConstant(literalExpression))
+                    if (this.HasToBeConstant(literalExpression))
                         return;
 
                     if (token.ValueText == string.Empty)
@@ -81,7 +81,7 @@
 
         private bool HasToBeConstant(LiteralExpressionSyntax literalExpression)
         {
-            ExpressionSyntax outermostExpression = FindOutermostExpression(literalExpression);
+            ExpressionSyntax outermostExpression = this.FindOutermostExpression(literalExpression);
 
             if (outermostExpression.Parent.IsKind(SyntaxKind.AttributeArgument))
                 return true;
