@@ -24,13 +24,13 @@
     [Shared]
     public class SA1642SA1643CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> fixableDiagnostics =
+        private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.DiagnosticId, SA1643DestructorSummaryDocumentationMustBeginWithStandardText.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> GetFixableDiagnosticIds()
         {
-            return fixableDiagnostics;
+            return FixableDiagnostics;
         }
 
         /// <inheritdoc/>
@@ -44,7 +44,7 @@
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!fixableDiagnostics.Contains(diagnostic.Id))
+                if (!FixableDiagnostics.Contains(diagnostic.Id))
                     continue;
 
                 var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);

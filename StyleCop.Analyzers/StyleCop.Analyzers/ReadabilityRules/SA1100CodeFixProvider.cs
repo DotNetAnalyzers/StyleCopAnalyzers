@@ -14,13 +14,13 @@
     [Shared]
     public class SA1100CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> fixableDiagnostics =
+        private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> GetFixableDiagnosticIds()
         {
-            return fixableDiagnostics;
+            return FixableDiagnostics;
         }
 
         /// <inheritdoc/>

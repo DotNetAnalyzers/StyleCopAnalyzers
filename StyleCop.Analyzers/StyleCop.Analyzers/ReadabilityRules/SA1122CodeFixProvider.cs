@@ -21,13 +21,13 @@
     [Shared]
     public class SA1122CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> fixableDiagnostics =
+        private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1122UseStringEmptyForEmptyStrings.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> GetFixableDiagnosticIds()
         {
-            return fixableDiagnostics;
+            return FixableDiagnostics;
         }
 
         /// <inheritdoc/>

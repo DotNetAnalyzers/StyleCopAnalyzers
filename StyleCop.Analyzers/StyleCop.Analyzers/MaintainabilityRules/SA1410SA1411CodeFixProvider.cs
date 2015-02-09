@@ -21,14 +21,14 @@
     [Shared]
     public class SA1410SA1411CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> fixableDiagnostics =
+        private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1410RemoveDelegateParenthesisWhenPossible.DiagnosticId,
                 SA1411AttributeConstructorMustNotUseUnnecessaryParenthesis.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> GetFixableDiagnosticIds()
         {
-            return fixableDiagnostics;
+            return FixableDiagnostics;
         }
 
         /// <inheritdoc/>
