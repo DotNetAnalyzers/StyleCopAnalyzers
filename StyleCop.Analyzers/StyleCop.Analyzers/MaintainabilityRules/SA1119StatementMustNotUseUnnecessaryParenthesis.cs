@@ -64,10 +64,10 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleParenthesizedExpressionn, SyntaxKind.ParenthesizedExpression);
+            context.RegisterSyntaxNodeAction(this.HandleParenthesizedExpression, SyntaxKind.ParenthesizedExpression);
         }
 
-        private void HandleParenthesizedExpressionn(SyntaxNodeAnalysisContext context)
+        private void HandleParenthesizedExpression(SyntaxNodeAnalysisContext context)
         {
             var node = context.Node as ParenthesizedExpressionSyntax;
 
@@ -92,8 +92,8 @@
                 }
                 else
                 {
-                    if (!(node.Parent is ExpressionSyntax) 
-                        || node.Parent is CheckedExpressionSyntax 
+                    if (!(node.Parent is ExpressionSyntax)
+                        || node.Parent is CheckedExpressionSyntax
                         || node.Parent is MemberAccessExpressionSyntax)
                     {
                         var memberAccess = node.Parent as MemberAccessExpressionSyntax;
@@ -123,11 +123,11 @@
                             {
                                 ReportDiagnostic(context, node);
                             }
-                            }
                         }
                     }
                 }
             }
+        }
 
         private static void ReportDiagnostic(SyntaxNodeAnalysisContext context, ParenthesizedExpressionSyntax node)
         {
