@@ -30,6 +30,13 @@
         }
 
         [TestMethod]
+        public async Task TestSpaceAfterComma()
+        {
+            string statement = "f(a, b);";
+            await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
+        }
+
+        [TestMethod]
         public async Task TestNoSpaceAfterComma()
         {
             string statementWithoutSpace = @"f(a,b);";
@@ -117,8 +124,7 @@
         [TestMethod]
         public async Task TestLastCommaInLine()
         {
-            string statement = @"f(a,
-              b);";
+            string statement = $"f(a,{Environment.NewLine}b);";
             await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
         }
 
