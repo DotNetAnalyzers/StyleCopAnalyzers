@@ -1,4 +1,6 @@
-﻿namespace StyleCop.Analyzers.NamingRules
+﻿using System.Linq;
+
+namespace StyleCop.Analyzers.NamingRules
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -11,12 +13,13 @@
     /// <summary>
     /// Implements a code fix for <see cref="SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter"/>
     /// </summary>
-    [ExportCodeFixProvider(nameof(SA1311CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(nameof(SA1304SA1311CodeFixProvider), LanguageNames.CSharp)]
     [Shared]
-    public class SA1311CodeFixProvider : CodeFixProvider
+    public class SA1304SA1311CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter.DiagnosticId);
+            ImmutableArray.Create(SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter.DiagnosticId,
+                                  SA1304NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> GetFixableDiagnosticIds()
@@ -29,7 +32,7 @@
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!diagnostic.Id.Equals(SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter.DiagnosticId))
+                if (!FixableDiagnostics.Any(d => diagnostic.Id.Equals(d)))
                     continue;
 
                 var document = context.Document;
