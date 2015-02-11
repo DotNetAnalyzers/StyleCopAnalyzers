@@ -17,6 +17,7 @@
     /// <para>A violation of this rule occurs if an element contains an empty <c>&lt;returns&gt;</c> tag.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    [NoCodeFix("Cannot generate documentation")]
     public class SA1616ElementReturnValueDocumentationMustHaveText : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1616";

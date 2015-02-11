@@ -29,6 +29,7 @@
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    [NoCodeFix("Cannot generate documentation")]
     public class SA1632DocumentationTextMustMeetMinimumCharacterLength : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1632";

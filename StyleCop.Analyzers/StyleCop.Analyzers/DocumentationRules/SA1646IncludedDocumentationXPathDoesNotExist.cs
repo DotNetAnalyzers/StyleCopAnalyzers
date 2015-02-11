@@ -30,6 +30,7 @@
     /// documentation file.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    [NoCodeFix("Cannot generate documentation")]
     public class SA1646IncludedDocumentationXPathDoesNotExist : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1646";

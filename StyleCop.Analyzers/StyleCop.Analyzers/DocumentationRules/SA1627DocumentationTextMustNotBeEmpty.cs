@@ -31,6 +31,7 @@
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    [NoCodeFix("Cannot generate documentation")]
     public class SA1627DocumentationTextMustNotBeEmpty : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1627";

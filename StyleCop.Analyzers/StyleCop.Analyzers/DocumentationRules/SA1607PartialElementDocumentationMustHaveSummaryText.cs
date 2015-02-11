@@ -64,6 +64,7 @@
     /// SDK documentation tools.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    [NoCodeFix("Cannot generate documentation")]
     public class SA1607PartialElementDocumentationMustHaveSummaryText : PartialElementDocumentationSummaryBase
     {
         public const string DiagnosticId = "SA1607";

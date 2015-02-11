@@ -30,6 +30,7 @@
     /// improperly formatted file or path attribute.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    [NoCodeFix("Cannot generate documentation")]
     public class SA1647IncludeNodeDoesNotContainValidFileAndPath : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1647";
