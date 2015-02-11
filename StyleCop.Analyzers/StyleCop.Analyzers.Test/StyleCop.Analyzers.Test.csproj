@@ -137,6 +137,7 @@
     <Compile Include="NamingRules\SA1302UnitTests.cs" />
     <Compile Include="NamingRules\SA1303UnitTests.cs" />
     <Compile Include="NamingRules\SA1304UnitTests.cs" />
+    <Compile Include="NamingRules\SA1306UnitTests.cs" />
     <Compile Include="NamingRules\SA1309UnitTests.cs" />
     <Compile Include="NamingRules\SA1311UnitTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
