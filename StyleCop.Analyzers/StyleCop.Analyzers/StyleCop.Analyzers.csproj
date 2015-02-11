@@ -155,6 +155,7 @@
     <Compile Include="NamingRules\SA1310FieldNamesMustNotContainUnderscore.cs" />
     <Compile Include="NamingRules\SA1311CodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter.cs" />
+    <Compile Include="NoCodeFixAttribute.cs" />
     <Compile Include="OrderingRules\SA1200UsingDirectivesMustBePlacedWithinNamespace.cs" />
     <Compile Include="OrderingRules\SA1201ElementsMustAppearInTheCorrectOrder.cs" />
     <Compile Include="OrderingRules\SA1202ElementsMustBeOrderedByAccess.cs" />
