@@ -177,6 +177,14 @@
         }
 
         [TestMethod]
+        public async Task TestCommaFollowedBySpaceFollowedByAngleBracketInFuncType()
+        {
+            // This is correct by SA1001, and reported as an error by SA1015
+            string statement = @"var a = typeof(System.Func<, >);";
+            await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
+        }
+
+        [TestMethod]
         public async Task TestSpaceBeforeCommaFollowedByCommaInFuncType()
         {
             string statement = @"var a = typeof(System.Func< ,,>);";
