@@ -21,6 +21,7 @@
     /// <c>&lt;summary&gt;</c> tag which does not contain a description of the element.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    [NoCodeFix("Cannot generate documentation")]
     public class SA1606ElementDocumentationMustHaveSummaryText : ElementDocumentationSummaryBase
     {
         public const string DiagnosticId = "SA1606";

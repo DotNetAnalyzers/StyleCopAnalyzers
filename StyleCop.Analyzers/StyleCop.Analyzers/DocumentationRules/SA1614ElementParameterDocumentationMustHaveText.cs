@@ -18,6 +18,7 @@
     /// which is empty and does not contain a description of the parameter.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    [NoCodeFix("Cannot generate documentation")]
     public class SA1614ElementParameterDocumentationMustHaveText : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1614";

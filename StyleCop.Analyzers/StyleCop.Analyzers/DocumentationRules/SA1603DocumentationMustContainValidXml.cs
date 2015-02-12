@@ -22,6 +22,7 @@
     /// occur if the XML contains invalid characters, or if an XML node is missing a closing tag, for example.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    [NoCodeFix("Trying to fix invalid xml would most likely not produce the desired result.")]
     public class SA1603DocumentationMustContainValidXml : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "SA1603";
