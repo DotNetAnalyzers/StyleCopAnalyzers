@@ -23,7 +23,7 @@
         public const string DiagnosticId = "SA1400";
         private const string Title = "Access modifier must be declared";
         private const string MessageFormat = "Element '{0}' must declare an access modifier";
-        private const string Category = "StyleCop.CSharp.Maintainability";
+        private const string Category = "StyleCop.CSharp.MaintainabilityRules";
         private const string Description = "The access modifier for a C# element has not been explicitly defined.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1400.html";
 

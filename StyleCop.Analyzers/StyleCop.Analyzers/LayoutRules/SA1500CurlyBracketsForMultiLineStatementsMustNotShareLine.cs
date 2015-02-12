@@ -52,7 +52,7 @@
         public const string DiagnosticId = "SA1500";
         private const string Title = "Curly brackets for multi-line statements must not share line";
         private const string MessageFormat = "TODO: Message format";
-        private const string Category = "StyleCop.CSharp.Layout";
+        private const string Category = "StyleCop.CSharp.LayoutRules";
         private const string Description = "The opening or closing curly bracket within a C# statement, element, or expression is not placed on its own line.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1500.html";
 
