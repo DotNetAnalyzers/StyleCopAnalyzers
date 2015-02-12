@@ -210,6 +210,32 @@
             await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
         }
 
+        [TestMethod]
+        public async Task TestCommaFollowedBySpaceFollowedByCommaInFuncType()
+        {
+            string statement = @"var a = typeof(System.Func<, ,>);";
+            string fixedStatement = @"var a = typeof(System.Func<,,>);";
+            DiagnosticResult[] expected;
+
+            expected =
+                new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = this.DiagnosticId,
+                        Message = "Commas must not be preceded by a space.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 7, 42)
+                            }
+                    },
+                };
+
+            await this.TestCommaInStatementOrDecl(statement, expected, fixedStatement);
+        }
+
         private async Task TestCommaInStatementOrDecl(string originalStatement, DiagnosticResult[] expected, string fixedStatement)
         {
             string template = @"namespace Foo
