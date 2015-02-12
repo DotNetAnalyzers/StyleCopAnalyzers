@@ -14,6 +14,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1107CodeMustNotContainMultipleStatementsOnOneLine : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1107CodeMustNotContainMultipleStatementsOnOneLine"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1107";
         private const string Title = "Code must not contain multiple statements on one line";
         private const string MessageFormat = "TODO: Message format";

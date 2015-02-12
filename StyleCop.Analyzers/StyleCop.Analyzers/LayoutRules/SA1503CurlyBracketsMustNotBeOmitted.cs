@@ -48,6 +48,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1503CurlyBracketsMustNotBeOmitted : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1503CurlyBracketsMustNotBeOmitted"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1503";
         private const string Title = "Curly brackets must not be omitted";
         private const string MessageFormat = "TODO: Message format";

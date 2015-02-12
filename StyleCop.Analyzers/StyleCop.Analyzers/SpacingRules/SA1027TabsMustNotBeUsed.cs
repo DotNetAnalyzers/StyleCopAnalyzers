@@ -21,6 +21,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1027TabsMustNotBeUsed : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1027TabsMustNotBeUsed"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1027";
         private const string Title = "Tabs must not be used";
         private const string MessageFormat = "Tabs must not be used.";

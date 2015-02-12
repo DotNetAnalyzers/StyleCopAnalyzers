@@ -35,6 +35,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1023DereferenceAndAccessOfSymbolsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the
+        /// <see cref="SA1023DereferenceAndAccessOfSymbolsMustBeSpacedCorrectly"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1023";
         private const string Title = "Dereference and access of symbols must be spaced correctly";
         private const string MessageFormat = "Dereference symbol '*' must {0}.";

@@ -11,6 +11,12 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.SpacingRules;
 
+    /// <summary>
+    /// Implements a code fix for <see cref="SA1400AccessModifierMustBeDeclared"/>.
+    /// </summary>
+    /// <remarks>
+    /// <para>To fix a violation of this rule, add an access modifier to the declaration of the element.</para>
+    /// </remarks>
     [ExportCodeFixProvider(nameof(SA1119CodeFixProvider), LanguageNames.CSharp)]
     [Shared]
     public class SA1400CodeFixProvider : CodeFixProvider

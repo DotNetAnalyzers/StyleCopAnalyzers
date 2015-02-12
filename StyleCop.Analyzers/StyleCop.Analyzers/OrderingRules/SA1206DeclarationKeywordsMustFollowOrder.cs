@@ -26,6 +26,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1206DeclarationKeywordsMustFollowOrder : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1206DeclarationKeywordsMustFollowOrder"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1206";
         private const string Title = "Declaration keywords must follow order";
         private const string MessageFormat = "TODO: Message format";

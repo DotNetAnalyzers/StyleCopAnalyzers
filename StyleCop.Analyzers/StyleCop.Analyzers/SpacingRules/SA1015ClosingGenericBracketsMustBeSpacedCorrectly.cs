@@ -19,6 +19,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1015ClosingGenericBracketsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1015ClosingGenericBracketsMustBeSpacedCorrectly"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1015";
         private const string Title = "Closing generic brackets must be spaced correctly";
         private const string MessageFormat = "Closing generic bracket must{0} be {1} by a space.";

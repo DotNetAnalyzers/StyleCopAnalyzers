@@ -16,6 +16,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1106CodeMustNotContainEmptyStatements : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1106CodeMustNotContainEmptyStatements"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1106";
         private const string Title = "Code must not contain empty statements";
         private const string MessageFormat = "Code must not contain empty statements";

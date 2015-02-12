@@ -21,6 +21,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1011ClosingSquareBracketsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1011ClosingSquareBracketsMustBeSpacedCorrectly"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1011";
         private const string Title = "Closing square brackets must be spaced correctly";
         private const string MessageFormat = "Closing square bracket must{0} be {1} by a space.";

@@ -18,6 +18,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1020IncrementDecrementSymbolsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1020IncrementDecrementSymbolsMustBeSpacedCorrectly"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1020";
         private const string Title = "Increment decrement symbols must be spaced correctly";
         private const string MessageFormat = "{0} symbol '{1}' must not be {2} by a space.";

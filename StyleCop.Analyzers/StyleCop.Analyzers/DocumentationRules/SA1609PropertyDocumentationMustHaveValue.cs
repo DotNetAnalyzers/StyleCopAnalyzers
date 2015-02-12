@@ -22,6 +22,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1609PropertyDocumentationMustHaveValue : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1609PropertyDocumentationMustHaveValue"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1609";
         private const string Title = "Property documentation must have value";
         private const string MessageFormat = "TODO: Message format";

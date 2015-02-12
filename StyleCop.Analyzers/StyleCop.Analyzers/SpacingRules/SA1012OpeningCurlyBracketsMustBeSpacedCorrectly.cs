@@ -21,6 +21,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1012OpeningCurlyBracketsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1012OpeningCurlyBracketsMustBeSpacedCorrectly"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1012";
         private const string Title = "Opening curly brackets must be spaced correctly";
         private const string MessageFormat = "Opening curly bracket must{0} be {1} by a space.";

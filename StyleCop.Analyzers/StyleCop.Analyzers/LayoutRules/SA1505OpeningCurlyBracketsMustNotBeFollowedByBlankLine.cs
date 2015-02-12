@@ -33,6 +33,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1505OpeningCurlyBracketsMustNotBeFollowedByBlankLine : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1505OpeningCurlyBracketsMustNotBeFollowedByBlankLine"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1505";
         private const string Title = "Opening curly brackets must not be followed by blank line";
         private const string MessageFormat = "TODO: Message format";

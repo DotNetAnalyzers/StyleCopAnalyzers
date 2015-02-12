@@ -18,6 +18,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1401FieldsMustBePrivate : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1401FieldsMustBePrivate"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1401";
         private const string Title = "Fields must be private";
         private const string MessageFormat = "Field must be private";

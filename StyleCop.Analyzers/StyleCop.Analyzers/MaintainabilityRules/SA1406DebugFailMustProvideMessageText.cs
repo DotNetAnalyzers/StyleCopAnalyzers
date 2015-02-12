@@ -20,6 +20,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1406DebugFailMustProvideMessageText : SystemDiagnosticsDebugDiagnosticBase
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1406DebugFailMustProvideMessageText"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1406";
         private const string Title = "Debug.Fail must provide message text";
         private const string MessageFormat = "Debug.Fail must provide message text";

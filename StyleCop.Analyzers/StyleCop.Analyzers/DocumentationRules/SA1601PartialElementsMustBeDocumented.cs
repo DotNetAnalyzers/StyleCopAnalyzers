@@ -66,6 +66,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1601PartialElementsMustBeDocumented : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1601PartialElementsMustBeDocumented"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1601";
         private const string Title = "Partial elements must be documented";
         private const string MessageFormat = "Partial elements must be documented";

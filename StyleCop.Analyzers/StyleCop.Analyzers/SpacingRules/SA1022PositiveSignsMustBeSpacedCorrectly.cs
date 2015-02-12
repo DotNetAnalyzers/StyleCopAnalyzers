@@ -20,6 +20,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1022PositiveSignsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1022PositiveSignsMustBeSpacedCorrectly"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1022";
         private const string Title = "Positive signs must be spaced correctly";
         private const string MessageFormat = "Positive sign must{0} be {1} by a space.";

@@ -14,6 +14,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1205PartialElementsMustDeclareAccess : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1205PartialElementsMustDeclareAccess"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1205";
         private const string Title = "Partial elements must declare access";
         private const string MessageFormat = "TODO: Message format";

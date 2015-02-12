@@ -30,6 +30,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1410RemoveDelegateParenthesisWhenPossible : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1410RemoveDelegateParenthesisWhenPossible"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1410";
         private const string Title = "Remove delegate parenthesis when possible";
         private const string MessageFormat = "Remove delegate parenthesis when possible";

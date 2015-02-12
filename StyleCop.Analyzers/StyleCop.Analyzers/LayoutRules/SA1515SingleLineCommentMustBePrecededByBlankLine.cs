@@ -65,6 +65,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1515SingleLineCommentMustBePrecededByBlankLine : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1515SingleLineCommentMustBePrecededByBlankLine"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1515";
         private const string Title = "Single-line comment must be preceded by blank line";
         private const string MessageFormat = "TODO: Message format";

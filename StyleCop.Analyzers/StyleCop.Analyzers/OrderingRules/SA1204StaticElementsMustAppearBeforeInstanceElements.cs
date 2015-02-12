@@ -15,6 +15,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1204StaticElementsMustAppearBeforeInstanceElements : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1204StaticElementsMustAppearBeforeInstanceElements"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1204";
         private const string Title = "Static elements must appear before instance elements";
         private const string MessageFormat = "TODO: Message format";

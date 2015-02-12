@@ -64,6 +64,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1512SingleLineCommentsMustNotBeFollowedByBlankLine : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1512SingleLineCommentsMustNotBeFollowedByBlankLine"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1512";
         private const string Title = "Single-line comments must not be followed by blank line";
         private const string MessageFormat = "TODO: Message format";

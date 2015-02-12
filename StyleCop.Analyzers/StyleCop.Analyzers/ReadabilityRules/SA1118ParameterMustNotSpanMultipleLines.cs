@@ -49,6 +49,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1118ParameterMustNotSpanMultipleLines : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1118ParameterMustNotSpanMultipleLines"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1118";
         private const string Title = "Parameter must not span multiple lines";
         private const string MessageFormat = "TODO: Message format";

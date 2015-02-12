@@ -51,6 +51,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1408ConditionalExpressionsMustDeclarePrecedence : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1408ConditionalExpressionsMustDeclarePrecedence"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1408";
         private const string Title = "Conditional expressions must declare precedence";
         private const string MessageFormat = "Conditional expressions must declare precedence";

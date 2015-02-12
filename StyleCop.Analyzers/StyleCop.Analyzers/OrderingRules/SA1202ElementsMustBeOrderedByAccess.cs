@@ -30,6 +30,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1202ElementsMustBeOrderedByAccess : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1202ElementsMustBeOrderedByAccess"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1202";
         private const string Title = "Elements must be ordered by access";
         private const string MessageFormat = "TODO: Message format";

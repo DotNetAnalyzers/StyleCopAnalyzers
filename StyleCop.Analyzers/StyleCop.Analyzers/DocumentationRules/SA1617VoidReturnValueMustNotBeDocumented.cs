@@ -21,6 +21,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1617VoidReturnValueMustNotBeDocumented : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1617VoidReturnValueMustNotBeDocumented"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1617";
         private const string Title = "Void return value must not be documented";
         private const string MessageFormat = "TODO: Message format";

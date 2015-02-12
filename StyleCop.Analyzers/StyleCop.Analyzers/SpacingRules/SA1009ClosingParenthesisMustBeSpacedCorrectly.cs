@@ -23,6 +23,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1009ClosingParenthesisMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1009ClosingParenthesisMustBeSpacedCorrectly"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1009";
         private const string Title = "Closing parenthesis must be spaced correctly";
         private const string MessageFormat = "Closing parenthesis must{0} be {1} by a space.";

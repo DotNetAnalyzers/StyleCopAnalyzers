@@ -17,6 +17,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1001CommasMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1001CommasMustBeSpacedCorrectly"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1001";
         private const string Title = "Commas must be spaced correctly";
         private const string MessageFormat = "Commas must{0} be {1} by a space.";

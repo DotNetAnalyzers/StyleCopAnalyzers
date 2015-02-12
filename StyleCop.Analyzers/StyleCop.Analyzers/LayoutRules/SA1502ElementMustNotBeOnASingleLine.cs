@@ -31,6 +31,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1502ElementMustNotBeOnASingleLine : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1502ElementMustNotBeOnASingleLine"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1502";
         private const string Title = "Element must not be on a single line";
         private const string MessageFormat = "TODO: Message format";

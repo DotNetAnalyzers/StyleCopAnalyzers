@@ -20,6 +20,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1615ElementReturnValueMustBeDocumented : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1615ElementReturnValueMustBeDocumented"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1615";
         private const string Title = "Element return value must be documented";
         private const string MessageFormat = "TODO: Message format";

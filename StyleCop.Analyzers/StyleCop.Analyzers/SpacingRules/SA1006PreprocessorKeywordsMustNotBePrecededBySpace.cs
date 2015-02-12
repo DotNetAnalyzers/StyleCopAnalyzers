@@ -25,6 +25,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1006PreprocessorKeywordsMustNotBePrecededBySpace : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1006PreprocessorKeywordsMustNotBePrecededBySpace"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1006";
         private const string Title = "Preprocessor keywords must not be preceded by space";
         private const string MessageFormat = "Preprocessor keyword '{0}' must not be preceded by a space.";

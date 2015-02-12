@@ -28,6 +28,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1110OpeningParenthesisMustBeOnDeclarationLine : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1110OpeningParenthesisMustBeOnDeclarationLine"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1110";
         private const string Title = "Opening parenthesis must be on declaration line";
         private const string MessageFormat = "TODO: Message format";

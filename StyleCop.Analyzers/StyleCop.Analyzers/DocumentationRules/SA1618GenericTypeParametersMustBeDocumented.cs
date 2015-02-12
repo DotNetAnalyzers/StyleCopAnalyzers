@@ -20,6 +20,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1618GenericTypeParametersMustBeDocumented : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1618GenericTypeParametersMustBeDocumented"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1618";
         private const string Title = "Generic type parameters must be documented";
         private const string MessageFormat = "TODO: Message format";

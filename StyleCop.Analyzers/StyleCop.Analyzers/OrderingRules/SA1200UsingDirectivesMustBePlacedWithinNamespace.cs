@@ -147,6 +147,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1200UsingDirectivesMustBePlacedWithinNamespace : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1200UsingDirectivesMustBePlacedWithinNamespace"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1200";
         private const string Title = "Using directives must be placed within namespace";
         private const string MessageFormat = "Using directive must appear within a namespace declaration";

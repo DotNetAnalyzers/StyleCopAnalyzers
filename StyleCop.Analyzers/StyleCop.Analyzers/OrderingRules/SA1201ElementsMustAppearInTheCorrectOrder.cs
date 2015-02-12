@@ -98,6 +98,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1201ElementsMustAppearInTheCorrectOrder : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1201ElementsMustAppearInTheCorrectOrder"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1201";
         private const string Title = "Elements must appear in the correct order";
         private const string MessageFormat = "TODO: Message format";

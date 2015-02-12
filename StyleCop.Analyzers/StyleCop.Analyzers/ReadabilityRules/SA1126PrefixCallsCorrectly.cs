@@ -18,6 +18,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1126PrefixCallsCorrectly : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1126PrefixCallsCorrectly"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1126";
         private const string Title = "Prefix calls correctly";
         private const string MessageFormat = "TODO: Message format";

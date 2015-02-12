@@ -23,6 +23,9 @@
     [NoCodeFix("Cannot generate documentation")]
     public class SA1610PropertyDocumentationMustHaveValueText : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1610PropertyDocumentationMustHaveValueText"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1610";
         private const string Title = "Property documentation must have value text";
         private const string MessageFormat = "TODO: Message format";

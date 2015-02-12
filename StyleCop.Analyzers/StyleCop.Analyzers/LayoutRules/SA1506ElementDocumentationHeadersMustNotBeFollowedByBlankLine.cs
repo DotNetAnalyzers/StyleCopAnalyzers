@@ -32,6 +32,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1506ElementDocumentationHeadersMustNotBeFollowedByBlankLine : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the
+        /// <see cref="SA1506ElementDocumentationHeadersMustNotBeFollowedByBlankLine"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1506";
         private const string Title = "Element documentation headers must not be followed by blank line";
         private const string MessageFormat = "TODO: Message format";

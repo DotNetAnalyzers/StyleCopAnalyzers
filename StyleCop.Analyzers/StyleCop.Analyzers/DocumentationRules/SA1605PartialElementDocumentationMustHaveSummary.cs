@@ -68,6 +68,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1605PartialElementDocumentationMustHaveSummary : PartialElementDocumentationSummaryBase
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1605PartialElementDocumentationMustHaveSummary"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1605";
         private const string Title = "Partial element documentation must have summary";
         private const string MessageFormat = "Partial element documentation must have summary";
@@ -90,6 +94,7 @@
             }
         }
 
+        /// <inheritdoc/>
         protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location[] diagnosticLocations)
         {
             if (syntax == null)

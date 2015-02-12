@@ -10,6 +10,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1301ElementMustBeginWithLowerCaseLetter : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1301ElementMustBeginWithLowerCaseLetter"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1301";
         private const string Title = "Element must begin with lower-case letter";
         private const string MessageFormat = "TODO: Message format";

@@ -31,6 +31,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1111ClosingParenthesisMustBeOnLineOfLastParameter : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1111ClosingParenthesisMustBeOnLineOfLastParameter"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1111";
         private const string Title = "Closing parenthesis must be on line of last parameter";
         private const string MessageFormat = "Closing parenthesis must be on line of last parameter";

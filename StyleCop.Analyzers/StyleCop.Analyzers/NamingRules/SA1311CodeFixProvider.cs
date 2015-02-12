@@ -11,6 +11,10 @@
     /// <summary>
     /// Implements a code fix for <see cref="SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter"/>
     /// </summary>
+    /// <remarks>
+    /// <para>To fix a violation of this rule, change the name of the field so that it begins with an upper-case
+    /// letter.</para>
+    /// </remarks>
     [ExportCodeFixProvider(nameof(SA1311CodeFixProvider), LanguageNames.CSharp)]
     [Shared]
     public class SA1311CodeFixProvider : CodeFixProvider

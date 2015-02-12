@@ -39,6 +39,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1003SymbolsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1003SymbolsMustBeSpacedCorrectly"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1003";
         private const string Title = "Symbols must be spaced correctly";
         private const string MessageFormat = "Operator '{0}' must {1}.";

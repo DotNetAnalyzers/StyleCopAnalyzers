@@ -32,6 +32,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1645IncludedDocumentationFileDoesNotExist : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1645IncludedDocumentationFileDoesNotExist"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1645";
         private const string Title = "Included documentation file does not exist";
         private const string MessageFormat = "TODO: Message format";

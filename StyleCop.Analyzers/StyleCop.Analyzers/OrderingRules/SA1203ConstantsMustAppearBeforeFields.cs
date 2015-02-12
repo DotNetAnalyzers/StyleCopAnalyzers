@@ -15,6 +15,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1203ConstantsMustAppearBeforeFields : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1203ConstantsMustAppearBeforeFields"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1203";
         private const string Title = "Constants must appear before fields";
         private const string MessageFormat = "TODO: Message format";

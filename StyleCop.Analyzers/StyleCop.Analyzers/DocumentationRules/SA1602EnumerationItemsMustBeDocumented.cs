@@ -37,6 +37,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1602EnumerationItemsMustBeDocumented : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1602EnumerationItemsMustBeDocumented"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1602";
         private const string Title = "Enumeration items must be documented";
         private const string MessageFormat = "Enumeration items must be documented";

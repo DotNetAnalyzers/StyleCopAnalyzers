@@ -29,6 +29,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1103QueryClausesMustBeOnSeparateLinesOrAllOnOneLine : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1103QueryClausesMustBeOnSeparateLinesOrAllOnOneLine"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1103";
         private const string Title = "Query clauses must be on separate lines or all on one line";
         private const string MessageFormat = "TODO: Message format";

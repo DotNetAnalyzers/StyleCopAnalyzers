@@ -16,6 +16,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1124DoNotUseRegions : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1124DoNotUseRegions"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1124";
         private const string Title = "Do not use regions";
         private const string MessageFormat = "TODO: Message format";

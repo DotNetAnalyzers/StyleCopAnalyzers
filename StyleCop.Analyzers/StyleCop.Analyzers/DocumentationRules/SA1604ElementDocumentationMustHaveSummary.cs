@@ -22,6 +22,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1604ElementDocumentationMustHaveSummary : ElementDocumentationSummaryBase
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1604ElementDocumentationMustHaveSummary"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1604";
         private const string Title = "Element documentation must have summary";
         private const string MessageFormat = "Element documentation must have summary";
@@ -43,6 +46,7 @@
             }
         }
 
+        /// <inheritdoc/>
         protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location[] diagnosticLocations)
         {
             if (syntax == null)

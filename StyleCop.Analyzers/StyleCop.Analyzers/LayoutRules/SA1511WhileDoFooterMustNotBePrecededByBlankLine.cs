@@ -27,6 +27,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1511WhileDoFooterMustNotBePrecededByBlankLine : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1511WhileDoFooterMustNotBePrecededByBlankLine"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1511";
         private const string Title = "while-do footer must not be preceded by blank line";
         private const string MessageFormat = "TODO: Message format";

@@ -28,6 +28,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1608ElementDocumentationMustNotHaveDefaultSummary : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1608ElementDocumentationMustNotHaveDefaultSummary"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1608";
         private const string Title = "Element documentation must not have default summary";
         private const string MessageFormat = "Element documentation must not have default summary";

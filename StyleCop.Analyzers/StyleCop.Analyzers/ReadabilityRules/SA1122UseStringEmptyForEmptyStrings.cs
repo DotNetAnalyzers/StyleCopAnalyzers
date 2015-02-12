@@ -31,6 +31,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1122UseStringEmptyForEmptyStrings : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1122UseStringEmptyForEmptyStrings"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1122";
         private const string Title = "Use string.Empty for empty strings";
         private const string MessageFormat = "Use string.Empty for empty strings";

@@ -20,6 +20,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the
+        /// <see cref="SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1026";
         private const string Title = "Code must not contain space after new keyword in implicitly typed array allocation";
         private const string MessageFormat = "The keyword 'new' must not be followed by a space.";

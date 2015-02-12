@@ -29,6 +29,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1102QueryClauseMustFollowPreviousClause : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1102QueryClauseMustFollowPreviousClause"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1102";
         private const string Title = "Query clause must follow previous clause";
         private const string MessageFormat = "TODO: Message format";

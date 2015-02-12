@@ -21,6 +21,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the
+        /// <see cref="SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1210";
         private const string Title = "Using directives must be ordered alphabetically by namespace";
         private const string MessageFormat = "Using directive for '{0}' must appear before directive for '{1}'";

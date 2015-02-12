@@ -188,6 +188,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1623PropertySummaryDocumentationMustMatchAccessors : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1623PropertySummaryDocumentationMustMatchAccessors"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1623";
         private const string Title = "Property summary documentation must match accessors";
         private const string MessageFormat = "TODO: Message format";

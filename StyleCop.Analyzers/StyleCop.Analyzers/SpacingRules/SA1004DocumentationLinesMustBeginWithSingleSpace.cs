@@ -39,6 +39,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1004DocumentationLinesMustBeginWithSingleSpace : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1004DocumentationLinesMustBeginWithSingleSpace"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1004";
         private const string Title = "Documentation lines must begin with single space";
         private const string MessageFormat = "Documentation line must begin with a space.";

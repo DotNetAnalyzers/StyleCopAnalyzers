@@ -19,6 +19,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1207ProtectedMustComeBeforeInternal : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1207ProtectedMustComeBeforeInternal"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1207";
         private const string Title = "Protected must come before internal";
         private const string MessageFormat = "TODO: Message format";

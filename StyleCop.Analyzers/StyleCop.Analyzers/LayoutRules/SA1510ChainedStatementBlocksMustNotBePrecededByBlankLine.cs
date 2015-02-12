@@ -32,6 +32,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1510ChainedStatementBlocksMustNotBePrecededByBlankLine : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the
+        /// <see cref="SA1510ChainedStatementBlocksMustNotBePrecededByBlankLine"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1510";
         private const string Title = "Chained statement blocks must not be preceded by blank line";
         private const string MessageFormat = "TODO: Message format";

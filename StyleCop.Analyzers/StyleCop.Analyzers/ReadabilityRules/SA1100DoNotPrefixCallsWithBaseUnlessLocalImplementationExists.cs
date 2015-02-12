@@ -50,6 +50,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the
+        /// <see cref="SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1100";
         private const string Title = "Do not prefix calls with base unless local implementation exists";
         private const string MessageFormat = "Do not prefix calls with base unless local implementation exists";

@@ -22,6 +22,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1620GenericTypeParameterDocumentationMustMatchTypeParameters : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the
+        /// <see cref="SA1620GenericTypeParameterDocumentationMustMatchTypeParameters"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1620";
         private const string Title = "Generic type parameter documentation must match type parameters";
         private const string MessageFormat = "TODO: Message format";

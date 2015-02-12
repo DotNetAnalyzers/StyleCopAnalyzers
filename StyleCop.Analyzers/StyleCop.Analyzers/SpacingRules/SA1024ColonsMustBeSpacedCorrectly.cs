@@ -46,6 +46,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1024ColonsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1024ColonsMustBeSpacedCorrectly"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1024";
         private const string Title = "Colons Must Be Spaced Correctly";
         private const string MessageFormat = "Colon must{0} be {1} by a space.";

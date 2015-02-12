@@ -55,6 +55,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1649FileHeaderFileNameDocumentationMustMatchTypeName : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1649FileHeaderFileNameDocumentationMustMatchTypeName"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1649";
         private const string Title = "File header file name documentation must match type name";
         private const string MessageFormat = "TODO: Message format";

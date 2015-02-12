@@ -33,6 +33,10 @@
     [NoCodeFix("Cannot generate documentation")]
     public class SA1647IncludeNodeDoesNotContainValidFileAndPath : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1647IncludeNodeDoesNotContainValidFileAndPath"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1647";
         private const string Title = "Include node does not contain valid file and path";
         private const string MessageFormat = "TODO: Message format";

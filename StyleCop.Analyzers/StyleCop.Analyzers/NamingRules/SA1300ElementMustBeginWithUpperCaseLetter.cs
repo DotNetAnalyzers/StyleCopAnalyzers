@@ -27,6 +27,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1300ElementMustBeginWithUpperCaseLetter : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1300ElementMustBeginWithUpperCaseLetter"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1300";
         private const string Title = "Element must begin with upper-case letter";
         private const string MessageFormat = "Element '{0}' must begin with an uppercase letter";

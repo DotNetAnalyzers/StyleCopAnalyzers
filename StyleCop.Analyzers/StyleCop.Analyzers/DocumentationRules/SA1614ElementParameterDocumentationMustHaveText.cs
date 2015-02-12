@@ -21,6 +21,10 @@
     [NoCodeFix("Cannot generate documentation")]
     public class SA1614ElementParameterDocumentationMustHaveText : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1614ElementParameterDocumentationMustHaveText"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1614";
         private const string Title = "Element parameter documentation must have text";
         private const string MessageFormat = "TODO: Message format";

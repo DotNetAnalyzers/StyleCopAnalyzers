@@ -16,6 +16,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1311";
         private const string Title = "Static readonly fields must begin with upper-case letter";
         private const string MessageFormat = "Static readonly fields must begin with upper-case letter";
