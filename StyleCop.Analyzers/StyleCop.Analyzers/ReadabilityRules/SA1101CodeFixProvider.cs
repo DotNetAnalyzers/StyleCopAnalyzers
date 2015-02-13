@@ -17,7 +17,7 @@
     /// <para>To fix a violation of this rule, insert the <c>this.</c> prefix before the call to the class
     /// member.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1101PrefixLocalCallsWithThis), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(nameof(SA1101CodeFixProvider), LanguageNames.CSharp)]
     [Shared]
     public class SA1101CodeFixProvider : CodeFixProvider
     {

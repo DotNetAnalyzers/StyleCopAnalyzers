@@ -20,7 +20,7 @@
     /// <para>To fix a violation of this rule, add the standard documentation text.
     /// above.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1642ConstructorSummaryDocumentationMustBeginWithStandardText), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(nameof(SA1642SA1643CodeFixProvider), LanguageNames.CSharp)]
     [Shared]
     public class SA1642SA1643CodeFixProvider : CodeFixProvider
     {
