@@ -48,6 +48,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1516ElementsMustBeSeparatedByBlankLine : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1516ElementsMustBeSeparatedByBlankLine"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1516";
         private const string Title = "Elements must be separated by blank line";
         private const string MessageFormat = "TODO: Message format";

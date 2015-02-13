@@ -25,6 +25,9 @@ namespace StyleCop.Analyzers.NamingRules
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1302InterfaceNamesMustBeginWithI : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1302InterfaceNamesMustBeginWithI"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1302";
         private const string Title = "Interface names must begin with I";
         private const string MessageFormat = "Interface names must begin with I";

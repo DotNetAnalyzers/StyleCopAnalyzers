@@ -28,6 +28,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1000KeywordsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1000KeywordsMustBeSpacedCorrectly"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1000";
         private const string Title = "Keywords must be spaced correctly";
         private const string MessageFormat = "The keyword '{0}' must{1} be followed by a space.";

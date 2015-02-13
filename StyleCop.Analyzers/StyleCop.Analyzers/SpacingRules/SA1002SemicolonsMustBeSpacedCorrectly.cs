@@ -17,6 +17,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1002SemicolonsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1002SemicolonsMustBeSpacedCorrectly"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1002";
         private const string Title = "Semicolons must be spaced correctly";
         private const string MessageFormat = "Semicolons must{0} be {1} by a space.";

@@ -29,6 +29,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1101PrefixLocalCallsWithThis : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1101PrefixLocalCallsWithThis"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1101";
         private const string Title = "Prefix local calls with this";
         private const string MessageFormat = "Prefix local calls with this";

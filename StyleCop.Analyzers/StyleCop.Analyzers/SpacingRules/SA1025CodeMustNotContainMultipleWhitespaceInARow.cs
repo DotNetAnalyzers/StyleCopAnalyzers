@@ -17,6 +17,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1025CodeMustNotContainMultipleWhitespaceInARow : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1025CodeMustNotContainMultipleWhitespaceInARow"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1025";
         private const string Title = "Code must not contain multiple whitespace in a row";
         private const string MessageFormat = "Code must not contain multiple whitespace characters in a row.";

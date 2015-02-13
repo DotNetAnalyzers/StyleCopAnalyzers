@@ -35,6 +35,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1115ParameterMustFollowComma : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1115ParameterMustFollowComma"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1115";
         private const string Title = "Parameter must follow comma";
         private const string MessageFormat = "TODO: Message format";

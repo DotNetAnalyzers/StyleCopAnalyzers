@@ -8,6 +8,13 @@
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
 
+    /// <summary>
+    /// Implements a code fix for <see cref="SA1309FieldNamesMustNotBeginWithUnderscore"/>.
+    /// </summary>
+    /// <remarks>
+    /// <para>To fix a violation of this rule, remove the underscore from the beginning of the field name, or place the
+    /// item within a <c>NativeMethods</c> class if appropriate.</para>
+    /// </remarks>
     [ExportCodeFixProvider(nameof(SA1309CodeFixProvider), LanguageNames.CSharp)]
     [Shared]
     public class SA1309CodeFixProvider : CodeFixProvider

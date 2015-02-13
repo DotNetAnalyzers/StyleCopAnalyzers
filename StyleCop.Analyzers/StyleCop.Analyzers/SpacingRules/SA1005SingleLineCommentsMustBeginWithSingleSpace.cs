@@ -45,6 +45,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1005SingleLineCommentsMustBeginWithSingleSpace : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1005SingleLineCommentsMustBeginWithSingleSpace"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1005";
         private const string Title = "Single line comments must begin with single space";
         private const string MessageFormat = "Single line comment must begin with a space.";

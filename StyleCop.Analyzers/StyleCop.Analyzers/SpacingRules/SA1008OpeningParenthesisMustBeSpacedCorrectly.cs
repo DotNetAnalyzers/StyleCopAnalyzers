@@ -21,6 +21,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1008OpeningParenthesisMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1008OpeningParenthesisMustBeSpacedCorrectly"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1008";
         private const string Title = "Opening parenthesis must be spaced correctly";
         private const string MessageFormat = "Opening parenthesis must{0} be {1} by a space.";

@@ -25,6 +25,9 @@
     [NoCodeFix("Trying to fix invalid xml would most likely not produce the desired result.")]
     public class SA1603DocumentationMustContainValidXml : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1603DocumentationMustContainValidXml"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1603";
         private const string Title = "Documentation must contain valid XML";
         private const string MessageFormat = "The documentation header is composed of invalid XML: {0}";

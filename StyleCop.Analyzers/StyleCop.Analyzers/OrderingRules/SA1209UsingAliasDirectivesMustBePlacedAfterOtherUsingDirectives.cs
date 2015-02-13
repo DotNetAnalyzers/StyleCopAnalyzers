@@ -18,6 +18,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1209UsingAliasDirectivesMustBePlacedAfterOtherUsingDirectives : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the
+        /// <see cref="SA1209UsingAliasDirectivesMustBePlacedAfterOtherUsingDirectives"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1209";
         private const string Title = "Using alias directives must be placed after other using directives";
         private const string MessageFormat = "Using alias directive for '{0}' must appear after directive for '{1}'";

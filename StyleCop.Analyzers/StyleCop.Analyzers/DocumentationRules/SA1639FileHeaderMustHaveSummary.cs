@@ -35,6 +35,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1639FileHeaderMustHaveSummary : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1639FileHeaderMustHaveSummary"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1639";
         private const string Title = "File header must have summary";
         private const string MessageFormat = "TODO: Message format";

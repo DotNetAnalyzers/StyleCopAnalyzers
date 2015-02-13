@@ -168,6 +168,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1624PropertySummaryDocumentationMustOmitSetAccessorWithRestrictedAccess : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the
+        /// <see cref="SA1624PropertySummaryDocumentationMustOmitSetAccessorWithRestrictedAccess"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1624";
         private const string Title = "Property summary documentation must omit set accessor with restricted access";
         private const string MessageFormat = "TODO: Message format";

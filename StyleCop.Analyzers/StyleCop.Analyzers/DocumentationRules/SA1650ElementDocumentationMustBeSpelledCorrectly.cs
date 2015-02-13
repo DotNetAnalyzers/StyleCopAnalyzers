@@ -49,6 +49,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1650ElementDocumentationMustBeSpelledCorrectly : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1650ElementDocumentationMustBeSpelledCorrectly"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1650";
         private const string Title = "Element documentation must be spelled correctly";
         private const string MessageFormat = "TODO: Message format";

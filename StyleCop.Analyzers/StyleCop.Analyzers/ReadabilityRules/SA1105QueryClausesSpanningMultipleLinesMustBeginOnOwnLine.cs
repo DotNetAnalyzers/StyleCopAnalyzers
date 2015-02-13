@@ -27,6 +27,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1105QueryClausesSpanningMultipleLinesMustBeginOnOwnLine : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the
+        /// <see cref="SA1105QueryClausesSpanningMultipleLinesMustBeginOnOwnLine"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1105";
         private const string Title = "Query clauses spanning multiple lines must begin on own line";
         private const string MessageFormat = "TODO: Message format";

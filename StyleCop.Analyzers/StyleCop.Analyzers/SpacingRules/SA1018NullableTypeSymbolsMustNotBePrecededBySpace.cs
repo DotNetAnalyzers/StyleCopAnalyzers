@@ -17,6 +17,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1018NullableTypeSymbolsMustNotBePrecededBySpace : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1018NullableTypeSymbolsMustNotBePrecededBySpace"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1018";
         private const string Title = "Nullable type symbols must be spaced correctly";
         private const string MessageFormat = "Nullable type symbol must not be preceded by a space.";

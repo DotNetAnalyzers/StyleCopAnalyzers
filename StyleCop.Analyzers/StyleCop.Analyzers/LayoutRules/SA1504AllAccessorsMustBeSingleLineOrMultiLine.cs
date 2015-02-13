@@ -55,6 +55,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1504AllAccessorsMustBeSingleLineOrMultiLine : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1504AllAccessorsMustBeSingleLineOrMultiLine"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1504";
         private const string Title = "All accessors must be single-line or multi-line";
         private const string MessageFormat = "TODO: Message format";

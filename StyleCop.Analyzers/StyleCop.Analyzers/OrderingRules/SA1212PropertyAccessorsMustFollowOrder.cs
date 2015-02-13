@@ -34,6 +34,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1212PropertyAccessorsMustFollowOrder : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1212PropertyAccessorsMustFollowOrder"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1212";
         private const string Title = "Property accessors must follow order";
         private const string MessageFormat = "TODO: Message format";

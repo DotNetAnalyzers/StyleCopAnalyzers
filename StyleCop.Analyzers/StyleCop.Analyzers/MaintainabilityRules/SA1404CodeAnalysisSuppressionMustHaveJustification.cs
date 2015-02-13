@@ -28,6 +28,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1404CodeAnalysisSuppressionMustHaveJustification : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1404CodeAnalysisSuppressionMustHaveJustification"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1404";
         private const string Title = "Code analysis suppression must have justification";
         private const string MessageFormat = "Code analysis suppression must have justification";

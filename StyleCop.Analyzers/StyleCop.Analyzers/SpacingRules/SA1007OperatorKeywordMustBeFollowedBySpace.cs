@@ -22,6 +22,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1007OperatorKeywordMustBeFollowedBySpace : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1007OperatorKeywordMustBeFollowedBySpace"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1007";
         private const string Title = "Operator keyword must be followed by space";
         private const string MessageFormat = "Operator keyword must be followed by a space.";

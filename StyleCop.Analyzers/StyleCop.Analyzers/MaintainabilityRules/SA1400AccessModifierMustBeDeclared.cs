@@ -20,6 +20,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1400AccessModifierMustBeDeclared : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1400AccessModifierMustBeDeclared"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1400";
         private const string Title = "Access modifier must be declared";
         private const string MessageFormat = "Element '{0}' must declare an access modifier";

@@ -20,6 +20,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1403FileMayOnlyContainASingleNamespace : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1403FileMayOnlyContainASingleNamespace"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1403";
         private const string Title = "File may only contain a single namespace";
         private const string MessageFormat = "File may only contain a single namespace";

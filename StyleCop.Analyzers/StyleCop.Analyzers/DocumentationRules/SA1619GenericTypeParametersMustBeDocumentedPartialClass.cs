@@ -69,6 +69,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1619GenericTypeParametersMustBeDocumentedPartialClass : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1619GenericTypeParametersMustBeDocumentedPartialClass"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1619";
         private const string Title = "Generic type parameters must be documented partial class";
         private const string MessageFormat = "TODO: Message format";

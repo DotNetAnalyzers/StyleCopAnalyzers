@@ -20,6 +20,10 @@
     [NoCodeFix("Cannot generate documentation")]
     public class SA1616ElementReturnValueDocumentationMustHaveText : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1616ElementReturnValueDocumentationMustHaveText"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1616";
         private const string Title = "Element return value documentation must have text";
         private const string MessageFormat = "TODO: Message format";

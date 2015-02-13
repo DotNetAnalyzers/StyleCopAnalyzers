@@ -25,6 +25,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1402FileMayOnlyContainASingleClass : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1402FileMayOnlyContainASingleClass"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1402";
         private const string Title = "File may only contain a single class";
         private const string MessageFormat = "File may only contain a single class";

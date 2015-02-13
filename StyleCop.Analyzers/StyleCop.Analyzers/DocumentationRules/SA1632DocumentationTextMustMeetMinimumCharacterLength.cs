@@ -32,6 +32,10 @@
     [NoCodeFix("Cannot generate documentation")]
     public class SA1632DocumentationTextMustMeetMinimumCharacterLength : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1632DocumentationTextMustMeetMinimumCharacterLength"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1632";
         private const string Title = "Documentation text must meet minimum character length";
         private const string MessageFormat = "TODO: Message format";

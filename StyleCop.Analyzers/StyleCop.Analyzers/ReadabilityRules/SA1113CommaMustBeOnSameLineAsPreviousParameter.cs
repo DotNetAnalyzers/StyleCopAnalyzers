@@ -29,6 +29,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1113CommaMustBeOnSameLineAsPreviousParameter : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1113CommaMustBeOnSameLineAsPreviousParameter"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1113";
         private const string Title = "Comma must be on same line as previous parameter";
         private const string MessageFormat = "TODO: Message format";

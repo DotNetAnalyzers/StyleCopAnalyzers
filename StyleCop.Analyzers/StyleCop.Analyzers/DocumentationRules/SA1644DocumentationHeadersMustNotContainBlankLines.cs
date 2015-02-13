@@ -55,6 +55,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1644DocumentationHeadersMustNotContainBlankLines : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1644DocumentationHeadersMustNotContainBlankLines"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1644";
         private const string Title = "Documentation headers must not contain blank lines";
         private const string MessageFormat = "TODO: Message format";

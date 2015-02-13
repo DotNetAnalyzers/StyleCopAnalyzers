@@ -18,6 +18,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1211UsingAliasDirectivesMustBeOrderedAlphabeticallyByAliasName : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the
+        /// <see cref="SA1211UsingAliasDirectivesMustBeOrderedAlphabeticallyByAliasName"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1211";
         private const string Title = "Using alias directives must be ordered alphabetically by alias name";
         private const string MessageFormat = "Using alias directive for '{0}' must appear before using alias directive for '{1}'";

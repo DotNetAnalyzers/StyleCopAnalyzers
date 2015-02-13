@@ -119,6 +119,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1121UseBuiltInTypeAlias : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1121UseBuiltInTypeAlias"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1121";
         private const string Title = "Use built-in type alias";
         private const string MessageFormat = "Use built-in type alias";

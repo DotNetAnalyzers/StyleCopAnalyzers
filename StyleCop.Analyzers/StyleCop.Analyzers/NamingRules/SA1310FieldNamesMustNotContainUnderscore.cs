@@ -25,6 +25,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1310FieldNamesMustNotContainUnderscore : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1310FieldNamesMustNotContainUnderscore"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1310";
         private const string Title = "Field names must not contain underscore";
         private const string MessageFormat = "Field '{0}' must not contain an underscore";

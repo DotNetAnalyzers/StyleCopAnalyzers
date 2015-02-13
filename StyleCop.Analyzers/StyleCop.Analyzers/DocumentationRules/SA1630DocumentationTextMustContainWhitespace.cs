@@ -34,6 +34,9 @@
     [NoCodeFix("Cannot generate documentation")]
     public class SA1630DocumentationTextMustContainWhitespace : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1630DocumentationTextMustContainWhitespace"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1630";
         private const string Title = "Documentation text must contain whitespace";
         private const string MessageFormat = "TODO: Message format";

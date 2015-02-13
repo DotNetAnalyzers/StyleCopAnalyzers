@@ -34,6 +34,9 @@
     [NoCodeFix("Cannot generate documentation")]
     public class SA1627DocumentationTextMustNotBeEmpty : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1627DocumentationTextMustNotBeEmpty"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1627";
         private const string Title = "Documentation text must not be empty";
         private const string MessageFormat = "TODO: Message format";

@@ -25,6 +25,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1112ClosingParenthesisMustBeOnLineOfOpeningParenthesis : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the
+        /// <see cref="SA1112ClosingParenthesisMustBeOnLineOfOpeningParenthesis"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1112";
         private const string Title = "Closing parenthesis must be on line of opening parenthesis";
         private const string MessageFormat = "Closing parenthesis must be on line of opening parenthesis";

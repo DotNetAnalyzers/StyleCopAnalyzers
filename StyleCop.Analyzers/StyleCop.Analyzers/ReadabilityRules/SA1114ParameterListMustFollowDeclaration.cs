@@ -34,6 +34,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1114ParameterListMustFollowDeclaration : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1114ParameterListMustFollowDeclaration"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1114";
         private const string Title = "Parameter list must follow declaration";
         private const string MessageFormat = "TODO: Message format";

@@ -34,6 +34,10 @@
     [NoCodeFix("Cannot generate documentation")]
     public class SA1631DocumentationMustMeetCharacterPercentage : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1631DocumentationMustMeetCharacterPercentage"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1631";
         private const string Title = "Documentation must meet character percentage";
         private const string MessageFormat = "TODO: Message format";

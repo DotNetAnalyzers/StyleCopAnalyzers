@@ -41,6 +41,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1117ParametersMustBeOnSameLineOrSeparateLines : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1117ParametersMustBeOnSameLineOrSeparateLines"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1117";
         private const string Title = "Parameters must be on same line or separate lines";
         private const string MessageFormat = "TODO: Message format";

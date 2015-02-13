@@ -67,6 +67,10 @@
     [NoCodeFix("Cannot generate documentation")]
     public class SA1607PartialElementDocumentationMustHaveSummaryText : PartialElementDocumentationSummaryBase
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1607PartialElementDocumentationMustHaveSummaryText"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1607";
         private const string Title = "Partial element documentation must have summary text";
         private const string MessageFormat = "Partial element documentation must have summary text";
@@ -89,6 +93,7 @@
             }
         }
 
+        /// <inheritdoc/>
         protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location[] diagnosticLocations)
         {
             if (syntax != null)

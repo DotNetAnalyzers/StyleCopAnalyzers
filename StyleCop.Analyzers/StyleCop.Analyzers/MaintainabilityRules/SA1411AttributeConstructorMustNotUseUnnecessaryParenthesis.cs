@@ -26,6 +26,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1411AttributeConstructorMustNotUseUnnecessaryParenthesis : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the
+        /// <see cref="SA1411AttributeConstructorMustNotUseUnnecessaryParenthesis"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1411";
         private const string Title = "Attribute constructor must not use unnecessary parenthesis";
         private const string MessageFormat = "Attribute constructor must not use unnecessary parenthesis";

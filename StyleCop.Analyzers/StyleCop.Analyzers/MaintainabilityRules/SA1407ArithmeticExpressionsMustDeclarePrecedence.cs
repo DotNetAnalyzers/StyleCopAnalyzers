@@ -42,6 +42,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1407ArithmeticExpressionsMustDeclarePrecedence : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1407ArithmeticExpressionsMustDeclarePrecedence"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1407";
         private const string Title = "Arithmetic expressions must declare precedence";
         private const string MessageFormat = "Arithmetic expressions must declare precedence";

@@ -46,6 +46,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1643DestructorSummaryDocumentationMustBeginWithStandardText : StandardTextDiagnosticBase
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the
+        /// <see cref="SA1643DestructorSummaryDocumentationMustBeginWithStandardText"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1643";
         private const string Title = "Destructor summary documentation must begin with standard text";
         private const string MessageFormat = "Destructor summary documentation must begin with standard text";
@@ -59,6 +63,12 @@
         private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
+        /// <summary>
+        /// Gets a two-element array containing the standard text which is expected to appear at the beginning of the
+        /// <c>&lt;summary&gt;</c> documentation for a destructor. The first element appears before the name of the
+        /// containing class, followed by a <c>&lt;see&gt;</c> element targeting the containing type, and finally
+        /// followed by the second element of this array.
+        /// </summary>
         public static ImmutableArray<string> DestructorStandardText { get; } = ImmutableArray.Create("Finalizes an instance of the ", " class.");
         
         /// <inheritdoc/>

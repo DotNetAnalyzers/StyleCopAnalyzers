@@ -94,6 +94,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1642ConstructorSummaryDocumentationMustBeginWithStandardText : StandardTextDiagnosticBase
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the
+        /// <see cref="SA1642ConstructorSummaryDocumentationMustBeginWithStandardText"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1642";
         private const string Title = "Constructor summary documentation must begin with standard text";
         private const string MessageFormat = "Constructor summary documentation must begin with standard text";
@@ -101,9 +105,36 @@
         private const string Description = "The XML documentation header for a C# constructor does not contain the appropriate summary text.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1642.html";
 
-
+        /// <summary>
+        /// Gets a two-element array containing the standard text which is expected to appear at the beginning of the
+        /// <c>&lt;summary&gt;</c> documentation for a non-private constructor. The first element appears before the
+        /// name of the containing class, followed by a <c>&lt;see&gt;</c> element targeting the containing type, and
+        /// finally followed by the second element of this array.
+        /// </summary>
         public static ImmutableArray<string> NonPrivateConstructorStandardText { get; } = ImmutableArray.Create("Initializes a new instance of the ", " class");
+
+        /// <summary>
+        /// Gets a two-element array containing the standard text which is expected to appear at the beginning of the
+        /// <c>&lt;summary&gt;</c> documentation for a private constructor. The first element appears before the name of
+        /// the containing class, followed by a <c>&lt;see&gt;</c> element targeting the containing type, and finally
+        /// followed by the second element of this array.
+        /// </summary>
+        /// <remarks>
+        /// <para>In addition to the format given in <see cref="PrivateConstructorStandardText"/>, a private constructor
+        /// may choose to use <see cref="NonPrivateConstructorStandardText"/> instead. The code fix provided for this
+        /// diagnostic uses <see cref="NonPrivateConstructorStandardText"/> by default, since this is generally a more
+        /// accurate representation of a user's intent. In new code, <see langword="static"/> classes provide a
+        /// superior alternative to private constructors for the purpose of declaring utility types that cannot be
+        /// instantiated.</para>
+        /// </remarks>
         public static ImmutableArray<string> PrivateConstructorStandardText { get; } = ImmutableArray.Create("Prevents a default instance of the ", " class from being created.");
+
+        /// <summary>
+        /// Gets a two-element array containing the standard text which is expected to appear at the beginning of the
+        /// <c>&lt;summary&gt;</c> documentation for a static constructor. The first element appears before the name of
+        /// the containing class, followed by a <c>&lt;see&gt;</c> element targeting the containing type, and finally
+        /// followed by the second element of this array.
+        /// </summary>
         public static ImmutableArray<string> StaticConstructorStandardText { get; } = ImmutableArray.Create("Initializes static members of the ", " class.");
 
         private static readonly DiagnosticDescriptor Descriptor =

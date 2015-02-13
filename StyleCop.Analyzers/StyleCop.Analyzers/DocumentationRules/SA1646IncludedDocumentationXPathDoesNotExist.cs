@@ -33,6 +33,9 @@
     [NoCodeFix("Cannot generate documentation")]
     public class SA1646IncludedDocumentationXPathDoesNotExist : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1646IncludedDocumentationXPathDoesNotExist"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1646";
         private const string Title = "Included documentation XPath does not exist";
         private const string MessageFormat = "TODO: Message format";

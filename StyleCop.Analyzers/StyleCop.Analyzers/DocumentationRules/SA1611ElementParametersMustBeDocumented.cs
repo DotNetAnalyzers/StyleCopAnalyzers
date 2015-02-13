@@ -21,6 +21,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1611ElementParametersMustBeDocumented : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1611ElementParametersMustBeDocumented"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1611";
         private const string Title = "Element parameters must be documented";
         private const string MessageFormat = "TODO: Message format";

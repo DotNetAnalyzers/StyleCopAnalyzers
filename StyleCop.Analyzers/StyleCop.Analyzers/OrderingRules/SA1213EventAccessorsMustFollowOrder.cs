@@ -34,6 +34,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1213EventAccessorsMustFollowOrder : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1213EventAccessorsMustFollowOrder"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1213";
         private const string Title = "Event accessors must follow order";
         private const string MessageFormat = "TODO: Message format";

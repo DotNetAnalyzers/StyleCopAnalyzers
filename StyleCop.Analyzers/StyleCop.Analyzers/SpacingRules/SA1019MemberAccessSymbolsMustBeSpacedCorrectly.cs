@@ -15,6 +15,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1019MemberAccessSymbolsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1019MemberAccessSymbolsMustBeSpacedCorrectly"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1019";
         private const string Title = "Member access symbols must be spaced correctly";
         private const string MessageFormat = "Member access symbol '{0}' must not be {1} by a space.";

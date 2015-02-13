@@ -22,6 +22,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1306FieldNamesMustBeginWithLowerCaseLetter : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1306FieldNamesMustBeginWithLowerCaseLetter"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1306";
         private const string Title = "Field names must begin with lower-case letter";
         private const string MessageFormat = "TODO: Message format";

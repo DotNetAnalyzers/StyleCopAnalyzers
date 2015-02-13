@@ -33,6 +33,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1628DocumentationTextMustBeginWithACapitalLetter : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1628DocumentationTextMustBeginWithACapitalLetter"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1628";
         private const string Title = "Documentation text must begin with a capital letter";
         private const string MessageFormat = "TODO: Message format";

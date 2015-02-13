@@ -40,6 +40,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1305FieldNamesMustNotUseHungarianNotation : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1305FieldNamesMustNotUseHungarianNotation"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1305";
         private const string Title = "Field names must not use Hungarian notation";
         private const string MessageFormat = "TODO: Message format";

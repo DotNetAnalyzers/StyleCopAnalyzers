@@ -24,6 +24,9 @@
     [NoCodeFix("Cannot generate documentation")]
     public class SA1606ElementDocumentationMustHaveSummaryText : ElementDocumentationSummaryBase
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1606ElementDocumentationMustHaveSummaryText"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1606";
         private const string Title = "Element documentation must have summary text";
         private const string MessageFormat = "Element documentation must have summary text";
@@ -46,6 +49,7 @@
             }
         }
 
+        /// <inheritdoc/>
         protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location[] diagnosticLocations)
         {
             if (syntax != null)

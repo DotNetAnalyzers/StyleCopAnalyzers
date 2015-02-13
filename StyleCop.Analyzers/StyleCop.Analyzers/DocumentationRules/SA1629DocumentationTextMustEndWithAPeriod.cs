@@ -34,6 +34,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1629DocumentationTextMustEndWithAPeriod : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1629DocumentationTextMustEndWithAPeriod"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1629";
         private const string Title = "Documentation text must end with a period";
         private const string MessageFormat = "TODO: Message format";

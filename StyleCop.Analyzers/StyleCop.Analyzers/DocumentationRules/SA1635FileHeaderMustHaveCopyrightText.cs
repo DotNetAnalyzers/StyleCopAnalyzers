@@ -31,6 +31,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1635FileHeaderMustHaveCopyrightText : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1635FileHeaderMustHaveCopyrightText"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1635";
         private const string Title = "File header must have copyright text";
         private const string MessageFormat = "TODO: Message format";

@@ -52,6 +52,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1625ElementDocumentationMustNotBeCopiedAndPasted : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1625ElementDocumentationMustNotBeCopiedAndPasted"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1625";
         private const string Title = "Element documentation must not be copied and pasted";
         private const string MessageFormat = "TODO: Message format";

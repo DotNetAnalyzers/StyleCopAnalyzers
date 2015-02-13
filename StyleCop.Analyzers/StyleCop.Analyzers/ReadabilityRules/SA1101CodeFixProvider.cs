@@ -10,6 +10,13 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using SpacingRules;
 
+    /// <summary>
+    /// This class provides a code fix for <see cref="SA1101PrefixLocalCallsWithThis"/>.
+    /// </summary>
+    /// <remarks>
+    /// <para>To fix a violation of this rule, insert the <c>this.</c> prefix before the call to the class
+    /// member.</para>
+    /// </remarks>
     [ExportCodeFixProvider(nameof(SA1101PrefixLocalCallsWithThis), LanguageNames.CSharp)]
     [Shared]
     public class SA1101CodeFixProvider : CodeFixProvider

@@ -21,6 +21,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1612ElementParameterDocumentationMustMatchElementParameters : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the
+        /// <see cref="SA1612ElementParameterDocumentationMustMatchElementParameters"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1612";
         private const string Title = "Element parameter documentation must match element parameters";
         private const string MessageFormat = "TODO: Message format";

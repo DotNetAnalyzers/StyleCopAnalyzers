@@ -19,6 +19,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1123DoNotPlaceRegionsWithinElements : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1123DoNotPlaceRegionsWithinElements"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1123";
         private const string Title = "Do not place regions within elements";
         private const string MessageFormat = "Region must not be located within a code element.";

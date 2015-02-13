@@ -24,6 +24,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1304NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the
+        /// <see cref="SA1304NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1304";
         private const string Title = "Non-private readonly fields must begin with upper-case letter";
         private const string MessageFormat = "Non-private readonly fields must begin with upper-case letter";

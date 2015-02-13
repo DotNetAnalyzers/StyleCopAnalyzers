@@ -25,6 +25,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1405DebugAssertMustProvideMessageText : SystemDiagnosticsDebugDiagnosticBase
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1405DebugAssertMustProvideMessageText"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1405";
         private const string Title = "Debug.Assert must provide message text";
         private const string MessageFormat = "Debug.Assert must provide message text";

@@ -10,6 +10,12 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using SpacingRules;
 
+    /// <summary>
+    /// This class provides a code fix for <see cref="SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists"/>.
+    /// </summary>
+    /// <remarks>
+    /// <para>To fix a violation of this rule, change the <c>base.</c> prefix to <c>this.</c>.</para>
+    /// </remarks>
     [ExportCodeFixProvider(nameof(SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists), LanguageNames.CSharp)]
     [Shared]
     public class SA1100CodeFixProvider : CodeFixProvider

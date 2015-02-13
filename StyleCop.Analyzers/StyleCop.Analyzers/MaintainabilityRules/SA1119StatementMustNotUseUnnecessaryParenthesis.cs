@@ -37,6 +37,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1119StatementMustNotUseUnnecessaryParenthesis : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1119StatementMustNotUseUnnecessaryParenthesis"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1119";
         private const string Title = "Statement must not use unnecessary parenthesis";
         private const string MessageFormat = "Statement must not use unnecessary parenthesis";

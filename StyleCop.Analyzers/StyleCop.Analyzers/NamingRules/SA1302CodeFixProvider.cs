@@ -8,6 +8,13 @@
     using Microsoft.CodeAnalysis.CodeFixes;
     using StyleCop.Analyzers.Helpers;
 
+    /// <summary>
+    /// Implements a code fix for <see cref="SA1302InterfaceNamesMustBeginWithI"/>.
+    /// </summary>
+    /// <remarks>
+    /// <para>To fix a violation of this rule, add the capital letter I to the front of the interface name, or place the
+    /// item within a <c>NativeMethods</c> class if appropriate.</para>
+    /// </remarks>
     [ExportCodeFixProvider(nameof(SA1302CodeFixProvider), LanguageNames.CSharp)]
     [Shared]
     public class SA1302CodeFixProvider : CodeFixProvider

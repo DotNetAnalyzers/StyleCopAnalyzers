@@ -40,6 +40,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1626SingleLineCommentsMustNotUseDocumentationStyleSlashes : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the
+        /// <see cref="SA1626SingleLineCommentsMustNotUseDocumentationStyleSlashes"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1626";
         private const string Title = "Single-line comments must not use documentation style slashes";
         private const string MessageFormat = "TODO: Message format";

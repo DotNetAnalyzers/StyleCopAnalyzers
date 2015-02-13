@@ -32,6 +32,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1640FileHeaderMustHaveValidCompanyText : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1640FileHeaderMustHaveValidCompanyText"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1640";
         private const string Title = "File header must have valid company text";
         private const string MessageFormat = "TODO: Message format";

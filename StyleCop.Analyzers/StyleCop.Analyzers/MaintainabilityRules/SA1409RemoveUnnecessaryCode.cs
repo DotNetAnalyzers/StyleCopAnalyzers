@@ -48,6 +48,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1409RemoveUnnecessaryCode : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1409RemoveUnnecessaryCode"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1409";
         private const string Title = "Remove unnecessary code";
         private const string MessageFormat = "TODO: Message format";
