@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.NamingRules
 {
+    using System;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
@@ -7,7 +8,8 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using StyleCop.Analyzers.Helpers;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter"/>
@@ -42,8 +44,68 @@
                     continue;
 
                 var newName = char.ToUpper(token.ValueText[0]) + token.ValueText.Substring(1);
-                context.RegisterCodeFix(CodeAction.Create($"Rename field to '{newName}'", cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken)), diagnostic);
+                var typeSyntax = this.GetParentTypeDeclaration(token);
+
+                if (typeSyntax != null)
+                {
+                    SemanticModel semanticModel = await document.GetSemanticModelAsync();
+
+                    var typeDeclarationSymbol = semanticModel.GetDeclaredSymbol(typeSyntax) as INamedTypeSymbol;
+                    if (typeDeclarationSymbol == null)
+                    {
+                        return;
+                    }
+
+                    while (!this.IsValidNewMemberName(typeDeclarationSymbol, newName) || newName == typeSyntax.GetTypeName())
+                    {
+                        newName = newName + "Value";
+                    }
+
+                    context.RegisterCodeFix(CodeAction.Create($"Rename field to '{newName}'", cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken)), diagnostic);
+                }
             }
+        }
+
+        private bool IsValidNewMemberName(INamedTypeSymbol typeSymbol, string name)
+        {
+            foreach (var member in typeSymbol.GetMembers())
+            {
+                if (member.Kind == SymbolKind.Method)
+                {
+                    // Field names can't colide with method names
+                    continue;
+                }
+                else
+                {
+                    if (member.Name == name)
+                    {
+                        return false;
+                    }
+                }
+            }
+            if (typeSymbol.SpecialType == SpecialType.System_Object)
+            {
+                return true;
+            }
+            else
+            {
+                return this.IsValidNewMemberName(typeSymbol.BaseType, name);
+            }
+        }
+
+        private TypeDeclarationSyntax GetParentTypeDeclaration(SyntaxToken token)
+        {
+            SyntaxNode parent = token.Parent;
+            while (!(parent is TypeDeclarationSyntax))
+            {
+                parent = parent.Parent;
+                if (parent == null)
+                {
+                    return null;
+                }
+            }
+
+            return (TypeDeclarationSyntax)parent;
         }
     }
 }
