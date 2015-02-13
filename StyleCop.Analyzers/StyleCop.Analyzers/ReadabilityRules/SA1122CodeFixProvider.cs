@@ -17,7 +17,7 @@
     /// <para>To fix a violation of this rule, add or remove a space after the keyword, according to the description
     /// above.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1122UseStringEmptyForEmptyStrings), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(nameof(SA1122CodeFixProvider), LanguageNames.CSharp)]
     [Shared]
     public class SA1122CodeFixProvider : CodeFixProvider
     {

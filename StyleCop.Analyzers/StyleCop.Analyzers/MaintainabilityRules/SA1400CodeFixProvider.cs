@@ -17,7 +17,7 @@
     /// <remarks>
     /// <para>To fix a violation of this rule, add an access modifier to the declaration of the element.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1119CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(nameof(SA1400CodeFixProvider), LanguageNames.CSharp)]
     [Shared]
     public class SA1400CodeFixProvider : CodeFixProvider
     {

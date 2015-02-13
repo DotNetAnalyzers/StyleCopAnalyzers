@@ -17,7 +17,7 @@
     /// <para>To fix a violation of this rule, ensure that the comma is followed by a single space, and is not preceded
     /// by any space.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1121UseBuiltInTypeAlias), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(nameof(SA1121CodeFixProvider), LanguageNames.CSharp)]
     [Shared]
     public class SA1121CodeFixProvider : CodeFixProvider
     {
