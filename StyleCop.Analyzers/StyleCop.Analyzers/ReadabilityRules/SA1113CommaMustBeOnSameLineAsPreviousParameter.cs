@@ -63,17 +63,17 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeAction(HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
-            context.RegisterSyntaxNodeAction(HandleInvoationExpression, SyntaxKind.InvocationExpression);
-            context.RegisterSyntaxNodeAction(HandleObjectCreationExpression, SyntaxKind.ObjectCreationExpression);
-            context.RegisterSyntaxNodeAction(HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
-            context.RegisterSyntaxNodeAction(HandleElementAccessExpression, SyntaxKind.ElementAccessExpression);
-            context.RegisterSyntaxNodeAction(HandleAnonymousMethodDeclaration, SyntaxKind.AnonymousMethodExpression);
-            context.RegisterSyntaxNodeAction(HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeAction(HandleLambdaExpression, SyntaxKind.ParenthesizedLambdaExpression);
-            context.RegisterSyntaxNodeAction(HandleAttribute, SyntaxKind.Attribute);
-            context.RegisterSyntaxNodeAction(HandleAttributeList, SyntaxKind.AttributeList);
+            context.RegisterSyntaxNodeAction(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleInvoationExpression, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeAction(this.HandleObjectCreationExpression, SyntaxKind.ObjectCreationExpression);
+            context.RegisterSyntaxNodeAction(this.HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleElementAccessExpression, SyntaxKind.ElementAccessExpression);
+            context.RegisterSyntaxNodeAction(this.HandleAnonymousMethodDeclaration, SyntaxKind.AnonymousMethodExpression);
+            context.RegisterSyntaxNodeAction(this.HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleLambdaExpression, SyntaxKind.ParenthesizedLambdaExpression);
+            context.RegisterSyntaxNodeAction(this.HandleAttribute, SyntaxKind.Attribute);
+            context.RegisterSyntaxNodeAction(this.HandleAttributeList, SyntaxKind.AttributeList);
         }
 
         private void HandleAttributeList(SyntaxNodeAnalysisContext context)
