@@ -7,25 +7,36 @@ using StyleCop.Analyzers.Helpers;
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
+    /// <summary>
+    /// This is the base class for analyzers which examine the <c>&lt;summary&gt;</c> text of a documentation comment.
+    /// </summary>
     public abstract class ElementDocumentationSummaryBase : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// Analyzes the top-level <c>&lt;summary&gt;</c> element of a documentation comment.
+        /// </summary>
+        /// <param name="context">The current analysis context.</param>
+        /// <param name="syntax">The <see cref="XmlElementSyntax"/> or <see cref="XmlEmptyElementSyntax"/> of the node
+        /// to examine.</param>
+        /// <param name="diagnosticLocations">The location(s) where diagnostics, if any, should be reported.</param>
         abstract protected void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, params Location[] diagnosticLocations);
 
+        /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeAction(HandleTypeDeclaration, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeAction(HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
-            context.RegisterSyntaxNodeAction(HandleTypeDeclaration, SyntaxKind.EnumDeclaration);
-            context.RegisterSyntaxNodeAction(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeAction(HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
-            context.RegisterSyntaxNodeAction(HandleDestructorDeclaration, SyntaxKind.DestructorDeclaration);
-            context.RegisterSyntaxNodeAction(HandlePropertyDeclaration, SyntaxKind.PropertyDeclaration);
-            context.RegisterSyntaxNodeAction(HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
-            context.RegisterSyntaxNodeAction(HandleFieldDeclaration, SyntaxKind.FieldDeclaration);
-            context.RegisterSyntaxNodeAction(HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeAction(HandleEventDeclaration, SyntaxKind.EventDeclaration);
-            context.RegisterSyntaxNodeAction(HandleFieldDeclaration, SyntaxKind.EventFieldDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleTypeDeclaration, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleTypeDeclaration, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleDestructorDeclaration, SyntaxKind.DestructorDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandlePropertyDeclaration, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleFieldDeclaration, SyntaxKind.FieldDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleEventDeclaration, SyntaxKind.EventDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleFieldDeclaration, SyntaxKind.EventFieldDeclaration);
         }
 
         private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
@@ -40,7 +51,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            HandleDeclaration(context, node, node.Identifier.GetLocation());
+            this.HandleDeclaration(context, node, node.Identifier.GetLocation());
         }
 
         private void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
@@ -49,7 +60,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             if (node == null || node.Identifier.IsMissing)
                 return;
 
-            HandleDeclaration(context, node, node.Identifier.GetLocation());
+            this.HandleDeclaration(context, node, node.Identifier.GetLocation());
         }
 
         private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
@@ -64,7 +75,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            HandleDeclaration(context, node, node.Identifier.GetLocation());
+            this.HandleDeclaration(context, node, node.Identifier.GetLocation());
         }
 
         private void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
@@ -73,7 +84,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             if (node == null || node.Identifier.IsMissing)
                 return;
 
-            HandleDeclaration(context, node, node.Identifier.GetLocation());
+            this.HandleDeclaration(context, node, node.Identifier.GetLocation());
         }
 
         private void HandleDestructorDeclaration(SyntaxNodeAnalysisContext context)
@@ -82,7 +93,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             if (node == null || node.Identifier.IsMissing)
                 return;
 
-            HandleDeclaration(context, node, node.Identifier.GetLocation());
+            this.HandleDeclaration(context, node, node.Identifier.GetLocation());
         }
 
         private void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
@@ -91,7 +102,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             if (node == null || node.Identifier.IsMissing)
                 return;
 
-            HandleDeclaration(context, node, node.Identifier.GetLocation());
+            this.HandleDeclaration(context, node, node.Identifier.GetLocation());
         }
 
         private void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)
@@ -100,7 +111,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             if (node == null || node.ThisKeyword.IsMissing)
                 return;
 
-            HandleDeclaration(context, node, node.ThisKeyword.GetLocation());
+            this.HandleDeclaration(context, node, node.ThisKeyword.GetLocation());
         }
 
         private void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
@@ -115,7 +126,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 where !identifier.IsMissing
                 select identifier.GetLocation();
 
-            HandleDeclaration(context, node, locations.ToArray());
+            this.HandleDeclaration(context, node, locations.ToArray());
         }
 
         private void HandleEventDeclaration(SyntaxNodeAnalysisContext context)
@@ -124,7 +135,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             if (node == null || node.Identifier.IsMissing)
                 return;
 
-            HandleDeclaration(context, node, node.Identifier.GetLocation());
+            this.HandleDeclaration(context, node, node.Identifier.GetLocation());
         }
 
         private void HandleDeclaration(SyntaxNodeAnalysisContext context, SyntaxNode node, params Location[] locations)
@@ -143,7 +154,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             var summaryXmlElement = XmlCommentHelper.GetTopLevelElement(documentation, XmlCommentHelper.SummaryXmlTag);
-            HandleXmlElement(context, summaryXmlElement, locations);
+            this.HandleXmlElement(context, summaryXmlElement, locations);
         }
     }
 }

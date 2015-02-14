@@ -20,6 +20,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1406DebugFailMustProvideMessageText : SystemDiagnosticsDebugDiagnosticBase
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1406DebugFailMustProvideMessageText"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1406";
         private const string Title = "Debug.Fail must provide message text";
         private const string MessageFormat = "Debug.Fail must provide message text";
@@ -30,7 +33,7 @@
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -38,20 +41,20 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleMethodCall, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeAction(this.HandleMethodCall, SyntaxKind.InvocationExpression);
         }
 
         private void HandleMethodCall(SyntaxNodeAnalysisContext context)
         {
             // Debug.Fail is not availible in a portable library. So no nameof(Debug.Fail) here
-            HandleMethodCall(context, "Fail", 0, Descriptor);
+            this.HandleMethodCall(context, "Fail", 0, Descriptor);
         }
     }
 }

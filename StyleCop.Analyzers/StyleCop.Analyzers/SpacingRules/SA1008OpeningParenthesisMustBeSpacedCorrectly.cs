@@ -21,6 +21,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1008OpeningParenthesisMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1008OpeningParenthesisMustBeSpacedCorrectly"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1008";
         private const string Title = "Opening parenthesis must be spaced correctly";
         private const string MessageFormat = "Opening parenthesis must{0} be {1} by a space.";
@@ -31,7 +34,7 @@
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -39,14 +42,14 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(HandleSyntaxTree);
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -57,7 +60,7 @@
                 switch (token.CSharpKind())
                 {
                 case SyntaxKind.OpenParenToken:
-                    HandleOpenParenToken(context, token);
+                    this.HandleOpenParenToken(context, token);
                     break;
 
                 default:

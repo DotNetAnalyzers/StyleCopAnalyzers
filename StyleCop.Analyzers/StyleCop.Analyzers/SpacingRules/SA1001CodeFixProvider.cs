@@ -21,13 +21,13 @@
     [Shared]
     public class SA1001CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> _fixableDiagnostics =
+        private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1001CommasMustBeSpacedCorrectly.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> GetFixableDiagnosticIds()
         {
-            return _fixableDiagnostics;
+            return FixableDiagnostics;
         }
 
         /// <inheritdoc/>
@@ -76,7 +76,7 @@
                     SyntaxToken precedingToken = token.GetPreviousToken();
                     if (precedingToken.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
                     {
-                        SyntaxToken corrected = precedingToken.WithoutLeadingWhitespace().WithoutFormatting();
+                        SyntaxToken corrected = precedingToken.WithoutTrailingWhitespace().WithoutFormatting();
                         replacements[precedingToken] = corrected;
                     }
                 }

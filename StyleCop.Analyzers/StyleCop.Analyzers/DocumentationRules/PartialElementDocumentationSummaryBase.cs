@@ -9,17 +9,28 @@ using StyleCop.Analyzers.Helpers;
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
+    /// <summary>
+    /// This is the base class for analyzers which examine the <c>&lt;summary&gt;</c> or <c>&lt;content&gt;</c> text of
+    /// the documentation comment associated with a <c>partial</c> element.
+    /// </summary>
     public abstract class PartialElementDocumentationSummaryBase : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// Analyzes the top-level <c>&lt;summary&gt;</c> or <c>&lt;content&gt;</c> element of a documentation comment.
+        /// </summary>
+        /// <param name="context">The current analysis context.</param>
+        /// <param name="syntax">The <see cref="XmlElementSyntax"/> or <see cref="XmlEmptyElementSyntax"/> of the node
+        /// to examine.</param>
+        /// <param name="diagnosticLocations">The location(s) where diagnostics, if any, should be reported.</param>
         abstract protected void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, params Location[] diagnosticLocations);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeAction(HandleTypeDeclaration, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeAction(HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
-            context.RegisterSyntaxNodeAction(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleTypeDeclaration, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
         }
 
         private static XmlNodeSyntax GetTopLevelElement(DocumentationCommentTriviaSyntax syntax, string tagName)
@@ -44,7 +55,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            HandleDeclaration(context, node, node.Identifier.GetLocation());
+            this.HandleDeclaration(context, node, node.Identifier.GetLocation());
         }
 
         private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
@@ -59,7 +70,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            HandleDeclaration(context, node, node.Identifier.GetLocation());
+            this.HandleDeclaration(context, node, node.Identifier.GetLocation());
         }
 
         private void HandleDeclaration(SyntaxNodeAnalysisContext context, SyntaxNode node, params Location[] locations)
@@ -81,7 +92,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             if (xmlElement == null)
                 xmlElement = GetTopLevelElement(documentation, XmlCommentHelper.ContentXmlTag);
 
-            HandleXmlElement(context, xmlElement, locations);
+            this.HandleXmlElement(context, xmlElement, locations);
         }
     }
 }

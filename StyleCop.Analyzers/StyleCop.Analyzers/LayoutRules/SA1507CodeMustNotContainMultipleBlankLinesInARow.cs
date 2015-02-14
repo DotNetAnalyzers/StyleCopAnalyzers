@@ -34,6 +34,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1507CodeMustNotContainMultipleBlankLinesInARow : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1507CodeMustNotContainMultipleBlankLinesInARow"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1507";
         private const string Title = "Code must not contain multiple blank lines in a row";
         private const string MessageFormat = "TODO: Message format";
@@ -44,7 +48,7 @@
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -52,7 +56,7 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 

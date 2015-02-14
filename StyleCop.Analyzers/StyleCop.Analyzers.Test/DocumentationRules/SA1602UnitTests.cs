@@ -21,7 +21,7 @@
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -38,7 +38,7 @@ enum TypeName
     /// </summary>
     Bar
 }}";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -57,7 +57,7 @@ enum TypeName
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "Enumeration items must be documented",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -67,7 +67,7 @@ enum TypeName
                             }
                     }
                 };
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
         [TestMethod]
@@ -92,7 +92,7 @@ enum TypeName
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "Enumeration items must be documented",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -102,7 +102,7 @@ enum TypeName
                             }
                     }
                 };
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

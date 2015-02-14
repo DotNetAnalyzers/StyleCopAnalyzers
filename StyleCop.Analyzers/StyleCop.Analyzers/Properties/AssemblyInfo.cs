@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Tunnel Vision Laboratories, LLC")]
 [assembly: AssemblyProduct("StyleCop.Analyzers")]
-[assembly: AssemblyCopyright("Copyright © Sam Harwell 2014")]
+[assembly: AssemblyCopyright("Copyright © Sam Harwell 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: CLSCompliant(false)]

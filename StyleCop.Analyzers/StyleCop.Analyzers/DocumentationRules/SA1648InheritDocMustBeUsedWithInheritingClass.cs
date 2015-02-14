@@ -18,6 +18,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1648InheritDocMustBeUsedWithInheritingClass : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1648InheritDocMustBeUsedWithInheritingClass"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1648";
         private const string Title = "inheritdoc must be used with inheriting class";
         private const string MessageFormat = "TODO: Message format";
@@ -28,7 +31,7 @@
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -36,7 +39,7 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 

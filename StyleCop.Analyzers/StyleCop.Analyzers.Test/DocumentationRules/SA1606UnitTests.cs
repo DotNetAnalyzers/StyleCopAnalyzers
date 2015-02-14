@@ -21,7 +21,7 @@
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         private async Task TestTypeNoDocumentation(string typeName)
@@ -30,7 +30,7 @@
 {0} TypeName
 {{
 }}";
-            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
         }
 
         private async Task TestTypeWithDocumentation(string typeName)
@@ -42,7 +42,7 @@
 {0} TypeName
 {{
 }}";
-            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
         }
 
         private async Task TestTypeWithInheritedDocumentation(string typeName)
@@ -52,7 +52,7 @@
 {0} TypeName
 {{
 }}";
-            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
         }
 
         private async Task TestTypeWithoutDocumentation(string typeName)
@@ -73,7 +73,7 @@ TypeName
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "Element documentation must have summary text",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -83,103 +83,103 @@ TypeName
                             }
                     }
                 };
-            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), expected, CancellationToken.None);
         }
 
         [TestMethod]
         public async Task TestEnumWithDocumentation()
         {
-            await TestTypeWithDocumentation("enum");
+            await this.TestTypeWithDocumentation("enum");
         }
 
         [TestMethod]
         public async Task TestClassWithDocumentation()
         {
-            await TestTypeWithDocumentation("class");
+            await this.TestTypeWithDocumentation("class");
         }
 
         [TestMethod]
         public async Task TestStructWithDocumentation()
         {
-            await TestTypeWithDocumentation("struct");
+            await this.TestTypeWithDocumentation("struct");
         }
 
         [TestMethod]
         public async Task TestInterfaceWithDocumentation()
         {
-            await TestTypeWithDocumentation("interface");
+            await this.TestTypeWithDocumentation("interface");
         }
 
         [TestMethod]
         public async Task TestEnumWithInheritedDocumentation()
         {
-            await TestTypeWithInheritedDocumentation("enum");
+            await this.TestTypeWithInheritedDocumentation("enum");
         }
 
         [TestMethod]
         public async Task TestClassWithInheritedDocumentation()
         {
-            await TestTypeWithInheritedDocumentation("class");
+            await this.TestTypeWithInheritedDocumentation("class");
         }
 
         [TestMethod]
         public async Task TestStructWithInheritedDocumentation()
         {
-            await TestTypeWithInheritedDocumentation("struct");
+            await this.TestTypeWithInheritedDocumentation("struct");
         }
 
         [TestMethod]
         public async Task TestInterfaceWithInheritedDocumentation()
         {
-            await TestTypeWithInheritedDocumentation("interface");
+            await this.TestTypeWithInheritedDocumentation("interface");
         }
 
         [TestMethod]
         public async Task TestEnumWithoutDocumentation()
         {
-            await TestTypeWithoutDocumentation("enum");
+            await this.TestTypeWithoutDocumentation("enum");
         }
 
         [TestMethod]
         public async Task TestClassWithoutDocumentation()
         {
-            await TestTypeWithoutDocumentation("class");
+            await this.TestTypeWithoutDocumentation("class");
         }
 
         [TestMethod]
         public async Task TestStructWithoutDocumentation()
         {
-            await TestTypeWithoutDocumentation("struct");
+            await this.TestTypeWithoutDocumentation("struct");
         }
 
         [TestMethod]
         public async Task TestInterfaceWithoutDocumentation()
         {
-            await TestTypeWithoutDocumentation("interface");
+            await this.TestTypeWithoutDocumentation("interface");
         }
 
         [TestMethod]
         public async Task TestEnumNoDocumentation()
         {
-            await TestTypeNoDocumentation("enum");
+            await this.TestTypeNoDocumentation("enum");
         }
 
         [TestMethod]
         public async Task TestClassNoDocumentation()
         {
-            await TestTypeNoDocumentation("class");
+            await this.TestTypeNoDocumentation("class");
         }
 
         [TestMethod]
         public async Task TestStructNoDocumentation()
         {
-            await TestTypeNoDocumentation("struct");
+            await this.TestTypeNoDocumentation("struct");
         }
 
         [TestMethod]
         public async Task TestInterfaceNoDocumentation()
         {
-            await TestTypeNoDocumentation("interface");
+            await this.TestTypeNoDocumentation("interface");
         }
 
         [TestMethod]
@@ -188,7 +188,7 @@ TypeName
             var testCode = @"
 public delegate 
 TypeName();";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -200,7 +200,7 @@ TypeName();";
 /// </summary>
 public delegate 
 TypeName();";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -210,7 +210,7 @@ TypeName();";
 /// <inheritdoc/>
 public delegate 
 TypeName();";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -230,7 +230,7 @@ void TypeName();";
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "Element documentation must have summary text",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -240,7 +240,7 @@ void TypeName();";
                             }
                     }
                 };
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
         [TestMethod]
@@ -254,7 +254,7 @@ public class ClassName
 {
     public void Test() { }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -271,7 +271,7 @@ public class ClassName
     /// </summary>
     public void Test() { }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -286,7 +286,7 @@ public class ClassName
     /// <inheritdoc/>
     public void Test() { }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -311,7 +311,7 @@ public class ClassName
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "Element documentation must have summary text",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -321,7 +321,7 @@ public class ClassName
                             }
                     }
                 };
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
         [TestMethod]
@@ -335,7 +335,7 @@ public class ClassName
 {
     public ClassName() { }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -352,7 +352,7 @@ public class ClassName
     /// </summary>
     public ClassName() { }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -367,7 +367,7 @@ public class ClassName
     /// <inheritdoc/>
     public ClassName() { }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -392,7 +392,7 @@ public class ClassName
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "Element documentation must have summary text",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -402,7 +402,7 @@ public class ClassName
                             }
                     }
                 };
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
         [TestMethod]
@@ -416,7 +416,7 @@ public class ClassName
 {
     ~ClassName() { }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -433,7 +433,7 @@ public class ClassName
     /// </summary>
     ~ClassName() { }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -448,7 +448,7 @@ public class ClassName
     /// <inheritdoc/>
     ~ClassName() { }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -473,7 +473,7 @@ public class ClassName
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "Element documentation must have summary text",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -483,7 +483,7 @@ public class ClassName
                             }
                     }
                 };
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
         [TestMethod]
@@ -500,7 +500,7 @@ public class ClassName
     /// </summary>
     public ClassName Property { get; set; }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -515,7 +515,7 @@ public class ClassName
     /// <inheritdoc/>
     public ClassName Property { get; set; }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -529,7 +529,7 @@ public class ClassName
 {
     public ClassName Property { get; set; }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -554,7 +554,7 @@ public class ClassName
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "Element documentation must have summary text",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -564,7 +564,7 @@ public class ClassName
                             }
                     }
                 };
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
         [TestMethod]
@@ -581,7 +581,7 @@ public class ClassName
     /// </summary>
     public ClassName this[string t] { get { return null; } }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -596,7 +596,7 @@ public class ClassName
     /// <inheritdoc/>
     public ClassName this[string t] { get { return null; } }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -610,7 +610,7 @@ public class ClassName
 {
     public ClassName this[string t] { get { return null; } }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -635,7 +635,7 @@ public class ClassName
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "Element documentation must have summary text",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -645,7 +645,7 @@ public class ClassName
                             }
                     }
                 };
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
         [TestMethod]
@@ -662,7 +662,7 @@ public class ClassName
     /// </summary>
     public ClassName Foo;
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -677,7 +677,7 @@ public class ClassName
     /// <inheritdoc/>
     public ClassName Foo;
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -691,7 +691,7 @@ public class ClassName
 {
     public ClassName Foo;
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -716,7 +716,7 @@ public class ClassName
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "Element documentation must have summary text",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -726,7 +726,7 @@ public class ClassName
                             }
                     }
                 };
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
         [TestMethod]
@@ -743,7 +743,7 @@ public class ClassName
     /// </summary>
     public event System.Action Foo;
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -758,7 +758,7 @@ public class ClassName
     /// <inheritdoc/>
     public event System.Action Foo;
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -772,7 +772,7 @@ public class ClassName
 {
     public ClassName Foo;
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -797,7 +797,7 @@ public class ClassName
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "Element documentation must have summary text",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -807,7 +807,7 @@ public class ClassName
                             }
                     }
                 };
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
         [TestMethod]
@@ -824,7 +824,7 @@ public interface InterfaceName
     /// </summary>
     event System.Action Foo { add; remove; }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -839,7 +839,7 @@ public interface InterfaceName
     /// <inheritdoc/>
     event System.Action Foo { add; remove; }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -853,7 +853,7 @@ public interface InterfaceName
 {
     event System.Action Foo { add; remove; }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -878,7 +878,7 @@ public interface InterfaceName
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "Element documentation must have summary text",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -888,7 +888,7 @@ public interface InterfaceName
                             }
                     }
                 };
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

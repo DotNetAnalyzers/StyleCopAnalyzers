@@ -22,6 +22,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1303ConstFieldNamesMustBeginWithUpperCaseLetter : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1303ConstFieldNamesMustBeginWithUpperCaseLetter"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1303";
         private const string Title = "Const field names must begin with upper-case letter";
         private const string MessageFormat = "Const field names must begin with upper-case letter.";
@@ -32,7 +36,7 @@
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -40,14 +44,14 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSymbolAction(HandleFieldDeclaration , SymbolKind.Field);
+            context.RegisterSymbolAction(this.HandleFieldDeclaration, SymbolKind.Field);
         }
 
         private void HandleFieldDeclaration(SymbolAnalysisContext context)

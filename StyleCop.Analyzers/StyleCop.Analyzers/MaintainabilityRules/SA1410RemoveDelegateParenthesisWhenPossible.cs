@@ -30,6 +30,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1410RemoveDelegateParenthesisWhenPossible : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1410RemoveDelegateParenthesisWhenPossible"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1410";
         private const string Title = "Remove delegate parenthesis when possible";
         private const string MessageFormat = "Remove delegate parenthesis when possible";
@@ -40,7 +43,7 @@
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -48,14 +51,14 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleAnonymousMethodExpressionSyntax, SyntaxKind.AnonymousMethodExpression);
+            context.RegisterSyntaxNodeAction(this.HandleAnonymousMethodExpressionSyntax, SyntaxKind.AnonymousMethodExpression);
         }
 
         private void HandleAnonymousMethodExpressionSyntax(SyntaxNodeAnalysisContext context)

@@ -18,6 +18,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1020IncrementDecrementSymbolsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1020IncrementDecrementSymbolsMustBeSpacedCorrectly"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1020";
         private const string Title = "Increment decrement symbols must be spaced correctly";
         private const string MessageFormat = "{0} symbol '{1}' must not be {2} by a space.";
@@ -28,7 +32,7 @@
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -36,14 +40,14 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(HandleSyntaxTree);
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -55,7 +59,7 @@
                 {
                 case SyntaxKind.MinusMinusToken:
                 case SyntaxKind.PlusPlusToken:
-                    HandleIncrementDecrementToken(context, token);
+                    this.HandleIncrementDecrementToken(context, token);
                     break;
 
                 default:

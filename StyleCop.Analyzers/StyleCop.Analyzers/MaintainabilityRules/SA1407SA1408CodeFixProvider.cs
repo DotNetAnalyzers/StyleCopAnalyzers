@@ -11,7 +11,7 @@
     using StyleCop.Analyzers.SpacingRules;
 
     /// <summary>
-    /// Implements a code fix for <see cref="SA1407ArithmeticExpressionsMustDeclarePrecedence"/>.
+    /// Implements a code fix for <see cref="SA1407ArithmeticExpressionsMustDeclarePrecedence"/> and  <see cref="SA1408ConditionalExpressionsMustDeclarePrecedence"/>.
     /// </summary>
     /// <remarks>
     /// <para>To fix a violation of this rule, insert parenthesis within the arithmetic expression to declare the precedence of the operations.</para>
@@ -20,26 +20,19 @@
     [Shared]
     public class SA1407SA1408CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> _fixableDiagnostics =
+        private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1407ArithmeticExpressionsMustDeclarePrecedence.DiagnosticId, SA1408ConditionalExpressionsMustDeclarePrecedence.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> GetFixableDiagnosticIds()
         {
-            return _fixableDiagnostics;
+            return FixableDiagnostics;
         }
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            // In some cases the WellKnownFixAllProviders.BatchFixer screws up and 'merges' some parenthesis together
-            // int a = 5 + y * b / 6 % z - 2;
-            // gets transformed into
-            // int a = 5 + (y * b / 6) % z) - 2;
-            // which is invalid C# (a opening parenthesis is missing). So for now FixAll is disabled until
-            // either WellKnownFixAllProviders.BatchFixer is fixed and does not remove some parenthesis, or
-            // we implement a FixAllProvider that works in this case.
-            return null;
+            return new SA1407SA1408FixAllProvider();
         }
 
         /// <inheritdoc/>
@@ -47,7 +40,7 @@
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!GetFixableDiagnosticIds().Contains(diagnostic.Id))
+                if (!this.GetFixableDiagnosticIds().Contains(diagnostic.Id))
                     continue;
 
                 var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);

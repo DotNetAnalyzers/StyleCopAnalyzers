@@ -26,6 +26,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1411AttributeConstructorMustNotUseUnnecessaryParenthesis : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the
+        /// <see cref="SA1411AttributeConstructorMustNotUseUnnecessaryParenthesis"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1411";
         private const string Title = "Attribute constructor must not use unnecessary parenthesis";
         private const string MessageFormat = "Attribute constructor must not use unnecessary parenthesis";
@@ -36,7 +40,7 @@
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -44,14 +48,14 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleAttributeArgumentListSyntax, SyntaxKind.AttributeArgumentList);
+            context.RegisterSyntaxNodeAction(this.HandleAttributeArgumentListSyntax, SyntaxKind.AttributeArgumentList);
         }
 
         private void HandleAttributeArgumentListSyntax(SyntaxNodeAnalysisContext context)

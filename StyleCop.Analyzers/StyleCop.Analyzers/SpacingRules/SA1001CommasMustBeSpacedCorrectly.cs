@@ -17,6 +17,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1001CommasMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1001CommasMustBeSpacedCorrectly"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1001";
         private const string Title = "Commas must be spaced correctly";
         private const string MessageFormat = "Commas must{0} be {1} by a space.";
@@ -25,9 +28,9 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1001.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -35,14 +38,14 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(HandleSyntaxTree);
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -53,7 +56,7 @@
                 switch (token.CSharpKind())
                 {
                 case SyntaxKind.CommaToken:
-                    HandleCommaToken(context, token);
+                    this.HandleCommaToken(context, token);
                     break;
 
                 default:
@@ -87,9 +90,8 @@
             }
 
             bool hasPrecedingSpace = false;
-            if (!token.HasLeadingTrivia)
+            if (!token.IsFirstTokenOnLine(context.CancellationToken))
             {
-                // only the first token on the line has leading trivia, and those are ignored
                 SyntaxToken precedingToken = token.GetPreviousToken();
                 if (precedingToken.HasTrailingTrivia)
                     hasPrecedingSpace = true;

@@ -25,6 +25,9 @@ namespace StyleCop.Analyzers.NamingRules
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1302InterfaceNamesMustBeginWithI : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1302InterfaceNamesMustBeginWithI"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1302";
         private const string Title = "Interface names must begin with I";
         private const string MessageFormat = "Interface names must begin with I";
@@ -35,7 +38,7 @@ namespace StyleCop.Analyzers.NamingRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -43,14 +46,14 @@ namespace StyleCop.Analyzers.NamingRules
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleInterfaceDeclarationSyntax, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleInterfaceDeclarationSyntax, SyntaxKind.InterfaceDeclaration);
         }
 
         private void HandleInterfaceDeclarationSyntax(SyntaxNodeAnalysisContext context)

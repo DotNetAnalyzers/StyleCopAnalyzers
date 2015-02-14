@@ -147,6 +147,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1200UsingDirectivesMustBePlacedWithinNamespace : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1200UsingDirectivesMustBePlacedWithinNamespace"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1200";
         private const string Title = "Using directives must be placed within namespace";
         private const string MessageFormat = "Using directive must appear within a namespace declaration";
@@ -157,7 +161,7 @@
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -165,14 +169,14 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleCompilationUnitSyntax, SyntaxKind.CompilationUnit);
+            context.RegisterSyntaxNodeAction(this.HandleCompilationUnitSyntax, SyntaxKind.CompilationUnit);
         }
 
         private void HandleCompilationUnitSyntax(SyntaxNodeAnalysisContext context)

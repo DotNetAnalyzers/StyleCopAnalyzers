@@ -20,6 +20,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1403FileMayOnlyContainASingleNamespace : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1403FileMayOnlyContainASingleNamespace"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1403";
         private const string Title = "File may only contain a single namespace";
         private const string MessageFormat = "File may only contain a single namespace";
@@ -30,7 +33,7 @@
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -38,14 +41,14 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(HandleSyntaxTree);
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
         }
 
         private async void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -62,7 +65,7 @@
                 {
                     if (foundNode)
                     {
-                        var location = GetNamespaceLocation(node);
+                        var location = this.GetNamespaceLocation(node);
                         if (location != null)
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));

@@ -30,6 +30,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1116SplitParametersMustStartOnLineAfterDeclaration : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1116SplitParametersMustStartOnLineAfterDeclaration"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1116";
         private const string Title = "Split parameters must start on line after declaration";
         private const string MessageFormat = "TODO: Message format";
@@ -40,7 +44,7 @@
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -48,7 +52,7 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 

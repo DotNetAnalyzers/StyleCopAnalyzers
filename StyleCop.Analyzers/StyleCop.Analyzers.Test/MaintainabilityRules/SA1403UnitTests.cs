@@ -43,8 +43,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             {
                 new DiagnosticResult
                 {
-                    Id = DiagnosticId,
-                    Message = Message,
+                    Id = this.DiagnosticId,
+                    Message = this.Message,
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -54,7 +54,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
         }
 

@@ -28,6 +28,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1404CodeAnalysisSuppressionMustHaveJustification : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1404CodeAnalysisSuppressionMustHaveJustification"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1404";
         private const string Title = "Code analysis suppression must have justification";
         private const string MessageFormat = "Code analysis suppression must have justification";
@@ -38,7 +42,7 @@
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -46,14 +50,14 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleAttributeNode, SyntaxKind.Attribute);
+            context.RegisterSyntaxNodeAction(this.HandleAttributeNode, SyntaxKind.Attribute);
         }
 
         private void HandleAttributeNode(SyntaxNodeAnalysisContext context)

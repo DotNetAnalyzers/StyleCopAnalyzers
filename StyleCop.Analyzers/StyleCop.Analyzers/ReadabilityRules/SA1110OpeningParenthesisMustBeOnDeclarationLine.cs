@@ -33,6 +33,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1110OpeningParenthesisMustBeOnDeclarationLine : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1110OpeningParenthesisMustBeOnDeclarationLine"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1110";
         internal const string Title = "Opening parenthesis must be on declaration line";
         internal const string MessageFormat = "The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the method or indexer name.";
@@ -43,7 +47,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -51,7 +55,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 

@@ -22,7 +22,7 @@
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -36,7 +36,7 @@ catch
 }
 ";
 
-            await TestKeywordStatement(statement, EmptyDiagnosticResults, statement);
+            await this.TestKeywordStatement(statement, EmptyDiagnosticResults, statement);
         }
 
         [TestMethod]
@@ -58,7 +58,7 @@ catch (Exception ex)
 }
 ";
 
-            await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
             DiagnosticResult[] expected;
 
@@ -67,7 +67,7 @@ catch (Exception ex)
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'catch' must be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -78,7 +78,7 @@ catch (Exception ex)
                     }
                 };
 
-            await TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
 
         [TestMethod]
@@ -94,7 +94,7 @@ catch (Exception ex)
 }
 ";
 
-            await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
             DiagnosticResult[] expected;
 
@@ -103,7 +103,7 @@ catch (Exception ex)
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'fixed' must be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -114,7 +114,7 @@ catch (Exception ex)
                     }
                 };
 
-            await TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
 
         [TestMethod]
@@ -130,7 +130,7 @@ catch (Exception ex)
 }
 ";
 
-            await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
             DiagnosticResult[] expected;
 
@@ -139,7 +139,7 @@ catch (Exception ex)
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'for' must be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -150,7 +150,7 @@ catch (Exception ex)
                     }
                 };
 
-            await TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
 
         [TestMethod]
@@ -166,7 +166,7 @@ catch (Exception ex)
 }
 ";
 
-            await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
             DiagnosticResult[] expected;
 
@@ -175,7 +175,7 @@ catch (Exception ex)
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'foreach' must be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -186,7 +186,7 @@ catch (Exception ex)
                     }
                 };
 
-            await TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
 
         [TestMethod]
@@ -196,7 +196,7 @@ catch (Exception ex)
 
             string statementWithSpace = @"var result = from @x in y select x;";
 
-            await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
             DiagnosticResult[] expected;
 
@@ -205,7 +205,7 @@ catch (Exception ex)
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'from' must be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -216,7 +216,7 @@ catch (Exception ex)
                     }
                 };
 
-            await TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
 
         [TestMethod]
@@ -230,7 +230,7 @@ select z;";
 group @x by x.A into z
 select z;";
 
-            await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
             DiagnosticResult[] expected;
 
@@ -239,7 +239,7 @@ select z;";
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'group' must be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -250,7 +250,7 @@ select z;";
                     }
                 };
 
-            await TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
 
         [TestMethod]
@@ -266,7 +266,7 @@ select z;";
 }
 ";
 
-            await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
             DiagnosticResult[] expected;
 
@@ -275,7 +275,7 @@ select z;";
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'if' must be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -286,7 +286,7 @@ select z;";
                     }
                 };
 
-            await TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
 
         [TestMethod]
@@ -296,7 +296,7 @@ select z;";
 
             string statementWithSpace = @"var result = from x in @y select x;";
 
-            await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
             DiagnosticResult[] expected;
 
@@ -305,7 +305,7 @@ select z;";
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'in' must be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -316,7 +316,7 @@ select z;";
                     }
                 };
 
-            await TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
 
         [TestMethod]
@@ -330,7 +330,7 @@ select z;";
 group x by x.A into @z
 select z;";
 
-            await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
             DiagnosticResult[] expected;
 
@@ -339,7 +339,7 @@ select z;";
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'into' must be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -350,7 +350,7 @@ select z;";
                     }
                 };
 
-            await TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
 
         [TestMethod]
@@ -364,7 +364,7 @@ select z;";
 join @a in b on x.A equals a.B
 select z;";
 
-            await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
             DiagnosticResult[] expected;
 
@@ -373,7 +373,7 @@ select z;";
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'join' must be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -384,7 +384,7 @@ select z;";
                     }
                 };
 
-            await TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
 
         [TestMethod]
@@ -398,7 +398,7 @@ select x;";
 let @z = 3
 select x;";
 
-            await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
             DiagnosticResult[] expected;
 
@@ -407,7 +407,7 @@ select x;";
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'let' must be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -418,7 +418,7 @@ select x;";
                     }
                 };
 
-            await TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
 
         [TestMethod]
@@ -434,7 +434,7 @@ select x;";
 }
 ";
 
-            await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
             DiagnosticResult[] expected;
 
@@ -443,7 +443,7 @@ select x;";
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'lock' must be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -454,7 +454,7 @@ select x;";
                     }
                 };
 
-            await TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
 
         [TestMethod]
@@ -468,7 +468,7 @@ select z;";
 orderby (x.A)
 select z;";
 
-            await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
             DiagnosticResult[] expected;
 
@@ -477,7 +477,7 @@ select z;";
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'orderby' must be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -488,7 +488,7 @@ select z;";
                     }
                 };
 
-            await TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
 
         [TestMethod]
@@ -498,7 +498,7 @@ select z;";
 
             string statementWithSpace = @"return ;";
 
-            await TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
 
             DiagnosticResult[] expected;
 
@@ -507,7 +507,7 @@ select z;";
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'return' must not be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -518,7 +518,7 @@ select z;";
                     }
                 };
 
-            await TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
+            await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
         }
 
         [TestMethod]
@@ -528,7 +528,7 @@ select z;";
 
             string statementWithSpace = @"return (3);";
 
-            await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
             DiagnosticResult[] expected;
 
@@ -537,7 +537,7 @@ select z;";
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'return' must be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -548,7 +548,7 @@ select z;";
                     }
                 };
 
-            await TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
 
         [TestMethod]
@@ -558,7 +558,7 @@ select z;";
 
             string statementWithSpace = @"var result = from x in y select @x;";
 
-            await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
             DiagnosticResult[] expected;
 
@@ -567,7 +567,7 @@ select z;";
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'select' must be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -578,7 +578,7 @@ select z;";
                     }
                 };
 
-            await TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
 
         [TestMethod]
@@ -588,7 +588,7 @@ select z;";
 
             string statementWithSpace = @"int* x = stackalloc @Int32[3];";
 
-            await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
             DiagnosticResult[] expected;
 
@@ -597,7 +597,7 @@ select z;";
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'stackalloc' must be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -608,7 +608,7 @@ select z;";
                     }
                 };
 
-            await TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
 
         [TestMethod]
@@ -628,7 +628,7 @@ default:
 }
 ";
 
-            await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
             DiagnosticResult[] expected;
 
@@ -637,7 +637,7 @@ default:
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'switch' must be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -648,7 +648,7 @@ default:
                     }
                 };
 
-            await TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
 
         [TestMethod]
@@ -658,7 +658,7 @@ default:
 
             string statementWithSpace = @"throw (new Exception());";
 
-            await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
             DiagnosticResult[] expected;
 
@@ -667,7 +667,7 @@ default:
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'throw' must be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -678,7 +678,7 @@ default:
                     }
                 };
 
-            await TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
 
         [TestMethod]
@@ -702,7 +702,7 @@ catch (Exception ex)
 }
 ";
 
-            await TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
 
             DiagnosticResult[] expected;
 
@@ -711,7 +711,7 @@ catch (Exception ex)
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'throw' must not be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -722,7 +722,7 @@ catch (Exception ex)
                     }
                 };
 
-            await TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
+            await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
         }
 
         [TestMethod]
@@ -738,7 +738,7 @@ catch (Exception ex)
 }
 ";
 
-            await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
             DiagnosticResult[] expected;
 
@@ -747,7 +747,7 @@ catch (Exception ex)
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'using' must be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -758,7 +758,7 @@ catch (Exception ex)
                     }
                 };
 
-            await TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
 
         [TestMethod]
@@ -772,7 +772,7 @@ select z;";
 where (x.A)
 select z;";
 
-            await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
             DiagnosticResult[] expected;
 
@@ -781,7 +781,7 @@ select z;";
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'where' must be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -792,7 +792,7 @@ select z;";
                     }
                 };
 
-            await TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
 
         [TestMethod]
@@ -808,7 +808,7 @@ select z;";
 }
 ";
 
-            await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
             DiagnosticResult[] expected;
 
@@ -817,7 +817,7 @@ select z;";
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'while' must be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -828,15 +828,20 @@ select z;";
                     }
                 };
 
-            await TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
 
         [TestMethod]
-        [Ignore]
-        public void TestYieldStatement()
+        public async Task TestYieldStatement()
         {
-            // There is no way to have a 'yield' keyword which is not followed by a space.
-            Assert.Inconclusive("Not yet implemented.");
+            // There is no way to have a 'yield' keyword which is not followed by a space. All we need to do is verify
+            // that no diagnostic is reported for its use with a space.
+
+            string statementWithSpace = @"yield return 3;";
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+
+            string statementWithSpace2 = @"yield break;";
+            await this.TestKeywordStatement(statementWithSpace2, EmptyDiagnosticResults, statementWithSpace2);
         }
 
         [TestMethod]
@@ -846,7 +851,7 @@ select z;";
 
             string statementWithSpace = @"int x = checked (3);";
 
-            await TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
 
             DiagnosticResult[] expected;
 
@@ -855,7 +860,7 @@ select z;";
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'checked' must not be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -866,7 +871,7 @@ select z;";
                     }
                 };
 
-            await TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
+            await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
         }
 
         [TestMethod]
@@ -886,7 +891,7 @@ default :
 }
 ";
 
-            await TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
 
             DiagnosticResult[] expected;
 
@@ -895,7 +900,7 @@ default :
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'default' must not be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -906,7 +911,7 @@ default :
                     }
                 };
 
-            await TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
+            await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
         }
 
         [TestMethod]
@@ -916,7 +921,7 @@ default :
 
             string statementWithSpace = @"int x = default (int);";
 
-            await TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
 
             DiagnosticResult[] expected;
 
@@ -925,7 +930,7 @@ default :
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'default' must not be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -936,7 +941,7 @@ default :
                     }
                 };
 
-            await TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
+            await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
         }
 
         [TestMethod]
@@ -946,7 +951,7 @@ default :
 
             string statementWithSpace = @"string x = nameof (x);";
 
-            await TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
 
             DiagnosticResult[] expected;
 
@@ -955,7 +960,7 @@ default :
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'nameof' must not be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -966,7 +971,7 @@ default :
                     }
                 };
 
-            await TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
+            await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
         }
 
         [TestMethod]
@@ -976,7 +981,7 @@ default :
 
             string statementWithSpace = @"int x = sizeof (int);";
 
-            await TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
 
             DiagnosticResult[] expected;
 
@@ -985,7 +990,7 @@ default :
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'sizeof' must not be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -996,7 +1001,7 @@ default :
                     }
                 };
 
-            await TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
+            await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
         }
 
         [TestMethod]
@@ -1006,7 +1011,7 @@ default :
 
             string statementWithSpace = @"Type x = typeof (int);";
 
-            await TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
 
             DiagnosticResult[] expected;
 
@@ -1015,7 +1020,7 @@ default :
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'typeof' must not be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -1026,7 +1031,7 @@ default :
                     }
                 };
 
-            await TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
+            await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
         }
 
         [TestMethod]
@@ -1036,7 +1041,7 @@ default :
 
             string statementWithSpace = @"int x = unchecked (3);";
 
-            await TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
 
             DiagnosticResult[] expected;
 
@@ -1045,7 +1050,7 @@ default :
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'unchecked' must not be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -1056,7 +1061,7 @@ default :
                     }
                 };
 
-            await TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
+            await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
         }
 
         [TestMethod]
@@ -1066,7 +1071,7 @@ default :
 
             string statementWithSpace = @"int x = new @Int32();";
 
-            await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
             DiagnosticResult[] expected;
 
@@ -1075,7 +1080,7 @@ default :
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'new' must be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -1086,7 +1091,7 @@ default :
                     }
                 };
 
-            await TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
 
         [TestMethod]
@@ -1096,7 +1101,7 @@ default :
 
             string statementWithSpace = @"int[] x = new @Int32[3];";
 
-            await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
             DiagnosticResult[] expected;
 
@@ -1105,7 +1110,7 @@ default :
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'new' must be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -1116,7 +1121,7 @@ default :
                     }
                 };
 
-            await TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
 
         [TestMethod]
@@ -1126,10 +1131,10 @@ default :
 
             string statementWithSpace = @"int[] x = new [] { 3 };";
 
-            await TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
 
             // this case is handled by SA1026, so it shouldn't be reported here
-            await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
         }
 
         [TestMethod]
@@ -1143,7 +1148,7 @@ default :
 {
 }";
 
-            await VerifyCSharpDiagnosticAsync(statementWithoutSpace, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(statementWithoutSpace, EmptyDiagnosticResults, CancellationToken.None);
 
             DiagnosticResult[] expected;
 
@@ -1152,7 +1157,7 @@ default :
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'new' must not be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -1163,7 +1168,7 @@ default :
                     }
                 };
 
-            await TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
+            await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
         }
 
         [TestMethod]
@@ -1177,7 +1182,7 @@ default :
 {
 }";
 
-            await VerifyCSharpDiagnosticAsync(statementWithoutSpace, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(statementWithoutSpace, EmptyDiagnosticResults, CancellationToken.None);
 
             DiagnosticResult[] expected;
 
@@ -1186,7 +1191,7 @@ default :
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'new' must not be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -1197,7 +1202,7 @@ default :
                     }
                 };
 
-            await TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
+            await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
         }
 
         [TestMethod]
@@ -1211,7 +1216,7 @@ default :
 {
 }";
 
-            await VerifyCSharpDiagnosticAsync(statementWithoutSpace, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(statementWithoutSpace, EmptyDiagnosticResults, CancellationToken.None);
 
             DiagnosticResult[] expected;
 
@@ -1220,7 +1225,7 @@ default :
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'new' must not be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -1231,7 +1236,7 @@ default :
                     }
                 };
 
-            await TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
+            await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
         }
 
         [TestMethod]
@@ -1245,7 +1250,7 @@ default :
 {
 }";
 
-            await VerifyCSharpDiagnosticAsync(statementWithoutSpace, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(statementWithoutSpace, EmptyDiagnosticResults, CancellationToken.None);
 
             DiagnosticResult[] expected;
 
@@ -1254,7 +1259,7 @@ default :
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'new' must not be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -1265,7 +1270,7 @@ default :
                     }
                 };
 
-            await TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
+            await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
         }
 
         [TestMethod]
@@ -1279,7 +1284,7 @@ default :
 {
 }";
 
-            await VerifyCSharpDiagnosticAsync(statementWithoutSpace, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(statementWithoutSpace, EmptyDiagnosticResults, CancellationToken.None);
 
             DiagnosticResult[] expected;
 
@@ -1288,7 +1293,7 @@ default :
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'new' must not be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -1299,7 +1304,7 @@ default :
                     }
                 };
 
-            await TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
+            await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
         }
 
         [TestMethod]
@@ -1313,7 +1318,7 @@ default :
 {
 }";
 
-            await VerifyCSharpDiagnosticAsync(statementWithoutSpace, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(statementWithoutSpace, EmptyDiagnosticResults, CancellationToken.None);
 
             DiagnosticResult[] expected;
 
@@ -1322,7 +1327,7 @@ default :
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'new' must not be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -1333,7 +1338,7 @@ default :
                     }
                 };
 
-            await TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
+            await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
         }
 
         [TestMethod]
@@ -1343,8 +1348,8 @@ default :
 
             string statementWithSpace = @"var result = await (x);";
 
-            await TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace, asyncMethod: false);
-            await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace, asyncMethod: false);
+            await this.TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace, asyncMethod: false);
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace, asyncMethod: false);
         }
 
         [TestMethod]
@@ -1354,7 +1359,7 @@ default :
 
             string statementWithSpace = @"var result = await (x);";
 
-            await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace, asyncMethod: true);
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace, asyncMethod: true);
 
             DiagnosticResult[] expected;
 
@@ -1363,7 +1368,7 @@ default :
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'await' must be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -1374,7 +1379,7 @@ default :
                     }
                 };
 
-            await TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace, asyncMethod: true);
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace, asyncMethod: true);
         }
 
         [TestMethod]
@@ -1396,7 +1401,7 @@ default:
 }
 ";
 
-            await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
             DiagnosticResult[] expected;
 
@@ -1405,7 +1410,7 @@ default:
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'case' must be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -1416,7 +1421,7 @@ default:
                     }
                 };
 
-            await TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
 
         [TestMethod]
@@ -1444,7 +1449,7 @@ default:
 }
 ";
 
-            await TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
             DiagnosticResult[] expected;
 
@@ -1453,7 +1458,7 @@ default:
                 {
                     new DiagnosticResult
                     {
-                        Id = DiagnosticId,
+                        Id = this.DiagnosticId,
                         Message = "The keyword 'case' must be followed by a space.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
@@ -1464,7 +1469,7 @@ default:
                     }
                 };
 
-            await TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
 
         private async Task TestKeywordStatement(string statement, DiagnosticResult[] expected, string fixedStatement, bool asyncMethod = false)
@@ -1485,8 +1490,8 @@ default:
             string testCode = string.Format(testCodeFormat, asyncModifier, statement);
             string fixedTest = string.Format(testCodeFormat, asyncModifier, fixedStatement);
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-            await VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

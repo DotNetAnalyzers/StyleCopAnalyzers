@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         {
             get
             {
-                return "File may only contain a single " + Keyword;
+                return "File may only contain a single " + this.Keyword;
             }
         }
 
@@ -23,7 +23,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -32,7 +32,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             var testCode = @"%1 Foo
 {
 }";
-            await VerifyCSharpDiagnosticAsync(testCode.Replace("%1",Keyword), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("%1", this.Keyword), EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [TestMethod]
@@ -49,18 +49,18 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             {
                 new DiagnosticResult
                 {
-                    Id = DiagnosticId,
-                    Message = Message,
+                    Id = this.DiagnosticId,
+                    Message = this.Message,
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
                         {
-                            new DiagnosticResultLocation("Test0.cs", 4, Keyword.Length + 2)
+                            new DiagnosticResultLocation("Test0.cs", 4, this.Keyword.Length + 2)
                         }
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode.Replace("%1", Keyword), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("%1", this.Keyword), expected, CancellationToken.None);
         }
 
         [TestMethod]
@@ -80,29 +80,29 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             {
                 new DiagnosticResult
                 {
-                    Id = DiagnosticId,
-                    Message = Message,
+                    Id = this.DiagnosticId,
+                    Message = this.Message,
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
                         {
-                            new DiagnosticResultLocation("Test0.cs", 4, Keyword.Length + 2)
+                            new DiagnosticResultLocation("Test0.cs", 4, this.Keyword.Length + 2)
                         }
                 },
                 new DiagnosticResult
                 {
-                    Id = DiagnosticId,
-                    Message = Message,
+                    Id = this.DiagnosticId,
+                    Message = this.Message,
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
                         {
-                            new DiagnosticResultLocation("Test0.cs", 7, Keyword.Length + 2)
+                            new DiagnosticResultLocation("Test0.cs", 7, this.Keyword.Length + 2)
                         }
                 }
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode.Replace("%1", Keyword), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("%1", this.Keyword), expected, CancellationToken.None);
         }
     }
 }

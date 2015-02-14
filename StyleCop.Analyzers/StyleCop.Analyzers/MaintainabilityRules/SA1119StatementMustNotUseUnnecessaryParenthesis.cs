@@ -37,6 +37,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1119StatementMustNotUseUnnecessaryParenthesis : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1119StatementMustNotUseUnnecessaryParenthesis"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1119";
         private const string Title = "Statement must not use unnecessary parenthesis";
         private const string MessageFormat = "Statement must not use unnecessary parenthesis";
@@ -49,7 +53,7 @@
         private static readonly DiagnosticDescriptor ParenthesisDescriptor =
             new DiagnosticDescriptor(DiagnosticId + "_p", Title, MessageFormat, Category, DiagnosticSeverity.Hidden, true, Description, HelpLink, customTags: new[] { WellKnownDiagnosticTags.Unnecessary, WellKnownDiagnosticTags.NotConfigurable });
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -57,17 +61,17 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleParenthesizedExpressionn, SyntaxKind.ParenthesizedExpression);
+            context.RegisterSyntaxNodeAction(this.HandleParenthesizedExpression, SyntaxKind.ParenthesizedExpression);
         }
 
-        private void HandleParenthesizedExpressionn(SyntaxNodeAnalysisContext context)
+        private void HandleParenthesizedExpression(SyntaxNodeAnalysisContext context)
         {
             var node = context.Node as ParenthesizedExpressionSyntax;
 
@@ -92,8 +96,8 @@
                 }
                 else
                 {
-                    if (!(node.Parent is ExpressionSyntax) 
-                        || node.Parent is CheckedExpressionSyntax 
+                    if (!(node.Parent is ExpressionSyntax)
+                        || node.Parent is CheckedExpressionSyntax
                         || node.Parent is MemberAccessExpressionSyntax)
                     {
                         var memberAccess = node.Parent as MemberAccessExpressionSyntax;
@@ -123,11 +127,11 @@
                             {
                                 ReportDiagnostic(context, node);
                             }
-                            }
                         }
                     }
                 }
             }
+        }
 
         private static void ReportDiagnostic(SyntaxNodeAnalysisContext context, ParenthesizedExpressionSyntax node)
         {

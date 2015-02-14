@@ -49,17 +49,21 @@
     /// </remarks>
     public class SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the
+        /// <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1500";
         private const string Title = "Curly brackets for multi-line statements must not share line";
         private const string MessageFormat = "TODO: Message format";
-        private const string Category = "StyleCop.CSharp.Layout";
+        private const string Category = "StyleCop.CSharp.LayoutRules";
         private const string Description = "The opening or closing curly bracket within a C# statement, element, or expression is not placed on its own line.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1500.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -67,7 +71,7 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 

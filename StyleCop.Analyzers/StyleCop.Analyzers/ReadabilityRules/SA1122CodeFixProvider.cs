@@ -11,23 +11,23 @@
     using StyleCop.Analyzers.SpacingRules;
 
     /// <summary>
-    /// Implements a code fix for <see cref="SA1000KeywordsMustBeSpacedCorrectly"/>.
+    /// Implements a code fix for <see cref="SA1122UseStringEmptyForEmptyStrings"/>.
     /// </summary>
     /// <remarks>
     /// <para>To fix a violation of this rule, add or remove a space after the keyword, according to the description
     /// above.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1122UseStringEmptyForEmptyStrings), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(nameof(SA1122CodeFixProvider), LanguageNames.CSharp)]
     [Shared]
     public class SA1122CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> _fixableDiagnostics =
+        private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1122UseStringEmptyForEmptyStrings.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> GetFixableDiagnosticIds()
         {
-            return _fixableDiagnostics;
+            return FixableDiagnostics;
         }
 
         /// <inheritdoc/>

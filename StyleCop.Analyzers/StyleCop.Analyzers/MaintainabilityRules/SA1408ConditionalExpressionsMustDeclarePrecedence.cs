@@ -51,6 +51,10 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1408ConditionalExpressionsMustDeclarePrecedence : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1408ConditionalExpressionsMustDeclarePrecedence"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1408";
         private const string Title = "Conditional expressions must declare precedence";
         private const string MessageFormat = "Conditional expressions must declare precedence";
@@ -61,7 +65,7 @@
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -69,15 +73,15 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleLogicalExpression, SyntaxKind.LogicalAndExpression);
-            context.RegisterSyntaxNodeAction(HandleLogicalExpression, SyntaxKind.LogicalOrExpression);
+            context.RegisterSyntaxNodeAction(this.HandleLogicalExpression, SyntaxKind.LogicalAndExpression);
+            context.RegisterSyntaxNodeAction(this.HandleLogicalExpression, SyntaxKind.LogicalOrExpression);
         }
 
         private void HandleLogicalExpression(SyntaxNodeAnalysisContext context)
@@ -94,7 +98,7 @@
                     if (left.OperatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken) || left.OperatorToken.IsKind(SyntaxKind.BarBarToken))
                     {
 
-                        if (!IsSameFamily(binSyntax.OperatorToken, left.OperatorToken))
+                        if (!this.IsSameFamily(binSyntax.OperatorToken, left.OperatorToken))
                             context.ReportDiagnostic(Diagnostic.Create(Descriptor, left.GetLocation()));
                     }
                 }
@@ -105,7 +109,7 @@
                     var right = (BinaryExpressionSyntax)binSyntax.Right;
                     if (right.OperatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken) || right.OperatorToken.IsKind(SyntaxKind.BarBarToken))
                     {
-                        if (!IsSameFamily(binSyntax.OperatorToken, right.OperatorToken))
+                        if (!this.IsSameFamily(binSyntax.OperatorToken, right.OperatorToken))
                             context.ReportDiagnostic(Diagnostic.Create(Descriptor, right.GetLocation()));
                     }
                 }

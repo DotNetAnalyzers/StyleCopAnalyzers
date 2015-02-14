@@ -31,6 +31,9 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1122UseStringEmptyForEmptyStrings : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1122UseStringEmptyForEmptyStrings"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1122";
         private const string Title = "Use string.Empty for empty strings";
         private const string MessageFormat = "Use string.Empty for empty strings";
@@ -41,7 +44,7 @@
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -49,14 +52,14 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleStringLiteral, SyntaxKind.StringLiteralExpression);
+            context.RegisterSyntaxNodeAction(this.HandleStringLiteral, SyntaxKind.StringLiteralExpression);
         }
 
         private void HandleStringLiteral(SyntaxNodeAnalysisContext context)
@@ -68,7 +71,7 @@
                 var token = literalExpression.Token;
                 if (token.IsKind(SyntaxKind.StringLiteralToken))
                 {
-                    if (HasToBeConstant(literalExpression))
+                    if (this.HasToBeConstant(literalExpression))
                         return;
 
                     if (token.ValueText == string.Empty)
@@ -81,19 +84,47 @@
 
         private bool HasToBeConstant(LiteralExpressionSyntax literalExpression)
         {
-            if (literalExpression.Parent.IsKind(SyntaxKind.AttributeArgument))
+            ExpressionSyntax outermostExpression = this.FindOutermostExpression(literalExpression);
+
+            if (outermostExpression.Parent.IsKind(SyntaxKind.AttributeArgument))
                 return true;
-            var fieldDeclarationSyntax = FindFieldDeclarationSyntax(literalExpression);
-            return fieldDeclarationSyntax != null && fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.ConstKeyword);
+
+            EqualsValueClauseSyntax equalsValueClause = outermostExpression.Parent as EqualsValueClauseSyntax;
+            if (equalsValueClause != null)
+            {
+                ParameterSyntax parameterSyntax = equalsValueClause.Parent as ParameterSyntax;
+                if (parameterSyntax != null)
+                    return true;
+
+                VariableDeclaratorSyntax variableDeclaratorSyntax = equalsValueClause.Parent as VariableDeclaratorSyntax;
+                VariableDeclarationSyntax variableDeclarationSyntax = variableDeclaratorSyntax.Parent as VariableDeclarationSyntax;
+                if (variableDeclaratorSyntax == null || variableDeclarationSyntax == null)
+                    return false;
+
+                FieldDeclarationSyntax fieldDeclarationSyntax = variableDeclarationSyntax.Parent as FieldDeclarationSyntax;
+                if (fieldDeclarationSyntax != null && fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.ConstKeyword))
+                    return true;
+
+                LocalDeclarationStatementSyntax localDeclarationStatementSyntax = variableDeclarationSyntax.Parent as LocalDeclarationStatementSyntax;
+                if (localDeclarationStatementSyntax != null && localDeclarationStatementSyntax.Modifiers.Any(SyntaxKind.ConstKeyword))
+                    return true;
+            }
+
+            return false;
         }
 
-        private FieldDeclarationSyntax FindFieldDeclarationSyntax(SyntaxNode node)
+        private ExpressionSyntax FindOutermostExpression(ExpressionSyntax node)
         {
-            if (node == null)
-                return null;
-            if (node is FieldDeclarationSyntax)
-                return node as FieldDeclarationSyntax;
-            return FindFieldDeclarationSyntax(node.Parent);
+            while (true)
+            {
+                ExpressionSyntax parent = node.Parent as ExpressionSyntax;
+                if (parent == null)
+                    break;
+
+                node = parent;
+            }
+
+            return node;
         }
     }
 }

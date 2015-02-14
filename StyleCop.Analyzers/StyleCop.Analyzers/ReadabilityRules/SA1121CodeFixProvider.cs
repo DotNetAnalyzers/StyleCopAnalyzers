@@ -17,11 +17,11 @@
     /// <para>To fix a violation of this rule, ensure that the comma is followed by a single space, and is not preceded
     /// by any space.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1121UseBuiltInTypeAlias), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(nameof(SA1121CodeFixProvider), LanguageNames.CSharp)]
     [Shared]
     public class SA1121CodeFixProvider : CodeFixProvider
     {
-        static readonly Dictionary<SpecialType, SyntaxKind> _predefinedSpecialTypes = new Dictionary<SpecialType, SyntaxKind>
+        private static readonly Dictionary<SpecialType, SyntaxKind> PredefinedSpecialTypes = new Dictionary<SpecialType, SyntaxKind>
         {
             [SpecialType.System_Boolean] = SyntaxKind.BoolKeyword,
             [SpecialType.System_Byte] = SyntaxKind.ByteKeyword,
@@ -39,13 +39,13 @@
             [SpecialType.System_UInt32] = SyntaxKind.UIntKeyword,
             [SpecialType.System_UInt64] = SyntaxKind.ULongKeyword
         };
-        private static readonly ImmutableArray<string> _fixableDiagnostics =
+        private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1121UseBuiltInTypeAlias.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> GetFixableDiagnosticIds()
         {
-            return _fixableDiagnostics;
+            return FixableDiagnostics;
         }
 
         /// <inheritdoc/>
@@ -73,7 +73,7 @@
                 if (typeInfo?.Type != null)
                 {
                     SpecialType specialType = typeInfo.Value.Type.SpecialType;
-                    var newNode = SyntaxFactory.PredefinedType(SyntaxFactory.Token(_predefinedSpecialTypes[specialType]))
+                    var newNode = SyntaxFactory.PredefinedType(SyntaxFactory.Token(PredefinedSpecialTypes[specialType]))
                         .WithTriviaFrom(node)
                         .WithoutFormatting();
                     var newRoot = root.ReplaceNode(node, newNode);

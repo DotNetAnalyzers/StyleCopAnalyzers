@@ -13,23 +13,24 @@
     using SpacingRules;
 
     /// <summary>
-    /// Implements a code fix for <see cref="SA1642ConstructorSummaryDocumentationMustBeginWithStandardText"/>.
+    /// Implements a code fix for <see cref="SA1642ConstructorSummaryDocumentationMustBeginWithStandardText"/>
+    /// and <see cref="SA1643DestructorSummaryDocumentationMustBeginWithStandardText"/>.
     /// </summary>
     /// <remarks>
     /// <para>To fix a violation of this rule, add the standard documentation text.
     /// above.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1642ConstructorSummaryDocumentationMustBeginWithStandardText), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(nameof(SA1642SA1643CodeFixProvider), LanguageNames.CSharp)]
     [Shared]
-    public class SA1642CodeFixProvider : CodeFixProvider
+    public class SA1642SA1643CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> _fixableDiagnostics =
-            ImmutableArray.Create(SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.DiagnosticId);
+        private static readonly ImmutableArray<string> FixableDiagnostics =
+            ImmutableArray.Create(SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.DiagnosticId, SA1643DestructorSummaryDocumentationMustBeginWithStandardText.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> GetFixableDiagnosticIds()
         {
-            return _fixableDiagnostics;
+            return FixableDiagnostics;
         }
 
         /// <inheritdoc/>
@@ -43,7 +44,7 @@
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!diagnostic.Id.Equals(SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.DiagnosticId))
+                if (!FixableDiagnostics.Contains(diagnostic.Id))
                     continue;
 
                 var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
@@ -51,23 +52,33 @@
                 if (node == null)
                     continue;
                 var classDeclaration = node.FirstAncestorOrSelf<ClassDeclarationSyntax>();
-                var constructorDeclarationSyntax = node.FirstAncestorOrSelf<ConstructorDeclarationSyntax>();
+                var declarationSyntax = node.FirstAncestorOrSelf<BaseMethodDeclarationSyntax>();
 
                 ImmutableArray<string> standardText;
-
-                if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword))
+                if (declarationSyntax is ConstructorDeclarationSyntax)
                 {
-                    standardText = SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.StaticConstructorStandardText;
+                    if (declarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword))
+                    {
+                        standardText = SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.StaticConstructorStandardText;
+                    }
+                    else if (declarationSyntax.Modifiers.Any(SyntaxKind.PrivateKeyword))
+                    {
+                        // Prefer to insert the "non-private" wording, even though both are considered acceptable by the
+                        // diagnostic. https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/413
+                        standardText = SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.NonPrivateConstructorStandardText;
+                    }
+                    else
+                    {
+                        standardText = SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.NonPrivateConstructorStandardText;
+                    }
                 }
-                else if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.PrivateKeyword))
+                else if (declarationSyntax is DestructorDeclarationSyntax)
                 {
-                    // Prefer to insert the "non-private" wording, even though both are considered acceptable by the
-                    // diagnostic. https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/413
-                    standardText = SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.NonPrivateConstructorStandardText;
+                    standardText = SA1643DestructorSummaryDocumentationMustBeginWithStandardText.DestructorStandardText;
                 }
                 else
                 {
-                    standardText = SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.NonPrivateConstructorStandardText;
+                    return;
                 }
 
                 var list = this.BuildStandardText(classDeclaration.Identifier, classDeclaration.TypeParameterList, standardText[0], standardText[1]);
@@ -93,14 +104,14 @@
             }
             else
             {
-                identifierName = SyntaxFactory.GenericName(identifier.WithoutTrivia(), ParameterToArgumentListSyntax(typeParameters));
+                identifierName = SyntaxFactory.GenericName(identifier.WithoutTrivia(), this.ParameterToArgumentListSyntax(typeParameters));
             }
             var list = new SyntaxList<XmlNodeSyntax>();
 
             list = list.Add(XmlNewLine());
             list = list.Add(this.CreateTextSyntax(preText).WithLeadingTrivia(XmlLineStart()));
-            list = list.Add(CreateSeeSyntax(identifierName));
-            list = list.Add(CreateTextSyntax(postText.EndsWith(".") ? postText : (postText + ".")));
+            list = list.Add(this.CreateSeeSyntax(identifierName));
+            list = list.Add(this.CreateTextSyntax(postText.EndsWith(".") ? postText : (postText + ".")));
 
             return list;
         }
