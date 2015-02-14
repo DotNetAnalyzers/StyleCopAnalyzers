@@ -73,6 +73,27 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeAction(HandleAnonymousMethod, SyntaxKind.AnonymousMethodExpression);
             context.RegisterSyntaxNodeAction(HandleArrayCreation, SyntaxKind.ArrayCreationExpression);
             context.RegisterSyntaxNodeAction(HandleOperatorDeclaration, SyntaxKind.OperatorDeclaration);
+            context.RegisterSyntaxNodeAction(HandleConversionOperatorDeclaration, SyntaxKind.ConversionOperatorDeclaration);
+        }
+
+        private void HandleConversionOperatorDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var conversionOperator = (ConversionOperatorDeclarationSyntax) context.Node;
+
+            var identifierName = conversionOperator.ChildNodes()
+                .OfType<IdentifierNameSyntax>()
+                .FirstOrDefault();
+            if (identifierName == null || identifierName.Identifier.IsMissing)
+            {
+                return;
+            }
+               
+            var parameterListSyntax = conversionOperator.ParameterList;
+
+            if (parameterListSyntax != null && !parameterListSyntax.OpenParenToken.IsMissing)
+            {
+                CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(context, parameterListSyntax.OpenParenToken, identifierName.Identifier);
+            }
         }
 
         private void HandleOperatorDeclaration(SyntaxNodeAnalysisContext context)
