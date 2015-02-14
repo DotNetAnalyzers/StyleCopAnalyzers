@@ -17,7 +17,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         [TestMethod]
         public async Task TestEmptySource()
         {
-            var testCode = @"";
+            var testCode = string.Empty;
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
@@ -37,7 +37,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A comma between two parameters in a call to a C# method or indexer, or in the declaration of a method or indexer, is not placed on the same line as the previous parameter.",
+                    Message = "Comma must be on same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -67,7 +67,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A comma between two parameters in a call to a C# method or indexer, or in the declaration of a method or indexer, is not placed on the same line as the previous parameter.",
+                    Message = "Comma must be on same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -78,7 +78,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A comma between two parameters in a call to a C# method or indexer, or in the declaration of a method or indexer, is not placed on the same line as the previous parameter.",
+                    Message = "Comma must be on same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -122,7 +122,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A comma between two parameters in a call to a C# method or indexer, or in the declaration of a method or indexer, is not placed on the same line as the previous parameter.",
+                    Message = "Comma must be on same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -153,7 +153,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A comma between two parameters in a call to a C# method or indexer, or in the declaration of a method or indexer, is not placed on the same line as the previous parameter.",
+                    Message = "Comma must be on same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -164,7 +164,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A comma between two parameters in a call to a C# method or indexer, or in the declaration of a method or indexer, is not placed on the same line as the previous parameter.",
+                    Message = "Comma must be on same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -212,7 +212,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A comma between two parameters in a call to a C# method or indexer, or in the declaration of a method or indexer, is not placed on the same line as the previous parameter.",
+                    Message = "Comma must be on same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -246,7 +246,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A comma between two parameters in a call to a C# method or indexer, or in the declaration of a method or indexer, is not placed on the same line as the previous parameter.",
+                    Message = "Comma must be on same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -257,7 +257,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A comma between two parameters in a call to a C# method or indexer, or in the declaration of a method or indexer, is not placed on the same line as the previous parameter.",
+                    Message = "Comma must be on same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -304,7 +304,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A comma between two parameters in a call to a C# method or indexer, or in the declaration of a method or indexer, is not placed on the same line as the previous parameter.",
+                    Message = "Comma must be on same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -334,7 +334,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A comma between two parameters in a call to a C# method or indexer, or in the declaration of a method or indexer, is not placed on the same line as the previous parameter.",
+                    Message = "Comma must be on same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -345,7 +345,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A comma between two parameters in a call to a C# method or indexer, or in the declaration of a method or indexer, is not placed on the same line as the previous parameter.",
+                    Message = "Comma must be on same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -392,7 +392,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A comma between two parameters in a call to a C# method or indexer, or in the declaration of a method or indexer, is not placed on the same line as the previous parameter.",
+                    Message = "Comma must be on same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -426,7 +426,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A comma between two parameters in a call to a C# method or indexer, or in the declaration of a method or indexer, is not placed on the same line as the previous parameter.",
+                    Message = "Comma must be on same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -437,7 +437,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A comma between two parameters in a call to a C# method or indexer, or in the declaration of a method or indexer, is not placed on the same line as the previous parameter.",
+                    Message = "Comma must be on same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -492,7 +492,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A comma between two parameters in a call to a C# method or indexer, or in the declaration of a method or indexer, is not placed on the same line as the previous parameter.",
+                    Message = "Comma must be on same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -530,7 +530,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A comma between two parameters in a call to a C# method or indexer, or in the declaration of a method or indexer, is not placed on the same line as the previous parameter.",
+                    Message = "Comma must be on same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -541,7 +541,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "A comma between two parameters in a call to a C# method or indexer, or in the declaration of a method or indexer, is not placed on the same line as the previous parameter.",
+                    Message = "Comma must be on same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
