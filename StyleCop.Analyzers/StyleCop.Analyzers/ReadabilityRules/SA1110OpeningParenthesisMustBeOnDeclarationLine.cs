@@ -38,10 +38,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1110";
-        internal const string Title = "Opening parenthesis must be on declaration line";
-        internal const string MessageFormat = "The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the method or indexer name.";
+        internal const string Title = "Opening parenthesis or bracket must be on declaration line";
+        internal const string MessageFormat = "Opening parenthesis or bracket must be on declaration line.";
         internal const string Category = "StyleCop.CSharp.ReadabilityRules";
-        internal const string Description = "The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the method or indexer name.";
+        internal const string Description = "The opening parenthesis or bracket is not placed on the same line as the method/indexer/attribute/array name.";
         internal const string HelpLink = "http://www.stylecop.com/docs/SA1110.html";
 
         private static readonly DiagnosticDescriptor Descriptor =

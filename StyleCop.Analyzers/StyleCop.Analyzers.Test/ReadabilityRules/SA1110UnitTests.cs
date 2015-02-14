@@ -41,7 +41,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the method or indexer name.",
+                        Message = "Opening parenthesis or bracket must be on declaration line.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -71,7 +71,7 @@ public class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the method or indexer name.",
+                        Message = "Opening parenthesis or bracket must be on declaration line.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -132,7 +132,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the method or indexer name.",
+                        Message = "Opening parenthesis or bracket must be on declaration line.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -163,7 +163,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the method or indexer name.",
+                        Message = "Opening parenthesis or bracket must be on declaration line.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -194,7 +194,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the method or indexer name.",
+                        Message = "Opening parenthesis or bracket must be on declaration line.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -226,7 +226,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the method or indexer name.",
+                        Message = "Opening parenthesis or bracket must be on declaration line.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -261,7 +261,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the method or indexer name.",
+                        Message = "Opening parenthesis or bracket must be on declaration line.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -312,7 +312,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the method or indexer name.",
+                        Message = "Opening parenthesis or bracket must be on declaration line.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -360,7 +360,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the method or indexer name.",
+                        Message = "Opening parenthesis or bracket must be on declaration line.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -394,7 +394,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the method or indexer name.",
+                        Message = "Opening parenthesis or bracket must be on declaration line.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -451,7 +451,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the method or indexer name.",
+                        Message = "Opening parenthesis or bracket must be on declaration line.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -483,7 +483,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the method or indexer name.",
+                        Message = "Opening parenthesis or bracket must be on declaration line.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -553,7 +553,7 @@ class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the method or indexer name.",
+                        Message = "Opening parenthesis or bracket must be on declaration line.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -601,7 +601,7 @@ public class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the method or indexer name.",
+                        Message = "Opening parenthesis or bracket must be on declaration line.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -612,7 +612,7 @@ public class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the method or indexer name.",
+                        Message = "Opening parenthesis or bracket must be on declaration line.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -656,7 +656,7 @@ public class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the method or indexer name.",
+                        Message = "Opening parenthesis or bracket must be on declaration line.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -703,7 +703,7 @@ public class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                        Message = "The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the method or indexer name.",
+                        Message = "Opening parenthesis or bracket must be on declaration line.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -771,7 +771,7 @@ public class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                         Message = "The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the method or indexer name.",
+                         Message = "Opening parenthesis or bracket must be on declaration line.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -836,7 +836,7 @@ public class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                         Message = "The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the method or indexer name.",
+                         Message = "Opening parenthesis or bracket must be on declaration line.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -867,7 +867,7 @@ public class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                         Message = "The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the method or indexer name.",
+                         Message = "Opening parenthesis or bracket must be on declaration line.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -913,7 +913,7 @@ public class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                         Message = "The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the method or indexer name.",
+                         Message = "Opening parenthesis or bracket must be on declaration line.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
