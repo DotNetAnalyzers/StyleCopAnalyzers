@@ -62,18 +62,18 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleMethodDeclaration,SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeAction(HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
-            context.RegisterSyntaxNodeAction(HandleInvocationExpression, SyntaxKind.InvocationExpression);
-            context.RegisterSyntaxNodeAction(HandleObjectCreationExpression, SyntaxKind.ObjectCreationExpression);
-            context.RegisterSyntaxNodeAction(HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
-            context.RegisterSyntaxNodeAction(HandleElementAccessExpression, SyntaxKind.ElementAccessExpression);
-            context.RegisterSyntaxNodeAction(HandleAttribute, SyntaxKind.Attribute);
-            context.RegisterSyntaxNodeAction(HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeAction(HandleAnonymousMethod, SyntaxKind.AnonymousMethodExpression);
-            context.RegisterSyntaxNodeAction(HandleArrayCreation, SyntaxKind.ArrayCreationExpression);
-            context.RegisterSyntaxNodeAction(HandleOperatorDeclaration, SyntaxKind.OperatorDeclaration);
-            context.RegisterSyntaxNodeAction(HandleConversionOperatorDeclaration, SyntaxKind.ConversionOperatorDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleMethodDeclaration,SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleInvocationExpression, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeAction(this.HandleObjectCreationExpression, SyntaxKind.ObjectCreationExpression);
+            context.RegisterSyntaxNodeAction(this.HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleElementAccessExpression, SyntaxKind.ElementAccessExpression);
+            context.RegisterSyntaxNodeAction(this.HandleAttribute, SyntaxKind.Attribute);
+            context.RegisterSyntaxNodeAction(this.HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleAnonymousMethod, SyntaxKind.AnonymousMethodExpression);
+            context.RegisterSyntaxNodeAction(this.HandleArrayCreation, SyntaxKind.ArrayCreationExpression);
+            context.RegisterSyntaxNodeAction(this.HandleOperatorDeclaration, SyntaxKind.OperatorDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleConversionOperatorDeclaration, SyntaxKind.ConversionOperatorDeclaration);
         }
 
         private void HandleConversionOperatorDeclaration(SyntaxNodeAnalysisContext context)
