@@ -3,6 +3,7 @@
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -27,17 +28,20 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1000KeywordsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1000KeywordsMustBeSpacedCorrectly"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1000";
-        internal const string Title = "Keywords must be spaced correctly";
-        internal const string MessageFormat = "The keyword '{0}' must{1} be followed by a space.";
-        internal const string Category = "StyleCop.CSharp.SpacingRules";
-        internal const string Description = "The spacing around a C# keyword is incorrect.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1000.html";
+        private const string Title = "Keywords must be spaced correctly";
+        private const string MessageFormat = "The keyword '{0}' must{1} be followed by a space.";
+        private const string Category = "StyleCop.CSharp.SpacingRules";
+        private const string Description = "The spacing around a C# keyword is incorrect.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1000.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -45,14 +49,18 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(HandleSyntaxTree);
+            // handle everything except nameof
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
+
+            // handle nameof (which appears as an invocation expression??)
+            context.RegisterSyntaxNodeAction(this.HandleInvocationExpressionSyntax, SyntaxKind.InvocationExpression);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -84,32 +92,54 @@
                 case SyntaxKind.WhereKeyword:
                 case SyntaxKind.WhileKeyword:
                 case SyntaxKind.YieldKeyword:
-                    HandleRequiredSpaceToken(context, token);
+                    this.HandleRequiredSpaceToken(context, token);
                     break;
 
                 case SyntaxKind.CheckedKeyword:
                 case SyntaxKind.DefaultKeyword:
+                case SyntaxKind.NameOfKeyword:
                 case SyntaxKind.SizeOfKeyword:
                 case SyntaxKind.TypeOfKeyword:
                 case SyntaxKind.UncheckedKeyword:
-                    HandleDisallowedSpaceToken(context, token);
+                    this.HandleDisallowedSpaceToken(context, token);
                     break;
 
                 case SyntaxKind.NewKeyword:
-                    HandleNewKeywordToken(context, token);
+                    this.HandleNewKeywordToken(context, token);
                     break;
 
                 case SyntaxKind.ReturnKeyword:
-                    HandleReturnKeywordToken(context, token);
+                    this.HandleReturnKeywordToken(context, token);
                     break;
 
                 case SyntaxKind.ThrowKeyword:
-                    HandleThrowKeywordToken(context, token);
+                    this.HandleThrowKeywordToken(context, token);
                     break;
 
                 default:
                     break;
                 }
+            }
+        }
+
+        private void HandleInvocationExpressionSyntax(SyntaxNodeAnalysisContext context)
+        {
+            InvocationExpressionSyntax invocationExpressionSyntax = (InvocationExpressionSyntax)context.Node;
+            IdentifierNameSyntax identifierNameSyntax = invocationExpressionSyntax.Expression as IdentifierNameSyntax;
+            if (identifierNameSyntax == null)
+                return;
+
+            if (identifierNameSyntax.Identifier.IsMissing)
+                return;
+
+            if (identifierNameSyntax.Identifier.Text != "nameof")
+                return;
+
+            var constantValue = context.SemanticModel.GetConstantValue(invocationExpressionSyntax, context.CancellationToken);
+            if (constantValue.HasValue && !string.IsNullOrEmpty(constantValue.Value as string))
+            {
+                // this is a nameof expression
+                this.HandleDisallowedSpaceToken(context, identifierNameSyntax.Identifier);
             }
         }
 
@@ -141,14 +171,25 @@
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), token.Text, " not"));
         }
 
+        private void HandleDisallowedSpaceToken(SyntaxNodeAnalysisContext context, SyntaxToken token)
+        {
+            if (token.IsMissing || !token.HasTrailingTrivia)
+                return;
+
+            if (!token.TrailingTrivia.First().IsKind(SyntaxKind.WhitespaceTrivia))
+                return;
+
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), token.Text, " not"));
+        }
+
         private void HandleNewKeywordToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
                 return;
 
-            // if the next token is [, then treat as disallowed
+            // if the next token is [ or (, then treat as disallowed
             SyntaxToken nextToken = token.GetNextToken();
-            if (nextToken.IsKind(SyntaxKind.OpenBracketToken))
+            if (nextToken.IsKind(SyntaxKind.OpenBracketToken) || nextToken.IsKind(SyntaxKind.OpenParenToken))
             {
                 if (token.Parent.IsKind(SyntaxKind.ImplicitArrayCreationExpression))
                 {
@@ -156,12 +197,12 @@
                     return;
                 }
 
-                HandleDisallowedSpaceToken(context, token);
+                this.HandleDisallowedSpaceToken(context, token);
                 return;
             }
 
             // otherwise treat as required
-            HandleRequiredSpaceToken(context, token);
+            this.HandleRequiredSpaceToken(context, token);
         }
 
         private void HandleReturnKeywordToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
@@ -175,12 +216,12 @@
             SyntaxToken nextToken = token.GetNextToken();
             if (nextToken.IsKind(SyntaxKind.SemicolonToken) || nextToken.IsKind(SyntaxKind.ColonToken))
             {
-                HandleDisallowedSpaceToken(context, token);
+                this.HandleDisallowedSpaceToken(context, token);
                 return;
             }
 
             // otherwise treat as required
-            HandleRequiredSpaceToken(context, token);
+            this.HandleRequiredSpaceToken(context, token);
         }
 
         private void HandleThrowKeywordToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
@@ -193,12 +234,12 @@
             SyntaxToken nextToken = token.GetNextToken();
             if (nextToken.IsKind(SyntaxKind.SemicolonToken))
             {
-                HandleDisallowedSpaceToken(context, token);
+                this.HandleDisallowedSpaceToken(context, token);
                 return;
             }
 
             // otherwise treat as required
-            HandleRequiredSpaceToken(context, token);
+            this.HandleRequiredSpaceToken(context, token);
         }
     }
 }

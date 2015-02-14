@@ -21,13 +21,13 @@
     [Shared]
     public class SA1021CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> _fixableDiagnostics =
+        private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1021NegativeSignsMustBeSpacedCorrectly.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> GetFixableDiagnosticIds()
         {
-            return _fixableDiagnostics;
+            return FixableDiagnostics;
         }
 
         /// <inheritdoc/>
@@ -68,21 +68,24 @@
 
                     if (followsSpecialCharacter && precededBySpace)
                     {
-                        SyntaxToken correctedPreceding = precedingToken.WithoutTrailingWhitespace();
+                        SyntaxToken correctedPreceding = precedingToken.WithoutTrailingWhitespace().WithoutFormatting();
                         replacements.Add(precedingToken, correctedPreceding);
                     }
                     else if (!followsSpecialCharacter && !precededBySpace)
                     {
                         SyntaxToken correctedPreceding = precedingToken.WithoutTrailingWhitespace();
                         SyntaxTrivia whitespace = SyntaxFactory.Whitespace(" ");
-                        correctedPreceding = correctedPreceding.WithTrailingTrivia(correctedPreceding.TrailingTrivia.Add(whitespace));
+                        correctedPreceding =
+                            correctedPreceding
+                            .WithTrailingTrivia(correctedPreceding.TrailingTrivia.Add(whitespace))
+                            .WithoutFormatting();
                         replacements.Add(precedingToken, correctedPreceding);
                     }
                 }
 
                 if (token.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia) || token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia))
                 {
-                    SyntaxToken corrected = token.WithoutTrailingWhitespace(removeEndOfLineTrivia: true);
+                    SyntaxToken corrected = token.WithoutTrailingWhitespace(removeEndOfLineTrivia: true).WithoutFormatting();
                     replacements.Add(token, corrected);
                 }
 

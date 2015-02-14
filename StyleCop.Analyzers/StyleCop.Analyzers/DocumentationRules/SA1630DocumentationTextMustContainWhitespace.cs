@@ -31,19 +31,23 @@
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    [NoCodeFix("Cannot generate documentation")]
     public class SA1630DocumentationTextMustContainWhitespace : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1630DocumentationTextMustContainWhitespace"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1630";
-        internal const string Title = "Documentation text must contain whitespace";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "A section of the XML header documentation for a C# element does not contain any whitespace between words.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1630.html";
+        private const string Title = "Documentation text must contain whitespace";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "A section of the XML header documentation for a C# element does not contain any whitespace between words.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1630.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -51,7 +55,7 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 

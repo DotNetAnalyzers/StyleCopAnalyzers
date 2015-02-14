@@ -19,13 +19,13 @@
     [Shared]
     public class SA1006CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> _fixableDiagnostics =
+        private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1006PreprocessorKeywordsMustNotBePrecededBySpace.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> GetFixableDiagnosticIds()
         {
-            return _fixableDiagnostics;
+            return FixableDiagnostics;
         }
 
         /// <inheritdoc/>
@@ -51,7 +51,7 @@
                 if (!hashToken.IsKind(SyntaxKind.HashToken))
                     continue;
 
-                SyntaxToken corrected = hashToken.WithoutTrailingWhitespace();
+                SyntaxToken corrected = hashToken.WithoutTrailingWhitespace().WithoutFormatting();
                 Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(hashToken, corrected));
                 context.RegisterFix(CodeAction.Create("Remove space", updatedDocument), diagnostic);
             }

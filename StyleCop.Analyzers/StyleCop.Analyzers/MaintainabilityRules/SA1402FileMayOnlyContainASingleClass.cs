@@ -3,6 +3,11 @@
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using System;
+    using System.Threading.Tasks;
+
 
     /// <summary>
     /// A C# code file contains more than one unique class.
@@ -20,17 +25,20 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1402FileMayOnlyContainASingleClass : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1402FileMayOnlyContainASingleClass"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1402";
-        internal const string Title = "File may only contain a single class";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
-        internal const string Description = "A C# code file contains more than one unique class.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1402.html";
+        private const string Title = "File may only contain a single class";
+        private const string MessageFormat = "File may only contain a single class";
+        private const string Category = "StyleCop.CSharp.MaintainabilityRules";
+        private const string Description = "A C# code file contains more than one unique class.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1402.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+        private static readonly DiagnosticDescriptor Descriptor =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -38,14 +46,55 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
+        }
+
+        private async void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        {
+            var syntaxRoot = await context.Tree.GetRootAsync(context.CancellationToken);
+
+            var descentNodes = syntaxRoot.DescendantNodes(descendIntoChildren: node => node != null && !node.IsKind(SyntaxKind.ClassDeclaration));
+
+            string foundClassName = null;
+            bool isPartialClass = false;
+
+            foreach (var node in descentNodes)
+            {
+                if (node.IsKind(SyntaxKind.ClassDeclaration))
+                {
+                    ClassDeclarationSyntax classDeclaration = node as ClassDeclarationSyntax;
+                    if (foundClassName != null)
+                    {
+                        if (isPartialClass && foundClassName == classDeclaration.Identifier.Text)
+                        {
+                            continue;
+                        }
+                        var location = this.GetClassLocation(node);
+                        if (location != null)
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                        }
+                    }
+                    else
+                    {
+                        foundClassName = classDeclaration.Identifier.Text;
+                        isPartialClass = classDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword);
+                    }
+                }
+            }
+        }
+
+        private Location GetClassLocation(SyntaxNode node)
+        {
+            var classDeclaration = node as ClassDeclarationSyntax;
+            return classDeclaration?.Identifier.GetLocation();
         }
     }
 }

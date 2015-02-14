@@ -2,6 +2,8 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -27,17 +29,20 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1101PrefixLocalCallsWithThis : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1101PrefixLocalCallsWithThis"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1101";
-        internal const string Title = "Prefix local calls with this";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.ReadabilityRules";
-        internal const string Description = "A call to an instance member of the local class or a base class is not prefixed with 'this.', within a C# code file.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1101.html";
+        private const string Title = "Prefix local calls with this";
+        private const string MessageFormat = "Prefix local calls with this";
+        private const string Category = "StyleCop.CSharp.ReadabilityRules";
+        private const string Description = "A call to an instance member of the local class or a base class is not prefixed with 'this.', within a C# code file.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1101.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+        private static readonly DiagnosticDescriptor Descriptor =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -45,14 +50,173 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(this.HandleMemberAccessExpression, SyntaxKind.SimpleMemberAccessExpression);
+            context.RegisterSyntaxNodeAction(this.HandleIdentifierName, SyntaxKind.IdentifierName);
+        }
+
+        /// <summary>
+        /// <see cref="SyntaxKind.SimpleMemberAccessExpression"/> is handled separately so only <c>X</c> is evaluated in
+        /// the expression <c>X.Y.Z.A.B.C</c>.
+        /// </summary>
+        private void HandleMemberAccessExpression(SyntaxNodeAnalysisContext context)
+        {
+            MemberAccessExpressionSyntax syntax = (MemberAccessExpressionSyntax)context.Node;
+            IdentifierNameSyntax nameExpression = syntax.Expression as IdentifierNameSyntax;
+            this.HandleIdentifierNameImpl(context, nameExpression);
+        }
+
+        private void HandleIdentifierName(SyntaxNodeAnalysisContext context)
+        {
+            switch (context.Node?.Parent?.CSharpKind() ?? SyntaxKind.None)
+            {
+            case SyntaxKind.SimpleMemberAccessExpression:
+                // this is handled separately
+                return;
+
+            case SyntaxKind.PointerMemberAccessExpression:
+                // this doesn't need to be handled
+                return;
+
+            case SyntaxKind.QualifiedCref:
+            case SyntaxKind.NameMemberCref:
+                // documentation comments don't use 'this.'
+                return;
+
+            case SyntaxKind.SimpleAssignmentExpression:
+                if (((AssignmentExpressionSyntax)context.Node.Parent).Left == context.Node
+                    && (context.Node.Parent.Parent?.IsKind(SyntaxKind.ObjectInitializerExpression) ?? true))
+                {
+                    // Handle 'X' in:
+                    //   new TypeName() { X = 3 }
+                    return;
+                }
+
+                break;
+
+            case SyntaxKind.NameEquals:
+                if (((NameEqualsSyntax)context.Node.Parent).Name != context.Node)
+                    break;
+
+                switch (context.Node?.Parent?.Parent?.CSharpKind() ?? SyntaxKind.None)
+                {
+                case SyntaxKind.AttributeArgument:
+                case SyntaxKind.AnonymousObjectMemberDeclarator:
+                    return;
+
+                default:
+                    break;
+                }
+
+                break;
+
+            case SyntaxKind.MemberBindingExpression:
+                // this doesn't need to be handled
+                return;
+
+            default:
+                break;
+            }
+
+            this.HandleIdentifierNameImpl(context, (IdentifierNameSyntax)context.Node);
+        }
+
+        private void HandleIdentifierNameImpl(SyntaxNodeAnalysisContext context, IdentifierNameSyntax nameExpression)
+        {
+            if (nameExpression == null)
+                return;
+
+            if (!this.HasThis(nameExpression))
+                return;
+
+            SymbolInfo symbolInfo = context.SemanticModel.GetSymbolInfo(nameExpression, context.CancellationToken);
+            ImmutableArray<ISymbol> symbolsToAnalyze;
+            if (symbolInfo.Symbol != null)
+            {
+                symbolsToAnalyze = ImmutableArray.Create(symbolInfo.Symbol);
+            }
+            else if (symbolInfo.CandidateReason == CandidateReason.MemberGroup)
+            {
+                // analyze the complete set of candidates, and use 'this.' if it applies to all
+                symbolsToAnalyze = symbolInfo.CandidateSymbols;
+            }
+            else
+            {
+                return;
+            }
+
+            foreach (ISymbol symbol in symbolsToAnalyze)
+            {
+                if (symbol is ITypeSymbol)
+                    return;
+
+                if (symbol.IsStatic)
+                    return;
+
+                if (!(symbol.ContainingSymbol is ITypeSymbol))
+                {
+                    // covers local variables, parameters, etc.
+                    return;
+                }
+
+                IMethodSymbol methodSymbol = symbol as IMethodSymbol;
+                if (methodSymbol != null && methodSymbol.MethodKind == MethodKind.Constructor)
+                    return;
+            }
+
+            // Prefix local calls with this
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, nameExpression.GetLocation()));
+        }
+
+        private bool HasThis(SyntaxNode node)
+        {
+            for (; node != null; node = node.Parent)
+            {
+                switch (node.CSharpKind())
+                {
+                case SyntaxKind.ClassDeclaration:
+                case SyntaxKind.InterfaceDeclaration:
+                case SyntaxKind.StructDeclaration:
+                case SyntaxKind.DelegateDeclaration:
+                case SyntaxKind.EnumDeclaration:
+                case SyntaxKind.NamespaceDeclaration:
+                    return false;
+
+                case SyntaxKind.FieldDeclaration:
+                case SyntaxKind.EventFieldDeclaration:
+                    return false;
+
+                case SyntaxKind.MultiLineDocumentationCommentTrivia:
+                case SyntaxKind.SingleLineDocumentationCommentTrivia:
+                    return false;
+
+                case SyntaxKind.EventDeclaration:
+                case SyntaxKind.PropertyDeclaration:
+                case SyntaxKind.IndexerDeclaration:
+                    BasePropertyDeclarationSyntax basePropertySyntax = (BasePropertyDeclarationSyntax)node;
+                    return !basePropertySyntax.Modifiers.Any(SyntaxKind.StaticKeyword);
+
+                case SyntaxKind.ConstructorDeclaration:
+                case SyntaxKind.DestructorDeclaration:
+                case SyntaxKind.MethodDeclaration:
+                    BaseMethodDeclarationSyntax baseMethodSyntax = (BaseMethodDeclarationSyntax)node;
+                    return !baseMethodSyntax.Modifiers.Any(SyntaxKind.StaticKeyword);
+
+                case SyntaxKind.Attribute:
+                    return false;
+
+                default:
+                    continue;
+                }
+            }
+
+            return false;
         }
     }
 }

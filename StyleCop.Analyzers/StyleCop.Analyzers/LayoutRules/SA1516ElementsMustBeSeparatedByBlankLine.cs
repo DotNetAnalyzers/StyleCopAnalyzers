@@ -48,17 +48,20 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1516ElementsMustBeSeparatedByBlankLine : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1516ElementsMustBeSeparatedByBlankLine"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1516";
-        internal const string Title = "Elements must be separated by blank line";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.LayoutRules";
-        internal const string Description = "Adjacent C# elements are not separated by a blank line.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1516.html";
+        private const string Title = "Elements must be separated by blank line";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.LayoutRules";
+        private const string Description = "Adjacent C# elements are not separated by a blank line.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1516.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -66,7 +69,7 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 

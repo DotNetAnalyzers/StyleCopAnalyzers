@@ -3,6 +3,13 @@
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using System;
+
+
+
+
 
     /// <summary>
     /// The C# code includes an empty string, written as <c>""</c>.
@@ -24,17 +31,20 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1122UseStringEmptyForEmptyStrings : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1122UseStringEmptyForEmptyStrings"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1122";
-        internal const string Title = "Use string.Empty for empty strings";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.ReadabilityRules";
-        internal const string Description = "The C# code includes an empty string, written as \"\".";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1122.html";
+        private const string Title = "Use string.Empty for empty strings";
+        private const string MessageFormat = "Use string.Empty for empty strings";
+        private const string Category = "StyleCop.CSharp.ReadabilityRules";
+        private const string Description = "The C# code includes an empty string, written as \"\".";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1122.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+        private static readonly DiagnosticDescriptor Descriptor =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -42,14 +52,79 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(this.HandleStringLiteral, SyntaxKind.StringLiteralExpression);
+        }
+
+        private void HandleStringLiteral(SyntaxNodeAnalysisContext context)
+        {
+            LiteralExpressionSyntax literalExpression = context.Node as LiteralExpressionSyntax;
+
+            if (literalExpression != null)
+            {
+                var token = literalExpression.Token;
+                if (token.IsKind(SyntaxKind.StringLiteralToken))
+                {
+                    if (this.HasToBeConstant(literalExpression))
+                        return;
+
+                    if (token.ValueText == string.Empty)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, literalExpression.GetLocation()));
+                    }
+                }
+            }
+        }
+
+        private bool HasToBeConstant(LiteralExpressionSyntax literalExpression)
+        {
+            ExpressionSyntax outermostExpression = this.FindOutermostExpression(literalExpression);
+
+            if (outermostExpression.Parent.IsKind(SyntaxKind.AttributeArgument))
+                return true;
+
+            EqualsValueClauseSyntax equalsValueClause = outermostExpression.Parent as EqualsValueClauseSyntax;
+            if (equalsValueClause != null)
+            {
+                ParameterSyntax parameterSyntax = equalsValueClause.Parent as ParameterSyntax;
+                if (parameterSyntax != null)
+                    return true;
+
+                VariableDeclaratorSyntax variableDeclaratorSyntax = equalsValueClause.Parent as VariableDeclaratorSyntax;
+                VariableDeclarationSyntax variableDeclarationSyntax = variableDeclaratorSyntax.Parent as VariableDeclarationSyntax;
+                if (variableDeclaratorSyntax == null || variableDeclarationSyntax == null)
+                    return false;
+
+                FieldDeclarationSyntax fieldDeclarationSyntax = variableDeclarationSyntax.Parent as FieldDeclarationSyntax;
+                if (fieldDeclarationSyntax != null && fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.ConstKeyword))
+                    return true;
+
+                LocalDeclarationStatementSyntax localDeclarationStatementSyntax = variableDeclarationSyntax.Parent as LocalDeclarationStatementSyntax;
+                if (localDeclarationStatementSyntax != null && localDeclarationStatementSyntax.Modifiers.Any(SyntaxKind.ConstKeyword))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private ExpressionSyntax FindOutermostExpression(ExpressionSyntax node)
+        {
+            while (true)
+            {
+                ExpressionSyntax parent = node.Parent as ExpressionSyntax;
+                if (parent == null)
+                    break;
+
+                node = parent;
+            }
+
+            return node;
         }
     }
 }

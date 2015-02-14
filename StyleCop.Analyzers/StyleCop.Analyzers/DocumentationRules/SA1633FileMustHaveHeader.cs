@@ -65,17 +65,20 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1633FileMustHaveHeader : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1633FileMustHaveHeader"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1633";
-        internal const string Title = "File must have header";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "A C# code file is missing a standard file header.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1633.html";
+        private const string Title = "File must have header";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "A C# code file is missing a standard file header.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1633.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -83,7 +86,7 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 

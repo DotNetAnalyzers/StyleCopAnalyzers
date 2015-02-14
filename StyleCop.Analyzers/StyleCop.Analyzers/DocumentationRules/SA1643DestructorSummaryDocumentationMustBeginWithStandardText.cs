@@ -2,6 +2,8 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -42,34 +44,66 @@
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1643DestructorSummaryDocumentationMustBeginWithStandardText : DiagnosticAnalyzer
+    public class SA1643DestructorSummaryDocumentationMustBeginWithStandardText : StandardTextDiagnosticBase
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the
+        /// <see cref="SA1643DestructorSummaryDocumentationMustBeginWithStandardText"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1643";
-        internal const string Title = "Destructor summary documentation must begin with standard text";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "The XML documentation header for a C# finalizer does not contain the appropriate summary text.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1643.html";
+        private const string Title = "Destructor summary documentation must begin with standard text";
+        private const string MessageFormat = "Destructor summary documentation must begin with standard text";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "The XML documentation header for a C# finalizer does not contain the appropriate summary text.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1643.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+        private static readonly DiagnosticDescriptor Descriptor =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
+        /// <summary>
+        /// Gets a two-element array containing the standard text which is expected to appear at the beginning of the
+        /// <c>&lt;summary&gt;</c> documentation for a destructor. The first element appears before the name of the
+        /// containing class, followed by a <c>&lt;see&gt;</c> element targeting the containing type, and finally
+        /// followed by the second element of this array.
+        /// </summary>
+        public static ImmutableArray<string> DestructorStandardText { get; } = ImmutableArray.Create("Finalizes an instance of the ", " class.");
+        
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
+        protected override DiagnosticDescriptor DiagnosticDescriptor
+        {
+            get
+            {
+                return Descriptor;
+            }
+        }
+
+
+        /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(this.HandleDestructor, SyntaxKind.DestructorDeclaration);
+        }
+
+        private void HandleDestructor(SyntaxNodeAnalysisContext context)
+        {
+            var destructorDeclaration = context.Node as DestructorDeclarationSyntax;
+
+            if (destructorDeclaration != null)
+            {
+                this.HandleDeclaration(context, DestructorStandardText[0], DestructorStandardText[1], true);
+            }
         }
     }
 }

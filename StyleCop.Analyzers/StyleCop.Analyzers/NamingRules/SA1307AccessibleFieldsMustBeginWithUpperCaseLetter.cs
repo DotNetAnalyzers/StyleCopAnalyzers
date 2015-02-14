@@ -20,17 +20,21 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1307AccessibleFieldsMustBeginWithUpperCaseLetter : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1307AccessibleFieldsMustBeginWithUpperCaseLetter"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1307";
-        internal const string Title = "Accessible fields must begin with upper-case letter";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.NamingRules";
-        internal const string Description = "The name of a public or internal field in C# does not begin with an upper-case letter.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1307.html";
+        private const string Title = "Accessible fields must begin with upper-case letter";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.NamingRules";
+        private const string Description = "The name of a public or internal field in C# does not begin with an upper-case letter.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1307.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -38,7 +42,7 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 

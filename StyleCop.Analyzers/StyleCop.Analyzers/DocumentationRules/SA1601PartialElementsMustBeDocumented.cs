@@ -1,8 +1,13 @@
 ﻿namespace StyleCop.Analyzers.DocumentationRules
 {
+    using System.Linq;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Helpers;
+
 
     /// <summary>
     /// A C# partial element is missing a documentation header.
@@ -61,17 +66,20 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1601PartialElementsMustBeDocumented : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1601PartialElementsMustBeDocumented"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1601";
-        internal const string Title = "Partial elements must be documented";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "A C# partial element is missing a documentation header.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1601.html";
+        private const string Title = "Partial elements must be documented";
+        private const string MessageFormat = "Partial elements must be documented";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "A C# partial element is missing a documentation header.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1601.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+        private static readonly DiagnosticDescriptor Descriptor =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -79,14 +87,47 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(this.HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleTypeDeclaration, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
+        }
+
+        private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            TypeDeclarationSyntax typeDeclaration = context.Node as TypeDeclarationSyntax;
+            if (typeDeclaration != null)
+            {
+                if (typeDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+                {
+                    if (!XmlCommentHelper.HasDocumentation(typeDeclaration))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, typeDeclaration.Identifier.GetLocation()));
+                    }
+                }
+            }
+        }
+
+        private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            MethodDeclarationSyntax methodDeclaration = context.Node as MethodDeclarationSyntax;
+            if (methodDeclaration != null)
+            {
+                if (methodDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+                {
+                    if (!XmlCommentHelper.HasDocumentation(methodDeclaration))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, methodDeclaration.Identifier.GetLocation()));
+                    }
+                }
+            }
         }
     }
 }

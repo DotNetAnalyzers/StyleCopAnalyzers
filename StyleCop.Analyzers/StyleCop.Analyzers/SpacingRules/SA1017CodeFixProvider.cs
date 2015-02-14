@@ -19,13 +19,13 @@
     [Shared]
     public class SA1017CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> _fixableDiagnostics =
+        private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1017ClosingAttributeBracketsMustBeSpacedCorrectly.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> GetFixableDiagnosticIds()
         {
-            return _fixableDiagnostics;
+            return FixableDiagnostics;
         }
 
         /// <inheritdoc/>
@@ -55,7 +55,7 @@
                 if (!precedingToken.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
                     continue;
 
-                SyntaxToken corrected = precedingToken.WithoutTrailingWhitespace();
+                SyntaxToken corrected = precedingToken.WithoutTrailingWhitespace().WithoutFormatting();
                 SyntaxNode transformed = root.ReplaceToken(precedingToken, corrected);
                 Document updatedDocument = context.Document.WithSyntaxRoot(transformed);
                 context.RegisterFix(CodeAction.Create("Fix spacing", updatedDocument), diagnostic);

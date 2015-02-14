@@ -39,17 +39,20 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1003SymbolsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1003SymbolsMustBeSpacedCorrectly"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1003";
-        internal const string Title = "Symbols must be spaced correctly";
-        internal const string MessageFormat = "Operator '{0}' must {1}.";
-        internal const string Category = "StyleCop.CSharp.SpacingRules";
-        internal const string Description = "The spacing around an operator symbol is incorrect, within a C# code file.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1003.html";
+        private const string Title = "Symbols must be spaced correctly";
+        private const string MessageFormat = "Operator '{0}' must {1}.";
+        private const string Category = "StyleCop.CSharp.SpacingRules";
+        private const string Description = "The spacing around an operator symbol is incorrect, within a C# code file.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1003.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -57,14 +60,14 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(HandleSyntaxTree);
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -74,18 +77,18 @@
             {
                 if (SyntaxFacts.IsBinaryExpressionOperatorToken(token.CSharpKind()) && token.Parent is BinaryExpressionSyntax)
                 {
-                    HandleBinaryExpressionOperatorToken(context, token);
+                    this.HandleBinaryExpressionOperatorToken(context, token);
                 }
                 else if (SyntaxFacts.IsPrefixUnaryExpressionOperatorToken(token.CSharpKind()) && token.Parent is PrefixUnaryExpressionSyntax)
                 {
-                    HandlePrefixUnaryExpressionOperatorToken(context, token);
+                    this.HandlePrefixUnaryExpressionOperatorToken(context, token);
                 }
             }
         }
 
         private void HandleBinaryExpressionOperatorToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
-            HandleOperatorToken(context, token, true);
+            this.HandleOperatorToken(context, token, true);
         }
 
         private void HandlePrefixUnaryExpressionOperatorToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
@@ -95,7 +98,7 @@
             if (token.Parent?.Parent is PrefixUnaryExpressionSyntax)
                 return;
 
-            HandleOperatorToken(context, token, false);
+            this.HandleOperatorToken(context, token, false);
         }
 
         private void HandleOperatorToken(SyntaxTreeAnalysisContext context, SyntaxToken token, bool isBinaryExpressionOperator)

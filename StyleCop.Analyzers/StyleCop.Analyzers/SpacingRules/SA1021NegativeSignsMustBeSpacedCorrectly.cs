@@ -20,17 +20,20 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1021NegativeSignsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1021NegativeSignsMustBeSpacedCorrectly"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1021";
-        internal const string Title = "Negative signs must be spaced correctly";
-        internal const string MessageFormat = "Negative sign must{0} be {1} by a space.";
-        internal const string Category = "StyleCop.CSharp.SpacingRules";
-        internal const string Description = "A negative sign within a C# element is not spaced correctly.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1021.html";
+        private const string Title = "Negative signs must be spaced correctly";
+        private const string MessageFormat = "Negative sign must{0} be {1} by a space.";
+        private const string Category = "StyleCop.CSharp.SpacingRules";
+        private const string Description = "A negative sign within a C# element is not spaced correctly.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1021.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -38,14 +41,14 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(HandleSyntaxTree);
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -56,7 +59,7 @@
                 switch (token.CSharpKind())
                 {
                 case SyntaxKind.MinusToken:
-                    HandleMinusToken(context, token);
+                    this.HandleMinusToken(context, token);
                     break;
 
                 default:

@@ -1,8 +1,13 @@
 ﻿namespace StyleCop.Analyzers.DocumentationRules
 {
+    using System.Linq;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Helpers;
+
 
     /// <summary>
     /// An item within a C# enumeration is missing an XML documentation header.
@@ -32,17 +37,20 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1602EnumerationItemsMustBeDocumented : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1602EnumerationItemsMustBeDocumented"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1602";
-        internal const string Title = "Enumeration items must be documented";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "An item within a C# enumeration is missing an Xml documentation header.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1602.html";
+        private const string Title = "Enumeration items must be documented";
+        private const string MessageFormat = "Enumeration items must be documented";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "An item within a C# enumeration is missing an Xml documentation header.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1602.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+        private static readonly DiagnosticDescriptor Descriptor =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -50,14 +58,26 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(this.HandleEnumMember, SyntaxKind.EnumMemberDeclaration);
+        }
+
+        private void HandleEnumMember(SyntaxNodeAnalysisContext context)
+        {
+            EnumMemberDeclarationSyntax enumMemberDeclaration = context.Node as EnumMemberDeclarationSyntax;
+            if (enumMemberDeclaration != null)
+            {
+                if (!XmlCommentHelper.HasDocumentation(enumMemberDeclaration))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, enumMemberDeclaration.Identifier.GetLocation()));
+                }
+            }
         }
     }
 }

@@ -16,17 +16,20 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1124DoNotUseRegions : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1124DoNotUseRegions"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1124";
-        internal const string Title = "Do not use regions";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.ReadabilityRules";
-        internal const string Description = "The C# code contains a region.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1124.html";
+        private const string Title = "Do not use regions";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.ReadabilityRules";
+        private const string Description = "The C# code contains a region.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1124.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -34,7 +37,7 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 

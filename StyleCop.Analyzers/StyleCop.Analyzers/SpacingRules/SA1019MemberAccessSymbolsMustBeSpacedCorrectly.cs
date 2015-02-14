@@ -15,17 +15,21 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1019MemberAccessSymbolsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1019MemberAccessSymbolsMustBeSpacedCorrectly"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1019";
-        internal const string Title = "Member access symbols must be spaced correctly";
-        internal const string MessageFormat = "Member access symbol '{0}' must not be {1} by a space.";
-        internal const string Category = "StyleCop.CSharp.SpacingRules";
-        internal const string Description = "The spacing around a member access symbol is incorrect, within a C# code file.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1019.html";
+        private const string Title = "Member access symbols must be spaced correctly";
+        private const string MessageFormat = "Member access symbol '{0}' must not be {1} by a space.";
+        private const string Category = "StyleCop.CSharp.SpacingRules";
+        private const string Description = "The spacing around a member access symbol is incorrect, within a C# code file.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1019.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -33,14 +37,14 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(HandleSyntaxTree);
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -51,12 +55,12 @@
                 switch (token.CSharpKind())
                 {
                 case SyntaxKind.DotToken:
-                    HandleDotToken(context, token);
+                    this.HandleDotToken(context, token);
                     break;
 
                 // This case handles the new ?. and ?[ operators
                 case SyntaxKind.QuestionToken:
-                    HandleQuestionToken(context, token);
+                    this.HandleQuestionToken(context, token);
                     break;
 
                 default:
@@ -70,7 +74,7 @@
             if (token.IsMissing)
                 return;
 
-            HandleMemberAccessSymbol(context, token);
+            this.HandleMemberAccessSymbol(context, token);
         }
 
         private void HandleQuestionToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
@@ -81,7 +85,7 @@
             if (!token.Parent.IsKind(SyntaxKind.ConditionalAccessExpression))
                 return;
 
-            HandleMemberAccessSymbol(context, token);
+            this.HandleMemberAccessSymbol(context, token);
         }
 
         private void HandleMemberAccessSymbol(SyntaxTreeAnalysisContext context, SyntaxToken token)

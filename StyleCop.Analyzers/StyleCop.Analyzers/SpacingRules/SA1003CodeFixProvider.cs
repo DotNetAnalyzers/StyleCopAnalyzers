@@ -22,13 +22,13 @@
     [Shared]
     public class SA1003CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> _fixableDiagnostics =
+        private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1003SymbolsMustBeSpacedCorrectly.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> GetFixableDiagnosticIds()
         {
-            return _fixableDiagnostics;
+            return FixableDiagnostics;
         }
 
         /// <inheritdoc/>
@@ -84,14 +84,17 @@
                     if (!token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia))
                     {
                         SyntaxToken correctedOperatorNoSpace = token.WithoutTrailingWhitespace();
-                        SyntaxToken correctedOperator = correctedOperatorNoSpace.WithTrailingTrivia(correctedOperatorNoSpace.TrailingTrivia.Insert(0, SyntaxFactory.Whitespace(" ")));
+                        SyntaxToken correctedOperator =
+                            correctedOperatorNoSpace
+                            .WithTrailingTrivia(correctedOperatorNoSpace.TrailingTrivia.Insert(0, SyntaxFactory.Whitespace(" ")))
+                            .WithoutFormatting();
                         replacements[token] = correctedOperator;
                     }
                 }
                 else if (token.Parent is PrefixUnaryExpressionSyntax)
                 {
                     // do not include a space after (includes new line characters)
-                    SyntaxToken correctedOperatorNoSpace = token.WithoutTrailingWhitespace(removeEndOfLineTrivia: true);
+                    SyntaxToken correctedOperatorNoSpace = token.WithoutTrailingWhitespace(removeEndOfLineTrivia: true).WithoutFormatting();
                     replacements[token] = correctedOperatorNoSpace;
                 }
 

@@ -20,13 +20,13 @@
     [Shared]
     public class SA1005CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> _fixableDiagnostics =
+        private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1005SingleLineCommentsMustBeginWithSingleSpace.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> GetFixableDiagnosticIds()
         {
-            return _fixableDiagnostics;
+            return FixableDiagnostics;
         }
 
         /// <inheritdoc/>
@@ -53,7 +53,7 @@
                     continue;
 
                 string correctedText = "// " + text.Substring(2);
-                SyntaxTrivia corrected = SyntaxFactory.Comment(correctedText);
+                SyntaxTrivia corrected = SyntaxFactory.Comment(correctedText).WithoutFormatting();
                 Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceTrivia(trivia, corrected));
                 context.RegisterFix(CodeAction.Create("Insert space", updatedDocument), diagnostic);
             }

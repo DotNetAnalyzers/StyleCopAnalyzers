@@ -19,13 +19,13 @@
     [Shared]
     public class SA1018CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> _fixableDiagnostics =
+        private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1018NullableTypeSymbolsMustNotBePrecededBySpace.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> GetFixableDiagnosticIds()
         {
-            return _fixableDiagnostics;
+            return FixableDiagnostics;
         }
 
         /// <inheritdoc/>
@@ -55,7 +55,7 @@
                 if (!previousToken.HasTrailingTrivia)
                     continue;
 
-                SyntaxToken corrected = previousToken.WithoutTrailingWhitespace();
+                SyntaxToken corrected = previousToken.WithoutTrailingWhitespace().WithoutFormatting();
                 Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(previousToken, corrected));
                 context.RegisterFix(CodeAction.Create("Remove space", updatedDocument), diagnostic);
             }

@@ -17,17 +17,21 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1025CodeMustNotContainMultipleWhitespaceInARow : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1025CodeMustNotContainMultipleWhitespaceInARow"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1025";
-        internal const string Title = "Code must not contain multiple whitespace in a row";
-        internal const string MessageFormat = "Code must not contain multiple whitespace characters in a row.";
-        internal const string Category = "StyleCop.CSharp.SpacingRules";
-        internal const string Description = "The code contains multiple whitespace characters in a row.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1025.html";
+        private const string Title = "Code must not contain multiple whitespace in a row";
+        private const string MessageFormat = "Code must not contain multiple whitespace characters in a row.";
+        private const string Category = "StyleCop.CSharp.SpacingRules";
+        private const string Description = "The code contains multiple whitespace characters in a row.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1025.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -35,14 +39,14 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(HandleSyntaxTree);
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -53,7 +57,7 @@
                 switch (trivia.CSharpKind())
                 {
                 case SyntaxKind.WhitespaceTrivia:
-                    HandleWhitespaceTrivia(context, trivia);
+                    this.HandleWhitespaceTrivia(context, trivia);
                     break;
 
                 default:

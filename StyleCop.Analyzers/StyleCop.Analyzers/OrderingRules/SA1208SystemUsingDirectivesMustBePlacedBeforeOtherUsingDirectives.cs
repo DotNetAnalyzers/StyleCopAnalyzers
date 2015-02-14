@@ -21,17 +21,21 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the
+        /// <see cref="SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1208";
-        internal const string Title = "System using directives must be placed before other using directives";
-        internal const string MessageFormat = "Using directive for '{0}' must appear before directive for '{1}'";
-        internal const string Category = "StyleCop.CSharp.OrderingRules";
-        internal const string Description = "A using directive which declares a member of the 'System' namespace appears after a using directive which declares a member of a different namespace, within a C# code file.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1208.html";
+        private const string Title = "System using directives must be placed before other using directives";
+        private const string MessageFormat = "Using directive for '{0}' must appear before directive for '{1}'";
+        private const string Category = "StyleCop.CSharp.OrderingRules";
+        private const string Description = "A using directive which declares a member of the 'System' namespace appears after a using directive which declares a member of a different namespace, within a C# code file.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1208.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -39,14 +43,14 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleUsingDirectiveSyntax, SyntaxKind.UsingDirective);
+            context.RegisterSyntaxNodeAction(this.HandleUsingDirectiveSyntax, SyntaxKind.UsingDirective);
         }
 
         private void HandleUsingDirectiveSyntax(SyntaxNodeAnalysisContext context)

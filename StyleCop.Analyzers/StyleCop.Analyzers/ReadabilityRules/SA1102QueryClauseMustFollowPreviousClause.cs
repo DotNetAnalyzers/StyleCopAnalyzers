@@ -29,17 +29,20 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1102QueryClauseMustFollowPreviousClause : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1102QueryClauseMustFollowPreviousClause"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1102";
-        internal const string Title = "Query clause must follow previous clause";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.ReadabilityRules";
-        internal const string Description = "A C# query clause does not begin on the same line as the previous clause, or on the next line.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1102.html";
+        private const string Title = "Query clause must follow previous clause";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.ReadabilityRules";
+        private const string Description = "A C# query clause does not begin on the same line as the previous clause, or on the next line.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1102.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -47,7 +50,7 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 

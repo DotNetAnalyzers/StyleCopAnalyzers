@@ -3,6 +3,7 @@
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.CSharp;
 
     /// <summary>
     /// A call to <see cref="O:System.Diagnostics.Debug.Fail"/> in C# code does not include a descriptive message.
@@ -17,19 +18,22 @@
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1406DebugFailMustProvideMessageText : DiagnosticAnalyzer
+    public class SA1406DebugFailMustProvideMessageText : SystemDiagnosticsDebugDiagnosticBase
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1406DebugFailMustProvideMessageText"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1406";
-        internal const string Title = "Debug.Fail must provide message text";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
-        internal const string Description = "A call to Debug.Fail in C# code does not include a descriptive message.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1406.html";
+        private const string Title = "Debug.Fail must provide message text";
+        private const string MessageFormat = "Debug.Fail must provide message text";
+        private const string Category = "StyleCop.CSharp.MaintainabilityRules";
+        private const string Description = "A call to Debug.Fail in C# code does not include a descriptive message.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1406.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+        private static readonly DiagnosticDescriptor Descriptor =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -37,14 +41,20 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(this.HandleMethodCall, SyntaxKind.InvocationExpression);
+        }
+
+        private void HandleMethodCall(SyntaxNodeAnalysisContext context)
+        {
+            // Debug.Fail is not availible in a portable library. So no nameof(Debug.Fail) here
+            this.HandleMethodCall(context, "Fail", 0, Descriptor);
         }
     }
 }

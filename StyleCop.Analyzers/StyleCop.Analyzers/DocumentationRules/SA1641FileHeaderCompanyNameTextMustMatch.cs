@@ -28,17 +28,20 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1641FileHeaderCompanyNameTextMustMatch : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1641FileHeaderCompanyNameTextMustMatch"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1641";
-        internal const string Title = "File header company name text must match";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "The file header at the top of a C# code file does not contain the appropriate company name text.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1641.html";
+        private const string Title = "File header company name text must match";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "The file header at the top of a C# code file does not contain the appropriate company name text.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1641.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -46,7 +49,7 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 

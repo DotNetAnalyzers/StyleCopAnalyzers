@@ -30,17 +30,20 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1202ElementsMustBeOrderedByAccess : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1202ElementsMustBeOrderedByAccess"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1202";
-        internal const string Title = "Elements must be ordered by access";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.OrderingRules";
-        internal const string Description = "An element within a C# code file is out of order within regard to access level, in relation to other elements in the code.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1202.html";
+        private const string Title = "Elements must be ordered by access";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.OrderingRules";
+        private const string Description = "An element within a C# code file is out of order within regard to access level, in relation to other elements in the code.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1202.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -48,7 +51,7 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 

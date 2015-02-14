@@ -98,17 +98,20 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1201ElementsMustAppearInTheCorrectOrder : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1201ElementsMustAppearInTheCorrectOrder"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1201";
-        internal const string Title = "Elements must appear in the correct order";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.OrderingRules";
-        internal const string Description = "An element within a C# code file is out of order in relation to the other elements in the code.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1201.html";
+        private const string Title = "Elements must appear in the correct order";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.OrderingRules";
+        private const string Description = "An element within a C# code file is out of order in relation to the other elements in the code.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1201.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -116,7 +119,7 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 

@@ -18,16 +18,17 @@ namespace TestHelper
     public abstract partial class DiagnosticVerifier
     {
         private static readonly MetadataReference CorlibReference = MetadataReference.CreateFromAssembly(typeof(object).Assembly);
+        private static readonly MetadataReference SystemReference = MetadataReference.CreateFromAssembly(typeof(System.Diagnostics.Debug).Assembly);
         private static readonly MetadataReference SystemCoreReference = MetadataReference.CreateFromAssembly(typeof(Enumerable).Assembly);
         private static readonly MetadataReference CSharpSymbolsReference = MetadataReference.CreateFromAssembly(typeof(CSharpCompilation).Assembly);
         private static readonly MetadataReference CodeAnalysisReference = MetadataReference.CreateFromAssembly(typeof(Compilation).Assembly);
 
-        internal static string DefaultFilePathPrefix = "Test";
-        internal static string CSharpDefaultFileExt = "cs";
-        internal static string VisualBasicDefaultExt = "vb";
-        internal static string CSharpDefaultFilePath = DefaultFilePathPrefix + 0 + "." + CSharpDefaultFileExt;
-        internal static string VisualBasicDefaultFilePath = DefaultFilePathPrefix + 0 + "." + VisualBasicDefaultExt;
-        internal static string TestProjectName = "TestProject";
+        private static readonly string DefaultFilePathPrefix = "Test";
+        private static readonly string CSharpDefaultFileExt = "cs";
+        private static readonly string VisualBasicDefaultExt = "vb";
+        private static readonly string CSharpDefaultFilePath = DefaultFilePathPrefix + 0 + "." + CSharpDefaultFileExt;
+        private static readonly string VisualBasicDefaultFilePath = DefaultFilePathPrefix + 0 + "." + VisualBasicDefaultExt;
+        private static readonly string TestProjectName = "TestProject";
 
         #region  Get Diagnostics
 
@@ -93,7 +94,7 @@ namespace TestHelper
                 }
             }
 
-            var results = SortDiagnostics(diagnostics);
+            var results = SortDistinctDiagnostics(diagnostics);
             return results.ToImmutableArray();
         }
 
@@ -103,9 +104,9 @@ namespace TestHelper
         /// <param name="diagnostics">A collection of <see cref="Diagnostic"/>s to be sorted.</param>
         /// <returns>A collection containing the input <paramref name="diagnostics"/>, sorted by
         /// <see cref="Diagnostic.Location"/>.</returns>
-        private static Diagnostic[] SortDiagnostics(IEnumerable<Diagnostic> diagnostics)
+        private static Diagnostic[] SortDistinctDiagnostics(IEnumerable<Diagnostic> diagnostics)
         {
-            return diagnostics.OrderBy(d => d.Location.SourceSpan.Start).ToArray();
+            return diagnostics.OrderBy(d => d.Location.SourceSpan.Start).Distinct(default(DiagnosticEqualityComparer)).ToArray();
         }
 
         #endregion
@@ -173,6 +174,7 @@ namespace TestHelper
                 .CurrentSolution
                 .AddProject(projectId, TestProjectName, TestProjectName, language)
                 .AddMetadataReference(projectId, CorlibReference)
+                .AddMetadataReference(projectId, SystemReference)
                 .AddMetadataReference(projectId, SystemCoreReference)
                 .AddMetadataReference(projectId, CSharpSymbolsReference)
                 .AddMetadataReference(projectId, CodeAnalysisReference);
@@ -188,6 +190,42 @@ namespace TestHelper
             return solution.GetProject(projectId);
         }
         #endregion
+
+        /// <summary>
+        /// A little helper to be able to use Enumerable.Distinct. Currently Roslyn does have a bug so that Diagnostic.GetHashCode()
+        /// is not implemented correctly. <see href="https://github.com/dotnet/roslyn/issues/57"/>.
+        /// </summary>
+        private struct DiagnosticEqualityComparer : IEqualityComparer<Diagnostic>
+        {
+            public bool Equals(Diagnostic x, Diagnostic y)
+            {
+                return (x == null && y == null)
+                    || x.Equals(y);
+            }
+
+            public int GetHashCode(Diagnostic obj)
+            {
+                return this.Combine(obj.Descriptor,
+                         this.Combine(obj.Location.GetHashCode(),
+                          this.Combine(obj.Severity.GetHashCode(), obj.WarningLevel)));
+            }
+
+            private int Combine<T>(T newKeyPart, int currentKey) where T : class
+            {
+                int hash = unchecked(currentKey * (int)0xA5555529);
+
+                if (newKeyPart != null)
+                {
+                    return unchecked(hash + newKeyPart.GetHashCode());
+                }
+
+                return hash;
+            }
+            private int Combine(int newKey, int currentKey)
+            {
+                return unchecked((currentKey * (int)0xA5555529) + newKey);
+            }
+        }
     }
 }
 

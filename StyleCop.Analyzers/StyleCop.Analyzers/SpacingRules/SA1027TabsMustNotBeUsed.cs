@@ -21,17 +21,20 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1027TabsMustNotBeUsed : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1027TabsMustNotBeUsed"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1027";
-        internal const string Title = "Tabs must not be used";
-        internal const string MessageFormat = "Tabs must not be used.";
-        internal const string Category = "StyleCop.CSharp.SpacingRules";
-        internal const string Description = "The C# code contains a tab character.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1027.html";
+        private const string Title = "Tabs must not be used";
+        private const string MessageFormat = "Tabs must not be used.";
+        private const string Category = "StyleCop.CSharp.SpacingRules";
+        private const string Description = "The C# code contains a tab character.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1027.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -39,14 +42,14 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(HandleSyntaxTree);
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -57,7 +60,7 @@
                 switch (trivia.CSharpKind())
                 {
                 case SyntaxKind.WhitespaceTrivia:
-                    HandleWhitespaceTrivia(context, trivia);
+                    this.HandleWhitespaceTrivia(context, trivia);
                     break;
 
                 default:

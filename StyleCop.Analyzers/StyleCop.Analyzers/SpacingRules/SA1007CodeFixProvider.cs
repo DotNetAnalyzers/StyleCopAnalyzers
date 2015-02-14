@@ -18,13 +18,13 @@
     [Shared]
     public class SA1007CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> _fixableDiagnostics =
+        private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1007OperatorKeywordMustBeFollowedBySpace.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> GetFixableDiagnosticIds()
         {
-            return _fixableDiagnostics;
+            return FixableDiagnostics;
         }
 
         /// <inheritdoc/>
@@ -50,7 +50,7 @@
                     continue;
 
                 SyntaxTrivia whitespace = SyntaxFactory.Whitespace(" ");
-                SyntaxToken corrected = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, whitespace));
+                SyntaxToken corrected = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, whitespace)).WithoutFormatting();
                 Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
                 context.RegisterFix(CodeAction.Create("Insert space", updatedDocument), diagnostic);
             }

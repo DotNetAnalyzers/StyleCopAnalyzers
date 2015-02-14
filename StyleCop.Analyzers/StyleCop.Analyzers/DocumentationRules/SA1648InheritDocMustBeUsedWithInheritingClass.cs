@@ -18,17 +18,20 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1648InheritDocMustBeUsedWithInheritingClass : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1648InheritDocMustBeUsedWithInheritingClass"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1648";
-        internal const string Title = "inheritdoc must be used with inheriting class";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "<inheritdoc> has been used on an element that doesn't inherit from a base class or implement an interface.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1648.html";
+        private const string Title = "inheritdoc must be used with inheriting class";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "<inheritdoc> has been used on an element that doesn't inherit from a base class or implement an interface.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1648.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -36,7 +39,7 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 

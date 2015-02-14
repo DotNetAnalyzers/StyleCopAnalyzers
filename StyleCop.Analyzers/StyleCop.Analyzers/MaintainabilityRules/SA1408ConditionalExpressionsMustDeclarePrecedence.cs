@@ -3,6 +3,10 @@
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+
 
     /// <summary>
     /// A C# statement contains a complex conditional expression which omits parenthesis around operators.
@@ -47,17 +51,21 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1408ConditionalExpressionsMustDeclarePrecedence : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1408ConditionalExpressionsMustDeclarePrecedence"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1408";
-        internal const string Title = "Conditional expressions must declare precedence";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
-        internal const string Description = "A C# statement contains a complex conditional expression which omits parenthesis around operators.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1408.html";
+        private const string Title = "Conditional expressions must declare precedence";
+        private const string MessageFormat = "Conditional expressions must declare precedence";
+        private const string Category = "StyleCop.CSharp.MaintainabilityRules";
+        private const string Description = "A C# statement contains a complex conditional expression which omits parenthesis around operators.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1408.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+        private static readonly DiagnosticDescriptor Descriptor =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -65,14 +73,53 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(this.HandleLogicalExpression, SyntaxKind.LogicalAndExpression);
+            context.RegisterSyntaxNodeAction(this.HandleLogicalExpression, SyntaxKind.LogicalOrExpression);
+        }
+
+        private void HandleLogicalExpression(SyntaxNodeAnalysisContext context)
+        {
+            BinaryExpressionSyntax binSyntax = context.Node as BinaryExpressionSyntax;
+
+            if (binSyntax != null)
+            {
+                if (binSyntax.Left is BinaryExpressionSyntax)
+                {
+                    // Check if the operations are of the same kind
+
+                    var left = (BinaryExpressionSyntax)binSyntax.Left;
+                    if (left.OperatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken) || left.OperatorToken.IsKind(SyntaxKind.BarBarToken))
+                    {
+
+                        if (!this.IsSameFamily(binSyntax.OperatorToken, left.OperatorToken))
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, left.GetLocation()));
+                    }
+                }
+                if (binSyntax.Right is BinaryExpressionSyntax)
+                {
+                    // Check if the operations are of the same kind
+
+                    var right = (BinaryExpressionSyntax)binSyntax.Right;
+                    if (right.OperatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken) || right.OperatorToken.IsKind(SyntaxKind.BarBarToken))
+                    {
+                        if (!this.IsSameFamily(binSyntax.OperatorToken, right.OperatorToken))
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, right.GetLocation()));
+                    }
+                }
+            }
+        }
+
+        private bool IsSameFamily(SyntaxToken operatorToken1, SyntaxToken operatorToken2)
+        {
+            return (operatorToken1.IsKind(SyntaxKind.AmpersandAmpersandToken) && operatorToken2.IsKind(SyntaxKind.AmpersandAmpersandToken))
+             || (operatorToken1.IsKind(SyntaxKind.BarBarToken) && operatorToken2.IsKind(SyntaxKind.BarBarToken));
         }
     }
 }

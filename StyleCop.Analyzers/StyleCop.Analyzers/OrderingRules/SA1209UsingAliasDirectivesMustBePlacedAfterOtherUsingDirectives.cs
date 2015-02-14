@@ -18,17 +18,21 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1209UsingAliasDirectivesMustBePlacedAfterOtherUsingDirectives : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the
+        /// <see cref="SA1209UsingAliasDirectivesMustBePlacedAfterOtherUsingDirectives"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1209";
-        internal const string Title = "Using alias directives must be placed after other using directives";
-        internal const string MessageFormat = "Using alias directive for '{0}' must appear after directive for '{1}'";
-        internal const string Category = "StyleCop.CSharp.OrderingRules";
-        internal const string Description = "A using-alias directive is positioned before a regular using directive.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1209.html";
+        private const string Title = "Using alias directives must be placed after other using directives";
+        private const string MessageFormat = "Using alias directive for '{0}' must appear after directive for '{1}'";
+        private const string Category = "StyleCop.CSharp.OrderingRules";
+        private const string Description = "A using-alias directive is positioned before a regular using directive.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1209.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -36,14 +40,14 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleUsingDirectiveSyntax, SyntaxKind.UsingDirective);
+            context.RegisterSyntaxNodeAction(this.HandleUsingDirectiveSyntax, SyntaxKind.UsingDirective);
         }
 
         private void HandleUsingDirectiveSyntax(SyntaxNodeAnalysisContext context)

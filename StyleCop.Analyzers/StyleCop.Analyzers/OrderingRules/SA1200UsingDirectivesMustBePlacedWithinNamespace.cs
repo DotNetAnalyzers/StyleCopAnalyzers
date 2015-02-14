@@ -1,6 +1,7 @@
 ﻿namespace StyleCop.Analyzers.OrderingRules
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -146,17 +147,21 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1200UsingDirectivesMustBePlacedWithinNamespace : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1200UsingDirectivesMustBePlacedWithinNamespace"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1200";
-        internal const string Title = "Using directives must be placed within namespace";
-        internal const string MessageFormat = "Using directive must appear within a namespace declaration";
-        internal const string Category = "StyleCop.CSharp.OrderingRules";
-        internal const string Description = "A C# using directive is placed outside of a namespace element.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1200.html";
+        private const string Title = "Using directives must be placed within namespace";
+        private const string MessageFormat = "Using directive must appear within a namespace declaration";
+        private const string Category = "StyleCop.CSharp.OrderingRules";
+        private const string Description = "A C# using directive is placed outside of a namespace element.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1200.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -164,23 +169,55 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleUsingDirectiveSyntax, SyntaxKind.UsingDirective);
+            context.RegisterSyntaxNodeAction(this.HandleCompilationUnitSyntax, SyntaxKind.CompilationUnit);
         }
 
-        private void HandleUsingDirectiveSyntax(SyntaxNodeAnalysisContext context)
+        private void HandleCompilationUnitSyntax(SyntaxNodeAnalysisContext context)
         {
-            if (context.Node.Parent is NamespaceDeclarationSyntax)
+            CompilationUnitSyntax syntax = context.Node as CompilationUnitSyntax;
+            if (syntax == null)
                 return;
 
-            // Using directive must appear within a namespace declaration
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation()));
+            List<SyntaxNode> usingDirectives = new List<SyntaxNode>();
+            foreach (SyntaxNode child in syntax.ChildNodes())
+            {
+                switch (child.CSharpKind())
+                {
+                case SyntaxKind.ClassDeclaration:
+                case SyntaxKind.InterfaceDeclaration:
+                case SyntaxKind.EnumDeclaration:
+                case SyntaxKind.StructDeclaration:
+                case SyntaxKind.DelegateDeclaration:
+                    // Suppress SA1200 if file contains a type in the global namespace
+                    return;
+
+                case SyntaxKind.AttributeList:
+                    // suppress SA1200 if file contains an attribute in the global namespace
+                    return;
+
+                case SyntaxKind.UsingDirective:
+                    usingDirectives.Add(child);
+                    continue;
+
+                case SyntaxKind.ExternAliasDirective:
+                case SyntaxKind.NamespaceDeclaration:
+                default:
+                    continue;
+                }
+            }
+
+            foreach (var directive in usingDirectives)
+            {
+                // Using directive must appear within a namespace declaration
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, directive.GetLocation()));
+            }
         }
     }
 }

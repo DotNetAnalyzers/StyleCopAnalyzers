@@ -33,17 +33,21 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1628DocumentationTextMustBeginWithACapitalLetter : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1628DocumentationTextMustBeginWithACapitalLetter"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1628";
-        internal const string Title = "Documentation text must begin with a capital letter";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "A section of the XML header documentation for a C# element does not begin with a capital letter.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1628.html";
+        private const string Title = "Documentation text must begin with a capital letter";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "A section of the XML header documentation for a C# element does not begin with a capital letter.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1628.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -51,7 +55,7 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 

@@ -2,6 +2,8 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -14,17 +16,21 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1311";
-        internal const string Title = "Static readonly fields must begin with upper-case letter";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.NamingRules";
-        internal const string Description = "The name of a static readonly field does not begin with an upper-case letter.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1311.html";
+        private const string Title = "Static readonly fields must begin with upper-case letter";
+        private const string MessageFormat = "Static readonly fields must begin with upper-case letter";
+        private const string Category = "StyleCop.CSharp.NamingRules";
+        private const string Description = "The name of a static readonly field does not begin with an upper-case letter.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1311.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+        private static readonly DiagnosticDescriptor Descriptor =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -32,14 +38,49 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(this.HandleFieldDeclarationm, SyntaxKind.FieldDeclaration);
+        }
+
+        private void HandleFieldDeclarationm(SyntaxNodeAnalysisContext context)
+        {
+            var fieldDeclaration = context.Node as FieldDeclarationSyntax;
+            if (fieldDeclaration == null)
+            {
+                return;
+            }
+
+            if (!fieldDeclaration.Modifiers.Any(SyntaxKind.StaticKeyword) ||
+               !fieldDeclaration.Modifiers.Any(SyntaxKind.ReadOnlyKeyword))
+            {
+                return;
+            }
+
+            var variables = fieldDeclaration.Declaration?.Variables;
+            if (variables == null)
+                return;
+
+            foreach (VariableDeclaratorSyntax variableDeclarator in variables.Value)
+            {
+                if (variableDeclarator == null)
+                    continue;
+
+                var identifier = variableDeclarator.Identifier;
+                if (identifier.IsMissing)
+                    continue;
+
+                string name = identifier.ValueText;
+                if (string.IsNullOrEmpty(name) || !char.IsLower(name[0]))
+                    continue;
+
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation()));
+            }
         }
     }
 }

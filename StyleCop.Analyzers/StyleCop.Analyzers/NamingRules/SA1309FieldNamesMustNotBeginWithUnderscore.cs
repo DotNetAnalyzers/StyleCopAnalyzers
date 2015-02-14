@@ -2,7 +2,10 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A field name in C# begins with an underscore.
@@ -26,17 +29,20 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1309FieldNamesMustNotBeginWithUnderscore : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1309FieldNamesMustNotBeginWithUnderscore"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1309";
-        internal const string Title = "Field names must not begin with underscore";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.NamingRules";
-        internal const string Description = "A field name in C# begins with an underscore.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1309.html";
+        private const string Title = "Field names must not begin with underscore";
+        private const string MessageFormat = "Field '{0}' must not begin with an underscore";
+        private const string Category = "StyleCop.CSharp.NamingRules";
+        private const string Description = "A field name in C# begins with an underscore.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1309.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+        private static readonly DiagnosticDescriptor Descriptor =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -44,14 +50,42 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(this.HandleFieldDeclarationSyntax, SyntaxKind.FieldDeclaration);
+        }
+
+        private void HandleFieldDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        {
+            FieldDeclarationSyntax syntax = (FieldDeclarationSyntax)context.Node;
+            if (NamedTypeHelpers.IsContainedInNativeMethodsClass(syntax))
+                return;
+
+            var variables = syntax.Declaration?.Variables;
+            if (variables == null)
+                return;
+
+            foreach (VariableDeclaratorSyntax variableDeclarator in variables.Value)
+            {
+                if (variableDeclarator == null)
+                    continue;
+
+                var identifier = variableDeclarator.Identifier;
+                if (identifier.IsMissing)
+                    continue;
+
+                if (!identifier.ValueText.StartsWith("_"))
+                    continue;
+
+                // Field '{name}' must not begin with an underscore
+                string name = identifier.ValueText;
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), name));
+            }
         }
     }
 }

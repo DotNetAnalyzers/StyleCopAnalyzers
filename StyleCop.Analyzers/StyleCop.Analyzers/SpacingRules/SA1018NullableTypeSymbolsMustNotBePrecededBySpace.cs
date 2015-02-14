@@ -17,17 +17,21 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1018NullableTypeSymbolsMustNotBePrecededBySpace : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1018NullableTypeSymbolsMustNotBePrecededBySpace"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1018";
-        internal const string Title = "Nullable type symbols must be spaced correctly";
-        internal const string MessageFormat = "Nullable type symbol must not be preceded by a space.";
-        internal const string Category = "StyleCop.CSharp.SpacingRules";
-        internal const string Description = "A nullable type symbol within a C# element is not spaced correctly.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1018.html";
+        private const string Title = "Nullable type symbols must be spaced correctly";
+        private const string MessageFormat = "Nullable type symbol must not be preceded by a space.";
+        private const string Category = "StyleCop.CSharp.SpacingRules";
+        private const string Description = "A nullable type symbol within a C# element is not spaced correctly.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1018.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -35,14 +39,14 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(HandleSyntaxTree);
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -53,7 +57,7 @@
                 switch (token.CSharpKind())
                 {
                 case SyntaxKind.QuestionToken:
-                    HandleQuestionToken(context, token);
+                    this.HandleQuestionToken(context, token);
                     break;
 
                 default:
@@ -70,16 +74,11 @@
             if (token.Parent.CSharpKind() != SyntaxKind.NullableType)
                 return;
 
-            bool hasPrecedingSpace = false;
-            if (!token.HasLeadingTrivia)
-            {
-                // only the first token on the line has leading trivia, and those are ignored
-                SyntaxToken precedingToken = token.GetPreviousToken();
-                if (precedingToken.HasTrailingTrivia)
-                    hasPrecedingSpace = true;
-            }
+            if (token.IsFirstTokenOnLine(context.CancellationToken))
+                return;
 
-            if (hasPrecedingSpace)
+            SyntaxToken precedingToken = token.GetPreviousToken();
+            if (precedingToken.HasTrailingTrivia)
             {
                 // nullable type symbol must not be preceded by a space
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));

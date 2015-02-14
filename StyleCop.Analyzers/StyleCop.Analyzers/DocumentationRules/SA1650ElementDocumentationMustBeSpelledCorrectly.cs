@@ -49,17 +49,21 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1650ElementDocumentationMustBeSpelledCorrectly : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1650ElementDocumentationMustBeSpelledCorrectly"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1650";
-        internal const string Title = "Element documentation must be spelled correctly";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "The element documentation for the element contains one or more spelling mistakes or unrecognized words.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1650.html";
+        private const string Title = "Element documentation must be spelled correctly";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "The element documentation for the element contains one or more spelling mistakes or unrecognized words.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1650.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -67,7 +71,7 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 

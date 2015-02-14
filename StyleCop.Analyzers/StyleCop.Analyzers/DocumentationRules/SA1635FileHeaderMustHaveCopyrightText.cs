@@ -31,17 +31,20 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1635FileHeaderMustHaveCopyrightText : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1635FileHeaderMustHaveCopyrightText"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1635";
-        internal const string Title = "File header must have copyright text";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.DocumentationRules";
-        internal const string Description = "The file header at the top of a C# code file is missing copyright text.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1635.html";
+        private const string Title = "File header must have copyright text";
+        private const string MessageFormat = "TODO: Message format";
+        private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "The file header at the top of a C# code file is missing copyright text.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1635.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -49,7 +52,7 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 

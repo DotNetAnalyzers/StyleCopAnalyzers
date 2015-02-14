@@ -17,17 +17,21 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1017ClosingAttributeBracketsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1017ClosingAttributeBracketsMustBeSpacedCorrectly"/>
+        /// analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1017";
-        internal const string Title = "Closing attribute brackets must be spaced correctly";
-        internal const string MessageFormat = "Closing attribute brackets must not be preceded by a space.";
-        internal const string Category = "StyleCop.CSharp.SpacingRules";
-        internal const string Description = "A closing attribute bracket within a C# element is not spaced correctly.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1017.html";
+        private const string Title = "Closing attribute brackets must be spaced correctly";
+        private const string MessageFormat = "Closing attribute brackets must not be preceded by a space.";
+        private const string Category = "StyleCop.CSharp.SpacingRules";
+        private const string Description = "A closing attribute bracket within a C# element is not spaced correctly.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1017.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -35,14 +39,14 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(HandleSyntaxTree);
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -53,7 +57,7 @@
                 switch (token.CSharpKind())
                 {
                 case SyntaxKind.CloseBracketToken:
-                    HandleCloseBracketToken(context, token);
+                    this.HandleCloseBracketToken(context, token);
                     break;
 
                 default:

@@ -2,6 +2,8 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -24,17 +26,21 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1411AttributeConstructorMustNotUseUnnecessaryParenthesis : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the
+        /// <see cref="SA1411AttributeConstructorMustNotUseUnnecessaryParenthesis"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1411";
-        internal const string Title = "Attribute constructor must not use unnecessary parenthesis";
-        internal const string MessageFormat = "TODO: Message format";
-        internal const string Category = "StyleCop.CSharp.MaintainabilityRules";
-        internal const string Description = "TODO.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1411.html";
+        private const string Title = "Attribute constructor must not use unnecessary parenthesis";
+        private const string MessageFormat = "Attribute constructor must not use unnecessary parenthesis";
+        private const string Category = "StyleCop.CSharp.MaintainabilityRules";
+        private const string Description = "TODO.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1411.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+        private static readonly DiagnosticDescriptor Descriptor =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -42,14 +48,24 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(this.HandleAttributeArgumentListSyntax, SyntaxKind.AttributeArgumentList);
+        }
+
+        private void HandleAttributeArgumentListSyntax(SyntaxNodeAnalysisContext context)
+        {
+            AttributeArgumentListSyntax syntax = context.Node as AttributeArgumentListSyntax;
+            if (syntax.Arguments.Count != 0)
+                return;
+
+            // Attribute constructor must not use unnecessary parenthesis
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.GetLocation()));
         }
     }
 }

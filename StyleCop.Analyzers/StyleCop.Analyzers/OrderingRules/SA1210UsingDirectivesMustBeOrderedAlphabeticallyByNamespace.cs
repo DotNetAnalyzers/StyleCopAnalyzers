@@ -21,17 +21,21 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The ID for diagnostics produced by the
+        /// <see cref="SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace"/> analyzer.
+        /// </summary>
         public const string DiagnosticId = "SA1210";
-        internal const string Title = "Using directives must be ordered alphabetically by namespace";
-        internal const string MessageFormat = "Using directive for '{0}' must appear before directive for '{1}'";
-        internal const string Category = "StyleCop.CSharp.OrderingRules";
-        internal const string Description = "The using directives within a C# code file are not sorted alphabetically by namespace.";
-        internal const string HelpLink = "http://www.stylecop.com/docs/SA1210.html";
+        private const string Title = "Using directives must be ordered alphabetically by namespace";
+        private const string MessageFormat = "Using directive for '{0}' must appear before directive for '{1}'";
+        private const string Category = "StyleCop.CSharp.OrderingRules";
+        private const string Description = "The using directives within a C# code file are not sorted alphabetically by namespace.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1210.html";
 
-        public static readonly DiagnosticDescriptor Descriptor =
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -39,14 +43,14 @@
         {
             get
             {
-                return _supportedDiagnostics;
+                return supportedDiagnostics;
             }
         }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleUsingDirectiveSyntax, SyntaxKind.UsingDirective);
+            context.RegisterSyntaxNodeAction(this.HandleUsingDirectiveSyntax, SyntaxKind.UsingDirective);
         }
 
         private void HandleUsingDirectiveSyntax(SyntaxNodeAnalysisContext context)
@@ -58,6 +62,9 @@
             SemanticModel semanticModel = context.SemanticModel;
             INamespaceSymbol namespaceSymbol;
             string topLevelNamespace = GetTopLevelNamespace(semanticModel, syntax, out namespaceSymbol, context.CancellationToken);
+            if (namespaceSymbol == null)
+                return;
+
             bool systemNamespace = "System".Equals(topLevelNamespace, StringComparison.Ordinal);
             string fullyQualifiedNamespace = namespaceSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
 
@@ -84,7 +91,7 @@
 
                 INamespaceSymbol precedingNamespaceSymbol;
                 string precedingTopLevelNamespace = GetTopLevelNamespace(semanticModel, usingDirective, out precedingNamespaceSymbol, context.CancellationToken);
-                if (precedingTopLevelNamespace == null)
+                if (precedingTopLevelNamespace == null || precedingNamespaceSymbol == null)
                     continue;
 
                 // compare System namespaces to each other, and non-System namespaces to each other

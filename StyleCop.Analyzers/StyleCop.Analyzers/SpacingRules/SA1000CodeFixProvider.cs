@@ -19,13 +19,13 @@
     [Shared]
     public class SA1000CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> _fixableDiagnostics =
+        private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1000KeywordsMustBeSpacedCorrectly.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> GetFixableDiagnosticIds()
         {
-            return _fixableDiagnostics;
+            return FixableDiagnostics;
         }
 
         /// <inheritdoc/>
@@ -53,7 +53,7 @@
                 case SyntaxKind.NewKeyword:
                     {
                         SyntaxToken nextToken = token.GetNextToken();
-                        if (nextToken.IsKind(SyntaxKind.OpenBracketToken))
+                        if (nextToken.IsKind(SyntaxKind.OpenBracketToken) || nextToken.IsKind(SyntaxKind.OpenParenToken))
                             isAddingSpace = false;
                     }
 
@@ -71,11 +71,21 @@
 
                 case SyntaxKind.CheckedKeyword:
                 case SyntaxKind.DefaultKeyword:
+                case SyntaxKind.NameOfKeyword:
                 case SyntaxKind.SizeOfKeyword:
                 case SyntaxKind.TypeOfKeyword:
                 case SyntaxKind.UncheckedKeyword:
                     isAddingSpace = false;
                     break;
+
+                case SyntaxKind.IdentifierToken:
+                    if (token.Text == "nameof")
+                    {
+                        // SA1000 would only have been reported for a nameof expression. No need to verify.
+                        goto case SyntaxKind.NameOfKeyword;
+                    }
+
+                    continue;
 
                 default:
                     break;
@@ -86,7 +96,7 @@
                     if (token.HasTrailingTrivia)
                         continue;
 
-                    SyntaxTrivia whitespace = SyntaxFactory.Whitespace(" ");
+                    SyntaxTrivia whitespace = SyntaxFactory.Whitespace(" ").WithoutFormatting();
                     SyntaxToken corrected = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, whitespace));
                     Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
                     context.RegisterFix(CodeAction.Create("Fix spacing", updatedDocument), diagnostic);
@@ -96,7 +106,7 @@
                     if (!token.HasTrailingTrivia)
                         continue;
 
-                    SyntaxToken corrected = token.WithoutTrailingWhitespace();
+                    SyntaxToken corrected = token.WithoutTrailingWhitespace().WithoutFormatting();
                     Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
                     context.RegisterFix(CodeAction.Create("Fix spacing", updatedDocument), diagnostic);
                 }
