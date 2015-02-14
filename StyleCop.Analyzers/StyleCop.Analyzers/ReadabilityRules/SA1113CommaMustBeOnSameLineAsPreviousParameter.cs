@@ -74,6 +74,26 @@
             context.RegisterSyntaxNodeAction(this.HandleLambdaExpression, SyntaxKind.ParenthesizedLambdaExpression);
             context.RegisterSyntaxNodeAction(this.HandleAttribute, SyntaxKind.Attribute);
             context.RegisterSyntaxNodeAction(this.HandleAttributeList, SyntaxKind.AttributeList);
+            context.RegisterSyntaxNodeAction(this.HandleOperatorDeclaration, SyntaxKind.OperatorDeclaration);
+        }
+
+        private void HandleOperatorDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var operatorDeclaration = (OperatorDeclarationSyntax) context.Node;
+
+            if (operatorDeclaration.ParameterList == null ||
+                operatorDeclaration.ParameterList.IsMissing ||
+                operatorDeclaration.ParameterList.Parameters.Count < 2)
+            {
+                return;
+            }
+
+            var commas = operatorDeclaration.ParameterList
+                .ChildTokens()
+                .Where(t => t.CSharpKind() == SyntaxKind.CommaToken)
+                .ToList();
+
+            CheckIfCommasAreAtTheSameLineAsThePreviousParameter(context, commas, operatorDeclaration.ParameterList);
         }
 
         private void HandleAttributeList(SyntaxNodeAnalysisContext context)
