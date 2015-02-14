@@ -102,7 +102,9 @@
 
                 var elementAccess = (ElementAccessExpressionSyntax)context.Node;
 
-                if (elementAccess.ArgumentList.IsMissing || elementAccess.ArgumentList.Arguments.Count  < 2)
+                if (elementAccess.ArgumentList == null ||
+                    elementAccess.ArgumentList.IsMissing || 
+                    elementAccess.ArgumentList.Arguments.Count  < 2)
                 {
                     return;
                 }
@@ -121,7 +123,9 @@
         {
             var constructorDeclaration = (IndexerDeclarationSyntax)context.Node;
 
-            if (constructorDeclaration.ParameterList.IsMissing || constructorDeclaration.ParameterList.Parameters.Count < 2)
+            if (constructorDeclaration.ParameterList == null ||
+                constructorDeclaration.ParameterList.IsMissing || 
+                constructorDeclaration.ParameterList.Parameters.Count < 2)
             {
                 return;
             }
@@ -139,7 +143,9 @@
         {
             var invocationEpression = (ObjectCreationExpressionSyntax)context.Node;
 
-            if (invocationEpression.ArgumentList.IsMissing || invocationEpression.ArgumentList.Arguments.Count < 2)
+            if (invocationEpression.ArgumentList == null ||
+                invocationEpression.ArgumentList.IsMissing || 
+                invocationEpression.ArgumentList.Arguments.Count < 2)
             {
                 return;
             }
@@ -157,7 +163,9 @@
         {
             var invocationEpression = (InvocationExpressionSyntax)context.Node;
 
-            if (invocationEpression.ArgumentList.IsMissing || invocationEpression.ArgumentList.Arguments.Count < 2)
+            if (invocationEpression.ArgumentList == null ||
+                invocationEpression.ArgumentList.IsMissing || 
+                invocationEpression.ArgumentList.Arguments.Count < 2)
             {
                 return;
             }
@@ -175,7 +183,9 @@
         {
             var constructorDeclaration = (ConstructorDeclarationSyntax)context.Node;
 
-            if (constructorDeclaration.ParameterList.IsMissing || constructorDeclaration.ParameterList.Parameters.Count < 2)
+            if (constructorDeclaration.ParameterList == null ||
+                constructorDeclaration.ParameterList.IsMissing || 
+                constructorDeclaration.ParameterList.Parameters.Count < 2)
             {
                 return;
             }
@@ -193,7 +203,9 @@
         {
             var methodDeclaration = (MethodDeclarationSyntax)context.Node;
 
-            if (methodDeclaration.ParameterList.IsMissing || methodDeclaration.ParameterList.Parameters.Count < 2)
+            if (methodDeclaration.ParameterList == null ||
+                methodDeclaration.ParameterList.IsMissing || 
+                methodDeclaration.ParameterList.Parameters.Count < 2)
             {
                 return;
             }
