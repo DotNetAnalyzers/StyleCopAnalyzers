@@ -19,7 +19,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         [TestMethod]
         public async Task TestEmptySource()
         {
-            var testCode = @"";
+            var testCode = string.Empty;
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
@@ -798,6 +798,83 @@ public class Foo
             {
                 1
             };
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestOperatorDeclarationOpeningParenthesisOnTheNextLineAsOperator()
+        {
+            var testCode = @"
+public class Foo
+{
+    public static Foo operator +
+(Foo a, Foo b)
+    {
+        return null;
+    }
+}";
+
+            var expected = new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                         Message = "The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the method or indexer name.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 5, 1)
+                            }
+                    }
+                };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestUnaryOperatorDeclarationOpeningParenthesisOnTheNextLineAsOperator()
+        {
+            var testCode = @"
+public class Foo
+{
+    public static Foo operator +
+(Foo a)
+    {
+        return null;
+    }
+}";
+
+            var expected = new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                         Message = "The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the method or indexer name.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 5, 1)
+                            }
+                    }
+                };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestOperatorDeclarationOpeningParenthesisOnTheSameLineAsOperator()
+        {
+            var testCode = @"
+public class Foo
+{
+    public static Foo operator +(Foo a, Foo b)
+    {
+        return null;
     }
 }";
 

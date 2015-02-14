@@ -72,6 +72,39 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeAction(HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
             context.RegisterSyntaxNodeAction(HandleAnonymousMethod, SyntaxKind.AnonymousMethodExpression);
             context.RegisterSyntaxNodeAction(HandleArrayCreation, SyntaxKind.ArrayCreationExpression);
+            context.RegisterSyntaxNodeAction(HandleOperatorDeclaration, SyntaxKind.OperatorDeclaration);
+        }
+
+        private void HandleOperatorDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var operatorDeclaration = (OperatorDeclarationSyntax)context.Node;
+
+            var operatorKeywords = operatorDeclaration.ChildTokens()
+                .Where(t => t.CSharpKind() == SyntaxKind.OperatorKeyword)
+                .ToList();
+            if (!operatorKeywords.Any())
+            {
+                return;
+            }
+
+            var operatorKeywordToken = operatorKeywords.First();
+            if (operatorKeywordToken.IsMissing)
+            {
+                return;
+            }
+
+            var operatorValueToken = operatorKeywordToken.GetNextToken();
+            if (operatorValueToken.IsMissing)
+            {
+                return;
+            }
+
+            var parameterListSyntax = operatorDeclaration.ParameterList;
+
+            if (parameterListSyntax != null && !parameterListSyntax.OpenParenToken.IsMissing)
+            {
+                CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(context, parameterListSyntax.OpenParenToken, operatorValueToken);
+            }
         }
 
         private void HandleArrayCreation(SyntaxNodeAnalysisContext context)
