@@ -569,7 +569,59 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     }
     public void Bar()
     {
-        var i = this[string.Empty, 5);
+        var i = this[string.Empty, 5];
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestDelegateDeclarationCommaPlacedAtTheNextLineAsThePreviousParameter()
+        {
+            var testCode = @"public class Foo
+{
+    public void Bar()
+    {
+         Action<string,int> i = 
+            delegate(string s
+            , int j)
+            {
+
+            };
+    }
+}";
+
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Comma must be on same line as previous parameter.",
+                    Severity = DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 7, 13)
+                        }
+                },
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestDelegateDeclarationCommaPlacedAtTheSameLineAsThePreviousParameter()
+        {
+            var testCode = @"public class Foo
+{
+    public void Bar()
+    {
+         Action<string,int> i = 
+            delegate(string s, int j)
+            {
+
+            };
     }
 }";
 
