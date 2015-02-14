@@ -100,22 +100,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var operatorDeclaration = (OperatorDeclarationSyntax)context.Node;
 
-            var operatorKeywords = operatorDeclaration.ChildTokens()
-                .Where(t => t.CSharpKind() == SyntaxKind.OperatorKeyword)
-                .ToList();
-            if (!operatorKeywords.Any())
-            {
-                return;
-            }
-
-            var operatorKeywordToken = operatorKeywords.First();
-            if (operatorKeywordToken.IsMissing)
-            {
-                return;
-            }
-
-            var operatorValueToken = operatorKeywordToken.GetNextToken();
-            if (operatorValueToken.IsMissing)
+            if (operatorDeclaration.OperatorToken.IsMissing)
             {
                 return;
             }
@@ -124,7 +109,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             if (parameterListSyntax != null && !parameterListSyntax.OpenParenToken.IsMissing)
             {
-                CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(context, parameterListSyntax.OpenParenToken, operatorValueToken);
+                CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(context, parameterListSyntax.OpenParenToken, operatorDeclaration.OperatorToken);
             }
         }
 
