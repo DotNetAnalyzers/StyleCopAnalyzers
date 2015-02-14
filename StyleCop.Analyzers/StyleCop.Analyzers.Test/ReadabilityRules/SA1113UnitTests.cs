@@ -628,6 +628,83 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
+        [TestMethod]
+        public async Task TestDelegateDeclarationCommaPlacedAtTheNextLineAsThePreviousParameter()
+        {
+            var testCode = @"public class Foo
+{
+    delegate void Del(string str
+, int i);
+}";
+
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Comma must be on same line as previous parameter.",
+                    Severity = DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 4, 1)
+                        }
+                },
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestDelegateDeclarationWith3ParametersCommaPlacedAtTheNextLineAsThePreviousParameter()
+        {
+            var testCode = @"public class Foo
+{
+    delegate void Del(string str
+, int i
+, long l);
+}";
+
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Comma must be on same line as previous parameter.",
+                    Severity = DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 4, 1)
+                        }
+                },
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Comma must be on same line as previous parameter.",
+                    Severity = DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 5, 1)
+                        }
+                }
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestDelegateDeclarationCommaPlacedAtTheSameLineAsThePreviousParameter()
+        {
+            var testCode = @"public class Foo
+{
+    delegate void Del(string str, int i);
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1113CommaMustBeOnSameLineAsPreviousParameter();

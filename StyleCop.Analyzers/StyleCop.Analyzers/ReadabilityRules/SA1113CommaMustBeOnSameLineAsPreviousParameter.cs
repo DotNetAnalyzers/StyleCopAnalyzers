@@ -70,6 +70,26 @@
             context.RegisterSyntaxNodeAction(HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
             context.RegisterSyntaxNodeAction(HandleElementAccessExpression, SyntaxKind.ElementAccessExpression);
             context.RegisterSyntaxNodeAction(HandleAnonymousMethodDeclaration, SyntaxKind.AnonymousMethodExpression);
+            context.RegisterSyntaxNodeAction(HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
+        }
+
+        private void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var delegateDeclaration = (DelegateDeclarationSyntax) context.Node;
+
+            if (delegateDeclaration.ParameterList == null ||
+                delegateDeclaration.ParameterList.IsMissing ||
+                delegateDeclaration.ParameterList.Parameters.Count < 2)
+            {
+                return;
+            }
+
+            var commas = delegateDeclaration.ParameterList
+                .ChildTokens()
+                .Where(t => t.CSharpKind() == SyntaxKind.CommaToken)
+                .ToList();
+
+            CheckIfCommasAreAtTheSameLineAsThePreviousParameter(context, commas, delegateDeclaration.ParameterList);
         }
 
         private void HandleAnonymousMethodDeclaration(SyntaxNodeAnalysisContext context)
