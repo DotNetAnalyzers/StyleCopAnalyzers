@@ -705,6 +705,76 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
+        [TestMethod]
+        public async Task TestLambdaExpressionWith3ParametersCommaPlacedAtTheNextLineAsThePreviousParameter()
+        {
+            var testCode = @"public class Foo
+{
+        public void Bar()
+        {
+            Action<string, int, long> a = (s
+                , i
+                , l) => { };
+        }
+}";
+
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Comma must be on same line as previous parameter.",
+                    Severity = DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 6, 17)
+                        }
+                },
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Comma must be on same line as previous parameter.",
+                    Severity = DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 7, 17)
+                        }
+                }
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestLambdaExpressionCommaPlacedAtTheSameLineAsThePreviousParameter()
+        {
+            var testCode = @"public class Foo
+{
+            public void Bar()
+        {
+            Action<string, int, long> a = (s, i, l) => { };
+        }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestLambdaExpressionNoParameters()
+        {
+            var testCode = @"public class Foo
+{
+            public void Bar()
+        {
+            Action a = () => { };
+        }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1113CommaMustBeOnSameLineAsPreviousParameter();

@@ -71,6 +71,26 @@
             context.RegisterSyntaxNodeAction(HandleElementAccessExpression, SyntaxKind.ElementAccessExpression);
             context.RegisterSyntaxNodeAction(HandleAnonymousMethodDeclaration, SyntaxKind.AnonymousMethodExpression);
             context.RegisterSyntaxNodeAction(HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeAction(HandleLambdaExpression, SyntaxKind.ParenthesizedLambdaExpression);
+        }
+
+        private void HandleLambdaExpression(SyntaxNodeAnalysisContext context)
+        {
+            var lambdaExpression = (ParenthesizedLambdaExpressionSyntax) context.Node;
+
+            if (lambdaExpression.ParameterList == null ||
+                lambdaExpression.ParameterList.IsMissing ||
+                lambdaExpression.ParameterList.Parameters.Count < 2)
+            {
+                return;
+            }
+
+            var commas = lambdaExpression.ParameterList
+                .ChildTokens()
+                .Where(t => t.CSharpKind() == SyntaxKind.CommaToken)
+                .ToList();
+
+            CheckIfCommasAreAtTheSameLineAsThePreviousParameter(context, commas, lambdaExpression.ParameterList);
         }
 
         private void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
