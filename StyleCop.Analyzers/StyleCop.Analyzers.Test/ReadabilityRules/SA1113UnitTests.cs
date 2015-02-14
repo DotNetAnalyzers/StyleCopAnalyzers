@@ -804,13 +804,69 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         }
 
         [TestMethod]
-        public async Task TestAttributeCommaPlacedAtTheSameLineAsThePreviousParameter()
+        public async Task TestAttributeListCommaPlacedAtTheSameLineAsThePreviousParameter()
         {
             var testCode = @"public class SimpleApiOriginal
 {
     [DllImport(""user32.dll"", CharSet=CharSet.Auto)]
     public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
  }";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestAttributeListCommaPlacedAtTheNextLineAsThePreviousParameter()
+        {
+            var testCode = @"public class Foo
+{
+    [Conditional(""A"")
+, Conditional(""B"")
+, Conditional(""C"")]
+        public void Bar()
+        {
+        }
+    }";
+
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Comma must be on same line as previous parameter.",
+                    Severity = DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 4, 1)
+                        }
+                },
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Comma must be on same line as previous parameter.",
+                    Severity = DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 5, 1)
+                        }
+                }
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestAttributeCommaPlacedAtTheSameLineAsThePreviousParameter()
+        {
+            var testCode = @"public class Foo
+{
+    [Conditional(""A""), Conditional(""B""), Conditional(""C"")]
+        public void Bar()
+        {
+        }
+    }";
 
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }

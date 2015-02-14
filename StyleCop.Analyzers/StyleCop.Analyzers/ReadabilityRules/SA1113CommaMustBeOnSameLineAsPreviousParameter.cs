@@ -73,6 +73,25 @@
             context.RegisterSyntaxNodeAction(HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
             context.RegisterSyntaxNodeAction(HandleLambdaExpression, SyntaxKind.ParenthesizedLambdaExpression);
             context.RegisterSyntaxNodeAction(HandleAttribute, SyntaxKind.Attribute);
+            context.RegisterSyntaxNodeAction(HandleAttributeList, SyntaxKind.AttributeList);
+        }
+
+        private void HandleAttributeList(SyntaxNodeAnalysisContext context)
+        {
+            var attribute = (AttributeListSyntax)context.Node;
+
+            if (attribute == null ||
+                attribute.Attributes.Count < 2)
+            {
+                return;
+            }
+
+            var commas = attribute
+                .ChildTokens()
+                .Where(t => t.CSharpKind() == SyntaxKind.CommaToken)
+                .ToList();
+
+            CheckIfCommasAreAtTheSameLineAsThePreviousParameter(context, commas, attribute);
         }
 
         private void HandleAttribute(SyntaxNodeAnalysisContext context)
@@ -335,6 +354,28 @@
                 }
 
                 var previousParameter = attributeListSyntax.Arguments[index];
+
+                var commaLocation = comma.GetLocation();
+                if (commaLocation.GetLineSpan().StartLinePosition.Line !=
+                    previousParameter.GetLocation().GetLineSpan().StartLinePosition.Line)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, commaLocation));
+                }
+            }
+        }
+
+        private static void CheckIfCommasAreAtTheSameLineAsThePreviousParameter(SyntaxNodeAnalysisContext context, List<SyntaxToken> commas,
+            AttributeListSyntax attributeListSyntax)
+        {
+            for (int index = 0; index < commas.Count; index++)
+            {
+                var comma = commas[index];
+                if (attributeListSyntax.Attributes.Count <= index)
+                {
+                    return;
+                }
+
+                var previousParameter = attributeListSyntax.Attributes[index];
 
                 var commaLocation = comma.GetLocation();
                 if (commaLocation.GetLineSpan().StartLinePosition.Line !=
