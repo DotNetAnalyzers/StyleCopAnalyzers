@@ -326,6 +326,20 @@ class Foo
         }
 
         [TestMethod]
+        public async Task TestCreationOfObjectNoOpeningClosingParenthesis()
+        {
+            var testCode = @"
+public class Foo
+{
+    public void Bar()
+    {
+        System.Collections.Generic.Dictionary<int, int> cache = new System.Collections.Generic.Dictionary<int, int> { { 3, 3 } };
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+        [TestMethod]
         public async Task TestConstructorWithQualifiedNameCallOpeningBracketInTheNextLine()
         {
             var testCode = @"
