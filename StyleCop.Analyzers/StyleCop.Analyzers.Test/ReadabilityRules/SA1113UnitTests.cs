@@ -577,7 +577,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         }
 
         [TestMethod]
-        public async Task TestDelegateDeclarationCommaPlacedAtTheNextLineAsThePreviousParameter()
+        public async Task TestAnonymousMethodCommaPlacedAtTheNextLineAsThePreviousParameter()
         {
             var testCode = @"public class Foo
 {
@@ -611,7 +611,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         }
 
         [TestMethod]
-        public async Task TestDelegateDeclarationCommaPlacedAtTheSameLineAsThePreviousParameter()
+        public async Task TestAnonymousMethodCommaPlacedAtTheSameLineAsThePreviousParameter()
         {
             var testCode = @"public class Foo
 {
