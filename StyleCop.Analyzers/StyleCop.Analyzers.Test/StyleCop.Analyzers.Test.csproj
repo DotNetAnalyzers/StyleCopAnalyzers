@@ -120,6 +120,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExportCodeFixProviderAttributeNameTest.cs" />
     <Compile Include="DocumentationRules\SA1600UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1601UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1602UnitTests.cs" />
