@@ -355,7 +355,7 @@
 
                 var commaLocation = comma.GetLocation();
                 if (commaLocation.GetLineSpan().StartLinePosition.Line !=
-                    previousParameter.GetLocation().GetLineSpan().StartLinePosition.Line)
+                    previousParameter.GetLocation().GetLineSpan().EndLinePosition.Line)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, commaLocation));
                 }
@@ -377,7 +377,7 @@
 
                 var commaLocation = comma.GetLocation();
                 if (commaLocation.GetLineSpan().StartLinePosition.Line !=
-                    previousParameter.GetLocation().GetLineSpan().StartLinePosition.Line)
+                    previousParameter.GetLocation().GetLineSpan().EndLinePosition.Line)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, commaLocation));
                 }
@@ -399,7 +399,7 @@
 
                 var commaLocation = comma.GetLocation();
                 if (commaLocation.GetLineSpan().StartLinePosition.Line !=
-                    previousParameter.GetLocation().GetLineSpan().StartLinePosition.Line)
+                    previousParameter.GetLocation().GetLineSpan().EndLinePosition.Line)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, commaLocation));
                 }
@@ -421,7 +421,7 @@
 
                 var commaLocation = comma.GetLocation();
                 if (commaLocation.GetLineSpan().StartLinePosition.Line !=
-                    previousParameter.GetLocation().GetLineSpan().StartLinePosition.Line)
+                    previousParameter.GetLocation().GetLineSpan().EndLinePosition.Line)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, commaLocation));
                 }
@@ -442,7 +442,7 @@
 
                 var commaLocation = comma.GetLocation();
                 if (commaLocation.GetLineSpan().StartLinePosition.Line !=
-                    previousParameter.GetLocation().GetLineSpan().StartLinePosition.Line)
+                    previousParameter.GetLocation().GetLineSpan().EndLinePosition.Line)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, commaLocation));
                 }
