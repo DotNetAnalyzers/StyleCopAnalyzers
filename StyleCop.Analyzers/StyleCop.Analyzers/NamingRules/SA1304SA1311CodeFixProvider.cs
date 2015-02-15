@@ -22,6 +22,8 @@
     [Shared]
     public class SA1304SA1311CodeFixProvider : CodeFixProvider
     {
+        private const string Suffix = "Value";
+
         private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter.DiagnosticId,
                                   SA1304NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter.DiagnosticId);
@@ -48,7 +50,7 @@
 
                 if (typeSyntax != null)
                 {
-                    SemanticModel semanticModel = await document.GetSemanticModelAsync();
+                    SemanticModel semanticModel = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
 
                     var typeDeclarationSymbol = semanticModel.GetDeclaredSymbol(typeSyntax) as INamedTypeSymbol;
                     if (typeDeclarationSymbol == null)
@@ -56,9 +58,9 @@
                         return;
                     }
 
-                    while (!this.IsValidNewMemberName(typeDeclarationSymbol, newName) || newName == typeSyntax.GetTypeName())
+                    while (!this.IsValidNewMemberName(typeDeclarationSymbol, newName) || newName == typeDeclarationSymbol.Name)
                     {
-                        newName = newName + "Value";
+                        newName = newName + Suffix;
                     }
 
                     context.RegisterCodeFix(CodeAction.Create($"Rename field to '{newName}'", cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken)), diagnostic);
@@ -68,44 +70,33 @@
 
         private bool IsValidNewMemberName(INamedTypeSymbol typeSymbol, string name)
         {
-            foreach (var member in typeSymbol.GetMembers())
+            if (typeSymbol == null)
             {
-                if (member.Kind == SymbolKind.Method)
-                {
-                    // Field names can't colide with method names
-                    continue;
-                }
-                else
-                {
-                    if (member.Name == name)
-                    {
-                        return false;
-                    }
-                }
+                throw new ArgumentNullException(nameof(typeSymbol));
             }
-            if (typeSymbol.SpecialType == SpecialType.System_Object)
+            else if (typeSymbol.GetMembers(name).Length > 0)
             {
-                return true;
+                return false;
             }
-            else
-            {
-                return this.IsValidNewMemberName(typeSymbol.BaseType, name);
-            }
+
+            return true;
         }
 
         private TypeDeclarationSyntax GetParentTypeDeclaration(SyntaxToken token)
         {
             SyntaxNode parent = token.Parent;
-            while (!(parent is TypeDeclarationSyntax))
+
+            while (parent != null)
             {
-                parent = parent.Parent;
-                if (parent == null)
+                var declarationParent = parent as TypeDeclarationSyntax;
+                if (declarationParent != null)
                 {
-                    return null;
+                    return declarationParent;
                 }
+                parent = parent.Parent;
             }
 
-            return (TypeDeclarationSyntax)parent;
+            return null;
         }
     }
 }

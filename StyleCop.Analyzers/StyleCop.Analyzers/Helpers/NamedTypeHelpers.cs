@@ -69,23 +69,5 @@
 
             return false;
         }
-
-        internal static string GetTypeName(this TypeDeclarationSyntax typeDeclaration)
-        {
-            if (typeDeclaration is ClassDeclarationSyntax)
-            {
-                return ((ClassDeclarationSyntax)typeDeclaration).Identifier.ToString();
-            }
-            if (typeDeclaration is StructDeclarationSyntax)
-            {
-                return ((StructDeclarationSyntax)typeDeclaration).Identifier.ToString();
-            }
-            if (typeDeclaration is InterfaceDeclarationSyntax)
-            {
-                return ((InterfaceDeclarationSyntax)typeDeclaration).Identifier.ToString();
-            }
-
-            return null;
-        }
     }
 }
