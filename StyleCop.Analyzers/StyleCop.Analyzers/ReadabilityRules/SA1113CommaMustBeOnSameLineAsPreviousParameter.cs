@@ -41,8 +41,8 @@
         /// </summary>
         public const string DiagnosticId = "SA1113";
 
-        private const string Title = "Comma must be on same line as previous parameter";
-        private const string MessageFormat = "Comma must be on same line as previous parameter.";
+        private const string Title = "Comma must be on the same line as previous parameter";
+        private const string MessageFormat = "Comma must be on the same line as previous parameter.";
         private const string Category = "StyleCop.CSharp.ReadabilityRules";
         private const string Description = "A comma between two parameters in a call to a C# method or indexer, or in the declaration of a method or indexer, is not placed on the same line as the previous parameter.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1113.html";

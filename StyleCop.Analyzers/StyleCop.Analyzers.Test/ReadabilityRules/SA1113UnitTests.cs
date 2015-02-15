@@ -37,7 +37,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Comma must be on same line as previous parameter.",
+                    Message = "Comma must be on the same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -67,7 +67,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Comma must be on same line as previous parameter.",
+                    Message = "Comma must be on the same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -78,7 +78,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Comma must be on same line as previous parameter.",
+                    Message = "Comma must be on the same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -122,7 +122,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Comma must be on same line as previous parameter.",
+                    Message = "Comma must be on the same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -153,7 +153,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Comma must be on same line as previous parameter.",
+                    Message = "Comma must be on the same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -164,7 +164,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Comma must be on same line as previous parameter.",
+                    Message = "Comma must be on the same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -212,7 +212,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Comma must be on same line as previous parameter.",
+                    Message = "Comma must be on the same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -246,7 +246,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Comma must be on same line as previous parameter.",
+                    Message = "Comma must be on the same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -257,7 +257,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Comma must be on same line as previous parameter.",
+                    Message = "Comma must be on the same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -304,7 +304,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Comma must be on same line as previous parameter.",
+                    Message = "Comma must be on the same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -334,7 +334,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Comma must be on same line as previous parameter.",
+                    Message = "Comma must be on the same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -345,7 +345,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Comma must be on same line as previous parameter.",
+                    Message = "Comma must be on the same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -392,7 +392,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Comma must be on same line as previous parameter.",
+                    Message = "Comma must be on the same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -426,7 +426,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Comma must be on same line as previous parameter.",
+                    Message = "Comma must be on the same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -437,7 +437,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Comma must be on same line as previous parameter.",
+                    Message = "Comma must be on the same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -492,7 +492,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Comma must be on same line as previous parameter.",
+                    Message = "Comma must be on the same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -530,7 +530,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Comma must be on same line as previous parameter.",
+                    Message = "Comma must be on the same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -541,7 +541,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Comma must be on same line as previous parameter.",
+                    Message = "Comma must be on the same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -597,7 +597,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Comma must be on same line as previous parameter.",
+                    Message = "Comma must be on the same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -642,7 +642,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Comma must be on same line as previous parameter.",
+                    Message = "Comma must be on the same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -670,7 +670,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Comma must be on same line as previous parameter.",
+                    Message = "Comma must be on the same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -681,7 +681,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Comma must be on same line as previous parameter.",
+                    Message = "Comma must be on the same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -723,7 +723,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Comma must be on same line as previous parameter.",
+                    Message = "Comma must be on the same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -734,7 +734,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Comma must be on same line as previous parameter.",
+                    Message = "Comma must be on the same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -790,7 +790,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Comma must be on same line as previous parameter.",
+                    Message = "Comma must be on the same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -833,7 +833,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Comma must be on same line as previous parameter.",
+                    Message = "Comma must be on the same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -844,7 +844,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 new DiagnosticResult
                 {
                     Id = DiagnosticId,
-                    Message = "Comma must be on same line as previous parameter.",
+                    Message = "Comma must be on the same line as previous parameter.",
                     Severity = DiagnosticSeverity.Warning,
                     Locations =
                         new[]
@@ -889,7 +889,7 @@ public class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                         Message = "Comma must be on same line as previous parameter.",
+                         Message = "Comma must be on the same line as previous parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -951,7 +951,7 @@ public class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                         Message = "Comma must be on same line as previous parameter.",
+                         Message = "Comma must be on the same line as previous parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -1033,7 +1033,7 @@ public class Foo
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                         Message = "Comma must be on same line as previous parameter.",
+                         Message = "Comma must be on the same line as previous parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
@@ -1102,7 +1102,7 @@ public class Foo4
                     new DiagnosticResult
                     {
                         Id = DiagnosticId,
-                         Message = "Comma must be on same line as previous parameter.",
+                         Message = "Comma must be on the same line as previous parameter.",
                         Severity = DiagnosticSeverity.Warning,
                         Locations =
                             new[]
