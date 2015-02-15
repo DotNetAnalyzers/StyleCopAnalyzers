@@ -7,6 +7,8 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using System;
+
 
     /// <summary>
     /// A comma between two parameters in a call to a C# method or indexer, or in the declaration of a method or
@@ -75,6 +77,35 @@
             context.RegisterSyntaxNodeAction(this.HandleAttribute, SyntaxKind.Attribute);
             context.RegisterSyntaxNodeAction(this.HandleAttributeList, SyntaxKind.AttributeList);
             context.RegisterSyntaxNodeAction(this.HandleOperatorDeclaration, SyntaxKind.OperatorDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleArrayDeclaration, SyntaxKind.ArrayCreationExpression);
+        }
+
+        private void HandleArrayDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var arrayCreation = (ArrayCreationExpressionSyntax)context.Node;
+
+            if (arrayCreation.Type == null)
+            {
+                return;
+            }
+
+            foreach (var arrayRankSpecifierSyntax in arrayCreation.Type.RankSpecifiers)
+            {
+                if (arrayRankSpecifierSyntax.Sizes.Count < 2)
+                {
+                    continue;
+                }
+
+                var commas = arrayRankSpecifierSyntax
+                    .ChildTokens()
+                    .Where(t => t.CSharpKind() == SyntaxKind.CommaToken)
+                    .ToList();
+
+                if (!arrayRankSpecifierSyntax.CloseBracketToken.IsMissing)
+                {
+                    CheckIfCommasAreAtTheSameLineAsThePreviousParameter(context, commas, arrayRankSpecifierSyntax);
+                }
+            }
         }
 
         private void HandleOperatorDeclaration(SyntaxNodeAnalysisContext context)
@@ -396,6 +427,27 @@
                 }
 
                 var previousParameter = attributeListSyntax.Attributes[index];
+
+                var commaLocation = comma.GetLocation();
+                if (commaLocation.GetLineSpan().StartLinePosition.Line !=
+                    previousParameter.GetLocation().GetLineSpan().StartLinePosition.Line)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, commaLocation));
+                }
+            }
+        }
+
+        private static void CheckIfCommasAreAtTheSameLineAsThePreviousParameter(SyntaxNodeAnalysisContext context, List<SyntaxToken> commas, ArrayRankSpecifierSyntax arrayRankSpecifierSyntax)
+        {
+            for (int index = 0; index < commas.Count; index++)
+            {
+                var comma = commas[index];
+                if (arrayRankSpecifierSyntax.Sizes.Count <= index)
+                {
+                    return;
+                }
+
+                var previousParameter = arrayRankSpecifierSyntax.Sizes[index];
 
                 var commaLocation = comma.GetLocation();
                 if (commaLocation.GetLineSpan().StartLinePosition.Line !=

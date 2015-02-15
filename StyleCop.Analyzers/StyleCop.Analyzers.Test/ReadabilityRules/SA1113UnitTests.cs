@@ -933,6 +933,87 @@ public class Foo
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
+        [TestMethod]
+        public async Task TestArrayDeclarationCommaPlacedAtTheNextLineAsThePreviousParameter()
+        {
+            var testCode = @"
+public class Foo
+{
+    public void Bar()
+    {
+        var a = new int[1
+, 2];
+    }
+}";
+
+            var expected = new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                         Message = "Comma must be on same line as previous parameter.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 7, 1)
+                            }
+                    }
+                };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestArrayDeclarationCommaPlacedAtTheSameLineAsThePreviousParameter()
+        {
+            var testCode = @"
+public class Foo
+{
+    public void Bar()
+    {
+        var a = new int[1, 2];
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestOneDimensionalArrayDeclarationCommaPlacedAtTheSameLineAsThePreviousParameter()
+        {
+            var testCode = @"
+public class Foo
+{
+    public void Bar()
+    {
+        var a = new int[1];
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestArrayOfArraysDeclarationCommaPlacedAtTheSameLineAsThePreviousParameter()
+        {
+            var testCode = @"
+public class Foo
+{
+    public void Bar()
+    {
+        int[][,] jaggedArray4 = new int[3][,] 
+{
+    new int[,] { {1,3}, {5,7} },
+    new int[,] { {0,2}, {4,6}, {8,10} },
+    new int[,] { {11,22}, {99,88}, {0,9} } 
+};
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1113CommaMustBeOnSameLineAsPreviousParameter();
