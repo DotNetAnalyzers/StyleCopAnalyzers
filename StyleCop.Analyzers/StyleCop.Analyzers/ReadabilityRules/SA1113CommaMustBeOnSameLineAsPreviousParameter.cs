@@ -223,30 +223,21 @@
 
         private void HandleElementAccessExpression(SyntaxNodeAnalysisContext context)
         {
-            var symbol = context.SemanticModel.GetSymbolInfo(((ElementAccessExpressionSyntax)context.Node).Expression).Symbol;
-            var parameterSymbol = symbol as IParameterSymbol;
+            var elementAccess = (ElementAccessExpressionSyntax)context.Node;
 
-
-            if (parameterSymbol != null && parameterSymbol.IsThis)
+            if (elementAccess.ArgumentList == null ||
+                elementAccess.ArgumentList.IsMissing ||
+                !elementAccess.ArgumentList.Arguments.Any())
             {
-
-                var elementAccess = (ElementAccessExpressionSyntax)context.Node;
-
-                if (elementAccess.ArgumentList == null ||
-                    elementAccess.ArgumentList.IsMissing || 
-                    elementAccess.ArgumentList.Arguments.Count  < 2)
-                {
-                    return;
-                }
-
-                var commas = elementAccess.ArgumentList
-               .ChildTokens()
-               .Where(t => t.CSharpKind() == SyntaxKind.CommaToken)
-               .ToList();
-
-                var argumentListSyntax = elementAccess.ArgumentList;
-                CheckIfCommasAreAtTheSameLineAsThePreviousParameter(context, commas, argumentListSyntax);
+                return;
             }
+
+            var commas = elementAccess.ArgumentList
+    .ChildTokens()
+    .Where(t => t.CSharpKind() == SyntaxKind.CommaToken)
+    .ToList();
+
+            CheckIfCommasAreAtTheSameLineAsThePreviousParameter(context, commas, elementAccess.ArgumentList);
         }
 
         private void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)

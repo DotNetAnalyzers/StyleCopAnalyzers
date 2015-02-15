@@ -1014,6 +1014,148 @@ public class Foo
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
+        [TestMethod]
+        public async Task TestArrayCallCommaPlacedAtTheNextLineAsThePreviousParameter()
+        {
+            var testCode = @"
+public class Foo
+{
+    public void Bar()
+    {
+        var a = new int[1,2];
+        int i = a[0
+, 0];
+    }
+}";
+
+            var expected = new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                         Message = "Comma must be on same line as previous parameter.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 8, 1)
+                            }
+                    }
+                };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestArrayCallCommaPlacedAtTheSameLineAsThePreviousParameter()
+        {
+            var testCode = @"
+public class Foo
+{
+    public void Bar()
+    {
+        var a = new int[1,2];
+        int i = a[0, 0];
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestOneDimensionalArrayCallCommaPlacedAtTheSameLineAsThePreviousParameter()
+        {
+            var testCode = @"
+public class Foo
+{
+    public void Bar()
+    {
+        var a = new int[1];
+        int i = a[0];
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestIndexerCallCommaPlacedAtTheNextLineAsThePreviousParameter()
+        {
+            var testCode = @"
+public class Foo3
+{
+    public int this[int index1, int index2] => 0;
+}
+
+public class Foo4
+{
+    public void Bar()
+    {
+        var f = new Foo3();
+        var i = f[0
+, 0];
+    }
+}";
+
+            var expected = new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                         Message = "Comma must be on same line as previous parameter.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 13, 1)
+                            }
+                    }
+                };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestIndexerCallCommaPlacedAtTheSameLineAsThePreviousParameter()
+        {
+            var testCode = @"
+public class Foo3
+{
+    public int this[int index1, int index2] => 0;
+}
+
+public class Foo4
+{
+    public void Bar()
+    {
+        var f = new Foo3();
+        var i = f[0, 0];
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestIndexerWithOneArgumentCallCommaPlacedAtTheSameLineAsThePreviousParameter()
+        {
+            var testCode = @"
+public class Foo3
+{
+    public int this[int index1] => 0;
+}
+
+public class Foo4
+{
+    public void Bar()
+    {
+        var f = new Foo3();
+        var i = f[0];
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1113CommaMustBeOnSameLineAsPreviousParameter();
