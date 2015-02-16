@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.ReadabilityRules
 {
+    using System;
     using System.Collections.Immutable;
     using System.Linq;
     using Microsoft.CodeAnalysis;
@@ -47,36 +48,53 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
+            context.RegisterSyntaxNodeAction(this.HandleRegionDirectiveTrivia, SyntaxKind.RegionDirectiveTrivia);
         }
 
-        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private void HandleRegionDirectiveTrivia(SyntaxNodeAnalysisContext context)
         {
-            SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
-            foreach (var trivia in root.DescendantTrivia(descendIntoTrivia: true))
-            {
-                switch (trivia.Kind())
-                {
-                case SyntaxKind.RegionDirectiveTrivia:
-                    this.HandleRegionDirectiveTrivia(context, trivia);
-                    break;
+            RegionDirectiveTriviaSyntax regionSyntax = context.Node as RegionDirectiveTriviaSyntax;
 
-                default:
-                    break;
+            if (regionSyntax != null && IsCompletelyContainedInBody(regionSyntax))
+            {
+                // Region must not be located within a code element.
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, regionSyntax.GetLocation()));
+            }
+        }
+
+        /// <summary>
+        /// Checks if a region is completely part of a body. 
+        /// That means that the #region and #endregion tags both have to have a common <see cref="BlockSyntax"/> as one of their ancestors.
+        /// </summary>
+        /// <param name="regionSyntax">The <see cref="RegionDirectiveTriviaSyntax"/> that should be analyzed.</param>
+        /// <returns>true, if both tags have a common <see cref="BlockSyntax"/> as one of their ancestors, false otherwise.</returns>
+        internal static bool IsCompletelyContainedInBody(RegionDirectiveTriviaSyntax regionSyntax)
+        {
+            if (regionSyntax == null)
+            {
+                throw new ArgumentNullException(nameof(regionSyntax));
+            }
+
+            BlockSyntax syntax = null;
+
+            foreach (var directive in regionSyntax.GetRelatedDirectives())
+            {
+                BlockSyntax blockSyntax = directive.AncestorsAndSelf().OfType<BlockSyntax>().LastOrDefault();
+
+                if (blockSyntax == null)
+                {
+                    return false;
+                }
+                else if (syntax == null)
+                {
+                    syntax = blockSyntax;
+                }
+                else if (blockSyntax != syntax)
+                {
+                    return false;
                 }
             }
-        }
-
-        private void HandleRegionDirectiveTrivia(SyntaxTreeAnalysisContext context, SyntaxTrivia trivia)
-        {
-            BlockSyntax blockSyntax = trivia.Token.Parent.AncestorsAndSelf().OfType<BlockSyntax>().FirstOrDefault();
-            if (blockSyntax == null)
-            {
-                return;
-            }
-
-            // Region must not be located within a code element.
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, trivia.GetLocation()));
+            return true;
         }
     }
 }
