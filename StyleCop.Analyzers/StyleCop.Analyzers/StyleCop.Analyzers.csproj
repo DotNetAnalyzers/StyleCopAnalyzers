@@ -207,6 +207,7 @@
     <Compile Include="ReadabilityRules\SA1120CommentsMustContainText.cs" />
     <Compile Include="ReadabilityRules\SA1121CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1121UseBuiltInTypeAlias.cs" />
+    <Compile Include="ReadabilityRules\RemoveRegionCodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1122CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1122UseStringEmptyForEmptyStrings.cs" />
     <Compile Include="ReadabilityRules\SA1123DoNotPlaceRegionsWithinElements.cs" />
