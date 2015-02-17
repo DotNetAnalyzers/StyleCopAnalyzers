@@ -1,4 +1,10 @@
-﻿namespace StyleCop.Analyzers.ReadabilityRules
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
@@ -34,7 +40,7 @@
         /// </summary>
         public const string DiagnosticId = "SA1102";
         private const string Title = "Query clause must follow previous clause";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "Query clause must follow previous clause.";
         private const string Category = "StyleCop.CSharp.ReadabilityRules";
         private const string Description = "A C# query clause does not begin on the same line as the previous clause, or on the next line.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1102.html";
@@ -44,6 +50,16 @@
 
         private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
             ImmutableArray.Create(Descriptor);
+
+        private readonly SyntaxKind[] supportedKinds = new[]
+        {
+            SyntaxKind.WhereKeyword,
+            SyntaxKind.GroupKeyword,
+            SyntaxKind.LetKeyword,
+            SyntaxKind.JoinKeyword,
+            SyntaxKind.SelectKeyword,
+            SyntaxKind.OrderByKeyword
+        };
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
@@ -57,7 +73,82 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(this.HandleQuery, SyntaxKind.QueryExpression);
+        }
+
+        private void HandleQuery(SyntaxNodeAnalysisContext context)
+        {
+            var query = (QueryExpressionSyntax)context.Node;
+
+            var clauses = query.DescendantTokens()
+                .Where(t => this.supportedKinds.Any(sk => sk == t.CSharpKind()))
+                .Where(t => !t.IsMissing)
+                .ToList();
+
+            var allElementsAreAtTheSameLine = this.CheckIfAllElementsAreAtTheSameLine(query);
+            if (allElementsAreAtTheSameLine.HasValue && !allElementsAreAtTheSameLine.Value)
+            {
+                foreach (var clause in clauses)
+                {
+                    var isPreviousLineEmpty = this.IsPreviousLineEmpty(clause);
+                    var isFirstToken = this.IsFirstToken(clause);
+                    if ((isPreviousLineEmpty.HasValue && isPreviousLineEmpty.Value) || 
+                        (isFirstToken.HasValue && !isFirstToken.Value))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, clause.GetLocation()));
+                    }
+                }
+            }
+        }
+
+        private bool? IsFirstToken(SyntaxToken clause)
+        {
+            var fileLinePositionSpan = clause.GetLocation().GetLineSpan();
+            if (!fileLinePositionSpan.IsValid)
+            {
+                return null;
+            }
+
+            var startLine = fileLinePositionSpan.StartLinePosition.Line;
+            var previousToken = clause.GetPreviousToken();
+            if (previousToken.IsMissing)
+            {
+                return true;
+            }
+
+            var endLineOfPreviousToken = previousToken.GetLocation().GetLineSpan().EndLinePosition.Line;
+            return startLine > endLineOfPreviousToken;
+        }
+
+        private bool? IsPreviousLineEmpty(SyntaxToken clause)
+        {
+            var fileLinePositionSpan = clause.GetLocation().GetLineSpan();
+            if (!fileLinePositionSpan.IsValid)
+            {
+                return null;
+            }
+
+            var startLine = fileLinePositionSpan.StartLinePosition.Line;
+            var previousToken = clause.GetPreviousToken();
+            if (previousToken.IsMissing)
+            {
+                return false;
+            }
+
+            var endLineOfPreviousToken = previousToken.GetLocation().GetLineSpan().EndLinePosition.Line;
+            return (startLine - endLineOfPreviousToken) > 1;
+        }
+
+        private bool? CheckIfAllElementsAreAtTheSameLine(QueryExpressionSyntax query)
+        {
+            var fileLinePositionSpan = query.GetLocation().GetLineSpan();
+
+            if (fileLinePositionSpan.IsValid)
+            {
+                return fileLinePositionSpan.StartLinePosition.Line == fileLinePositionSpan.EndLinePosition.Line;
+            }
+
+            return null;
         }
     }
 }
