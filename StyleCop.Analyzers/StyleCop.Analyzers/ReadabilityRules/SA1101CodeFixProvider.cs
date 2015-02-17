@@ -25,10 +25,7 @@
             ImmutableArray.Create(SA1101PrefixLocalCallsWithThis.DiagnosticId);
 
         /// <inheritdoc/>
-        public override ImmutableArray<string> GetFixableDiagnosticIds()
-        {
-            return FixableDiagnostics;
-        }
+        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -37,7 +34,7 @@
         }
 
         /// <inheritdoc/>
-        public override async Task ComputeFixesAsync(CodeFixContext context)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             foreach (var diagnostic in context.Diagnostics)
             {
@@ -57,8 +54,7 @@
 
                 var newSyntaxRoot = root.ReplaceNode(node, qualifiedExpression);
 
-                context.RegisterFix(
-                    CodeAction.Create("Prefix reference with 'this.'", context.Document.WithSyntaxRoot(newSyntaxRoot)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Prefix reference with 'this.'", token => Task.FromResult(context.Document.WithSyntaxRoot(newSyntaxRoot))), diagnostic);
             }
         }
     }

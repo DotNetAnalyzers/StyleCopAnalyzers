@@ -74,7 +74,7 @@
 
         private void HandleIdentifierName(SyntaxNodeAnalysisContext context)
         {
-            switch (context.Node?.Parent?.CSharpKind() ?? SyntaxKind.None)
+            switch (context.Node?.Parent?.Kind() ?? SyntaxKind.None)
             {
             case SyntaxKind.SimpleMemberAccessExpression:
                 // this is handled separately
@@ -104,7 +104,7 @@
                 if (((NameEqualsSyntax)context.Node.Parent).Name != context.Node)
                     break;
 
-                switch (context.Node?.Parent?.Parent?.CSharpKind() ?? SyntaxKind.None)
+                switch (context.Node?.Parent?.Parent?.Kind() ?? SyntaxKind.None)
                 {
                 case SyntaxKind.AttributeArgument:
                 case SyntaxKind.AnonymousObjectMemberDeclarator:
@@ -178,7 +178,7 @@
         {
             for (; node != null; node = node.Parent)
             {
-                switch (node.CSharpKind())
+                switch (node.Kind())
                 {
                 case SyntaxKind.ClassDeclaration:
                 case SyntaxKind.InterfaceDeclaration:

@@ -23,13 +23,10 @@
             ImmutableArray.Create(SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter.DiagnosticId);
 
         /// <inheritdoc/>
-        public override ImmutableArray<string> GetFixableDiagnosticIds()
-        {
-            return FixableDiagnostics;
-        }
+        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
 
         /// <inheritdoc/>
-        public override async Task ComputeFixesAsync(CodeFixContext context)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             foreach (var diagnostic in context.Diagnostics)
             {
@@ -43,7 +40,7 @@
                     continue;
 
                 var newName = char.ToUpper(token.ValueText[0]) + token.ValueText.Substring(1);
-                context.RegisterFix(CodeAction.Create($"Rename field to '{newName}'", cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create($"Rename field to '{newName}'", cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken)), diagnostic);
             }
         }
     }

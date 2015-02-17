@@ -54,7 +54,7 @@
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
             {
-                switch (token.CSharpKind())
+                switch (token.Kind())
                 {
                 case SyntaxKind.QuestionToken:
                     this.HandleQuestionToken(context, token);
@@ -71,7 +71,7 @@
             if (token.IsMissing)
                 return;
 
-            if (token.Parent.CSharpKind() != SyntaxKind.NullableType)
+            if (token.Parent.Kind() != SyntaxKind.NullableType)
                 return;
 
             if (token.IsFirstTokenOnLine(context.CancellationToken))

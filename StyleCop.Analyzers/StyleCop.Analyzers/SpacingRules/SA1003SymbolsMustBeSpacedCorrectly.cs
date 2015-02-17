@@ -75,11 +75,11 @@
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
             {
-                if (SyntaxFacts.IsBinaryExpressionOperatorToken(token.CSharpKind()) && token.Parent is BinaryExpressionSyntax)
+                if (SyntaxFacts.IsBinaryExpressionOperatorToken(token.Kind()) && token.Parent is BinaryExpressionSyntax)
                 {
                     this.HandleBinaryExpressionOperatorToken(context, token);
                 }
-                else if (SyntaxFacts.IsPrefixUnaryExpressionOperatorToken(token.CSharpKind()) && token.Parent is PrefixUnaryExpressionSyntax)
+                else if (SyntaxFacts.IsPrefixUnaryExpressionOperatorToken(token.Kind()) && token.Parent is PrefixUnaryExpressionSyntax)
                 {
                     this.HandlePrefixUnaryExpressionOperatorToken(context, token);
                 }
@@ -121,7 +121,7 @@
             else
             {
                 SyntaxToken precedingToken = token.GetPreviousToken();
-                switch (precedingToken.CSharpKind())
+                switch (precedingToken.Kind())
                 {
                 case SyntaxKind.OpenParenToken:
                 case SyntaxKind.CloseParenToken:

@@ -169,7 +169,7 @@
 
             foreach (SyntaxToken token in modifiers)
             {
-                switch (token.CSharpKind())
+                switch (token.Kind())
                 {
                 case SyntaxKind.PublicKeyword:
                 case SyntaxKind.ProtectedKeyword:

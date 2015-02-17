@@ -25,10 +25,7 @@
             ImmutableArray.Create(SA1122UseStringEmptyForEmptyStrings.DiagnosticId);
 
         /// <inheritdoc/>
-        public override ImmutableArray<string> GetFixableDiagnosticIds()
-        {
-            return FixableDiagnostics;
-        }
+        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -37,7 +34,7 @@
         }
 
         /// <inheritdoc/>
-        public override async Task ComputeFixesAsync(CodeFixContext context)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             foreach (var diagnostic in context.Diagnostics)
             {
@@ -54,7 +51,7 @@
 
                     var newSyntaxRoot = syntaxRoot.ReplaceNode(node, newNode);
 
-                    context.RegisterFix(CodeAction.Create($"Replace with {newNode}", context.Document.WithSyntaxRoot(newSyntaxRoot)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create($"Replace with {newNode}", token => Task.FromResult(context.Document.WithSyntaxRoot(newSyntaxRoot))), diagnostic);
                 }
             }
         }

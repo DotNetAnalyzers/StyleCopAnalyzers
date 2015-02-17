@@ -1,6 +1,7 @@
 ﻿namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
@@ -19,11 +20,11 @@
             {
             case FixAllScope.Document:
                 var newRoot = await this.FixAllInDocumentAsync(fixAllContext, fixAllContext.Document);
-                return CodeAction.Create("Add parentheses", fixAllContext.Document.WithSyntaxRoot(newRoot));
+                return CodeAction.Create("Add parentheses", token => Task.FromResult(fixAllContext.Document.WithSyntaxRoot(newRoot)));
 
             case FixAllScope.Project:
                 Solution solution = await this.GetProjectFixesAsync(fixAllContext, fixAllContext.Project);
-                return CodeAction.Create("Add parentheses", solution);
+                return CodeAction.Create("Add parentheses", token => Task.FromResult(solution));
 
             case FixAllScope.Solution:
                 var newSolution = fixAllContext.Solution;
@@ -32,7 +33,7 @@
                 {
                     newSolution = await this.GetProjectFixesAsync(fixAllContext, newSolution.GetProject(projectIds[i]));
                 }
-                return CodeAction.Create("Add parentheses", newSolution);
+                return CodeAction.Create("Add parentheses", token => Task.FromResult(newSolution));
 
             case FixAllScope.Custom:
             default:
@@ -43,7 +44,7 @@
         private async Task<Solution> GetProjectFixesAsync(FixAllContext fixAllContext, Project project)
         {
             Solution solution = project.Solution;
-            var oldDocuments = project.Documents.AsImmutable();
+            var oldDocuments = project.Documents.ToImmutableArray();
             List<Task<SyntaxNode>> newDocuments = new List<Task<SyntaxNode>>(oldDocuments.Length);
             foreach (var document in oldDocuments)
             {
@@ -60,7 +61,7 @@
 
         private async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
         {
-            var diagnostics = await fixAllContext.GetDiagnosticsAsync(document);
+            var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document);
 
             var newDocument = document;
 

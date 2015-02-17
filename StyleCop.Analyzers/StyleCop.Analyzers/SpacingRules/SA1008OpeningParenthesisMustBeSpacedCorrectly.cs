@@ -57,7 +57,7 @@
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
             {
-                switch (token.CSharpKind())
+                switch (token.Kind())
                 {
                 case SyntaxKind.OpenParenToken:
                     this.HandleOpenParenToken(context, token);
@@ -95,7 +95,7 @@
             {
                 SyntaxToken precedingToken = token.GetPreviousToken();
                 precededBySpace = precedingToken.HasTrailingTrivia;
-                switch (precedingToken.CSharpKind())
+                switch (precedingToken.Kind())
                 {
                 case SyntaxKind.AwaitKeyword:
                 case SyntaxKind.CaseKeyword:

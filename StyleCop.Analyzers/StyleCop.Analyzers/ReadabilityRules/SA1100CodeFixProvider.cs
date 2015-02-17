@@ -24,10 +24,7 @@
             ImmutableArray.Create(SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists.DiagnosticId);
 
         /// <inheritdoc/>
-        public override ImmutableArray<string> GetFixableDiagnosticIds()
-        {
-            return FixableDiagnostics;
-        }
+        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -36,7 +33,7 @@
         }
 
         /// <inheritdoc/>
-        public override async Task ComputeFixesAsync(CodeFixContext context)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             foreach (var diagnostic in context.Diagnostics)
             {
@@ -57,8 +54,7 @@
 
                 var newSyntaxRoot = root.ReplaceNode(node, thisExpressionSyntax);
 
-                context.RegisterFix(
-                    CodeAction.Create("Replace 'base.' with 'this.'", context.Document.WithSyntaxRoot(newSyntaxRoot)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Replace 'base.' with 'this.'", token => Task.FromResult(context.Document.WithSyntaxRoot(newSyntaxRoot))), diagnostic);
             }
         }
     }

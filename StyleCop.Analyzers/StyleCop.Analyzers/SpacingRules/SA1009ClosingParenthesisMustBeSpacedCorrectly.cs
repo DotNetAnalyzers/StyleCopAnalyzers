@@ -59,7 +59,7 @@
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
             {
-                switch (token.CSharpKind())
+                switch (token.Kind())
                 {
                 case SyntaxKind.CloseParenToken:
                     this.HandleCloseParenToken(context, token);
@@ -99,7 +99,7 @@
             bool suppressFollowingSpaceError = false;
 
             SyntaxToken nextToken = token.GetNextToken();
-            switch (nextToken.CSharpKind())
+            switch (nextToken.Kind())
             {
             case SyntaxKind.OpenParenToken:
             case SyntaxKind.CloseParenToken:
@@ -155,7 +155,7 @@
                 break;
             }
 
-            switch (token.Parent.CSharpKind())
+            switch (token.Parent.Kind())
             {
             case SyntaxKind.CastExpression:
                 precedesStickyCharacter = true;

@@ -24,10 +24,7 @@
             ImmutableArray.Create(SA1005SingleLineCommentsMustBeginWithSingleSpace.DiagnosticId);
 
         /// <inheritdoc/>
-        public override ImmutableArray<string> GetFixableDiagnosticIds()
-        {
-            return FixableDiagnostics;
-        }
+        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -36,7 +33,7 @@
         }
 
         /// <inheritdoc/>
-        public override async Task ComputeFixesAsync(CodeFixContext context)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             foreach (var diagnostic in context.Diagnostics)
             {
@@ -55,7 +52,7 @@
                 string correctedText = "// " + text.Substring(2);
                 SyntaxTrivia corrected = SyntaxFactory.Comment(correctedText).WithoutFormatting();
                 Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceTrivia(trivia, corrected));
-                context.RegisterFix(CodeAction.Create("Insert space", updatedDocument), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Insert space", t => Task.FromResult(updatedDocument)), diagnostic);
             }
         }
     }

@@ -54,7 +54,7 @@
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
             {
-                switch (token.CSharpKind())
+                switch (token.Kind())
                 {
                 case SyntaxKind.LessThanToken:
                     this.HandleLessThanToken(context, token);
@@ -71,7 +71,7 @@
             if (token.IsMissing)
                 return;
 
-            switch (token.Parent.CSharpKind())
+            switch (token.Parent.Kind())
             {
             case SyntaxKind.TypeArgumentList:
             case SyntaxKind.TypeParameterList:

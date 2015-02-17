@@ -23,10 +23,7 @@
             ImmutableArray.Create(SA1000KeywordsMustBeSpacedCorrectly.DiagnosticId);
 
         /// <inheritdoc/>
-        public override ImmutableArray<string> GetFixableDiagnosticIds()
-        {
-            return FixableDiagnostics;
-        }
+        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -35,7 +32,7 @@
         }
 
         /// <inheritdoc/>
-        public override async Task ComputeFixesAsync(CodeFixContext context)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             foreach (var diagnostic in context.Diagnostics)
             {
@@ -48,7 +45,7 @@
                     continue;
 
                 bool isAddingSpace = true;
-                switch (token.CSharpKind())
+                switch (token.Kind())
                 {
                 case SyntaxKind.NewKeyword:
                     {
@@ -99,7 +96,7 @@
                     SyntaxTrivia whitespace = SyntaxFactory.Whitespace(" ").WithoutFormatting();
                     SyntaxToken corrected = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, whitespace));
                     Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
-                    context.RegisterFix(CodeAction.Create("Fix spacing", updatedDocument), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => Task.FromResult(updatedDocument)), diagnostic);
                 }
                 else
                 {
@@ -108,7 +105,7 @@
 
                     SyntaxToken corrected = token.WithoutTrailingWhitespace().WithoutFormatting();
                     Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
-                    context.RegisterFix(CodeAction.Create("Fix spacing", updatedDocument), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => Task.FromResult(updatedDocument)), diagnostic);
                 }
             }
         }
