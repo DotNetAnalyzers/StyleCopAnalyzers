@@ -71,7 +71,7 @@ namespace TestHelper
             {
                 var compilation = await project.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
                 var compilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create(analyzer), null, cancellationToken);
-                var diags = await compilationWithAnalyzers.GetAllDiagnosticsAsync().ConfigureAwait(false);
+                var diags = await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
                 foreach (var diag in diags)
                 {
                     if (diag.Location == Location.None || diag.Location.IsInMetadata)
