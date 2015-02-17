@@ -105,7 +105,7 @@ namespace TestHelper
         /// <see cref="Diagnostic.Location"/>.</returns>
         private static Diagnostic[] SortDistinctDiagnostics(IEnumerable<Diagnostic> diagnostics)
         {
-            return diagnostics.OrderBy(d => d.Location.SourceSpan.Start).Distinct(default(DiagnosticEqualityComparer)).ToArray();
+            return diagnostics.OrderBy(d => d.Location.SourceSpan.Start).ToArray();
         }
 
         #endregion
@@ -189,42 +189,6 @@ namespace TestHelper
             return solution.GetProject(projectId);
         }
         #endregion
-
-        /// <summary>
-        /// A little helper to be able to use Enumerable.Distinct. Currently Roslyn does have a bug so that Diagnostic.GetHashCode()
-        /// is not implemented correctly. <see href="https://github.com/dotnet/roslyn/issues/57"/>.
-        /// </summary>
-        private struct DiagnosticEqualityComparer : IEqualityComparer<Diagnostic>
-        {
-            public bool Equals(Diagnostic x, Diagnostic y)
-            {
-                return (x == null && y == null)
-                    || x.Equals(y);
-            }
-
-            public int GetHashCode(Diagnostic obj)
-            {
-                return this.Combine(obj.Descriptor,
-                         this.Combine(obj.Location.GetHashCode(),
-                          this.Combine(obj.Severity.GetHashCode(), obj.WarningLevel)));
-            }
-
-            private int Combine<T>(T newKeyPart, int currentKey) where T : class
-            {
-                int hash = unchecked(currentKey * (int)0xA5555529);
-
-                if (newKeyPart != null)
-                {
-                    return unchecked(hash + newKeyPart.GetHashCode());
-                }
-
-                return hash;
-            }
-            private int Combine(int newKey, int currentKey)
-            {
-                return unchecked((currentKey * (int)0xA5555529) + newKey);
-            }
-        }
     }
 }
 
