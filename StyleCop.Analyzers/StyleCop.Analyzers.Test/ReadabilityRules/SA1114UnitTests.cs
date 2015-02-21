@@ -700,6 +700,82 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
+        [TestMethod]
+        public async Task TestAttributeParametersList2LinesAfterOpeningParenthesis()
+        {
+            var testCode = @"
+class Foo
+{
+    [Conditional(
+
+""DEBUG"")]
+    public void Bar()
+    {
+    }
+}";
+
+            var expected = new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = this.DiagnosticId,
+                        Message = "Parameter list must follow declaration.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 6, 1)
+                            }
+                    }
+                };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestAttributeParametersListOnNextLineAsOpeningParenthesis()
+        {
+            var testCode = @"
+class Foo
+{
+    [Conditional(
+""DEBUG"")]
+    public void Bar()
+    {
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestAtributeParametersListOnSameLineAsOpeningParenthesis()
+        {
+            var testCode = @"
+class Foo
+{
+    [Conditional(""DEBUG"")]
+    public void Bar()
+    {
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestAttributeNoParameters()
+        {
+            var testCode = @"
+[Serializable]
+class Foo
+{
+
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1114ParameterListMustFollowDeclaration();
