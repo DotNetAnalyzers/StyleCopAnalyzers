@@ -73,6 +73,40 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeAction(this.HandleArrayCreation, SyntaxKind.ArrayCreationExpression);
             context.RegisterSyntaxNodeAction(this.HandleElementAccess, SyntaxKind.ElementAccessExpression);
             context.RegisterSyntaxNodeAction(this.HandleAttribute, SyntaxKind.Attribute);
+            context.RegisterSyntaxNodeAction(this.HandleAttributesList, SyntaxKind.AttributeList);
+        }
+
+        private void HandleAttributesList(SyntaxNodeAnalysisContext context)
+        {
+            var attributesList = (AttributeListSyntax) context.Node;
+
+            var openBracketToken = attributesList.OpenBracketToken;
+            if (openBracketToken.IsMissing ||
+                attributesList.IsMissing ||
+                !attributesList.Attributes.Any())
+            {
+                return;
+            }
+
+            var firstAttribute = attributesList.Attributes[0];
+
+            var firstAttributeLineSpan = firstAttribute.GetLocation().GetLineSpan();
+            if (!firstAttributeLineSpan.IsValid)
+            {
+                return;
+            }
+
+            var openBracketLineSpan = openBracketToken.GetLocation().GetLineSpan();
+            if (!openBracketLineSpan.IsValid)
+            {
+                return;
+            }
+
+            if (openBracketLineSpan.EndLinePosition.Line != firstAttributeLineSpan.StartLinePosition.Line &&
+                openBracketLineSpan.EndLinePosition.Line != (firstAttributeLineSpan.StartLinePosition.Line - 1))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstAttribute.GetLocation()));
+            }
         }
 
         private void HandleAttribute(SyntaxNodeAnalysisContext context)
