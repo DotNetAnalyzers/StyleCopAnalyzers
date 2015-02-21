@@ -71,6 +71,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeAction(this.HandleObjectCreation, SyntaxKind.ObjectCreationExpression);
             context.RegisterSyntaxNodeAction(this.HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
             context.RegisterSyntaxNodeAction(this.HandleArrayCreation, SyntaxKind.ArrayCreationExpression);
+            context.RegisterSyntaxNodeAction(this.HandleElementAccess, SyntaxKind.ElementAccessExpression);
+        }
+
+        private void HandleElementAccess(SyntaxNodeAnalysisContext context)
+        {
+            var elementAccess = (ElementAccessExpressionSyntax)context.Node;
+            AnalyzeArgumentList(context, elementAccess.ArgumentList);
         }
 
         private void HandleArrayCreation(SyntaxNodeAnalysisContext context)
@@ -147,6 +154,37 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var methodDeclaration = (MethodDeclarationSyntax)context.Node;
 
             AnalyzeParametersList(context, methodDeclaration.ParameterList);
+        }
+
+        private static void AnalyzeArgumentList(SyntaxNodeAnalysisContext context, BracketedArgumentListSyntax argumentListSyntax)
+        {
+            var openBracketToken = argumentListSyntax.OpenBracketToken;
+            if (openBracketToken.IsMissing ||
+                argumentListSyntax.IsMissing ||
+                !argumentListSyntax.Arguments.Any())
+            {
+                return;
+            }
+
+            var firstArgument = argumentListSyntax.Arguments[0];
+
+            var firstArgumentLineSpan = firstArgument.GetLocation().GetLineSpan();
+            if (!firstArgumentLineSpan.IsValid)
+            {
+                return;
+            }
+
+            var openBracketLineSpan = openBracketToken.GetLocation().GetLineSpan();
+            if (!openBracketLineSpan.IsValid)
+            {
+                return;
+            }
+
+            if (openBracketLineSpan.EndLinePosition.Line != firstArgumentLineSpan.StartLinePosition.Line &&
+                openBracketLineSpan.EndLinePosition.Line != (firstArgumentLineSpan.StartLinePosition.Line - 1))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstArgument.GetLocation()));
+            }
         }
 
         private static void AnalyzeArgumentList(SyntaxNodeAnalysisContext context, ArgumentListSyntax argumentListSyntax)

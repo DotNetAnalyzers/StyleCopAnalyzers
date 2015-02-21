@@ -537,6 +537,168 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
+        [TestMethod]
+        public async Task TestIndexerCallParameters2LinesAfterOpeningBracket()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar()
+    {
+        System.Collection.Generics.List<int> list = new System.Collection.Generics.List<int>();
+        var i = list[
+
+1];
+    }
+}";
+
+            var expected = new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = this.DiagnosticId,
+                        Message = "Parameter list must follow declaration.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 9, 1)
+                            }
+                    }
+                };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestIndexerCallParametersOnNextLineAsOpeningBracket()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar()
+    {
+        System.Collection.Generics.List<int> list = new System.Collection.Generics.List<int>();
+        var i = list[
+1];
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestIndexerCallParametersOnSameLineAsOpeningBracket()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar()
+    {
+        System.Collection.Generics.List<int> list = new System.Collection.Generics.List<int>();
+        var i = list[1];
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestArrayCallParameters2LinesAfterOpeningBracket()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar()
+    {
+        int[][,] jaggedArray4 = new int[3][,] 
+        {
+            new int[,] { {1,3}, {5,7} },
+            new int[,] { {0,2}, {4,6}, {8,10} },
+            new int[,] { {11,22}, {99,88}, {0,9} } 
+        };
+        var i = jaggedArray4[
+
+0][
+
+1, 0];
+    }
+}";
+
+            var expected = new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = this.DiagnosticId,
+                        Message = "Parameter list must follow declaration.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 14, 1)
+                            }
+                    },
+                    new DiagnosticResult
+                    {
+                        Id = this.DiagnosticId,
+                        Message = "Parameter list must follow declaration.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 16, 1)
+                            }
+                    }
+                };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestArrayCallParametersOnNextLineAsOpeningBracket()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar()
+    {
+        int[][,] jaggedArray4 = new int[3][,] 
+        {
+            new int[,] { {1,3}, {5,7} },
+            new int[,] { {0,2}, {4,6}, {8,10} },
+            new int[,] { {11,22}, {99,88}, {0,9} } 
+        };
+        var i = jaggedArray4[
+0][
+1, 0];
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestArrayCallParametersOnSameLineAsOpeningBracket()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar()
+    {
+    public void Bar()
+    {
+        int[][,] jaggedArray4 = new int[3][,] 
+        {
+            new int[,] { {1,3}, {5,7} },
+            new int[,] { {0,2}, {4,6}, {8,10} },
+            new int[,] { {11,22}, {99,88}, {0,9} } 
+        };
+        var i = jaggedArray4[0][1, 0];
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
