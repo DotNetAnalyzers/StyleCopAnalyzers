@@ -68,6 +68,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeAction(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
             context.RegisterSyntaxNodeAction(this.HandleMethodInvocation, SyntaxKind.InvocationExpression);
             context.RegisterSyntaxNodeAction(this.HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleObjectCreation, SyntaxKind.ObjectCreationExpression);
+        }
+
+        private void HandleObjectCreation(SyntaxNodeAnalysisContext context)
+        {
+            var objectCreation = (ObjectCreationExpressionSyntax) context.Node;
+            AnalyzeArgumentList(context, objectCreation.ArgumentList);
         }
 
         private void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
@@ -79,7 +86,18 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private void HandleMethodInvocation(SyntaxNodeAnalysisContext context)
         {
             var invocationExpression = (InvocationExpressionSyntax) context.Node;
-            var argumentListSyntax = invocationExpression.ArgumentList;
+            AnalyzeArgumentList(context, invocationExpression.ArgumentList);
+        }
+
+        private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var methodDeclaration = (MethodDeclarationSyntax)context.Node;
+
+            AnalyzeParametersList(context, methodDeclaration.ParameterList);
+        }
+
+        private static void AnalyzeArgumentList(SyntaxNodeAnalysisContext context, ArgumentListSyntax argumentListSyntax)
+        {
             var openParenToken = argumentListSyntax.OpenParenToken;
             if (openParenToken.IsMissing ||
                 argumentListSyntax.IsMissing ||
@@ -107,13 +125,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstArgument.GetLocation()));
             }
-        }
-
-        private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            var methodDeclaration = (MethodDeclarationSyntax) context.Node;
-
-            AnalyzeParametersList(context, methodDeclaration.ParameterList);
         }
 
         private static void AnalyzeParametersList(SyntaxNodeAnalysisContext context, ParameterListSyntax parameterListSyntax)
