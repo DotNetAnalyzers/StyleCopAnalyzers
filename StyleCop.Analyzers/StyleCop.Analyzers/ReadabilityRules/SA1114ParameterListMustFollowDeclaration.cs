@@ -44,7 +44,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private const string Title = "Parameter list must follow declaration";
         private const string MessageFormat = "Parameter list must follow declaration.";
         private const string Category = "StyleCop.CSharp.ReadabilityRules";
-        private const string Description = "The start of the parameter list for a method or indexer call or declaration does not begin on the same line as the opening bracket, or on the line after the opening bracket.";
+        private const string Description = "The start of the parameter list for a method/constructor/indexer/array/operator call or declaration does not begin on the same line as the opening bracket, or on the line after the opening bracket.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1114.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
