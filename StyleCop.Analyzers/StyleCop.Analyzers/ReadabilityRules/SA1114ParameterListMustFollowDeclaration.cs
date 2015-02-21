@@ -75,6 +75,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeAction(this.HandleAttribute, SyntaxKind.Attribute);
             context.RegisterSyntaxNodeAction(this.HandleAttributesList, SyntaxKind.AttributeList);
             context.RegisterSyntaxNodeAction(this.HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleAnonymousMethod, SyntaxKind.AnonymousMethodExpression);
+        }
+
+        private void HandleAnonymousMethod(SyntaxNodeAnalysisContext context)
+        {
+            var anonymousMethod = (AnonymousMethodExpressionSyntax) context.Node;
+            AnalyzeParametersList(context, anonymousMethod.ParameterList);
         }
 
         private void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
