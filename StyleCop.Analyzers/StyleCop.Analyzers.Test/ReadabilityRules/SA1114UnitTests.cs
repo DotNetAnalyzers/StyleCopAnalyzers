@@ -995,6 +995,96 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
+        [TestMethod]
+        public async Task TestLambdaExpressionDeclarationParametersList2LinesAfterOpeningParenthesis()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar()
+    {
+        Action<int,int> c = (
+
+z,j) =>
+        {
+
+        };
+    }
+}";
+
+            var expected = new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = this.DiagnosticId,
+                        Message = "Parameter list must follow declaration.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 8, 1)
+                            }
+                    }
+                };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestLambdaExpressionDeclarationParametersListOnNextLineAsOpeningParenthesis()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar()
+    {
+        Action<int,int> c = (
+z,j) =>
+        {
+
+        };
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestLambdaExpressionDeclarationParametersListOnSameLineAsOpeningParenthesis()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar()
+    {
+        Action<int,int> c = (z,j) =>
+        {
+
+        };
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestLambdaExpressionDeclarationNoParameters()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar()
+    {
+        Action c = () => 
+        {
+
+        };
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1114ParameterListMustFollowDeclaration();
