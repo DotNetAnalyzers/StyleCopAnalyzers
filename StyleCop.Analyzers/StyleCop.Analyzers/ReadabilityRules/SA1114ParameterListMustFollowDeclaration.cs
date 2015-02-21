@@ -66,6 +66,40 @@ namespace StyleCop.Analyzers.ReadabilityRules
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterSyntaxNodeAction(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleMethodInvocation, SyntaxKind.InvocationExpression);
+        }
+
+        private void HandleMethodInvocation(SyntaxNodeAnalysisContext context)
+        {
+            var invocationExpression = (InvocationExpressionSyntax) context.Node;
+            var argumentListSyntax = invocationExpression.ArgumentList;
+            var openParenToken = argumentListSyntax.OpenParenToken;
+            if (openParenToken.IsMissing ||
+                argumentListSyntax.IsMissing ||
+                !argumentListSyntax.Arguments.Any())
+            {
+                return;
+            }
+
+            var firstArgument = argumentListSyntax.Arguments[0];
+
+            var firstArgumentLineSpan = firstArgument.GetLocation().GetLineSpan();
+            if (!firstArgumentLineSpan.IsValid)
+            {
+                return;
+            }
+
+            var openParenLineSpan = openParenToken.GetLocation().GetLineSpan();
+            if (!openParenLineSpan.IsValid)
+            {
+                return;
+            }
+
+            if (openParenLineSpan.EndLinePosition.Line != firstArgumentLineSpan.StartLinePosition.Line &&
+                openParenLineSpan.EndLinePosition.Line != (firstArgumentLineSpan.StartLinePosition.Line - 1))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstArgument.GetLocation()));
+            }
         }
 
         private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
