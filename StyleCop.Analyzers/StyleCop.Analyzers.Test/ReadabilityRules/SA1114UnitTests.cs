@@ -1148,6 +1148,101 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
+        [TestMethod]
+        public async Task TestOperatorOverloadDeclarationParametersList2LinesAfterOpeningParenthesis()
+        {
+            var testCode = @"
+public class Foo
+{
+    public static Foo operator +(
+
+Foo a, Foo b)
+    {
+        return new Foo();
+    }
+}";
+
+            var expected = new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = this.DiagnosticId,
+                        Message = "Parameter list must follow declaration.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 6, 1)
+                            }
+                    }
+                };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestUnaryOperatorOverloadDeclarationParametersList2LinesAfterOpeningParenthesis()
+        {
+            var testCode = @"
+public class Foo
+{
+    public static Foo operator +(
+
+Foo a)
+    {
+        return new Foo();
+    }
+}";
+
+            var expected = new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = this.DiagnosticId,
+                        Message = "Parameter list must follow declaration.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 6, 1)
+                            }
+                    }
+                };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+ 
+        [TestMethod]
+        public async Task TestOperatorOverloadDeclarationParametersListOnNextLineAsOpeningParenthesis()
+        {
+            var testCode = @"
+public class Foo
+{
+    public static Foo operator +(
+Foo a, Foo b)
+    {
+        return new Foo();
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestOperatorOverloadDeclarationParametersListOnSameLineAsOpeningParenthesis()
+        {
+            var testCode = @"
+public class Foo
+{
+    public static Foo operator +(Foo a, Foo b)
+    {
+        return new Foo();
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1114ParameterListMustFollowDeclaration();
