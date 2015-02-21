@@ -1085,6 +1085,69 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
+        [TestMethod]
+        public async Task TestCastOperatorDeclarationParametersList2LinesAfterOpeningParenthesis()
+        {
+            var testCode = @"
+public class Foo
+{
+    public static explicit operator Foo(
+
+int i)
+    {
+        return new Foo();
+    }
+}";
+
+            var expected = new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = this.DiagnosticId,
+                        Message = "Parameter list must follow declaration.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 6, 1)
+                            }
+                    }
+                };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestCastOperatorDeclarationDeclarationParametersListOnNextLineAsOpeningParenthesis()
+        {
+            var testCode = @"
+public class Foo
+{
+    public static explicit operator Foo(
+int i)
+    {
+        return new Foo();
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestCastOperatorDeclarationParametersListOnSameLineAsOpeningParenthesis()
+        {
+            var testCode = @"
+public class Foo
+{
+    public static explicit operator Foo(int i)
+    {
+        return new Foo();
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1114ParameterListMustFollowDeclaration();

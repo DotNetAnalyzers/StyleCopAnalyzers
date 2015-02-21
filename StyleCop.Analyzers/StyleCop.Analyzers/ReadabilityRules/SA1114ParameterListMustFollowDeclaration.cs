@@ -77,6 +77,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeAction(this.HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
             context.RegisterSyntaxNodeAction(this.HandleAnonymousMethod, SyntaxKind.AnonymousMethodExpression);
             context.RegisterSyntaxNodeAction(this.HandleLambdaExpression, SyntaxKind.ParenthesizedLambdaExpression);
+            context.RegisterSyntaxNodeAction(this.HandleConversionOperatorDeclaration, SyntaxKind.ConversionOperatorDeclaration);
+        }
+
+        private void HandleConversionOperatorDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var conversionOperatorDeclaration = (ConversionOperatorDeclarationSyntax) context.Node;
+            AnalyzeParametersList(context, conversionOperatorDeclaration.ParameterList);
         }
 
         private void HandleLambdaExpression(SyntaxNodeAnalysisContext context)
