@@ -115,33 +115,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var attributesList = (AttributeListSyntax) context.Node;
 
-            var openBracketToken = attributesList.OpenBracketToken;
-            if (openBracketToken.IsMissing ||
-                attributesList.IsMissing ||
-                !attributesList.Attributes.Any())
-            {
-                return;
-            }
-
-            var firstAttribute = attributesList.Attributes[0];
-
-            var firstAttributeLineSpan = firstAttribute.GetLocation().GetLineSpan();
-            if (!firstAttributeLineSpan.IsValid)
-            {
-                return;
-            }
-
-            var openBracketLineSpan = openBracketToken.GetLocation().GetLineSpan();
-            if (!openBracketLineSpan.IsValid)
-            {
-                return;
-            }
-
-            if (openBracketLineSpan.EndLinePosition.Line != firstAttributeLineSpan.StartLinePosition.Line &&
-                openBracketLineSpan.EndLinePosition.Line != (firstAttributeLineSpan.StartLinePosition.Line - 1))
-            {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstAttribute.GetLocation()));
-            }
+            AnalyzeAttributeList(context, attributesList);
         }
 
         private void HandleAttribute(SyntaxNodeAnalysisContext context)
@@ -164,6 +138,42 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
+            AnalyzeRankSpecifiers(context, arrayCreation);
+        }
+
+        private void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var indexerDeclaration = (IndexerDeclarationSyntax) context.Node;
+            AnalyzeBracketParametersList(context, indexerDeclaration.ParameterList);
+        }
+
+        private void HandleObjectCreation(SyntaxNodeAnalysisContext context)
+        {
+            var objectCreation = (ObjectCreationExpressionSyntax) context.Node;
+            AnalyzeArgumentList(context, objectCreation.ArgumentList);
+        }
+
+        private void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var constructorDeclaration = (ConstructorDeclarationSyntax) context.Node;
+            AnalyzeParametersList(context,constructorDeclaration.ParameterList);
+        }
+
+        private void HandleMethodInvocation(SyntaxNodeAnalysisContext context)
+        {
+            var invocationExpression = (InvocationExpressionSyntax) context.Node;
+            AnalyzeArgumentList(context, invocationExpression.ArgumentList);
+        }
+
+        private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var methodDeclaration = (MethodDeclarationSyntax)context.Node;
+
+            AnalyzeParametersList(context, methodDeclaration.ParameterList);
+        }
+
+        private static void AnalyzeRankSpecifiers(SyntaxNodeAnalysisContext context, ArrayCreationExpressionSyntax arrayCreation)
+        {
             if (!arrayCreation.Type.RankSpecifiers.Any())
             {
                 return;
@@ -201,35 +211,35 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
-        private void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)
+        private static void AnalyzeAttributeList(SyntaxNodeAnalysisContext context, AttributeListSyntax attributesList)
         {
-            var indexerDeclaration = (IndexerDeclarationSyntax) context.Node;
-            AnalyzeBracketParametersList(context, indexerDeclaration.ParameterList);
-        }
+            var openBracketToken = attributesList.OpenBracketToken;
+            if (openBracketToken.IsMissing ||
+                attributesList.IsMissing ||
+                !attributesList.Attributes.Any())
+            {
+                return;
+            }
 
-        private void HandleObjectCreation(SyntaxNodeAnalysisContext context)
-        {
-            var objectCreation = (ObjectCreationExpressionSyntax) context.Node;
-            AnalyzeArgumentList(context, objectCreation.ArgumentList);
-        }
+            var firstAttribute = attributesList.Attributes[0];
 
-        private void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            var constructorDeclaration = (ConstructorDeclarationSyntax) context.Node;
-            AnalyzeParametersList(context,constructorDeclaration.ParameterList);
-        }
+            var firstAttributeLineSpan = firstAttribute.GetLocation().GetLineSpan();
+            if (!firstAttributeLineSpan.IsValid)
+            {
+                return;
+            }
 
-        private void HandleMethodInvocation(SyntaxNodeAnalysisContext context)
-        {
-            var invocationExpression = (InvocationExpressionSyntax) context.Node;
-            AnalyzeArgumentList(context, invocationExpression.ArgumentList);
-        }
+            var openBracketLineSpan = openBracketToken.GetLocation().GetLineSpan();
+            if (!openBracketLineSpan.IsValid)
+            {
+                return;
+            }
 
-        private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            var methodDeclaration = (MethodDeclarationSyntax)context.Node;
-
-            AnalyzeParametersList(context, methodDeclaration.ParameterList);
+            if (openBracketLineSpan.EndLinePosition.Line != firstAttributeLineSpan.StartLinePosition.Line &&
+                openBracketLineSpan.EndLinePosition.Line != (firstAttributeLineSpan.StartLinePosition.Line - 1))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstAttribute.GetLocation()));
+            }
         }
 
         private static void AnalyzeArgumentList(SyntaxNodeAnalysisContext context, BracketedArgumentListSyntax argumentListSyntax)
