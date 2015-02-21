@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.ReadabilityRules
+﻿using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
@@ -39,7 +42,7 @@
         /// </summary>
         public const string DiagnosticId = "SA1114";
         private const string Title = "Parameter list must follow declaration";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "Parameter list must follow declaration.";
         private const string Category = "StyleCop.CSharp.ReadabilityRules";
         private const string Description = "The start of the parameter list for a method or indexer call or declaration does not begin on the same line as the opening bracket, or on the line after the opening bracket.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1114.html";
@@ -62,7 +65,41 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
+        }
+
+        private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var methodDeclaration = (MethodDeclarationSyntax) context.Node;
+
+            var parameterListSyntax = methodDeclaration.ParameterList;
+            var openParenToken = parameterListSyntax.OpenParenToken;
+            if (openParenToken.IsMissing ||
+                parameterListSyntax.IsMissing ||
+                !parameterListSyntax.Parameters.Any())
+            {
+                return;
+            }
+
+            var firstParameter = parameterListSyntax.Parameters[0];
+
+            var firstParameterLineSpan = firstParameter.GetLocation().GetLineSpan();
+            if (!firstParameterLineSpan.IsValid)
+            {
+                return;
+            }
+
+            var openParenLineSpan = openParenToken.GetLocation().GetLineSpan();
+            if (!openParenLineSpan.IsValid)
+            {
+                return;
+            }
+
+            if (openParenLineSpan.EndLinePosition.Line != firstParameterLineSpan.StartLinePosition.Line &&
+                openParenLineSpan.EndLinePosition.Line != (firstParameterLineSpan.StartLinePosition.Line - 1))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstParameter.GetLocation()));
+            }
         }
     }
 }

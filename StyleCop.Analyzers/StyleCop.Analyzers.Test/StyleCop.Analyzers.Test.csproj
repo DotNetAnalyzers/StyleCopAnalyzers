@@ -145,6 +145,7 @@
     <Compile Include="ReadabilityRules\SA1106UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1111UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1112UnitTests.cs" />
+    <Compile Include="ReadabilityRules\SA1114UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1121UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1122UnitTests.cs" />
     <Compile Include="SpacingRules\NumberSignSpacingTestBase.cs" />
