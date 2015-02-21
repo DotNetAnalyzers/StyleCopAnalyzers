@@ -74,6 +74,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeAction(this.HandleElementAccess, SyntaxKind.ElementAccessExpression);
             context.RegisterSyntaxNodeAction(this.HandleAttribute, SyntaxKind.Attribute);
             context.RegisterSyntaxNodeAction(this.HandleAttributesList, SyntaxKind.AttributeList);
+            context.RegisterSyntaxNodeAction(this.HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
+        }
+
+        private void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var delegateDeclaration = (DelegateDeclarationSyntax) context.Node;
+            AnalyzeParametersList(context, delegateDeclaration.ParameterList);
         }
 
         private void HandleAttributesList(SyntaxNodeAnalysisContext context)
