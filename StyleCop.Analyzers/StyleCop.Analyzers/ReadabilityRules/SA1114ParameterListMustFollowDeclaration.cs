@@ -69,6 +69,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeAction(this.HandleMethodInvocation, SyntaxKind.InvocationExpression);
             context.RegisterSyntaxNodeAction(this.HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
             context.RegisterSyntaxNodeAction(this.HandleObjectCreation, SyntaxKind.ObjectCreationExpression);
+            context.RegisterSyntaxNodeAction(this.HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
+        }
+
+        private void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var indexerDeclaration = (IndexerDeclarationSyntax) context.Node;
+            AnalyzeBracketParametersList(context, indexerDeclaration.ParameterList);
         }
 
         private void HandleObjectCreation(SyntaxNodeAnalysisContext context)
@@ -124,6 +131,37 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 openParenLineSpan.EndLinePosition.Line != (firstArgumentLineSpan.StartLinePosition.Line - 1))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstArgument.GetLocation()));
+            }
+        }
+
+        private static void AnalyzeBracketParametersList(SyntaxNodeAnalysisContext context, BracketedParameterListSyntax parameterListSyntax)
+        {
+            var openBracketToken = parameterListSyntax.OpenBracketToken;
+            if (openBracketToken.IsMissing ||
+                parameterListSyntax.IsMissing ||
+                !parameterListSyntax.Parameters.Any())
+            {
+                return;
+            }
+
+            var firstParameter = parameterListSyntax.Parameters[0];
+
+            var firstParameterLineSpan = firstParameter.GetLocation().GetLineSpan();
+            if (!firstParameterLineSpan.IsValid)
+            {
+                return;
+            }
+
+            var openBracketLineSpan = openBracketToken.GetLocation().GetLineSpan();
+            if (!openBracketLineSpan.IsValid)
+            {
+                return;
+            }
+
+            if (openBracketLineSpan.EndLinePosition.Line != firstParameterLineSpan.StartLinePosition.Line &&
+                openBracketLineSpan.EndLinePosition.Line != (firstParameterLineSpan.StartLinePosition.Line - 1))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstParameter.GetLocation()));
             }
         }
 

@@ -349,6 +349,79 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
+        [TestMethod]
+        public async Task TestIndexerDeclarationParametersList2LinesAfterOpeningParenthesis()
+        {
+            var testCode = @"
+class Foo
+{
+    int this[
+
+int i]
+    {
+        get
+        {
+            return 1;
+        }
+    }
+}";
+
+            var expected = new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = this.DiagnosticId,
+                        Message = "Parameter list must follow declaration.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 6, 1)
+                            }
+                    }
+                };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestIndexerDeclarationParametersListOnNextLineAsOpeningParenthesis()
+        {
+            var testCode = @"
+class Foo
+{
+    int this[
+int i]
+    {
+        get
+        {
+            return 1;
+        }
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestIndexerDeclarationParametersListOnSameLineAsOpeningParenthesis()
+        {
+            var testCode = @"
+class Foo
+{
+    int this[int i]
+    {
+        get
+        {
+            return 1;
+        }
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1114ParameterListMustFollowDeclaration();
