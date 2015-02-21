@@ -67,6 +67,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             context.RegisterSyntaxNodeAction(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
             context.RegisterSyntaxNodeAction(this.HandleMethodInvocation, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeAction(this.HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
+        }
+
+        private void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var constructorDeclaration = (ConstructorDeclarationSyntax) context.Node;
+            AnalyzeParametersList(context,constructorDeclaration.ParameterList);
         }
 
         private void HandleMethodInvocation(SyntaxNodeAnalysisContext context)
@@ -106,7 +113,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var methodDeclaration = (MethodDeclarationSyntax) context.Node;
 
-            var parameterListSyntax = methodDeclaration.ParameterList;
+            AnalyzeParametersList(context, methodDeclaration.ParameterList);
+        }
+
+        private static void AnalyzeParametersList(SyntaxNodeAnalysisContext context, ParameterListSyntax parameterListSyntax)
+        {
             var openParenToken = parameterListSyntax.OpenParenToken;
             if (openParenToken.IsMissing ||
                 parameterListSyntax.IsMissing ||
