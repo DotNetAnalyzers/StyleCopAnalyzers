@@ -421,6 +421,122 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
+        [TestMethod]
+        public async Task TestArrayDeclarationSizes2LinesAfterOpeningParenthesis()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar()
+    {
+        int[,] array2Da = new int[
+
+4, 2] { { 1, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 } };
+    }
+}";
+
+            var expected = new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = this.DiagnosticId,
+                        Message = "Parameter list must follow declaration.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 8, 1)
+                            }
+                    }
+                };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestMultidimensionalArrayDeclarationSizes2LinesAfterOpeningParenthesis()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar()
+    {
+var a = new int[
+
+1][
+
+,]
+            {
+                new int[
+
+1, 1]
+                {
+                    {1}
+                }
+            };
+    }
+}";
+
+            var expected = new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = this.DiagnosticId,
+                        Message = "Parameter list must follow declaration.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 8, 1)
+                            }
+                    },
+                    new DiagnosticResult
+                    {
+                        Id = this.DiagnosticId,
+                        Message = "Parameter list must follow declaration.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 14, 1)
+                            }
+                    }
+                };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestArrayDeclarationSizesOnNextLineAsOpeningParenthesis()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar()
+    {
+        int[,] array2Da = new int[
+4, 2] { { 1, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 } };
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestArrayDeclarationSizesOnSameLineAsOpeningParenthesis()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar()
+    {
+        int[,] array2Da = new int[4, 2] { { 1, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 } };
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {

@@ -70,6 +70,52 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeAction(this.HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
             context.RegisterSyntaxNodeAction(this.HandleObjectCreation, SyntaxKind.ObjectCreationExpression);
             context.RegisterSyntaxNodeAction(this.HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleArrayCreation, SyntaxKind.ArrayCreationExpression);
+        }
+
+        private void HandleArrayCreation(SyntaxNodeAnalysisContext context)
+        {
+            var arrayCreation = (ArrayCreationExpressionSyntax) context.Node;
+            if (arrayCreation.Type == null)
+            {
+                return;
+            }
+
+            if (!arrayCreation.Type.RankSpecifiers.Any())
+            {
+                return;
+            }
+
+            foreach (var arrayRankSpecifierSyntax in arrayCreation.Type.RankSpecifiers)
+            {
+                var openBracketToken = arrayRankSpecifierSyntax.OpenBracketToken;
+                if (openBracketToken.IsMissing ||
+                    arrayRankSpecifierSyntax.IsMissing ||
+                    !arrayRankSpecifierSyntax.Sizes.Any())
+                {
+                    return;
+                }
+
+                var firstSize = arrayRankSpecifierSyntax.Sizes[0];
+
+                var firstSizeLineSpan = firstSize.GetLocation().GetLineSpan();
+                if (!firstSizeLineSpan.IsValid)
+                {
+                    return;
+                }
+
+                var openBracketLineSpan = openBracketToken.GetLocation().GetLineSpan();
+                if (!openBracketLineSpan.IsValid)
+                {
+                    return;
+                }
+
+                if (openBracketLineSpan.EndLinePosition.Line != firstSizeLineSpan.StartLinePosition.Line &&
+                    openBracketLineSpan.EndLinePosition.Line != (firstSizeLineSpan.StartLinePosition.Line - 1))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstSize.GetLocation()));
+                }
+            }
         }
 
         private void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)
