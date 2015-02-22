@@ -66,13 +66,27 @@
   </Rules>
   <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers">
     <Rule Id="SA1000" Action="Error" />
+    <Rule Id="SA1001" Action="Error" />
     <Rule Id="SA1021" Action="Error" />
     <Rule Id="SA1022" Action="Error" />
     <Rule Id="SA1100" Action="Error" />
+    <Rule Id="SA1101" Action="Error" />
+    <Rule Id="SA1106" Action="Error" />
+    <Rule Id="SA1111" Action="Error" />
     <Rule Id="SA1112" Action="Error" />
+    <Rule Id="SA1119" Action="Error" />
     <Rule Id="SA1121" Action="Error" />
     <Rule Id="SA1122" Action="Error" />
+    <Rule Id="SA1300" Action="Error" />
     <Rule Id="SA1302" Action="Error" />
+    <Rule Id="SA1303" Action="Error" />
+    <Rule Id="SA1304" Action="Error" />
+    <Rule Id="SA1309" Action="Error" />
+    <Rule Id="SA1311" Action="Error" />
+    <Rule Id="SA1400" Action="Error" />
+    <Rule Id="SA1401" Action="Error" />
+    <Rule Id="SA1402" Action="Error" />
+    <Rule Id="SA1403" Action="Error" />
     <Rule Id="SA1404" Action="Error" />
     <Rule Id="SA1405" Action="Error" />
     <Rule Id="SA1406" Action="Error" />
@@ -81,5 +95,8 @@
     <Rule Id="SA1410" Action="Error" />
     <Rule Id="SA1411" Action="Error" />
     <Rule Id="SA1600" Action="None" />
+    <Rule Id="SA1603" Action="Error" />
+    <Rule Id="SA1642" Action="Error" />
+    <Rule Id="SA1643" Action="Error" />
   </Rules>
 </RuleSet>
