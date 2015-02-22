@@ -58,7 +58,7 @@
                         return;
                     }
 
-                    while (!this.IsValidNewMemberName(typeDeclarationSymbol, newName) || newName == typeDeclarationSymbol.Name)
+                    if (!this.IsValidNewMemberName(typeDeclarationSymbol, newName))
                     {
                         newName = newName + Suffix;
                     }
@@ -74,7 +74,7 @@
             {
                 throw new ArgumentNullException(nameof(typeSymbol));
             }
-            else if (typeSymbol.GetMembers(name).Length > 0)
+            else if (typeSymbol.Name == name || typeSymbol.GetMembers(name).Length > 0)
             {
                 return false;
             }
