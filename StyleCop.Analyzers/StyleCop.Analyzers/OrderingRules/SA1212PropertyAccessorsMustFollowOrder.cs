@@ -67,11 +67,25 @@ namespace StyleCop.Analyzers.OrderingRules
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterSyntaxNodeAction(this.HandlePropertyDeclaration, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
+        }
+
+        private void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var indexerDeclaration = (IndexerDeclarationSyntax) context.Node;
+
+            AnalyzeProperty(context, indexerDeclaration);
         }
 
         private void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
         {
             var propertyDeclaration = (PropertyDeclarationSyntax) context.Node;
+
+            AnalyzeProperty(context, propertyDeclaration);
+        }
+
+        private static void AnalyzeProperty(SyntaxNodeAnalysisContext context, BasePropertyDeclarationSyntax propertyDeclaration)
+        {
             var accessors = propertyDeclaration.AccessorList.Accessors;
             if (propertyDeclaration.AccessorList.IsMissing ||
                 accessors.Count != 2)

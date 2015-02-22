@@ -46,7 +46,7 @@ public class Foo
             {
                 new DiagnosticResult
                 {
-                    Id = DiagnosticId,
+                    Id = this.DiagnosticId,
                     Message = "A get accessor appears after a set accessor within a property or indexer.",
                     Severity =  DiagnosticSeverity.Warning,
                     Locations =
@@ -141,7 +141,7 @@ public class Foo
             {
                 new DiagnosticResult
                 {
-                    Id = DiagnosticId,
+                    Id = this.DiagnosticId,
                     Message = "A get accessor appears after a set accessor within a property or indexer.",
                     Severity =  DiagnosticSeverity.Warning,
                     Locations =
@@ -153,6 +153,111 @@ public class Foo
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestIndexerDeclarationSetterBeforeGetter()
+        {
+            var testCode = @"
+public class Foo
+{
+    private int field;
+
+    public int this[int index]
+    {
+        set
+        {
+            field = value;
+        }
+
+        get
+        {
+            return field;
+        }
+    }
+}";
+
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = this.DiagnosticId,
+                    Message = "A get accessor appears after a set accessor within a property or indexer.",
+                    Severity =  DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 8, 9)
+                        }
+                }
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestIndexerDeclarationGetterBeforeSetter()
+        {
+            var testCode = @"
+public class Foo
+{
+    private int field;
+
+    public int this[int index]
+    {
+        get
+        {
+            return field;
+        }
+
+        set
+        {
+            field = value;
+        }
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestIndexerDeclarationOnlySetter()
+        {
+            var testCode = @"
+public class Foo
+{
+    private int field;
+
+    public int this[int index]
+    {
+        set
+        {
+            field = value;
+        }
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestIndexerDeclarationOnlyGetter()
+        {
+            var testCode = @"
+public class Foo
+{
+    private int field;
+
+    public int this[int index]
+    {
+        get
+        {
+            return field;
+        }
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
