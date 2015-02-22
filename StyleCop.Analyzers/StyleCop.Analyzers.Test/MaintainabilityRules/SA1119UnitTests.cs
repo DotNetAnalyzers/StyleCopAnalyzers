@@ -1854,6 +1854,89 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
+        [TestMethod]
+        public async Task TestNoLeadingTrivia()
+        {
+            var testCode = @"public class Foo
+{
+    public string Bar()
+    {
+        string foo = """";
+        return(foo);
+    }
+}";
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Statement must not use unnecessary parenthesis",
+                    Severity = DiagnosticSeverity.Warning,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 6, 15)
+                        }
+                },
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId + "_p",
+                    Message = "Statement must not use unnecessary parenthesis",
+                    Severity = DiagnosticSeverity.Hidden,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 6, 15)
+                        }
+                },
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId + "_p",
+                    Message = "Statement must not use unnecessary parenthesis",
+                    Severity = DiagnosticSeverity.Hidden,
+                    Locations =
+                        new[]
+                        {
+                            new DiagnosticResultLocation("Test0.cs", 6, 19)
+                        }
+                }
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"public class Foo
+{
+    public string Bar()
+    {
+        string foo = """";
+        return foo;
+    }
+}";
+            await VerifyCSharpFixAsync(testCode, fixedCode);
+        }
+
+        [TestMethod]
+        public async Task TestCodeFixDoesNotRemoveSpaces()
+        {
+            var testCode = @"public class Foo
+{
+    public string Bar()
+    {
+        string foo = """";
+        return     (     foo     )     ;
+    }
+}";
+            var fixedCode = @"public class Foo
+{
+    public string Bar()
+    {
+        string foo = """";
+        return          foo          ;
+    }
+}";
+            await VerifyCSharpFixAsync(testCode, fixedCode);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1119StatementMustNotUseUnnecessaryParenthesis();
