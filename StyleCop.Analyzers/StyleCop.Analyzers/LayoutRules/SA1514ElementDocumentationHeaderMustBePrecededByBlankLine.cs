@@ -68,7 +68,7 @@
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -76,7 +76,7 @@
         {
             get
             {
-                return supportedDiagnostics;
+                return SupportedDiagnosticsValue;
             }
         }
 

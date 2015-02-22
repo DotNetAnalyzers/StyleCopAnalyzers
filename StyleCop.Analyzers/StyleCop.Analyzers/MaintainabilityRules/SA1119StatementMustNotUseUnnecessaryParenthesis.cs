@@ -53,7 +53,7 @@
         private static readonly DiagnosticDescriptor ParenthesisDescriptor =
             new DiagnosticDescriptor(DiagnosticId + "_p", Title, MessageFormat, Category, DiagnosticSeverity.Hidden, true, Description, HelpLink, customTags: new[] { WellKnownDiagnosticTags.Unnecessary, WellKnownDiagnosticTags.NotConfigurable });
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -61,7 +61,7 @@
         {
             get
             {
-                return supportedDiagnostics;
+                return SupportedDiagnosticsValue;
             }
         }
 

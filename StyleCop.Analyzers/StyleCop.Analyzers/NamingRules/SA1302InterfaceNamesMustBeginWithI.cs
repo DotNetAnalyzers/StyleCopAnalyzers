@@ -38,7 +38,7 @@ namespace StyleCop.Analyzers.NamingRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> supportedDiagnostics =
+        private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
@@ -46,7 +46,7 @@ namespace StyleCop.Analyzers.NamingRules
         {
             get
             {
-                return supportedDiagnostics;
+                return SupportedDiagnosticsValue;
             }
         }
 
