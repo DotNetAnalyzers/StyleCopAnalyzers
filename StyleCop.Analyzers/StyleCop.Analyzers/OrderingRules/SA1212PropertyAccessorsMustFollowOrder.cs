@@ -2,6 +2,8 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -39,7 +41,7 @@
         /// </summary>
         public const string DiagnosticId = "SA1212";
         private const string Title = "Property accessors must follow order";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "A get accessor appears after a set accessor within a property or indexer.";
         private const string Category = "StyleCop.CSharp.OrderingRules";
         private const string Description = "A get accessor appears after a set accessor within a property or indexer.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1212.html";
@@ -62,7 +64,38 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(this.HandlePropertyDeclaration, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
+        }
+
+        private void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var indexerDeclaration = (IndexerDeclarationSyntax) context.Node;
+
+            AnalyzeProperty(context, indexerDeclaration);
+        }
+
+        private void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var propertyDeclaration = (PropertyDeclarationSyntax) context.Node;
+
+            AnalyzeProperty(context, propertyDeclaration);
+        }
+
+        private static void AnalyzeProperty(SyntaxNodeAnalysisContext context, BasePropertyDeclarationSyntax propertyDeclaration)
+        {
+            var accessors = propertyDeclaration.AccessorList.Accessors;
+            if (propertyDeclaration.AccessorList.IsMissing ||
+                accessors.Count != 2)
+            {
+                return;
+            }
+
+            if (accessors[0].CSharpKind() == SyntaxKind.SetAccessorDeclaration &&
+                accessors[1].CSharpKind() == SyntaxKind.GetAccessorDeclaration)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, accessors[0].GetLocation()));
+            }
         }
     }
 }
