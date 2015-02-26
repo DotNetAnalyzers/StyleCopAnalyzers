@@ -82,7 +82,7 @@
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var trivia in root.DescendantTrivia())
             {
-                switch (trivia.CSharpKind())
+                switch (trivia.Kind())
                 {
                 case SyntaxKind.SingleLineCommentTrivia:
                     this.HandleSingleLineCommentTrivia(context, trivia);

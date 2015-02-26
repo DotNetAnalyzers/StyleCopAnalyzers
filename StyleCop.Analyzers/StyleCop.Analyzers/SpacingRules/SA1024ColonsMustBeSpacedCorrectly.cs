@@ -82,7 +82,7 @@
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
             {
-                switch (token.CSharpKind())
+                switch (token.Kind())
                 {
                 case SyntaxKind.ColonToken:
                     this.HandleColonToken(context, token);
@@ -100,7 +100,7 @@
                 return;
 
             bool requireBefore;
-            switch (token.Parent.CSharpKind())
+            switch (token.Parent.Kind())
             {
             case SyntaxKind.BaseList:
             case SyntaxKind.BaseConstructorInitializer:

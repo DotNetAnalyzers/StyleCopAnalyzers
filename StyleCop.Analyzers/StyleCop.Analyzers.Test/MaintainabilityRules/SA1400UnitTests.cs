@@ -2,11 +2,12 @@
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Analyzers.MaintainabilityRules;
+    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using StyleCop.Analyzers.MaintainabilityRules;
     using TestHelper;
 
     [TestClass]
@@ -487,37 +488,37 @@
 
         #region EventFieldDeclarationSyntax
 
-        [TestMethod]
+        [TestMethod, Ignore, OpenIssue("https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
         public async Task TestEventFieldDeclarationAsync()
         {
             await this.TestNestedDeclarationAsync("private", "MemberName", "event EventHandler MemberName", ", AnotherMemberName;");
         }
 
-        [TestMethod]
+        [TestMethod, Ignore, OpenIssue("https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
         public async Task TestEventFieldDeclarationWithAttributesAsync()
         {
             await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "event EventHandler MemberName", ", AnotherMemberName;");
         }
 
-        [TestMethod]
+        [TestMethod, Ignore, OpenIssue("https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
         public async Task TestEventFieldDeclarationWithDirectivesAsync()
         {
             await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "event EventHandler MemberName", ", AnotherMemberName;");
         }
 
-        [TestMethod]
+        [TestMethod, Ignore, OpenIssue("https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
         public async Task TestStaticEventFieldDeclarationAsync()
         {
             await this.TestNestedDeclarationAsync("private", "MemberName", "static event EventHandler MemberName", ", AnotherMemberName;");
         }
 
-        [TestMethod]
+        [TestMethod, Ignore, OpenIssue("https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
         public async Task TestStaticEventFieldDeclarationWithAttributesAsync()
         {
             await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "static event EventHandler MemberName", ", AnotherMemberName;");
         }
 
-        [TestMethod]
+        [TestMethod, Ignore, OpenIssue("https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
         public async Task TestStaticEventFieldDeclarationWithDirectivesAsync()
         {
             await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "static event EventHandler MemberName", ", AnotherMemberName;");
@@ -545,37 +546,37 @@
 
         #region FieldDeclarationSyntax
 
-        [TestMethod]
+        [TestMethod, Ignore, OpenIssue("https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
         public async Task TestFieldDeclarationAsync()
         {
             await this.TestNestedDeclarationAsync("private", "MemberName", "System.EventHandler MemberName", ", AnotherMemberName;");
         }
 
-        [TestMethod]
+        [TestMethod, Ignore, OpenIssue("https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
         public async Task TestFieldDeclarationWithAttributesAsync()
         {
             await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "System.EventHandler MemberName", ", AnotherMemberName;");
         }
 
-        [TestMethod]
+        [TestMethod, Ignore, OpenIssue("https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
         public async Task TestFieldDeclarationWithDirectivesAsync()
         {
             await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "System.EventHandler MemberName", ", AnotherMemberName;");
         }
 
-        [TestMethod]
+        [TestMethod, Ignore, OpenIssue("https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
         public async Task TestStaticFieldDeclarationAsync()
         {
             await this.TestNestedDeclarationAsync("private", "MemberName", "static System.EventHandler MemberName", ", AnotherMemberName;");
         }
 
-        [TestMethod]
+        [TestMethod, Ignore, OpenIssue("https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
         public async Task TestStaticFieldDeclarationWithAttributesAsync()
         {
             await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "static System.EventHandler MemberName", ", AnotherMemberName;");
         }
 
-        [TestMethod]
+        [TestMethod, Ignore, OpenIssue("https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
         public async Task TestStaticFieldDeclarationWithDirectivesAsync()
         {
             await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "static System.EventHandler MemberName", ", AnotherMemberName;");

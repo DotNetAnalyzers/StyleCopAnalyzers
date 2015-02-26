@@ -93,7 +93,7 @@ namespace TestHelper
             {
                 var actions = new List<CodeAction>();
                 var context = new CodeFixContext(document, analyzerDiagnostics[0], (a, d) => actions.Add(a), cancellationToken);
-                await codeFixProvider.ComputeFixesAsync(context).ConfigureAwait(false);
+                await codeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
 
                 if (!actions.Any())
                 {

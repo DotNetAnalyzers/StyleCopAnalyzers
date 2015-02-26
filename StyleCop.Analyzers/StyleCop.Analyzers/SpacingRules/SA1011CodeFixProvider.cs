@@ -24,10 +24,7 @@
             ImmutableArray.Create(SA1011ClosingSquareBracketsMustBeSpacedCorrectly.DiagnosticId);
 
         /// <inheritdoc/>
-        public override ImmutableArray<string> GetFixableDiagnosticIds()
-        {
-            return FixableDiagnostics;
-        }
+        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -36,7 +33,7 @@
         }
 
         /// <inheritdoc/>
-        public override async Task ComputeFixesAsync(CodeFixContext context)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             foreach (var diagnostic in context.Diagnostics)
             {
@@ -65,7 +62,7 @@
                 {
                     bool ignoreTrailingWhitespace;
                     SyntaxToken nextToken = token.GetNextToken();
-                    switch (nextToken.CSharpKind())
+                    switch (nextToken.Kind())
                     {
                     case SyntaxKind.CloseBracketToken:
                     case SyntaxKind.OpenParenToken:
@@ -103,7 +100,7 @@
 
                 var transformed = root.ReplaceTokens(replacements.Keys, (original, maybeRewritten) => replacements[original]);
                 Document updatedDocument = context.Document.WithSyntaxRoot(transformed);
-                context.RegisterFix(CodeAction.Create("Fix spacing", updatedDocument), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => Task.FromResult(updatedDocument)), diagnostic);
             }
         }
     }

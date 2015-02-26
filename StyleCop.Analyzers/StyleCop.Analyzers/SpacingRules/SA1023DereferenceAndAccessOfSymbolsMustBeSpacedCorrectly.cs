@@ -72,7 +72,7 @@
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
             {
-                switch (token.CSharpKind())
+                switch (token.Kind())
                 {
                 case SyntaxKind.AsteriskToken:
                     this.HandleAsteriskToken(context, token);
@@ -95,7 +95,7 @@
             bool allowPrecedingNoSpace;
             bool allowTrailingSpace;
             bool allowTrailingNoSpace;
-            switch (token.Parent.CSharpKind())
+            switch (token.Parent.Kind())
             {
             case SyntaxKind.PointerType:
                 allowAtLineStart = false;

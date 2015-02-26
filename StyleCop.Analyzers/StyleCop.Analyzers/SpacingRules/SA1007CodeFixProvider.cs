@@ -22,10 +22,7 @@
             ImmutableArray.Create(SA1007OperatorKeywordMustBeFollowedBySpace.DiagnosticId);
 
         /// <inheritdoc/>
-        public override ImmutableArray<string> GetFixableDiagnosticIds()
-        {
-            return FixableDiagnostics;
-        }
+        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -34,7 +31,7 @@
         }
 
         /// <inheritdoc/>
-        public override async Task ComputeFixesAsync(CodeFixContext context)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             foreach (var diagnostic in context.Diagnostics)
             {
@@ -52,7 +49,7 @@
                 SyntaxTrivia whitespace = SyntaxFactory.Whitespace(" ");
                 SyntaxToken corrected = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, whitespace)).WithoutFormatting();
                 Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
-                context.RegisterFix(CodeAction.Create("Insert space", updatedDocument), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Insert space", t => Task.FromResult(updatedDocument)), diagnostic);
             }
         }
     }

@@ -188,7 +188,7 @@
             List<SyntaxNode> usingDirectives = new List<SyntaxNode>();
             foreach (SyntaxNode child in syntax.ChildNodes())
             {
-                switch (child.CSharpKind())
+                switch (child.Kind())
                 {
                 case SyntaxKind.ClassDeclaration:
                 case SyntaxKind.InterfaceDeclaration:

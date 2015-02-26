@@ -56,7 +56,7 @@
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
             {
-                switch (token.CSharpKind())
+                switch (token.Kind())
                 {
                 case SyntaxKind.GreaterThanToken:
                     this.HandleGreaterThanToken(context, token);
@@ -73,7 +73,7 @@
             if (token.IsMissing)
                 return;
 
-            switch (token.Parent.CSharpKind())
+            switch (token.Parent.Kind())
             {
             case SyntaxKind.TypeArgumentList:
             case SyntaxKind.TypeParameterList:
@@ -108,7 +108,7 @@
             if (!lastInLine)
             {
                 SyntaxToken nextToken = token.GetNextToken();
-                switch (nextToken.CSharpKind())
+                switch (nextToken.Kind())
                 {
                 case SyntaxKind.OpenParenToken:
                 // DotToken isn't listed above, but it's required for reasonable member access formatting

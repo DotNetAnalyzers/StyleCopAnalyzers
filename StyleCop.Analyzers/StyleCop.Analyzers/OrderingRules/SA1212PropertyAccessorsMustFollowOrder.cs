@@ -91,8 +91,8 @@
                 return;
             }
 
-            if (accessors[0].CSharpKind() == SyntaxKind.SetAccessorDeclaration &&
-                accessors[1].CSharpKind() == SyntaxKind.GetAccessorDeclaration)
+            if (accessors[0].Kind() == SyntaxKind.SetAccessorDeclaration &&
+                accessors[1].Kind() == SyntaxKind.GetAccessorDeclaration)
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, accessors[0].GetLocation()));
             }

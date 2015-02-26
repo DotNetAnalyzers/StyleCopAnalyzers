@@ -76,7 +76,7 @@
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var trivia in root.DescendantTrivia(descendIntoTrivia: true))
             {
-                switch (trivia.CSharpKind())
+                switch (trivia.Kind())
                 {
                 case SyntaxKind.DocumentationCommentExteriorTrivia:
                     this.HandleDocumentationCommentExteriorTrivia(context, trivia);
@@ -94,7 +94,7 @@
             if (token.IsMissing)
                 return;
 
-            switch (token.CSharpKind())
+            switch (token.Kind())
             {
             case SyntaxKind.EqualsToken:
             case SyntaxKind.DoubleQuoteToken:
@@ -112,7 +112,7 @@
                     break;
 
                 SyntaxTrivia lastLeadingTrivia = token.LeadingTrivia.Last();
-                switch (lastLeadingTrivia.CSharpKind())
+                switch (lastLeadingTrivia.Kind())
                 {
                 case SyntaxKind.WhitespaceTrivia:
                     if (lastLeadingTrivia.ToFullString().StartsWith(" "))

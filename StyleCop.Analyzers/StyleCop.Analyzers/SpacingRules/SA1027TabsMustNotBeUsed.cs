@@ -57,7 +57,7 @@
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var trivia in root.DescendantTrivia(descendIntoTrivia: true))
             {
-                switch (trivia.CSharpKind())
+                switch (trivia.Kind())
                 {
                 case SyntaxKind.WhitespaceTrivia:
                     this.HandleWhitespaceTrivia(context, trivia);

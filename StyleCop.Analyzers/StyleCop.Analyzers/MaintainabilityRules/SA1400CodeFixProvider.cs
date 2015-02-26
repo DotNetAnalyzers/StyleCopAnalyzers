@@ -25,10 +25,7 @@
             ImmutableArray.Create(SA1400AccessModifierMustBeDeclared.DiagnosticId);
 
         /// <inheritdoc/>
-        public override ImmutableArray<string> GetFixableDiagnosticIds()
-        {
-            return FixableDiagnostics;
-        }
+        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -37,7 +34,7 @@
         }
 
         /// <inheritdoc/>
-        public override async Task ComputeFixesAsync(CodeFixContext context)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             foreach (var diagnostic in context.Diagnostics)
             {
@@ -54,7 +51,7 @@
                     continue;
 
                 SyntaxNode updatedDeclarationNode;
-                switch (declarationNode.CSharpKind())
+                switch (declarationNode.Kind())
                 {
                 case SyntaxKind.ClassDeclaration:
                     updatedDeclarationNode = this.HandleClassDeclaration((ClassDeclarationSyntax)declarationNode);
@@ -113,7 +110,7 @@
                     break;
 
                 default:
-                    throw new InvalidOperationException("Unhandled declaration kind: " + declarationNode.CSharpKind());
+                    throw new InvalidOperationException("Unhandled declaration kind: " + declarationNode.Kind());
                 }
 
                 if (updatedDeclarationNode != null)
@@ -121,7 +118,7 @@
                     var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken);
                     var newSyntaxRoot = syntaxRoot.ReplaceNode(declarationNode, updatedDeclarationNode);
                     var newDocument = context.Document.WithSyntaxRoot(newSyntaxRoot);
-                    context.RegisterFix(CodeAction.Create("Declare accessibility", newDocument), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Declare accessibility", token => Task.FromResult(newDocument)), diagnostic);
                 }
             }
         }
@@ -379,7 +376,7 @@
         {
             while (node != null)
             {
-                switch (node.CSharpKind())
+                switch (node.Kind())
                 {
                 case SyntaxKind.ClassDeclaration:
                 case SyntaxKind.InterfaceDeclaration:

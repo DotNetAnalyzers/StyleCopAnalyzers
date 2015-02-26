@@ -47,6 +47,7 @@
     /// }
     /// </code>
     /// </remarks>
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine : DiagnosticAnalyzer
     {
         /// <summary>
