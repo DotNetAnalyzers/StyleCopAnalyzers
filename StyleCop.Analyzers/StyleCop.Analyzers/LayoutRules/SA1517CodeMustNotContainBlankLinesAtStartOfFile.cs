@@ -1,8 +1,11 @@
 ﻿namespace StyleCop.Analyzers.LayoutRules
 {
+    using System;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.CSharp;
+
 
     /// <summary>
     /// The code file has blank lines at the start.
@@ -21,7 +24,7 @@
         /// </summary>
         public const string DiagnosticId = "SA1517";
         private const string Title = "Code must not contain blank lines at start of file";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "Code must not contain blank lines at start of file";
         private const string Category = "StyleCop.CSharp.LayoutRules";
         private const string Description = "The code file has blank lines at the start.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1517.html";
@@ -44,7 +47,24 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTreeAnalysis);
+        }
+
+        private void HandleSyntaxTreeAnalysis(SyntaxTreeAnalysisContext context)
+        {
+            var firstToken = context.Tree.GetRoot().GetFirstToken(includeZeroWidth: true);
+
+            if (firstToken.HasLeadingTrivia)
+            {
+                foreach (var trivia in firstToken.LeadingTrivia)
+                {
+                    if (trivia.IsKind(SyntaxKind.EndOfLineTrivia))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, trivia.FullSpan)));
+                        break;
+                    }
+                }
+            }
         }
     }
 }
