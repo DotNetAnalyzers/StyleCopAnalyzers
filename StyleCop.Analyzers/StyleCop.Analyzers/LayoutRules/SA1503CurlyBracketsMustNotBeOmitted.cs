@@ -3,7 +3,9 @@
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+    
     /// <summary>
     /// The opening and closing curly brackets for a C# statement have been omitted.
     /// </summary>
@@ -53,7 +55,7 @@
         /// </summary>
         public const string DiagnosticId = "SA1503";
         private const string Title = "Curly brackets must not be omitted";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "Curly brackets must not be omitted";
         private const string Category = "StyleCop.CSharp.LayoutRules";
         private const string Description = "The opening and closing curly brackets for a C# statement have been omitted.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1503.html";
@@ -76,7 +78,59 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(this.HandleIfStatement, SyntaxKind.IfStatement);
+            context.RegisterSyntaxNodeAction(this.HandleWhileStatement, SyntaxKind.WhileStatement);
+            context.RegisterSyntaxNodeAction(this.HandleForStatement, SyntaxKind.ForStatement);
+            context.RegisterSyntaxNodeAction(this.HandleForEachStatement, SyntaxKind.ForEachStatement);
+        }
+
+        private void HandleIfStatement(SyntaxNodeAnalysisContext context)
+        {
+            var ifStatement = context.Node as IfStatementSyntax;
+            if (ifStatement != null)
+            {
+                this.CheckChildStatement(context, ifStatement.Statement);
+
+                if (ifStatement.Else != null)
+                {
+                    this.CheckChildStatement(context, ifStatement.Else.Statement);
+                }
+            }
+        }
+
+        private void HandleWhileStatement(SyntaxNodeAnalysisContext context)
+        {
+            var whileStatement = context.Node as WhileStatementSyntax;
+            if (whileStatement != null)
+            {
+                this.CheckChildStatement(context, whileStatement.Statement);
+            }
+        }
+
+        private void HandleForStatement(SyntaxNodeAnalysisContext context)
+        {
+            var forStatement = context.Node as ForStatementSyntax;
+            if (forStatement != null)
+            {
+                this.CheckChildStatement(context, forStatement.Statement);
+            }
+        }
+
+        private void HandleForEachStatement(SyntaxNodeAnalysisContext context)
+        {
+            var forEachStatement = context.Node as ForEachStatementSyntax;
+            if (forEachStatement != null)
+            {
+                this.CheckChildStatement(context, forEachStatement.Statement);
+            }
+        }
+
+        private void CheckChildStatement(SyntaxNodeAnalysisContext context, StatementSyntax childStatement)
+        {
+            if (!(childStatement is BlockSyntax))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, childStatement.GetLocation()));
+            }
         }
     }
 }
