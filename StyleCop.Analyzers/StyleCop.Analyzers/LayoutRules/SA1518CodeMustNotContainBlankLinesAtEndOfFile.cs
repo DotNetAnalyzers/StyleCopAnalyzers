@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.LayoutRules
 {
+    using System;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -20,7 +21,7 @@
         /// </summary>
         public const string DiagnosticId = "SA1518";
         private const string Title = "Code must not contain blank lines at end of file";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "Code must not contain blank lines at end of file";
         private const string Category = "StyleCop.CSharp.LayoutRules";
         private const string Description = "The code file has blank lines at the end.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1518.html";
@@ -43,7 +44,17 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTreeAction);
+        }
+
+        private void HandleSyntaxTreeAction(SyntaxTreeAnalysisContext context)
+        {
+            var lastToken = context.Tree.GetRoot().GetLastToken(includeZeroWidth: true);
+
+            if (lastToken.HasLeadingTrivia)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, lastToken.LeadingTrivia.FullSpan)));
+            }
         }
     }
 }
