@@ -2,6 +2,7 @@
 {
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
@@ -15,12 +16,13 @@
     /// <para>To fix a violation of this rule, change the name of the field so that it begins with an upper-case
     /// letter.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1311CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(nameof(SA1304SA1311CodeFixProvider), LanguageNames.CSharp)]
     [Shared]
-    public class SA1311CodeFixProvider : CodeFixProvider
+    public class SA1304SA1311CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter.DiagnosticId);
+            ImmutableArray.Create(SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter.DiagnosticId,
+                                  SA1304NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
@@ -30,7 +32,7 @@
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!diagnostic.Id.Equals(SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter.DiagnosticId))
+                if (!FixableDiagnostics.Any(d => diagnostic.Id.Equals(d)))
                     continue;
 
                 var document = context.Document;
