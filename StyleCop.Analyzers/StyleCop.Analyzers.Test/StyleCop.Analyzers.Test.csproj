@@ -147,6 +147,7 @@
     <Compile Include="ReadabilityRules\SA1100UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1101UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1106UnitTests.cs" />
+    <Compile Include="ReadabilityRules\SA1110UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1111UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1112UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1113UnitTests.cs" />
