@@ -1,11 +1,13 @@
 ﻿namespace StyleCop.Analyzers.LayoutRules
 {
-    using System;
     using System.Collections.Immutable;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.CodeAnalysis.CSharp;
 
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Text;
+
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The code file has blank lines at the start.
@@ -30,7 +32,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1517.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -56,13 +58,22 @@
 
             if (firstToken.HasLeadingTrivia)
             {
-                foreach (var trivia in firstToken.LeadingTrivia)
+                var leadingTrivia = firstToken.LeadingTrivia;
+
+                var firstNonBlankLineTriviaIndex = TriviaHelper.IndexOfFirstNonBlankLineTrivia(leadingTrivia);
+                switch (firstNonBlankLineTriviaIndex)
                 {
-                    if (trivia.IsKind(SyntaxKind.EndOfLineTrivia))
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, trivia.FullSpan)));
+                    case 0:
+                        // no blank lines
                         break;
-                    }
+                    case -1:
+                        // only blank lines
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, leadingTrivia.Span)));
+                        break;
+                    default:
+                        var textSpan = TextSpan.FromBounds(leadingTrivia[0].Span.Start, leadingTrivia[firstNonBlankLineTriviaIndex].Span.Start);
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, textSpan)));
+                        break;
                 }
             }
         }

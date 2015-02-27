@@ -1,15 +1,17 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using System.Composition;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Collections.Immutable;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CodeActions;
-using System;
-
-namespace StyleCop.Analyzers.LayoutRules
+﻿namespace StyleCop.Analyzers.LayoutRules
 {
+    using System.Collections.Immutable;
+    using System.Composition;
+    using System.Linq;
+    using System.Threading.Tasks;
+
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CodeActions;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp;
+
+    using StyleCop.Analyzers.Helpers;
+
     /// <summary>
     /// Implements a code fix for <see cref="SA1517CodeMustNotContainBlankLinesAtStartOfFile"/>.
     /// </summary>
@@ -40,14 +42,16 @@ namespace StyleCop.Analyzers.LayoutRules
                 var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
                 var firstToken = syntaxRoot.GetFirstToken(includeZeroWidth: true);
+                var leadingTrivia = firstToken.LeadingTrivia;
 
                 var newTriviaList = SyntaxFactory.TriviaList();
 
-                foreach (SyntaxTrivia trivia in firstToken.LeadingTrivia)
+                var firstNonBlankLineTriviaIndex = TriviaHelper.IndexOfFirstNonBlankLineTrivia(leadingTrivia);
+                if (firstNonBlankLineTriviaIndex != -1)
                 {
-                    if (!trivia.IsKind(SyntaxKind.EndOfLineTrivia))
+                    for (var index = firstNonBlankLineTriviaIndex; index < leadingTrivia.Count; index++)
                     {
-                        newTriviaList = newTriviaList.Add(trivia);
+                        newTriviaList = newTriviaList.Add(leadingTrivia[index]);
                     }
                 }
 
