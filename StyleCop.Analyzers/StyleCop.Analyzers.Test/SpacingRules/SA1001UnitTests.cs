@@ -30,6 +30,13 @@
         }
 
         [TestMethod]
+        public async Task TestSpaceAfterComma()
+        {
+            string statement = "f(a, b);";
+            await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
+        }
+
+        [TestMethod]
         public async Task TestNoSpaceAfterComma()
         {
             string statementWithoutSpace = @"f(a,b);";
@@ -117,8 +124,7 @@
         [TestMethod]
         public async Task TestLastCommaInLine()
         {
-            string statement = @"f(a,
-              b);";
+            string statement = $"f(a,{Environment.NewLine}b);";
             await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
         }
 
@@ -171,6 +177,14 @@
         }
 
         [TestMethod]
+        public async Task TestCommaFollowedBySpaceFollowedByAngleBracketInFuncType()
+        {
+            // This is correct by SA1001, and reported as an error by SA1015
+            string statement = @"var a = typeof(System.Func<, >);";
+            await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
+        }
+
+        [TestMethod]
         public async Task TestSpaceBeforeCommaFollowedByCommaInFuncType()
         {
             string statement = @"var a = typeof(System.Func< ,,>);";
@@ -202,6 +216,32 @@
         {
             string statement = @"var a = typeof(System.Func<,,>);";
             await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
+        }
+
+        [TestMethod]
+        public async Task TestCommaFollowedBySpaceFollowedByCommaInFuncType()
+        {
+            string statement = @"var a = typeof(System.Func<, ,>);";
+            string fixedStatement = @"var a = typeof(System.Func<,,>);";
+            DiagnosticResult[] expected;
+
+            expected =
+                new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = this.DiagnosticId,
+                        Message = "Commas must not be preceded by a space.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 7, 42)
+                            }
+                    },
+                };
+
+            await this.TestCommaInStatementOrDecl(statement, expected, fixedStatement);
         }
 
         private async Task TestCommaInStatementOrDecl(string originalStatement, DiagnosticResult[] expected, string fixedStatement)
