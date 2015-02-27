@@ -146,6 +146,7 @@
     <Compile Include="NamingRules\SA1302InterfaceNamesMustBeginWithI.cs" />
     <Compile Include="NamingRules\SA1303ConstFieldNamesMustBeginWithUpperCaseLetter.cs" />
     <Compile Include="NamingRules\SA1304NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter.cs" />
+    <Compile Include="NamingRules\SA1304SA1311CodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1305FieldNamesMustNotUseHungarianNotation.cs" />
     <Compile Include="NamingRules\SA1306CodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1306FieldNamesMustBeginWithLowerCaseLetter.cs" />
@@ -154,7 +155,6 @@
     <Compile Include="NamingRules\SA1309CodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1309FieldNamesMustNotBeginWithUnderscore.cs" />
     <Compile Include="NamingRules\SA1310FieldNamesMustNotContainUnderscore.cs" />
-    <Compile Include="NamingRules\SA1311CodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter.cs" />
     <Compile Include="NoCodeFixAttribute.cs" />
     <Compile Include="OrderingRules\SA1200UsingDirectivesMustBePlacedWithinNamespace.cs" />
