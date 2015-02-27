@@ -170,7 +170,7 @@
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1311CodeFixProvider();
+            return new SA1304SA1311CodeFixProvider();
         }
     }
 }

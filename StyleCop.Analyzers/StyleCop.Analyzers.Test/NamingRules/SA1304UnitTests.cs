@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using StyleCop.Analyzers.NamingRules;
@@ -44,6 +45,13 @@ namespace StyleCop.Analyzers.Test.NamingRules
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"public class Foo
+{
+    public readonly string Bar = ""baz"";
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
         [TestMethod]
@@ -81,6 +89,12 @@ namespace StyleCop.Analyzers.Test.NamingRules
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"public class Foo
+{
+    protected readonly string Bar = ""baz"";
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
         [TestMethod]
@@ -118,6 +132,12 @@ namespace StyleCop.Analyzers.Test.NamingRules
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"public class Foo
+{
+    internal readonly string Bar = ""baz"";
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
         [TestMethod]
@@ -167,6 +187,11 @@ namespace StyleCop.Analyzers.Test.NamingRules
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1304NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter();
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1304SA1311CodeFixProvider();
         }
     }
 }
