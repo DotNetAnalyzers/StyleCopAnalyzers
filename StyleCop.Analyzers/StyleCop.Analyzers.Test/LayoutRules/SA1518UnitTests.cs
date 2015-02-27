@@ -77,7 +77,7 @@ public class Foo
         }
 
         /// <summary>
-        /// Verifies that source file that ends without a carriage return / linefeed at the end of the file will not produce a warning.
+        /// Verifies that a source file that ends without a carriage return / linefeed at the end of the file will not produce a warning.
         /// </summary>
         [TestMethod]
         public async Task TestWithoutCarriageReturnLineFeedAtEndOfFile()
@@ -86,7 +86,7 @@ public class Foo
         }
 
         /// <summary>
-        /// Verifies that a single carriage return / linefeed at the end of the file will not produce a warning.
+        /// Verifies that a source file that ends with spaces will produce a warning.
         /// </summary>
         [TestMethod]
         public async Task TestFileEndsWithSpaces()
