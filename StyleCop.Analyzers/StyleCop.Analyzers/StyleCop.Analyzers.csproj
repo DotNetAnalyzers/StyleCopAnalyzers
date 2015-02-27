@@ -147,6 +147,7 @@
     <Compile Include="NamingRules\SA1303ConstFieldNamesMustBeginWithUpperCaseLetter.cs" />
     <Compile Include="NamingRules\SA1304NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter.cs" />
     <Compile Include="NamingRules\SA1305FieldNamesMustNotUseHungarianNotation.cs" />
+    <Compile Include="NamingRules\SA1306CodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1306FieldNamesMustBeginWithLowerCaseLetter.cs" />
     <Compile Include="NamingRules\SA1307AccessibleFieldsMustBeginWithUpperCaseLetter.cs" />
     <Compile Include="NamingRules\SA1308VariableNamesMustNotBePrefixed.cs" />
