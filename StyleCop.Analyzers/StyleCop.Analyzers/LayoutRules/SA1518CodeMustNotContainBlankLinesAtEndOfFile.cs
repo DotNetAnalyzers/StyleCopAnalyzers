@@ -1,9 +1,10 @@
 ﻿namespace StyleCop.Analyzers.LayoutRules
 {
-    using System;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Text;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The code file has blank lines at the end.
@@ -27,7 +28,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1518.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -53,7 +54,14 @@
 
             if (lastToken.HasLeadingTrivia)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, lastToken.LeadingTrivia.FullSpan)));
+                var leadingTrivia = lastToken.LeadingTrivia;
+
+                var trailingWhitespaceIndex = TriviaHelper.IndexOfTrailingWhitespace(leadingTrivia);
+                if (trailingWhitespaceIndex != -1)
+                {
+                    var textSpan = TextSpan.FromBounds(leadingTrivia[trailingWhitespaceIndex].SpanStart, leadingTrivia[leadingTrivia.Count - 1].Span.End);
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, textSpan)));
+                }
             }
         }
     }

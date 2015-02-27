@@ -1,15 +1,16 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeActions;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CSharp;
-using System.Collections.Immutable;
-using System.Composition;
-using System.Linq;
-using System.Threading.Tasks;
-using System;
-
-namespace StyleCop.Analyzers.LayoutRules
+﻿namespace StyleCop.Analyzers.LayoutRules
 {
+    using System.Collections.Immutable;
+    using System.Composition;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CodeActions;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp;
+    using StyleCop.Analyzers.Helpers;
+
+
     /// <summary>
     /// Implements a code fix for <see cref="SA1518CodeMustNotContainBlankLinesAtEndOfFile"/>.
     /// </summary>
@@ -41,12 +42,26 @@ namespace StyleCop.Analyzers.LayoutRules
 
                 var lastToken = syntaxRoot.GetLastToken(includeZeroWidth: true);
 
-                var newLastToken = lastToken.WithLeadingTrivia(SyntaxFactory.TriviaList());
+                var newLastToken = this.StripViolatingWhitespace(lastToken);
                 var newSyntaxRoot = syntaxRoot.ReplaceToken(lastToken, newLastToken);
                 var newDocument = context.Document.WithSyntaxRoot(newSyntaxRoot);
 
                 context.RegisterCodeFix(CodeAction.Create("Remove blank lines at the end of the file", token => Task.FromResult(newDocument)), diagnostic);
             }
+        }
+
+        private SyntaxToken StripViolatingWhitespace(SyntaxToken token)
+        {
+            SyntaxToken result = token;
+
+            var trailingWhitespaceIndex = TriviaHelper.IndexOfTrailingWhitespace(token.LeadingTrivia);
+            if (trailingWhitespaceIndex != -1)
+            {
+                var newTriviaList = SyntaxFactory.TriviaList(token.LeadingTrivia.Take(trailingWhitespaceIndex));
+                result = token.WithLeadingTrivia(newTriviaList);
+            }
+
+            return result;
         }
     }
 }
