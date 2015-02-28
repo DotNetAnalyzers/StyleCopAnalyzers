@@ -3,6 +3,8 @@
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Text;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The code file has blank lines at the start.
@@ -21,13 +23,13 @@
         /// </summary>
         public const string DiagnosticId = "SA1517";
         private const string Title = "Code must not contain blank lines at start of file";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "Code must not contain blank lines at start of file";
         private const string Category = "StyleCop.CSharp.LayoutRules";
         private const string Description = "The code file has blank lines at the start.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1517.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -44,7 +46,35 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTreeAnalysis);
+        }
+
+        private void HandleSyntaxTreeAnalysis(SyntaxTreeAnalysisContext context)
+        {
+            var firstToken = context.Tree.GetRoot().GetFirstToken(includeZeroWidth: true);
+
+            if (firstToken.HasLeadingTrivia)
+            {
+                var leadingTrivia = firstToken.LeadingTrivia;
+
+                var firstNonBlankLineTriviaIndex = TriviaHelper.IndexOfFirstNonBlankLineTrivia(leadingTrivia);
+                switch (firstNonBlankLineTriviaIndex)
+                {
+                case 0:
+                    // no blank lines
+                    break;
+
+                case -1:
+                    // only blank lines
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, leadingTrivia.Span)));
+                    break;
+
+                default:
+                    var textSpan = TextSpan.FromBounds(leadingTrivia[0].Span.Start, leadingTrivia[firstNonBlankLineTriviaIndex].Span.Start);
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, textSpan)));
+                    break;
+                }
+            }
         }
     }
 }
