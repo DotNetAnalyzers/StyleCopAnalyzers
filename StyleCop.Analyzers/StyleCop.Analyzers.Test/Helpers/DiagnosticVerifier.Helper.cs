@@ -182,6 +182,12 @@ namespace TestHelper
             return solution.GetProject(projectId);
         }
 
+        /// <summary>
+        /// Creates a solution that will be used as parent for the sources that need to be checked.
+        /// </summary>
+        /// <param name="projectId">The project identifier to use.</param>
+        /// <param name="language">The language for which the solution is being created.</param>
+        /// <returns>The created solution.</returns>
         protected virtual Solution CreateSolution(ProjectId projectId, string language)
         {
             return new AdhocWorkspace()
