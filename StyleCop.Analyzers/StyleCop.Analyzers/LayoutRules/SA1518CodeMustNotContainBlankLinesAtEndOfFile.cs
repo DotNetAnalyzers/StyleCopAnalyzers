@@ -3,6 +3,8 @@
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Text;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The code file has blank lines at the end.
@@ -20,13 +22,13 @@
         /// </summary>
         public const string DiagnosticId = "SA1518";
         private const string Title = "Code must not contain blank lines at end of file";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "Code must not contain blank lines at end of file";
         private const string Category = "StyleCop.CSharp.LayoutRules";
         private const string Description = "The code file has blank lines at the end.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1518.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -43,7 +45,24 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTreeAction);
+        }
+
+        private void HandleSyntaxTreeAction(SyntaxTreeAnalysisContext context)
+        {
+            var lastToken = context.Tree.GetRoot().GetLastToken(includeZeroWidth: true);
+
+            if (lastToken.HasLeadingTrivia)
+            {
+                var leadingTrivia = lastToken.LeadingTrivia;
+
+                var trailingWhitespaceIndex = TriviaHelper.IndexOfTrailingWhitespace(leadingTrivia);
+                if (trailingWhitespaceIndex != -1)
+                {
+                    var textSpan = TextSpan.FromBounds(leadingTrivia[trailingWhitespaceIndex].SpanStart, leadingTrivia[leadingTrivia.Count - 1].Span.End);
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, textSpan)));
+                }
+            }
         }
     }
 }

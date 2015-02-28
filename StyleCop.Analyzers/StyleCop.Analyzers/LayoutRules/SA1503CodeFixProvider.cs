@@ -1,17 +1,16 @@
-﻿using System.Composition;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Collections.Immutable;
-
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.CodeActions;
-using Microsoft.CodeAnalysis.CodeFixes;
-using System;
-
-namespace StyleCop.Analyzers.LayoutRules
+﻿namespace StyleCop.Analyzers.LayoutRules
 {
+    using System.Composition;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using System.Collections.Immutable;
+
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CodeActions;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+
     /// <summary>
     /// Implements a code fix for <see cref="SA1503CurlyBracketsMustNotBeOmitted"/>.
     /// </summary>
@@ -78,39 +77,37 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private SyntaxNode FixIfStatement(SyntaxNode root, SyntaxNode parent)
         {
-            return this.ReplaceStatementWithWrappedStatement(root, parent, ((IfStatementSyntax)parent).Statement);
+            var ifStatement = (IfStatementSyntax)parent;
+            return this.ReplaceStatementWithWrappedStatement(root, ifStatement, ifStatement.CloseParenToken, ifStatement.Statement);
         }
 
         private SyntaxNode FixElseStatement(SyntaxNode root, SyntaxNode parent)
         {
-            return this.ReplaceStatementWithWrappedStatement(root, parent, ((ElseClauseSyntax)parent).Statement);
+            var elseStatement = (ElseClauseSyntax)parent;
+            return this.ReplaceStatementWithWrappedStatement(root, elseStatement, elseStatement.ElseKeyword, elseStatement.Statement);
         }
 
         private SyntaxNode FixWhileStatement(SyntaxNode root, SyntaxNode parent)
         {
-            return this.ReplaceStatementWithWrappedStatement(root, parent, ((WhileStatementSyntax)parent).Statement);
+            var whileStatement = (WhileStatementSyntax)parent;
+            return this.ReplaceStatementWithWrappedStatement(root, whileStatement, whileStatement.CloseParenToken, whileStatement.Statement);
         }
 
         private SyntaxNode FixForStatement(SyntaxNode root, SyntaxNode parent)
         {
-            return this.ReplaceStatementWithWrappedStatement(root, parent, ((ForStatementSyntax)parent).Statement);
+            var forStatement = (ForStatementSyntax)parent;
+            return this.ReplaceStatementWithWrappedStatement(root, forStatement, forStatement.CloseParenToken, forStatement.Statement);
         }
 
         private SyntaxNode FixForEachStatement(SyntaxNode root, SyntaxNode parent)
         {
-            return this.ReplaceStatementWithWrappedStatement(root, parent, ((ForEachStatementSyntax)parent).Statement);
+            var foreachStatement = (ForEachStatementSyntax)parent;
+            return this.ReplaceStatementWithWrappedStatement(root, foreachStatement, foreachStatement.CloseParenToken, foreachStatement.Statement);
         }
 
-        private SyntaxNode ReplaceStatementWithWrappedStatement(SyntaxNode root, SyntaxNode parent, StatementSyntax statement)
+        private SyntaxNode ReplaceStatementWithWrappedStatement(SyntaxNode root, SyntaxNode parent, SyntaxToken parentEndToken, StatementSyntax statement)
         {
-            SyntaxTriviaList parentLeadingTrivia = parent.GetLeadingTrivia();
-
-            var newOpenBraceToken = SyntaxFactory.Token(parentLeadingTrivia, SyntaxKind.OpenBraceToken, SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed));
-            var newCloseBraceToken = SyntaxFactory.Token(parentLeadingTrivia, SyntaxKind.CloseBraceToken, SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed));
-            var newStatementList = new SyntaxList<StatementSyntax>().Add(statement);
-
-            var newStatement = SyntaxFactory.Block(newOpenBraceToken, newStatementList, newCloseBraceToken);
-
+            var newStatement = SyntaxFactory.Block(statement);
             return root.ReplaceNode(statement, newStatement);
         }
     }

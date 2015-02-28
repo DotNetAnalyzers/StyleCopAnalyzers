@@ -1,17 +1,21 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Threading.Tasks;
-using System.Threading;
-
-using StyleCop.Analyzers.LayoutRules;
-using TestHelper;
-using Microsoft.CodeAnalysis.CodeFixes;
-
-namespace StyleCop.Analyzers.Test.LayoutRules
+﻿namespace StyleCop.Analyzers.Test.LayoutRules
 {
+    using System.Threading;
+    using System.Threading.Tasks;
+
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Formatting;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+    using StyleCop.Analyzers.LayoutRules;
+    using TestHelper;
+    using Microsoft.CodeAnalysis.CSharp.Formatting;
+
+
     /// <summary>
-    /// Unit tests for the SA1503: CurlyBracketsMustNotBeOmitted analyzer.
+    /// Unit tests for <see cref="SA1503CurlyBracketsMustNotBeOmitted"/>.
     /// </summary>
     [TestClass]
 	public class SA1503UnitTests : CodeFixVerifier
@@ -22,11 +26,12 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         private const string ForTestStatement = "for (var j = 0; j < i; j++)";
         private const string ForEachTestStatement = "foreach (var j in new[] { 1, 2, 3 })";
 
+        private int indentSize = FormattingOptions.IndentationSize.DefaultValue;
+
         /// <summary>
         /// Verifies that the analyzer will properly handle an empty source.
         /// </summary>
-        /// <returns></returns>
-        [TestMethod, TestCategory("MaintainabilityRules/SA1503")]
+        [TestMethod]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
@@ -36,8 +41,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <summary>
         /// Verifies that an if statement followed by a block without curly braces will produce a warning.
         /// </summary>
-        /// <returns></returns>
-        [TestMethod, TestCategory("MaintainabilityRules/SA1503")]
+        [TestMethod]
         public async Task TestIfStatementWithoutCurlyBrackets()
         {
             await this.TestStatementWithoutCurlyBrackets(IfTestStatement);
@@ -46,8 +50,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <summary>
         /// Verifies that an if statement followed by a block with curly braces will produce no diagnostics results.
         /// </summary>
-        /// <returns></returns>
-        [TestMethod, TestCategory("MaintainabilityRules/SA1503")]
+        [TestMethod]
         public async Task TestIfStatementWithCurlyBrackets()
         {
             await this.TestStatementWithCurlyBrackets(IfTestStatement);
@@ -56,8 +59,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <summary>
         /// Verifies that an if / else statement followed by a block without curly braces will produce a warning.
         /// </summary>
-        /// <returns></returns>
-        [TestMethod, TestCategory("MaintainabilityRules/SA1503")]
+        [TestMethod]
         public async Task TestIfElseStatementWithoutCurlyBrackets()
         {
             var testCode = @"using System.Diagnostics;
@@ -95,10 +97,46 @@ public class Foo
         }
 
         /// <summary>
+        /// Verifies that nested if statements followed by a block without curly braces will produce warnings.
+        /// </summary>
+        [TestMethod]
+        public async Task TestMultipleIfStatementsWithoutCurlyBrackets()
+        {
+            var testCode = @"using System.Diagnostics;
+public class Foo
+{
+    public void Bar(int i)
+    {
+        if (i == 0) if (i == 0) Debug.Assert(true);
+    }
+}";
+
+            var expected = new[]
+            {
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Curly brackets must not be omitted",
+                    Severity = DiagnosticSeverity.Warning,
+                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 21) }
+                },
+
+                new DiagnosticResult
+                {
+                    Id = DiagnosticId,
+                    Message = "Curly brackets must not be omitted",
+                    Severity = DiagnosticSeverity.Warning,
+                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 33) }
+                }
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        /// <summary>
         /// Verifies that an if statement followed by a block with curly braces will produce no diagnostics results.
         /// </summary>
-        /// <returns></returns>
-        [TestMethod, TestCategory("MaintainabilityRules/SA1503")]
+        [TestMethod]
         public async Task TestIfElseStatementWithCurlyBrackets()
         {
             var testCode = @"using System.Diagnostics;
@@ -123,8 +161,7 @@ public class Foo
         /// <summary>
         /// Verifies that a while statement followed by a block without curly braces will produce a warning.
         /// </summary>
-        /// <returns></returns>
-        [TestMethod, TestCategory("MaintainabilityRules/SA1503")]
+        [TestMethod]
         public async Task TestWhileStatementWithoutCurlyBrackets()
         {
             await this.TestStatementWithoutCurlyBrackets(WhileTestStatement);
@@ -133,8 +170,7 @@ public class Foo
         /// <summary>
         /// Verifies that a while statement followed by a block with curly braces will produce no diagnostics results.
         /// </summary>
-        /// <returns></returns>
-        [TestMethod, TestCategory("MaintainabilityRules/SA1503")]
+        [TestMethod]
         public async Task TestWhileStatementWithCurlyBrackets()
         {
             await this.TestStatementWithCurlyBrackets(WhileTestStatement);
@@ -143,8 +179,7 @@ public class Foo
         /// <summary>
         /// Verifies that a while statement followed by a block without curly braces will produce a warning.
         /// </summary>
-        /// <returns></returns>
-        [TestMethod, TestCategory("MaintainabilityRules/SA1503")]
+        [TestMethod]
         public async Task TestForStatementWithoutCurlyBrackets()
         {
             await this.TestStatementWithoutCurlyBrackets(ForTestStatement);
@@ -153,8 +188,7 @@ public class Foo
         /// <summary>
         /// Verifies that a while statement followed by a block with curly braces will produce no diagnostics results.
         /// </summary>
-        /// <returns></returns>
-        [TestMethod, TestCategory("MaintainabilityRules/SA1503")]
+        [TestMethod]
         public async Task TestForStatementWithCurlyBrackets()
         {
             await this.TestStatementWithCurlyBrackets(ForTestStatement);
@@ -163,8 +197,7 @@ public class Foo
         /// <summary>
         /// Verifies that a while statement followed by a block without curly braces will produce a warning.
         /// </summary>
-        /// <returns></returns>
-        [TestMethod, TestCategory("MaintainabilityRules/SA1503")]
+        [TestMethod]
         public async Task TestForEachStatementWithoutCurlyBrackets()
         {
             await this.TestStatementWithoutCurlyBrackets(ForEachTestStatement);
@@ -173,20 +206,25 @@ public class Foo
         /// <summary>
         /// Verifies that a while statement followed by a block with curly braces will produce no diagnostics results.
         /// </summary>
-        /// <returns></returns>
-        [TestMethod, TestCategory("MaintainabilityRules/SA1503")]
+        [TestMethod]
         public async Task TestForEachStatementWithCurlyBrackets()
         {
             await this.TestStatementWithCurlyBrackets(ForEachTestStatement);
         }
 
-        [TestMethod, TestCategory("MaintainabilityRules/SA1503")]
+        /// <summary>
+        /// Verifies that the codefix provider will work properly for an if statement.
+        /// </summary>
+        [TestMethod]
         public async Task TestCodeFixProviderForIfStatement()
         {
             await this.TestCodeFixForStatement(IfTestStatement);
         }
 
-        [TestMethod, TestCategory("MaintainabilityRules/SA1503")]
+        /// <summary>
+        /// Verifies that the codefix provider will work properly for an if .. else statement.
+        /// </summary>
+        [TestMethod]
         public async Task TestCodeFixProviderForIfElseStatement()
         {
             var testCode = @"using System.Diagnostics;
@@ -222,28 +260,41 @@ public class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
         }
 
-        [TestMethod, TestCategory("MaintainabilityRules/SA1503")]
+        /// <summary>
+        /// Verifies that the codefix provider will work properly for a while statement.
+        /// </summary>
+        [TestMethod]
         public async Task TestCodeFixProviderForWhileStatement()
         {
             await this.TestCodeFixForStatement(WhileTestStatement);
         }
 
-        [TestMethod, TestCategory("MaintainabilityRules/SA1503")]
+        /// <summary>
+        /// Verifies that the codefix provider will work properly for a for statement.
+        /// </summary>
+        [TestMethod]
         public async Task TestCodeFixProviderForForStatement()
         {
             await this.TestCodeFixForStatement(ForTestStatement);
         }
 
-        [TestMethod, TestCategory("MaintainabilityRules/SA1503")]
+        /// <summary>
+        /// Verifies that the codefix provider will work properly for a foreach statement.
+        /// </summary>
+        [TestMethod]
         public async Task TestCodeFixProviderForForEachStatement()
         {
             await this.TestCodeFixForStatement(ForEachTestStatement);
         }
 
-        // VW: Not sure if this is a valid test at all.
-        [TestMethod, TestCategory("MaintainabilityRules/SA1503")]
+        /// <summary>
+        /// Verifies that the codefix provider will properly handle alternate indentations.
+        /// </summary>
+        [TestMethod]
         public async Task TestCodeFixProviderWithAlternateIndentation()
         {
+            this.indentSize = 1;
+
             var testCode = @"using System.Diagnostics;
 public class Foo
 {
@@ -264,6 +315,72 @@ public class Foo
    Debug.Assert(true);
   }
  }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+        }
+
+        /// <summary>
+        /// Verifies that the codefix provider will work properly handle non-whitespace trivia.
+        /// </summary>
+        [TestMethod]
+        public async Task TestCodeFixProviderWithNonWhitespaceTrivia()
+        {
+            var testCode = @"using System.Diagnostics;
+public class Foo
+{
+    public void Bar(int i)
+    {
+#pragma warning restore
+        if (i == 0)
+            Debug.Assert(true);
+    }
+}";
+
+            var fixedTestCode = @"using System.Diagnostics;
+public class Foo
+{
+    public void Bar(int i)
+    {
+#pragma warning restore
+        if (i == 0)
+        {
+            Debug.Assert(true);
+        }
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+        }
+
+        /// <summary>
+        /// Verifies that the codefix provider will work properly handle multiple cases of missing brackets.
+        /// </summary>
+        [TestMethod]
+        public async Task TestCodeFixProviderWithMultipleNestings()
+        {
+            var testCode = @"using System.Diagnostics;
+public class Foo
+{
+    public void Bar(int i)
+    {
+        if (i == 0) if (i == 0) Debug.Assert(true);
+    }
+}";
+
+            var fixedTestCode = @"using System.Diagnostics;
+public class Foo
+{
+    public void Bar(int i)
+    {
+        if (i == 0)
+        {
+            if (i == 0)
+            {
+                Debug.Assert(true);
+            }
+        }
+    }
 }";
 
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
@@ -335,6 +452,15 @@ public class Foo
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new SA1503CodeFixProvider();
+        }
+
+        protected override Solution CreateSolution(ProjectId projectId, string language)
+        {
+            var newSolution = base.CreateSolution(projectId, language);
+
+            newSolution.Workspace.Options = newSolution.Workspace.Options.WithChangedOption(FormattingOptions.IndentationSize, language, this.indentSize);
+
+            return newSolution;
         }
     }
 }

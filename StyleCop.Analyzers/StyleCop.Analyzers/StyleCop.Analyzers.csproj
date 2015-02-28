@@ -101,6 +101,7 @@
     <Compile Include="DocumentationRules\StandardTextDiagnosticBase.cs" />
     <Compile Include="Helpers\NamedTypeHelpers.cs" />
     <Compile Include="Helpers\RenameHelper.cs" />
+    <Compile Include="Helpers\TriviaHelper.cs" />
     <Compile Include="Helpers\XmlCommentHelper.cs" />
     <Compile Include="LayoutRules\SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine.cs" />
     <Compile Include="LayoutRules\SA1501StatementMustNotBeOnASingleLine.cs" />
@@ -120,7 +121,9 @@
     <Compile Include="LayoutRules\SA1514ElementDocumentationHeaderMustBePrecededByBlankLine.cs" />
     <Compile Include="LayoutRules\SA1515SingleLineCommentMustBePrecededByBlankLine.cs" />
     <Compile Include="LayoutRules\SA1516ElementsMustBeSeparatedByBlankLine.cs" />
+    <Compile Include="LayoutRules\SA1517CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1517CodeMustNotContainBlankLinesAtStartOfFile.cs" />
+    <Compile Include="LayoutRules\SA1518CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1518CodeMustNotContainBlankLinesAtEndOfFile.cs" />
     <Compile Include="MaintainabilityRules\SA1119CodeFixProvider.cs" />
     <Compile Include="MaintainabilityRules\SA1119StatementMustNotUseUnnecessaryParenthesis.cs" />

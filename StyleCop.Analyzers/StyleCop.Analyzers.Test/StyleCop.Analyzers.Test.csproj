@@ -122,6 +122,8 @@
     <Compile Include="Helpers\DiagnosticVerifier.Helper.cs" />
     <Compile Include="Helpers\OpenIssueAttribute.cs" />
     <Compile Include="LayoutRules\SA1503UnitTests.cs" />
+    <Compile Include="LayoutRules\SA1517UnitTests.cs" />
+    <Compile Include="LayoutRules\SA1518UnitTests.cs" />
     <Compile Include="MaintainabilityRules\DebugMessagesUnitTestsBase.cs" />
     <Compile Include="MaintainabilityRules\FileMayOnlyContainTestBase.cs" />
     <Compile Include="MaintainabilityRules\SA1119UnitTests.cs" />
