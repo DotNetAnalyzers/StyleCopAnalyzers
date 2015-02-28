@@ -32,6 +32,12 @@
         public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
 
         /// <inheritdoc/>
+        public override FixAllProvider GetFixAllProvider()
+        {
+            return WellKnownFixAllProviders.BatchFixer;
+        }
+
+        /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             foreach (var diagnostic in context.Diagnostics)
