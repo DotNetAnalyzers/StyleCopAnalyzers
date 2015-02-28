@@ -218,7 +218,7 @@ public class Foo4
         var query = from m in source let z  = source.Take(10) join f in source2 on m equals f where m > 0 && m < 1 group m by m into g select new {g.Key, Sum = g.Sum()};
     }
 }";
-           
+
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
@@ -254,6 +254,51 @@ public class Foo4
                         Locations =
                             new[]
                             {
+                                new DiagnosticResultLocation("Test0.cs", 4, 17)
+                            }
+                    },
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                        Message = "Query clause must follow previous clause.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 6, 17)
+                            }
+                    }
+                };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task QueryInsideQueryComplex()
+        {
+            var testCode = @"            var query = from m in (from s in Enumerable.Empty<int>()
+                where s > 0 select s)
+
+                where m > 0 && (from zz in Enumerable.Empty<int>()
+
+
+                    select zz).Max() > m
+
+                orderby m descending
+                select (from pp in new[] {m}
+
+                    select pp);";
+
+            var expected = new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                        Message = "Query clause must follow previous clause.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
                                 new DiagnosticResultLocation("Test0.cs", 2, 29)
                             }
                     },
@@ -276,7 +321,29 @@ public class Foo4
                         Locations =
                             new[]
                             {
-                                new DiagnosticResultLocation("Test0.cs", 6, 17)
+                                new DiagnosticResultLocation("Test0.cs", 7, 21)
+                            }
+                    },
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                        Message = "Query clause must follow previous clause.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 9, 17)
+                            }
+                    },
+                    new DiagnosticResult
+                    {
+                        Id = DiagnosticId,
+                        Message = "Query clause must follow previous clause.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 12, 21)
                             }
                     }
                 };
