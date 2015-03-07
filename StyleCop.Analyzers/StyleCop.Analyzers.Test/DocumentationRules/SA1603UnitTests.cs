@@ -4,26 +4,25 @@
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using StyleCop.Analyzers.DocumentationRules;
     using TestHelper;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1603DocumentationMustContainValidXml"/>-
     /// </summary>
-    [TestClass]
     public class SA1603UnitTests : CodeFixVerifier
     {
         public string DiagnosticId { get; } = SA1603DocumentationMustContainValidXml.DiagnosticId;
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestTextDocumentation()
         {
             var testCode = @"
@@ -32,7 +31,7 @@ public class Foo { }";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptyElementDocumentation()
         {
             var testCode = @"
@@ -41,7 +40,7 @@ public class Foo { }";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestElementDocumentation()
         {
             var testCode = @"
@@ -50,7 +49,7 @@ public class Foo { }";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestCDataDocumentation()
         {
             var testCode = @"
@@ -59,7 +58,7 @@ public class Foo { }";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestElementStartTagSkippedToken()
         {
             var testCode = @"
@@ -86,7 +85,7 @@ public class Foo { }";
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestElementEndTagSkippedToken()
         {
             var testCode = @"
@@ -113,7 +112,7 @@ public class Foo { }";
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptyElementSkippedToken()
         {
             var testCode = @"
@@ -140,7 +139,7 @@ public class Foo { }";
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestElementTagsNotMatching()
         {
             var testCode = @"
@@ -168,7 +167,7 @@ public class Foo { }";
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestElementMissingEndTag()
         {
             var testCode = @"

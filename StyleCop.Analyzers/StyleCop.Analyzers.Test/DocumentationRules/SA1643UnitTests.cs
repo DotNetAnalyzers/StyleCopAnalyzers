@@ -5,7 +5,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using StyleCop.Analyzers.DocumentationRules;
     using TestHelper;
     using static StyleCop.Analyzers.DocumentationRules.SA1643DestructorSummaryDocumentationMustBeginWithStandardText;
@@ -13,19 +13,18 @@
     /// <summary>
     /// This class contains unit tests for <see cref="SA1643DestructorSummaryDocumentationMustBeginWithStandardText"/>-
     /// </summary>
-    [TestClass]
     public class SA1643UnitTests : CodeFixVerifier
     {
         public string DiagnosticId { get; } = SA1643DestructorSummaryDocumentationMustBeginWithStandardText.DiagnosticId;
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestNoDocumentation()
         {
             var testCode = @"namespace FooNamespace
@@ -125,25 +124,25 @@
             await this.TestDestructorCorrectDocumentation(part1, part2, " with A and B.", generic);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestDestructorCorrectDocumentationSimple()
         {
             await this.TestDestructorCorrectDocumentationSimple(DestructorStandardText[0], DestructorStandardText[1], false);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestDestructorCorrectDocumentationCustomized()
         {
             await this.TestDestructorCorrectDocumentationCustomized(DestructorStandardText[0], DestructorStandardText[1], false);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestNonPrivateConstructorCorrectDocumentationGenericSimple()
         {
             await this.TestDestructorCorrectDocumentationSimple(DestructorStandardText[0], DestructorStandardText[1], true);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestDestructorCorrectDocumentationGenericCustomized()
         {
             await this.TestDestructorCorrectDocumentationCustomized(DestructorStandardText[0], DestructorStandardText[1], true);
@@ -206,13 +205,13 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestDestructorMissingDocumentation()
         {
             await this.TestDestructorMissingDocumentation(DestructorStandardText[0], DestructorStandardText[1], false);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestDestructorMissingDocumentationGeneric()
         {
             await this.TestDestructorMissingDocumentation(DestructorStandardText[0], DestructorStandardText[1], true);

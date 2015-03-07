@@ -2,25 +2,24 @@
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using StyleCop.Analyzers.MaintainabilityRules;
 using TestHelper;
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
-    [TestClass]
     public class SA1401UnitTests : CodeFixVerifier
     {
         private const string DiagnosticId = SA1401FieldsMustBePrivate.DiagnosticId;
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestClassWithPublicField()
         {
             var testCode = @"public class Foo
@@ -46,7 +45,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestClassWithInternalField()
         {
             var testCode = @"public class Foo
@@ -72,7 +71,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestClassWithFieldNoAccessModifier()
         {
             var testCode = @"public class Foo
@@ -83,7 +82,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestStructWithPublicField()
         {
             var testCode = @"public struct Foo
@@ -94,7 +93,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestClassWithConstField()
         {
             var testCode = @"public class Foo

@@ -5,11 +5,10 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using StyleCop.Analyzers.ReadabilityRules;
     using TestHelper;
 
-    [TestClass]
     public class SA1101UnitTests : CodeFixVerifier
     {
         private const string DiagnosticId = SA1101PrefixLocalCallsWithThis.DiagnosticId;
@@ -259,7 +258,7 @@
             };
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPrefixLocalCallsWithThisDiagnostics()
         {
             var expected = new[]
@@ -276,7 +275,7 @@
             await this.VerifyCSharpDiagnosticAsync(ReferenceCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPrefixLocalCallsWithThisCodeFix()
         {
             await this.VerifyCSharpFixAsync(ReferenceCode, FixedCode, cancellationToken: CancellationToken.None);

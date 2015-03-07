@@ -4,23 +4,22 @@
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using StyleCop.Analyzers.ReadabilityRules;
     using TestHelper;
 
-    [TestClass]
     public class SA1102UnitTests : CodeFixVerifier
     {
         private const string DiagnosticId = SA1102QueryClauseMustFollowPreviousClause.DiagnosticId;
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestSelectOnSeparateLineWithAdditionalEmptyLine()
         {
             var testCode = @"
@@ -53,7 +52,7 @@ public class Foo4
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestWhereSelectOnSameLine()
         {
             var testCode = @"
@@ -85,7 +84,7 @@ public class Foo4
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestWhereOnTheSameLineAsFrom()
         {
             var testCode = @"
@@ -116,7 +115,7 @@ public class Foo4
         }
 
 
-        [TestMethod]
+        [Fact]
         public async Task TestComplexQueryWithAdditionalEmptyLine()
         {
             var testCode = @"
@@ -204,7 +203,7 @@ public class Foo4
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestComplexQueryInOneLine()
         {
             var testCode = @"
@@ -218,11 +217,11 @@ public class Foo4
         var query = from m in source let z  = source.Take(10) join f in source2 on m equals f where m > 0 && m < 1 group m by m into g select new {g.Key, Sum = g.Sum()};
     }
 }";
-           
+
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestQueryInsideQuery()
         {
             var testCode = @"        var query = from m in (from s in Enumerable.Empty<int>()

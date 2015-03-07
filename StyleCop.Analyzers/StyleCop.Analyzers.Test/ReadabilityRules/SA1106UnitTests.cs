@@ -4,23 +4,22 @@
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using StyleCop.Analyzers.ReadabilityRules;
     using TestHelper;
 
-    [TestClass]
     public class SA1106UnitTests : CodeFixVerifier
     {
         private const string DiagnosticId = SA1106CodeMustNotContainEmptyStatements.DiagnosticId;
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptyStatementAsBlock()
         {
             var testCode = @"
@@ -51,7 +50,7 @@ class TestClass
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptyStatementInForStatement()
         {
             var testCode = @"
@@ -68,7 +67,7 @@ class TestClass
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptyStatement()
         {
             var testCode = @"
@@ -98,7 +97,7 @@ class TestClass
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLabeledEmptyStatement()
         {
             var testCode = @"
@@ -114,7 +113,7 @@ class TestClass
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLabeledEmptyStatementFollowedByEmptyStatement()
         {
             var testCode = @"
@@ -146,7 +145,7 @@ class TestClass
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLabeledEmptyStatementFollowedByNonEmptyStatement()
         {
             var testCode = @"

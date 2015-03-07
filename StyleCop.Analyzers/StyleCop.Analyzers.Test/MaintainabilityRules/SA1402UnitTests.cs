@@ -3,13 +3,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using StyleCop.Analyzers.MaintainabilityRules;
 using TestHelper;
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
-    [TestClass]
     public class SA1402UnitTests : FileMayOnlyContainTestBase
     {
 
@@ -34,7 +33,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             return new SA1402FileMayOnlyContainASingleClass();
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPartialClasses()
         {
             var testCode = @"public partial class Foo
@@ -49,7 +48,7 @@ public partial class Foo
 
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestDifferentPartialClasses()
         {
             var testCode = @"public partial class Foo
@@ -79,7 +78,7 @@ public partial class Bar
 
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestNestedClasses()
         {
             var testCode = @"public class Foo

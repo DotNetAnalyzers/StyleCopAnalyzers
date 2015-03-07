@@ -5,17 +5,16 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using StyleCop.Analyzers.NamingRules;
     using StyleCop.Analyzers.Test.Helpers;
     using TestHelper;
 
-    [TestClass]
     public class SA1306UnitTests : CodeFixVerifier
     {
         private const string DiagnosticId = SA1306FieldNamesMustBeginWithLowerCaseLetter.DiagnosticId;
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
@@ -132,7 +131,7 @@ string bar, car, dar;
             await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers));
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestThatDiagnosticIsReported_SingleField()
         {
             await this.TestThatDiagnosticIsReported_SingleField(string.Empty);
@@ -141,9 +140,7 @@ string bar, car, dar;
             await this.TestThatDiagnosticIsReported_SingleField("private readonly");
         }
 
-        [TestMethod]
-        [Ignore]
-        [OpenIssue("https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
         public async Task TestThatDiagnosticIsReported_MultipleFields()
         {
             await this.TestThatDiagnosticIsReported_MultipleFields(string.Empty);
@@ -152,7 +149,7 @@ string bar, car, dar;
             await this.TestThatDiagnosticIsReported_MultipleFields("private readonly");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestThatDiagnosticIsNotReported()
         {
             await this.TestThatDiagnosticIsNotReported("const");
@@ -168,7 +165,7 @@ string bar, car, dar;
             await this.TestThatDiagnosticIsNotReported("internal");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestFieldStartingWithAnUnderscore()
         {
             // Makes sure SA1306 is not reported for fields starting with an underscore
@@ -180,7 +177,7 @@ string bar, car, dar;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestFieldStartingWithLetter()
         {
             var testCode = @"public class Foo
@@ -191,7 +188,7 @@ string bar, car, dar;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestFieldPlacedInsideNativeMethodsClass()
         {
             var testCode = @"public class FooNativeMethods

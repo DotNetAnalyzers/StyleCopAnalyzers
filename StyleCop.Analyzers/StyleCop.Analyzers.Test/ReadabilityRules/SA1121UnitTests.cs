@@ -6,7 +6,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using StyleCop.Analyzers.ReadabilityRules;
     using TestHelper;
     using System;
@@ -15,7 +15,6 @@
     /// <summary>
     /// This class contains unit tests for <see cref="SA1121UseBuiltInTypeAlias"/>
     /// </summary>
-    [TestClass]
     public class SA1121UnitTests : CodeFixVerifier
     {
         private static readonly Tuple<string, string>[] ReferenceTypes = new Tuple<string, string>[]
@@ -67,7 +66,7 @@
                 }
                 catch (Exception ex)
                 {
-                    throw new AssertFailedException("Type failed: " + item.Item1 + Environment.NewLine + ex.Message, ex);
+                    Assert.True(false, "Type failed: " + item.Item1 + Environment.NewLine + ex.Message);
                 }
             }
         }
@@ -123,7 +122,7 @@
         }
 
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
@@ -162,7 +161,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestVariableDeclarationCodeFix()
         {
             string testSource = @"using System;
@@ -177,7 +176,7 @@ public class Foo
             await this.VerifyAllFixes(testSource);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestVariableDeclaration()
         {
             await this.TestAllCases(this.TestVariableDeclaration);
@@ -214,13 +213,13 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestDefaultDeclaration()
         {
             await this.TestAllCases(this.TestDefaultDeclaration);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestDefaultDeclarationCodeFix()
         {
             string testSource = @"using System;
@@ -266,13 +265,13 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestTypeOf()
         {
             await this.TestAllCases(this.TestTypeOf);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestTypeOfCodeFix()
         {
             string testSource = @"using System;
@@ -317,13 +316,13 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestReturnType()
         {
             await this.TestAllCases(this.TestReturnType);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestReturnTypeCodeFix()
         {
             string testSource = @"using System;
@@ -367,13 +366,13 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestEnumBaseType()
         {
             await this.TestEnumTypeCases(this.TestEnumBaseType);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestEnumBaseTypeCodeFix()
         {
             string testSource = @"using System;
@@ -418,13 +417,13 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPointerDeclaration()
         {
             await this.TestValueTypeCases(this.TestPointerDeclaration);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPointerDeclarationCodeFix()
         {
             string testSource = @"using System;
@@ -469,13 +468,13 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestArgument()
         {
             await this.TestAllCases(this.TestArgument);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestArgumentCodeFix()
         {
             string testSource = @"using System;
@@ -543,13 +542,13 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIndexer()
         {
             await this.TestAllCases(this.TestIndexer);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIndexerCodeFix()
         {
             string testSource = @"using System;
@@ -620,13 +619,13 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestGenericAndLambda()
         {
             await this.TestAllCases(this.TestGenericAndLambda);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestGenericAndLambdaCodeFix()
         {
             string testSource = @"using System;
@@ -674,13 +673,13 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestArray()
         {
             await this.TestAllCases(this.TestArray);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestArrayCodeFix()
         {
             string testSource = @"using System;
@@ -726,13 +725,13 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestStackAllocArray()
         {
             await this.TestAllCases(this.TestStackAllocArray);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestStackAllocArrayCodeFix()
         {
             string testSource = @"using System;
@@ -790,13 +789,13 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestImplicitCast()
         {
             await this.TestAllCases(this.TestImplicitCast);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestImplicitCastCodeFix()
         {
             string testSource = @"using System;
@@ -843,13 +842,13 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestExplicitCast()
         {
             await this.TestReferenceTypeCases(this.TestExplicitCast);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestExplicitCastCodeFix()
         {
             string testSource = @"using System;
@@ -895,13 +894,13 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestNullable()
         {
             await this.TestValueTypeCases(this.TestNullable);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestNullableCodeFix()
         {
             string testSource = @"using System;
@@ -916,7 +915,7 @@ public class Foo
             await this.VerifyValueTypeFixes(testSource);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMissleadingUsing()
         {
             string testCode = @"namespace Foo
@@ -949,7 +948,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMissleadingUsingCodeFix()
         {
             string oldSource = @"namespace Foo
@@ -974,7 +973,7 @@ public class Foo
             await this.VerifyCSharpFixAsync(oldSource, newSource, allowNewCompilerDiagnostics: true);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestUsingNameChange()
         {
             string testCode = @"namespace Foo
@@ -1007,7 +1006,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestUsingNameChangeCodeFix()
         {
             string oldSource = @"namespace Foo
@@ -1032,7 +1031,7 @@ public class Foo
             await this.VerifyCSharpFixAsync(oldSource, newSource, allowNewCompilerDiagnostics: true);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestWrongType()
         {
             string testCode = @"
@@ -1052,7 +1051,7 @@ public class {0} {{}}
             }
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestUsing()
         {
             string testCode = @"
@@ -1075,7 +1074,7 @@ public namespace {0}
             }
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestNameOf()
         {
             string testCode = @"
@@ -1096,7 +1095,7 @@ namespace Foo
             }
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestNameOfInnerMethod()
         {
             string testCode = @"

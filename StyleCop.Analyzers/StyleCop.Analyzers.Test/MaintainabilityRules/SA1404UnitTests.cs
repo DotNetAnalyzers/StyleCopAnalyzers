@@ -2,19 +2,18 @@
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using StyleCop.Analyzers.MaintainabilityRules;
 using TestHelper;
 using System;
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
-    [TestClass]
     public class SA1404UnitTests : CodeFixVerifier
     {
         private const string DiagnosticId = SA1404CodeAnalysisSuppressionMustHaveJustification.DiagnosticId;
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
@@ -36,7 +35,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestSuppressionWithNoJustification()
         {
             var testCode = @"public class Foo
@@ -66,7 +65,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestSuppressionWithEmptyJustification()
         {
             var testCode = @"public class Foo
@@ -96,7 +95,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestSuppressionWithWhitespaceJustification()
         {
             var testCode = @"public class Foo
@@ -126,7 +125,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestSuppressionWithNullJustification()
         {
             var testCode = @"public class Foo
@@ -156,7 +155,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestSuppressionWithComplexJustification()
         {
             var testCode = @"public class Foo
@@ -172,7 +171,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestSuppressionWithComplexWhitespaceJustification()
         {
             var testCode = @"public class Foo
@@ -203,7 +202,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestDiagnosticDoesNotThrowNullReferenceForWrongConstantType()
         {
             var testCode = @"public class Foo
@@ -236,7 +235,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             }
             catch (NullReferenceException)
             {
-                Assert.Fail("Diagnostic threw NullReferenceException");
+                Assert.True(false, "Diagnostic threw NullReferenceException");
             }
         }
 

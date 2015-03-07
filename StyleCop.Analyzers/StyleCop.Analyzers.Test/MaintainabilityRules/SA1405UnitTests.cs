@@ -6,11 +6,10 @@
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using StyleCop.Analyzers.MaintainabilityRules;
     using TestHelper;
 
-    [TestClass]
     public class SA1405UnitTests : DebugMessagesUnitTestsBase
     {
         protected override string DiagnosticId
@@ -37,7 +36,7 @@
             }
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestWrongOverload()
         {
             var testCode = @"using System.Diagnostics;
