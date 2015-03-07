@@ -15,6 +15,7 @@
         internal const string SummaryXmlTag = "summary";
         internal const string ContentXmlTag = "content";
         internal const string InheritdocXmlTag = "inheritdoc";
+        internal const string ValueXmlTag = "value";
         internal const string SeeXmlTag = "see";
         internal const string CrefArgumentName = "cref";
 
