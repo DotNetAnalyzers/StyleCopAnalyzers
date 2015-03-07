@@ -110,6 +110,8 @@
     <Compile Include="DocumentationRules\SA1601UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1602UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1603UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1610UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1609UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1604UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1605UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1606UnitTests.cs" />
