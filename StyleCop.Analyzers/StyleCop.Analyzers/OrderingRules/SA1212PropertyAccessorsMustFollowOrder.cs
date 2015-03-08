@@ -70,14 +70,14 @@
 
         private void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var indexerDeclaration = (IndexerDeclarationSyntax) context.Node;
+            var indexerDeclaration = (IndexerDeclarationSyntax)context.Node;
 
             AnalyzeProperty(context, indexerDeclaration);
         }
 
         private void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var propertyDeclaration = (PropertyDeclarationSyntax) context.Node;
+            var propertyDeclaration = (PropertyDeclarationSyntax)context.Node;
 
             AnalyzeProperty(context, propertyDeclaration);
         }

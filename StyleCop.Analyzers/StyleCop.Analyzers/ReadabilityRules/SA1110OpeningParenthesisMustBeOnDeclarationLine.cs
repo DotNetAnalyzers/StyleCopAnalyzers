@@ -76,7 +76,7 @@
 
         private void HandleConversionOperatorDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var conversionOperator = (ConversionOperatorDeclarationSyntax) context.Node;
+            var conversionOperator = (ConversionOperatorDeclarationSyntax)context.Node;
 
             var identifierName = conversionOperator.ChildNodes()
                 .OfType<IdentifierNameSyntax>()
@@ -85,7 +85,7 @@
             {
                 return;
             }
-               
+
             var parameterListSyntax = conversionOperator.ParameterList;
 
             if (parameterListSyntax != null && !parameterListSyntax.OpenParenToken.IsMissing)
@@ -113,7 +113,7 @@
 
         private void HandleArrayCreation(SyntaxNodeAnalysisContext context)
         {
-            var array = (ArrayCreationExpressionSyntax) context.Node;
+            var array = (ArrayCreationExpressionSyntax)context.Node;
 
             if (array.Type.IsMissing ||
                 array.Type.ElementType == null ||
@@ -146,7 +146,7 @@
 
         private void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var delegateDeclaration = (DelegateDeclarationSyntax) context.Node;
+            var delegateDeclaration = (DelegateDeclarationSyntax)context.Node;
 
             if (!delegateDeclaration.Identifier.IsMissing &&
                 delegateDeclaration.ParameterList != null &&
@@ -159,7 +159,7 @@
 
         private void HandleAttribute(SyntaxNodeAnalysisContext context)
         {
-            var attribute = (AttributeSyntax) context.Node;
+            var attribute = (AttributeSyntax)context.Node;
 
             var qualifiedNameSyntax = attribute.ChildNodes().OfType<QualifiedNameSyntax>().FirstOrDefault();
             IdentifierNameSyntax identifierNameSyntax = null;
@@ -186,7 +186,7 @@
 
         private void HandleElementAccessExpression(SyntaxNodeAnalysisContext context)
         {
-            var elementAccess = (ElementAccessExpressionSyntax) context.Node;
+            var elementAccess = (ElementAccessExpressionSyntax)context.Node;
 
             if (elementAccess.Expression == null ||
                 elementAccess.ArgumentList.IsMissing ||
@@ -201,7 +201,7 @@
 
         private void HandleIndexerDeclaration(SyntaxNodeAnalysisContext obj)
         {
-            var indexerDeclaration = (IndexerDeclarationSyntax) obj.Node;
+            var indexerDeclaration = (IndexerDeclarationSyntax)obj.Node;
 
             if (!indexerDeclaration.ThisKeyword.IsMissing &&
                 indexerDeclaration.ParameterList != null &&
@@ -214,7 +214,7 @@
 
         private void HandleObjectCreationExpression(SyntaxNodeAnalysisContext context)
         {
-            var objectCreation = (ObjectCreationExpressionSyntax) context.Node;
+            var objectCreation = (ObjectCreationExpressionSyntax)context.Node;
             var qualifiedNameSyntax = objectCreation.ChildNodes().OfType<QualifiedNameSyntax>().FirstOrDefault();
             IdentifierNameSyntax identifierNameSyntax = null;
             if (qualifiedNameSyntax != null)
@@ -240,7 +240,7 @@
 
         private void HandleInvocationExpression(SyntaxNodeAnalysisContext context)
         {
-            var invocationExpression = (InvocationExpressionSyntax) context.Node;
+            var invocationExpression = (InvocationExpressionSyntax)context.Node;
             var identifierNameSyntax = invocationExpression.DescendantNodes().OfType<IdentifierNameSyntax>().LastOrDefault();
             if (identifierNameSyntax != null)
             {
@@ -256,13 +256,13 @@
 
         private void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var constructotDeclarationSyntax = (ConstructorDeclarationSyntax) context.Node;
+            var constructotDeclarationSyntax = (ConstructorDeclarationSyntax)context.Node;
             HandleBaseMethodDeclaration(context, constructotDeclarationSyntax);
         }
 
         private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var methodDeclaration = (MethodDeclarationSyntax) context.Node;
+            var methodDeclaration = (MethodDeclarationSyntax)context.Node;
             HandleBaseMethodDeclaration(context, methodDeclaration);
         }
 

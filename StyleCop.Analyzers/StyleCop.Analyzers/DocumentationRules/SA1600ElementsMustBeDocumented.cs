@@ -141,7 +141,7 @@
             if (declaration != null && this.NeedsComment(declaration.Modifiers, defaultVisibility))
             {
                 if (!XmlCommentHelper.HasDocumentation(declaration))
-                { 
+                {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
                 }
             }
