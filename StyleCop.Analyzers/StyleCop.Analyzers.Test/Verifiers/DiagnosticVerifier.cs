@@ -47,7 +47,7 @@ namespace TestHelper
         /// <param name="expected">A collection of <see cref="DiagnosticResult"/>s describing the
         /// <see cref="Diagnostic"/>s that should be reported by the analyzer for the specified source.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
-        protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken = default(CancellationToken))
         {
             return this.VerifyDiagnosticsAsync(new[] { source }, LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzer(), expected, cancellationToken);
         }
@@ -79,7 +79,7 @@ namespace TestHelper
         /// <param name="expected">A collection of <see cref="DiagnosticResult"/>s describing the
         /// <see cref="Diagnostic"/>s that should be reported by the analyzer for the specified sources.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
-        protected Task VerifyCSharpDiagnosticAsync(string[] sources, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        protected Task VerifyCSharpDiagnosticAsync(string[] sources, DiagnosticResult[] expected, CancellationToken cancellationToken = default(CancellationToken))
         {
             return this.VerifyDiagnosticsAsync(sources, LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzer(), expected, cancellationToken);
         }
