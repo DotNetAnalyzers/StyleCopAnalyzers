@@ -70,7 +70,7 @@
                         string name = declarator.Identifier.ToString();
 
                         if (!string.IsNullOrEmpty(name) 
-                            && !char.IsUpper(name[0]) 
+                            && char.IsLower(name[0]) 
                             && char.IsLetter(name[0])
                             && !NamedTypeHelpers.IsContainedInNativeMethodsClass(declaration))
                         {
