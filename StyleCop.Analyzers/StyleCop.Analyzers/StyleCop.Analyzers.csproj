@@ -264,16 +264,13 @@
       <Link>StyleCop.Analyzers.ruleset</Link>
     </None>
     <None Include="packages.config" />
-    <None Include="StyleCop.Analyzers.nuspec">
+    <NuGetManifest Include="StyleCop.Analyzers.nuspec">
       <SubType>Designer</SubType>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="tools\install.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="tools\uninstall.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+      <Symbols>True</Symbols>
+      <PackageAnalysis>False</PackageAnalysis>
+    </NuGetManifest>
+    <None Include="tools\install.ps1" />
+    <None Include="tools\uninstall.ps1" />
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -322,10 +319,6 @@
     <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0-alpha004\tools\analyzers\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>if exist Diagnostic.nuspec if exist "$(SolutionDir)\packages\NuGet.CommandLine.2.8.2\tools\NuGet.exe" "$(SolutionDir)\packages\NuGet.CommandLine.2.8.2\tools\NuGet.exe" pack Diagnostic.nuspec -OutputDirectory .</PostBuildEvent>
-    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
-  </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>

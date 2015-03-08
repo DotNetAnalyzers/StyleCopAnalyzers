@@ -88,4 +88,5 @@ if (-not (Test-Path 'nuget')) {
 	mkdir "nuget"
 }
 
-&$nuget 'pack' "..\StyleCop.Analyzers\StyleCop.Analyzers\bin\$BuildConfig\StyleCop.Analyzers.nuspec" '-OutputDirectory' 'nuget' '-Prop' "Configuration=$BuildConfig" '-Version' "$Version" '-Symbols'
+Copy-Item "..\StyleCop.Analyzers\StyleCop.Analyzers\bin\$BuildConfig\StyleCop.Analyzers.$Version.nupkg" 'nuget'
+Copy-Item "..\StyleCop.Analyzers\StyleCop.Analyzers\bin\$BuildConfig\StyleCop.Analyzers.$Version.symbols.nupkg" 'nuget'
