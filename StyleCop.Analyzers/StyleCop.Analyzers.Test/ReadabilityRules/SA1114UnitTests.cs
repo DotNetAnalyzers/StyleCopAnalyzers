@@ -1211,7 +1211,7 @@ Foo a)
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
- 
+
         [TestMethod]
         public async Task TestOperatorOverloadDeclarationParametersListOnNextLineAsOpeningParenthesis()
         {

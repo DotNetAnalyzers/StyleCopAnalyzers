@@ -76,7 +76,7 @@
 
         private void HandleArrayCreation(SyntaxNodeAnalysisContext context)
         {
-            var arrayCreation = (ArrayCreationExpressionSyntax) context.Node;
+            var arrayCreation = (ArrayCreationExpressionSyntax)context.Node;
 
             if (arrayCreation.Type == null)
             {
@@ -105,8 +105,8 @@
         {
             var lambdaExpressionSyntax = (ParenthesizedLambdaExpressionSyntax)context.Node;
 
-            if (lambdaExpressionSyntax.ParameterList == null || 
-                lambdaExpressionSyntax.ParameterList.IsMissing || 
+            if (lambdaExpressionSyntax.ParameterList == null ||
+                lambdaExpressionSyntax.ParameterList.IsMissing ||
                 !lambdaExpressionSyntax.ParameterList.Parameters.Any())
             {
                 return;
@@ -144,10 +144,10 @@
 
         private void HandleAnonymousMethod(SyntaxNodeAnalysisContext context)
         {
-            var anonymousMethod = (AnonymousMethodExpressionSyntax) context.Node;
+            var anonymousMethod = (AnonymousMethodExpressionSyntax)context.Node;
 
-            if (anonymousMethod.ParameterList == null || 
-                anonymousMethod.ParameterList.IsMissing || 
+            if (anonymousMethod.ParameterList == null ||
+                anonymousMethod.ParameterList.IsMissing ||
                 !anonymousMethod.ParameterList.Parameters.Any())
             {
                 return;
@@ -166,10 +166,10 @@
 
         private void HandleAttribute(SyntaxNodeAnalysisContext context)
         {
-            var attribute = (AttributeSyntax) context.Node;
+            var attribute = (AttributeSyntax)context.Node;
 
-            if (attribute.ArgumentList == null || 
-                attribute.ArgumentList.IsMissing || 
+            if (attribute.ArgumentList == null ||
+                attribute.ArgumentList.IsMissing ||
                 !attribute.ArgumentList.Arguments.Any())
             {
                 return;
@@ -188,10 +188,10 @@
 
         private void HandleDelegateDeclarationExpression(SyntaxNodeAnalysisContext context)
         {
-            var delegateDeclaration = (DelegateDeclarationSyntax) context.Node;
+            var delegateDeclaration = (DelegateDeclarationSyntax)context.Node;
 
-            if (delegateDeclaration.ParameterList == null || 
-                delegateDeclaration.ParameterList.IsMissing || 
+            if (delegateDeclaration.ParameterList == null ||
+                delegateDeclaration.ParameterList.IsMissing ||
                 !delegateDeclaration.ParameterList.Parameters.Any())
             {
                 return;
@@ -210,7 +210,7 @@
 
         private void HandleElementAccessExpression(SyntaxNodeAnalysisContext context)
         {
-            var elementAccess = (ElementAccessExpressionSyntax) context.Node;
+            var elementAccess = (ElementAccessExpressionSyntax)context.Node;
 
             if (elementAccess.ArgumentList == null ||
                 elementAccess.ArgumentList.IsMissing ||
@@ -244,7 +244,7 @@
 
         private void HandleInvocationExpression(SyntaxNodeAnalysisContext context)
         {
-            var invocationExpression = (InvocationExpressionSyntax) context.Node;
+            var invocationExpression = (InvocationExpressionSyntax)context.Node;
 
             if (invocationExpression.ArgumentList == null ||
                 invocationExpression.ArgumentList.IsMissing ||
@@ -267,7 +267,7 @@
 
         private void HandleObjectCreationExpression(SyntaxNodeAnalysisContext context)
         {
-            var objectCreation = (ObjectCreationExpressionSyntax) context.Node;
+            var objectCreation = (ObjectCreationExpressionSyntax)context.Node;
 
             if (objectCreation.ArgumentList == null ||
                 objectCreation.ArgumentList.IsMissing ||
@@ -294,8 +294,8 @@
         {
             var indexerDeclaration = (IndexerDeclarationSyntax)context.Node;
 
-            if (indexerDeclaration.ParameterList == null || 
-                indexerDeclaration.ParameterList.IsMissing || 
+            if (indexerDeclaration.ParameterList == null ||
+                indexerDeclaration.ParameterList.IsMissing ||
                 !indexerDeclaration.ParameterList.Parameters.Any())
             {
                 return;

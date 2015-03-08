@@ -70,7 +70,7 @@
             if (fieldDeclarationSyntax.ContainingSymbol != null &&
                 fieldDeclarationSyntax.ContainingSymbol.Kind == SymbolKind.NamedType)
             {
-                return ((ITypeSymbol) fieldDeclarationSyntax.ContainingSymbol).TypeKind == TypeKind.Class;
+                return ((ITypeSymbol)fieldDeclarationSyntax.ContainingSymbol).TypeKind == TypeKind.Class;
             }
 
             return false;
