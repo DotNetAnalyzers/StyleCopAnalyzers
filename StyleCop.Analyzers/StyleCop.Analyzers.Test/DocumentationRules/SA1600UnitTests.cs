@@ -12,7 +12,6 @@
     /// <summary>
     /// This class contains unit tests for <see cref="SA1600ElementsMustBeDocumented"/>-
     /// </summary>
-    [Collection("FooCollection")]
     public class SA1600UnitTests : CodeFixVerifier
     {
         public string DiagnosticId { get; } = SA1600ElementsMustBeDocumented.DiagnosticId;

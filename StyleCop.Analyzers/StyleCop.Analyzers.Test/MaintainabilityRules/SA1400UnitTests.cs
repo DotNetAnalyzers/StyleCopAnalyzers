@@ -9,7 +9,7 @@
     using Microsoft.CodeAnalysis.Diagnostics;
     using Xunit;
     using TestHelper;
-    [Collection("Foo")]
+
     public class SA1400UnitTests : CodeFixVerifier
     {
         private const string DiagnosticId = SA1400AccessModifierMustBeDeclared.DiagnosticId;

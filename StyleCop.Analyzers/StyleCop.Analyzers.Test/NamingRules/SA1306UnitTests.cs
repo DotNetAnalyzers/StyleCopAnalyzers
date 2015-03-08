@@ -7,7 +7,6 @@
     using Microsoft.CodeAnalysis.Diagnostics;
     using Xunit;
     using StyleCop.Analyzers.NamingRules;
-    using StyleCop.Analyzers.Test.Helpers;
     using TestHelper;
 
     public class SA1306UnitTests : CodeFixVerifier
