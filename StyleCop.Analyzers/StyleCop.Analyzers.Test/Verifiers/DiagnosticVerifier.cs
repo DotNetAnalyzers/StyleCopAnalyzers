@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System;
+using System.Collections.Immutable;
 
 namespace TestHelper
 {
@@ -259,5 +261,67 @@ namespace TestHelper
             return builder.ToString();
         }
         #endregion
+
+        protected DiagnosticResultBuilder CreateDiagnosticResult(int line, int column, params object[] messageParameters)
+        {
+            return new DiagnosticResultBuilder(this).AddDiagnosticResult(line, column, messageParameters);
+        }
+
+        protected struct DiagnosticResultBuilder
+        {
+            private DiagnosticVerifier verifier;
+            private ImmutableList<DiagnosticResult> results;
+
+            internal DiagnosticResultBuilder(DiagnosticVerifier verifier)
+            {
+                this.verifier = verifier;
+                this.results = ImmutableList<DiagnosticResult>.Empty;
+            }
+
+            public DiagnosticResult[] ToArray()
+            {
+                return this.results.ToArray();
+            }
+
+            public DiagnosticResultBuilder AddDiagnosticResult(int line, int column, params object[] messageParameters)
+            {
+                var analyzer = this.verifier.GetCSharpDiagnosticAnalyzer();
+
+                if (analyzer.SupportedDiagnostics.Length != 1)
+                {
+                    throw new NotSupportedException("Only analyzers with one diagnostic are supported.");
+                }
+
+                var diagnostic = analyzer.SupportedDiagnostics[0];
+
+                messageParameters = messageParameters ?? new object[0];
+
+                string message = string.Format(diagnostic.MessageFormat.ToString(), messageParameters);
+
+                var newDiagnostic =
+                    new DiagnosticResult
+                    {
+                        Id = diagnostic.Id,
+                        Message = message,
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", line, column)
+                            }
+                    };
+
+                return new DiagnosticResultBuilder
+                {
+                    verifier = this.verifier,
+                    results = this.results.Add(newDiagnostic)
+                };
+            }
+
+            public static implicit operator DiagnosticResult[] (DiagnosticResultBuilder builder)
+            {
+                return builder.ToArray();
+            }
+        }
     }
 }
