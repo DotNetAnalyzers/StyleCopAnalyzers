@@ -54,10 +54,10 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleFieldDeclarator, SyntaxKind.FieldDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleFieldDeclaration, SyntaxKind.FieldDeclaration);
         }
 
-        private void HandleFieldDeclarator(SyntaxNodeAnalysisContext context)
+        private void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
         {
             // To improve performance we are looking for the field instead of the declarator directly. That way we don't get called for local variables.
             FieldDeclarationSyntax declaration = context.Node as FieldDeclarationSyntax;
@@ -71,7 +71,6 @@
 
                         if (!string.IsNullOrEmpty(name) 
                             && char.IsLower(name[0]) 
-                            && char.IsLetter(name[0])
                             && !NamedTypeHelpers.IsContainedInNativeMethodsClass(declaration))
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptor, declarator.GetLocation(), name));
