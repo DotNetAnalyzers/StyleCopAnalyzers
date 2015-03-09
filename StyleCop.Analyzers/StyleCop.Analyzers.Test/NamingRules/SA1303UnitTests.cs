@@ -2,25 +2,24 @@
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using StyleCop.Analyzers.NamingRules;
 using TestHelper;
 
 namespace StyleCop.Analyzers.Test.NamingRules
 {
-    [TestClass]
     public class SA1303UnitTests : CodeFixVerifier
     {
         private const string DiagnosticId = SA1303ConstFieldNamesMustBeginWithUpperCaseLetter.DiagnosticId;
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestConstFieldStartingWithLowerCase()
         {
             var testCode = @"public class Foo
@@ -46,7 +45,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestConstFieldStartingWithLowerCaseNativeMethodsExampleOne()
         {
             var testCode = @"public class NativeMethods    
@@ -57,7 +56,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestConstFieldStartingWithLowerCaseNativeMethodsExampleTwo()
         {
             var testCode = @"public class MyNativeMethods    
@@ -68,7 +67,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestConstFieldStartingWithLowerCaseInnerClassInNativeMethods()
         {
             var testCode = @"public class NativeMethods    
@@ -82,7 +81,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestConstFieldStartingWithLowerCaseInnerInnerClassInNativeMethods()
         {
             var testCode = @"public class NativeMethods    
@@ -99,7 +98,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestConstFieldStartingWithLowerCaseNativeMethodsIncorrectName()
         {
             var testCode = @"public class MyNativeMethodsClass    
@@ -125,7 +124,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestConstFieldStartingWithLowerCaseInnerInnerClassInNativeMethodsIncorrectName()
         {
             var testCode = @"
@@ -161,7 +160,7 @@ namespace Test
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestConstFieldStartingWithUpperCase()
         {
             var testCode = @"public class Foo
@@ -172,7 +171,7 @@ namespace Test
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestConstFieldStartingWithUnderscore()
         {
             var testCode = @"public class Foo
@@ -184,7 +183,7 @@ namespace Test
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestFieldWhichIsNotConstStartingWithLowerCase()
         {
             var testCode = @"public class Foo

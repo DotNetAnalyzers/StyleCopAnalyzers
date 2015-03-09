@@ -5,23 +5,22 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using StyleCop.Analyzers.NamingRules;
     using TestHelper;
 
-    [TestClass]
     public class SA1311UnitTests : CodeFixVerifier
     {
         private const string DiagnosticId = SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter.DiagnosticId;
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestStaticReadonlyFieldStartingWithLoweCase()
         {
             var testCode = @"public class Foo
@@ -54,7 +53,7 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestStaticReadonlyFieldStartingWithLoweCaseFieldIsJustOneLetter()
         {
             var testCode = @"public class Foo
@@ -87,7 +86,7 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestStaticReadonlyFieldAssignmentInConstructor()
         {
             var testCode = @"public class Foo
@@ -130,7 +129,7 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestStaticReadonlyFieldStartingWithUpperCase()
         {
             var testCode = @"public class Foo
@@ -141,7 +140,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestReadonlyFieldStartingWithLoweCase()
         {
             var testCode = @"public class Foo
@@ -152,7 +151,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestStaticFieldStartingWithLoweCase()
         {
             var testCode = @"public class Foo

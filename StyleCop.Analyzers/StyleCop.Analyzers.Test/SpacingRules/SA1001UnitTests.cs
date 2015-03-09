@@ -6,7 +6,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using StyleCop.Analyzers.SpacingRules;
     using TestHelper;
 
@@ -14,7 +14,6 @@
     /// This class contains unit tests for <see cref="SA1001CommasMustBeSpacedCorrectly"/> and
     /// <see cref="SA1001CodeFixProvider"/>.
     /// </summary>
-    [TestClass]
     public class SA1001UnitTests : CodeFixVerifier
     {
         private string DiagnosticId { get; } = SA1001CommasMustBeSpacedCorrectly.DiagnosticId;
@@ -29,14 +28,14 @@
             return new SA1001CommasMustBeSpacedCorrectly();
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestSpaceAfterComma()
         {
             string statement = "f(a, b);";
             await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestNoSpaceAfterComma()
         {
             string statementWithoutSpace = @"f(a,b);";
@@ -66,7 +65,7 @@
             await this.TestCommaInStatementOrDecl(statementWithoutSpace, expected, statementWithSpace);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestSpaceBeforeComma()
         {
             string spaceBeforeComma = @"f(a , b);";
@@ -94,7 +93,7 @@
             await this.TestCommaInStatementOrDecl(spaceBeforeComma, expected, spaceOnlyAfterComma);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestSpaceBeforeCommaAtEndOfLine()
         {
             string spaceBeforeComma = $"f(a ,{Environment.NewLine}b);";
@@ -121,28 +120,28 @@
             await this.TestCommaInStatementOrDecl(spaceBeforeComma, expected, spaceOnlyAfterComma);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLastCommaInLine()
         {
             string statement = $"f(a,{Environment.NewLine}b);";
             await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestFirstCommaInLine()
         {
             string statement = $"f(a{Environment.NewLine}, b);";
             await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestCommentBeforeFirstCommaInLine()
         {
             string statement = $"f(a // comment{Environment.NewLine}, b);";
             await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestSpaceBeforeCommaFollowedByAngleBracketInFuncType()
         {
             string statement = @"var a = typeof(System.Func< ,>);";
@@ -169,14 +168,14 @@
             await this.TestCommaInStatementOrDecl(statement, expected, fixedStatement);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestCommaFollowedByAngleBracketInFuncType()
         {
             string statement = @"var a = typeof(System.Func<,>);";
             await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestCommaFollowedBySpaceFollowedByAngleBracketInFuncType()
         {
             // This is correct by SA1001, and reported as an error by SA1015
@@ -184,7 +183,7 @@
             await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestSpaceBeforeCommaFollowedByCommaInFuncType()
         {
             string statement = @"var a = typeof(System.Func< ,,>);";
@@ -211,14 +210,14 @@
             await this.TestCommaInStatementOrDecl(statement, expected, fixedStatement);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestCommaFollowedByCommaInFuncType()
         {
             string statement = @"var a = typeof(System.Func<,,>);";
             await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestCommaFollowedBySpaceFollowedByCommaInFuncType()
         {
             string statement = @"var a = typeof(System.Func<, ,>);";

@@ -5,14 +5,13 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using StyleCop.Analyzers.LayoutRules;
     using TestHelper;
 
     /// <summary>
     /// Unit tests for <see cref="SA1518CodeMustNotContainBlankLinesAtEndOfFile"/>.
     /// </summary>
-    [TestClass]
     public class SA1518UnitTests : CodeFixVerifier
     {
         private const string DiagnosticId = SA1518CodeMustNotContainBlankLinesAtEndOfFile.DiagnosticId;
@@ -29,7 +28,7 @@ public class Foo
         /// <summary>
         /// Verifies that the analyzer will properly handle an empty source.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
@@ -39,7 +38,7 @@ public class Foo
         /// <summary>
         /// Verifies that blank lines at the end of the file will produce a warning.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestWithBlankLinesAtEndOfFile()
         {
             var testCode = BaseCode + "\r\n\r\n";
@@ -49,7 +48,7 @@ public class Foo
         /// <summary>
         /// Verifies that linefeed only blank lines at the end of the file will produce a warning.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestWithLineFeedOnlyBlankLinesAtEndOfFile()
         {
             var testCode = BaseCode + "\n\n";
@@ -59,7 +58,7 @@ public class Foo
         /// <summary>
         /// Verifies that a single carriage return / linefeed at the end of the file will not produce a warning.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestWithSingleCarriageReturnLineFeedAtEndOfFile()
         {
             var testCode = BaseCode + "\r\n";
@@ -69,7 +68,7 @@ public class Foo
         /// <summary>
         /// Verifies that a single linefeed at the end of the file will not produce a warning.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestWithSingleLineFeedAtEndOfFile()
         {
             var testCode = BaseCode + "\n";
@@ -79,7 +78,7 @@ public class Foo
         /// <summary>
         /// Verifies that a source file that ends without a carriage return / linefeed at the end of the file will not produce a warning.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestWithoutCarriageReturnLineFeedAtEndOfFile()
         {
             await this.VerifyCSharpDiagnosticAsync(BaseCode, EmptyDiagnosticResults, CancellationToken.None);
@@ -88,7 +87,7 @@ public class Foo
         /// <summary>
         /// Verifies that a source file that ends with spaces will produce a warning.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestFileEndsWithSpaces()
         {
             var testCode = BaseCode + "\r\n          ";
@@ -98,7 +97,7 @@ public class Foo
         /// <summary>
         /// Verifies that a comment at the end of the file is not flagged.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestFileEndingWithComment()
         {
             var testCode = BaseCode + "\r\n// Test comment";
@@ -108,7 +107,7 @@ public class Foo
         /// <summary>
         /// Verifies that spurious end of lines after a comment at the end of the file are flagged.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestFileEndingWithCommentAndSpuriousWhitespace()
         {
             var testCode = BaseCode + "\r\n// Test comment\r\n   \r\n";
@@ -118,7 +117,7 @@ public class Foo
         /// <summary>
         /// Verifies that an endif at the end of the file is not flagged.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestFileEndingWithEndIf()
         {
             var testCode = "#if true\r\n" + BaseCode + "\r\n#endif\r\n";
@@ -128,7 +127,7 @@ public class Foo
         /// <summary>
         /// Verifies that an endif at the end of the file is not flagged.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestFileEndingWithEndIfWithSpuriousWhitespace()
         {
             var testCode = "#if true\r\n" + BaseCode + "\r\n#endif\r\n   \r\n";
@@ -139,7 +138,7 @@ public class Foo
         /// Verifies that the code fix provider will strip trailing blank lines.
         /// </summary>
         /// <remarks>The CRLF after the last curly bracket will not be stripped!</remarks>
-        [TestMethod]
+        [Fact]
         public async Task TestCodeFixProviderStripsTrailingBlankLines()
         {
             var testCode = BaseCode + "\r\n\r\n";
@@ -152,7 +151,7 @@ public class Foo
         /// Verifies that the code fix provider will strip trailing blank lines that include whitespace.
         /// </summary>
         /// <remarks>The CRLF after the last curly bracket will not be stripped!</remarks>
-        [TestMethod]
+        [Fact]
         public async Task TestCodeFixProviderStripsTrailingBlankLinesIncludingWhitespace()
         {
             var testCode = BaseCode + "\r\n   \r\n   \r\n";
@@ -165,7 +164,7 @@ public class Foo
         /// Verifies that the code fix provider will strip trailing linefeed only blank lines that include whitespace.
         /// </summary>
         /// <remarks>The LF after the last curly bracket will not be stripped!</remarks>
-        [TestMethod]
+        [Fact]
         public async Task TestCodeFixProviderStripsTrailingLinefeedOnlyBlankLinesIncludingWhitespace()
         {
             var testCode = BaseCode + "\n   \n   \n";
@@ -178,7 +177,7 @@ public class Foo
         /// Verifies that the code fix provider will strip only trailing blank lines.
         /// </summary>
         /// <remarks>The CRLF after the #endif will not be stripped!</remarks>
-        [TestMethod]
+        [Fact]
         public async Task TestCodeFixProviderOnlyStripsTrailingBlankLines()
         {
             var testCode = "#if true\r\n" + BaseCode + "\r\n#endif\r\n   \r\n";

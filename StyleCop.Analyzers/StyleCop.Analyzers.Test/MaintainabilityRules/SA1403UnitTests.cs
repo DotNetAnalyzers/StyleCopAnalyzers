@@ -3,13 +3,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using StyleCop.Analyzers.MaintainabilityRules;
 using TestHelper;
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
-    [TestClass]
     public class SA1403UnitTests : FileMayOnlyContainTestBase
     {
         public override string Keyword
@@ -28,7 +27,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             }
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestNestedNamespaces()
         {
             var testCode = @"namespace Foo

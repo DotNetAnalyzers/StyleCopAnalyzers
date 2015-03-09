@@ -5,23 +5,22 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using Analyzers.MaintainabilityRules;
     using TestHelper;
 
-    [TestClass]
     public class SA1119UnitTests : CodeFixVerifier
     {
         private const string DiagnosticId = SA1119StatementMustNotUseUnnecessaryParenthesis.DiagnosticId;
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLiteral()
         {
             var testCode = @"public class Foo
@@ -34,7 +33,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLiteralParenthesis()
         {
             var testCode = @"public class Foo
@@ -93,7 +92,7 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLiteralDoubleParenthesis()
         {
             var testCode = @"public class Foo
@@ -185,7 +184,7 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMethodCall()
         {
             var testCode = @"public class Foo
@@ -198,7 +197,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMethodCallParenthesis()
         {
             var testCode = @"public class Foo
@@ -257,7 +256,7 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLocalMember()
         {
             var testCode = @"public class Foo
@@ -271,7 +270,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLocalMemberMemberAccess()
         {
             var testCode = @"public class Foo
@@ -365,7 +364,7 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLocalMemberAssignment()
         {
             var testCode = @"public class Foo
@@ -379,7 +378,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLocalMemberAssignmentParenthesis()
         {
             var testCode = @"public class Foo
@@ -440,7 +439,7 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLocalMemberParenthesis()
         {
             var testCode = @"public class Foo
@@ -501,7 +500,7 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestCast()
         {
             var testCode = @"public class Foo
@@ -514,7 +513,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestCastParenthesis()
         {
             var testCode = @"public class Foo
@@ -573,7 +572,7 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestCastAssignment()
         {
             var testCode = @"public class Foo
@@ -587,7 +586,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestCastAssignmentParenthesis()
         {
             var testCode = @"public class Foo
@@ -648,7 +647,7 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestCastMemberAccess()
         {
             var testCode = @"public class Foo
@@ -661,7 +660,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestCastMemberAccessAssignment()
         {
             var testCode = @"public class Foo
@@ -675,7 +674,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestUnaryOperators()
         {
             var testCode = @"public class Foo
@@ -694,7 +693,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestUnaryOperatorsParenthesis()
         {
             var testCode = @"public class Foo
@@ -930,7 +929,7 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestCheckedUnchecked()
         {
             var testCode = @"public class Foo
@@ -944,7 +943,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestCheckedUncheckedParenthesis()
         {
             var testCode = @"public class Foo
@@ -1038,7 +1037,7 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestNameOf()
         {
             var testCode = @"public class Foo
@@ -1051,7 +1050,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestNameOfParenthesis()
         {
             var testCode = @"public class Foo
@@ -1110,7 +1109,7 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIsExpression()
         {
             var testCode = @"public class Foo
@@ -1123,7 +1122,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIsExpressionMemberAccess()
         {
             var testCode = @"public class Foo
@@ -1136,7 +1135,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIsExpressionParenthesis()
         {
             var testCode = @"public class Foo
@@ -1230,7 +1229,7 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestAssignment()
         {
             var testCode = @"public class Foo
@@ -1244,7 +1243,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestAssignmentParenthesis()
         {
             var testCode = @"public class Foo
@@ -1305,7 +1304,7 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestInnerAssignment()
         {
             var testCode = @"public class Foo
@@ -1320,7 +1319,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestConditional()
         {
             var testCode = @"public class Foo
@@ -1333,7 +1332,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestConditionalParenthesis()
         {
             var testCode = @"public class Foo
@@ -1392,7 +1391,7 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestConditionalInner()
         {
             var testCode = @"public class Foo
@@ -1406,7 +1405,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestCoalesce()
         {
             var testCode = @"public class Foo
@@ -1419,7 +1418,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestCoalesceParenthesis()
         {
             var testCode = @"public class Foo
@@ -1478,7 +1477,7 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestCoalesceInner()
         {
             var testCode = @"public class Foo
@@ -1492,7 +1491,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLambda()
         {
             var testCode = @"public class Foo
@@ -1506,7 +1505,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLambdaParenthesis()
         {
             var testCode = @"public class Foo
@@ -1600,7 +1599,7 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLambdaInner()
         {
             var testCode = @"public class Foo
@@ -1614,7 +1613,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestArray()
         {
             var testCode = @"public class Foo
@@ -1627,7 +1626,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestArrayParenthesis()
         {
             var testCode = @"public class Foo
@@ -1686,7 +1685,7 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestArrayInner()
         {
             var testCode = @"public class Foo
@@ -1699,7 +1698,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestQuery()
         {
             var testCode = @"public class Foo
@@ -1712,7 +1711,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestQueryParenthesis()
         {
             var testCode = @"public class Foo
@@ -1771,7 +1770,7 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestQueryInner()
         {
             var testCode = @"public class Foo
@@ -1784,7 +1783,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestAwaitInner()
         {
             var testCode = @"public class Foo
@@ -1797,7 +1796,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestBinary()
         {
             var testCode = @"public class Foo
@@ -1812,7 +1811,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestInnerTriviaCodeFix()
         {
             var testCode = @"public class Foo
@@ -1842,7 +1841,7 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestCodeFixWorksInTrivia()
         {
             var testCode = @"#if (NET20 || NET35)
