@@ -91,7 +91,7 @@ that spans 2 lines */
         }
 
         [TestMethod]
-        public async Task TestClassDeclarationMultilineCommentBeforeOpeningBraceButBlankLineExists()
+        public async Task TestClassDeclarationMultilineCommentBeforeOpeningBraceButBlankLineBetweenCommentsExists()
         {
             var testCode = @"
 class Foo
@@ -99,6 +99,22 @@ class Foo
 that spans 2 lines */
 
 //another comment
+{
+
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [TestMethod]
+        public async Task TestClassDeclarationMultilineCommentBlankLineBeforeOpeningBrace()
+        {
+            var testCode = @"
+class Foo
+/*this is a comment
+that spans 2 lines */
+//another comment
+
 {
 
 }";

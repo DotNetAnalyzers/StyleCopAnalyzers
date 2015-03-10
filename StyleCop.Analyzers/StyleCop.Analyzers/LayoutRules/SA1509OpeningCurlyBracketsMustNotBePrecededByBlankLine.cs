@@ -108,33 +108,16 @@
                 return false;
             }
 
-            return CheckIfAllBlanksLinesHaveComments(blankLinesBetweenTokens, endLineOfPreviousToken, token);
+            return !CheckIfPreviousLineHasComment(startLine - 1, token);
         }
 
-        private static bool CheckIfAllBlanksLinesHaveComments(int blankLinesBetweenTokens, int endLineOfPreviousToken, SyntaxToken token)
+        private static bool CheckIfPreviousLineHasComment(int previousLine, SyntaxToken token)
         {
-            var leadingCommentsTriviaLineSpans = token.LeadingTrivia
+            return token.LeadingTrivia
                 .Where(t => t.IsKind(SyntaxKind.MultiLineCommentTrivia) || t.IsKind(SyntaxKind.SingleLineCommentTrivia))
                 .Select(t => t.GetLocation().GetLineSpan())
                 .Where(t => t.IsValid)
-                .ToList();
-            if (leadingCommentsTriviaLineSpans.Count == 0)
-            {
-                return true;
-            }
-
-            for (int i = 1; i < blankLinesBetweenTokens; i++)
-            {
-                var lineToCheck = endLineOfPreviousToken + i;
-                if (
-                    !leadingCommentsTriviaLineSpans.Any(
-                        c => c.StartLinePosition.Line == lineToCheck || c.EndLinePosition.Line == lineToCheck))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+                .Any(l => l.StartLinePosition.Line == previousLine || l.EndLinePosition.Line == previousLine);
         }
     }
 }
