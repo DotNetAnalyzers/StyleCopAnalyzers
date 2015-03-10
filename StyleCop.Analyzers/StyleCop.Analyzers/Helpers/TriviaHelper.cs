@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Helpers
 {
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
 
@@ -94,6 +95,28 @@
             }
 
             return (whiteSpaceStartIndex < triviaList.Count) ? whiteSpaceStartIndex : -1;
+        }
+
+        /// <summary>
+        /// Extension method that strips all trailing whitespace from the trailing trivia of the given <see cref="SyntaxToken"/>.
+        /// </summary>
+        /// <param name="token">The token to strip of its trailing whitespace.</param>
+        /// <returns>The modified token.</returns>
+        internal static SyntaxToken WithoutTrailingWhitespace(this SyntaxToken token)
+        {
+            var trailingTrivia = token.TrailingTrivia;
+            int trailingWhitespaceStartIndex = 0;
+            
+            for (var index = trailingTrivia.Count - 1; index >= 0; index--)
+            {
+                if (!trailingTrivia[index].IsKind(SyntaxKind.WhitespaceTrivia))
+                {
+                    trailingWhitespaceStartIndex = index + 1;
+                    break;
+                }
+            }
+
+            return token.WithTrailingTrivia(trailingTrivia.Take(trailingWhitespaceStartIndex));
         }
     }
 }
