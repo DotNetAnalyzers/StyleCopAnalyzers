@@ -4,23 +4,22 @@
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using StyleCop.Analyzers.OrderingRules;
     using TestHelper;
 
-    [TestClass]
     public class SA1212UnitTests : CodeFixVerifier
     {
         public string DiagnosticId { get; } = SA1212PropertyAccessorsMustFollowOrder.DiagnosticId;
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPropertyWithBackingFieldDeclarationSetterBeforeGetter()
         {
             var testCode = @"
@@ -60,7 +59,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPropertyWithBackingFieldDeclarationGetterBeforeSetter()
         {
             var testCode = @"
@@ -85,7 +84,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPropertyWithBackingFieldDeclarationOnlyGetter()
         {
             var testCode = @"
@@ -105,7 +104,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPropertyWithBackingFieldDeclarationOnlySetter()
         {
             var testCode = @"
@@ -125,7 +124,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestAutoPropertydDeclarationSetterBeforeGetter()
         {
             var testCode = @"
@@ -155,7 +154,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIndexerDeclarationSetterBeforeGetter()
         {
             var testCode = @"
@@ -195,7 +194,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIndexerDeclarationGetterBeforeSetter()
         {
             var testCode = @"
@@ -220,7 +219,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIndexerDeclarationOnlySetter()
         {
             var testCode = @"
@@ -240,7 +239,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIndexerDeclarationOnlyGetter()
         {
             var testCode = @"

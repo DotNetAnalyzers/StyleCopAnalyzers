@@ -5,17 +5,15 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using StyleCop.Analyzers.NamingRules;
-    using StyleCop.Analyzers.Test.Helpers;
     using TestHelper;
 
-    [TestClass]
     public class SA1306UnitTests : CodeFixVerifier
     {
         private const string DiagnosticId = SA1306FieldNamesMustBeginWithLowerCaseLetter.DiagnosticId;
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
@@ -23,7 +21,7 @@
         }
 
 
-        private async Task TestThatDiagnosticIsNotReported(string modifiers)
+        private async Task TestThatDiagnosticIsNotReportedImpl(string modifiers)
         {
             var testCode = @"public class Foo
 {{
@@ -34,7 +32,7 @@ string Bar, car, Dar;
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        private async Task TestThatDiagnosticIsReported_SingleField(string modifiers)
+        private async Task TestThatDiagnosticIsReported_SingleFieldImpl(string modifiers)
         {
             var testCode = @"public class Foo
 {{
@@ -87,7 +85,7 @@ string dar;
             await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers));
         }
 
-        private async Task TestThatDiagnosticIsReported_MultipleFields(string modifiers)
+        private async Task TestThatDiagnosticIsReported_MultipleFieldsImpl(string modifiers)
         {
             var testCode = @"public class Foo
 {{
@@ -132,43 +130,41 @@ string bar, car, dar;
             await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers));
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestThatDiagnosticIsReported_SingleField()
         {
-            await this.TestThatDiagnosticIsReported_SingleField(string.Empty);
-            await this.TestThatDiagnosticIsReported_SingleField("readonly");
-            await this.TestThatDiagnosticIsReported_SingleField("private");
-            await this.TestThatDiagnosticIsReported_SingleField("private readonly");
+            await this.TestThatDiagnosticIsReported_SingleFieldImpl(string.Empty);
+            await this.TestThatDiagnosticIsReported_SingleFieldImpl("readonly");
+            await this.TestThatDiagnosticIsReported_SingleFieldImpl("private");
+            await this.TestThatDiagnosticIsReported_SingleFieldImpl("private readonly");
         }
 
-        [TestMethod]
-        [Ignore]
-        [OpenIssue("https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
         public async Task TestThatDiagnosticIsReported_MultipleFields()
         {
-            await this.TestThatDiagnosticIsReported_MultipleFields(string.Empty);
-            await this.TestThatDiagnosticIsReported_MultipleFields("readonly");
-            await this.TestThatDiagnosticIsReported_MultipleFields("private");
-            await this.TestThatDiagnosticIsReported_MultipleFields("private readonly");
+            await this.TestThatDiagnosticIsReported_MultipleFieldsImpl(string.Empty);
+            await this.TestThatDiagnosticIsReported_MultipleFieldsImpl("readonly");
+            await this.TestThatDiagnosticIsReported_MultipleFieldsImpl("private");
+            await this.TestThatDiagnosticIsReported_MultipleFieldsImpl("private readonly");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestThatDiagnosticIsNotReported()
         {
-            await this.TestThatDiagnosticIsNotReported("const");
-            await this.TestThatDiagnosticIsNotReported("private const");
-            await this.TestThatDiagnosticIsNotReported("internal const");
-            await this.TestThatDiagnosticIsNotReported("protected const");
-            await this.TestThatDiagnosticIsNotReported("protected internal const");
+            await this.TestThatDiagnosticIsNotReportedImpl("const");
+            await this.TestThatDiagnosticIsNotReportedImpl("private const");
+            await this.TestThatDiagnosticIsNotReportedImpl("internal const");
+            await this.TestThatDiagnosticIsNotReportedImpl("protected const");
+            await this.TestThatDiagnosticIsNotReportedImpl("protected internal const");
 
-            await this.TestThatDiagnosticIsNotReported("internal readonly");
-            await this.TestThatDiagnosticIsNotReported("protected readonly");
-            await this.TestThatDiagnosticIsNotReported("protected internal readonly");
-            await this.TestThatDiagnosticIsNotReported("public");
-            await this.TestThatDiagnosticIsNotReported("internal");
+            await this.TestThatDiagnosticIsNotReportedImpl("internal readonly");
+            await this.TestThatDiagnosticIsNotReportedImpl("protected readonly");
+            await this.TestThatDiagnosticIsNotReportedImpl("protected internal readonly");
+            await this.TestThatDiagnosticIsNotReportedImpl("public");
+            await this.TestThatDiagnosticIsNotReportedImpl("internal");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestFieldStartingWithAnUnderscore()
         {
             // Makes sure SA1306 is not reported for fields starting with an underscore
@@ -180,7 +176,7 @@ string bar, car, dar;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestFieldStartingWithLetter()
         {
             var testCode = @"public class Foo
@@ -191,7 +187,7 @@ string bar, car, dar;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestFieldPlacedInsideNativeMethodsClass()
         {
             var testCode = @"public class FooNativeMethods

@@ -5,19 +5,18 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using StyleCop.Analyzers.DocumentationRules;
     using TestHelper;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1606ElementDocumentationMustHaveSummaryText"/>-
     /// </summary>
-    [TestClass]
     public class SA1606UnitTests : CodeFixVerifier
     {
         public string DiagnosticId { get; } = SA1606ElementDocumentationMustHaveSummaryText.DiagnosticId;
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
@@ -86,103 +85,103 @@ TypeName
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestEnumWithDocumentation()
         {
             await this.TestTypeWithDocumentation("enum");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestClassWithDocumentation()
         {
             await this.TestTypeWithDocumentation("class");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestStructWithDocumentation()
         {
             await this.TestTypeWithDocumentation("struct");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestInterfaceWithDocumentation()
         {
             await this.TestTypeWithDocumentation("interface");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestEnumWithInheritedDocumentation()
         {
             await this.TestTypeWithInheritedDocumentation("enum");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestClassWithInheritedDocumentation()
         {
             await this.TestTypeWithInheritedDocumentation("class");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestStructWithInheritedDocumentation()
         {
             await this.TestTypeWithInheritedDocumentation("struct");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestInterfaceWithInheritedDocumentation()
         {
             await this.TestTypeWithInheritedDocumentation("interface");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestEnumWithoutDocumentation()
         {
             await this.TestTypeWithoutDocumentation("enum");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestClassWithoutDocumentation()
         {
             await this.TestTypeWithoutDocumentation("class");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestStructWithoutDocumentation()
         {
             await this.TestTypeWithoutDocumentation("struct");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestInterfaceWithoutDocumentation()
         {
             await this.TestTypeWithoutDocumentation("interface");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestEnumNoDocumentation()
         {
             await this.TestTypeNoDocumentation("enum");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestClassNoDocumentation()
         {
             await this.TestTypeNoDocumentation("class");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestStructNoDocumentation()
         {
             await this.TestTypeNoDocumentation("struct");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestInterfaceNoDocumentation()
         {
             await this.TestTypeNoDocumentation("interface");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestDelegateNoDocumentation()
         {
             var testCode = @"
@@ -191,7 +190,7 @@ TypeName();";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestDelegateWithDocumentation()
         {
             var testCode = @"
@@ -203,7 +202,7 @@ TypeName();";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestDelegateWithInheritedDocumentation()
         {
             var testCode = @"
@@ -213,7 +212,7 @@ TypeName();";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestDelegateWithoutDocumentation()
         {
             var testCode = @"
@@ -243,7 +242,7 @@ void TypeName();";
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMethodNoDocumentation()
         {
             var testCode = @"
@@ -257,7 +256,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMethodWithDocumentation()
         {
             var testCode = @"
@@ -274,7 +273,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMethodWithInheritedDocumentation()
         {
             var testCode = @"
@@ -289,7 +288,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMethodWithoutDocumentation()
         {
             var testCode = @"
@@ -324,7 +323,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestConstructorNoDocumentation()
         {
             var testCode = @"
@@ -338,7 +337,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestConstructorWithDocumentation()
         {
             var testCode = @"
@@ -355,7 +354,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestConstructorWithInheritedDocumentation()
         {
             var testCode = @"
@@ -370,7 +369,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestConstructorWithoutDocumentation()
         {
             var testCode = @"
@@ -405,7 +404,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestDestructorNoDocumentation()
         {
             var testCode = @"
@@ -419,7 +418,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestDestructorWithDocumentation()
         {
             var testCode = @"
@@ -436,7 +435,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestDestructorWithInheritedDocumentation()
         {
             var testCode = @"
@@ -451,7 +450,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestDestructorWithoutDocumentation()
         {
             var testCode = @"
@@ -486,7 +485,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPropertyWithDocumentation()
         {
             var testCode = @"
@@ -503,7 +502,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPropertyWithInheritedDocumentation()
         {
             var testCode = @"
@@ -518,7 +517,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPropertyNoDocumentation()
         {
             var testCode = @"
@@ -532,7 +531,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPropertyWithoutDocumentation()
         {
             var testCode = @"
@@ -567,7 +566,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIndexerWithDocumentation()
         {
             var testCode = @"
@@ -584,7 +583,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIndexerWithInheritedDocumentation()
         {
             var testCode = @"
@@ -599,7 +598,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIndexerNoDocumentation()
         {
             var testCode = @"
@@ -613,7 +612,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIndexerWithoutDocumentation()
         {
             var testCode = @"
@@ -648,7 +647,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestFieldWithDocumentation()
         {
             var testCode = @"
@@ -665,7 +664,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestFieldWithInheritedDocumentation()
         {
             var testCode = @"
@@ -680,7 +679,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestFieldNoDocumentation()
         {
             var testCode = @"
@@ -694,7 +693,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestFieldWithoutDocumentation()
         {
             var testCode = @"
@@ -729,7 +728,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestEventWithDocumentation()
         {
             var testCode = @"
@@ -746,7 +745,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestEventWithInheritedDocumentation()
         {
             var testCode = @"
@@ -761,7 +760,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestEventNoDocumentation()
         {
             var testCode = @"
@@ -775,7 +774,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestEventWithoutDocumentation()
         {
             var testCode = @"
@@ -810,7 +809,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestEventPropertyWithDocumentation()
         {
             var testCode = @"
@@ -827,7 +826,7 @@ public interface InterfaceName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestEventPropertyWithInheritedDocumentation()
         {
             var testCode = @"
@@ -842,7 +841,7 @@ public interface InterfaceName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestEventPropertyNoDocumentation()
         {
             var testCode = @"
@@ -856,7 +855,7 @@ public interface InterfaceName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestEventPropertyWithoutDocumentation()
         {
             var testCode = @"

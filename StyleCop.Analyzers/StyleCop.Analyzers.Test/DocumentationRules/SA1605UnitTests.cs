@@ -5,19 +5,18 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using StyleCop.Analyzers.DocumentationRules;
     using TestHelper;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1605PartialElementDocumentationMustHaveSummary"/>-
     /// </summary>
-    [TestClass]
     public class SA1605UnitTests : CodeFixVerifier
     {
         public string DiagnosticId { get; } = SA1605PartialElementDocumentationMustHaveSummary.DiagnosticId;
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
@@ -96,103 +95,103 @@ TypeName
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestClassWithDocumentation()
         {
             await this.TestTypeWithSummaryDocumentation("class");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestStructWithDocumentation()
         {
             await this.TestTypeWithSummaryDocumentation("struct");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestInterfaceWithDocumentation()
         {
             await this.TestTypeWithSummaryDocumentation("interface");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestClassWithContentDocumentation()
         {
             await this.TestTypeWithContentDocumentation("class");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestStructWithContentDocumentation()
         {
             await this.TestTypeWithContentDocumentation("struct");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestInterfaceWithContentDocumentation()
         {
             await this.TestTypeWithContentDocumentation("interface");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestClassWithInheritedDocumentation()
         {
             await this.TestTypeWithInheritedDocumentation("class");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestStructWithInheritedDocumentation()
         {
             await this.TestTypeWithInheritedDocumentation("struct");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestInterfaceWithInheritedDocumentation()
         {
             await this.TestTypeWithInheritedDocumentation("interface");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestClassWithoutDocumentation()
         {
             await this.TestTypeWithoutDocumentation("class");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestStructWithoutDocumentation()
         {
             await this.TestTypeWithoutDocumentation("struct");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestInterfaceWithoutDocumentation()
         {
             await this.TestTypeWithoutDocumentation("interface");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestEnumNoDocumentation()
         {
             await this.TestTypeNoDocumentation("enum");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestClassNoDocumentation()
         {
             await this.TestTypeNoDocumentation("class");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestStructNoDocumentation()
         {
             await this.TestTypeNoDocumentation("struct");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestInterfaceNoDocumentation()
         {
             await this.TestTypeNoDocumentation("interface");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMethodNoDocumentation()
         {
             var testCode = @"
@@ -206,7 +205,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMethodWithSummaryDocumentation()
         {
             var testCode = @"
@@ -223,7 +222,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMethodWithContentDocumentation()
         {
             var testCode = @"
@@ -240,7 +239,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMethodWithInheritedDocumentation()
         {
             var testCode = @"
@@ -255,7 +254,7 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMethodWithoutDocumentation()
         {
             var testCode = @"

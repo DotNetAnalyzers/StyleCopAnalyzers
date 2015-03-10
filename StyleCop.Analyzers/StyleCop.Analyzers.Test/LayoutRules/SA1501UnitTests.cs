@@ -6,18 +6,18 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
 
     using StyleCop.Analyzers.LayoutRules;
 
     using TestHelper;
     using System.Linq;
+    using Xunit;
+
 
 
     /// <summary>
     /// Unit tests for <see cref="SA1501StatementMustNotBeOnASingleLine"/>.
     /// </summary>
-    [TestClass]
     public class SA1501UnitTests : CodeFixVerifier
     {
         private const string DiagnosticId = SA1501StatementMustNotBeOnASingleLine.DiagnosticId;
@@ -25,7 +25,7 @@
         /// <summary>
         /// Verifies that the analyzer will properly handle an empty source.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
@@ -35,7 +35,7 @@
         /// <summary>
         /// Verifies that lock statement with single line block statement will trigger a warning.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestLockWithSingleLineBlock()
         {
           string testCode = @"using System.Diagnostics;
@@ -55,7 +55,7 @@ public class Foo
         /// <remarks>
         /// The analyzer will only trigger on the second block, as the first block will be marked as DisabledTextTrivia due to the preprocessor statements.
         /// </remarks>
-        [TestMethod]
+        [Fact]
         public async Task TestLockWithPreProcessorTrivia()
         {
             string testCode = @"using System.Diagnostics;
@@ -78,7 +78,7 @@ public class Foo
         /// <summary>
         /// Verifies that lock statement with a block statement spread over multiple lines will not trigger a warning.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestLockWithMultilineBlock()
         {
             string testCode = @"using System.Diagnostics;
@@ -99,7 +99,7 @@ public class Foo
         /// Verifies that lock statement with an invalid formatted block statement spread over multiple lines will not trigger a warning.
         /// </summary>
         /// <remarks>This will trigger SA1500.</remarks>
-        [TestMethod]
+        [Fact]
         public async Task TestLockWithInvalidMultilineBlock()
         {
             string testCode = @"using System.Diagnostics;
@@ -117,7 +117,7 @@ public class Foo
         /// <summary>
         /// Verifies that a single line anonymous method definition is allowed.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestSingleLineAnonymousMethodIsAllowed()
         {
             string testCode = @"using System.Diagnostics;
@@ -136,7 +136,7 @@ public class Foo
         /// <summary>
         /// Verifies that a single line lambda expression definition is allowed.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestSingleLineLambdaExpressionIsAllowed()
         {
             string testCode = @"using System.Diagnostics;
@@ -153,7 +153,7 @@ public class Foo
         /// <summary>
         /// Verifies that a single line method definition is not flagged by this analyzer.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestSingleLineMethodIsAllowed()
         {
             string testCode = @"using System.Diagnostics;
@@ -167,7 +167,7 @@ public class Foo
         /// <summary>
         /// Verifies that a single line property accessors are not flagged by this analyzer.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestSingleLinePropertyAccessorsAreAllowed()
         {
             string testCode = @"using System.Diagnostics;
@@ -185,7 +185,7 @@ public class Foo
         /// <summary>
         /// Verifies that the code fix provider will correctly expand the block to a multiline statement.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestCodeFixProviderCorrectlyExpandsBlock()
         {
             string testCode = @"using System.Diagnostics;
@@ -215,7 +215,7 @@ public class Foo
         /// <summary>
         /// Verifies that the code fix provider will correctly expand the block to a multiline statement, when it starts on the same line as the parent.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestCodeFixProviderCorrectlyExpandsBlockWithParentOnSameLine()
         {
             string testCode = @"using System.Diagnostics;
@@ -244,7 +244,7 @@ public class Foo
         /// <summary>
         /// Verifies that the code fix provider will correctly expand the block to a multiline statement, when it starts on the same line as the parent.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestCodeFixProviderCorrectlyExpandsBlockInSourceFileWithTabs()
         {
             string testCode = 
@@ -276,7 +276,7 @@ public class Foo
         /// <summary>
         /// Verifies that the code fix provider will correctly handle non-whitespace trivia.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestCodeFixProviderCorrectlyHandlesTrivia()
         {
             string testCode = @"using System.Diagnostics;
@@ -309,7 +309,7 @@ public class Foo
         /// <remarks>
         /// Only the second block will be fixed, as the first block is marked as DisabledTextTrivia.
         /// </remarks>
-        [TestMethod]
+        [Fact]
         public async Task TestCodeFixProviderCorrectlyHandlesPreProcessorTrivia()
         {
             string testCode = @"using System.Diagnostics;
