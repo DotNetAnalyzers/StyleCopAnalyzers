@@ -1,4 +1,6 @@
-﻿namespace StyleCop.Analyzers.Test.LayoutRules
+﻿using Microsoft.CodeAnalysis.CodeFixes;
+
+namespace StyleCop.Analyzers.Test.LayoutRules
 {
     using System.Threading;
     using System.Threading.Tasks;
@@ -49,6 +51,50 @@ class Foo
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"
+class Foo
+{
+
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+        }
+
+        [TestMethod]
+        public async Task TestClassDeclarationOpeningBraceHasThreeBlankLine()
+        {
+            var testCode = @"
+class Foo
+
+
+
+{
+
+}";
+
+            var expected = new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = this.DiagnosticId,
+                        Message = "Opening curly brackets must not be preceded by blank line.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 6, 1)
+                            }
+                    }
+                };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"
+class Foo
+{
+
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
         [TestMethod]
@@ -135,6 +181,16 @@ that spans 2 lines */
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"
+class Foo
+/*this is a comment
+that spans 2 lines */
+//another comment
+{
+
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
         [TestMethod]
@@ -163,6 +219,13 @@ struct Foo
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"
+struct Foo
+{
+
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
         [TestMethod]
@@ -205,6 +268,55 @@ class Foo
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"
+class Foo
+{
+    void Bar()
+    {
+    }
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+    }
+
+        [TestMethod]
+        public async Task TestMethodDeclarationOpeningBraceHasTwoBlankLine()
+        {
+            var testCode = @"
+class Foo
+{
+    void Bar()
+
+
+    {
+    }
+}";
+
+            var expected = new[]
+                {
+                    new DiagnosticResult
+                    {
+                        Id = this.DiagnosticId,
+                        Message = "Opening curly brackets must not be preceded by blank line.",
+                        Severity = DiagnosticSeverity.Warning,
+                        Locations =
+                            new[]
+                            {
+                                new DiagnosticResultLocation("Test0.cs", 7, 5)
+                            }
+                    }
+                };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"
+class Foo
+{
+    void Bar()
+    {
+    }
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
         [TestMethod]
@@ -249,6 +361,15 @@ namespace Bar
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"
+namespace Bar
+{
+    class Foo
+    {
+    }
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
         [TestMethod]
@@ -292,6 +413,15 @@ class Foo
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"
+class Foo
+{
+    string Prop
+    {
+        get;set;}
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
         [TestMethod]
@@ -352,6 +482,20 @@ class Foo
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"
+class Foo
+{
+    void Bar()
+    {
+        if(1 == 1)
+        {}
+        else
+        {
+        }
+    }
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
         [TestMethod]
@@ -403,6 +547,17 @@ class Foo
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"
+class Foo
+{
+    void Bar()
+    {
+        while(1 == 1)
+        {}
+    }
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
         [TestMethod]
@@ -451,6 +606,17 @@ class Foo
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"
+class Foo
+{
+    void Bar()
+    {
+        Action a = () =>  
+{ };
+    }
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
         [TestMethod]
@@ -498,6 +664,17 @@ class Foo
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"
+class Foo
+{
+    void Bar()
+    {
+        var a = new[]
+{1, 2, 3};
+    }
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
         [TestMethod]
@@ -550,6 +727,22 @@ class Foo
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"
+class Person
+{
+    internal string Name {get;set;}
+}
+
+class Foo
+{
+    void Bar()
+    {
+        var p = new Person()
+        { Name = ""qwe""};
+    }
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
         [TestMethod]
@@ -579,11 +772,6 @@ class Foo
         public async Task TestAnonymousTypeOpeningBraceHasBlankLine()
         {
             var testCode = @"
-class Person
-{
-    internal string Name {get;set;}
-}
-
 class Foo
 {
     void Bar()
@@ -604,12 +792,23 @@ class Foo
                         Locations =
                             new[]
                             {
-                                new DiagnosticResultLocation("Test0.cs", 13, 9)
+                                new DiagnosticResultLocation("Test0.cs", 8, 9)
                             }
                     },
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"
+class Foo
+{
+    void Bar()
+    {
+        var p = new 
+        { Name = ""qwe""};
+    }
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
         [TestMethod]
@@ -650,7 +849,8 @@ class Foo
         
 
         {
-            var a = new 
+            var a = new
+//this is a comment 
 
 {Age = 5};
 
@@ -702,17 +902,43 @@ class Foo
                         Locations =
                             new[]
                             {
-                                new DiagnosticResultLocation("Test0.cs", 18, 1)
+                                new DiagnosticResultLocation("Test0.cs", 19, 1)
                             }
                     },
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"namespace Test
+    {
+    class Person
+    {
+        internal string Name {get;set;}
+    }
+
+    class Foo  
+    {
+        void Bar()
+        {
+            var a = new
+//this is a comment 
+{Age = 5};
+
+            var b = new {Week = 5};
+        }
+    }
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1509OpeningCurlyBracketsMustNotBePrecededByBlankLine();
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1509CodeFixProvider();
         }
     }
 }

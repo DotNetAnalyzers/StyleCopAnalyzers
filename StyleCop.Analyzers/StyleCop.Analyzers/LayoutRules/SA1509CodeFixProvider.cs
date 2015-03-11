@@ -1,0 +1,85 @@
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Composition;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
+using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
+using StyleCop.Analyzers.Helpers;
+
+namespace StyleCop.Analyzers.LayoutRules
+{
+    /// <summary>
+    /// Implements a code fix for <see cref="SA1509OpeningCurlyBracketsMustNotBePrecededByBlankLine"/>.
+    /// </summary>
+    [ExportCodeFixProvider(nameof(SA1509CodeFixProvider), LanguageNames.CSharp)]
+    [Shared]
+    public class SA1509CodeFixProvider : CodeFixProvider
+    {
+        private static readonly ImmutableArray<string> FixableDiagnostics =
+            ImmutableArray.Create(SA1509OpeningCurlyBracketsMustNotBePrecededByBlankLine.DiagnosticId);
+
+        /// <inheritdoc/>
+        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+
+        /// <inheritdoc/>
+        public override FixAllProvider GetFixAllProvider()
+        {
+            return WellKnownFixAllProviders.BatchFixer;
+        }
+
+        /// <inheritdoc/>
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        {
+            foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)).ToList())
+            {
+                var syntaxRoot =
+                    await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
+                var openBrace = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
+                var leadingTrivia = openBrace.LeadingTrivia;
+
+                var newTriviaList = SyntaxFactory.TriviaList();
+
+                var previousEmptyLines = this.GetPreviousEmptyLines(openBrace).ToList();
+                newTriviaList = newTriviaList.AddRange(leadingTrivia.Except(previousEmptyLines));
+
+                var newOpenBrace = openBrace.WithLeadingTrivia(newTriviaList);
+                var newSyntaxRoot = syntaxRoot.ReplaceToken(openBrace, newOpenBrace);
+
+                context.RegisterCodeFix(
+                    CodeAction.Create("Remove blank lines preceding this curly bracket",
+                        token => Task.FromResult(context.Document.WithSyntaxRoot(newSyntaxRoot))), diagnostic);
+            }
+        }
+
+        private IEnumerable<SyntaxTrivia> GetPreviousEmptyLines(SyntaxToken openBrace)
+        {
+            var result = new List<SyntaxTrivia>();
+
+            var lineOfOpenBrace = openBrace.GetLocation().GetLineSpan().StartLinePosition.Line;
+            var lineToCheck = lineOfOpenBrace - 1;
+
+            while (lineToCheck > -1)
+            {
+                var trivias = openBrace.LeadingTrivia
+                    .Where(t => t.GetLocation().GetLineSpan().StartLinePosition.Line == lineToCheck)
+                    .ToList();
+                var endOfLineTrivia = trivias.Where(t => t.IsKind(SyntaxKind.EndOfLineTrivia)).ToList();
+                if (endOfLineTrivia.Any() && trivias.Except(endOfLineTrivia).All(t => t.IsKind(SyntaxKind.WhitespaceTrivia)))
+                {
+                    lineToCheck --;
+                    result.AddRange(trivias);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return result;
+        }
+    }
+}
