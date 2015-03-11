@@ -112,7 +112,7 @@ namespace TestHelper
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         private async Task VerifyDiagnosticsAsync(string[] sources, string language, DiagnosticAnalyzer analyzer, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
-            var diagnostics = await GetSortedDiagnosticsAsync(sources, language, analyzer, cancellationToken);
+            var diagnostics = await this.GetSortedDiagnosticsAsync(sources, language, analyzer, cancellationToken);
             VerifyDiagnosticResults(diagnostics, analyzer, expected);
         }
 

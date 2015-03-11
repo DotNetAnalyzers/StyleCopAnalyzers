@@ -84,7 +84,7 @@ namespace TestHelper
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         private async Task VerifyFixAsync(string language, DiagnosticAnalyzer analyzer, CodeFixProvider codeFixProvider, string oldSource, string newSource, int? codeFixIndex, bool allowNewCompilerDiagnostics, CancellationToken cancellationToken)
         {
-            var document = CreateDocument(oldSource, language);
+            var document = this.CreateDocument(oldSource, language);
             var analyzerDiagnostics = await GetSortedDiagnosticsFromDocumentsAsync(analyzer, new[] { document }, cancellationToken);
             var compilerDiagnostics = await GetCompilerDiagnosticsAsync(document, cancellationToken);
             var attempts = analyzerDiagnostics.Length;

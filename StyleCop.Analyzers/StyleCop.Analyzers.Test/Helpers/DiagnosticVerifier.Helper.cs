@@ -44,9 +44,9 @@ namespace TestHelper
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>A collection of <see cref="Diagnostic"/>s that surfaced in the source code, sorted by
         /// <see cref="Diagnostic.Location"/>.</returns>
-        private static Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsAsync(string[] sources, string language, DiagnosticAnalyzer analyzer, CancellationToken cancellationToken)
+        private Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsAsync(string[] sources, string language, DiagnosticAnalyzer analyzer, CancellationToken cancellationToken)
         {
-            return GetSortedDiagnosticsFromDocumentsAsync(analyzer, GetDocuments(sources, language), cancellationToken);
+            return GetSortedDiagnosticsFromDocumentsAsync(analyzer, this.GetDocuments(sources, language), cancellationToken);
         }
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace TestHelper
         /// <param name="language">The language the source classes are in. Values may be taken from the
         /// <see cref="LanguageNames"/> class.</param>
         /// <returns>A collection of <see cref="Document"/>s representing the sources.</returns>
-        private static Document[] GetDocuments(string[] sources, string language)
+        private Document[] GetDocuments(string[] sources, string language)
         {
             if (language != LanguageNames.CSharp && language != LanguageNames.VisualBasic)
             {
@@ -131,7 +131,7 @@ namespace TestHelper
                 string fileName = language == LanguageNames.CSharp ? "Test" + i + ".cs" : "Test" + i + ".vb";
             }
 
-            var project = CreateProject(sources, language);
+            var project = this.CreateProject(sources, language);
             var documents = project.Documents.ToArray();
 
             if (sources.Length != documents.Length)
@@ -149,9 +149,9 @@ namespace TestHelper
         /// <param name="language">The language the source classes are in. Values may be taken from the
         /// <see cref="LanguageNames"/> class.</param>
         /// <returns>A <see cref="Document"/> created from the source string.</returns>
-        protected static Document CreateDocument(string source, string language = LanguageNames.CSharp)
+        protected Document CreateDocument(string source, string language = LanguageNames.CSharp)
         {
-            return CreateProject(new[] { source }, language).Documents.Single();
+            return this.CreateProject(new[] { source }, language).Documents.Single();
         }
 
         /// <summary>
@@ -162,21 +162,14 @@ namespace TestHelper
         /// <see cref="LanguageNames"/> class.</param>
         /// <returns>A <see cref="Project"/> created out of the <see cref="Document"/>s created from the source
         /// strings.</returns>
-        private static Project CreateProject(string[] sources, string language = LanguageNames.CSharp)
+        private Project CreateProject(string[] sources, string language = LanguageNames.CSharp)
         {
             string fileNamePrefix = DefaultFilePathPrefix;
             string fileExt = language == LanguageNames.CSharp ? CSharpDefaultFileExt : VisualBasicDefaultExt;
 
             var projectId = ProjectId.CreateNewId(debugName: TestProjectName);
 
-            var solution = new AdhocWorkspace()
-                .CurrentSolution
-                .AddProject(projectId, TestProjectName, TestProjectName, language)
-                .AddMetadataReference(projectId, CorlibReference)
-                .AddMetadataReference(projectId, SystemReference)
-                .AddMetadataReference(projectId, SystemCoreReference)
-                .AddMetadataReference(projectId, CSharpSymbolsReference)
-                .AddMetadataReference(projectId, CodeAnalysisReference);
+            var solution = this.CreateSolution(projectId, language);
 
             int count = 0;
             foreach (var source in sources)
@@ -188,7 +181,25 @@ namespace TestHelper
             }
             return solution.GetProject(projectId);
         }
-        #endregion
+
+        /// <summary>
+        /// Creates a solution that will be used as parent for the sources that need to be checked.
+        /// </summary>
+        /// <param name="projectId">The project identifier to use.</param>
+        /// <param name="language">The language for which the solution is being created.</param>
+        /// <returns>The created solution.</returns>
+        protected virtual Solution CreateSolution(ProjectId projectId, string language)
+        {
+            return new AdhocWorkspace()
+            .CurrentSolution
+            .AddProject(projectId, TestProjectName, TestProjectName, language)
+            .AddMetadataReference(projectId, CorlibReference)
+            .AddMetadataReference(projectId, SystemReference)
+            .AddMetadataReference(projectId, SystemCoreReference)
+            .AddMetadataReference(projectId, CSharpSymbolsReference)
+            .AddMetadataReference(projectId, CodeAnalysisReference);
+        }
+    #endregion
     }
 }
 
