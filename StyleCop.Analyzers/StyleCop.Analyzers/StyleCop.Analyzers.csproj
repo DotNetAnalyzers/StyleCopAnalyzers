@@ -99,6 +99,8 @@
     <Compile Include="DocumentationRules\SA1649FileHeaderFileNameDocumentationMustMatchTypeName.cs" />
     <Compile Include="DocumentationRules\SA1650ElementDocumentationMustBeSpelledCorrectly.cs" />
     <Compile Include="DocumentationRules\StandardTextDiagnosticBase.cs" />
+    <Compile Include="Helpers\IndentationHelper.cs" />
+    <Compile Include="Helpers\IndentationOptions.cs" />
     <Compile Include="Helpers\NamedTypeHelpers.cs" />
     <Compile Include="Helpers\RenameHelper.cs" />
     <Compile Include="Helpers\TriviaHelper.cs" />

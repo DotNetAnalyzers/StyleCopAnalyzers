@@ -1,7 +1,5 @@
 ﻿namespace StyleCop.Analyzers.LayoutRules
 {
-    using System;
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
@@ -12,7 +10,6 @@
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Formatting;
 
     using StyleCop.Analyzers.Helpers;
 
@@ -55,119 +52,120 @@
 
         private SyntaxNode ReformatBlockAndParent(CodeFixContext context, SyntaxNode syntaxRoot, BlockSyntax block)
         {
-            var prevToken = block.OpenBraceToken.GetPreviousToken();
+            var parentLastToken = block.OpenBraceToken.GetPreviousToken();
 
-            var parentEndLine = prevToken.GetLocation().GetLineSpan().EndLinePosition.Line;
+            var parentEndLine = parentLastToken.GetLocation().GetLineSpan().EndLinePosition.Line;
             var blockStartLine = block.OpenBraceToken.GetLocation().GetLineSpan().StartLinePosition.Line;
 
-            var newPrevToken = prevToken.WithoutTrailingWhitespace();
+            var newParentLastToken = parentLastToken;
             if (parentEndLine == blockStartLine)
             {
-                var newTrailingTrivia = newPrevToken.TrailingTrivia.Add(SyntaxFactory.CarriageReturnLineFeed);
-                newPrevToken = newPrevToken.WithTrailingTrivia(newTrailingTrivia);
+                var newTrailingTrivia = parentLastToken.TrailingTrivia
+                    .WithoutTrailingWhitespace()
+                    .Add(SyntaxFactory.CarriageReturnLineFeed);
+
+                newParentLastToken = newParentLastToken.WithTrailingTrivia(newTrailingTrivia);
             }
 
-            /* TODO: The ReplaceToken call below seems to do nothing! */
-            var newSyntaxRoot = syntaxRoot.TrackNodes(block);
-            newSyntaxRoot = newSyntaxRoot.ReplaceToken(prevToken, newPrevToken);
-            newSyntaxRoot = newSyntaxRoot.ReplaceNode(newSyntaxRoot.GetCurrentNode(block), this.ReformatBlock(context, block));
+            var newBlock = this.ReformatBlock(context, block);
+            var rewriter = new BlockRewriter(parentLastToken, newParentLastToken, block, newBlock);
 
+            var newSyntaxRoot = rewriter.Visit(syntaxRoot);
             return newSyntaxRoot;
         }
 
-        private SyntaxNode ReformatBlock(CodeFixContext context, BlockSyntax block)
+        private BlockSyntax ReformatBlock(CodeFixContext context, BlockSyntax block)
         {
-            var indentationOptions = new IndentationOptions(context.Document);
-            var parentIndentationLevel = this.GetNodeIndentationLevel(indentationOptions, block.Parent);
+            var indentationOptions = IndentationOptions.FromDocument(context.Document);
+            var parentIndentationLevel = IndentationHelper.GetNodeIndentationSteps(indentationOptions, block.Parent);
 
-            var indentationString = this.GenerateIndentationString(parentIndentationLevel, indentationOptions);
-            var statementIndentationString = this.GenerateIndentationString(parentIndentationLevel + 1, indentationOptions);
+            var indentationString = IndentationHelper.GenerateIndentationString(indentationOptions, parentIndentationLevel);
+            var statementIndentationString = IndentationHelper.GenerateIndentationString(indentationOptions, parentIndentationLevel + 1);
+
+            var newOpenBraceLeadingTrivia = block.OpenBraceToken.LeadingTrivia
+                .WithoutTrailingWhitespace()
+                .Add(SyntaxFactory.Whitespace(indentationString));
+
+            var newOpenBraceTrailingTrivia = block.OpenBraceToken.TrailingTrivia
+                .WithoutTrailingWhitespace()
+                .Add(SyntaxFactory.CarriageReturnLineFeed);
+
+            var newCloseBraceLeadingTrivia = block.CloseBraceToken.LeadingTrivia
+                .WithoutTrailingWhitespace()
+                .Add(SyntaxFactory.Whitespace(indentationString));
+
+            var newCloseBraceTrailingTrivia = block.CloseBraceToken.TrailingTrivia
+                .WithoutTrailingWhitespace();
+
+            // only add an end-of-line to the close brace if there is none yet.
+            if (!newCloseBraceTrailingTrivia.Last().IsKind(SyntaxKind.EndOfLineTrivia))
+            {
+                newCloseBraceTrailingTrivia = newCloseBraceTrailingTrivia.Add(SyntaxFactory.CarriageReturnLineFeed);
+            }
 
             var openBraceToken = SyntaxFactory.Token(SyntaxKind.OpenBraceToken)
-                .WithLeadingTrivia(SyntaxFactory.Whitespace(indentationString))
-                .WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed);
+                .WithLeadingTrivia(newOpenBraceLeadingTrivia)
+                .WithTrailingTrivia(newOpenBraceTrailingTrivia);
 
             var closeBraceToken = SyntaxFactory.Token(SyntaxKind.CloseBraceToken)
-                .WithLeadingTrivia(SyntaxFactory.Whitespace(indentationString))
-                .WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed);
+                .WithLeadingTrivia(newCloseBraceLeadingTrivia)
+                .WithTrailingTrivia(newCloseBraceTrailingTrivia);
 
             var statements = SyntaxFactory.List<StatementSyntax>();
             foreach (var statement in block.Statements)
             {
-                /* TODO: Take into account all forms of non-whitespace trivia */
-                /* TODO: Strip trailing whitespace from the last parent token and all statement tokens */
-                /* TODO: Add CRLF to last statement if there is none */
-                statements = statements.Add(statement.WithLeadingTrivia(SyntaxFactory.Whitespace(statementIndentationString)));
+                var newLeadingTrivia = statement.GetLeadingTrivia()
+                    .WithoutTrailingWhitespace()
+                    .Add(SyntaxFactory.Whitespace(statementIndentationString));
+
+                var newTrailingTrivia = statement.GetTrailingTrivia()
+                    .WithoutTrailingWhitespace()
+                    .Add(SyntaxFactory.CarriageReturnLineFeed);
+
+                var modifiedStatement = statement
+                    .WithLeadingTrivia(newLeadingTrivia)
+                    .WithTrailingTrivia(newTrailingTrivia);
+
+                statements = statements.Add(modifiedStatement);
             }
 
             return SyntaxFactory.Block(openBraceToken, statements, closeBraceToken);
         }
 
-        private int GetNodeIndentationLevel(IndentationOptions indentationOptions, SyntaxNode node)
+        private class BlockRewriter : CSharpSyntaxRewriter
         {
-            var leadingTrivia = node.GetLeadingTrivia();
-            var indentationString = string.Empty;
+            private SyntaxToken parentToken;
+            private SyntaxToken newParentToken;
+            private BlockSyntax block;
+            private BlockSyntax newBlock;
 
-            for (var i = leadingTrivia.Count - 1; (i >= 0) && leadingTrivia[i].IsKind(SyntaxKind.WhitespaceTrivia); i--)
+            public BlockRewriter(SyntaxToken parentToken, SyntaxToken newParentToken, BlockSyntax block, BlockSyntax newBlock)
             {
-                indentationString = string.Concat(leadingTrivia[i].ToFullString(), indentationString);
+                this.parentToken = parentToken;
+                this.newParentToken = newParentToken;
+                this.block = block;
+                this.newBlock = newBlock;
             }
 
-            var indentationCount = indentationString.ToCharArray().Sum(c => this.IndentationAmount(c, indentationOptions));
-
-            return indentationCount / indentationOptions.IndentationSize;
-        }
-
-        private int IndentationAmount(char c, IndentationOptions indentationOptions)
-        {
-            return c == '\t' ? indentationOptions.TabSize : 1;
-        }
-
-        private string GenerateIndentationString(int indentationLevel, IndentationOptions indentationOptions)
-        {
-            string result;
-            var indentationCount = indentationLevel * indentationOptions.IndentationSize;
-
-            if (indentationOptions.UseTabs)
+            public override SyntaxToken VisitToken(SyntaxToken token)
             {
-                var tabCount = indentationCount / indentationOptions.TabSize;
-                var spaceCount = indentationCount % indentationOptions.TabSize;
+                if (token == this.parentToken)
+                {
+                    return this.newParentToken;
+                }
 
-                result = new string('\t', tabCount) + new string(' ', spaceCount);
-            }
-            else
-            {
-                result = new string(' ', indentationCount);
+                return base.VisitToken(token);
             }
 
-            return result;
-        }
-
-        private class IndentationOptions
-        {
-            public IndentationOptions(Document document)
+            public override SyntaxNode VisitBlock(BlockSyntax node)
             {
-                var options = document.Project.Solution.Workspace.Options;
+                if (node == this.block)
+                {
+                    return this.newBlock;
+                }
 
-                this.IndentationSize = options.GetOption(FormattingOptions.IndentationSize, LanguageNames.CSharp);
-                this.TabSize = options.GetOption(FormattingOptions.TabSize, LanguageNames.CSharp);
-                this.UseTabs = options.GetOption(FormattingOptions.UseTabs, LanguageNames.CSharp);
+                return base.VisitBlock(node);
             }
-
-            /// <summary>
-            /// Gets the indentation size.
-            /// </summary>
-            public int IndentationSize { get; private set; }
-
-            /// <summary>
-            /// Gets the tab size.
-            /// </summary>
-            public int TabSize { get; private set; }
-
-            /// <summary>
-            /// Gets a value indicating whether tabs should be used instead of spaces.
-            /// </summary>
-            public bool UseTabs { get; private set; }
         }
     }
 }

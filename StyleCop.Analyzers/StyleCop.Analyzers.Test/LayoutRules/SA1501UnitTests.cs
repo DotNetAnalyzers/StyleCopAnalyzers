@@ -10,7 +10,6 @@
     using StyleCop.Analyzers.LayoutRules;
 
     using TestHelper;
-    using System.Linq;
     using Xunit;
 
 
@@ -231,9 +230,9 @@ public class Foo
 {
     public void Bar(int i)
     {
-        lock (this) 
-        { 
-            Debug.Assert(true); 
+        lock (this)
+        {
+            Debug.Assert(true);
         }
     }
 }";
@@ -244,7 +243,7 @@ public class Foo
         /// <summary>
         /// Verifies that the code fix provider will correctly expand the block to a multiline statement, when it starts on the same line as the parent.
         /// </summary>
-        [Fact]
+        [Fact(Skip = "Disabled until pull request #522 is merged.")]
         public async Task TestCodeFixProviderCorrectlyExpandsBlockInSourceFileWithTabs()
         {
             string testCode = 
@@ -284,7 +283,7 @@ public class Foo
 {
     public void Bar(int i)
     {
-        lock (this) /* comment */ { /* comment2 */ Debug.Assert(true); }
+        lock (this) /* comment */ { /* comment2 */ Debug.Assert(true); /* comment3 */ } /* comment4 */
     }
 }";
             string fixedTestCode = @"using System.Diagnostics;
@@ -293,10 +292,9 @@ public class Foo
     public void Bar(int i)
     {
         lock (this) /* comment */
-        { 
-            /* comment2 */
-            Debug.Assert(true); 
-        }
+        { /* comment2 */
+            Debug.Assert(true); /* comment3 */
+        } /* comment4 */
     }
 }";
 

@@ -1,6 +1,5 @@
 ﻿namespace StyleCop.Analyzers.LayoutRules
 {
-    using System;
     using System.Collections.Immutable;
 
     using Microsoft.CodeAnalysis;

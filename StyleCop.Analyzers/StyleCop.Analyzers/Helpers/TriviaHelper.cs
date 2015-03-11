@@ -1,8 +1,8 @@
 ﻿namespace StyleCop.Analyzers.Helpers
 {
-    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Provides helper methods to work with trivia (lists).
@@ -98,25 +98,79 @@
         }
 
         /// <summary>
-        /// Extension method that strips all trailing whitespace from the trailing trivia of the given <see cref="SyntaxToken"/>.
+        /// Strips all trialing whitespace trivia from the trivia list until a non-whitespace trivia is encountered.
+        /// end-of-line trivia are ignored, but kept.
         /// </summary>
-        /// <param name="token">The token to strip of its trailing whitespace.</param>
-        /// <returns>The modified token.</returns>
-        internal static SyntaxToken WithoutTrailingWhitespace(this SyntaxToken token)
+        /// <param name="triviaList">The trivia list to strip of its trailing whitespace.</param>
+        /// <returns>The modified triviaList.</returns>
+        internal static SyntaxTriviaList WithoutTrailingWhitespace(this SyntaxTriviaList triviaList)
         {
-            var trailingTrivia = token.TrailingTrivia;
-            int trailingWhitespaceStartIndex = 0;
-            
-            for (var index = trailingTrivia.Count - 1; index >= 0; index--)
+            var result = new List<SyntaxTrivia>();
+            bool skipWhitespace = true;
+
+            for (var index = triviaList.Count - 1; index >= 0; index--)
             {
-                if (!trailingTrivia[index].IsKind(SyntaxKind.WhitespaceTrivia))
+                var trivia = triviaList[index];
+
+                switch (trivia.Kind())
                 {
-                    trailingWhitespaceStartIndex = index + 1;
-                    break;
+                    case SyntaxKind.WhitespaceTrivia:
+                        if (!skipWhitespace)
+                        {
+                            result.Insert(0, trivia);
+                        }
+                        break;
+
+                    case SyntaxKind.EndOfLineTrivia:
+                        result.Insert(0, trivia);
+                        break;
+
+                    default:
+                        result.Insert(0, trivia);
+                        skipWhitespace = false;
+                        break;
                 }
             }
 
-            return token.WithTrailingTrivia(trailingTrivia.Take(trailingWhitespaceStartIndex));
+            return SyntaxFactory.TriviaList(result);
+        }
+
+        /// <summary>
+        /// Strips all leading whitespace trivia from the trivia list until a non-whitespace trivia is encountered.
+        /// end-of-line trivia are ignored, but kept.
+        /// </summary>
+        /// <param name="triviaList">The triviaList to strip of its leading whitespace.</param>
+        /// <returns>The modified triviaList.</returns>
+        internal static SyntaxTriviaList WithoutLeadingWhitespace(this SyntaxTriviaList triviaList)
+        {
+            var result = new List<SyntaxTrivia>();
+            bool skipWhitespace = true;
+
+            for (var index = 0; index < triviaList.Count; index++)
+            {
+                var trivia = triviaList[index];
+
+                switch (trivia.Kind())
+                {
+                    case SyntaxKind.WhitespaceTrivia:
+                        if (!skipWhitespace)
+                        {
+                            result.Add(trivia);
+                        }
+                        break;
+
+                    case SyntaxKind.EndOfLineTrivia:
+                        result.Add(trivia);
+                        break;
+
+                    default:
+                        result.Add(trivia);
+                        skipWhitespace = false;
+                        break;
+                }
+            }
+
+            return SyntaxFactory.TriviaList(result);
         }
     }
 }
