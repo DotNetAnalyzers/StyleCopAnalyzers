@@ -5,7 +5,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using TestHelper;
 
     public abstract class NumberSignSpacingTestBase : CodeFixVerifier
@@ -25,14 +25,14 @@
             get;
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPrefixUnaryOperatorAtEndOfLine()
         {
             string testCode = @"namespace Namespace
@@ -81,7 +81,7 @@
             await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPrefixUnaryOperatorAtBeginningOfLine_LeadingTrivia()
         {
             string testFormat = @"namespace Namespace
@@ -139,7 +139,7 @@
             await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPrefixUnaryOperatorAtBeginningOfLine_NoLeadingTrivia()
         {
             string testFormat = @"namespace Namespace
@@ -197,7 +197,7 @@
             await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPrefixUnaryOperatorAfterEquals()
         {
             string testFormat = @"namespace Namespace
@@ -302,7 +302,7 @@
             await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPrefixUnaryOperatorAfterBinaryOperator()
         {
             string testFormat = @"namespace Namespace
@@ -358,7 +358,7 @@
             await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPrefixUnaryOperatorAfterCast()
         {
             string testFormat = @"namespace Namespace
@@ -463,7 +463,7 @@
             await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPrefixUnaryOperatorInParentheses()
         {
             string testFormat = @"namespace Namespace
@@ -568,7 +568,7 @@
             await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPrefixUnaryOperatorInBrackets()
         {
             string testFormat = @"namespace Namespace

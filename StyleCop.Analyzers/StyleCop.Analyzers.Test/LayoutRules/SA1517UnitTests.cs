@@ -5,14 +5,13 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using StyleCop.Analyzers.LayoutRules;
     using TestHelper;
 
     /// <summary>
     /// Unit tests for <see cref="SA1517CodeMustNotContainBlankLinesAtStartOfFile"/>.
     /// </summary>
-    [TestClass]
     public class SA1517UnitTests : CodeFixVerifier
     {
         private const string DiagnosticId = SA1517CodeMustNotContainBlankLinesAtStartOfFile.DiagnosticId;
@@ -29,7 +28,7 @@ public class Foo
         /// <summary>
         /// Verifies that the analyzer will properly handle an empty source.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
@@ -39,7 +38,7 @@ public class Foo
         /// <summary>
         /// Verifies that blank lines at the start of the file will produce a warning.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestWithBlankLinesAtStartOfFile()
         {
             var testCode = "\r\n\r\n" + BaseCode;
@@ -49,7 +48,7 @@ public class Foo
         /// <summary>
         /// Verifies that blank linefeed only lines at the start of the file will produce a warning.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestWithBlankLinefeedOnlyLinesAtStartOfFile()
         {
             var testCode = "\n\n" + BaseCode;
@@ -59,7 +58,7 @@ public class Foo
         /// <summary>
         /// Verifies that non-whitespace trivia will not produce a warning.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestWithNonWhitespaceTrivia()
         {
             var testCode = "#if true\r\n" + BaseCode + "\r\n#endif\r\n";
@@ -69,7 +68,7 @@ public class Foo
         /// <summary>
         /// Verifies that blank lines followed by non-whitespace trivia will produce a warning.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestWithNonWhitespaceTriviaAndLeadingBlankLines()
         {
             var testCode = "\r\n\r\n#if true\r\n" + BaseCode + "\r\n#endif\r\n";
@@ -79,7 +78,7 @@ public class Foo
         /// <summary>
         /// Verifies that no blank lines at the start of the file will not produce a warning.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestWithoutCarriageReturnLineFeedAtStartOfFile()
         {
             await this.VerifyCSharpDiagnosticAsync(BaseCode, EmptyDiagnosticResults, CancellationToken.None);
@@ -88,7 +87,7 @@ public class Foo
         /// <summary>
         /// Verifies that invalid spacing will not trigger SA1517.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestWithInvalidSpacing()
         {
             var testCode = "    " + BaseCode;
@@ -98,7 +97,7 @@ public class Foo
         /// <summary>
         /// Verifies that the code fix provider will strip leading blank lines.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestCodeFixProviderStripsLeadingBlankLines()
         {
             var testCode = "\r\n\r\n" + BaseCode;
@@ -110,7 +109,7 @@ public class Foo
         /// <summary>
         /// Verifies that the code fix provider will not strip leading whitespace other than blank lines.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestCodeFixProviderHandlesWhitespaceProperly()
         {
             var testCode = "\r\n   " + BaseCode;
@@ -122,7 +121,7 @@ public class Foo
         /// <summary>
         /// Verifies that the code fix provider will strip whitespace on blank lines.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestCodeFixProviderHandlesBlankLinesWithWhitespaceProperly()
         {
             var testCode = "   \r\n   \r\n" + BaseCode;
@@ -134,7 +133,7 @@ public class Foo
         /// <summary>
         /// Verifies that the code fix provider will not strip non-whitespace trivia.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestCodeFixProviderHandlesNonWhitespaceTriviaProperly()
         {
             var testCode = "\r\n\r\n#if true\r\n" + BaseCode + "\r\n#endif\r\n";
