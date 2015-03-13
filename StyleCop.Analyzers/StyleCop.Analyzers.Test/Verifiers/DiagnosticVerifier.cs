@@ -371,10 +371,10 @@ namespace TestHelper
         }
 
         /// <summary>
-        /// Helper method to format a <see cref="Diagnostic"/> into an easily readable string.
+        /// Helper method to format a <see cref="DiagnosticResult"/> into an easily readable string.
         /// </summary>
         /// <param name="analyzer">The analyzer that this verifier tests.</param>
-        /// <param name="diagnostics">A collection of <see cref="Diagnostic"/>s to be formatted.</param>
+        /// <param name="diagnostics">A collection of <see cref="DiagnosticResult"/>s to be formatted.</param>
         /// <returns>The <paramref name="diagnostics"/> formatted as a string.</returns>
         private static string FormatDiagnostics(DiagnosticAnalyzer analyzer, params DiagnosticResult[] diagnostics)
         {
