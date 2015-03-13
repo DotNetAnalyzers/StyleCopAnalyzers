@@ -122,6 +122,7 @@
     <Compile Include="LayoutRules\SA1514ElementDocumentationHeaderMustBePrecededByBlankLine.cs" />
     <Compile Include="LayoutRules\SA1515SingleLineCommentMustBePrecededByBlankLine.cs" />
     <Compile Include="LayoutRules\SA1516ElementsMustBeSeparatedByBlankLine.cs" />
+    <Compile Include="LayoutRules\SA1516CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1517CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1517CodeMustNotContainBlankLinesAtStartOfFile.cs" />
     <Compile Include="LayoutRules\SA1518CodeFixProvider.cs" />
