@@ -91,5 +91,10 @@ namespace TestHelper
                 return this.Locations.Length > 0 ? this.Locations[0].Column : -1;
             }
         }
+
+        public override string ToString()
+        {
+            return $"{this.Path}({this.Line},{this.Column}): {this.Severity}: {this.Message}";
+        }
     }
 }
