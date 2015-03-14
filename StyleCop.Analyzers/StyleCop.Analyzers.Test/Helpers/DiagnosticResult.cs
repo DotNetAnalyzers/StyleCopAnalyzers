@@ -34,7 +34,10 @@ namespace TestHelper
     /// </summary>
     public struct DiagnosticResult
     {
+        private static readonly object[] EmptyArguments = new object[0];
+
         private DiagnosticResultLocation[] locations;
+        private string message;
 
         public DiagnosticResultLocation[] Locations
         {
@@ -65,7 +68,33 @@ namespace TestHelper
 
         public string Message
         {
-            get; set;
+            get
+            {
+                if (this.message != null)
+                    return this.message;
+
+                if (this.MessageFormat != null)
+                    return string.Format(this.MessageFormat.ToString(), this.MessageArguments ?? EmptyArguments);
+
+                return null;
+            }
+
+            set
+            {
+                this.message = value;
+            }
+        }
+
+        public LocalizableString MessageFormat
+        {
+            get;
+            set;
+        }
+
+        public object[] MessageArguments
+        {
+            get;
+            set;
         }
 
         public string Path
