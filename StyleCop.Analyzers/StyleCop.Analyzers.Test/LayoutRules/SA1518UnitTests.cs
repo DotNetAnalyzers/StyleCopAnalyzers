@@ -2,12 +2,11 @@
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.LayoutRules;
     using TestHelper;
+    using Xunit;
 
     /// <summary>
     /// Unit tests for <see cref="SA1518CodeMustNotContainBlankLinesAtEndOfFile"/>.
@@ -201,15 +200,9 @@ public class Foo
         private DiagnosticResult[] GenerateExpectedWarning(int line, int column)
         {
             return new[]
-            {
-                new DiagnosticResult
                 {
-                    Id = DiagnosticId,
-                    Message = "Code must not contain blank lines at end of file",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", line, column) }
-                }
-            };
+                    this.CSharpDiagnostic().WithLocation(line, column)
+                };
         }
     }
 }
