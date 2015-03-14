@@ -135,7 +135,7 @@ namespace TestHelper
         {
             int expectedCount = expectedResults.Count();
             int actualCount = actualResults.Count();
-                StringBuilder errorStringBuilder = new StringBuilder();
+            StringBuilder errorStringBuilder = new StringBuilder();
 
             if (expectedCount != actualCount)
             {
@@ -192,22 +192,7 @@ namespace TestHelper
 
             foreach (var expected in expectedResults)
             {
-                bool success = false;
-                foreach (var actual in actualResults)
-                {
-                    try
-                    {
-                        AssertDiagnosticsMatch(analyzer, actual, expected);
-                        success = true;
-                        break;
-                    }
-                    catch (XunitException)
-                    {
-                        // If the expected result does not match any diagnostic we will get an Exception for all
-                        // diagnostics.
-                    }
-                }
-                if (!success)
+                if (actualResults.All(actual => !DiagnosticsMatch(analyzer, actual, expected)))
                 {
                     errorStringBuilder.AppendLine("The test is expecting this diagnostic, but it is not reported:");
                     errorStringBuilder.AppendLine(FormatDiagnostics(analyzer, expected));
@@ -248,6 +233,37 @@ namespace TestHelper
                     expected.Message, actual.GetMessage(), FormatDiagnostics(analyzer, actual)));
         }
 
+        private static bool DiagnosticsMatch(DiagnosticAnalyzer analyzer, Diagnostic actual, DiagnosticResult expected)
+        {
+            if (expected.Line == -1 && expected.Column == -1)
+            {
+                return actual.Location != Location.None;
+            }
+            else
+            {
+                if (!DiagnosticLocationMatches(analyzer, actual, actual.Location, expected.Locations.First()))
+                {
+                    return false;
+                }
+                var additionalLocations = actual.AdditionalLocations.ToArray();
+                if (additionalLocations.Length != expected.Locations.Length - 1)
+                {
+                    return false;
+                }
+
+                for (int j = 0; j < additionalLocations.Length; ++j)
+                {
+                    if (!DiagnosticLocationMatches(analyzer, actual, additionalLocations[j], expected.Locations[j + 1]))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return actual.Id == expected.Id
+                && actual.Severity == expected.Severity
+                && actual.GetMessage() == expected.Message;
+        }
 
         /// <summary>
         /// Helper method to <see cref="VerifyDiagnosticResults"/> that checks the location of a
@@ -278,6 +294,39 @@ namespace TestHelper
             Assert.True(actualLinePosition.Character <= 0 || actualLinePosition.Character + 1 == expected.Column,
                 string.Format("Expected diagnostic to start at column \"{0}\" was actually at column \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
                     expected.Column, actualLinePosition.Character + 1, FormatDiagnostics(analyzer, diagnostic)));
+        }
+
+        /// <summary>
+        /// Helper method to <see cref="VerifyDiagnosticResults"/> that checks the location of a
+        /// <see cref="Diagnostic"/> and compares it with the location described by a
+        /// <see cref="DiagnosticResultLocation"/>.
+        /// </summary>
+        /// <param name="analyzer">The analyzer that was being run on the sources.</param>
+        /// <param name="diagnostic">The diagnostic that was found in the code.</param>
+        /// <param name="actual">The location of the diagnostic found in the code.</param>
+        /// <param name="expected">The <see cref="DiagnosticResultLocation"/> describing the expected location of the
+        /// diagnostic.</param>
+        private static bool DiagnosticLocationMatches(DiagnosticAnalyzer analyzer, Diagnostic diagnostic, Location actual, DiagnosticResultLocation expected)
+        {
+            var actualSpan = actual.GetLineSpan();
+            var actualLinePosition = actualSpan.StartLinePosition;
+
+            if (actualSpan.Path != expected.Path && (actualSpan.Path == null || !actualSpan.Path.Contains("Test0.") || !expected.Path.Contains("Test.")))
+            {
+                return false;
+            }
+
+            if (actualLinePosition.Line > 0 && actualLinePosition.Line + 1 != expected.Line)
+            {
+                return false;
+            }
+
+            if (actualLinePosition.Character > 0 && actualLinePosition.Character + 1 != expected.Column)
+            {
+                return false;
+            }
+
+            return true;
         }
         #endregion
 
