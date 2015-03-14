@@ -142,13 +142,10 @@ namespace TestHelper
                 errorStringBuilder.AppendLine($"Mismatch between number of diagnostics returned, expected \"{expectedCount}\" actual \"{actualCount}\"");
             }
 
-            AppendMissmatchErrorText(actualResults, analyzer, expectedResults, errorStringBuilder);
+            AppendMismatchErrorText(actualResults, analyzer, expectedResults, errorStringBuilder);
 
             string errorString = errorStringBuilder.ToString();
-            if (!string.IsNullOrEmpty(errorString))
-            {
-                Assert.True(false, errorString);
-            }
+            Assert.True(string.IsNullOrEmpty(errorString), errorString);
 
             //The only thing that could still be wrong is that the duplicated entries in actualResult and expectedResults
             // don't match. Example:
@@ -167,7 +164,7 @@ namespace TestHelper
             }
         }
 
-        private static void AppendMissmatchErrorText(IEnumerable<Diagnostic> actualResults, DiagnosticAnalyzer analyzer, DiagnosticResult[] expectedResults, StringBuilder errorStringBuilder)
+        private static void AppendMismatchErrorText(IEnumerable<Diagnostic> actualResults, DiagnosticAnalyzer analyzer, DiagnosticResult[] expectedResults, StringBuilder errorStringBuilder)
         {
             foreach (var actual in actualResults)
             {
@@ -222,52 +219,33 @@ namespace TestHelper
         {
             if (expected.Line == -1 && expected.Column == -1)
             {
-                if (actual.Location != Location.None)
-                {
-                    Assert.True(false,
-                        string.Format("Expected:\nA project diagnostic with No location\nActual:\n{0}",
-                        FormatDiagnostics(analyzer, actual)));
-                }
+                Assert.True(actual.Location == Location.None,
+                    string.Format("Expected:\nA project diagnostic with No location\nActual:\n{0}",
+                    FormatDiagnostics(analyzer, actual)));
             }
             else
             {
                 VerifyDiagnosticLocation(analyzer, actual, actual.Location, expected.Locations.First());
                 var additionalLocations = actual.AdditionalLocations.ToArray();
-
-                if (additionalLocations.Length != expected.Locations.Length - 1)
-                {
-                    Assert.True(false,
-                        string.Format("Expected {0} additional locations but got {1} for Diagnostic:\r\n    {2}\r\n",
-                            expected.Locations.Length - 1, additionalLocations.Length,
-                            FormatDiagnostics(analyzer, actual)));
-                }
+                Assert.True(additionalLocations.Length == expected.Locations.Length - 1,
+                    string.Format("Expected {0} additional locations but got {1} for Diagnostic:\r\n    {2}\r\n",
+                        expected.Locations.Length - 1, additionalLocations.Length,
+                        FormatDiagnostics(analyzer, actual)));
 
                 for (int j = 0; j < additionalLocations.Length; ++j)
                 {
                     VerifyDiagnosticLocation(analyzer, actual, additionalLocations[j], expected.Locations[j + 1]);
                 }
             }
-
-            if (actual.Id != expected.Id)
-            {
-                Assert.True(false,
-                    string.Format("Expected diagnostic id to be \"{0}\" was \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                        expected.Id, actual.Id, FormatDiagnostics(analyzer, actual)));
-            }
-
-            if (actual.Severity != expected.Severity)
-            {
-                Assert.True(false,
-                    string.Format("Expected diagnostic severity to be \"{0}\" was \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                        expected.Severity, actual.Severity, FormatDiagnostics(analyzer, actual)));
-            }
-
-            if (actual.GetMessage() != expected.Message)
-            {
-                Assert.True(false,
-                    string.Format("Expected diagnostic message to be \"{0}\" was \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                        expected.Message, actual.GetMessage(), FormatDiagnostics(analyzer, actual)));
-            }
+            Assert.True(actual.Id == expected.Id,
+                string.Format("Expected diagnostic id to be \"{0}\" was \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
+                    expected.Id, actual.Id, FormatDiagnostics(analyzer, actual)));
+            Assert.True(actual.Severity == expected.Severity,
+                string.Format("Expected diagnostic severity to be \"{0}\" was \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
+                    expected.Severity, actual.Severity, FormatDiagnostics(analyzer, actual)));
+            Assert.True(actual.GetMessage() == expected.Message,
+                string.Format("Expected diagnostic message to be \"{0}\" was \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
+                    expected.Message, actual.GetMessage(), FormatDiagnostics(analyzer, actual)));
         }
 
 
@@ -292,26 +270,14 @@ namespace TestHelper
             var actualLinePosition = actualSpan.StartLinePosition;
 
             // Only check line position if there is an actual line in the real diagnostic
-            if (actualLinePosition.Line > 0)
-            {
-                if (actualLinePosition.Line + 1 != expected.Line)
-                {
-                    Assert.True(false,
-                        string.Format("Expected diagnostic to be on line \"{0}\" was actually on line \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                            expected.Line, actualLinePosition.Line + 1, FormatDiagnostics(analyzer, diagnostic)));
-                }
-            }
+            Assert.True(actualLinePosition.Line <= 0 || actualLinePosition.Line + 1 == expected.Line,
+                string.Format("Expected diagnostic to be on line \"{0}\" was actually on line \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
+                    expected.Line, actualLinePosition.Line + 1, FormatDiagnostics(analyzer, diagnostic)));
 
             // Only check column position if there is an actual column position in the real diagnostic
-            if (actualLinePosition.Character > 0)
-            {
-                if (actualLinePosition.Character + 1 != expected.Column)
-                {
-                    Assert.True(false,
-                        string.Format("Expected diagnostic to start at column \"{0}\" was actually at column \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                            expected.Column, actualLinePosition.Character + 1, FormatDiagnostics(analyzer, diagnostic)));
-                }
-            }
+            Assert.True(actualLinePosition.Character <= 0 || actualLinePosition.Character + 1 == expected.Column,
+                string.Format("Expected diagnostic to start at column \"{0}\" was actually at column \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
+                    expected.Column, actualLinePosition.Character + 1, FormatDiagnostics(analyzer, diagnostic)));
         }
         #endregion
 
