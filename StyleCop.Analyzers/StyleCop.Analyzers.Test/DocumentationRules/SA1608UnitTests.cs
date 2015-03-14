@@ -3,10 +3,9 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Analyzers.DocumentationRules;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using TestHelper;
+    using Xunit;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1608ElementDocumentationMustNotHaveDefaultSummary"/>-
@@ -210,23 +209,11 @@ public class ClassName
 {
 }";
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Element documentation must not have default summary",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 2, 5)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(2, 5)
                 };
+
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
@@ -242,23 +229,11 @@ public class ClassName
 {
 }";
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Element documentation must not have default summary",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 2, 5)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(2, 5)
                 };
+
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
