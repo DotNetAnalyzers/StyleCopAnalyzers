@@ -2,11 +2,10 @@
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.DocumentationRules;
     using TestHelper;
+    using Xunit;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1603DocumentationMustContainValidXml"/>-
@@ -65,23 +64,11 @@ public class Foo { }";
 /// <summary=></summary>
 public class Foo { }";
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The documentation header is composed of invalid XML: Invalid token.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 2, 13)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithArguments("Invalid token.").WithLocation(2, 13)
                 };
+
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
@@ -92,23 +79,11 @@ public class Foo { }";
 /// <summary></summary=>
 public class Foo { }";
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The documentation header is composed of invalid XML: Invalid token.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 2, 23)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithArguments("Invalid token.").WithLocation(2, 23)
                 };
+
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
@@ -119,23 +94,11 @@ public class Foo { }";
 /// <summary=/>
 public class Foo { }";
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The documentation header is composed of invalid XML: Invalid token.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 2, 13)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithArguments("Invalid token.").WithLocation(2, 13)
                 };
+
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
@@ -146,24 +109,13 @@ public class Foo { }";
 /// <summary>a</sumary>
 public class Foo { }";
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The documentation header is composed of invalid XML: The 'summary' start tag does not match the end tag of 'sumary'.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 2, 5),
-                                new DiagnosticResultLocation("Test0.cs", 2, 15)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithArguments("The 'summary' start tag does not match the end tag of 'sumary'.")
+                        .WithLocation(2, 5)
+                        .WithLocation(2, 15)
                 };
+
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
@@ -174,23 +126,12 @@ public class Foo { }";
 /// <summary>a
 public class Foo { }";
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The documentation header is composed of invalid XML: The XML tag 'summary' is not closed.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 2, 5)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithArguments("The XML tag 'summary' is not closed.")
+                        .WithLocation(2, 5)
                 };
+
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
