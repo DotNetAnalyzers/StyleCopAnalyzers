@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Formatting;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -125,7 +125,7 @@ namespace TestHelper
                 document = await Formatter.FormatAsync(document, Formatter.Annotation, cancellationToken: cancellationToken);
                 newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, await GetCompilerDiagnosticsAsync(document, cancellationToken).ConfigureAwait(false));
 
-                Assert.IsTrue(false,
+                Assert.True(false,
                     string.Format("Fix introduced new compiler diagnostics:\r\n{0}\r\n\r\nNew document:\r\n{1}\r\n",
                         string.Join("\r\n", newCompilerDiagnostics.Select(d => d.ToString())),
                         (await document.GetSyntaxRootAsync().ConfigureAwait(false)).ToFullString()));
@@ -133,7 +133,7 @@ namespace TestHelper
 
             //after applying all of the code fixes, compare the resulting string to the inputted one
             var actual = await GetStringFromDocumentAsync(document, cancellationToken).ConfigureAwait(false);
-            Assert.AreEqual(newSource, actual);
+            Assert.Equal(newSource, actual);
         }
     }
 }

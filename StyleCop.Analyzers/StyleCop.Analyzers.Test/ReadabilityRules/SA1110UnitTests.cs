@@ -4,23 +4,22 @@
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using StyleCop.Analyzers.ReadabilityRules;
     using TestHelper;
 
-    [TestClass]
     public class SA1110UnitTests : CodeFixVerifier
     {
         public string DiagnosticId { get; } = SA1110OpeningParenthesisMustBeOnDeclarationLine.DiagnosticId;
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMethodDeclarationOpeningBracketInTheNextLine()
         {
             var testCode = @"
@@ -51,7 +50,7 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestConstructorDeclarationOpeningBracketInTheNextLine()
         {
             var testCode = @"
@@ -81,7 +80,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMethodDeclarationOpeningBracketInTheSameLine()
         {
             var testCode = @"
@@ -97,7 +96,7 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestConstructorDeclarationOpeningBracketInTheSameLine()
         {
             var testCode = @"
@@ -111,7 +110,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMethodCallOpeningBracketInTheNextLine()
         {
             var testCode = @"
@@ -142,7 +141,7 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMethodCallUsingThisOpeningBracketInTheNextLine()
         {
             var testCode = @"
@@ -173,7 +172,7 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMethodCallUsingBaseOpeningBracketInTheNextLine()
         {
             var testCode = @"
@@ -204,7 +203,7 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMethodCallUsingVariableOpeningBracketInTheNextLine()
         {
             var testCode = @"
@@ -236,7 +235,7 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestStaticMethodCallOpeningBracketInTheNextLine()
         {
             var testCode = @"
@@ -271,7 +270,7 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestStaticMethodCallOpeningBracketInTheNextLineAsClassName()
         {
             var testCode = @"
@@ -291,7 +290,7 @@ Baz();
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestConstructorCallOpeningBracketInTheNextLine()
         {
             var testCode = @"
@@ -322,7 +321,7 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestCreationOfObjectNoOpeningClosingParenthesis()
         {
             var testCode = @"
@@ -336,7 +335,7 @@ public class Foo
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
-        [TestMethod]
+        [Fact]
         public async Task TestConstructorWithQualifiedNameCallOpeningBracketInTheNextLine()
         {
             var testCode = @"
@@ -370,7 +369,7 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIndexerDeclarationOpeningBracketInTheNextLine()
         {
             var testCode = @"
@@ -404,7 +403,7 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIndexerDeclarationOpeningBracketInTheSameLine()
         {
             var testCode = @"
@@ -422,7 +421,7 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIndexerCallUsingThisOpeningBracketInTheNextLine()
         {
             var testCode = @"
@@ -461,7 +460,7 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIndexerCalOpeningBracketInTheNextLine()
         {
             var testCode = @"
@@ -493,7 +492,7 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIndexerCallUsingThisOpeningBracketInTheSameLine()
         {
             var testCode = @"
@@ -516,7 +515,7 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIndexerCallOpeningBracketInTheSameLine()
         {
             var testCode = @"
@@ -532,7 +531,7 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestArrayCallOpeningBracketInTheNextLine()
         {
             var testCode = @"
@@ -562,7 +561,7 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestArrayCallOpeningBracketInTheSameLine()
         {
             var testCode = @"
@@ -579,7 +578,7 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestAttributeOpeningParenthesisOnTheNextLine()
         {
             var testCode = @"
@@ -622,7 +621,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestAttributeOpeningParenthesisOnTheSameLine()
         {
             var testCode = @"
@@ -638,7 +637,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestDelegateDeclarationOpeningParenthesisOnTheNextLine()
         {
             var testCode = @"
@@ -666,7 +665,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestDelegateDeclarationOpeningParenthesisOnTheSameLine()
         {
             var testCode = @"
@@ -678,7 +677,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestAnonymousMethodDelegateKeywordOnPreviousLineAsOpeningParenthesis()
         {
             var testCode = @"
@@ -713,7 +712,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestAnonymousMethodDelegateKeywordOnTheSameLineAsOpeningParenthesis()
         {
             var testCode = @"
@@ -731,7 +730,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestAnonymousMethodNoParameters()
         {
             var testCode = @"
@@ -749,7 +748,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestArrayCreationOpeningBracketOnTheNextLineAsTypeName()
         {
             var testCode = @"
@@ -781,7 +780,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestArrayOfArraysCreationOpneningBracketOnTheSameLineAsTypeName()
         {
             var testCode = @"
@@ -797,7 +796,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestArrayCreationTypeOmitted()
         {
             var testCode = @"
@@ -815,7 +814,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestOperatorDeclarationOpeningParenthesisOnTheNextLineAsOperator()
         {
             var testCode = @"
@@ -846,7 +845,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestUnaryOperatorDeclarationOpeningParenthesisOnTheNextLineAsOperator()
         {
             var testCode = @"
@@ -877,7 +876,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestOperatorDeclarationOpeningParenthesisOnTheSameLineAsOperator()
         {
             var testCode = @"
@@ -892,7 +891,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestConversionOperatorDeclarationOpeningParenthesisOnTheNextLineAsOperator()
         {
             var testCode = @"
@@ -923,7 +922,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestConversionOperatorDeclarationOpeningParenthesisOnTheSameLineAsOperator()
         {
             var testCode = @"

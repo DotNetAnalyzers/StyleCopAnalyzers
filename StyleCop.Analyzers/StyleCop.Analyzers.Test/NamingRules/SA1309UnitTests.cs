@@ -5,23 +5,22 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using StyleCop.Analyzers.NamingRules;
     using TestHelper;
 
-    [TestClass]
     public class SA1309UnitTests : CodeFixVerifier
     {
         private const string DiagnosticId = SA1309FieldNamesMustNotBeginWithUnderscore.DiagnosticId;
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestFieldStartingWithAnUnderscore()
         {
             var testCode = @"public class Foo
@@ -54,7 +53,7 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestFieldStartingWithLetter()
         {
             var testCode = @"public class Foo
@@ -65,7 +64,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestFieldStartingAnUnderscorePlacedInsideNativeMethodsClass()
         {
             var testCode = @"public class FooNativeMethods
@@ -76,7 +75,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestFieldStartingAnUnderscorePlacedInsideNativeMethodsClassWithIncorrectName()
         {
             var testCode = @"public class FooNativeMethodsClass
@@ -111,7 +110,7 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestFieldStartingAnUnderscorePlacedInsideOuterNativeMethodsClass()
         {
             var testCode = @"public class FooNativeMethods

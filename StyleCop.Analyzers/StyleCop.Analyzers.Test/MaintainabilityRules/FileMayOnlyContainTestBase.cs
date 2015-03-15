@@ -1,5 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using System.Threading;
 using System.Threading.Tasks;
 using TestHelper;
@@ -19,14 +19,14 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             }
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestOneElement()
         {
             var testCode = @"%1 Foo
@@ -35,7 +35,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("%1", this.Keyword), EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestTwoElements()
         {
             var testCode = @"%1 Foo
@@ -63,7 +63,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("%1", this.Keyword), expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestThreeElements()
         {
             var testCode = @"%1 Foo
