@@ -1,14 +1,12 @@
-﻿using Microsoft.CodeAnalysis.CodeFixes;
-
-namespace StyleCop.Analyzers.Test.ReadabilityRules
+﻿namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.ReadabilityRules;
     using TestHelper;
+    using Xunit;
 
     public class SA1100UnitTests : CodeFixVerifier
     {
@@ -34,20 +32,7 @@ public class FooChild : Foo
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 14, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(14, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -90,20 +75,7 @@ public class FooChild : Foo
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 14, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(14, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -177,20 +149,7 @@ public class FooChild : Foo
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 14, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(14, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -264,20 +223,7 @@ public class FooChild : Foo
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 14, 17)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(14, 17);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -323,20 +269,7 @@ public class FooChild : Foo
 
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 14, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(14, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -386,20 +319,7 @@ public class FooChild : Foo
 
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 14, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(14, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -449,20 +369,7 @@ public class FooChild : Foo
 
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 14, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(14, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -512,20 +419,7 @@ public class FooChild : Foo
         s = string.Empty;
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 14, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(14, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -575,20 +469,7 @@ public class FooChild : Foo
 
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 14, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(14, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -638,20 +519,7 @@ public class FooChild : Foo
 
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 14, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(14, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -701,20 +569,7 @@ public class FooChild : Foo
         s = string.Empty;
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 14, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(14, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -764,20 +619,7 @@ public class FooChild : Foo
 
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 14, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(14, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -936,20 +778,7 @@ public class FooChild : Foo
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 11, 12)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(11, 12);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -1036,20 +865,7 @@ public struct S
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 16)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 16);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -1094,31 +910,11 @@ public class FooChild : Foo
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 19, 9)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 24, 9)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic().WithLocation(19, 9),
+                    this.CSharpDiagnostic().WithLocation(24, 9)
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -1173,20 +969,7 @@ public class FooChild : Foo
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 14, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(14, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -1228,20 +1011,7 @@ public class Foo
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 7, 17)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 17);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
