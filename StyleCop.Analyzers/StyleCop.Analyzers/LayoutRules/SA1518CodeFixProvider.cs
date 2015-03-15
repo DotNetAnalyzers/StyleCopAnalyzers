@@ -3,6 +3,7 @@
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
@@ -30,23 +31,30 @@
         }
 
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-
-                var lastToken = syntaxRoot.GetLastToken(includeZeroWidth: true);
-
-                var newLastToken = this.StripViolatingWhitespace(lastToken);
-                var newSyntaxRoot = syntaxRoot.ReplaceToken(lastToken, newLastToken);
-                var newDocument = context.Document.WithSyntaxRoot(newSyntaxRoot);
-
-                context.RegisterCodeFix(CodeAction.Create("Remove blank lines at the end of the file", token => Task.FromResult(newDocument)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Remove blank lines at the end of the file", token => GetTransformedDocument(context, token)), diagnostic);
             }
+
+            return Task.FromResult(true);
         }
 
-        private SyntaxToken StripViolatingWhitespace(SyntaxToken token)
+        private static async Task<Document> GetTransformedDocument(CodeFixContext context, CancellationToken token)
+        {
+            var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
+            var lastToken = syntaxRoot.GetLastToken(includeZeroWidth: true);
+
+            var newLastToken = StripViolatingWhitespace(lastToken);
+            var newSyntaxRoot = syntaxRoot.ReplaceToken(lastToken, newLastToken);
+            var newDocument = context.Document.WithSyntaxRoot(newSyntaxRoot);
+
+            return newDocument;
+        }
+
+        private static SyntaxToken StripViolatingWhitespace(SyntaxToken token)
         {
             SyntaxToken result = token;
 
