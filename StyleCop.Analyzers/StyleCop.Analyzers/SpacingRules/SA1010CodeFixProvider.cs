@@ -67,10 +67,15 @@
                 if (replacements.Count == 0)
                     continue;
 
-                var transformed = root.ReplaceTokens(replacements.Keys, (original, maybeRewritten) => replacements[original]);
-                Document updatedDocument = context.Document.WithSyntaxRoot(transformed);
-                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => Task.FromResult(updatedDocument)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context, root, replacements)), diagnostic);
             }
+        }
+        private static Task<Document> GetTransformedDocument(CodeFixContext context, SyntaxNode root, Dictionary<SyntaxToken, SyntaxToken> replacements)
+        {
+            var transformed = root.ReplaceTokens(replacements.Keys, (original, maybeRewritten) => replacements[original]);
+            Document updatedDocument = context.Document.WithSyntaxRoot(transformed);
+
+            return Task.FromResult(updatedDocument);
         }
     }
 }

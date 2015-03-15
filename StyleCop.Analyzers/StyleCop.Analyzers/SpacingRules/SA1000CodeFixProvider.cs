@@ -34,12 +34,13 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1000KeywordsMustBeSpacedCorrectly.DiagnosticId))
                     continue;
 
-                var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
                 SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (token.IsMissing)
                     continue;
@@ -88,25 +89,27 @@
                     break;
                 }
 
-                if (isAddingSpace)
+                if (isAddingSpace == !token.HasTrailingTrivia)
                 {
-                    if (token.HasTrailingTrivia)
-                        continue;
-
-                    SyntaxTrivia whitespace = SyntaxFactory.Whitespace(" ").WithoutFormatting();
-                    SyntaxToken corrected = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, whitespace));
-                    Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
-                    context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => Task.FromResult(updatedDocument)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context, root, token, isAddingSpace)), diagnostic);
                 }
-                else
-                {
-                    if (!token.HasTrailingTrivia)
-                        continue;
+            }
+        }
 
-                    SyntaxToken corrected = token.WithoutTrailingWhitespace().WithoutFormatting();
-                    Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
-                    context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => Task.FromResult(updatedDocument)), diagnostic);
-                }
+        private static Task<Document> GetTransformedDocument(CodeFixContext context, SyntaxNode root, SyntaxToken token, bool isAddingSpace)
+        {
+            if (isAddingSpace)
+            {
+                SyntaxTrivia whitespace = SyntaxFactory.Whitespace(" ").WithoutFormatting();
+                SyntaxToken corrected = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, whitespace));
+                Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
+                return Task.FromResult(updatedDocument);
+            }
+            else
+            {
+                SyntaxToken corrected = token.WithoutTrailingWhitespace().WithoutFormatting();
+                Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
+                return Task.FromResult(updatedDocument);
             }
         }
     }

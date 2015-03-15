@@ -34,12 +34,13 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1006PreprocessorKeywordsMustNotBePrecededBySpace.DiagnosticId))
                     continue;
 
-                var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
                 SyntaxToken keywordToken = root.FindToken(diagnostic.Location.SourceSpan.Start, findInsideTrivia: true);
                 if (keywordToken.IsMissing)
                     continue;
@@ -48,10 +49,15 @@
                 if (!hashToken.IsKind(SyntaxKind.HashToken))
                     continue;
 
-                SyntaxToken corrected = hashToken.WithoutTrailingWhitespace().WithoutFormatting();
-                Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(hashToken, corrected));
-                context.RegisterCodeFix(CodeAction.Create("Remove space", t => Task.FromResult(updatedDocument)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Remove space", t => GetTransformedDocument(context, root, hashToken)), diagnostic);
             }
+        }
+
+        private static Task<Document> GetTransformedDocument(CodeFixContext context, SyntaxNode root, SyntaxToken hashToken)
+        {
+            SyntaxToken corrected = hashToken.WithoutTrailingWhitespace().WithoutFormatting();
+            Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(hashToken, corrected));
+            return Task.FromResult(updatedDocument);
         }
     }
 }

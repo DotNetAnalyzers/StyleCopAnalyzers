@@ -35,53 +35,60 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1002SemicolonsMustBeSpacedCorrectly.DiagnosticId))
                     continue;
 
-                var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
                 SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (!token.IsKind(SyntaxKind.SemicolonToken))
                     continue;
 
-                Dictionary<SyntaxToken, SyntaxToken> replacements = new Dictionary<SyntaxToken, SyntaxToken>();
-
-                // check for a following space
-                bool missingFollowingSpace = true;
-                if (token.HasTrailingTrivia)
-                {
-                    if (token.TrailingTrivia.First().IsKind(SyntaxKind.WhitespaceTrivia))
-                        missingFollowingSpace = false;
-                    else if (token.TrailingTrivia.First().IsKind(SyntaxKind.EndOfLineTrivia))
-                        missingFollowingSpace = false;
-                }
-
-                bool firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
-                if (!firstInLine)
-                {
-                    SyntaxToken precedingToken = token.GetPreviousToken();
-                    if (precedingToken.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
-                    {
-                        SyntaxToken corrected = precedingToken.WithoutLeadingWhitespace().WithoutFormatting();
-                        replacements[precedingToken] = corrected;
-                    }
-                }
-
-                if (missingFollowingSpace)
-                {
-                    SyntaxToken intermediate = token.WithoutTrailingWhitespace();
-                    SyntaxToken corrected =
-                        intermediate
-                        .WithTrailingTrivia(intermediate.TrailingTrivia.Insert(0, SyntaxFactory.Whitespace(" ")))
-                        .WithoutFormatting();
-                    replacements[token] = corrected;
-                }
-
-                var transformed = root.ReplaceTokens(replacements.Keys, (original, maybeRewritten) => replacements[original]);
-                Document updatedDocument = context.Document.WithSyntaxRoot(transformed);
-                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => Task.FromResult(updatedDocument)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context, root, token)), diagnostic);
             }
+        }
+
+        private static Task<Document> GetTransformedDocument(CodeFixContext context, SyntaxNode root, SyntaxToken token)
+        {
+            Dictionary<SyntaxToken, SyntaxToken> replacements = new Dictionary<SyntaxToken, SyntaxToken>();
+
+            // check for a following space
+            bool missingFollowingSpace = true;
+            if (token.HasTrailingTrivia)
+            {
+                if (token.TrailingTrivia.First().IsKind(SyntaxKind.WhitespaceTrivia))
+                    missingFollowingSpace = false;
+                else if (token.TrailingTrivia.First().IsKind(SyntaxKind.EndOfLineTrivia))
+                    missingFollowingSpace = false;
+            }
+
+            bool firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
+            if (!firstInLine)
+            {
+                SyntaxToken precedingToken = token.GetPreviousToken();
+                if (precedingToken.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
+                {
+                    SyntaxToken corrected = precedingToken.WithoutLeadingWhitespace().WithoutFormatting();
+                    replacements[precedingToken] = corrected;
+                }
+            }
+
+            if (missingFollowingSpace)
+            {
+                SyntaxToken intermediate = token.WithoutTrailingWhitespace();
+                SyntaxToken corrected =
+                    intermediate
+                    .WithTrailingTrivia(intermediate.TrailingTrivia.Insert(0, SyntaxFactory.Whitespace(" ")))
+                    .WithoutFormatting();
+                replacements[token] = corrected;
+            }
+
+            var transformed = root.ReplaceTokens(replacements.Keys, (original, maybeRewritten) => replacements[original]);
+            Document updatedDocument = context.Document.WithSyntaxRoot(transformed);
+
+            return Task.FromResult(updatedDocument);
         }
     }
 }
