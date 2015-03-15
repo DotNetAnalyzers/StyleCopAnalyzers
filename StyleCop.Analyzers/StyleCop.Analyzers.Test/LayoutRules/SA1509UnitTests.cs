@@ -1,16 +1,14 @@
-﻿using Microsoft.CodeAnalysis.CodeFixes;
-
-namespace StyleCop.Analyzers.Test.LayoutRules
+﻿namespace StyleCop.Analyzers.Test.LayoutRules
 {
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using StyleCop.Analyzers.LayoutRules;
     using TestHelper;
+    using Xunit;
 
-    [TestClass]
     public class SA1509UnitTests : CodeFixVerifier
     {
         private string DiagnosticId = SA1509OpeningCurlyBracketsMustNotBePrecededByBlankLine.DiagnosticId;
@@ -18,14 +16,14 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <summary>
         /// Verifies that the analyzer will properly handle an empty source.
         /// </summary>
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestClassDeclarationOpeningBraceHasBlankLine()
         {
             var testCode = @"
@@ -60,7 +58,7 @@ class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestClassDeclarationOpeningBraceHasThreeBlankLine()
         {
             var testCode = @"
@@ -97,7 +95,7 @@ class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestClassDeclarationOpeningBraceDoesntHaveBlankLine()
         {
             var testCode = @"
@@ -109,7 +107,7 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestClassDeclarationCommentBeforeOpeningBrace()
         {
             var testCode = @"
@@ -122,7 +120,7 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestClassDeclarationMultilineCommentBeforeOpeningBrace()
         {
             var testCode = @"
@@ -136,7 +134,7 @@ that spans 2 lines */
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestClassDeclarationMultilineCommentBeforeOpeningBraceButBlankLineBetweenCommentsExists()
         {
             var testCode = @"
@@ -152,7 +150,7 @@ that spans 2 lines */
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestClassDeclarationMultilineCommentBlankLineBeforeOpeningBrace()
         {
             var testCode = @"
@@ -193,7 +191,7 @@ that spans 2 lines */
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestStructDeclarationOpeningBraceHasBlankLine()
         {
             var testCode = @"
@@ -228,7 +226,7 @@ struct Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestStructDeclarationOpeningBraceDoesntHaveBlankLine()
         {
             var testCode = @"
@@ -240,7 +238,7 @@ struct Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMethodDeclarationOpeningBraceHasBlankLine()
         {
             var testCode = @"
@@ -279,7 +277,7 @@ class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
     }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMethodDeclarationOpeningBraceHasTwoBlankLine()
         {
             var testCode = @"
@@ -319,7 +317,7 @@ class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMethodDeclarationOpeningBraceDoesntHaveBlankLine()
         {
             var testCode = @"
@@ -333,7 +331,7 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestNamespaceDeclarationOpeningBraceHasBlankLine()
         {
             var testCode = @"
@@ -372,7 +370,7 @@ namespace Bar
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestNamespaceDeclarationOpeningBraceDoesntHaveBlankLine()
         {
             var testCode = @"
@@ -385,7 +383,7 @@ namespace Bar{
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPropertyDeclarationOpeningBraceHasBlankLine()
         {
             var testCode = @"
@@ -424,7 +422,7 @@ class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPropertyDeclarationOpeningBraceDoesntHaveBlankLine()
         {
             var testCode = @"
@@ -436,7 +434,7 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIfStatementOpeningBraceHasBlankLine()
         {
             var testCode = @"
@@ -498,7 +496,7 @@ class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIfStatementOpeningBraceDoesntHaveBlankLine()
         {
             var testCode = @"
@@ -517,7 +515,7 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestWhileStatementOpeningBraceHasBlankLine()
         {
             var testCode = @"
@@ -560,7 +558,7 @@ class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestWhileStatementOpeningBraceDoesntHaveBlankLine()
         {
             var testCode = @"
@@ -576,7 +574,7 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLambdaOpeningBraceHasBlankLine()
         {
             var testCode = @"
@@ -619,7 +617,7 @@ class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLambdaOpeningBraceDoesntHaveBlankLine()
         {
             var testCode = @"
@@ -634,7 +632,7 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestArrayInitializationOpeningBraceHasBlankLine()
         {
             var testCode = @"
@@ -677,7 +675,7 @@ class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestArrayInitializationOpeningBraceDoesntHaveBlankLine()
         {
             var testCode = @"
@@ -692,7 +690,7 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPropertyInitializerOpeningBraceHasBlankLine()
         {
             var testCode = @"
@@ -745,7 +743,7 @@ class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPropertyInitializerOpeningBraceDoesntHaveBlankLine()
         {
             var testCode = @"
@@ -768,7 +766,7 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestAnonymousTypeOpeningBraceHasBlankLine()
         {
             var testCode = @"
@@ -811,7 +809,7 @@ class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestAnonymousTypeOpeningBraceDoesntHaveBlankLine()
         {
             var testCode = @"
@@ -831,7 +829,7 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestComplex1()
         {
             var testCode = @"namespace Test
