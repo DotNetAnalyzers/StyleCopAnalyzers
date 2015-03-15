@@ -1,26 +1,25 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using StyleCop.Analyzers.OrderingRules;
-using TestHelper;
-
-namespace StyleCop.Analyzers.Test.OrderingRules
+﻿namespace StyleCop.Analyzers.Test.OrderingRules
 {
-    [TestClass]
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.OrderingRules;
+    using TestHelper;
+    using Xunit;
+
     public class SA1214UnitTests : CodeFixVerifier
     {
         public string DiagnosticId { get; } = SA1214StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements.DiagnosticId;
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestTwoFieldsInClassStaticReadonlyFieldPlacedAfterStaticNonReadonly()
         {
             var testCode = @"
@@ -48,7 +47,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestTwoFieldsInClassStaticReadonlyFieldPlacedAfterStaticNonReadonlyOneLine()
         {
             var testCode = @"
@@ -75,7 +74,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestTwoFieldsInClassStaticReadonlyFieldPlacedBeforeStaticNonReadonly()
         {
             var testCode = @"
@@ -88,7 +87,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestTwoFieldsInClassNonStaticReadonlyFieldPlacedAfterNonStaticNonReadonly()
         {
             var testCode = @"
@@ -101,7 +100,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestTwoFieldsInStructStaticReadonlyFieldPlacedAfterStaticNonReadonly()
         {
             var testCode = @"
@@ -129,7 +128,7 @@ public struct Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task ComplexExample()
         {
             var testCode = @"
