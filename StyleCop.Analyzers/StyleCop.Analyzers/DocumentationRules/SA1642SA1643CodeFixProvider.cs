@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.DocumentationRules
 {
+    using System;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
@@ -39,58 +40,66 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!FixableDiagnostics.Contains(diagnostic.Id))
                     continue;
 
-                var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
                 var node = root.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true) as XmlElementSyntax;
                 if (node == null)
                     continue;
-                var classDeclaration = node.FirstAncestorOrSelf<ClassDeclarationSyntax>();
-                var declarationSyntax = node.FirstAncestorOrSelf<BaseMethodDeclarationSyntax>();
 
-                ImmutableArray<string> standardText;
-                if (declarationSyntax is ConstructorDeclarationSyntax)
-                {
-                    if (declarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword))
-                    {
-                        standardText = SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.StaticConstructorStandardText;
-                    }
-                    else if (declarationSyntax.Modifiers.Any(SyntaxKind.PrivateKeyword))
-                    {
-                        // Prefer to insert the "non-private" wording, even though both are considered acceptable by the
-                        // diagnostic. https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/413
-                        standardText = SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.NonPrivateConstructorStandardText;
-                    }
-                    else
-                    {
-                        standardText = SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.NonPrivateConstructorStandardText;
-                    }
-                }
-                else if (declarationSyntax is DestructorDeclarationSyntax)
-                {
-                    standardText = SA1643DestructorSummaryDocumentationMustBeginWithStandardText.DestructorStandardText;
-                }
-                else
-                {
-                    return;
-                }
-
-                var list = this.BuildStandardText(classDeclaration.Identifier, classDeclaration.TypeParameterList, standardText[0], standardText[1]);
-
-                var newContent = node.Content.InsertRange(0, list);
-                var newNode = node.WithContent(newContent);
-
-                var newRoot = root.ReplaceNode(node, newNode);
-
-                var newDocument = context.Document.WithSyntaxRoot(newRoot);
-                context.RegisterCodeFix(CodeAction.Create("Add standard text.", token => Task.FromResult(newDocument)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Add standard text.", token => GetTransformedDocument(context, root, node)), diagnostic);
             }
         }
 
-        private SyntaxList<XmlNodeSyntax> BuildStandardText(SyntaxToken identifier, TypeParameterListSyntax typeParameters, string preText, string postText)
+        private static Task<Document> GetTransformedDocument(CodeFixContext context, SyntaxNode root, XmlElementSyntax node)
+        {
+            var classDeclaration = node.FirstAncestorOrSelf<ClassDeclarationSyntax>();
+            var declarationSyntax = node.FirstAncestorOrSelf<BaseMethodDeclarationSyntax>();
+
+            ImmutableArray<string> standardText;
+            if (declarationSyntax is ConstructorDeclarationSyntax)
+            {
+                if (declarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword))
+                {
+                    standardText = SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.StaticConstructorStandardText;
+                }
+                else if (declarationSyntax.Modifiers.Any(SyntaxKind.PrivateKeyword))
+                {
+                    // Prefer to insert the "non-private" wording, even though both are considered acceptable by the
+                    // diagnostic. https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/413
+                    standardText = SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.NonPrivateConstructorStandardText;
+                }
+                else
+                {
+                    standardText = SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.NonPrivateConstructorStandardText;
+                }
+            }
+            else if (declarationSyntax is DestructorDeclarationSyntax)
+            {
+                standardText = SA1643DestructorSummaryDocumentationMustBeginWithStandardText.DestructorStandardText;
+            }
+            else
+            {
+                throw new InvalidOperationException("XmlElementSyntax has invalid method as its parent");
+            }
+
+            var list = BuildStandardText(classDeclaration.Identifier, classDeclaration.TypeParameterList, standardText[0], standardText[1]);
+
+            var newContent = node.Content.InsertRange(0, list);
+            var newNode = node.WithContent(newContent);
+
+            var newRoot = root.ReplaceNode(node, newNode);
+
+            var newDocument = context.Document.WithSyntaxRoot(newRoot);
+
+            return Task.FromResult(newDocument);
+        }
+
+        private static SyntaxList<XmlNodeSyntax> BuildStandardText(SyntaxToken identifier, TypeParameterListSyntax typeParameters, string preText, string postText)
         {
             TypeSyntax identifierName;
 
@@ -101,14 +110,14 @@
             }
             else
             {
-                identifierName = SyntaxFactory.GenericName(identifier.WithoutTrivia(), this.ParameterToArgumentListSyntax(typeParameters));
+                identifierName = SyntaxFactory.GenericName(identifier.WithoutTrivia(), ParameterToArgumentListSyntax(typeParameters));
             }
             var list = new SyntaxList<XmlNodeSyntax>();
 
             list = list.Add(XmlNewLine());
-            list = list.Add(this.CreateTextSyntax(preText).WithLeadingTrivia(XmlLineStart()));
-            list = list.Add(this.CreateSeeSyntax(identifierName));
-            list = list.Add(this.CreateTextSyntax(postText.EndsWith(".") ? postText : (postText + ".")));
+            list = list.Add(CreateTextSyntax(preText).WithLeadingTrivia(XmlLineStart()));
+            list = list.Add(CreateSeeSyntax(identifierName));
+            list = list.Add(CreateTextSyntax(postText.EndsWith(".") ? postText : (postText + ".")));
 
             return list;
         }
@@ -128,7 +137,7 @@
             return SyntaxFactory.XmlText(tokenList);
         }
 
-        private TypeArgumentListSyntax ParameterToArgumentListSyntax(TypeParameterListSyntax typeParameters)
+        private static TypeArgumentListSyntax ParameterToArgumentListSyntax(TypeParameterListSyntax typeParameters)
         {
             var list = new SeparatedSyntaxList<TypeSyntax>();
             list = list.AddRange(typeParameters.Parameters.Select(p => SyntaxFactory.ParseName(p.ToString()).WithTriviaFrom(p)));
@@ -143,7 +152,7 @@
             return SyntaxFactory.TypeArgumentList(list);
         }
 
-        private XmlNodeSyntax CreateSeeSyntax(TypeSyntax identifier)
+        private static  XmlNodeSyntax CreateSeeSyntax(TypeSyntax identifier)
         {
             NameMemberCrefSyntax cref;
 
@@ -170,7 +179,7 @@
             return SyntaxFactory.XmlEmptyElement(SyntaxFactory.XmlName(XmlCommentHelper.SeeXmlTag).WithTrailingTrivia(SyntaxFactory.ElasticSpace), attributes);
         }
 
-        private XmlTextSyntax CreateTextSyntax(string text)
+        private static XmlTextSyntax CreateTextSyntax(string text)
         {
             var tokenList = new SyntaxTokenList();
             tokenList = tokenList.Add(XmlTextLiteral(text));
