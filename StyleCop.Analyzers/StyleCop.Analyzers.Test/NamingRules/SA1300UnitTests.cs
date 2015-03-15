@@ -4,17 +4,16 @@
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using StyleCop.Analyzers.NamingRules;
     using TestHelper;
 
-    [TestClass]
     public class SA1300UnitTests : CodeFixVerifier
     {
         private const string DiagnosticId = SA1300ElementMustBeginWithUpperCaseLetter.DiagnosticId;
         private const string Message = "Element '{0}' must begin with an uppercase letter";
 
-        [TestMethod]
+        [Fact]
         public async Task TestUpperCaseNamespace()
         {
             var testCode = @"public namespace Test 
@@ -25,7 +24,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLowerCaseNamespace()
         {
             var testCode = @"public namespace test 
@@ -51,7 +50,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestUpperCaseClass()
         {
             var testCode = @"public class Test 
@@ -62,7 +61,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLowerCaseClass()
         {
             var testCode = @"public class test 
@@ -88,7 +87,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestUpperCaseInterface()
         {
             var testCode = @"public interface Test
@@ -99,7 +98,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLowerCaseInterface()
         {
             var testCode = @"public interface test
@@ -111,7 +110,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestUpperCaseStruct()
         {
             var testCode = @"public struct Test 
@@ -122,7 +121,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLowerCaseStruct()
         {
             var testCode = @"public struct test 
@@ -148,7 +147,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestUpperCaseEnum()
         {
             var testCode = @"public enum Test 
@@ -159,7 +158,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLowerCaseEnum()
         {
             var testCode = @"public enum test 
@@ -185,7 +184,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestUpperCaseDelegate()
         {
             var testCode = @"public class TestClass
@@ -196,7 +195,7 @@ public delegate void Test();
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLowerCaseDelegate()
         {
             var testCode = @"public class TestClass
@@ -222,7 +221,7 @@ public delegate void test();
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestUpperCaseEvent()
         {
             var testCode = @"public class TestClass
@@ -245,7 +244,7 @@ public delegate void test();
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLowerCaseEvent()
         {
             var testCode = @"public class TestClass
@@ -283,7 +282,7 @@ public delegate void test();
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestUpperCaseEventField()
         {
             var testCode = @"public class TestClass
@@ -295,7 +294,7 @@ public delegate void test();
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLowerCaseEventField()
         {
             var testCode = @"public class TestClass
@@ -322,7 +321,7 @@ public delegate void test();
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestUpperCaseMethod()
         {
             var testCode = @"public class TestClass
@@ -335,7 +334,7 @@ public void Test()
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLowerCaseMethod()
         {
             var testCode = @"public class TestClass
@@ -363,7 +362,7 @@ public void test()
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestUpperCaseProperty()
         {
             var testCode = @"public class TestClass
@@ -374,7 +373,7 @@ public string Test { get; set; }
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLowerCaseProperty()
         {
             var testCode = @"public class TestClass
@@ -400,7 +399,7 @@ public string test { get; set; }
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestUpperCasePublicField()
         {
             var testCode = @"public class TestClass
@@ -411,7 +410,7 @@ public string Test;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestUpperCaseInternalField()
         {
             var testCode = @"public class TestClass
@@ -422,7 +421,7 @@ internal string Test;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestUpperCaseConstField()
         {
             var testCode = @"public class TestClass
@@ -433,7 +432,7 @@ const string Test;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestUpperCaseProtectedReadOnlyField()
         {
             var testCode = @"public class TestClass
@@ -444,7 +443,7 @@ protected readonly string Test;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLowerCaseProtectedField()
         {
             var testCode = @"public class TestClass
@@ -455,7 +454,7 @@ protected string Test;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLowerCaseReadOnlyField()
         {
             var testCode = @"public class TestClass
@@ -466,7 +465,7 @@ readonly string test;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLowerCasePublicField()
         {
             var testCode = @"public class TestClass
@@ -478,7 +477,7 @@ public string test;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLowerCaseInternalField()
         {
             var testCode = @"public class TestClass
@@ -490,7 +489,7 @@ internal string test;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLowerCaseConstField()
         {
             var testCode = @"public class TestClass
@@ -502,7 +501,7 @@ const string test;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestNativeMethodsException()
         {
             var testCode = @"public class TestNativeMethods
@@ -513,7 +512,7 @@ public string test;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLowerCaseProtectedReadOnlyField()
         {
             var testCode = @"public class TestClass

@@ -3,25 +3,24 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using StyleCop.Analyzers.MaintainabilityRules;
 using TestHelper;
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
-    [TestClass]
     public class SA1407UnitTests : CodeFixVerifier
     {
         private const string DiagnosticId = SA1407ArithmeticExpressionsMustDeclarePrecedence.DiagnosticId;
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestAdditionAndSubtraction()
         {
             var testCode = @"public class Foo
@@ -34,7 +33,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMultiplicationAndDivision()
         {
             var testCode = @"public class Foo
@@ -47,7 +46,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLeftShiftRightShift()
         {
             var testCode = @"public class Foo
@@ -60,7 +59,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestAdditionMultiplication()
         {
             var testCode = @"public class Foo
@@ -98,7 +97,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMultiplicationAddition()
         {
             var testCode = @"public class Foo
@@ -136,7 +135,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestAdditionMultiplicationParenthesized()
         {
             var testCode = @"public class Foo
@@ -149,7 +148,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMultiplicationAdditionParenthesized()
         {
             var testCode = @"public class Foo
@@ -162,7 +161,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMultipleViolations()
         {
             var testCode = @"public class Foo
@@ -211,7 +210,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestSubViolations()
         {
             var testCode = @"public class Foo
@@ -260,7 +259,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestCodeFix()
         {
             var testCode = @"public class Foo

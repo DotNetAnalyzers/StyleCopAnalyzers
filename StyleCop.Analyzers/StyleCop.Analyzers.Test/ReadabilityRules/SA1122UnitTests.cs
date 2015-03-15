@@ -5,7 +5,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using StyleCop.Analyzers.ReadabilityRules;
     using TestHelper;
 
@@ -13,12 +13,11 @@
     /// This class contains unit tests for <see cref="SA1122UseStringEmptyForEmptyStrings"/> and
     /// <see cref="SA1122CodeFixProvider"/>.
     /// </summary>
-    [TestClass]
     public class SA1122UnitTests : CodeFixVerifier
     {
         public string DiagnosticId { get; } = SA1122UseStringEmptyForEmptyStrings.DiagnosticId;
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
@@ -87,7 +86,7 @@
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, useVerbatimLiteral ? "@" : string.Empty), expected, CancellationToken.None);
         }
 
-        private async Task TestLocalStringLiteral(bool useVerbatimLiteral, bool isConst)
+        private async Task TestLocalStringLiteralImpl(bool useVerbatimLiteral, bool isConst)
         {
             var testCode = @"public class Foo
 {{
@@ -119,7 +118,7 @@ string test = {0}"""";
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, useVerbatimLiteral ? "@" : string.Empty, isConst ? "const" : string.Empty), isConst ? EmptyDiagnosticResults : expected, CancellationToken.None);
         }
 
-        private async Task TestParenthesizedLocalStringLiteral(bool useVerbatimLiteral, bool isConst)
+        private async Task TestParenthesizedLocalStringLiteralImpl(bool useVerbatimLiteral, bool isConst)
         {
             var testCode = @"public class Foo
 {{
@@ -163,7 +162,7 @@ string test = ({0}"""");
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, useVerbatimLiteral ? "@" : string.Empty), EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        private async Task TestAttributeStringLiteral(bool useVerbatimLiteral)
+        private async Task TestAttributeStringLiteralImpl(bool useVerbatimLiteral)
         {
             var testCode = @"using System.Diagnostics.CodeAnalysis;
 public class Foo
@@ -177,7 +176,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, useVerbatimLiteral ? "@" : string.Empty), EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        private async Task TestDefaultParameterStringLiteral(bool useVerbatimLiteral)
+        private async Task TestDefaultParameterStringLiteralImpl(bool useVerbatimLiteral)
         {
             var testCode = @"using System.Diagnostics.CodeAnalysis;
 public class Foo
@@ -222,7 +221,7 @@ public class Foo
             await this.VerifyCSharpFixAsync(string.Format(oldSource, useVerbatimLiteral ? "@" : string.Empty), newSource);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestCodeFixMultipleNodes()
         {
             // Tests if the code fix works if the SourceSpan of the diagnostic has more then one SynatxNode associated with it
@@ -245,109 +244,109 @@ public class Foo
             await this.VerifyCSharpFixAsync(oldSource, newSource);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLiteralInMethodVerbatim()
         {
             await this.TestEmptyStringLiteral(true);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLiteralInMethod()
         {
             await this.TestEmptyStringLiteral(false);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestParenthesizedLiteralInMethodVerbatim()
         {
             await this.TestParenthesizedEmptyStringLiteral(true);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestParenthesizedLiteralInMethod()
         {
             await this.TestParenthesizedEmptyStringLiteral(false);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLocalStringLiteralVerbatim()
         {
-            await this.TestLocalStringLiteral(true, false);
+            await this.TestLocalStringLiteralImpl(true, false);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLocalStringLiteral()
         {
-            await this.TestLocalStringLiteral(false, false);
+            await this.TestLocalStringLiteralImpl(false, false);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestConstStringLiteralVerbatim()
         {
-            await this.TestLocalStringLiteral(true, true);
+            await this.TestLocalStringLiteralImpl(true, true);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestConstStringLiteral()
         {
-            await this.TestLocalStringLiteral(false, true);
+            await this.TestLocalStringLiteralImpl(false, true);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestParenthesizedLocalStringLiteralVerbatim()
         {
-            await this.TestParenthesizedLocalStringLiteral(true, false);
+            await this.TestParenthesizedLocalStringLiteralImpl(true, false);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestParenthesizedLocalStringLiteral()
         {
-            await this.TestParenthesizedLocalStringLiteral(false, false);
+            await this.TestParenthesizedLocalStringLiteralImpl(false, false);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestParenthesizedConstStringLiteralVerbatim()
         {
-            await this.TestParenthesizedLocalStringLiteral(true, true);
+            await this.TestParenthesizedLocalStringLiteralImpl(true, true);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestParenthesizedConstStringLiteral()
         {
-            await this.TestParenthesizedLocalStringLiteral(false, true);
+            await this.TestParenthesizedLocalStringLiteralImpl(false, true);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestAttributeStringLiteralVerbatim()
         {
-            await this.TestAttributeStringLiteral(true);
+            await this.TestAttributeStringLiteralImpl(true);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestAttributeStringLiteral()
         {
-            await this.TestAttributeStringLiteral(false);
+            await this.TestAttributeStringLiteralImpl(false);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestDefaultParameterStringLiteralVerbatim()
         {
-            await this.TestDefaultParameterStringLiteral(true);
+            await this.TestDefaultParameterStringLiteralImpl(true);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestDefaultParameterStringLiteral()
         {
-            await this.TestDefaultParameterStringLiteral(false);
+            await this.TestDefaultParameterStringLiteralImpl(false);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLiteralInMethodVerbatimCodeFix()
         {
             await this.TestSimpleCodeFix(true);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLiteralInMethodCodeFix()
         {
             await this.TestSimpleCodeFix(false);

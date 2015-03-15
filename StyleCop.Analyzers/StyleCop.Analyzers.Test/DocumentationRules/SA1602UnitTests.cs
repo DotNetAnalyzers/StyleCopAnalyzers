@@ -5,26 +5,25 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using StyleCop.Analyzers.DocumentationRules;
     using TestHelper;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1602EnumerationItemsMustBeDocumented"/>-
     /// </summary>
-    [TestClass]
     public class SA1602UnitTests : CodeFixVerifier
     {
         public string DiagnosticId { get; } = SA1602EnumerationItemsMustBeDocumented.DiagnosticId;
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestEnumWithDocumentation()
         {
             var testCode = @"
@@ -41,7 +40,7 @@ enum TypeName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestEnumWithoutDocumentation()
         {
             var testCode = @"
@@ -70,7 +69,7 @@ enum TypeName
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestEnumWithEmptyDocumentation()
         {
             var testCode = @"

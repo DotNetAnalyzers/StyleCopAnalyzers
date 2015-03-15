@@ -4,23 +4,22 @@
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using StyleCop.Analyzers.ReadabilityRules;
     using TestHelper;
 
-    [TestClass]
     public class SA1113UnitTests : CodeFixVerifier
     {
         private const string DiagnosticId = SA1113CommaMustBeOnSameLineAsPreviousParameter.DiagnosticId;
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMethodDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameter()
         {
             var testCode = @"public class Foo
@@ -49,7 +48,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMethodDeclarationWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameter()
         {
             var testCode = @"public class Foo
@@ -90,7 +89,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMethodDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameter()
         {
             var testCode = @"public class Foo
@@ -104,7 +103,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMethodCallWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameter()
         {
             var testCode = @"public class Foo
@@ -134,7 +133,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMethodCallWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameter()
         {
             var testCode = @"public class Foo
@@ -176,7 +175,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMethodCallWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameter()
         {
             var testCode = @"public class Foo
@@ -191,7 +190,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestConstructorCallWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameter()
         {
             var testCode = @"public class Foo
@@ -224,7 +223,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestConstructorCallWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameter()
         {
             var testCode = @"public class Foo
@@ -269,7 +268,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestConstructorCallWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameter()
         {
             var testCode = @"public class Foo
@@ -287,7 +286,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestConstructorDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameter()
         {
             var testCode = @"public class Foo
@@ -316,7 +315,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestConstructorDeclarationWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameter()
         {
             var testCode = @"public class Foo
@@ -357,7 +356,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestConstructorDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameter()
         {
             var testCode = @"public class Foo
@@ -371,7 +370,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIndexerDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameter()
         {
             var testCode = @"public class Foo
@@ -404,7 +403,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIndexerDeclarationWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameter()
         {
             var testCode = @"public class Foo
@@ -449,7 +448,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIndexerDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameter()
         {
             var testCode = @"public class Foo
@@ -467,7 +466,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIndexerCallUsingThisWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameter()
         {
             var testCode = @"public class Foo
@@ -504,7 +503,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIndexerCallUsingThisWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameter()
         {
             var testCode = @"public class Foo
@@ -553,7 +552,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIndexerCallUsingThisWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameter()
         {
             var testCode = @"public class Foo
@@ -575,7 +574,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestAnonymousMethodCommaPlacedAtTheNextLineAsThePreviousParameter()
         {
             var testCode = @"public class Foo
@@ -609,7 +608,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestAnonymousMethodCommaPlacedAtTheSameLineAsThePreviousParameter()
         {
             var testCode = @"public class Foo
@@ -627,7 +626,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestDelegateDeclarationCommaPlacedAtTheNextLineAsThePreviousParameter()
         {
             var testCode = @"public class Foo
@@ -654,7 +653,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestDelegateDeclarationWith3ParametersCommaPlacedAtTheNextLineAsThePreviousParameter()
         {
             var testCode = @"public class Foo
@@ -693,7 +692,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestDelegateDeclarationCommaPlacedAtTheSameLineAsThePreviousParameter()
         {
             var testCode = @"public class Foo
@@ -704,7 +703,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLambdaExpressionWith3ParametersCommaPlacedAtTheNextLineAsThePreviousParameter()
         {
             var testCode = @"public class Foo
@@ -746,7 +745,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLambdaExpressionCommaPlacedAtTheSameLineAsThePreviousParameter()
         {
             var testCode = @"public class Foo
@@ -760,7 +759,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestLambdaExpressionNoParameters()
         {
             var testCode = @"public class Foo
@@ -774,7 +773,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestAttributeCommaPlacedAtTheNextLineAsThePreviousParameter()
         {
             var testCode = @"public class SimpleApiOriginal
@@ -802,7 +801,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestAttributeListCommaPlacedAtTheSameLineAsThePreviousParameter()
         {
             var testCode = @"public class SimpleApiOriginal
@@ -814,7 +813,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestAttributeListCommaPlacedAtTheNextLineAsThePreviousParameter()
         {
             var testCode = @"public class Foo
@@ -856,7 +855,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestAttributeCommaPlacedAtTheSameLineAsThePreviousParameter()
         {
             var testCode = @"public class Foo
@@ -870,7 +869,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestOperatorDeclarationCommaPlacedAtTheNextLineAsThePreviousParameter()
         {
             var testCode = @"
@@ -901,7 +900,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestOperatorDeclarationCommaPlacedAtTheSameLineAsThePreviousParameter()
         {
             var testCode = @"
@@ -916,7 +915,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestUnaryOperator()
         {
             var testCode = @"
@@ -932,7 +931,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestArrayDeclarationCommaPlacedAtTheNextLineAsThePreviousParameter()
         {
             var testCode = @"
@@ -963,7 +962,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestArrayDeclarationCommaPlacedAtTheSameLineAsThePreviousParameter()
         {
             var testCode = @"
@@ -978,7 +977,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestOneDimensionalArrayDeclarationCommaPlacedAtTheSameLineAsThePreviousParameter()
         {
             var testCode = @"
@@ -993,7 +992,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestArrayOfArraysDeclarationCommaPlacedAtTheSameLineAsThePreviousParameter()
         {
             var testCode = @"
@@ -1013,7 +1012,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestArrayCallCommaPlacedAtTheNextLineAsThePreviousParameter()
         {
             var testCode = @"
@@ -1045,7 +1044,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestArrayCallCommaPlacedAtTheSameLineAsThePreviousParameter()
         {
             var testCode = @"
@@ -1061,7 +1060,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestOneDimensionalArrayCallCommaPlacedAtTheSameLineAsThePreviousParameter()
         {
             var testCode = @"
@@ -1077,7 +1076,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIndexerCallCommaPlacedAtTheNextLineAsThePreviousParameter()
         {
             var testCode = @"
@@ -1114,7 +1113,7 @@ public class Foo4
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIndexerCallCommaPlacedAtTheSameLineAsThePreviousParameter()
         {
             var testCode = @"
@@ -1135,7 +1134,7 @@ public class Foo4
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestIndexerWithOneArgumentCallCommaPlacedAtTheSameLineAsThePreviousParameter()
         {
             var testCode = @"

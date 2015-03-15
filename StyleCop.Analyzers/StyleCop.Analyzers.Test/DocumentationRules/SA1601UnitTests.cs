@@ -5,26 +5,25 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using StyleCop.Analyzers.DocumentationRules;
     using TestHelper;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1601PartialElementsMustBeDocumented"/>-
     /// </summary>
-    [TestClass]
     public class SA1601UnitTests : CodeFixVerifier
     {
         public string DiagnosticId { get; } = SA1601PartialElementsMustBeDocumented.DiagnosticId;
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPartialTypeWithDocumentation()
         {
             var testCode = @"
@@ -39,7 +38,7 @@ public partial {0} TypeName
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "interface"), EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPartialTypeWithoutDocumentation()
         {
             var testCode = @"
@@ -70,7 +69,7 @@ TypeName
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "interface"), expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPartialClassWithEmptyDocumentation()
         {
             var testCode = @"
@@ -104,7 +103,7 @@ TypeName
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "interface"), expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPartialMethodWithDocumentation()
         {
             var testCode = @"
@@ -121,7 +120,7 @@ public partial class TypeName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPartialMethodWithoutDocumentation()
         {
             var testCode = @"
@@ -154,7 +153,7 @@ public partial class TypeName
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestPartialMethodWithEmptyDocumentation()
         {
             var testCode = @"

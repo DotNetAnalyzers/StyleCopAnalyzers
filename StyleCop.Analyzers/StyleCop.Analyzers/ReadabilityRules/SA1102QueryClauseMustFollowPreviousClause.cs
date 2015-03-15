@@ -79,7 +79,7 @@
 
             var clauses = query.DescendantTokens()
                 .Where(t => this.supportedKinds.Any(sk => t.IsKind(sk)))
-                .Where(t => IsQueryParentForNode(t.Parent, query))
+                .Where(t => this.IsQueryParentForNode(t.Parent, query))
                 .Where(t => !t.IsMissing)
                 .ToList();
 
@@ -111,7 +111,7 @@
                 return syntaxNode == queryExpressionSyntax;
             }
 
-            return IsQueryParentForNode(syntaxNode.Parent, queryExpressionSyntax);
+            return this.IsQueryParentForNode(syntaxNode.Parent, queryExpressionSyntax);
         }
 
         private bool? IsFirstToken(SyntaxToken clause)

@@ -4,10 +4,9 @@
     using System.Diagnostics;
     using System.Linq;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Xunit;
     using StyleCop.Analyzers.MaintainabilityRules;
 
-    [TestClass]
     public class SA1406UnitTests : DebugMessagesUnitTestsBase
     {
         protected override string DiagnosticId
