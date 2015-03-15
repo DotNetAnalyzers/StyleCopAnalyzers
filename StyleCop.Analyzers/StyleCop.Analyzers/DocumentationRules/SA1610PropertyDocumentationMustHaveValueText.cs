@@ -22,7 +22,6 @@
     /// <para>A violation of this rule occurs when the <c>&lt;value&gt;</c> tag for a property is empty.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    [NoCodeFix("Cannot generate documentation")]
     public class SA1610PropertyDocumentationMustHaveValueText : PropertyDocumentationSummaryBase
     {
         /// <summary>
