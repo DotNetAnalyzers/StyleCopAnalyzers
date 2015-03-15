@@ -1,11 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Xunit;
 using StyleCop.Analyzers.MaintainabilityRules;
 using TestHelper;
+using Xunit;
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
@@ -56,20 +55,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         System.Func<int> getRandomNumber = delegate() { return 3; };
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Remove delegate parenthesis when possible",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 52)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 52);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }

@@ -1,11 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Xunit;
 using StyleCop.Analyzers.MaintainabilityRules;
 using TestHelper;
+using Xunit;
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
@@ -56,20 +55,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         bool x = true || false && true;
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Conditional expressions must declare precedence",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 26)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 26);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -94,20 +80,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         bool x = true && false || true;
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Conditional expressions must declare precedence",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 18)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 18);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -185,31 +158,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         bool x = true && false || true && false;
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Conditional expressions must declare precedence",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 18)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Conditional expressions must declare precedence",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 35)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic().WithLocation(5, 18),
+                    this.CSharpDiagnostic().WithLocation(5, 35)
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
