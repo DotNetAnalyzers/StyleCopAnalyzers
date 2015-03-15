@@ -36,12 +36,12 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1400AccessModifierMustBeDeclared.DiagnosticId))
                     continue;
 
-                var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
                 SyntaxNode node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
                 if (node == null || node.IsMissing)
                     continue;
@@ -115,12 +115,15 @@
 
                 if (updatedDeclarationNode != null)
                 {
-                    var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken);
-                    var newSyntaxRoot = syntaxRoot.ReplaceNode(declarationNode, updatedDeclarationNode);
-                    var newDocument = context.Document.WithSyntaxRoot(newSyntaxRoot);
-                    context.RegisterCodeFix(CodeAction.Create("Declare accessibility", token => Task.FromResult(newDocument)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Declare accessibility", token => GetTransformedDocument(context, root, declarationNode, updatedDeclarationNode)), diagnostic);
                 }
             }
+        }
+
+        private static Task<Document> GetTransformedDocument(CodeFixContext context, SyntaxNode root, SyntaxNode declarationNode, SyntaxNode updatedDeclarationNode)
+        {
+            var newSyntaxRoot = root.ReplaceNode(declarationNode, updatedDeclarationNode);
+            return Task.FromResult(context.Document.WithSyntaxRoot(newSyntaxRoot));
         }
 
         /// <summary>

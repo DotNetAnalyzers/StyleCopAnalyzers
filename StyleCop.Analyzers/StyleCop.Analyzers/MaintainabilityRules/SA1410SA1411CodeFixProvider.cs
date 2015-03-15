@@ -37,12 +37,13 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!this.FixableDiagnosticIds.Contains(diagnostic.Id))
                     continue;
 
-                var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
                 SyntaxNode node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
                 if (node.IsMissing)
                     continue;
@@ -52,15 +53,17 @@
 
                 if (node != null)
                 {
-                    var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken);
 
-                    var newSyntaxRoot = syntaxRoot.RemoveNode(node, SyntaxRemoveOptions.KeepExteriorTrivia);
-
-                    var changedDocument = context.Document.WithSyntaxRoot(newSyntaxRoot);
-
-                    context.RegisterCodeFix(CodeAction.Create("Remove parenthesis", token => Task.FromResult(changedDocument)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Remove parenthesis", token => GetTransformedDocument(context, root, node)), diagnostic);
                 }
             }
+        }
+
+        private static Task<Document> GetTransformedDocument(CodeFixContext context, SyntaxNode root, SyntaxNode node)
+        {
+            var newSyntaxRoot = root.RemoveNode(node, SyntaxRemoveOptions.KeepExteriorTrivia);
+
+            return Task.FromResult(context.Document.WithSyntaxRoot(newSyntaxRoot));
         }
     }
 }

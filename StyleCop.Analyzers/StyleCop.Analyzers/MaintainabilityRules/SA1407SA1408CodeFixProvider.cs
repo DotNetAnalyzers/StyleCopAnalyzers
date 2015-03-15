@@ -35,31 +35,33 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!this.FixableDiagnosticIds.Contains(diagnostic.Id))
                     continue;
 
-                var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
                 SyntaxNode node = root.FindNode(diagnostic.Location.SourceSpan);
                 if (node.IsMissing)
                     continue;
                 BinaryExpressionSyntax syntax = node as BinaryExpressionSyntax;
                 if (syntax != null)
                 {
-                    var newNode = SyntaxFactory.ParenthesizedExpression(syntax.WithoutTrivia())
-                        .WithTriviaFrom(syntax)
-                        .WithoutFormatting();
-
-                    var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken);
-
-                    var newSyntaxRoot = syntaxRoot.ReplaceNode(node, newNode);
-
-                    var changedDocument = context.Document.WithSyntaxRoot(newSyntaxRoot);
-
-                    context.RegisterCodeFix(CodeAction.Create("Add parenthesis", token => Task.FromResult(changedDocument)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Add parenthesis", token => GetTransformedDocument(context, root, syntax)), diagnostic);
                 }
             }
+        }
+
+        private static Task<Document> GetTransformedDocument(CodeFixContext context, SyntaxNode root, BinaryExpressionSyntax syntax)
+        {
+            var newNode = SyntaxFactory.ParenthesizedExpression(syntax.WithoutTrivia())
+                .WithTriviaFrom(syntax)
+                .WithoutFormatting();
+
+            var newSyntaxRoot = root.ReplaceNode(syntax, newNode);
+
+            return Task.FromResult(context.Document.WithSyntaxRoot(newSyntaxRoot));
         }
     }
 }
