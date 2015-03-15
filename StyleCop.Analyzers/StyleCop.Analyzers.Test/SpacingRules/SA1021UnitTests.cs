@@ -2,7 +2,6 @@
 {
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.SpacingRules;
 
     public class SA1021UnitTests : NumberSignSpacingTestBase
