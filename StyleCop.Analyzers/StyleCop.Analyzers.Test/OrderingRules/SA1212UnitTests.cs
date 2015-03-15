@@ -259,6 +259,22 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
+        [Fact]
+        public async Task TestExpressionProperty()
+        {
+            var testCode = @"
+public class Foo
+{
+    private int field;
+
+    public int this[int index] => field;
+
+    public int Property => field;
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1212PropertyAccessorsMustFollowOrder();
