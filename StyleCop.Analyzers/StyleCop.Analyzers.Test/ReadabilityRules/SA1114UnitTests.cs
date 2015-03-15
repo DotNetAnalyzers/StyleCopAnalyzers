@@ -1242,6 +1242,21 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
+        [Fact]
+        public async Task TestObjectCreationNoArgumentList()
+        {
+            var testCode = @"
+public class Foo
+{
+    public static void Foo()
+    {
+        var list = new System.Collections.Generic.List<int> { 42 };
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1114ParameterListMustFollowDeclaration();
