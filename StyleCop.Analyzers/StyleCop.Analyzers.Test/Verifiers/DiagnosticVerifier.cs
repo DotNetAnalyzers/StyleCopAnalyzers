@@ -40,6 +40,21 @@ namespace TestHelper
         /// <summary>
         /// Called to test a C# <see cref="DiagnosticAnalyzer"/> when applied on the single input source as a string.
         /// <note type="note">
+        /// <para>Input a <see cref="DiagnosticResult"/> for the expected <see cref="Diagnostic"/>.</para>
+        /// </note>
+        /// </summary>
+        /// <param name="source">A class in the form of a string to run the analyzer on.</param>
+        /// <param name="expected">A <see cref="DiagnosticResult"/>s describing the <see cref="Diagnostic"/> that should
+        /// be reported by the analyzer for the specified source.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
+        protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
+        {
+            return this.VerifyCSharpDiagnosticAsync(source, new[] { expected }, cancellationToken);
+        }
+
+        /// <summary>
+        /// Called to test a C# <see cref="DiagnosticAnalyzer"/> when applied on the single input source as a string.
+        /// <note type="note">
         /// <para>Input a <see cref="DiagnosticResult"/> for each <see cref="Diagnostic"/> expected.</para>
         /// </note>
         /// </summary>
