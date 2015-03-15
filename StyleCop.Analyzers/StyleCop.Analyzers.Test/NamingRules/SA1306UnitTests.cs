@@ -2,12 +2,11 @@
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.NamingRules;
     using TestHelper;
+    using Xunit;
 
     public class SA1306UnitTests : CodeFixVerifier
     {
@@ -44,31 +43,11 @@ string car;
 string Dar;
 }}";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = string.Format("Field '{0}' must begin with lower-case letter", "Bar"),
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 8)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = string.Format("Field '{0}' must begin with lower-case letter", "Dar"),
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 8, 8)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic().WithArguments("Bar").WithLocation(4, 8),
+                    this.CSharpDiagnostic().WithArguments("Dar").WithLocation(8, 8)
+                };
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), expected, CancellationToken.None);
 
@@ -93,31 +72,11 @@ string dar;
 string Bar, car, Dar;
 }}";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = string.Format("Field '{0}' must begin with lower-case letter", "Bar"),
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 8)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = string.Format("Field '{0}' must begin with lower-case letter", "Dar"),
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 18)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic().WithArguments("Bar").WithLocation(4, 8),
+                    this.CSharpDiagnostic().WithArguments("Dar").WithLocation(4, 18)
+                };
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), expected, CancellationToken.None);
 

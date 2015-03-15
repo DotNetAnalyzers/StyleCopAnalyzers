@@ -1,11 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Xunit;
 using StyleCop.Analyzers.NamingRules;
 using TestHelper;
+using Xunit;
 
 namespace StyleCop.Analyzers.Test.NamingRules
 {
@@ -28,20 +27,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     public readonly string bar = ""baz"";
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Non-private readonly fields must begin with upper-case letter",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 3, 28)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 28);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -72,20 +58,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     protected readonly string bar = ""baz"";
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Non-private readonly fields must begin with upper-case letter",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 3, 31)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 31);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -115,20 +88,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     internal readonly string bar = ""baz"";
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Non-private readonly fields must begin with upper-case letter",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 3, 30)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 30);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
