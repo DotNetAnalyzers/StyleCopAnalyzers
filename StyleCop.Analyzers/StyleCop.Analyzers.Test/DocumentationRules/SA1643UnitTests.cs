@@ -163,10 +163,7 @@
 }}";
             testCode = string.Format(testCode, generic ? "<T1, T2>" : string.Empty);
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(5, 13)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 13);
 
             await this.VerifyCSharpDiagnosticAsync(testCode,
                 expected, CancellationToken.None);

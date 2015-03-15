@@ -59,10 +59,7 @@
 }
 ";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 21)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 21);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
             await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
@@ -105,10 +102,7 @@
             await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
 
             test = string.Format(testFormat, this.Sign + " 3");
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(8, 17)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(8, 17);
 
             await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
             await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
@@ -151,10 +145,7 @@
             await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
 
             test = string.Format(testFormat, this.Sign + " 3");
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(8, 17)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(8, 17);
 
             await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
             await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
@@ -260,10 +251,7 @@
             await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
 
             test = string.Format(testFormat, this.Sign + " 3");
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 25)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 25);
 
             await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
             await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);

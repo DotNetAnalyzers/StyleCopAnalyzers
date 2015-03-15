@@ -209,10 +209,7 @@ public class ClassName
 {
 }";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(2, 5)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 5);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -229,10 +226,7 @@ public class ClassName
 {
 }";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(2, 5)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 5);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }

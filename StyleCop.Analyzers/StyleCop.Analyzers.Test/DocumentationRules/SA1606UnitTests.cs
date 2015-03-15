@@ -63,10 +63,7 @@ TypeName
 {{
 }}";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(6, 1)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), expected, CancellationToken.None);
         }
@@ -208,10 +205,7 @@ TypeName();";
 public delegate 
 void TypeName();";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(6, 6)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 6);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -277,10 +271,7 @@ public class ClassName
     public void Test() { }
 }";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(10, 17)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 17);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -346,10 +337,7 @@ public class ClassName
     public ClassName() { }
 }";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(10, 12)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 12);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -415,10 +403,7 @@ public class ClassName
     ~ClassName() { }
 }";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(10, 6)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 6);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -484,10 +469,7 @@ public class ClassName
     public ClassName Property { get; set; }
 }";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(10, 22)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 22);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -553,10 +535,7 @@ public class ClassName
     public ClassName this[string t] { get { return null; } }
 }";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(10, 22)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 22);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -622,10 +601,7 @@ public class ClassName
     public ClassName Foo;
 }";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(10, 22)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 22);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -691,10 +667,7 @@ public class ClassName
     public event System.Action Foo;
 }";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(10, 32)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 32);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -760,10 +733,7 @@ public interface InterfaceName
     event System.Action Foo { add; remove; }
 }";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(10, 25)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 25);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }

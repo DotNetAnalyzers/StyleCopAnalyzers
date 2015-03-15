@@ -64,10 +64,7 @@ public class Foo { }";
 /// <summary=></summary>
 public class Foo { }";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithArguments("Invalid token.").WithLocation(2, 13)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("Invalid token.").WithLocation(2, 13);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -79,10 +76,7 @@ public class Foo { }";
 /// <summary></summary=>
 public class Foo { }";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithArguments("Invalid token.").WithLocation(2, 23)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("Invalid token.").WithLocation(2, 23);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -94,10 +88,7 @@ public class Foo { }";
 /// <summary=/>
 public class Foo { }";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithArguments("Invalid token.").WithLocation(2, 13)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("Invalid token.").WithLocation(2, 13);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -109,12 +100,10 @@ public class Foo { }";
 /// <summary>a</sumary>
 public class Foo { }";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithArguments("The 'summary' start tag does not match the end tag of 'sumary'.")
-                        .WithLocation(2, 5)
-                        .WithLocation(2, 15)
-                };
+            DiagnosticResult expected =
+                this.CSharpDiagnostic().WithArguments("The 'summary' start tag does not match the end tag of 'sumary'.")
+                    .WithLocation(2, 5)
+                    .WithLocation(2, 15);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -126,11 +115,9 @@ public class Foo { }";
 /// <summary>a
 public class Foo { }";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithArguments("The XML tag 'summary' is not closed.")
-                        .WithLocation(2, 5)
-                };
+            DiagnosticResult expected =
+                this.CSharpDiagnostic().WithArguments("The XML tag 'summary' is not closed.")
+                    .WithLocation(2, 5);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }

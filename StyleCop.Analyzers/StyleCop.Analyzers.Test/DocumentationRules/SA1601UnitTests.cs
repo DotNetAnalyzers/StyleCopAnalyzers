@@ -45,10 +45,7 @@ TypeName
 {{
 }}";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(3, 1)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 1);
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "class"), expected, CancellationToken.None);
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "struct"), expected, CancellationToken.None);
@@ -67,10 +64,7 @@ TypeName
 {{
 }}";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(6, 1)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "class"), expected, CancellationToken.None);
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "struct"), expected, CancellationToken.None);
@@ -106,10 +100,7 @@ public partial class TypeName
     partial void MemberName();
 }}";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(7, 18)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 18);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -129,10 +120,7 @@ public partial class TypeName
     partial void MemberName();
 }}";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(10, 18)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 18);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }

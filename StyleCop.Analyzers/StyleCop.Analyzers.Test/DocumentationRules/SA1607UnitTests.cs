@@ -75,10 +75,7 @@ TypeName
 {{
 }}";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(6, 1)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), expected, CancellationToken.None);
         }
@@ -94,10 +91,7 @@ TypeName
 {{
 }}";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(6, 1)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), expected, CancellationToken.None);
         }
@@ -288,10 +282,7 @@ public class ClassName
     partial void Test();
 }";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(10, 18)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 18);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -311,10 +302,7 @@ public class ClassName
     partial void Test();
 }";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(10, 18)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 18);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }

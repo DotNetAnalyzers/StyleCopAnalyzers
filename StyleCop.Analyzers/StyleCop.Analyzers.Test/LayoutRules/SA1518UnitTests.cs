@@ -197,12 +197,9 @@ public class Foo
             return new SA1518CodeFixProvider();
         }
 
-        private DiagnosticResult[] GenerateExpectedWarning(int line, int column)
+        private DiagnosticResult GenerateExpectedWarning(int line, int column)
         {
-            return new[]
-                {
-                    this.CSharpDiagnostic().WithLocation(line, column)
-                };
+            return this.CSharpDiagnostic().WithLocation(line, column);
         }
     }
 }

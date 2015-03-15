@@ -47,10 +47,7 @@ enum TypeName
     Bar
 }}";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(4, 5)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 5);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -70,10 +67,7 @@ enum TypeName
     Bar
 }}";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(10, 5)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 5);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }

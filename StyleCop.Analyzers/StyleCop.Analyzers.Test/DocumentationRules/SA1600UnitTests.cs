@@ -841,10 +841,7 @@ public class OuterClass
 {
 }";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(3, 14)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 14);
 
             await this.VerifyCSharpDiagnosticAsync(testCodeWithDocumentation, EmptyDiagnosticResults, CancellationToken.None);
             await this.VerifyCSharpDiagnosticAsync(testCodeWithEmptyDocumentation, expected, CancellationToken.None);
@@ -866,10 +863,7 @@ public class OuterClass
 {
 }";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(4, 14)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 14);
 
             await this.VerifyCSharpDiagnosticAsync(testCodeWithDocumentation, EmptyDiagnosticResults, CancellationToken.None);
             await this.VerifyCSharpDiagnosticAsync(testCodeWithEmptyDocumentation, expected, CancellationToken.None);

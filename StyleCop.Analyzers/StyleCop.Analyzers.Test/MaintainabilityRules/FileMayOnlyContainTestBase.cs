@@ -45,10 +45,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
 }";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(4, this.Keyword.Length + 2)
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, this.Keyword.Length + 2);
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("%1", this.Keyword), expected, CancellationToken.None);
         }
