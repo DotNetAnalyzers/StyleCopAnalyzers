@@ -36,26 +36,31 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1101PrefixLocalCallsWithThis.DiagnosticId))
                     continue;
 
-                var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-
                 var node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) as SimpleNameSyntax;
                 if (node == null)
                     return;
 
-                var qualifiedExpression =
-                    SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.ThisExpression(), node.WithoutTrivia().WithoutFormatting())
-                    .WithTriviaFrom(node)
-                    .WithoutFormatting();
-
-                var newSyntaxRoot = root.ReplaceNode(node, qualifiedExpression);
-
-                context.RegisterCodeFix(CodeAction.Create("Prefix reference with 'this.'", token => Task.FromResult(context.Document.WithSyntaxRoot(newSyntaxRoot))), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Prefix reference with 'this.'", token => GetTransformedDocument(context, root, diagnostic, node)), diagnostic);
             }
+        }
+
+        private static Task<Document> GetTransformedDocument(CodeFixContext context, SyntaxNode root, Diagnostic diagnostic, SimpleNameSyntax node)
+        {
+            var qualifiedExpression =
+                SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.ThisExpression(), node.WithoutTrivia().WithoutFormatting())
+                .WithTriviaFrom(node)
+                .WithoutFormatting();
+
+            var newSyntaxRoot = root.ReplaceNode(node, qualifiedExpression);
+
+            return Task.FromResult(context.Document.WithSyntaxRoot(newSyntaxRoot));
         }
     }
 }

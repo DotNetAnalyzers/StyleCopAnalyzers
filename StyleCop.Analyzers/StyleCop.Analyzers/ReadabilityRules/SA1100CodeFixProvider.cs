@@ -35,12 +35,12 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists.DiagnosticId))
                     continue;
-
-                var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
                 var node = root.FindNode(diagnostic.Location.SourceSpan) as BaseExpressionSyntax;
                 if (node == null)
@@ -48,14 +48,18 @@
                     return;
                 }
 
-                var thisExpressionSyntax = SyntaxFactory.ThisExpression()
-                    .WithTriviaFrom(node)
-                    .WithoutFormatting();
-
-                var newSyntaxRoot = root.ReplaceNode(node, thisExpressionSyntax);
-
-                context.RegisterCodeFix(CodeAction.Create("Replace 'base.' with 'this.'", token => Task.FromResult(context.Document.WithSyntaxRoot(newSyntaxRoot))), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Replace 'base.' with 'this.'", token => GetTransformedDocument(context, root, node)), diagnostic);
             }
+        }
+
+        private static Task<Document> GetTransformedDocument(CodeFixContext context, SyntaxNode root, SyntaxNode node)
+        {
+            var thisExpressionSyntax = SyntaxFactory.ThisExpression()
+                .WithTriviaFrom(node)
+                .WithoutFormatting();
+
+            SyntaxNode newSyntaxRoot = root.ReplaceNode(node, thisExpressionSyntax);
+            return Task.FromResult(context.Document.WithSyntaxRoot(newSyntaxRoot));
         }
     }
 }
