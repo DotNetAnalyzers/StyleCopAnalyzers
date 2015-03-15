@@ -2,7 +2,10 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The name of a public or internal field in C# does not begin with an upper-case letter.
@@ -26,7 +29,7 @@
         /// </summary>
         public const string DiagnosticId = "SA1307";
         private const string Title = "Accessible fields must begin with upper-case letter";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "Field '{0}' must begin with upper-case letter";
         private const string Category = "StyleCop.CSharp.NamingRules";
         private const string Description = "The name of a public or internal field in C# does not begin with an upper-case letter.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1307.html";
@@ -49,7 +52,30 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(this.HandleFieldDeclaration, SyntaxKind.FieldDeclaration);
+        }
+
+        private void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            // To improve performance we are looking for the field instead of the declarator directly. That way we don't get called for local variables.
+            FieldDeclarationSyntax declaration = context.Node as FieldDeclarationSyntax;
+            if (declaration != null && declaration.Declaration != null)
+            {
+                if (declaration.Modifiers.Any(SyntaxKind.PublicKeyword) || declaration.Modifiers.Any(SyntaxKind.InternalKeyword))
+                {
+                    foreach (VariableDeclaratorSyntax declarator in declaration.Declaration.Variables)
+                    {
+                        string name = declarator.Identifier.ToString();
+
+                        if (!string.IsNullOrEmpty(name) 
+                            && char.IsLower(name[0]) 
+                            && !NamedTypeHelpers.IsContainedInNativeMethodsClass(declaration))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, declarator.GetLocation(), name));
+                        }
+                    }
+                }
+            }
         }
     }
 }
