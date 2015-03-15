@@ -2,12 +2,11 @@
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.NamingRules;
     using TestHelper;
+    using Xunit;
 
     public class SA1309UnitTests : CodeFixVerifier
     {
@@ -28,20 +27,7 @@
     public string _bar = ""baz"";
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = string.Format("Field '{0}' must not begin with an underscore", "_bar"),
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 3, 19)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("_bar").WithLocation(3, 19);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -83,20 +69,7 @@
     internal string _bar = ""baz"";
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = string.Format("Field '{0}' must not begin with an underscore", "_bar"),
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 3, 21)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("_bar").WithLocation(3, 21);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 

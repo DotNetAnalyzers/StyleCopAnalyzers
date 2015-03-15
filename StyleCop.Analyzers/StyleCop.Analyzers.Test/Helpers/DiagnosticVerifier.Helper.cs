@@ -189,6 +189,20 @@ namespace TestHelper
             return solution.GetProject(projectId);
         }
         #endregion
+
+        #region Generate expected results
+
+        protected DiagnosticResult CSharpDiagnostic(string diagnosticId = null)
+        {
+            DiagnosticAnalyzer analyzer = this.GetCSharpDiagnosticAnalyzer();
+            var supportedDiagnostics = analyzer.SupportedDiagnostics;
+            if (diagnosticId == null)
+                return new DiagnosticResult(supportedDiagnostics.Single());
+            else
+                return new DiagnosticResult(supportedDiagnostics.Single(i => i.Id == diagnosticId));
+        }
+
+        #endregion
     }
 }
 

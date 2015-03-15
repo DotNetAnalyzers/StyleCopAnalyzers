@@ -2,12 +2,10 @@
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.DocumentationRules;
     using TestHelper;
+    using Xunit;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1602EnumerationItemsMustBeDocumented"/>-
@@ -49,23 +47,8 @@ enum TypeName
     Bar
 }}";
 
-            DiagnosticResult[] expected;
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 5);
 
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Enumeration items must be documented",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 4, 5)
-                            }
-                    }
-                };
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
@@ -84,23 +67,8 @@ enum TypeName
     Bar
 }}";
 
-            DiagnosticResult[] expected;
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 5);
 
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Enumeration items must be documented",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 10, 5)
-                            }
-                    }
-                };
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
