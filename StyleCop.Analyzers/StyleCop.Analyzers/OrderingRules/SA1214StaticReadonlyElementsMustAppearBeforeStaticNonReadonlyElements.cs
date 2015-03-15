@@ -46,59 +46,53 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.AnalyzeClass, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeAction(this.AnalyzeStruct, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeAction(this.AnalyzeTypeDeclaration, SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration);
         }
 
-        private void AnalyzeStruct(SyntaxNodeAnalysisContext context)
+        private void AnalyzeTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var structDeclaration = (StructDeclarationSyntax)context.Node;
+            var typeDeclaration = (TypeDeclarationSyntax) context.Node;
 
-            AnalyzeType(context, structDeclaration);
-        }
-
-        private void AnalyzeClass(SyntaxNodeAnalysisContext context)
-        {
-            var classDeclaration = (ClassDeclarationSyntax) context.Node;
-
-            AnalyzeType(context, classDeclaration);
+            AnalyzeType(context, typeDeclaration);
         }
 
         private static void AnalyzeType(SyntaxNodeAnalysisContext context, TypeDeclarationSyntax typeDeclaration)
         {
             var staticFields = typeDeclaration.Members
-                .OfType<BaseFieldDeclarationSyntax>()
-                .Where(f => f.Modifiers.Any(m => m.IsKind(SyntaxKind.StaticKeyword)))
+                .OfType<FieldDeclarationSyntax>()
+                .Where(f => f.Modifiers.Any(SyntaxKind.StaticKeyword))
                 .ToList();
 
-            var endLocationsOfStaticNonReadonlyFields =
-                staticFields.Where(f => f.Modifiers.Any(m => m.IsKind(SyntaxKind.ReadOnlyKeyword)) == false)
-                    .Select(f => f.GetLocation().GetLineSpan())
-                    .Where(l => l.IsValid)
-                    .Select(l => l.EndLinePosition)
-                    .ToList();
+            var firstNonReadonlyField =
+                staticFields.FirstOrDefault(f => !f.Modifiers.Any(SyntaxKind.ReadOnlyKeyword));
+
+            if (firstNonReadonlyField == null)
+            {
+                return;
+            }
+
+            var firstNonReadonlyFieldLocation = firstNonReadonlyField.GetLocation().GetLineSpan();
+            if (!firstNonReadonlyFieldLocation.IsValid)
+            {
+                return;
+            }
 
             var readonlyFieldLocations =
-                staticFields.Where(f => f.Modifiers.Any(m => m.IsKind(SyntaxKind.ReadOnlyKeyword)))
+                staticFields.Where(f => f.Modifiers.Any(SyntaxKind.ReadOnlyKeyword))
                     .Where(f => f.GetLocation().GetLineSpan().IsValid)
                     .Where(f => f.Declaration != null && f.Declaration.Variables.Any())
-                    .Select(f => new {
-                        FieldLocations = f.Declaration.Variables
-                                                      .Where(v => !v.IsMissing && !v.Identifier.IsMissing)
-                                                      .Select(v => v.Identifier.GetLocation())
-                                                      .ToList(),
+                    .Select(f => new
+                    {
+                        FieldLocation = f.GetLocation(),
                         FieldEndLinePosition = f.GetLocation().GetLineSpan().EndLinePosition
                     })
                     .ToList();
 
             foreach (var location in readonlyFieldLocations)
             {
-                if (endLocationsOfStaticNonReadonlyFields.Any(e => e < location.FieldEndLinePosition))
+                if (firstNonReadonlyFieldLocation.EndLinePosition < location.FieldEndLinePosition)
                 {
-                    foreach (var fieldLocation in location.FieldLocations)
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, fieldLocation));
-                    }
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, location.FieldLocation));
                 }
             }
         }

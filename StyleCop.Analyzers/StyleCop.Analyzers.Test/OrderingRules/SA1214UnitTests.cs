@@ -39,12 +39,25 @@ public class Foo
                     Locations =
                         new[]
                         {
-                            new DiagnosticResultLocation("Test0.cs", 5, 33)
+                            new DiagnosticResultLocation("Test0.cs", 5, 5)
                         }
                 }
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task TestTwoFieldsAllStaticReadonly()
+        {
+            var testCode = @"
+public class Foo
+{
+    private static readonly int i = 0;
+    private static readonly int j = 0;
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [Fact]
@@ -66,7 +79,7 @@ public class Foo
                     Locations =
                         new[]
                         {
-                            new DiagnosticResultLocation("Test0.cs", 4, 58)
+                            new DiagnosticResultLocation("Test0.cs", 4, 30)
                         }
                 }
             };
@@ -120,7 +133,7 @@ public struct Foo
                     Locations =
                         new[]
                         {
-                            new DiagnosticResultLocation("Test0.cs", 5, 33)
+                            new DiagnosticResultLocation("Test0.cs", 5, 5)
                         }
                 }
             };
@@ -164,7 +177,7 @@ public class Foo
                     Locations =
                         new[]
                         {
-                            new DiagnosticResultLocation("Test0.cs", 11, 33)
+                            new DiagnosticResultLocation("Test0.cs", 11, 5)
                         }
                 },
                 new DiagnosticResult
@@ -175,7 +188,7 @@ public class Foo
                     Locations =
                         new[]
                         {
-                            new DiagnosticResultLocation("Test0.cs", 18, 37)
+                            new DiagnosticResultLocation("Test0.cs", 18, 9)
                         }
                 },
                 new DiagnosticResult
@@ -186,7 +199,7 @@ public class Foo
                     Locations =
                         new[]
                         {
-                            new DiagnosticResultLocation("Test0.cs", 21, 32)
+                            new DiagnosticResultLocation("Test0.cs", 21, 5)
                         }
                 },
             };
