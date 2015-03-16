@@ -51,15 +51,15 @@
                 if (!token.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
                     continue;
 
-                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context, root, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context.Document, root, token)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(CodeFixContext context, SyntaxNode root, SyntaxToken token)
+        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxToken token)
         {
             SyntaxToken corrected = token.WithoutTrailingWhitespace().WithoutFormatting();
             SyntaxNode transformed = root.ReplaceToken(token, corrected);
-            Document updatedDocument = context.Document.WithSyntaxRoot(transformed);
+            Document updatedDocument = document.WithSyntaxRoot(transformed);
 
             return Task.FromResult(updatedDocument);
         }

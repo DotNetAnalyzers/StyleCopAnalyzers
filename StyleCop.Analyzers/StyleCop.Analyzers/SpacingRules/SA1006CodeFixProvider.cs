@@ -49,14 +49,14 @@
                 if (!hashToken.IsKind(SyntaxKind.HashToken))
                     continue;
 
-                context.RegisterCodeFix(CodeAction.Create("Remove space", t => GetTransformedDocument(context, root, hashToken)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Remove space", t => GetTransformedDocument(context.Document, root, hashToken)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(CodeFixContext context, SyntaxNode root, SyntaxToken hashToken)
+        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxToken hashToken)
         {
             SyntaxToken corrected = hashToken.WithoutTrailingWhitespace().WithoutFormatting();
-            Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(hashToken, corrected));
+            Document updatedDocument = document.WithSyntaxRoot(root.ReplaceToken(hashToken, corrected));
             return Task.FromResult(updatedDocument);
         }
     }

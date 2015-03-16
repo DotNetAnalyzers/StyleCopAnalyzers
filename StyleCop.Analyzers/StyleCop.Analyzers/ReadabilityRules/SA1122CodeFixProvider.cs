@@ -54,15 +54,15 @@
                 var node = root?.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
                 if (node != null && node.IsKind(SyntaxKind.StringLiteralExpression))
                 {
-                    context.RegisterCodeFix(CodeAction.Create($"Replace with string.Empty", token => GetTransformedDocument(context, root, node)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create($"Replace with string.Empty", token => GetTransformedDocument(context.Document, root, node)), diagnostic);
                 }
             }
         }
 
-        private static Task<Document> GetTransformedDocument(CodeFixContext context, SyntaxNode root, SyntaxNode node)
+        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxNode node)
         {
             var newSyntaxRoot = root.ReplaceNode(node, StringEmptyExpression);
-            return Task.FromResult(context.Document.WithSyntaxRoot(newSyntaxRoot));
+            return Task.FromResult(document.WithSyntaxRoot(newSyntaxRoot));
         }
     }
 }

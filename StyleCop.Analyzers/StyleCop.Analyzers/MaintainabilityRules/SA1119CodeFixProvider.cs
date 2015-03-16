@@ -50,12 +50,12 @@
 
                 if (syntax != null)
                 {
-                    context.RegisterCodeFix(CodeAction.Create("Remove parenthesis", token => GetTransformedDocument(context, root, syntax)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Remove parenthesis", token => GetTransformedDocument(context.Document, root, syntax)), diagnostic);
                 }
             }
         }
 
-        private static Task<Document> GetTransformedDocument(CodeFixContext context, SyntaxNode root, ParenthesizedExpressionSyntax syntax)
+        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, ParenthesizedExpressionSyntax syntax)
         {
             var leadingTrivia = syntax.OpenParenToken.GetAllTrivia().Concat(syntax.Expression.GetLeadingTrivia());
             var trailingTrivia = syntax.Expression.GetTrailingTrivia().Concat(syntax.CloseParenToken.GetAllTrivia());
@@ -67,7 +67,7 @@
 
             var newSyntaxRoot = root.ReplaceNode(syntax, newNode);
 
-            var changedDocument = context.Document.WithSyntaxRoot(newSyntaxRoot);
+            var changedDocument = document.WithSyntaxRoot(newSyntaxRoot);
 
             return Task.FromResult(changedDocument);
         }

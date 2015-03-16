@@ -44,14 +44,14 @@
                 if (token.IsMissing)
                     continue;
 
-                context.RegisterCodeFix(CodeAction.Create("Remove space", t => GetTransformedDocument(context, root, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Remove space", t => GetTransformedDocument(context.Document, root, token)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(CodeFixContext context, SyntaxNode root, SyntaxToken token)
+        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxToken token)
         {
             SyntaxToken corrected = token.WithoutTrailingWhitespace().WithoutFormatting();
-            Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
+            Document updatedDocument = document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
 
             return Task.FromResult(updatedDocument);
         }

@@ -47,15 +47,15 @@
                 if (token.HasTrailingTrivia && token.TrailingTrivia[0].IsKind(SyntaxKind.WhitespaceTrivia))
                     continue;
 
-                context.RegisterCodeFix(CodeAction.Create("Insert space", t => GetTransformedDocument(context, root, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Insert space", t => GetTransformedDocument(context.Document, root, token)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(CodeFixContext context, SyntaxNode root, SyntaxToken token)
+        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxToken token)
         {
             SyntaxTrivia whitespace = SyntaxFactory.Whitespace(" ");
             SyntaxToken corrected = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, whitespace)).WithoutFormatting();
-            Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
+            Document updatedDocument = document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
 
             return Task.FromResult(updatedDocument);
         }

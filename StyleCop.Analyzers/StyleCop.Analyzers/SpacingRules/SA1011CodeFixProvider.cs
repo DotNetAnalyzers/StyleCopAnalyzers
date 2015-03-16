@@ -98,14 +98,14 @@
                 if (replacements.Count == 0)
                     continue;
 
-                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context, root, replacements)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context.Document, root, replacements)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(CodeFixContext context, SyntaxNode root, Dictionary<SyntaxToken, SyntaxToken> replacements)
+        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, Dictionary<SyntaxToken, SyntaxToken> replacements)
         {
             var transformed = root.ReplaceTokens(replacements.Keys, (original, maybeRewritten) => replacements[original]);
-            Document updatedDocument = context.Document.WithSyntaxRoot(transformed);
+            Document updatedDocument = document.WithSyntaxRoot(transformed);
 
             return Task.FromResult(updatedDocument);
         }

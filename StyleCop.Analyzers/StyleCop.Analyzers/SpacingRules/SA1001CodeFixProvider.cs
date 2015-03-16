@@ -46,11 +46,11 @@
                 if (!token.IsKind(SyntaxKind.CommaToken))
                     continue;
 
-                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context, root, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context.Document, root, token)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(CodeFixContext context, SyntaxNode root, SyntaxToken token)
+        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxToken token)
         {
             Dictionary<SyntaxToken, SyntaxToken> replacements = new Dictionary<SyntaxToken, SyntaxToken>();
 
@@ -95,7 +95,7 @@
             }
 
             var transformed = root.ReplaceTokens(replacements.Keys, (original, maybeRewritten) => replacements[original]);
-            return Task.FromResult(context.Document.WithSyntaxRoot(transformed));
+            return Task.FromResult(document.WithSyntaxRoot(transformed));
         }
     }
 }

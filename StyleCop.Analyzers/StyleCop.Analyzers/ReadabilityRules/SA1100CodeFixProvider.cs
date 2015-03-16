@@ -48,18 +48,18 @@
                     return;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Replace 'base.' with 'this.'", token => GetTransformedDocument(context, root, node)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Replace 'base.' with 'this.'", token => GetTransformedDocument(context.Document, root, node)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(CodeFixContext context, SyntaxNode root, SyntaxNode node)
+        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxNode node)
         {
             var thisExpressionSyntax = SyntaxFactory.ThisExpression()
                 .WithTriviaFrom(node)
                 .WithoutFormatting();
 
             SyntaxNode newSyntaxRoot = root.ReplaceNode(node, thisExpressionSyntax);
-            return Task.FromResult(context.Document.WithSyntaxRoot(newSyntaxRoot));
+            return Task.FromResult(document.WithSyntaxRoot(newSyntaxRoot));
         }
     }
 }

@@ -91,24 +91,24 @@
 
                 if (isAddingSpace == !token.HasTrailingTrivia)
                 {
-                    context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context, root, token, isAddingSpace)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context.Document, root, token, isAddingSpace)), diagnostic);
                 }
             }
         }
 
-        private static Task<Document> GetTransformedDocument(CodeFixContext context, SyntaxNode root, SyntaxToken token, bool isAddingSpace)
+        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxToken token, bool isAddingSpace)
         {
             if (isAddingSpace)
             {
                 SyntaxTrivia whitespace = SyntaxFactory.Whitespace(" ").WithoutFormatting();
                 SyntaxToken corrected = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, whitespace));
-                Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
+                Document updatedDocument = document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
                 return Task.FromResult(updatedDocument);
             }
             else
             {
                 SyntaxToken corrected = token.WithoutTrailingWhitespace().WithoutFormatting();
-                Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
+                Document updatedDocument = document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
                 return Task.FromResult(updatedDocument);
             }
         }

@@ -53,14 +53,14 @@
                 if (!previousToken.HasTrailingTrivia)
                     continue;
 
-                context.RegisterCodeFix(CodeAction.Create("Remove space", t => GetTransformedDocument(context, root, previousToken)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Remove space", t => GetTransformedDocument(context.Document, root, previousToken)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(CodeFixContext context, SyntaxNode root, SyntaxToken previousToken)
+        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxToken previousToken)
         {
             SyntaxToken corrected = previousToken.WithoutTrailingWhitespace().WithoutFormatting();
-            Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(previousToken, corrected));
+            Document updatedDocument = document.WithSyntaxRoot(root.ReplaceToken(previousToken, corrected));
 
             return Task.FromResult(updatedDocument);
         }

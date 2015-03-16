@@ -50,15 +50,15 @@
                 if (!text.StartsWith("//"))
                     continue;
 
-                context.RegisterCodeFix(CodeAction.Create("Insert space", t => GetTransformedDocument(context, root, trivia, text)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Insert space", t => GetTransformedDocument(context.Document, root, trivia, text)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(CodeFixContext context, SyntaxNode root, SyntaxTrivia trivia, string text)
+        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxTrivia trivia, string text)
         {
             string correctedText = "// " + text.Substring(2);
             SyntaxTrivia corrected = SyntaxFactory.Comment(correctedText).WithoutFormatting();
-            Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceTrivia(trivia, corrected));
+            Document updatedDocument = document.WithSyntaxRoot(root.ReplaceTrivia(trivia, corrected));
 
             return Task.FromResult(updatedDocument);
         }

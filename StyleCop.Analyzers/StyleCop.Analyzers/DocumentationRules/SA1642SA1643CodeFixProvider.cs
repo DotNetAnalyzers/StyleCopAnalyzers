@@ -51,11 +51,11 @@
                 if (node == null)
                     continue;
 
-                context.RegisterCodeFix(CodeAction.Create("Add standard text.", token => GetTransformedDocument(context, root, node)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Add standard text.", token => GetTransformedDocument(context.Document, root, node)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(CodeFixContext context, SyntaxNode root, XmlElementSyntax node)
+        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, XmlElementSyntax node)
         {
             var classDeclaration = node.FirstAncestorOrSelf<ClassDeclarationSyntax>();
             var declarationSyntax = node.FirstAncestorOrSelf<BaseMethodDeclarationSyntax>();
@@ -94,7 +94,7 @@
 
             var newRoot = root.ReplaceNode(node, newNode);
 
-            var newDocument = context.Document.WithSyntaxRoot(newRoot);
+            var newDocument = document.WithSyntaxRoot(newRoot);
 
             return Task.FromResult(newDocument);
         }

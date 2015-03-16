@@ -54,16 +54,16 @@
                 if (node != null)
                 {
 
-                    context.RegisterCodeFix(CodeAction.Create("Remove parenthesis", token => GetTransformedDocument(context, root, node)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Remove parenthesis", token => GetTransformedDocument(context.Document, root, node)), diagnostic);
                 }
             }
         }
 
-        private static Task<Document> GetTransformedDocument(CodeFixContext context, SyntaxNode root, SyntaxNode node)
+        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxNode node)
         {
             var newSyntaxRoot = root.RemoveNode(node, SyntaxRemoveOptions.KeepExteriorTrivia);
 
-            return Task.FromResult(context.Document.WithSyntaxRoot(newSyntaxRoot));
+            return Task.FromResult(document.WithSyntaxRoot(newSyntaxRoot));
         }
     }
 }

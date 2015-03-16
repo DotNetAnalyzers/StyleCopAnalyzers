@@ -35,15 +35,15 @@
         {
             foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                context.RegisterCodeFix(CodeAction.Create("Remove blank lines at the start of the file", token => GetTransformedDocument(context, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Remove blank lines at the start of the file", token => GetTransformedDocument(context.Document, token)), diagnostic);
             }
 
             return Task.FromResult(true);
         }
 
-        private static async Task<Document> GetTransformedDocument(CodeFixContext context, CancellationToken token)
+        private static async Task<Document> GetTransformedDocument(Document document, CancellationToken token)
         {
-            var syntaxRoot = await context.Document.GetSyntaxRootAsync(token).ConfigureAwait(false);
+            var syntaxRoot = await document.GetSyntaxRootAsync(token).ConfigureAwait(false);
 
             var firstToken = syntaxRoot.GetFirstToken(includeZeroWidth: true);
             var leadingTrivia = firstToken.LeadingTrivia;
@@ -61,7 +61,7 @@
 
             var newFirstToken = firstToken.WithLeadingTrivia(newTriviaList);
             var newSyntaxRoot = syntaxRoot.ReplaceToken(firstToken, newFirstToken);
-            var newDocument = context.Document.WithSyntaxRoot(newSyntaxRoot);
+            var newDocument = document.WithSyntaxRoot(newSyntaxRoot);
 
             return newDocument;
         }

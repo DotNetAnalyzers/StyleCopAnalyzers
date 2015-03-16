@@ -115,15 +115,15 @@
 
                 if (updatedDeclarationNode != null)
                 {
-                    context.RegisterCodeFix(CodeAction.Create("Declare accessibility", token => GetTransformedDocument(context, root, declarationNode, updatedDeclarationNode)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Declare accessibility", token => GetTransformedDocument(context.Document, root, declarationNode, updatedDeclarationNode)), diagnostic);
                 }
             }
         }
 
-        private static Task<Document> GetTransformedDocument(CodeFixContext context, SyntaxNode root, SyntaxNode declarationNode, SyntaxNode updatedDeclarationNode)
+        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxNode declarationNode, SyntaxNode updatedDeclarationNode)
         {
             var newSyntaxRoot = root.ReplaceNode(declarationNode, updatedDeclarationNode);
-            return Task.FromResult(context.Document.WithSyntaxRoot(newSyntaxRoot));
+            return Task.FromResult(document.WithSyntaxRoot(newSyntaxRoot));
         }
 
         /// <summary>

@@ -48,12 +48,12 @@
                 BinaryExpressionSyntax syntax = node as BinaryExpressionSyntax;
                 if (syntax != null)
                 {
-                    context.RegisterCodeFix(CodeAction.Create("Add parenthesis", token => GetTransformedDocument(context, root, syntax)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Add parenthesis", token => GetTransformedDocument(context.Document, root, syntax)), diagnostic);
                 }
             }
         }
 
-        private static Task<Document> GetTransformedDocument(CodeFixContext context, SyntaxNode root, BinaryExpressionSyntax syntax)
+        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, BinaryExpressionSyntax syntax)
         {
             var newNode = SyntaxFactory.ParenthesizedExpression(syntax.WithoutTrivia())
                 .WithTriviaFrom(syntax)
@@ -61,7 +61,7 @@
 
             var newSyntaxRoot = root.ReplaceNode(syntax, newNode);
 
-            return Task.FromResult(context.Document.WithSyntaxRoot(newSyntaxRoot));
+            return Task.FromResult(document.WithSyntaxRoot(newSyntaxRoot));
         }
     }
 }
