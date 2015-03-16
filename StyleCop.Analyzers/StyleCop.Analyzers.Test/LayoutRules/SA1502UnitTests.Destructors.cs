@@ -38,7 +38,7 @@
 {
     ~Foo() { }
 }";
-            var expected = this.CSharpDiagnostic().WithLocation(3, 18);
+            var expected = this.CSharpDiagnostic().WithLocation(3, 12);
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
@@ -53,7 +53,7 @@
     ~Foo() { int bar; }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(3, 18);
+            var expected = this.CSharpDiagnostic().WithLocation(3, 12);
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 

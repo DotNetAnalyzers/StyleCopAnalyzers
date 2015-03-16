@@ -1,8 +1,11 @@
 ﻿namespace StyleCop.Analyzers.LayoutRules
 {
+    using System.Linq;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
     /// A C# element containing opening and closing curly brackets is written completely on a single line.
@@ -59,7 +62,66 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(this.HandleTypeDeclarations, SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandlePropertyLikeDeclarations, SyntaxKind.PropertyDeclaration, SyntaxKind.EventDeclaration, SyntaxKind.IndexerDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleMethodLikeDeclarations, SyntaxKind.MethodDeclaration, SyntaxKind.ConstructorDeclaration, SyntaxKind.DestructorDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleEnumDeclarations, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleNamespaceDeclarations, SyntaxKind.NamespaceDeclaration);
+        }
+
+        private void HandleTypeDeclarations(SyntaxNodeAnalysisContext context)
+        {
+            var typeDeclaration = (TypeDeclarationSyntax)context.Node;
+            CheckViolation(context, typeDeclaration.OpenBraceToken, typeDeclaration.CloseBraceToken);
+        }
+
+        private void HandlePropertyLikeDeclarations(SyntaxNodeAnalysisContext context)
+        {
+            var basePropertyDeclaration = (BasePropertyDeclarationSyntax)context.Node;
+
+            // The AccessorList will be null when an expression body is present.
+            if (basePropertyDeclaration.AccessorList != null)
+            {
+                bool isAutoProperty = basePropertyDeclaration.AccessorList.Accessors.All(accessor => accessor.Body == null);
+                if (!isAutoProperty)
+                {
+                    CheckViolation(context, basePropertyDeclaration.AccessorList.OpenBraceToken, basePropertyDeclaration.AccessorList.CloseBraceToken);
+                }
+            }
+        }
+
+        private void HandleMethodLikeDeclarations(SyntaxNodeAnalysisContext context)
+        {
+            var baseMethodDeclaration = (BaseMethodDeclarationSyntax)context.Node;
+
+            // Method declarations in interfaces will have an empty body.
+            if (baseMethodDeclaration.Body != null)
+            {
+                CheckViolation(context, baseMethodDeclaration.Body.OpenBraceToken, baseMethodDeclaration.Body.CloseBraceToken);
+            }
+        }
+
+        private void HandleEnumDeclarations(SyntaxNodeAnalysisContext context)
+        {
+            var enumDeclaration = (EnumDeclarationSyntax)context.Node;
+            CheckViolation(context, enumDeclaration.OpenBraceToken, enumDeclaration.CloseBraceToken);
+        }
+
+        private void HandleNamespaceDeclarations(SyntaxNodeAnalysisContext context)
+        {
+            var namespaceDeclaration = (NamespaceDeclarationSyntax)context.Node;
+            CheckViolation(context, namespaceDeclaration.OpenBraceToken, namespaceDeclaration.CloseBraceToken);
+        }
+
+        private static void CheckViolation(SyntaxNodeAnalysisContext context, SyntaxToken openBraceToken, SyntaxToken closeBraceToken)
+        {
+            var openingBraceLineSpan = openBraceToken.GetLocation().GetLineSpan();
+            var closingBraceLineSpan = closeBraceToken.GetLocation().GetLineSpan();
+
+            if (openingBraceLineSpan.EndLinePosition.Line == closingBraceLineSpan.StartLinePosition.Line)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, openBraceToken.GetLocation()));
+            }
         }
     }
 }

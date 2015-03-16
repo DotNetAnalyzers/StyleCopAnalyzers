@@ -15,28 +15,32 @@
         /// <summary>
         /// Verifies that a valid method will pass without diagnostic.
         /// </summary>
-        [Fact]
-        public async Task TestValidEmptyMethod()
+        [Theory, InlineData("class"), InlineData("struct")]
+        public async Task TestValidEmptyMethod(string elementType)
         {
-            var testCode = @"public class Foo
+            var testCodeFormat = @"public ##TOKEN## Foo
 {
     public void Bar()
     {
     }
 }";
+            var testCode = testCodeFormat.Replace("##TOKEN##", elementType);
+
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         /// <summary>
         /// Verifies that an empty method with its block on the same line will trigger a diagnostic.
         /// </summary>
-        [Fact]
-        public async Task TestEmptyMethodOnSingleLine()
+        [Theory, InlineData("class"), InlineData("struct")]
+        public async Task TestEmptyMethodOnSingleLine(string elementType)
         {
-            var testCode = @"public class Foo
+            var testCodeFormat = @"public ##TOKEN## Foo
 {
     public void Bar() { }
 }";
+            var testCode = testCodeFormat.Replace("##TOKEN##", elementType);
+
             var expected = this.CSharpDiagnostic().WithLocation(3, 23);
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -44,13 +48,14 @@
         /// <summary>
         /// Verifies that a method with its block on the same line will trigger a diagnostic.
         /// </summary>
-        [Fact]
-        public async Task TestMethodOnSingleLine()
+        [Theory, InlineData("class"), InlineData("struct")]
+        public async Task TestMethodOnSingleLine(string elementType)
         {
-            var testCode = @"public class Foo
+            var testCodeFormat = @"public ##TOKEN## Foo
 {
     public bool Bar() { return false; }
 }";
+            var testCode = testCodeFormat.Replace("##TOKEN##", elementType);
 
             var expected = this.CSharpDiagnostic().WithLocation(3, 23);
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
@@ -59,14 +64,15 @@
         /// <summary>
         /// Verifies that a method with its block on a single line will trigger a diagnostic.
         /// </summary>
-        [Fact]
-        public async Task TestMethodWithBlockOnSingleLine()
+        [Theory, InlineData("class"), InlineData("struct")]
+        public async Task TestMethodWithBlockOnSingleLine(string elementType)
         {
-            var testCode = @"public class Foo
+            var testCodeFormat = @"public ##TOKEN## Foo
 {
     public bool Bar() 
     { return false; }
 }";
+            var testCode = testCodeFormat.Replace("##TOKEN##", elementType);
 
             var expected = this.CSharpDiagnostic().WithLocation(4, 5);
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
@@ -75,14 +81,15 @@
         /// <summary>
         /// Verifies that a method with its block on multiple lines will pass without diagnostic.
         /// </summary>
-        [Fact]
-        public async Task TestMethodWithBlockStartOnSameLine()
+        [Theory, InlineData("class"), InlineData("struct")]
+        public async Task TestMethodWithBlockStartOnSameLine(string elementType)
         {
-            var testCode = @"public class Foo
+            var testCodeFormat = @"public ##TOKEN## Foo
 {
     public bool Bar() {
         return false; }
 }";
+            var testCode = testCodeFormat.Replace("##TOKEN##", elementType);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
@@ -90,13 +97,14 @@
         /// <summary>
         /// Verifies that a method with an expression body will pass without diagnostic.
         /// </summary>
-        [Fact]
-        public async Task TestMethodWithExpressionBody()
+        [Theory, InlineData("class"), InlineData("struct")]
+        public async Task TestMethodWithExpressionBody(string elementType)
         {
-            var testCode = @"public class Foo
+            var testCodeFormat = @"public ##TOKEN## Foo
 {
     public bool Bar(int x, int y) => x > y;
 }";
+            var testCode = testCodeFormat.Replace("##TOKEN##", elementType);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }

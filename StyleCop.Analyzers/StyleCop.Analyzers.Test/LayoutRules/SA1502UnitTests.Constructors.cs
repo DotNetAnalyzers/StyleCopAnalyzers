@@ -19,13 +19,13 @@
         [Theory, InlineData("class"), InlineData("struct")]
         public async Task TestValidEmptyConstructor(string elementType)
         {
-            var testCodeFormat = @"public {0} Foo
+            var testCodeFormat = @"public ##TOKEN## Foo
 {
     public Foo()
     {
     }
 }";
-            var testCode = string.Format(CultureInfo.InvariantCulture, testCodeFormat, elementType);
+            var testCode = testCodeFormat.Replace("##TOKEN##", elementType);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
@@ -36,11 +36,11 @@
         [Theory, InlineData("class"), InlineData("struct")]
         public async Task TestEmptyConstructorOnSingleLine(string elementType)
         {
-            var testCodeFormat = @"public {0} Foo
+            var testCodeFormat = @"public ##TOKEN## Foo
 {
     public Foo() { }
 }";
-            var testCode = string.Format(CultureInfo.InvariantCulture, testCodeFormat, elementType);
+            var testCode = testCodeFormat.Replace("##TOKEN##", elementType);
 
             var expected = this.CSharpDiagnostic().WithLocation(3, 18);
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
@@ -52,11 +52,11 @@
         [Theory, InlineData("class"), InlineData("struct")]
         public async Task TestConstructorOnSingleLine(string elementType)
         {
-            var testCodeFormat = @"public {0} Foo
+            var testCodeFormat = @"public ##TOKEN## Foo
 {
     public Foo() { int bar; }
 }";
-            var testCode = string.Format(CultureInfo.InvariantCulture, testCodeFormat, elementType);
+            var testCode = testCodeFormat.Replace("##TOKEN##", elementType);
 
             var expected = this.CSharpDiagnostic().WithLocation(3, 18);
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
@@ -68,12 +68,12 @@
         [Theory, InlineData("class"), InlineData("struct")]
         public async Task TestConstructorWithBlockOnSingleLine(string elementType)
         {
-            var testCodeFormat = @"public {0} Foo
+            var testCodeFormat = @"public ##TOKEN## Foo
 {
     public Foo() 
     { int bar; }
 }";
-            var testCode = string.Format(CultureInfo.InvariantCulture, testCodeFormat, elementType);
+            var testCode = testCodeFormat.Replace("##TOKEN##", elementType);
 
             var expected = this.CSharpDiagnostic().WithLocation(4, 5);
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
@@ -85,12 +85,12 @@
         [Theory, InlineData("class"), InlineData("struct")]
         public async Task TestConstructorWithBlockStartOnSameLine(string elementType)
         {
-            var testCodeFormat = @"public {0} Foo
+            var testCodeFormat = @"public ##TOKEN## Foo
 {
     public Foo() { 
         int bar; }
 }";
-            var testCode = string.Format(CultureInfo.InvariantCulture, testCodeFormat, elementType);
+            var testCode = testCodeFormat.Replace("##TOKEN##", elementType);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }

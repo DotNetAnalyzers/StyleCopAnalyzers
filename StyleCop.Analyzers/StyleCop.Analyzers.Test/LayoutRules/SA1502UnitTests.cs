@@ -14,8 +14,6 @@
     /// </summary>
     public partial class SA1502UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1502ElementMustNotBeOnASingleLine.DiagnosticId;
-
         /// <summary>
         /// Verifies that the analyzer will properly handle an empty source.
         /// </summary>
