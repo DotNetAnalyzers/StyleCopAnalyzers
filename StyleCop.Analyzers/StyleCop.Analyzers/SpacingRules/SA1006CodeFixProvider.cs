@@ -45,16 +45,16 @@
                 if (keywordToken.IsMissing)
                     continue;
 
-                SyntaxToken hashToken = keywordToken.GetPreviousToken(includeDirectives: true);
-                if (!hashToken.IsKind(SyntaxKind.HashToken))
-                    continue;
-
-                context.RegisterCodeFix(CodeAction.Create("Remove space", t => GetTransformedDocument(context.Document, root, hashToken)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Remove space", t => GetTransformedDocument(context.Document, root, keywordToken)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxToken hashToken)
+        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxToken keywordToken)
         {
+            SyntaxToken hashToken = keywordToken.GetPreviousToken(includeDirectives: true);
+            if (!hashToken.IsKind(SyntaxKind.HashToken))
+                return Task.FromResult(document);
+
             SyntaxToken corrected = hashToken.WithoutTrailingWhitespace().WithoutFormatting();
             Document updatedDocument = document.WithSyntaxRoot(root.ReplaceToken(hashToken, corrected));
             return Task.FromResult(updatedDocument);
