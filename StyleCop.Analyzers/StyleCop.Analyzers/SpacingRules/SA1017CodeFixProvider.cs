@@ -45,20 +45,20 @@
                 if (!token.IsKind(SyntaxKind.CloseBracketToken))
                     continue;
 
-                bool firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
-                if (firstInLine)
-                    continue;
-
-                SyntaxToken precedingToken = token.GetPreviousToken();
-                if (!precedingToken.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
-                    continue;
-
-                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context.Document, root, precedingToken)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context.Document, root, token)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxToken precedingToken)
+        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxToken token)
         {
+            bool firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
+            if (firstInLine)
+                return Task.FromResult(document);
+
+            SyntaxToken precedingToken = token.GetPreviousToken();
+            if (!precedingToken.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
+                return Task.FromResult(document);
+
             SyntaxToken corrected = precedingToken.WithoutTrailingWhitespace().WithoutFormatting();
             SyntaxNode transformed = root.ReplaceToken(precedingToken, corrected);
             Document updatedDocument = document.WithSyntaxRoot(transformed);
