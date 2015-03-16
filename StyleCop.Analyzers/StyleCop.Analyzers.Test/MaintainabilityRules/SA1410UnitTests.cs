@@ -82,6 +82,28 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.VerifyCSharpFixAsync(oldSource, newSource, cancellationToken: CancellationToken.None);
         }
 
+        [Fact]
+        public async Task TestCodeFixDoesNotRemoveExteriorTrivia()
+        {
+            var oldSource = @"public class Foo
+{
+    public void Bar()
+    {
+        System.Func<int> getRandomNumber = delegate/*Foo*/(/*Bar*/)/*Foo*/ { return 3; };
+    }
+}";
+
+            var newSource = @"public class Foo
+{
+    public void Bar()
+    {
+        System.Func<int> getRandomNumber = delegate/*Foo*//*Bar*//*Foo*/ { return 3; };
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(oldSource, newSource, cancellationToken: CancellationToken.None);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1410RemoveDelegateParenthesisWhenPossible();
