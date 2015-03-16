@@ -48,63 +48,59 @@
                 if (token.IsMissing)
                     continue;
 
-                Dictionary<SyntaxToken, SyntaxToken> replacements = new Dictionary<SyntaxToken, SyntaxToken>();
-
-                // always a space before unless at the beginning of a line or after certain tokens
-                bool firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
-                if (!firstInLine)
-                {
-                    SyntaxToken precedingToken = token.GetPreviousToken();
-                    SyntaxToken correctedPrecedingNoSpace = precedingToken.WithoutTrailingWhitespace();
-                    switch (precedingToken.Kind())
-                    {
-                    case SyntaxKind.OpenParenToken:
-                    case SyntaxKind.CloseParenToken:
-                    case SyntaxKind.OpenBracketToken:
-                    case SyntaxKind.CloseBracketToken:
-                        // remove any whitespace before
-                        replacements[precedingToken] = correctedPrecedingNoSpace;
-                        break;
-
-                    default:
-                        if (!precedingToken.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
-                        {
-                            SyntaxToken correctedPreceding = correctedPrecedingNoSpace.WithTrailingTrivia(correctedPrecedingNoSpace.TrailingTrivia.Insert(0, SyntaxFactory.Whitespace(" ")));
-                            replacements[precedingToken] = correctedPreceding;
-                        }
-                        break;
-                    }
-                }
-
-                if (token.Parent is BinaryExpressionSyntax)
-                {
-                    // include a space after unless last on line
-                    if (!token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia))
-                    {
-                        SyntaxToken correctedOperatorNoSpace = token.WithoutTrailingWhitespace();
-                        SyntaxToken correctedOperator =
-                            correctedOperatorNoSpace
-                            .WithTrailingTrivia(correctedOperatorNoSpace.TrailingTrivia.Insert(0, SyntaxFactory.Whitespace(" ")))
-                            .WithoutFormatting();
-                        replacements[token] = correctedOperator;
-                    }
-                }
-                else if (token.Parent is PrefixUnaryExpressionSyntax)
-                {
-                    // do not include a space after (includes new line characters)
-                    SyntaxToken correctedOperatorNoSpace = token.WithoutTrailingWhitespace(removeEndOfLineTrivia: true).WithoutFormatting();
-                    replacements[token] = correctedOperatorNoSpace;
-                }
-
-                if (replacements.Count == 0)
-                    continue;
-
-                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context.Document, root, replacements)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context.Document, root, token)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, Dictionary<SyntaxToken, SyntaxToken> replacements)
+        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxToken token)
         {
+            Dictionary<SyntaxToken, SyntaxToken> replacements = new Dictionary<SyntaxToken, SyntaxToken>();
+
+            // always a space before unless at the beginning of a line or after certain tokens
+            bool firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
+            if (!firstInLine)
+            {
+                SyntaxToken precedingToken = token.GetPreviousToken();
+                SyntaxToken correctedPrecedingNoSpace = precedingToken.WithoutTrailingWhitespace();
+                switch (precedingToken.Kind())
+                {
+                case SyntaxKind.OpenParenToken:
+                case SyntaxKind.CloseParenToken:
+                case SyntaxKind.OpenBracketToken:
+                case SyntaxKind.CloseBracketToken:
+                    // remove any whitespace before
+                    replacements[precedingToken] = correctedPrecedingNoSpace;
+                    break;
+
+                default:
+                    if (!precedingToken.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
+                    {
+                        SyntaxToken correctedPreceding = correctedPrecedingNoSpace.WithTrailingTrivia(correctedPrecedingNoSpace.TrailingTrivia.Insert(0, SyntaxFactory.Whitespace(" ")));
+                        replacements[precedingToken] = correctedPreceding;
+                    }
+                    break;
+                }
+            }
+
+            if (token.Parent is BinaryExpressionSyntax)
+            {
+                // include a space after unless last on line
+                if (!token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia))
+                {
+                    SyntaxToken correctedOperatorNoSpace = token.WithoutTrailingWhitespace();
+                    SyntaxToken correctedOperator =
+                        correctedOperatorNoSpace
+                        .WithTrailingTrivia(correctedOperatorNoSpace.TrailingTrivia.Insert(0, SyntaxFactory.Whitespace(" ")))
+                        .WithoutFormatting();
+                    replacements[token] = correctedOperator;
+                }
+            }
+            else if (token.Parent is PrefixUnaryExpressionSyntax)
+            {
+                // do not include a space after (includes new line characters)
+                SyntaxToken correctedOperatorNoSpace = token.WithoutTrailingWhitespace(removeEndOfLineTrivia: true).WithoutFormatting();
+                replacements[token] = correctedOperatorNoSpace;
+            }
             var transformed = root.ReplaceTokens(replacements.Keys, (original, maybeRewritten) => replacements[original]);
             Document updatedDocument = document.WithSyntaxRoot(transformed);
 
