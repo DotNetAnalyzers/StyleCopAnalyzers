@@ -795,6 +795,14 @@ namespace Foo
             {
                 await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "System." + item.Item2), EmptyDiagnosticResults, CancellationToken.None);
             }
+
+            var expected = this.CSharpDiagnostic().WithLocation(8, 41);
+
+            foreach (var item in AllTypes)
+            {
+                await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "System." + item.Item2 + ".ToString"), expected, CancellationToken.None);
+                await this.VerifyCSharpFixAsync(string.Format(testCode, "System." + item.Item2 + ".ToString"), string.Format(testCode, item.Item1 + ".ToString"));
+            }
         }
 
         [Fact]

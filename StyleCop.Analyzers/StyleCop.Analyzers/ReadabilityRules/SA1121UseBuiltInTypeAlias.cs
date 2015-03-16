@@ -231,19 +231,25 @@
             // nameof keyword. This assumption is the foundation of the following simple analysis algorithm.
 
             if (identifierNameSyntax.Parent == null)
+            {
                 return false;
+            }
 
             // This covers the case nameof(Int32)
             if (identifierNameSyntax.Parent is ArgumentSyntax)
+            {
                 return true;
+            }
+
+            MemberAccessExpressionSyntax simpleMemberAccess = identifierNameSyntax.Parent as MemberAccessExpressionSyntax;
 
             // This covers the case nameof(System.Int32)
-            if (identifierNameSyntax.Parent.IsKind(SyntaxKind.SimpleMemberAccessExpression))
+            if (simpleMemberAccess != null)
             {
                 // This final check ensures that we don't consider nameof(System.Int32.ToString) the same as
                 // nameof(System.Int32)
-                if (identifierNameSyntax.Parent.Parent is ArgumentSyntax)
-                    return true;
+                return identifierNameSyntax.Parent.Parent.IsKind(SyntaxKind.Argument)
+                    && simpleMemberAccess.Name == identifierNameSyntax;
             }
 
             return false;
