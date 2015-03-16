@@ -46,16 +46,15 @@
                 if (!trivia.IsKind(SyntaxKind.SingleLineCommentTrivia))
                     continue;
 
-                string text = trivia.ToFullString();
-                if (!text.StartsWith("//"))
-                    continue;
-
-                context.RegisterCodeFix(CodeAction.Create("Insert space", t => GetTransformedDocument(context.Document, root, trivia, text)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Insert space", t => GetTransformedDocument(context.Document, root, trivia)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxTrivia trivia, string text)
+        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxTrivia trivia)
         {
+            string text = trivia.ToFullString();
+            if (!text.StartsWith("//"))
+                return Task.FromResult(document);
             string correctedText = "// " + text.Substring(2);
             SyntaxTrivia corrected = SyntaxFactory.Comment(correctedText).WithoutFormatting();
             Document updatedDocument = document.WithSyntaxRoot(root.ReplaceTrivia(trivia, corrected));
