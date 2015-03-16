@@ -45,7 +45,7 @@
                 if (token.IsMissing)
                     continue;
 
-                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context.Document, root, token, isAddingSpace)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context.Document, root, token)), diagnostic);
             }
         }
 
@@ -95,7 +95,7 @@
                 break;
             }
 
-            if (isAddingSpace == !token.HasTrailingTrivia)
+            if (isAddingSpace == token.HasTrailingTrivia)
             {
                 return Task.FromResult(document);
             }
