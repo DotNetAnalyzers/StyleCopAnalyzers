@@ -31,17 +31,7 @@ public class Foo
 
             var expected = new[]
             {
-                new DiagnosticResult
-                {
-                    Id = this.DiagnosticId,
-                    Message = "Static readonly elements must appear before static non-readonly elements.",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 5)
-                        }
-                }
+                this.CSharpDiagnostic().WithLocation(5, 5)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
@@ -71,17 +61,7 @@ public class Foo
 
             var expected = new[]
             {
-                new DiagnosticResult
-                {
-                    Id = this.DiagnosticId,
-                    Message = "Static readonly elements must appear before static non-readonly elements.",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 30)
-                        }
-                }
+                this.CSharpDiagnostic().WithLocation(4, 30)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
@@ -125,17 +105,7 @@ public struct Foo
 
             var expected = new[]
             {
-                new DiagnosticResult
-                {
-                    Id = this.DiagnosticId,
-                    Message = "Static readonly elements must appear before static non-readonly elements.",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 5)
-                        }
-                }
+                this.CSharpDiagnostic().WithLocation(5, 5)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
@@ -169,39 +139,9 @@ public class Foo
 
             var expected = new[]
             {
-                new DiagnosticResult
-                {
-                    Id = this.DiagnosticId,
-                    Message = "Static readonly elements must appear before static non-readonly elements.",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 11, 5)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = this.DiagnosticId,
-                    Message = "Static readonly elements must appear before static non-readonly elements.",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 18, 9)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = this.DiagnosticId,
-                    Message = "Static readonly elements must appear before static non-readonly elements.",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 21, 5)
-                        }
-                },
+                this.CSharpDiagnostic().WithLocation(11, 5),
+                this.CSharpDiagnostic().WithLocation(18, 9),
+                this.CSharpDiagnostic().WithLocation(21, 5),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
