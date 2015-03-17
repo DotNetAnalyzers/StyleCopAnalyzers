@@ -34,19 +34,10 @@ class Foo
 }";
 
             var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening curly brackets must not be preceded by blank line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 4, 1)
-                            }
-                    }
-                };
+            {
+                this.CSharpDiagnostic().WithLocation(4, 1)
+            };
+               
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -71,19 +62,9 @@ class Foo
 }";
 
             var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening curly brackets must not be preceded by blank line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 1)
-                            }
-                    }
-                };
+            {
+                this.CSharpDiagnostic().WithLocation(6, 1)
+            };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -164,19 +145,9 @@ that spans 2 lines */
 }";
 
             var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening curly brackets must not be preceded by blank line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 1)
-                            }
-                    }
-                };
+            {
+                this.CSharpDiagnostic().WithLocation(7, 1)
+            };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -202,19 +173,9 @@ struct Foo
 }";
 
             var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening curly brackets must not be preceded by blank line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 4, 1)
-                            }
-                    }
-                };
+            {
+                this.CSharpDiagnostic().WithLocation(4, 1)
+            };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -251,19 +212,9 @@ class Foo
 }";
 
             var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening curly brackets must not be preceded by blank line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 5)
-                            }
-                    }
-                };
+            {
+                this.CSharpDiagnostic().WithLocation(6, 5)
+            };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -291,19 +242,9 @@ class Foo
 }";
 
             var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening curly brackets must not be preceded by blank line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 5)
-                            }
-                    }
-                };
+            {
+                this.CSharpDiagnostic().WithLocation(7, 5)
+            };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -344,19 +285,9 @@ namespace Bar
 }";
 
             var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening curly brackets must not be preceded by blank line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 4, 1)
-                            }
-                    }
-                };
+            {
+                this.CSharpDiagnostic().WithLocation(4, 1)
+            };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -396,19 +327,9 @@ class Foo
 }";
 
             var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening curly brackets must not be preceded by blank line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 5)
-                            }
-                    }
-                };
+            {
+                this.CSharpDiagnostic().WithLocation(6, 5)
+            };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -454,30 +375,10 @@ class Foo
 }";
 
             var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening curly brackets must not be preceded by blank line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 9)
-                            }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening curly brackets must not be preceded by blank line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 12, 9)
-                            }
-                    }
-                };
+            {
+                this.CSharpDiagnostic().WithLocation(8, 9),
+                this.CSharpDiagnostic().WithLocation(12, 9),
+            };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -530,19 +431,9 @@ class Foo
 }";
 
             var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening curly brackets must not be preceded by blank line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 9)
-                            }
-                    },
-                };
+            {
+                this.CSharpDiagnostic().WithLocation(8, 9)
+            };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -589,19 +480,9 @@ class Foo
 }";
 
             var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening curly brackets must not be preceded by blank line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 1)
-                            }
-                    },
-                };
+            {
+                this.CSharpDiagnostic().WithLocation(8, 1)
+            };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -647,19 +528,9 @@ class Foo
 }";
 
             var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening curly brackets must not be preceded by blank line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 1)
-                            }
-                    },
-                };
+            {
+                this.CSharpDiagnostic().WithLocation(8, 1)
+            };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -710,19 +581,9 @@ class Foo
 }";
 
             var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening curly brackets must not be preceded by blank line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 13, 9)
-                            }
-                    },
-                };
+            {
+                this.CSharpDiagnostic().WithLocation(13, 9)
+            };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -781,19 +642,9 @@ class Foo
 }";
 
             var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening curly brackets must not be preceded by blank line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 9)
-                            }
-                    },
-                };
+            {
+                this.CSharpDiagnostic().WithLocation(8, 9)
+            };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -856,54 +707,13 @@ class Foo
         }
     }
 }";
-
             var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening curly brackets must not be preceded by blank line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 3, 5)
-                            }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening curly brackets must not be preceded by blank line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 5)
-                            }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening curly brackets must not be preceded by blank line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 15, 9)
-                            }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening curly brackets must not be preceded by blank line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 19, 1)
-                            }
-                    },
-                };
+            {
+                this.CSharpDiagnostic().WithLocation(3, 5),
+                this.CSharpDiagnostic().WithLocation(6, 5),
+                this.CSharpDiagnostic().WithLocation(15, 9),
+                this.CSharpDiagnostic().WithLocation(19, 1)
+            };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
