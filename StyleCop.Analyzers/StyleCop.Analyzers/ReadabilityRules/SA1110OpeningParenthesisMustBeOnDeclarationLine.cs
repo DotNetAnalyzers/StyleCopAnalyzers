@@ -241,7 +241,10 @@
         private void HandleInvocationExpression(SyntaxNodeAnalysisContext context)
         {
             var invocationExpression = (InvocationExpressionSyntax) context.Node;
-            var identifierNameSyntax = invocationExpression.DescendantNodes().OfType<IdentifierNameSyntax>().LastOrDefault();
+            
+            var identifierNameSyntax = invocationExpression.Expression as IdentifierNameSyntax ??
+                                                        invocationExpression.Expression.DescendantNodes().OfType<IdentifierNameSyntax>().LastOrDefault();
+
             if (identifierNameSyntax != null)
             {
                 if (invocationExpression.ArgumentList != null &&
