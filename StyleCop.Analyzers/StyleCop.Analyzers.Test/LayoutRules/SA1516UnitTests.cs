@@ -15,6 +15,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         private const string CorrectCode = @"extern alias Foo1;
 
 using System;
+using System.Linq;
+using a = System.Collections.Generic;
 
 namespace Foo
 {
@@ -95,6 +97,8 @@ namespace Foot
         {
             var testCode = @"extern alias Foo1;
 using System;
+using System.Linq;
+using a = System.Collections.Generic;
 namespace Foo
 {
     public class Bar
@@ -142,18 +146,17 @@ namespace Foot
             var expected = new[]
             {
                 this.CSharpDiagnostic().WithLocation(2, 7),
-                this.CSharpDiagnostic().WithLocation(3, 11),
-                this.CSharpDiagnostic().WithLocation(10, 23),
-                this.CSharpDiagnostic().WithLocation(11, 23),
-                // this.CSharpDiagnostic().WithLocation(15, 23) handled by SA1514
-                this.CSharpDiagnostic().WithLocation(16, 23),
-                this.CSharpDiagnostic().WithLocation(22, 13),
-                this.CSharpDiagnostic().WithLocation(27, 23),
-                this.CSharpDiagnostic().WithLocation(28, 21),
-                this.CSharpDiagnostic().WithLocation(34, 17),
-                this.CSharpDiagnostic().WithLocation(39, 11),
-                this.CSharpDiagnostic().WithLocation(42, 11),
-                this.CSharpDiagnostic().WithLocation(43, 11)
+                this.CSharpDiagnostic().WithLocation(5, 11),
+                this.CSharpDiagnostic().WithLocation(12, 23),
+                this.CSharpDiagnostic().WithLocation(13, 23),
+                this.CSharpDiagnostic().WithLocation(18, 23),
+                this.CSharpDiagnostic().WithLocation(24, 13),
+                this.CSharpDiagnostic().WithLocation(29, 23),
+                this.CSharpDiagnostic().WithLocation(30, 21),
+                this.CSharpDiagnostic().WithLocation(36, 17),
+                this.CSharpDiagnostic().WithLocation(41, 11),
+                this.CSharpDiagnostic().WithLocation(44, 11),
+                this.CSharpDiagnostic().WithLocation(45, 11)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
