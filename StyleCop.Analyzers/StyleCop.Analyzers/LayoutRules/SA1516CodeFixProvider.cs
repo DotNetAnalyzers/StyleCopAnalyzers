@@ -50,7 +50,7 @@
         private static Task<Document> GetTransformedDocument(CodeFixContext context, SyntaxNode syntaxRoot, SyntaxNode node, SyntaxTriviaList leadingTrivia)
         {
             var newTriviaList = leadingTrivia;
-            newTriviaList = newTriviaList.Insert(0, SyntaxFactory.EndOfLine("\r\n", elastic: true));
+            newTriviaList = newTriviaList.Insert(0, SyntaxFactory.ElasticCarriageReturnLineFeed);
 
             var newNode = node.WithLeadingTrivia(newTriviaList);
             var newSyntaxRoot = syntaxRoot.ReplaceNode(node, newNode);
