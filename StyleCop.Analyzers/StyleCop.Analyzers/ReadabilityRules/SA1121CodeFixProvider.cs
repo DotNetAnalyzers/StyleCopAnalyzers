@@ -8,6 +8,7 @@
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.SpacingRules;
 
     /// <summary>
@@ -62,6 +63,16 @@
                 var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
                 var node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
+
+                var memberAccess = node.Parent as MemberAccessExpressionSyntax;
+
+                if (memberAccess != null)
+                {
+                    if (node == memberAccess.Name)
+                    {
+                        node = memberAccess;
+                    }
+                }
 
                 var semanticModel = await context.Document.GetSemanticModelAsync();
 

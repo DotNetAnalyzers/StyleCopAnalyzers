@@ -129,6 +129,8 @@
     <Compile Include="DocumentationRules\SA1606UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1607UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1608UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1609UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1610UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1642UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1643UnitTests.cs" />
     <Compile Include="Helpers\CodeFixVerifier.Helper.cs" />
@@ -156,6 +158,7 @@
     <Compile Include="NamingRules\SA1303UnitTests.cs" />
     <Compile Include="NamingRules\SA1304UnitTests.cs" />
     <Compile Include="NamingRules\SA1306UnitTests.cs" />
+    <Compile Include="NamingRules\SA1307UnitTests.cs" />
     <Compile Include="NamingRules\SA1309UnitTests.cs" />
     <Compile Include="NamingRules\SA1311UnitTests.cs" />
     <Compile Include="OrderingRules\SA1212UnitTests.cs" />

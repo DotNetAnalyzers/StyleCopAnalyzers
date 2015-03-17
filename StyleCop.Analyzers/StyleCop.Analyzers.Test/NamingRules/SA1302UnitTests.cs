@@ -1,12 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Xunit;
-using StyleCop.Analyzers.MaintainabilityRules;
 using StyleCop.Analyzers.NamingRules;
 using TestHelper;
+using Xunit;
 
 namespace StyleCop.Analyzers.Test.NamingRules
 {
@@ -29,20 +27,7 @@ public interface Foo
 {
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Interface names must begin with I",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 2, 18)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 18);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -65,20 +50,7 @@ public class Bar : Foo
 {
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Interface names must begin with I",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 2, 18)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 18);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -102,20 +74,7 @@ public interface iFoo
 {
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Interface names must begin with I",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 2, 18)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 18);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -138,20 +97,7 @@ public class Bar
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Interface names must begin with I",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 22)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 22);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -207,20 +153,7 @@ public class NativeMethodsClass
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Interface names must begin with I",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 22)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 22);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 

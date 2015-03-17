@@ -2,11 +2,10 @@
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.ReadabilityRules;
     using TestHelper;
+    using Xunit;
 
     public class SA1113UnitTests : CodeFixVerifier
     {
@@ -30,20 +29,7 @@
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 21)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 21);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -60,31 +46,11 @@
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 21)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 21)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic().WithLocation(4, 21),
+                    this.CSharpDiagnostic().WithLocation(5, 21)
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -115,20 +81,7 @@
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 37)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 37);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -146,31 +99,11 @@
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 37)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 7, 37)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic().WithLocation(6, 37),
+                    this.CSharpDiagnostic().WithLocation(7, 37)
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -205,20 +138,7 @@
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 9, 30)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(9, 30);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -239,31 +159,11 @@
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 9, 30)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 10, 30)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic().WithLocation(9, 30),
+                    this.CSharpDiagnostic().WithLocation(10, 30)
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -297,20 +197,7 @@
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 16)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 16);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -327,31 +214,11 @@
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 16)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 16)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic().WithLocation(4, 16),
+                    this.CSharpDiagnostic().WithLocation(5, 16)
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -385,20 +252,7 @@
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 21)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 21);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -419,31 +273,11 @@
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 21)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 21)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic().WithLocation(4, 21),
+                    this.CSharpDiagnostic().WithLocation(5, 21)
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -485,20 +319,7 @@
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 13, 1)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(13, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -523,31 +344,11 @@
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 13, 1)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 14, 5)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic().WithLocation(13, 1),
+                    this.CSharpDiagnostic().WithLocation(14, 5)
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -590,20 +391,7 @@
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 7, 13)
-                        }
-                },
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 13);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -635,20 +423,7 @@
 , int i);
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 1)
-                        }
-                },
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -663,31 +438,11 @@
 , long l);
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 1)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 1)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic().WithLocation(4, 1),
+                    this.CSharpDiagnostic().WithLocation(5, 1)
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -716,31 +471,11 @@
         }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 17)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 7, 17)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic().WithLocation(6, 17),
+                    this.CSharpDiagnostic().WithLocation(7, 17)
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -783,20 +518,7 @@
     public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
  }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 1)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -826,31 +548,11 @@
         }
     }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 1)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 1)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic().WithLocation(4, 1),
+                    this.CSharpDiagnostic().WithLocation(5, 1)
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -882,20 +584,7 @@ public class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                         Message = "Comma must be on the same line as previous parameter.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 5, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -944,20 +633,7 @@ public class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                         Message = "Comma must be on the same line as previous parameter.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -1026,20 +702,7 @@ public class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                         Message = "Comma must be on the same line as previous parameter.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -1095,20 +758,7 @@ public class Foo4
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                         Message = "Comma must be on the same line as previous parameter.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 13, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(13, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }

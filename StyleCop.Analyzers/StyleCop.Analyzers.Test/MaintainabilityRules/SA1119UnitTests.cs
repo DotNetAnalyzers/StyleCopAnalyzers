@@ -2,16 +2,16 @@
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
+    using Analyzers.MaintainabilityRules;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
-    using Analyzers.MaintainabilityRules;
     using TestHelper;
+    using Xunit;
 
     public class SA1119UnitTests : CodeFixVerifier
     {
         private const string DiagnosticId = SA1119StatementMustNotUseUnnecessaryParenthesis.DiagnosticId;
+        private const string ParenthesesDiagnosticId = SA1119StatementMustNotUseUnnecessaryParenthesis.ParenthesesDiagnosticId;
 
         [Fact]
         public async Task TestEmptySource()
@@ -43,42 +43,13 @@
         int x = (1);
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
+
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 17)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 17)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 19)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic(DiagnosticId).WithLocation(5, 17),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 17),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 19)
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -102,75 +73,16 @@
         int x = ((1));
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
+
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 17)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 17)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 18)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 18)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 20)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 21)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic(DiagnosticId).WithLocation(5, 17),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 17),
+                    this.CSharpDiagnostic(DiagnosticId).WithLocation(5, 18),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 18),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 20),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 21),
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -207,42 +119,13 @@
         string x = (ToString());
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
+
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 20)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 20)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 31)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic(DiagnosticId).WithLocation(5, 20),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 20),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 31)
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -281,75 +164,15 @@
         string x = (Local).ToString() + Local.IndexOf(('x'));
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 20)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 20)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 26)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 55)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 55)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 59)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 20),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 20),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 26),
+                    this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 55),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 55),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 59),
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -389,42 +212,13 @@
         (this.Local) = Local;
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
+
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 9)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 9)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 20)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 9),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 9),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 20)
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -450,42 +244,12 @@
         int x = (Local);
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 17)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 17)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 23)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 17),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 17),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 23)
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -523,42 +287,13 @@
         int x = ((int)3);
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
+
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 17)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 17)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 24)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic(DiagnosticId).WithLocation(5, 17),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 17),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 24)
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -597,42 +332,12 @@
         x = ((int)3);
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 13)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 13)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 20)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 13),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 13),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 20)
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -709,207 +414,27 @@
         x = (-x);
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 13)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 13)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 17)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 7, 13)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 7, 13)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 7, 17)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 8, 13)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 8, 13)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 8, 17)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 9, 13)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 9, 13)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 9, 16)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 10, 13)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 10, 13)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 10, 16)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 11, 13)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 11, 13)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 11, 16)
-                        }
-                },
-            };
+                    this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 13),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 13),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 17),
+                    this.CSharpDiagnostic(DiagnosticId).WithLocation(7, 13),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(7, 13),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(7, 17),
+                    this.CSharpDiagnostic(DiagnosticId).WithLocation(8, 13),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(8, 13),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(8, 17),
+                    this.CSharpDiagnostic(DiagnosticId).WithLocation(9, 13),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(9, 13),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(9, 16),
+                    this.CSharpDiagnostic(DiagnosticId).WithLocation(10, 13),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(10, 13),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(10, 16),
+                    this.CSharpDiagnostic(DiagnosticId).WithLocation(11, 13),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(11, 13),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(11, 16),
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -954,75 +479,16 @@
         x = 3 * (unchecked(5));
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
+
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 21)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 21)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 32)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 17)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 17)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 30)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic(DiagnosticId).WithLocation(5, 21),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 21),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 32),
+                    this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 17),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 17),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 30),
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -1060,42 +526,12 @@
         string x = (nameof(Foo)) + ""Bar"";
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 20)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 20)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 32)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic(DiagnosticId).WithLocation(5, 20),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 20),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 32)
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -1146,75 +582,15 @@
         x = ("""" is string);
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 18)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 18)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 31)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 13)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 13)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 26)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic(DiagnosticId).WithLocation(5, 18),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 18),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 31),
+                    this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 13),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 13),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 26),
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -1254,42 +630,12 @@
         string x = (y = ""foo"");
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 20)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 20)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 30)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 20),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 20),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 30)
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -1342,42 +688,12 @@
         string x = (true ? ""foo"" : ""bar"");
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 20)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 20)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 41)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic(DiagnosticId).WithLocation(5, 20),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 20),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 41)
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -1428,42 +744,12 @@
         string x = (""foo"" ?? ""bar"");
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 20)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 20)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 35)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic(DiagnosticId).WithLocation(5, 20),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 20),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 35)
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -1516,75 +802,15 @@
         System.Func<string, string> y = ((v) => v);
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 41)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 41)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 48)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 41)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 41)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 50)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic(DiagnosticId).WithLocation(5, 41),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 41),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 48),
+                    this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 41),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 41),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 50),
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -1636,42 +862,12 @@
         int[] x = (new int[10]);
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 19)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 19)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 31)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic(DiagnosticId).WithLocation(5, 19),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 19),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 31)
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -1721,42 +917,12 @@
         var x = (from y in new int[10] select y + 1);
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 17)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 17)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId + "_p",
-                    Message = "Statement must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Hidden,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 52)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic(DiagnosticId).WithLocation(5, 17),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 17),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 52)
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 

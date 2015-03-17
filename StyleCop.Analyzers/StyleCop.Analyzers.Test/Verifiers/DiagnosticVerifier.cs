@@ -25,17 +25,24 @@ namespace TestHelper
         {
             return null;
         }
-
-        /// <summary>
-        /// Get the Visual Basic analyzer being tested - to be implemented in non-abstract class.
-        /// </summary>
-        protected virtual DiagnosticAnalyzer GetBasicDiagnosticAnalyzer()
-        {
-            return null;
-        }
         #endregion
 
         #region Verifier wrappers
+
+        /// <summary>
+        /// Called to test a C# <see cref="DiagnosticAnalyzer"/> when applied on the single input source as a string.
+        /// <note type="note">
+        /// <para>Input a <see cref="DiagnosticResult"/> for the expected <see cref="Diagnostic"/>.</para>
+        /// </note>
+        /// </summary>
+        /// <param name="source">A class in the form of a string to run the analyzer on.</param>
+        /// <param name="expected">A <see cref="DiagnosticResult"/>s describing the <see cref="Diagnostic"/> that should
+        /// be reported by the analyzer for the specified source.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
+        protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
+        {
+            return this.VerifyCSharpDiagnosticAsync(source, new[] { expected }, cancellationToken);
+        }
 
         /// <summary>
         /// Called to test a C# <see cref="DiagnosticAnalyzer"/> when applied on the single input source as a string.
@@ -53,22 +60,6 @@ namespace TestHelper
         }
 
         /// <summary>
-        /// Called to test a Visual Basic <see cref="DiagnosticAnalyzer"/> when applied on the single input source as a
-        /// string.
-        /// <note type="note">
-        /// <para>Input a <see cref="DiagnosticResult"/> for each <see cref="Diagnostic"/> expected.</para>
-        /// </note>
-        /// </summary>
-        /// <param name="source">A class in the form of a string to run the analyzer on.</param>
-        /// <param name="expected">A collection of <see cref="DiagnosticResult"/>s describing the
-        /// <see cref="Diagnostic"/>s that should be reported by the analyzer for the specified source.</param>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
-        protected Task VerifyBasicDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
-        {
-            return this.VerifyDiagnosticsAsync(new[] { source }, LanguageNames.VisualBasic, this.GetBasicDiagnosticAnalyzer(), expected, cancellationToken);
-        }
-
-        /// <summary>
         /// Called to test a C# <see cref="DiagnosticAnalyzer"/> when applied on the input strings as sources.
         /// <note type="note">
         /// <para>Input a <see cref="DiagnosticResult"/> for each <see cref="Diagnostic"/> expected.</para>
@@ -82,22 +73,6 @@ namespace TestHelper
         protected Task VerifyCSharpDiagnosticAsync(string[] sources, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
             return this.VerifyDiagnosticsAsync(sources, LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzer(), expected, cancellationToken);
-        }
-
-        /// <summary>
-        /// Called to test a Visual Basic <see cref="DiagnosticAnalyzer"/> when applied on the input strings as sources.
-        /// <note type="note">
-        /// <para>Input a <see cref="DiagnosticResult"/> for each <see cref="Diagnostic"/> expected.</para>
-        /// </note>
-        /// </summary>
-        /// <param name="sources">A collection of strings to create source documents from to run the analyzers
-        /// on.</param>
-        /// <param name="expected">A collection of <see cref="DiagnosticResult"/>s describing the
-        /// <see cref="Diagnostic"/>s that should be reported by the analyzer for the specified sources.</param>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
-        protected Task VerifyBasicDiagnosticAsync(string[] sources, DiagnosticResult[] expected, CancellationToken cancellationToken)
-        {
-            return this.VerifyDiagnosticsAsync(sources, LanguageNames.VisualBasic, this.GetBasicDiagnosticAnalyzer(), expected, cancellationToken);
         }
 
         /// <summary>
