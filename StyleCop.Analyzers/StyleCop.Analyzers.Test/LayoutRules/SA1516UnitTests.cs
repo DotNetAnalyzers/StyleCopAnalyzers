@@ -45,6 +45,8 @@ namespace Foo
             }
         }
 
+        public string Foo, Bar;
+
         public enum TestEnum
         {
             Value1,
@@ -117,6 +119,7 @@ namespace Foo
                 Test1 = value;
             }
         }
+        public string Foo, Bar;
         public enum TestEnum
         {
             Value1,
@@ -145,11 +148,12 @@ namespace Foot
                 // this.CSharpDiagnostic().WithLocation(15, 23) handled by SA1514
                 this.CSharpDiagnostic().WithLocation(16, 23),
                 this.CSharpDiagnostic().WithLocation(22, 13),
-                this.CSharpDiagnostic().WithLocation(27, 21),
-                this.CSharpDiagnostic().WithLocation(33, 17),
-                this.CSharpDiagnostic().WithLocation(38, 11),
-                this.CSharpDiagnostic().WithLocation(41, 11),
-                this.CSharpDiagnostic().WithLocation(42, 11)
+                this.CSharpDiagnostic().WithLocation(27, 23),
+                this.CSharpDiagnostic().WithLocation(28, 21),
+                this.CSharpDiagnostic().WithLocation(34, 17),
+                this.CSharpDiagnostic().WithLocation(39, 11),
+                this.CSharpDiagnostic().WithLocation(42, 11),
+                this.CSharpDiagnostic().WithLocation(43, 11)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
