@@ -2,12 +2,11 @@
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.ReadabilityRules;
     using TestHelper;
+    using Xunit;
 
     public class SA1101UnitTests : CodeFixVerifier
     {
@@ -243,33 +242,18 @@
         }
         ";
 
-        private DiagnosticResult CreateDiagnosticResult(int line, int column)
-        {
-            return new DiagnosticResult
-            {
-                Id = DiagnosticId,
-                Message = "Prefix local calls with this",
-                Severity = DiagnosticSeverity.Warning,
-                Locations =
-                    new[]
-                    {
-                        new DiagnosticResultLocation("Test0.cs", line, column)
-                    }
-            };
-        }
-
         [Fact]
         public async Task TestPrefixLocalCallsWithThisDiagnostics()
         {
             var expected = new[]
             {
-                this.CreateDiagnosticResult(90, 36),
-                this.CreateDiagnosticResult(94, 36),
-                this.CreateDiagnosticResult(96, 36),
-                this.CreateDiagnosticResult(98, 36),
-                this.CreateDiagnosticResult(100, 36),
-                this.CreateDiagnosticResult(105, 45),
-                this.CreateDiagnosticResult(106, 48),
+                this.CSharpDiagnostic().WithLocation(90, 36),
+                this.CSharpDiagnostic().WithLocation(94, 36),
+                this.CSharpDiagnostic().WithLocation(96, 36),
+                this.CSharpDiagnostic().WithLocation(98, 36),
+                this.CSharpDiagnostic().WithLocation(100, 36),
+                this.CSharpDiagnostic().WithLocation(105, 45),
+                this.CSharpDiagnostic().WithLocation(106, 48),
             };
 
             await this.VerifyCSharpDiagnosticAsync(ReferenceCode, expected, CancellationToken.None);

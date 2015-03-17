@@ -1,11 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Xunit;
 using StyleCop.Analyzers.MaintainabilityRules;
 using TestHelper;
+using Xunit;
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
@@ -69,20 +68,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     {
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Attribute constructor must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 3, 21)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 21);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -97,31 +83,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     {
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Attribute constructor must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 3, 21)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Attribute constructor must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 3, 67)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic().WithLocation(3, 21),
+                    this.CSharpDiagnostic().WithLocation(3, 67)
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }

@@ -2,11 +2,10 @@
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.ReadabilityRules;
     using TestHelper;
+    using Xunit;
 
     public class SA1114UnitTests : CodeFixVerifier
     {
@@ -33,20 +32,7 @@ string s)
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -113,20 +99,7 @@ class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -193,20 +166,7 @@ string s)
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -274,20 +234,7 @@ public class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 12, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(12, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -365,20 +312,7 @@ int i]
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -434,20 +368,7 @@ class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -476,30 +397,10 @@ var a = new int[
     }
 }";
 
-            var expected = new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 1)
-                            }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 14, 1)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(8, 1),
+                    this.CSharpDiagnostic().WithLocation(14, 1)
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
@@ -551,20 +452,7 @@ class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 9, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(9, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -624,30 +512,10 @@ class Foo
     }
 }";
 
-            var expected = new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 14, 1)
-                            }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 16, 1)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(14, 1),
+                    this.CSharpDiagnostic().WithLocation(16, 1)
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
@@ -713,20 +581,7 @@ class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -789,20 +644,7 @@ Conditional(""DEBUG""),Conditional(""DEBUG2"")]
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -849,20 +691,7 @@ class Foo
 string s);
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -921,20 +750,7 @@ int z, int j)
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -1011,20 +827,7 @@ z,j) =>
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -1098,20 +901,7 @@ int i)
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -1161,20 +951,7 @@ Foo a, Foo b)
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -1193,20 +970,7 @@ Foo a)
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -1236,6 +1000,21 @@ public class Foo
     public static Foo operator +(Foo a, Foo b)
     {
         return new Foo();
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task TestObjectCreationNoArgumentList()
+        {
+            var testCode = @"
+public class Foo
+{
+    public static void Foo()
+    {
+        var list = new System.Collections.Generic.List<int> { 42 };
     }
 }";
 

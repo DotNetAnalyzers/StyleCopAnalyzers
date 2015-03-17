@@ -2,11 +2,10 @@
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.OrderingRules;
     using TestHelper;
+    using Xunit;
 
     public class SA1212UnitTests : CodeFixVerifier
     {
@@ -41,20 +40,7 @@ public class Foo
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = this.DiagnosticId,
-                    Message = "A get accessor appears after a set accessor within a property or indexer.",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 8, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -136,20 +122,7 @@ public class Foo
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = this.DiagnosticId,
-                    Message = "A get accessor appears after a set accessor within a property or indexer.",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -176,20 +149,7 @@ public class Foo
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = this.DiagnosticId,
-                    Message = "A get accessor appears after a set accessor within a property or indexer.",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 8, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -254,6 +214,22 @@ public class Foo
             return field;
         }
     }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task TestExpressionProperty()
+        {
+            var testCode = @"
+public class Foo
+{
+    private int field;
+
+    public int this[int index] => field;
+
+    public int Property => field;
 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);

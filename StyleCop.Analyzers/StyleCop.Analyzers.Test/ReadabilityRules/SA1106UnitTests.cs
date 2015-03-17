@@ -2,11 +2,10 @@
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.ReadabilityRules;
     using TestHelper;
+    using Xunit;
 
     public class SA1106UnitTests : CodeFixVerifier
     {
@@ -32,20 +31,7 @@ class TestClass
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Code must not contain empty statements",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 13)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 13);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -79,20 +65,7 @@ class TestClass
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Code must not contain empty statements",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 9)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -127,20 +100,7 @@ class TestClass
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Code must not contain empty statements",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 9)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -159,20 +119,7 @@ class TestClass
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Code must not contain empty statements",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 9)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }

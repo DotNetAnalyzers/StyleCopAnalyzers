@@ -2,16 +2,14 @@
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.NamingRules;
     using TestHelper;
+    using Xunit;
 
     public class SA1300UnitTests : CodeFixVerifier
     {
         private const string DiagnosticId = SA1300ElementMustBeginWithUpperCaseLetter.DiagnosticId;
-        private const string Message = "Element '{0}' must begin with an uppercase letter";
 
         [Fact]
         public async Task TestUpperCaseNamespace()
@@ -32,20 +30,7 @@
 
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = string.Format(Message, "test"),
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                    new []
-                    {
-                        new DiagnosticResultLocation("Test0.cs", 1, 18)
-                    }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("test").WithLocation(1, 18);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -69,20 +54,7 @@
 
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = string.Format(Message, "test"),
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                    new []
-                    {
-                        new DiagnosticResultLocation("Test0.cs", 1, 14)
-                    }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("test").WithLocation(1, 14);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -129,20 +101,7 @@
 
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = string.Format(Message, "test"),
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                    new []
-                    {
-                        new DiagnosticResultLocation("Test0.cs", 1, 15)
-                    }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("test").WithLocation(1, 15);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -166,20 +125,7 @@
 
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = string.Format(Message, "test"),
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                    new []
-                    {
-                        new DiagnosticResultLocation("Test0.cs", 1, 13)
-                    }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("test").WithLocation(1, 13);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -203,20 +149,7 @@ public delegate void Test();
 public delegate void test();
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = string.Format(Message, "test"),
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                    new []
-                    {
-                        new DiagnosticResultLocation("Test0.cs", 3, 22)
-                    }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("test").WithLocation(3, 22);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -264,20 +197,7 @@ public delegate void test();
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = string.Format(Message, "testEvent"),
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                    new []
-                    {
-                        new DiagnosticResultLocation("Test0.cs", 5, 23)
-                    }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("testEvent").WithLocation(5, 23);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -303,20 +223,7 @@ public delegate void test();
     public event Test testEvent;
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = string.Format(Message, "testEvent"),
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                    new []
-                    {
-                        new DiagnosticResultLocation("Test0.cs", 4, 23)
-                    }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("testEvent").WithLocation(4, 23);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -344,20 +251,7 @@ public void test()
 
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = string.Format(Message, "test"),
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                    new []
-                    {
-                        new DiagnosticResultLocation("Test0.cs", 3, 13)
-                    }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("test").WithLocation(3, 13);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -381,20 +275,7 @@ public string Test { get; set; }
 public string test { get; set; }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = string.Format(Message, "test"),
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                    new []
-                    {
-                        new DiagnosticResultLocation("Test0.cs", 3, 15)
-                    }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("test").WithLocation(3, 15);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
