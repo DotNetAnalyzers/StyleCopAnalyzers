@@ -85,12 +85,14 @@
         {
             context.RegisterSyntaxNodeAction(this.HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
             context.RegisterSyntaxNodeAction(this.HandleTypeDeclaration, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
 
             context.RegisterSyntaxNodeAction(this.HandleCompilationUnit, SyntaxKind.CompilationUnit);
             context.RegisterSyntaxNodeAction(this.HandleNamespaceDeclaration, SyntaxKind.NamespaceDeclaration);
 
             context.RegisterSyntaxNodeAction(this.HandlePropertyDeclaration, SyntaxKind.PropertyDeclaration);
             context.RegisterSyntaxNodeAction(this.HandlePropertyDeclaration, SyntaxKind.EventDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandlePropertyDeclaration, SyntaxKind.IndexerDeclaration);
         }
 
         private void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)

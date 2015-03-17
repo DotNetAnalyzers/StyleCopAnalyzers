@@ -254,6 +254,50 @@ namespace Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
+        [Fact]
+        public async Task TestInterfacesAndStructs()
+        {
+            string testCode = @"using System;
+public interface IInterface
+{
+    string Foo();
+    string Bar();
+}
+public struct Struct
+{
+    void Foo() { }
+    void Bar() { }
+}";
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(2, 18),
+                this.CSharpDiagnostic().WithLocation(5, 12),
+                this.CSharpDiagnostic().WithLocation(7, 15),
+                this.CSharpDiagnostic().WithLocation(10, 10),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+
+            string fixedCode = @"using System;
+
+public interface IInterface
+{
+    string Foo();
+
+    string Bar();
+}
+
+public struct Struct
+{
+    void Foo() { }
+
+    void Bar() { }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1516ElementsMustBeSeparatedByBlankLine();
