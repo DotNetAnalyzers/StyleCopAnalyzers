@@ -179,7 +179,6 @@
                     // or the current declaration is not a field declaration,
                     if (IsMultiline(members[i - 1])
                         || !members[i - 1].IsKind(members[i].Kind())
-                        || XmlCommentHelper.HasDocumentation(members[i])
                         || !members[i].IsKind(SyntaxKind.FieldDeclaration))
                     {
                         ReportIfThereIsNoBlankLine(context, members[i - 1], members[i]);
