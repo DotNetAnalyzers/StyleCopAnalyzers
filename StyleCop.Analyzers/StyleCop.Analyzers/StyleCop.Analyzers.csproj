@@ -101,12 +101,15 @@
     <Compile Include="DocumentationRules\SA1649FileHeaderFileNameDocumentationMustMatchTypeName.cs" />
     <Compile Include="DocumentationRules\SA1650ElementDocumentationMustBeSpelledCorrectly.cs" />
     <Compile Include="DocumentationRules\StandardTextDiagnosticBase.cs" />
+    <Compile Include="Helpers\IndentationHelper.cs" />
+    <Compile Include="Helpers\IndentationOptions.cs" />
     <Compile Include="Helpers\NamedTypeHelpers.cs" />
     <Compile Include="Helpers\RenameHelper.cs" />
     <Compile Include="Helpers\TriviaHelper.cs" />
     <Compile Include="Helpers\XmlCommentHelper.cs" />
     <Compile Include="LayoutRules\SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine.cs" />
     <Compile Include="LayoutRules\SA1501StatementMustNotBeOnASingleLine.cs" />
+    <Compile Include="LayoutRules\SA1502CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1502ElementMustNotBeOnASingleLine.cs" />
     <Compile Include="LayoutRules\SA1503CurlyBracketsMustNotBeOmitted.cs" />
     <Compile Include="LayoutRules\SA1504AllAccessorsMustBeSingleLineOrMultiLine.cs" />

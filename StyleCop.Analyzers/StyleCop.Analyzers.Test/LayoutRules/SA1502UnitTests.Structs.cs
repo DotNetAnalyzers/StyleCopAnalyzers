@@ -74,5 +74,85 @@
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
+
+        /// <summary>
+        /// Verifies that the code fix for an empty struct element is working properly.
+        /// </summary>
+        [Fact]
+        public async Task TestEmptyStructOnSingleLineCodeFix()
+        {
+            var testCode = "public struct Foo { }";
+            var fixedTextCode = @"public struct Foo
+{
+}
+";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTextCode);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix for a struct with a statement is working properly.
+        /// </summary>
+        [Fact]
+        public async Task TestStructOnSingleLineCodeFix()
+        {
+            var testCode = "public struct Foo { private int bar; }";
+            var fixedTextCode = @"public struct Foo
+{
+    private int bar;
+}
+";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTextCode);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix for a struct with multiple statements is working properly.
+        /// </summary>
+        [Fact]
+        public async Task TestStructOnSingleLineWithMultipleStatementsCodeFix()
+        {
+            var testCode = "public struct Foo { private int bar; private bool baz; }";
+            var fixedTextCode = @"public struct Foo
+{
+    private int bar; private bool baz;
+}
+";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTextCode);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix for a struct with its block defined on a single line is working properly.
+        /// </summary>
+        [Fact]
+        public async Task TestStructWithBlockOnSingleLineCodeFix()
+        {
+            var testCode = @"public struct Foo
+{ private int bar; }";
+            var fixedTextCode = @"public struct Foo
+{
+    private int bar;
+}
+";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTextCode);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix for a struct with lots of trivia is working properly.
+        /// </summary>
+        [Fact]
+        public async Task TestStructWithLotsOfTriviaCodeFix()
+        {
+            var testCode = @"public struct Foo /* TR1 */ { /* TR2 */ private int bar; /* TR3 */ private int baz; /* TR4 */ } /* TR5 */";
+            var fixedTextCode = @"public struct Foo /* TR1 */
+{ /* TR2 */
+    private int bar; /* TR3 */ private int baz; /* TR4 */
+} /* TR5 */
+";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTextCode);
+        }
     }
 }

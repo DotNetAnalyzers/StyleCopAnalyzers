@@ -74,5 +74,85 @@
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
+
+        /// <summary>
+        /// Verifies that the code fix for an empty class element is working properly.
+        /// </summary>
+        [Fact]
+        public async Task TestEmptyClassOnSingleLineCodeFix()
+        {
+            var testCode = "public class Foo { }";
+            var fixedTextCode = @"public class Foo
+{
+}
+";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTextCode);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix for a class with a statement is working properly.
+        /// </summary>
+        [Fact]
+        public async Task TestClassOnSingleLineCodeFix()
+        {
+            var testCode = "public class Foo { private int bar; }";
+            var fixedTextCode = @"public class Foo
+{
+    private int bar;
+}
+";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTextCode);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix for a class with multiple statements is working properly.
+        /// </summary>
+        [Fact]
+        public async Task TestClassOnSingleLineWithMultipleStatementsCodeFix()
+        {
+            var testCode = "public class Foo { private int bar; private bool baz; }";
+            var fixedTextCode = @"public class Foo
+{
+    private int bar; private bool baz;
+}
+";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTextCode);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix for a class with its block defined on a single line is working properly.
+        /// </summary>
+        [Fact]
+        public async Task TestClassWithBlockOnSingleLineCodeFix()
+        {
+            var testCode = @"public class Foo
+{ private int bar; }";
+            var fixedTextCode = @"public class Foo
+{
+    private int bar;
+}
+";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTextCode);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix for a class with lots of trivia is working properly.
+        /// </summary>
+        [Fact]
+        public async Task TestClassWithLotsOfTriviaCodeFix()
+        {
+            var testCode = @"public class Foo /* TR1 */ { /* TR2 */ private int bar; /* TR3 */ private int baz; /* TR4 */ } /* TR5 */";
+            var fixedTextCode = @"public class Foo /* TR1 */
+{ /* TR2 */
+    private int bar; /* TR3 */ private int baz; /* TR4 */
+} /* TR5 */
+";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTextCode);
+        }
     }
 }

@@ -2,7 +2,7 @@
 {
     using System.Threading;
     using System.Threading.Tasks;
-
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     using StyleCop.Analyzers.LayoutRules;
@@ -28,6 +28,17 @@
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1502ElementMustNotBeOnASingleLine();
+        }
+
+        /// <inheritdoc/>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1502CodeFixProvider();
+        }
+
+        private static string FormatTestCode(string testCode, string placeHolderReplacement)
+        {
+            return testCode.Replace("##PH##", placeHolderReplacement);
         }
     }
 }

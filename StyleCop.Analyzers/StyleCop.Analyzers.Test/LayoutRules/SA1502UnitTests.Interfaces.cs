@@ -73,5 +73,86 @@ void Bar(); }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
+
+        /// <summary>
+        /// Verifies that the code fix for an empty interface element is working properly.
+        /// </summary>
+        [Fact]
+        public async Task TestEmptyInterfaceOnSingleLineCodeFix()
+        {
+            var testCode = "public interface Foo { }";
+            var fixedTextCode = @"public interface Foo
+{
+}
+";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTextCode);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix for an interface with a statement is working properly.
+        /// </summary>
+        [Fact]
+        public async Task TestInterfaceOnSingleLineCodeFix()
+        {
+            var testCode = "public interface Foo { void Bar(); }";
+            var fixedTextCode = @"public interface Foo
+{
+    void Bar();
+}
+";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTextCode);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix for an interface with multiple statements is working properly.
+        /// </summary>
+        [Fact]
+        public async Task TestInterfaceOnSingleLineWithMultipleStatementsCodeFix()
+        {
+            var testCode = "public interface Foo { void Bar(); void Baz(); }";
+            var fixedTextCode = @"public interface Foo
+{
+    void Bar(); void Baz();
+}
+";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTextCode);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix for an interface with its block defined on a single line is working properly.
+        /// </summary>
+        [Fact]
+        public async Task TestInterfaceWithBlockOnSingleLineCodeFix()
+        {
+            var testCode = @"public interface Foo
+{ void Bar(); }";
+            var fixedTextCode = @"public interface Foo
+{
+    void Bar();
+}
+";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTextCode);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix for an interface with lots of trivia is working properly.
+        /// </summary>
+        [Fact]
+        public async Task TestInterfaceWithLotsOfTriviaCodeFix()
+        {
+            var testCode = @"public interface Foo /* TR1 */ { /* TR2 */ void Bar(); /* TR3 */ void Baz(); /* TR4 */ } /* TR5 */";
+            var fixedTextCode = @"public interface Foo /* TR1 */
+{ /* TR2 */
+    void Bar(); /* TR3 */ void Baz(); /* TR4 */
+} /* TR5 */
+";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTextCode);
+        }
+
     }
 }
