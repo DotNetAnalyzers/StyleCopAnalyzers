@@ -96,5 +96,69 @@
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
+
+        /// <summary>
+        /// Verifies that the code fix for an indexer with its block on the same line will work properly.
+        /// </summary>
+        [Fact]
+        public async Task TestIndexerOnSingleLineCodeFix()
+        {
+            var testCode = @"public class Foo
+{
+    public bool this[int index] { get { return true; } }
+}";
+            var fixedTestCode = @"public class Foo
+{
+    public bool this[int index]
+    {
+        get { return true; }
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix for an indexer with its block on a single line will work properly.
+        /// </summary>
+        [Fact]
+        public async Task TestIndexerWithBlockOnSingleLineCodeFix()
+        {
+            var testCode = @"public class Foo
+{
+    public bool this[int index]
+    { get { return true; } }
+}";
+            var fixedTestCode = @"public class Foo
+{
+    public bool this[int index]
+    {
+        get { return true; }
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix for an indexer with lots of trivia is working properly.
+        /// </summary>
+        [Fact]
+        public async Task TestIndexerWithLotsOfTriviaCodeFix()
+        {
+            var testCode = @"public class Foo
+{
+    public bool this[int index] /* TR1 */ { /* TR2 */ get /* TR3 */ { /* TR4 */ return true; /* TR5 */ } /* TR6 */ set /* TR7 */ { /* TR8 */ throw new System.InvalidOperationException(); /* TR9 */ } /* TR10 */ } /* TR11 */
+}";
+            var fixedTestCode = @"public class Foo
+{
+    public bool this[int index] /* TR1 */
+    { /* TR2 */
+        get /* TR3 */ { /* TR4 */ return true; /* TR5 */ } /* TR6 */ set /* TR7 */ { /* TR8 */ throw new System.InvalidOperationException(); /* TR9 */ } /* TR10 */
+    } /* TR11 */
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+        }
     }
 }

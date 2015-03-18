@@ -82,12 +82,12 @@
         public async Task TestEmptyClassOnSingleLineCodeFix()
         {
             var testCode = "public class Foo { }";
-            var fixedTextCode = @"public class Foo
+            var fixedTestCode = @"public class Foo
 {
 }
 ";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTextCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
         }
 
         /// <summary>
@@ -97,13 +97,13 @@
         public async Task TestClassOnSingleLineCodeFix()
         {
             var testCode = "public class Foo { private int bar; }";
-            var fixedTextCode = @"public class Foo
+            var fixedTestCode = @"public class Foo
 {
     private int bar;
 }
 ";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTextCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
         }
 
         /// <summary>
@@ -113,13 +113,13 @@
         public async Task TestClassOnSingleLineWithMultipleStatementsCodeFix()
         {
             var testCode = "public class Foo { private int bar; private bool baz; }";
-            var fixedTextCode = @"public class Foo
+            var fixedTestCode = @"public class Foo
 {
     private int bar; private bool baz;
 }
 ";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTextCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
         }
 
         /// <summary>
@@ -130,13 +130,13 @@
         {
             var testCode = @"public class Foo
 { private int bar; }";
-            var fixedTextCode = @"public class Foo
+            var fixedTestCode = @"public class Foo
 {
     private int bar;
 }
 ";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTextCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
         }
 
         /// <summary>
@@ -146,13 +146,13 @@
         public async Task TestClassWithLotsOfTriviaCodeFix()
         {
             var testCode = @"public class Foo /* TR1 */ { /* TR2 */ private int bar; /* TR3 */ private int baz; /* TR4 */ } /* TR5 */";
-            var fixedTextCode = @"public class Foo /* TR1 */
+            var fixedTestCode = @"public class Foo /* TR1 */
 { /* TR2 */
     private int bar; /* TR3 */ private int baz; /* TR4 */
 } /* TR5 */
 ";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTextCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
         }
     }
 }

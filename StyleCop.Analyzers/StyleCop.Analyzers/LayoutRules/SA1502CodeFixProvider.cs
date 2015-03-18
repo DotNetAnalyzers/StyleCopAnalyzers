@@ -68,6 +68,22 @@
                 case SyntaxKind.StructDeclaration:
                     newSyntaxRoot = this.RegisterTypeDeclarationCodeFix(syntaxRoot, (TypeDeclarationSyntax)node, indentationOptions);
                     break;
+
+                case SyntaxKind.AccessorList:
+                    newSyntaxRoot = this.RegisterPropertyLikeDeclarationCodeFix(syntaxRoot, (BasePropertyDeclarationSyntax)node.Parent, indentationOptions);
+                    break;
+
+                case SyntaxKind.Block:
+                    /* TODO: Handle method like stuff */
+                    break;
+
+                case SyntaxKind.EnumDeclaration:
+                    /* TODO: Handle this */
+                    break;
+
+                case SyntaxKind.NamespaceDeclaration:
+                    /* TODO: Handle this */
+                    break;
             }
 
             return context.Document.WithSyntaxRoot(newSyntaxRoot);
@@ -77,7 +93,12 @@
         {
             return this.ReformatElement(syntaxRoot, node, node.OpenBraceToken, node.CloseBraceToken, indentationOptions);
         }
-        
+
+        private SyntaxNode RegisterPropertyLikeDeclarationCodeFix(SyntaxNode syntaxRoot, BasePropertyDeclarationSyntax node, IndentationOptions indentationOptions)
+        {
+            return this.ReformatElement(syntaxRoot, node, node.AccessorList.OpenBraceToken, node.AccessorList.CloseBraceToken, indentationOptions);
+        }
+
         private SyntaxNode ReformatElement(SyntaxNode syntaxRoot, SyntaxNode element, SyntaxToken openBraceToken, SyntaxToken closeBraceToken, IndentationOptions indentationOptions)
         {
             var tokenSubstitutions = new Dictionary<SyntaxToken, SyntaxToken>();
@@ -172,7 +193,7 @@
                     return replacementToken;
                 }
 
-                return token; //// base.VisitToken(token);
+                return base.VisitToken(token);
             }
         }
     }

@@ -81,12 +81,12 @@ void Bar(); }";
         public async Task TestEmptyInterfaceOnSingleLineCodeFix()
         {
             var testCode = "public interface Foo { }";
-            var fixedTextCode = @"public interface Foo
+            var fixedTestCode = @"public interface Foo
 {
 }
 ";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTextCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
         }
 
         /// <summary>
@@ -96,13 +96,13 @@ void Bar(); }";
         public async Task TestInterfaceOnSingleLineCodeFix()
         {
             var testCode = "public interface Foo { void Bar(); }";
-            var fixedTextCode = @"public interface Foo
+            var fixedTestCode = @"public interface Foo
 {
     void Bar();
 }
 ";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTextCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
         }
 
         /// <summary>
@@ -112,13 +112,13 @@ void Bar(); }";
         public async Task TestInterfaceOnSingleLineWithMultipleStatementsCodeFix()
         {
             var testCode = "public interface Foo { void Bar(); void Baz(); }";
-            var fixedTextCode = @"public interface Foo
+            var fixedTestCode = @"public interface Foo
 {
     void Bar(); void Baz();
 }
 ";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTextCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
         }
 
         /// <summary>
@@ -129,13 +129,13 @@ void Bar(); }";
         {
             var testCode = @"public interface Foo
 { void Bar(); }";
-            var fixedTextCode = @"public interface Foo
+            var fixedTestCode = @"public interface Foo
 {
     void Bar();
 }
 ";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTextCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
         }
 
         /// <summary>
@@ -145,14 +145,13 @@ void Bar(); }";
         public async Task TestInterfaceWithLotsOfTriviaCodeFix()
         {
             var testCode = @"public interface Foo /* TR1 */ { /* TR2 */ void Bar(); /* TR3 */ void Baz(); /* TR4 */ } /* TR5 */";
-            var fixedTextCode = @"public interface Foo /* TR1 */
+            var fixedTestCode = @"public interface Foo /* TR1 */
 { /* TR2 */
     void Bar(); /* TR3 */ void Baz(); /* TR4 */
 } /* TR5 */
 ";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTextCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
         }
-
     }
 }

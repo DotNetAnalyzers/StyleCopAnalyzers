@@ -97,5 +97,81 @@
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
+
+        /// <summary>
+        /// Verifies that the code fix for an event block on the same line will work properly.
+        /// </summary>
+        [Fact]
+        public async Task TestEventOnSingleLineCodeFix()
+        {
+            var testCode = @"public class Foo
+{
+    private EventHandler x;
+
+    public event EventHandler Bar { add { x += value; } remove { x -= value; } }
+}";
+            var fixedTestCode = @"public class Foo
+{
+    private EventHandler x;
+
+    public event EventHandler Bar
+    {
+        add { x += value; } remove { x -= value; }
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix for an event with its block on a single line will work properly.
+        /// </summary>
+        [Fact]
+        public async Task TestEventWithBlockOnSingleLineCodeFix()
+        {
+            var testCode = @"public class Foo
+{
+    private EventHandler x;
+
+    public event EventHandler Bar 
+    { add { x += value; } remove { x -= value; } }
+}";
+            var fixedTestCode = @"public class Foo
+{
+    private EventHandler x;
+
+    public event EventHandler Bar
+    {
+        add { x += value; } remove { x -= value; }
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix for an event with lots of trivia is working properly.
+        /// </summary>
+        [Fact]
+        public async Task TestEventWithLotsOfTriviaCodeFix()
+        {
+            var testCode = @"public class Foo
+{
+    private EventHandler x;
+
+    public event EventHandler Bar /* TR1 */ { /* TR2 */ add /* TR3 */ { /* TR4 */ x += value; /* TR5 */ } /* TR6 */ remove /* TR7 */ { /* TR8 */ x -= value; /* TR9 */ } /* TR10 */ } /* TR11 */
+}";
+            var fixedTestCode = @"public class Foo
+{
+    private EventHandler x;
+
+    public event EventHandler Bar /* TR1 */
+    { /* TR2 */
+        add /* TR3 */ { /* TR4 */ x += value; /* TR5 */ } /* TR6 */ remove /* TR7 */ { /* TR8 */ x -= value; /* TR9 */ } /* TR10 */
+    } /* TR11 */
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+        }
     }
 }
