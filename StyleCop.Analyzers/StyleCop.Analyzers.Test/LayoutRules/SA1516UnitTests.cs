@@ -298,6 +298,80 @@ public struct Struct
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
+        [Fact]
+        public async Task TestIndexerAndEvents()
+        {
+            string testCode = @"using System;
+
+public class Foo
+{
+    public string this[int i]
+    {
+        get
+        {
+            return i;
+        }
+        set
+        {
+
+        }
+    }
+
+    public event EventHandler MyEvent
+    {
+        add
+        {
+
+        }
+        remove
+        {
+
+        }
+    }
+}";
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(11, 9),
+                this.CSharpDiagnostic().WithLocation(23, 9)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+
+            string fixedCode = @"using System;
+
+public class Foo
+{
+    public string this[int i]
+    {
+        get
+        {
+            return i;
+        }
+
+        set
+        {
+
+        }
+    }
+
+    public event EventHandler MyEvent
+    {
+        add
+        {
+
+        }
+
+        remove
+        {
+
+        }
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1516ElementsMustBeSeparatedByBlankLine();
