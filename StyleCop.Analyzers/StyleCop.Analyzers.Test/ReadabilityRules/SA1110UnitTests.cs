@@ -51,6 +51,7 @@ public class Foo
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
         }
 
         [Fact]
@@ -192,6 +193,28 @@ class Foo
     {
         Foo.
 Baz();
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task TestStaticMethodCallWithAnotherStaticCallOpeningBracketInTheNextLine()
+        {
+            var testCode = @"
+public class Foo
+{
+    public static Foo Baz(int i)
+    {
+        return new Foo();
+    }
+
+    public Foo Bar()
+    {
+        return Foo.Baz(
+            Int32.Parse(""5"")
+);
     }
 }";
 
