@@ -1,6 +1,5 @@
 ﻿namespace StyleCop.Analyzers.LayoutRules
 {
-    using System;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
@@ -15,7 +14,6 @@
 
     using StyleCop.Analyzers.Helpers;
     using System.Collections.Generic;
-
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1502ElementMustNotBeOnASingleLine"/>.
@@ -74,15 +72,15 @@
                     break;
 
                 case SyntaxKind.Block:
-                    /* TODO: Handle method like stuff */
+                    newSyntaxRoot = this.RegisterMethodLikeDeclarationCodeFix(syntaxRoot, (BaseMethodDeclarationSyntax)node.Parent, indentationOptions);
                     break;
 
                 case SyntaxKind.EnumDeclaration:
-                    /* TODO: Handle this */
+                    newSyntaxRoot = this.RegisterEnumDeclarationCodeFix(syntaxRoot, (EnumDeclarationSyntax)node, indentationOptions);
                     break;
 
                 case SyntaxKind.NamespaceDeclaration:
-                    /* TODO: Handle this */
+                    newSyntaxRoot = this.RegisterNamespaceDeclarationCodeFix(syntaxRoot, (NamespaceDeclarationSyntax)node, indentationOptions);
                     break;
             }
 
@@ -97,6 +95,21 @@
         private SyntaxNode RegisterPropertyLikeDeclarationCodeFix(SyntaxNode syntaxRoot, BasePropertyDeclarationSyntax node, IndentationOptions indentationOptions)
         {
             return this.ReformatElement(syntaxRoot, node, node.AccessorList.OpenBraceToken, node.AccessorList.CloseBraceToken, indentationOptions);
+        }
+
+        private SyntaxNode RegisterMethodLikeDeclarationCodeFix(SyntaxNode syntaxRoot, BaseMethodDeclarationSyntax node, IndentationOptions indentationOptions)
+        {
+            return this.ReformatElement(syntaxRoot, node, node.Body.OpenBraceToken, node.Body.CloseBraceToken, indentationOptions);
+        }
+
+        private SyntaxNode RegisterEnumDeclarationCodeFix(SyntaxNode syntaxRoot, EnumDeclarationSyntax node, IndentationOptions indentationOptions)
+        {
+            return this.ReformatElement(syntaxRoot, node, node.OpenBraceToken, node.CloseBraceToken, indentationOptions);
+        }
+
+        private SyntaxNode RegisterNamespaceDeclarationCodeFix(SyntaxNode syntaxRoot, NamespaceDeclarationSyntax node, IndentationOptions indentationOptions)
+        {
+            return this.ReformatElement(syntaxRoot, node, node.OpenBraceToken, node.CloseBraceToken, indentationOptions);
         }
 
         private SyntaxNode ReformatElement(SyntaxNode syntaxRoot, SyntaxNode element, SyntaxToken openBraceToken, SyntaxToken closeBraceToken, IndentationOptions indentationOptions)
@@ -143,7 +156,15 @@
                     .WithoutTrailingWhitespace()
                     .Add(SyntaxFactory.CarriageReturnLineFeed);
 
-                tokenSubstitutions.Add(endOfContentToken, endOfContentToken.WithTrailingTrivia(newEndOfContentTokenTrailingTrivia));
+                // check if the token already exists (occurs when there is only one token in the block)
+                if (tokenSubstitutions.ContainsKey(endOfContentToken))
+                {
+                    tokenSubstitutions[endOfContentToken] = tokenSubstitutions[endOfContentToken].WithTrailingTrivia(newEndOfContentTokenTrailingTrivia);
+                }
+                else
+                {
+                    tokenSubstitutions.Add(endOfContentToken, endOfContentToken.WithTrailingTrivia(newEndOfContentTokenTrailingTrivia));
+                }
             }
 
             // reformat closing brace

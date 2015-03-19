@@ -74,5 +74,69 @@
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
+
+        /// <summary>
+        /// Verifies that the codefix for an empty namespace defined on a single line will work properly.
+        /// </summary>
+        [Fact]
+        public async Task TestEmptyNamespaceOnSingleLineCodeFix()
+        {
+            var testCode = @"namespace Foo { }";
+            var fixedTestCode = @"namespace Foo
+{
+}
+";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+        }
+
+        /// <summary>
+        /// Verifies that the codefix for a namespace defined on a single line will work properly.
+        /// </summary>
+        [Fact]
+        public async Task TestNamespaceOnSingleLineCodeFix()
+        {
+            var testCode = @"namespace Foo { using System; }";
+            var fixedTestCode = @"namespace Foo
+{
+    using System;
+}
+";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+        }
+
+        /// <summary>
+        /// Verifies that the codefix for a namespace with its block defined on a single line will work properly.
+        /// </summary>
+        [Fact]
+        public async Task TestNamespaceWithBlockOnSingleLineCodeFix()
+        {
+            var testCode = @"namespace Foo
+{ using System; }";
+            var fixedTestCode = @"namespace Foo
+{
+    using System;
+}
+";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+        }
+
+        /// <summary>
+        /// Verifies that the codefix for a namespace defined with lots of trivia will work properly.
+        /// </summary>
+        [Fact]
+        public async Task TestNamespaceWithLotsOfTriviaCodeFix()
+        {
+            var testCode = @"namespace Foo /* TR1 */ { /* TR2 */ using System; /* TR3 */ } /* TR4 */";
+            var fixedTestCode = @"namespace Foo /* TR1 */
+{ /* TR2 */
+    using System; /* TR3 */
+} /* TR4 */
+";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+        }
     }
 }

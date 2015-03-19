@@ -19,15 +19,14 @@
         [Theory, InlineData("class"), InlineData("struct")]
         public async Task TestValidEmptyConstructor(string elementType)
         {
-            var testCodeFormat = @"public ##TOKEN## Foo
+            var testCode = @"public ##PH## Foo
 {
     public Foo()
     {
     }
 }";
-            var testCode = testCodeFormat.Replace("##TOKEN##", elementType);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), EmptyDiagnosticResults, CancellationToken.None);
         }
 
         /// <summary>
@@ -36,14 +35,13 @@
         [Theory, InlineData("class"), InlineData("struct")]
         public async Task TestEmptyConstructorOnSingleLine(string elementType)
         {
-            var testCodeFormat = @"public ##TOKEN## Foo
+            var testCode = @"public ##PH## Foo
 {
     public Foo() { }
 }";
-            var testCode = testCodeFormat.Replace("##TOKEN##", elementType);
 
             var expected = this.CSharpDiagnostic().WithLocation(3, 18);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), expected, CancellationToken.None);
         }
 
         /// <summary>
@@ -52,14 +50,13 @@
         [Theory, InlineData("class"), InlineData("struct")]
         public async Task TestConstructorOnSingleLine(string elementType)
         {
-            var testCodeFormat = @"public ##TOKEN## Foo
+            var testCode = @"public ##PH## Foo
 {
     public Foo() { int bar; }
 }";
-            var testCode = testCodeFormat.Replace("##TOKEN##", elementType);
 
             var expected = this.CSharpDiagnostic().WithLocation(3, 18);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), expected, CancellationToken.None);
         }
 
         /// <summary>
@@ -68,15 +65,14 @@
         [Theory, InlineData("class"), InlineData("struct")]
         public async Task TestConstructorWithBlockOnSingleLine(string elementType)
         {
-            var testCodeFormat = @"public ##TOKEN## Foo
+            var testCode = @"public ##PH## Foo
 {
     public Foo() 
     { int bar; }
 }";
-            var testCode = testCodeFormat.Replace("##TOKEN##", elementType);
 
             var expected = this.CSharpDiagnostic().WithLocation(4, 5);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), expected, CancellationToken.None);
         }
 
         /// <summary>
@@ -85,14 +81,97 @@
         [Theory, InlineData("class"), InlineData("struct")]
         public async Task TestConstructorWithBlockStartOnSameLine(string elementType)
         {
-            var testCodeFormat = @"public ##TOKEN## Foo
+            var testCode = @"public ##PH## Foo
 {
     public Foo() { 
         int bar; }
 }";
-            var testCode = testCodeFormat.Replace("##TOKEN##", elementType);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Verifies that the codefix for an empty constructor with its block on the same line will work properly.
+        /// </summary>
+        [Theory, InlineData("class"), InlineData("struct")]
+        public async Task TestEmptyConstructorOnSingleLineCodeFix(string elementType)
+        {
+            var testCode = @"public ##PH## Foo
+{
+    public Foo() { }
+}";
+            var fixedTestCode = @"public ##PH## Foo
+{
+    public Foo()
+    {
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(FormatTestCode(testCode, elementType), FormatTestCode(fixedTestCode, elementType));
+        }
+
+        /// <summary>
+        /// Verifies that the codefix for a constructor with its block on the same line will work properly.
+        /// </summary>
+        [Theory, InlineData("class"), InlineData("struct")]
+        public async Task TestConstructorOnSingleLineCodeFix(string elementType)
+        {
+            var testCode = @"public ##PH## Foo
+{
+    public Foo() { int bar; }
+}";
+            var fixedTestCode = @"public ##PH## Foo
+{
+    public Foo()
+    {
+        int bar;
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(FormatTestCode(testCode, elementType), FormatTestCode(fixedTestCode, elementType));
+        }
+
+        /// <summary>
+        /// Verifies that the codefix for a constructor with its block on a single line will work properly.
+        /// </summary>
+        [Theory, InlineData("class"), InlineData("struct")]
+        public async Task TestConstructorWithBlockOnSingleLineCodeFix(string elementType)
+        {
+            var testCode = @"public ##PH## Foo
+{
+    public Foo() 
+    { int bar; }
+}";
+            var fixedTestCode = @"public ##PH## Foo
+{
+    public Foo()
+    {
+        int bar;
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(FormatTestCode(testCode, elementType), FormatTestCode(fixedTestCode, elementType));
+        }
+
+        /// <summary>
+        /// Verifies that the codefix for a constructor with lots of trivia will work properly.
+        /// </summary>
+        [Theory, InlineData("class"), InlineData("struct")]
+        public async Task TestConstructorWithLotsOfTriviaCodeFix(string elementType)
+        {
+            var testCode = @"public ##PH## Foo
+{
+    public Foo() /* TR1 */ { /* TR2 */ int bar; /* TR3 */ } /* TR4 */
+}";
+            var fixedTestCode = @"public ##PH## Foo
+{
+    public Foo() /* TR1 */
+    { /* TR2 */
+        int bar; /* TR3 */
+    } /* TR4 */
+}";
+
+            await this.VerifyCSharpFixAsync(FormatTestCode(testCode, elementType), FormatTestCode(fixedTestCode, elementType));
         }
     }
 }

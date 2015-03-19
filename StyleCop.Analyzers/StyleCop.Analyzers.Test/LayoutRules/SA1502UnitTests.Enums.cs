@@ -73,5 +73,85 @@ Value1 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
+
+        /// <summary>
+        /// Verifies that the codefix for an empty enum defined on a single line will work properly.
+        /// </summary>
+        [Fact]
+        public async Task TestEmptyEnumOnSingleLineCodeFix()
+        {
+            var testCode = "public enum Foo { }";
+            var fixedTestCode = @"public enum Foo
+{
+}
+";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+        }
+
+        /// <summary>
+        /// Verifies that the codefix for an enum definition on a single line will work properly.
+        /// </summary>
+        [Fact]
+        public async Task TestEnumOnSingleLineCodeFix()
+        {
+            var testCode = "public enum Foo { Value1 }";
+            var fixedTestCode = @"public enum Foo
+{
+    Value1
+}
+";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+        }
+
+        /// <summary>
+        /// Verifies that the codefix for an enum definition with multiple values on a single line will work properly.
+        /// </summary>
+        [Fact]
+        public async Task TestMultiValueEnumOnSingleLineCodeFix()
+        {
+            var testCode = "public enum Foo { Value1, Value2 }";
+            var fixedTestCode = @"public enum Foo
+{
+    Value1, Value2
+}
+";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+        }
+
+        /// <summary>
+        /// Verifies that the codefix for an enum with its block defined on a single line will properly.
+        /// </summary>
+        [Fact]
+        public async Task TestEnumWithBlockOnSingleLineCodeFix()
+        {
+            var testCode = @"public enum Foo
+{ Value1 }";
+            var fixedTestCode = @"public enum Foo
+{
+    Value1
+}
+";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+        }
+
+        /// <summary>
+        /// Verifies that the codefix for an enum definition with lots of trivia will work properly.
+        /// </summary>
+        [Fact]
+        public async Task TestEnumWithLotsOfTriviaCodeFix()
+        {
+            var testCode = "public enum Foo /* TR1 */ { /* TR2 */ Value1, /* TR3 */ Value2 /* TR4 */ } /* TR5 */";
+            var fixedTestCode = @"public enum Foo /* TR1 */
+{ /* TR2 */
+    Value1, /* TR3 */ Value2 /* TR4 */
+} /* TR5 */
+";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+        }
     }
 }

@@ -87,5 +87,89 @@
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
+
+        /// <summary>
+        /// Verifies that the codefix for an empty destructor with its block on the same line will work properly.
+        /// </summary>
+        [Fact]
+        public async Task TestEmptyDestructorOnSingleLineCodeFix()
+        {
+            var testCode = @"public class Foo
+{
+    ~Foo() { }
+}";
+            var fixedTestCode = @"public class Foo
+{
+    ~Foo()
+    {
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+        }
+
+        /// <summary>
+        /// Verifies that the codefix a destructor with its block on the same line will work properly.
+        /// </summary>
+        [Fact]
+        public async Task TestDestructorOnSingleLineCodeFix()
+        {
+            var testCode = @"public class Foo
+{
+    ~Foo() { int bar; }
+}";
+            var fixedTestCode = @"public class Foo
+{
+    ~Foo()
+    {
+        int bar;
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+        }
+
+        /// <summary>
+        /// Verifies that the codefix a destructor with its block on a single line will work properly.
+        /// </summary>
+        [Fact]
+        public async Task TestDestructorWithBlockOnSingleLineCodeFix()
+        {
+            var testCode = @"public class Foo
+{
+    ~Foo() 
+    { int bar; }
+}";
+            var fixedTestCode = @"public class Foo
+{
+    ~Foo()
+    {
+        int bar;
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+        }
+
+        /// <summary>
+        /// Verifies that the codefix a destructor with lots of trivia will work properly.
+        /// </summary>
+        [Fact]
+        public async Task TestDestructorWithLotsOfTriviaCodeFix()
+        {
+            var testCode = @"public class Foo
+{
+    ~Foo() /* TR1 */ { /* TR2 */ int bar; /* TR3 */ } /* TR4 */
+}";
+            var fixedTestCode = @"public class Foo
+{
+    ~Foo() /* TR1 */
+    { /* TR2 */
+        int bar; /* TR3 */
+    } /* TR4 */
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+        }
     }
 }

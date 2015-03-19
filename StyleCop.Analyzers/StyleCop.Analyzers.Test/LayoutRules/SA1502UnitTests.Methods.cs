@@ -18,15 +18,14 @@
         [Theory, InlineData("class"), InlineData("struct")]
         public async Task TestValidEmptyMethod(string elementType)
         {
-            var testCodeFormat = @"public ##TOKEN## Foo
+            var testCode = @"public ##PH## Foo
 {
     public void Bar()
     {
     }
 }";
-            var testCode = testCodeFormat.Replace("##TOKEN##", elementType);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), EmptyDiagnosticResults, CancellationToken.None);
         }
 
         /// <summary>
@@ -35,14 +34,13 @@
         [Theory, InlineData("class"), InlineData("struct")]
         public async Task TestEmptyMethodOnSingleLine(string elementType)
         {
-            var testCodeFormat = @"public ##TOKEN## Foo
+            var testCode = @"public ##PH## Foo
 {
     public void Bar() { }
 }";
-            var testCode = testCodeFormat.Replace("##TOKEN##", elementType);
 
             var expected = this.CSharpDiagnostic().WithLocation(3, 23);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), expected, CancellationToken.None);
         }
 
         /// <summary>
@@ -51,14 +49,13 @@
         [Theory, InlineData("class"), InlineData("struct")]
         public async Task TestMethodOnSingleLine(string elementType)
         {
-            var testCodeFormat = @"public ##TOKEN## Foo
+            var testCode = @"public ##PH## Foo
 {
     public bool Bar() { return false; }
 }";
-            var testCode = testCodeFormat.Replace("##TOKEN##", elementType);
 
             var expected = this.CSharpDiagnostic().WithLocation(3, 23);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), expected, CancellationToken.None);
         }
 
         /// <summary>
@@ -67,15 +64,14 @@
         [Theory, InlineData("class"), InlineData("struct")]
         public async Task TestMethodWithBlockOnSingleLine(string elementType)
         {
-            var testCodeFormat = @"public ##TOKEN## Foo
+            var testCode = @"public ##PH## Foo
 {
     public bool Bar() 
     { return false; }
 }";
-            var testCode = testCodeFormat.Replace("##TOKEN##", elementType);
 
             var expected = this.CSharpDiagnostic().WithLocation(4, 5);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), expected, CancellationToken.None);
         }
 
         /// <summary>
@@ -84,14 +80,13 @@
         [Theory, InlineData("class"), InlineData("struct")]
         public async Task TestMethodWithBlockStartOnSameLine(string elementType)
         {
-            var testCodeFormat = @"public ##TOKEN## Foo
+            var testCode = @"public ##PH## Foo
 {
     public bool Bar() {
         return false; }
 }";
-            var testCode = testCodeFormat.Replace("##TOKEN##", elementType);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), EmptyDiagnosticResults, CancellationToken.None);
         }
 
         /// <summary>
@@ -100,13 +95,96 @@
         [Theory, InlineData("class"), InlineData("struct")]
         public async Task TestMethodWithExpressionBody(string elementType)
         {
-            var testCodeFormat = @"public ##TOKEN## Foo
+            var testCode = @"public ##PH## Foo
 {
     public bool Bar(int x, int y) => x > y;
 }";
-            var testCode = testCodeFormat.Replace("##TOKEN##", elementType);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Verifies that the codefix for an empty method with its block on the same line will work properly.
+        /// </summary>
+        [Theory, InlineData("class"), InlineData("struct")]
+        public async Task TestEmptyMethodOnSingleLineCodeFix(string elementType)
+        {
+            var testCode = @"public ##PH## Foo
+{
+    public void Bar() { }
+}";
+            var fixedTestCode = @"public ##PH## Foo
+{
+    public void Bar()
+    {
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(FormatTestCode(testCode, elementType), FormatTestCode(fixedTestCode, elementType));
+        }
+
+        /// <summary>
+        /// Verifies that the codefix for a method with its block on the same line will work properly.
+        /// </summary>
+        [Theory, InlineData("class"), InlineData("struct")]
+        public async Task TestMethodOnSingleLineCodeFix(string elementType)
+        {
+            var testCode = @"public ##PH## Foo
+{
+    public bool Bar() { return false; }
+}";
+            var fixedTestCode = @"public ##PH## Foo
+{
+    public bool Bar()
+    {
+        return false;
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(FormatTestCode(testCode, elementType), FormatTestCode(fixedTestCode, elementType));
+        }
+
+        /// <summary>
+        /// Verifies that the codefix for a method with its block on a single line will work properly.
+        /// </summary>
+        [Theory, InlineData("class"), InlineData("struct")]
+        public async Task TestMethodWithBlockOnSingleLineCodeFix(string elementType)
+        {
+            var testCode = @"public ##PH## Foo
+{
+    public bool Bar() 
+    { return false; }
+}";
+            var fixedTestCode = @"public ##PH## Foo
+{
+    public bool Bar()
+    {
+        return false;
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(FormatTestCode(testCode, elementType), FormatTestCode(fixedTestCode, elementType));
+        }
+
+        /// <summary>
+        /// Verifies that the code fix for a property with lots of trivia is working properly.
+        /// </summary>
+        [Theory, InlineData("class"), InlineData("struct")]
+        public async Task TestMethodWithLotsOfTriviaCodeFix(string elementType)
+        {
+            var testCode = @"public ##PH## Foo
+{
+    public bool Bar() /* TR1 */ { /* TR2 */ return false; /* TR3 */ } /* TR4 */
+}";
+            var fixedTestCode = @"public ##PH## Foo
+{
+    public bool Bar() /* TR1 */
+    { /* TR2 */
+        return false; /* TR3 */
+    } /* TR4 */
+}";
+
+            await this.VerifyCSharpFixAsync(FormatTestCode(testCode, elementType), FormatTestCode(fixedTestCode, elementType));
         }
     }
 }
