@@ -54,7 +54,21 @@
                 {
                     var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken);
 
-                    var newSyntaxRoot = syntaxRoot.RemoveNode(node, SyntaxRemoveOptions.KeepExteriorTrivia);
+                    // The first token is the open parenthesis token. This token has all the inner trivia
+                    var firstToken = node.GetFirstToken();
+                    var lastToken = node.GetLastToken();
+
+                    var previousToken = firstToken.GetPreviousToken();
+                    
+                    // We want to keep all trivia. The easiest way to do that is by doing it manually
+                    var newSyntaxRoot = syntaxRoot.RemoveNode(node, SyntaxRemoveOptions.KeepNoTrivia);
+
+                    // The removing operation has not changed the location of the previous token
+                    var newPreviousToken = newSyntaxRoot.FindToken(previousToken.GetLocation().SourceSpan.Start);
+
+                    var newTrailingTrivia = newPreviousToken.TrailingTrivia.AddRange(firstToken.GetAllTrivia()).AddRange(lastToken.GetAllTrivia());
+
+                    newSyntaxRoot = newSyntaxRoot.ReplaceToken(newPreviousToken, newPreviousToken.WithTrailingTrivia(newTrailingTrivia));
 
                     var changedDocument = context.Document.WithSyntaxRoot(newSyntaxRoot);
 
