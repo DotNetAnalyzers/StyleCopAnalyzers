@@ -106,7 +106,7 @@ namespace TestHelper
                 Assert.True(false,
                     string.Format("Fix introduced new compiler diagnostics:\r\n{0}\r\n\r\nNew document:\r\n{1}\r\n",
                         string.Join("\r\n", newCompilerDiagnostics.Select(d => d.ToString())),
-                        (await document.GetSyntaxRootAsync().ConfigureAwait(false)).ToFullString()));
+                        (await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false)).ToFullString()));
             }
 
             //after applying all of the code fixes, compare the resulting string to the inputted one
