@@ -18,7 +18,7 @@
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -31,9 +31,9 @@
 public partial {0} TypeName
 {{
 }}";
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "class"), EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "struct"), EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "interface"), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "class"), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "struct"), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "interface"), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -47,9 +47,9 @@ TypeName
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "class"), expected, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "struct"), expected, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "interface"), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "class"), expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "struct"), expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "interface"), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -66,9 +66,9 @@ TypeName
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "class"), expected, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "struct"), expected, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "interface"), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "class"), expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "struct"), expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "interface"), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -85,7 +85,7 @@ public partial class TypeName
     /// </summary>
     partial void MemberName();
 }}";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -102,7 +102,7 @@ public partial class TypeName
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 18);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -122,7 +122,7 @@ public partial class TypeName
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 18);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

@@ -18,7 +18,7 @@
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         private async Task TestTypeNoDocumentation(string typeName)
@@ -27,7 +27,7 @@
 {0} TypeName
 {{
 }}";
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         private async Task TestTypeWithDocumentation(string typeName)
@@ -39,7 +39,7 @@
 {0} TypeName
 {{
 }}";
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         private async Task TestTypeWithInheritedDocumentation(string typeName)
@@ -49,7 +49,7 @@
 {0} TypeName
 {{
 }}";
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         private async Task TestTypeWithoutDocumentation(string typeName)
@@ -65,103 +65,103 @@ TypeName
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestEnumWithDocumentation()
         {
-            await this.TestTypeWithDocumentation("enum");
+            await this.TestTypeWithDocumentation("enum").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestClassWithDocumentation()
         {
-            await this.TestTypeWithDocumentation("class");
+            await this.TestTypeWithDocumentation("class").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestStructWithDocumentation()
         {
-            await this.TestTypeWithDocumentation("struct");
+            await this.TestTypeWithDocumentation("struct").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestInterfaceWithDocumentation()
         {
-            await this.TestTypeWithDocumentation("interface");
+            await this.TestTypeWithDocumentation("interface").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestEnumWithInheritedDocumentation()
         {
-            await this.TestTypeWithInheritedDocumentation("enum");
+            await this.TestTypeWithInheritedDocumentation("enum").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestClassWithInheritedDocumentation()
         {
-            await this.TestTypeWithInheritedDocumentation("class");
+            await this.TestTypeWithInheritedDocumentation("class").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestStructWithInheritedDocumentation()
         {
-            await this.TestTypeWithInheritedDocumentation("struct");
+            await this.TestTypeWithInheritedDocumentation("struct").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestInterfaceWithInheritedDocumentation()
         {
-            await this.TestTypeWithInheritedDocumentation("interface");
+            await this.TestTypeWithInheritedDocumentation("interface").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestEnumWithoutDocumentation()
         {
-            await this.TestTypeWithoutDocumentation("enum");
+            await this.TestTypeWithoutDocumentation("enum").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestClassWithoutDocumentation()
         {
-            await this.TestTypeWithoutDocumentation("class");
+            await this.TestTypeWithoutDocumentation("class").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestStructWithoutDocumentation()
         {
-            await this.TestTypeWithoutDocumentation("struct");
+            await this.TestTypeWithoutDocumentation("struct").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestInterfaceWithoutDocumentation()
         {
-            await this.TestTypeWithoutDocumentation("interface");
+            await this.TestTypeWithoutDocumentation("interface").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestEnumNoDocumentation()
         {
-            await this.TestTypeNoDocumentation("enum");
+            await this.TestTypeNoDocumentation("enum").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestClassNoDocumentation()
         {
-            await this.TestTypeNoDocumentation("class");
+            await this.TestTypeNoDocumentation("class").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestStructNoDocumentation()
         {
-            await this.TestTypeNoDocumentation("struct");
+            await this.TestTypeNoDocumentation("struct").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestInterfaceNoDocumentation()
         {
-            await this.TestTypeNoDocumentation("interface");
+            await this.TestTypeNoDocumentation("interface").ConfigureAwait(false);
         }
 
         [Fact]
@@ -170,7 +170,7 @@ TypeName
             var testCode = @"
 public delegate 
 TypeName();";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -182,7 +182,7 @@ TypeName();";
 /// </summary>
 public delegate 
 TypeName();";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -192,7 +192,7 @@ TypeName();";
 /// <inheritdoc/>
 public delegate 
 TypeName();";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -207,7 +207,7 @@ void TypeName();";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 6);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -221,7 +221,7 @@ public class ClassName
 {
     public void Test() { }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -238,7 +238,7 @@ public class ClassName
     /// </summary>
     public void Test() { }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -253,7 +253,7 @@ public class ClassName
     /// <inheritdoc/>
     public void Test() { }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -273,7 +273,7 @@ public class ClassName
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 17);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -287,7 +287,7 @@ public class ClassName
 {
     public ClassName() { }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -304,7 +304,7 @@ public class ClassName
     /// </summary>
     public ClassName() { }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -319,7 +319,7 @@ public class ClassName
     /// <inheritdoc/>
     public ClassName() { }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -339,7 +339,7 @@ public class ClassName
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 12);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -353,7 +353,7 @@ public class ClassName
 {
     ~ClassName() { }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -370,7 +370,7 @@ public class ClassName
     /// </summary>
     ~ClassName() { }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -385,7 +385,7 @@ public class ClassName
     /// <inheritdoc/>
     ~ClassName() { }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -405,7 +405,7 @@ public class ClassName
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 6);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -422,7 +422,7 @@ public class ClassName
     /// </summary>
     public ClassName Property { get; set; }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -437,7 +437,7 @@ public class ClassName
     /// <inheritdoc/>
     public ClassName Property { get; set; }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -451,7 +451,7 @@ public class ClassName
 {
     public ClassName Property { get; set; }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -471,7 +471,7 @@ public class ClassName
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 22);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -488,7 +488,7 @@ public class ClassName
     /// </summary>
     public ClassName this[string t] { get { return null; } }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -503,7 +503,7 @@ public class ClassName
     /// <inheritdoc/>
     public ClassName this[string t] { get { return null; } }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -517,7 +517,7 @@ public class ClassName
 {
     public ClassName this[string t] { get { return null; } }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -537,7 +537,7 @@ public class ClassName
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 22);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -554,7 +554,7 @@ public class ClassName
     /// </summary>
     public ClassName Foo;
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -569,7 +569,7 @@ public class ClassName
     /// <inheritdoc/>
     public ClassName Foo;
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -583,7 +583,7 @@ public class ClassName
 {
     public ClassName Foo;
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -603,7 +603,7 @@ public class ClassName
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 22);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -620,7 +620,7 @@ public class ClassName
     /// </summary>
     public event System.Action Foo;
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -635,7 +635,7 @@ public class ClassName
     /// <inheritdoc/>
     public event System.Action Foo;
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -649,7 +649,7 @@ public class ClassName
 {
     public ClassName Foo;
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -669,7 +669,7 @@ public class ClassName
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 32);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -686,7 +686,7 @@ public interface InterfaceName
     /// </summary>
     event System.Action Foo { add; remove; }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -701,7 +701,7 @@ public interface InterfaceName
     /// <inheritdoc/>
     event System.Action Foo { add; remove; }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -715,7 +715,7 @@ public interface InterfaceName
 {
     event System.Action Foo { add; remove; }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -735,7 +735,7 @@ public interface InterfaceName
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 25);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

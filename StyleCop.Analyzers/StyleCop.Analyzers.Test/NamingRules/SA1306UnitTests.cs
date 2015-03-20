@@ -16,7 +16,7 @@
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
 
@@ -28,7 +28,7 @@
 string Bar, car, Dar;
 }}";
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         private async Task TestThatDiagnosticIsReported_SingleFieldImpl(string modifiers)
@@ -49,7 +49,7 @@ string Dar;
                     this.CSharpDiagnostic().WithArguments("Dar").WithLocation(8, 8)
                 };
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"public class Foo
 {{
@@ -61,7 +61,7 @@ string car;
 string dar;
 }}";
 
-            await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers));
+            await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers)).ConfigureAwait(false);
         }
 
         private async Task TestThatDiagnosticIsReported_MultipleFieldsImpl(string modifiers)
@@ -78,7 +78,7 @@ string Bar, car, Dar;
                     this.CSharpDiagnostic().WithArguments("Dar").WithLocation(4, 18)
                 };
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"public class Foo
 {{
@@ -86,41 +86,41 @@ string Bar, car, Dar;
 string bar, car, dar;
 }}";
 
-            await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers));
+            await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers)).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestThatDiagnosticIsReported_SingleField()
         {
-            await this.TestThatDiagnosticIsReported_SingleFieldImpl(string.Empty);
-            await this.TestThatDiagnosticIsReported_SingleFieldImpl("readonly");
-            await this.TestThatDiagnosticIsReported_SingleFieldImpl("private");
-            await this.TestThatDiagnosticIsReported_SingleFieldImpl("private readonly");
+            await this.TestThatDiagnosticIsReported_SingleFieldImpl(string.Empty).ConfigureAwait(false);
+            await this.TestThatDiagnosticIsReported_SingleFieldImpl("readonly").ConfigureAwait(false);
+            await this.TestThatDiagnosticIsReported_SingleFieldImpl("private").ConfigureAwait(false);
+            await this.TestThatDiagnosticIsReported_SingleFieldImpl("private readonly").ConfigureAwait(false);
         }
 
         [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
         public async Task TestThatDiagnosticIsReported_MultipleFields()
         {
-            await this.TestThatDiagnosticIsReported_MultipleFieldsImpl(string.Empty);
-            await this.TestThatDiagnosticIsReported_MultipleFieldsImpl("readonly");
-            await this.TestThatDiagnosticIsReported_MultipleFieldsImpl("private");
-            await this.TestThatDiagnosticIsReported_MultipleFieldsImpl("private readonly");
+            await this.TestThatDiagnosticIsReported_MultipleFieldsImpl(string.Empty).ConfigureAwait(false);
+            await this.TestThatDiagnosticIsReported_MultipleFieldsImpl("readonly").ConfigureAwait(false);
+            await this.TestThatDiagnosticIsReported_MultipleFieldsImpl("private").ConfigureAwait(false);
+            await this.TestThatDiagnosticIsReported_MultipleFieldsImpl("private readonly").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestThatDiagnosticIsNotReported()
         {
-            await this.TestThatDiagnosticIsNotReportedImpl("const");
-            await this.TestThatDiagnosticIsNotReportedImpl("private const");
-            await this.TestThatDiagnosticIsNotReportedImpl("internal const");
-            await this.TestThatDiagnosticIsNotReportedImpl("protected const");
-            await this.TestThatDiagnosticIsNotReportedImpl("protected internal const");
+            await this.TestThatDiagnosticIsNotReportedImpl("const").ConfigureAwait(false);
+            await this.TestThatDiagnosticIsNotReportedImpl("private const").ConfigureAwait(false);
+            await this.TestThatDiagnosticIsNotReportedImpl("internal const").ConfigureAwait(false);
+            await this.TestThatDiagnosticIsNotReportedImpl("protected const").ConfigureAwait(false);
+            await this.TestThatDiagnosticIsNotReportedImpl("protected internal const").ConfigureAwait(false);
 
-            await this.TestThatDiagnosticIsNotReportedImpl("internal readonly");
-            await this.TestThatDiagnosticIsNotReportedImpl("protected readonly");
-            await this.TestThatDiagnosticIsNotReportedImpl("protected internal readonly");
-            await this.TestThatDiagnosticIsNotReportedImpl("public");
-            await this.TestThatDiagnosticIsNotReportedImpl("internal");
+            await this.TestThatDiagnosticIsNotReportedImpl("internal readonly").ConfigureAwait(false);
+            await this.TestThatDiagnosticIsNotReportedImpl("protected readonly").ConfigureAwait(false);
+            await this.TestThatDiagnosticIsNotReportedImpl("protected internal readonly").ConfigureAwait(false);
+            await this.TestThatDiagnosticIsNotReportedImpl("public").ConfigureAwait(false);
+            await this.TestThatDiagnosticIsNotReportedImpl("internal").ConfigureAwait(false);
         }
 
         [Fact]
@@ -132,7 +132,7 @@ string bar, car, dar;
     public string _bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -143,7 +143,7 @@ string bar, car, dar;
     public string bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -154,7 +154,7 @@ string bar, car, dar;
     string Bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

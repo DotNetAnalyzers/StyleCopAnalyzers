@@ -18,7 +18,7 @@
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         private async Task TestTypeNoDocumentation(string typeName)
@@ -27,7 +27,7 @@
 partial {0} TypeName
 {{
 }}";
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         private async Task TestTypeWithSummaryDocumentation(string typeName)
@@ -39,7 +39,7 @@ partial {0} TypeName
 partial {0} TypeName
 {{
 }}";
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         private async Task TestTypeWithContentDocumentation(string typeName)
@@ -51,7 +51,7 @@ partial {0} TypeName
 partial {0} TypeName
 {{
 }}";
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         private async Task TestTypeWithInheritedDocumentation(string typeName)
@@ -61,7 +61,7 @@ partial {0} TypeName
 partial {0} TypeName
 {{
 }}";
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         private async Task TestTypeWithoutSummaryDocumentation(string typeName)
@@ -77,7 +77,7 @@ TypeName
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         private async Task TestTypeWithoutContentDocumentation(string typeName)
@@ -93,115 +93,115 @@ TypeName
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestClassWithDocumentation()
         {
-            await this.TestTypeWithSummaryDocumentation("class");
+            await this.TestTypeWithSummaryDocumentation("class").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestStructWithDocumentation()
         {
-            await this.TestTypeWithSummaryDocumentation("struct");
+            await this.TestTypeWithSummaryDocumentation("struct").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestInterfaceWithDocumentation()
         {
-            await this.TestTypeWithSummaryDocumentation("interface");
+            await this.TestTypeWithSummaryDocumentation("interface").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestClassWithContentDocumentation()
         {
-            await this.TestTypeWithContentDocumentation("class");
+            await this.TestTypeWithContentDocumentation("class").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestStructWithContentDocumentation()
         {
-            await this.TestTypeWithContentDocumentation("struct");
+            await this.TestTypeWithContentDocumentation("struct").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestInterfaceWithContentDocumentation()
         {
-            await this.TestTypeWithContentDocumentation("interface");
+            await this.TestTypeWithContentDocumentation("interface").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestClassWithInheritedDocumentation()
         {
-            await this.TestTypeWithInheritedDocumentation("class");
+            await this.TestTypeWithInheritedDocumentation("class").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestStructWithInheritedDocumentation()
         {
-            await this.TestTypeWithInheritedDocumentation("struct");
+            await this.TestTypeWithInheritedDocumentation("struct").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestInterfaceWithInheritedDocumentation()
         {
-            await this.TestTypeWithInheritedDocumentation("interface");
+            await this.TestTypeWithInheritedDocumentation("interface").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestClassWithoutSummaryDocumentation()
         {
-            await this.TestTypeWithoutSummaryDocumentation("class");
+            await this.TestTypeWithoutSummaryDocumentation("class").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestClassWithoutContentDocumentation()
         {
-            await this.TestTypeWithoutContentDocumentation("class");
+            await this.TestTypeWithoutContentDocumentation("class").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestStructWithoutSummaryDocumentation()
         {
-            await this.TestTypeWithoutSummaryDocumentation("struct");
+            await this.TestTypeWithoutSummaryDocumentation("struct").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestStructWithoutContentDocumentation()
         {
-            await this.TestTypeWithoutContentDocumentation("struct");
+            await this.TestTypeWithoutContentDocumentation("struct").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestInterfaceWithoutSummaryDocumentation()
         {
-            await this.TestTypeWithoutSummaryDocumentation("interface");
+            await this.TestTypeWithoutSummaryDocumentation("interface").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestInterfaceWithoutContentDocumentation()
         {
-            await this.TestTypeWithoutContentDocumentation("interface");
+            await this.TestTypeWithoutContentDocumentation("interface").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestClassNoDocumentation()
         {
-            await this.TestTypeNoDocumentation("class");
+            await this.TestTypeNoDocumentation("class").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestStructNoDocumentation()
         {
-            await this.TestTypeNoDocumentation("struct");
+            await this.TestTypeNoDocumentation("struct").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestInterfaceNoDocumentation()
         {
-            await this.TestTypeNoDocumentation("interface");
+            await this.TestTypeNoDocumentation("interface").ConfigureAwait(false);
         }
 
         [Fact]
@@ -215,7 +215,7 @@ public class ClassName
 {
     partial void Test();
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -232,7 +232,7 @@ public class ClassName
     /// </summary>
     partial void Test();
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -249,7 +249,7 @@ public class ClassName
     /// </content>
     partial void Test();
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -264,7 +264,7 @@ public class ClassName
     /// <inheritdoc/>
     partial void Test();
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -284,7 +284,7 @@ public class ClassName
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 18);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -304,7 +304,7 @@ public class ClassName
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 18);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

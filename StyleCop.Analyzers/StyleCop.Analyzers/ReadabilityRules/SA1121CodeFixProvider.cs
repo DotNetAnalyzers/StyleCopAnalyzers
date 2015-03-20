@@ -56,7 +56,7 @@
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-            var semanticModel = await context.Document.GetSemanticModelAsync();
+            var semanticModel = await context.Document.GetSemanticModelAsync().ConfigureAwait(false);
 
             if (semanticModel == null)
             {

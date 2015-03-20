@@ -31,7 +31,7 @@
         public async Task TestSpaceAfterComma()
         {
             string statement = "f(a, b);";
-            await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
+            await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement).ConfigureAwait(false);
         }
 
         [Fact]
@@ -40,11 +40,11 @@
             string statementWithoutSpace = @"f(a,b);";
             string statementWithSpace = @"f(a, b);";
 
-            await this.TestCommaInStatementOrDecl(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestCommaInStatementOrDecl(statementWithSpace, EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 16);
 
-            await this.TestCommaInStatementOrDecl(statementWithoutSpace, expected, statementWithSpace);
+            await this.TestCommaInStatementOrDecl(statementWithoutSpace, expected, statementWithSpace).ConfigureAwait(false);
         }
 
         [Fact]
@@ -55,7 +55,7 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 17);
 
-            await this.TestCommaInStatementOrDecl(spaceBeforeComma, expected, spaceOnlyAfterComma);
+            await this.TestCommaInStatementOrDecl(spaceBeforeComma, expected, spaceOnlyAfterComma).ConfigureAwait(false);
         }
 
         [Fact]
@@ -66,28 +66,28 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 17);
 
-            await this.TestCommaInStatementOrDecl(spaceBeforeComma, expected, spaceOnlyAfterComma);
+            await this.TestCommaInStatementOrDecl(spaceBeforeComma, expected, spaceOnlyAfterComma).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestLastCommaInLine()
         {
             string statement = $"f(a,{Environment.NewLine}b);";
-            await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
+            await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestFirstCommaInLine()
         {
             string statement = $"f(a{Environment.NewLine}, b);";
-            await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
+            await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestCommentBeforeFirstCommaInLine()
         {
             string statement = $"f(a // comment{Environment.NewLine}, b);";
-            await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
+            await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement).ConfigureAwait(false);
         }
 
         [Fact]
@@ -98,14 +98,14 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 41);
 
-            await this.TestCommaInStatementOrDecl(statement, expected, fixedStatement);
+            await this.TestCommaInStatementOrDecl(statement, expected, fixedStatement).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestCommaFollowedByAngleBracketInFuncType()
         {
             string statement = @"var a = typeof(System.Func<,>);";
-            await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
+            await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement).ConfigureAwait(false);
         }
 
         [Fact]
@@ -113,7 +113,7 @@
         {
             // This is correct by SA1001, and reported as an error by SA1015
             string statement = @"var a = typeof(System.Func<, >);";
-            await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
+            await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement).ConfigureAwait(false);
         }
 
         [Fact]
@@ -124,14 +124,14 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 41);
 
-            await this.TestCommaInStatementOrDecl(statement, expected, fixedStatement);
+            await this.TestCommaInStatementOrDecl(statement, expected, fixedStatement).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestCommaFollowedByCommaInFuncType()
         {
             string statement = @"var a = typeof(System.Func<,,>);";
-            await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement);
+            await this.TestCommaInStatementOrDecl(statement, EmptyDiagnosticResults, statement).ConfigureAwait(false);
         }
 
         [Fact]
@@ -141,7 +141,7 @@
             string fixedStatement = @"var a = typeof(System.Func<,,>);";
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 42);
 
-            await this.TestCommaInStatementOrDecl(statement, expected, fixedStatement);
+            await this.TestCommaInStatementOrDecl(statement, expected, fixedStatement).ConfigureAwait(false);
         }
 
         private Task TestCommaInStatementOrDecl(string originalStatement, DiagnosticResult expected, string fixedStatement)
@@ -165,8 +165,8 @@
             string originalCode = string.Format(template, originalStatement);
             string fixedCode = string.Format(template, fixedStatement);
 
-            await this.VerifyCSharpDiagnosticAsync(originalCode, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(originalCode, fixedCode, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(originalCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(originalCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

@@ -58,7 +58,7 @@
 
         private async void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
-            var syntaxRoot = await context.Tree.GetRootAsync(context.CancellationToken);
+            var syntaxRoot = await context.Tree.GetRootAsync(context.CancellationToken).ConfigureAwait(false);
 
             var descentNodes = syntaxRoot.DescendantNodes(descendIntoChildren: node => node != null && !node.IsKind(SyntaxKind.ClassDeclaration));
 
