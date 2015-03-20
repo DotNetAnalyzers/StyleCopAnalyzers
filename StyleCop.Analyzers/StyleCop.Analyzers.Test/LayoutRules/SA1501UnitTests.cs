@@ -3,7 +3,6 @@
     using System.Threading;
     using System.Threading.Tasks;
 
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -11,8 +10,6 @@
 
     using TestHelper;
     using Xunit;
-
-
 
     /// <summary>
     /// Unit tests for <see cref="SA1501StatementMustNotBeOnASingleLine"/>.
@@ -45,7 +42,7 @@ public class Foo
         lock (this) { Debug.Assert(true); }
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, this.GenerateExpectedWarning(6, 21), CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.CSharpDiagnostic().WithLocation(6, 21), CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -71,7 +68,7 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, this.GenerateExpectedWarning(10, 9), CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.CSharpDiagnostic().WithLocation(10, 9), CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -91,7 +88,7 @@ public class Foo
         }
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -110,7 +107,7 @@ public class Foo
         }
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -129,7 +126,7 @@ public class Foo
         MyDelegate d = delegate(int x) { Debug.WriteLine(x); };
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -146,7 +143,7 @@ public class Foo
         var test = new Action<int>(value => { Debug.WriteLine(value); });
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -160,7 +157,7 @@ public class Foo
 {
     public void Bar() { Debug.Assert(true); }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -178,7 +175,7 @@ public class Foo
         set { }
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -208,7 +205,7 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -237,7 +234,7 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -269,7 +266,7 @@ public class Foo
                 "\t}" +
                 "}";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -298,7 +295,7 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -340,7 +337,7 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -352,20 +349,6 @@ public class Foo
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new SA1501CodeFixProvider();
-        }
-
-        private DiagnosticResult[] GenerateExpectedWarning(int line, int column)
-        {
-            return new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Statement must not be on a single line",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations = new[] { new DiagnosticResultLocation("Test0.cs", line, column) }
-                    }
-                };
         }
     }
 }

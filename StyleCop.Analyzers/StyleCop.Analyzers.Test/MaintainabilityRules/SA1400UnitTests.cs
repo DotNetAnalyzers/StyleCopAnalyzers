@@ -3,12 +3,10 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Analyzers.MaintainabilityRules;
-    using Helpers;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using TestHelper;
+    using Xunit;
 
     public class SA1400UnitTests : CodeFixVerifier
     {
@@ -749,20 +747,7 @@
                 return;
             }
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = $"Element '{elementName ?? identifier}' must declare an access modifier",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 2, 4 + keywordLine.IndexOf(identifier))
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(elementName ?? identifier).WithLocation(2, 4 + keywordLine.IndexOf(identifier));
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -786,20 +771,7 @@
                 return;
             }
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = $"Element '{elementName ?? identifier}' must declare an access modifier",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 3, 4 + keywordLine.IndexOf(identifier))
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(elementName ?? identifier).WithLocation(3, 4 + keywordLine.IndexOf(identifier));
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -825,20 +797,7 @@
                 return;
             }
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = $"Element '{elementName ?? identifier}' must declare an access modifier",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 3, 4 + keywordLine.IndexOf(identifier))
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(elementName ?? identifier).WithLocation(3, 4 + keywordLine.IndexOf(identifier));
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -864,20 +823,7 @@ public {containingType} OuterTypeName {{
                 return;
             }
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = $"Element '{elementName ?? identifier}' must declare an access modifier",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 3, 4 + keywordLine.IndexOf(identifier))
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(elementName ?? identifier).WithLocation(3, 4 + keywordLine.IndexOf(identifier));
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -903,20 +849,7 @@ public {containingType} OuterTypeName {{
                 return;
             }
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = $"Element '{elementName ?? identifier}' must declare an access modifier",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 4 + keywordLine.IndexOf(identifier))
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(elementName ?? identifier).WithLocation(4, 4 + keywordLine.IndexOf(identifier));
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -944,20 +877,7 @@ public {containingType} OuterTypeName {{
                 return;
             }
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = $"Element '{elementName ?? identifier}' must declare an access modifier",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 4 + keywordLine.IndexOf(identifier))
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(elementName ?? identifier).WithLocation(4, 4 + keywordLine.IndexOf(identifier));
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 

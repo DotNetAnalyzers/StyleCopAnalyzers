@@ -45,9 +45,17 @@
                     var newSyntaxRoot = this.ReformatBlockAndParent(context, syntaxRoot, block);
                     var newDocument = context.Document.WithSyntaxRoot(newSyntaxRoot);
 
-                    context.RegisterCodeFix(CodeAction.Create("Expand single line block", token => Task.FromResult(newDocument)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Expand single line block", token => this.GetTransformedDocumentAsync(context, syntaxRoot, block)), diagnostic);
                 }
             }
+        }
+
+        private Task<Document> GetTransformedDocumentAsync(CodeFixContext context, SyntaxNode syntaxRoot, BlockSyntax block)
+        {
+            var newSyntaxRoot = this.ReformatBlockAndParent(context, syntaxRoot, block);
+            var newDocument = context.Document.WithSyntaxRoot(newSyntaxRoot);
+
+            return Task.FromResult(newDocument);
         }
 
         private SyntaxNode ReformatBlockAndParent(CodeFixContext context, SyntaxNode syntaxRoot, BlockSyntax block)

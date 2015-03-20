@@ -4,9 +4,8 @@
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
-    using Xunit;
     using TestHelper;
+    using Xunit;
 
     public abstract class DebugMessagesUnitTestsBase : CodeFixVerifier
     {
@@ -214,20 +213,7 @@ public class Foo
     }}}}
 }}}}";
 
-            var expected = new[]
-                    {
-                        new DiagnosticResult
-                        {
-                            Id = this.DiagnosticId,
-                            Message = string.Format("Debug.{0} must provide message text", this.MethodName),
-                            Severity = DiagnosticSeverity.Warning,
-                            Locations =
-                                new[]
-                                {
-                                    new DiagnosticResultLocation("Test0.cs", 7, 9)
-                                }
-                        }
-                    };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 9);
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None);
         }
@@ -244,20 +230,7 @@ public class Foo
     }}}}
 }}}}";
 
-            var expected = new[]
-                    {
-                        new DiagnosticResult
-                        {
-                            Id = this.DiagnosticId,
-                            Message = string.Format("Debug.{0} must provide message text", this.MethodName),
-                            Severity = DiagnosticSeverity.Warning,
-                            Locations =
-                                new[]
-                                {
-                                    new DiagnosticResultLocation("Test0.cs", 7, 9)
-                                }
-                        }
-                    };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 9);
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None);
         }
@@ -273,20 +246,7 @@ public class Foo
     }}}}
 }}}}";
 
-            var expected = new[]
-                    {
-                        new DiagnosticResult
-                        {
-                            Id = this.DiagnosticId,
-                            Message = string.Format("Debug.{0} must provide message text", this.MethodName),
-                            Severity = DiagnosticSeverity.Warning,
-                            Locations =
-                                new[]
-                                {
-                                    new DiagnosticResultLocation("Test0.cs", 6, 9)
-                                }
-                        }
-                    };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 9);
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None);
         }

@@ -27,15 +27,6 @@ namespace TestHelper
         }
 
         /// <summary>
-        /// Returns the code fix being tested (VB) - to be implemented in non-abstract class
-        /// </summary>
-        /// <returns>The <see cref="CodeFixProvider"/> to be used for Visual Basic code.</returns>
-        protected virtual CodeFixProvider GetBasicCodeFixProvider()
-        {
-            return null;
-        }
-
-        /// <summary>
         /// Called to test a C# code fix when applied on the input source as a string.
         /// </summary>
         /// <param name="oldSource">A class in the form of a string before the code fix was applied to it.</param>
@@ -46,19 +37,6 @@ namespace TestHelper
         protected Task VerifyCSharpFixAsync(string oldSource, string newSource, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false, CancellationToken cancellationToken = default(CancellationToken))
         {
             return this.VerifyFixAsync(LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzer(), this.GetCSharpCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics, cancellationToken);
-        }
-
-        /// <summary>
-        /// Called to test a Visual Basic code fix when applied on the input source as a string.
-        /// </summary>
-        /// <param name="oldSource">A class in the form of a string before the code fix was applied to it.</param>
-        /// <param name="newSource">A class in the form of a string after the code fix was applied to it.</param>
-        /// <param name="codeFixIndex">Index determining which code fix to apply if there are multiple.</param>
-        /// <param name="allowNewCompilerDiagnostics">A value indicating whether or not the test will fail if the code fix introduces other warnings after being applied.</param>
-        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
-        protected Task VerifyVisualBasicFixAsync(string oldSource, string newSource, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            return this.VerifyFixAsync(LanguageNames.VisualBasic, this.GetBasicDiagnosticAnalyzer(), this.GetBasicCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics, cancellationToken);
         }
 
         /// <summary>

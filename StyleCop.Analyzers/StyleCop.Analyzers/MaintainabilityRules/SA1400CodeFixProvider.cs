@@ -36,12 +36,12 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1400AccessModifierMustBeDeclared.DiagnosticId))
                     continue;
 
-                var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
                 SyntaxNode node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
                 if (node == null || node.IsMissing)
                     continue;
@@ -50,77 +50,77 @@
                 if (declarationNode == null)
                     continue;
 
-                SyntaxNode updatedDeclarationNode;
-                switch (declarationNode.Kind())
-                {
-                case SyntaxKind.ClassDeclaration:
-                    updatedDeclarationNode = this.HandleClassDeclaration((ClassDeclarationSyntax)declarationNode);
-                    break;
-
-                case SyntaxKind.InterfaceDeclaration:
-                    updatedDeclarationNode = this.HandleInterfaceDeclaration((InterfaceDeclarationSyntax)declarationNode);
-                    break;
-
-                case SyntaxKind.EnumDeclaration:
-                    updatedDeclarationNode = this.HandleEnumDeclaration((EnumDeclarationSyntax)declarationNode);
-                    break;
-
-                case SyntaxKind.StructDeclaration:
-                    updatedDeclarationNode = this.HandleStructDeclaration((StructDeclarationSyntax)declarationNode);
-                    break;
-
-                case SyntaxKind.DelegateDeclaration:
-                    updatedDeclarationNode = this.HandleDelegateDeclaration((DelegateDeclarationSyntax)declarationNode);
-                    break;
-
-                case SyntaxKind.EventDeclaration:
-                    updatedDeclarationNode = this.HandleEventDeclaration((EventDeclarationSyntax)declarationNode);
-                    break;
-
-                case SyntaxKind.EventFieldDeclaration:
-                    updatedDeclarationNode = this.HandleEventFieldDeclaration((EventFieldDeclarationSyntax)declarationNode);
-                    break;
-
-                case SyntaxKind.MethodDeclaration:
-                    updatedDeclarationNode = this.HandleMethodDeclaration((MethodDeclarationSyntax)declarationNode);
-                    break;
-
-                case SyntaxKind.PropertyDeclaration:
-                    updatedDeclarationNode = this.HandlePropertyDeclaration((PropertyDeclarationSyntax)declarationNode);
-                    break;
-
-                case SyntaxKind.FieldDeclaration:
-                    updatedDeclarationNode = this.HandleFieldDeclaration((FieldDeclarationSyntax)declarationNode);
-                    break;
-
-                case SyntaxKind.OperatorDeclaration:
-                    updatedDeclarationNode = this.HandleOperatorDeclaration((OperatorDeclarationSyntax)declarationNode);
-                    break;
-
-                case SyntaxKind.ConversionOperatorDeclaration:
-                    updatedDeclarationNode = this.HandleConversionOperatorDeclaration((ConversionOperatorDeclarationSyntax)declarationNode);
-                    break;
-
-                case SyntaxKind.IndexerDeclaration:
-                    updatedDeclarationNode = this.HandleIndexerDeclaration((IndexerDeclarationSyntax)declarationNode);
-                    break;
-
-                case SyntaxKind.ConstructorDeclaration:
-                    updatedDeclarationNode = this.HandleConstructorDeclaration((ConstructorDeclarationSyntax)declarationNode);
-                    break;
-
-                default:
-                    throw new InvalidOperationException("Unhandled declaration kind: " + declarationNode.Kind());
-                }
-
-                if (updatedDeclarationNode != null)
-                {
-                    var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken);
-                    var newSyntaxRoot = syntaxRoot.ReplaceNode(declarationNode, updatedDeclarationNode);
-                    var newDocument = context.Document.WithSyntaxRoot(newSyntaxRoot);
-                    context.RegisterCodeFix(CodeAction.Create("Declare accessibility", token => Task.FromResult(newDocument)), diagnostic);
-                }
+                context.RegisterCodeFix(CodeAction.Create("Declare accessibility", token => GetTransformedDocument(context.Document, root, declarationNode)), diagnostic);
             }
+        }
+
+        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxNode declarationNode)
+        {
+            SyntaxNode updatedDeclarationNode;
+            switch (declarationNode.Kind())
+            {
+            case SyntaxKind.ClassDeclaration:
+                updatedDeclarationNode = HandleClassDeclaration((ClassDeclarationSyntax)declarationNode);
+                break;
+
+            case SyntaxKind.InterfaceDeclaration:
+                updatedDeclarationNode = HandleInterfaceDeclaration((InterfaceDeclarationSyntax)declarationNode);
+                break;
+
+            case SyntaxKind.EnumDeclaration:
+                updatedDeclarationNode = HandleEnumDeclaration((EnumDeclarationSyntax)declarationNode);
+                break;
+
+            case SyntaxKind.StructDeclaration:
+                updatedDeclarationNode = HandleStructDeclaration((StructDeclarationSyntax)declarationNode);
+                break;
+
+            case SyntaxKind.DelegateDeclaration:
+                updatedDeclarationNode = HandleDelegateDeclaration((DelegateDeclarationSyntax)declarationNode);
+                break;
+
+            case SyntaxKind.EventDeclaration:
+                updatedDeclarationNode = HandleEventDeclaration((EventDeclarationSyntax)declarationNode);
+                break;
+
+            case SyntaxKind.EventFieldDeclaration:
+                updatedDeclarationNode = HandleEventFieldDeclaration((EventFieldDeclarationSyntax)declarationNode);
+                break;
+
+            case SyntaxKind.MethodDeclaration:
+                updatedDeclarationNode = HandleMethodDeclaration((MethodDeclarationSyntax)declarationNode);
+                break;
+
+            case SyntaxKind.PropertyDeclaration:
+                updatedDeclarationNode = HandlePropertyDeclaration((PropertyDeclarationSyntax)declarationNode);
+                break;
+
+            case SyntaxKind.FieldDeclaration:
+                updatedDeclarationNode = HandleFieldDeclaration((FieldDeclarationSyntax)declarationNode);
+                break;
+
+            case SyntaxKind.OperatorDeclaration:
+                updatedDeclarationNode = HandleOperatorDeclaration((OperatorDeclarationSyntax)declarationNode);
+                break;
+
+            case SyntaxKind.ConversionOperatorDeclaration:
+                updatedDeclarationNode = HandleConversionOperatorDeclaration((ConversionOperatorDeclarationSyntax)declarationNode);
+                break;
+
+            case SyntaxKind.IndexerDeclaration:
+                updatedDeclarationNode = HandleIndexerDeclaration((IndexerDeclarationSyntax)declarationNode);
+                break;
+
+            case SyntaxKind.ConstructorDeclaration:
+                updatedDeclarationNode = HandleConstructorDeclaration((ConstructorDeclarationSyntax)declarationNode);
+                break;
+
+            default:
+                throw new InvalidOperationException("Unhandled declaration kind: " + declarationNode.Kind());
+            }
+
+            var newSyntaxRoot = root.ReplaceNode(declarationNode, updatedDeclarationNode);
+            return Task.FromResult(document.WithSyntaxRoot(newSyntaxRoot));
         }
 
         /// <summary>
@@ -185,7 +185,7 @@
             return modifiers;
         }
 
-        private SyntaxNode HandleClassDeclaration(ClassDeclarationSyntax node)
+        private static SyntaxNode HandleClassDeclaration(ClassDeclarationSyntax node)
         {
             SyntaxToken triviaToken = node.Keyword;
             if (triviaToken.IsMissing)
@@ -199,7 +199,7 @@
                 .WithoutFormatting();
         }
 
-        private SyntaxNode HandleInterfaceDeclaration(InterfaceDeclarationSyntax node)
+        private static SyntaxNode HandleInterfaceDeclaration(InterfaceDeclarationSyntax node)
         {
             SyntaxToken triviaToken = node.Keyword;
             if (triviaToken.IsMissing)
@@ -213,7 +213,7 @@
                 .WithoutFormatting();
         }
 
-        private SyntaxNode HandleEnumDeclaration(EnumDeclarationSyntax node)
+        private static SyntaxNode HandleEnumDeclaration(EnumDeclarationSyntax node)
         {
             SyntaxToken triviaToken = node.EnumKeyword;
             if (triviaToken.IsMissing)
@@ -227,7 +227,7 @@
                 .WithoutFormatting();
         }
 
-        private SyntaxNode HandleStructDeclaration(StructDeclarationSyntax node)
+        private static SyntaxNode HandleStructDeclaration(StructDeclarationSyntax node)
         {
             SyntaxToken triviaToken = node.Keyword;
             if (triviaToken.IsMissing)
@@ -241,7 +241,7 @@
                 .WithoutFormatting();
         }
 
-        private SyntaxNode HandleDelegateDeclaration(DelegateDeclarationSyntax node)
+        private static SyntaxNode HandleDelegateDeclaration(DelegateDeclarationSyntax node)
         {
             SyntaxToken triviaToken = node.DelegateKeyword;
             if (triviaToken.IsMissing)
@@ -255,7 +255,7 @@
                 .WithoutFormatting();
         }
 
-        private SyntaxNode HandleEventDeclaration(EventDeclarationSyntax node)
+        private static SyntaxNode HandleEventDeclaration(EventDeclarationSyntax node)
         {
             SyntaxToken triviaToken = node.EventKeyword;
             if (triviaToken.IsMissing)
@@ -268,7 +268,7 @@
                 .WithoutFormatting();
         }
 
-        private SyntaxNode HandleEventFieldDeclaration(EventFieldDeclarationSyntax node)
+        private static SyntaxNode HandleEventFieldDeclaration(EventFieldDeclarationSyntax node)
         {
             SyntaxToken triviaToken = node.EventKeyword;
             if (triviaToken.IsMissing)
@@ -281,7 +281,7 @@
                 .WithoutFormatting();
         }
 
-        private SyntaxNode HandleMethodDeclaration(MethodDeclarationSyntax node)
+        private static SyntaxNode HandleMethodDeclaration(MethodDeclarationSyntax node)
         {
             TypeSyntax type = node.ReturnType;
             if (type == null || type.IsMissing)
@@ -294,7 +294,7 @@
                 .WithoutFormatting();
         }
 
-        private SyntaxNode HandlePropertyDeclaration(PropertyDeclarationSyntax node)
+        private static SyntaxNode HandlePropertyDeclaration(PropertyDeclarationSyntax node)
         {
             TypeSyntax type = node.Type;
             if (type == null || type.IsMissing)
@@ -307,7 +307,7 @@
                 .WithoutFormatting();
         }
 
-        private SyntaxNode HandleFieldDeclaration(FieldDeclarationSyntax node)
+        private static SyntaxNode HandleFieldDeclaration(FieldDeclarationSyntax node)
         {
             VariableDeclarationSyntax declaration = node.Declaration;
             if (declaration == null || declaration.IsMissing)
@@ -320,7 +320,7 @@
                 .WithoutFormatting();
         }
 
-        private SyntaxNode HandleOperatorDeclaration(OperatorDeclarationSyntax node)
+        private static SyntaxNode HandleOperatorDeclaration(OperatorDeclarationSyntax node)
         {
             TypeSyntax type = node.ReturnType;
             if (type == null || type.IsMissing)
@@ -333,7 +333,7 @@
                 .WithoutFormatting();
         }
 
-        private SyntaxNode HandleConversionOperatorDeclaration(ConversionOperatorDeclarationSyntax node)
+        private static SyntaxNode HandleConversionOperatorDeclaration(ConversionOperatorDeclarationSyntax node)
         {
             SyntaxToken triviaToken = node.ImplicitOrExplicitKeyword;
             if (triviaToken.IsMissing)
@@ -346,7 +346,7 @@
                 .WithoutFormatting();
         }
 
-        private SyntaxNode HandleIndexerDeclaration(IndexerDeclarationSyntax node)
+        private static SyntaxNode HandleIndexerDeclaration(IndexerDeclarationSyntax node)
         {
             TypeSyntax type = node.Type;
             if (type == null || type.IsMissing)
@@ -359,7 +359,7 @@
                 .WithoutFormatting();
         }
 
-        private SyntaxNode HandleConstructorDeclaration(ConstructorDeclarationSyntax node)
+        private static SyntaxNode HandleConstructorDeclaration(ConstructorDeclarationSyntax node)
         {
             SyntaxToken triviaToken = node.Identifier;
             if (triviaToken.IsMissing)

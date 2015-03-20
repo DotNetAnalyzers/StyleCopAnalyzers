@@ -2,12 +2,11 @@
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.LayoutRules;
     using TestHelper;
+    using Xunit;
 
     /// <summary>
     /// Unit tests for <see cref="SA1517CodeMustNotContainBlankLinesAtStartOfFile"/>.
@@ -154,18 +153,9 @@ public class Foo
             return new SA1517CodeFixProvider();
         }
 
-        private DiagnosticResult[] GenerateExpectedWarning(int line, int column)
+        private DiagnosticResult GenerateExpectedWarning(int line, int column)
         {
-            return new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Code must not contain blank lines at start of file",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", line, column) }
-                }
-            };
+            return this.CSharpDiagnostic().WithLocation(line, column);
         }
     }
 }
