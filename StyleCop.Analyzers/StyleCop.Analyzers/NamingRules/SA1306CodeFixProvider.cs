@@ -34,13 +34,14 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var document = context.Document;
+            var root = await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1306FieldNamesMustBeginWithLowerCaseLetter.DiagnosticId))
                     continue;
 
-                var document = context.Document;
-                var root = await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
                 var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (token.IsMissing)
                     continue;
