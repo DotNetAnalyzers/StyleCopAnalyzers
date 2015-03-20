@@ -46,7 +46,7 @@
     public int AutoBaz { get; } = 9;
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -61,7 +61,7 @@
 }";
 
             var expected = this.CSharpDiagnostic().WithLocation(3, 21);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -77,7 +77,7 @@
 }";
 
             var expected = this.CSharpDiagnostic().WithLocation(4, 5);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -93,7 +93,7 @@
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -110,7 +110,7 @@
     public bool Bar => this.x ^ this.y;
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -131,7 +131,7 @@
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -153,7 +153,7 @@
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -174,7 +174,7 @@
     } /* TR11 */
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
     }
 }

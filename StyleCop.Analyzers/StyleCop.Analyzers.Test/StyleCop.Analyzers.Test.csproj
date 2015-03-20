@@ -148,6 +148,7 @@
     <Compile Include="LayoutRules\SA1502UnitTests.Namespaces.cs" />
     <Compile Include="LayoutRules\SA1502UnitTests.Properties.cs" />
     <Compile Include="LayoutRules\SA1502UnitTests.Structs.cs" />
+    <Compile Include="LayoutRules\SA1516UnitTests.cs" />
     <Compile Include="LayoutRules\SA1517UnitTests.cs" />
     <Compile Include="LayoutRules\SA1518UnitTests.cs" />
     <Compile Include="MaintainabilityRules\DebugMessagesUnitTestsBase.cs" />

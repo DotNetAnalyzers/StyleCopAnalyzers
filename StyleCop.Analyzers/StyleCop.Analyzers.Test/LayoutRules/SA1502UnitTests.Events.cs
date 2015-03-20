@@ -42,7 +42,7 @@
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -59,7 +59,7 @@
 }";
 
             var expected = this.CSharpDiagnostic().WithLocation(5, 35);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -77,7 +77,7 @@
 }";
 
             var expected = this.CSharpDiagnostic().WithLocation(6, 5);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -95,7 +95,7 @@
         remove { x -= value; } }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -120,7 +120,7 @@
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -146,7 +146,7 @@
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -171,7 +171,7 @@
     } /* TR11 */
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
     }
 }

@@ -55,12 +55,18 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            var semanticModel = await context.Document.GetSemanticModelAsync();
+
+            if (semanticModel == null)
+            {
+                return;
+            }
+
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1121UseBuiltInTypeAlias.DiagnosticId))
                     continue;
-
-                var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
                 var node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
 
@@ -74,21 +80,24 @@
                     }
                 }
 
-                var semanticModel = await context.Document.GetSemanticModelAsync();
+                var typeInfo = semanticModel.GetTypeInfo(node);
 
-                var typeInfo = semanticModel?.GetTypeInfo(node);
-
-                if (typeInfo?.Type != null)
+                if (typeInfo.Type != null)
                 {
-                    SpecialType specialType = typeInfo.Value.Type.SpecialType;
-                    var newNode = SyntaxFactory.PredefinedType(SyntaxFactory.Token(PredefinedSpecialTypes[specialType]))
-                        .WithTriviaFrom(node)
-                        .WithoutFormatting();
-                    var newRoot = root.ReplaceNode(node, newNode);
-
-                    context.RegisterCodeFix(CodeAction.Create("Replace with built-in type", token => Task.FromResult(context.Document.WithSyntaxRoot(newRoot))), diagnostic);
+                    SpecialType specialType = typeInfo.Type.SpecialType;
+                    context.RegisterCodeFix(CodeAction.Create("Replace with built-in type", token => GetTransformedDocument(context.Document, root, node, specialType)), diagnostic);
                 }
             }
+        }
+
+        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxNode node, SpecialType specialType)
+        {
+            var newNode = SyntaxFactory.PredefinedType(SyntaxFactory.Token(PredefinedSpecialTypes[specialType]))
+                .WithTriviaFrom(node)
+                .WithoutFormatting();
+            var newRoot = root.ReplaceNode(node, newNode);
+
+            return Task.FromResult(document.WithSyntaxRoot(newRoot));
         }
     }
 }

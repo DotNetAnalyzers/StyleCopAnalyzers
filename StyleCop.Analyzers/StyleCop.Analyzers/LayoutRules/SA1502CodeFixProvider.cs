@@ -39,13 +39,13 @@
         {
             foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                context.RegisterCodeFix(CodeAction.Create("SA1502: Expand element", token => this.GetTransformedDocument(context, diagnostic, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("SA1502: Expand element", token => this.GetTransformedDocumentAsync(context, diagnostic, token)), diagnostic);
             }
 
             return Task.FromResult(true);
         }
 
-        private async Task<Document> GetTransformedDocument(CodeFixContext context, Diagnostic diagnostic, CancellationToken token)
+        private async Task<Document> GetTransformedDocumentAsync(CodeFixContext context, Diagnostic diagnostic, CancellationToken token)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             var newDocument = this.CreateCodeFix(context, diagnostic, syntaxRoot);

@@ -115,6 +115,28 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Fact]
+        public async Task TestCodeFixDoesNotRemoveExteriorTrivia()
+        {
+            var oldSource = @"public class Foo
+{
+    [System.Obsolete/*Foo*/(/*Bar*/)/*Foo*/]
+    public void Bar()
+    {
+    }
+}";
+
+            var newSource = @"public class Foo
+{
+    [System.Obsolete/*Foo*//*Bar*//*Foo*/]
+    public void Bar()
+    {
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(oldSource, newSource, cancellationToken: CancellationToken.None);
+        }
+
+        [Fact]
         public async Task TestCodeFixMultipleAttributes()
         {
             var oldSource = @"public class Foo
