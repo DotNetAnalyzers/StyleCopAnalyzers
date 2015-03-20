@@ -85,12 +85,12 @@
                 if (typeInfo.Type != null)
                 {
                     SpecialType specialType = typeInfo.Type.SpecialType;
-                    context.RegisterCodeFix(CodeAction.Create("Replace with built-in type", token => GetTransformedDocument(context.Document, root, node, specialType)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Replace with built-in type", token => GetTransformedDocumentAsync(context.Document, root, node, specialType)), diagnostic);
                 }
             }
         }
 
-        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxNode node, SpecialType specialType)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxNode node, SpecialType specialType)
         {
             var newNode = SyntaxFactory.PredefinedType(SyntaxFactory.Token(PredefinedSpecialTypes[specialType]))
                 .WithTriviaFrom(node)

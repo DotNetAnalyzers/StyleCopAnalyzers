@@ -54,12 +54,12 @@
                 var node = root?.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
                 if (node != null && node.IsKind(SyntaxKind.StringLiteralExpression))
                 {
-                    context.RegisterCodeFix(CodeAction.Create($"Replace with string.Empty", token => GetTransformedDocument(context.Document, root, node)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create($"Replace with string.Empty", token => GetTransformedDocumentAsync(context.Document, root, node)), diagnostic);
                 }
             }
         }
 
-        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxNode node)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxNode node)
         {
             var newSyntaxRoot = root.ReplaceNode(node, StringEmptyExpression);
             return Task.FromResult(document.WithSyntaxRoot(newSyntaxRoot));

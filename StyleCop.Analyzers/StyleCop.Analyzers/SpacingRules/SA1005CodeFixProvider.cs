@@ -46,11 +46,11 @@
                 if (!trivia.IsKind(SyntaxKind.SingleLineCommentTrivia))
                     continue;
 
-                context.RegisterCodeFix(CodeAction.Create("Insert space", t => GetTransformedDocument(context.Document, root, trivia)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Insert space", t => GetTransformedDocumentAsync(context.Document, root, trivia)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxTrivia trivia)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxTrivia trivia)
         {
             string text = trivia.ToFullString();
             if (!text.StartsWith("//"))

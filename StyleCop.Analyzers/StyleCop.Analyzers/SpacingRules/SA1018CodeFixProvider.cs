@@ -53,11 +53,11 @@
                 if (!previousToken.HasTrailingTrivia)
                     continue;
 
-                context.RegisterCodeFix(CodeAction.Create("Remove space", t => GetTransformedDocument(context.Document, root, previousToken)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Remove space", t => GetTransformedDocumentAsync(context.Document, root, previousToken)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxToken previousToken)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxToken previousToken)
         {
             SyntaxToken corrected = previousToken.WithoutTrailingWhitespace().WithoutFormatting();
             Document updatedDocument = document.WithSyntaxRoot(root.ReplaceToken(previousToken, corrected));

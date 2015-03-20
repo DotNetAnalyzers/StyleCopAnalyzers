@@ -45,11 +45,11 @@
                 if (keywordToken.IsMissing)
                     continue;
 
-                context.RegisterCodeFix(CodeAction.Create("Remove space", t => GetTransformedDocument(context.Document, root, keywordToken)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Remove space", t => GetTransformedDocumentAsync(context.Document, root, keywordToken)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxToken keywordToken)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxToken keywordToken)
         {
             SyntaxToken hashToken = keywordToken.GetPreviousToken(includeDirectives: true);
             if (!hashToken.IsKind(SyntaxKind.HashToken))

@@ -53,10 +53,10 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
+            context.RegisterSyntaxTreeAction(this.HandleSyntaxTreeAsync);
         }
 
-        private async void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private async void HandleSyntaxTreeAsync(SyntaxTreeAnalysisContext context)
         {
             var syntaxRoot = await context.Tree.GetRootAsync(context.CancellationToken).ConfigureAwait(false);
 
