@@ -13,7 +13,37 @@
     /// </summary>
     public class SA1507UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1507CodeMustNotContainMultipleBlankLinesInARow.DiagnosticId;
+        private const string TestCode = @"public class Foo
+{
+
+
+    using System;
+
+
+    using System.Collections;
+
+    void Bar()
+    {
+
+
+#if !IGNORE
+
+
+        return;
+#else
+
+
+        return;
+#endif
+
+
+/*
+
+
+*/
+    }
+}
+";
 
         /// <summary>
         /// Verifies that the analyzer will properly handle an empty source.
@@ -61,42 +91,9 @@ public class Foo
         /// <summary>
         /// Validate that all invalid multiple blank lines are reported.
         /// </summary>
-        /// <returns></returns>
         [Fact]
         public async Task TestInvalidMultipleBlankLines()
         {
-            var testCode = @"public class Foo
-{
-
-
-    using System;
-
-
-    using System.Collections;
-
-    void Bar()
-    {
-
-
-#if !IGNORE
-
-
-        return;
-#else
-
-
-        return;
-#endif
-
-
-/*
-
-
-*/
-    }
-}
-";
-
             var expectedDiagnostics = new[]
             {
                 this.CSharpDiagnostic().WithLocation(3, 1),
@@ -108,13 +105,55 @@ public class Foo
                 /* line 26 should not report a diagnostic, as its part of a comment */
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(TestCode, expectedDiagnostics, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Validate that the code fixes for all invalid multiple blank lines works properly.
+        /// </summary>
+        [Fact]
+        public async Task TestInvalidMultipleBlankLinesCodeFix()
+        {
+            var fixedTestCode = @"public class Foo
+{
+
+    using System;
+
+    using System.Collections;
+
+    void Bar()
+    {
+
+#if !IGNORE
+
+        return;
+#else
+
+
+        return;
+#endif
+
+/*
+
+
+*/
+    }
+}
+";
+
+            await this.VerifyCSharpFixAsync(TestCode, fixedTestCode);
         }
 
         /// <inheritdoc/>
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1507CodeMustNotContainMultipleBlankLinesInARow();
+        }
+
+        /// <inheritdoc/>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1507CodeFixProvider();
         }
     }
 }
