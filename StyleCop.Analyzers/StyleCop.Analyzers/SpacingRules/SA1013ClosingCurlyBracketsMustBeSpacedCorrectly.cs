@@ -3,6 +3,7 @@
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -105,6 +106,13 @@
             else
             {
                 precedesSpecialCharacter = false;
+            }
+
+            var parent = token.Parent as InterpolationSyntax;
+            if (parent != null)
+            {
+                // Don't report for interpolation string inlets
+                return;
             }
 
             if (!firstInLine && !precededBySpace)
