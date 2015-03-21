@@ -89,6 +89,29 @@ public class Foo
         }
 
         /// <summary>
+        /// Verifies that a verbatim string literal does not trigger any diagnostics.
+        /// (This will be handled by SA1518)
+        /// </summary>
+        [Fact]
+        public async Task TestVerbatimStringLiteral()
+        {
+            var testCode = @"public class Foo
+{
+    private string testCode = @""namespace Bar
+{
+
+
+    using System;
+}
+"";
+
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        /// <summary>
         /// Validate that all invalid multiple blank lines are reported.
         /// </summary>
         [Fact]

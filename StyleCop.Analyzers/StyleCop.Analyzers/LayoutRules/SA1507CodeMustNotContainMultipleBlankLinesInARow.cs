@@ -69,6 +69,7 @@
         private void HandleSyntaxTreeAnalysis(SyntaxTreeAnalysisContext context)
         {
             var text = context.Tree.GetText();
+            var syntaxRoot = context.Tree.GetRoot();
             var blankLinesStart = 0;
             var blankLinesCount = 0;
 
@@ -85,17 +86,21 @@
                     {
                         var blankLinesSpan = TextSpan.FromBounds(text.Lines[blankLinesStart].Span.Start, text.Lines[i - 1].Span.End);
 
-                        var trivia = context.Tree.GetRoot().FindTrivia(text.Lines[blankLinesStart].Span.Start);
-                        switch (trivia.Kind())
+                        var node = syntaxRoot.FindNode(text.Lines[blankLinesStart].Span);
+                        if (!node.IsKind(SyntaxKind.StringLiteralExpression))
                         {
-                            case SyntaxKind.DisabledTextTrivia:
-                            case SyntaxKind.MultiLineCommentTrivia:
-                                // ignore multiple blanks lines
-                                break;
+                            var trivia = syntaxRoot.FindTrivia(text.Lines[blankLinesStart].Span.Start);
+                            switch (trivia.Kind())
+                            {
+                                case SyntaxKind.DisabledTextTrivia:
+                                case SyntaxKind.MultiLineCommentTrivia:
+                                    // ignore multiple blanks lines
+                                    break;
 
-                            default:
-                                context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, blankLinesSpan)));
-                                break;
+                                default:
+                                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, blankLinesSpan)));
+                                    break;
+                            }
                         }
                     }
 
