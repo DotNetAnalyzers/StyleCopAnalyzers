@@ -34,13 +34,13 @@
         {
             foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                context.RegisterCodeFix(CodeAction.Create("Remove multiple blank lines", token => GetTransformedDocument(context.Document, diagnostic, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Remove multiple blank lines", token => GetTransformedDocumentAsync(context.Document, diagnostic, token)), diagnostic);
             }
 
             return Task.FromResult(true);
         }
 
-        private static async Task<Document> GetTransformedDocument(Document document, Diagnostic diagnostic, CancellationToken token)
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken token)
         {
             var sourceText = await document.GetTextAsync(token).ConfigureAwait(false);
 
