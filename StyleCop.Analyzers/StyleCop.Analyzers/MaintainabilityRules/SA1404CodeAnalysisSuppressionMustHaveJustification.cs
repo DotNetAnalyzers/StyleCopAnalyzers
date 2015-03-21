@@ -7,8 +7,6 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-
-
     /// <summary>
     /// A Code Analysis SuppressMessage attribute does not include a justification.
     /// </summary>

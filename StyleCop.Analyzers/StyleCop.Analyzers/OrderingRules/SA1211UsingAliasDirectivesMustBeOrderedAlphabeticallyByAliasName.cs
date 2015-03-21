@@ -82,7 +82,6 @@
                 if (string.Compare(alias, precedingAlias, StringComparison.OrdinalIgnoreCase) >= 0)
                     continue;
 
-
                 // Using alias directive for '{alias}' must appear before using alias directive for '{precedingAlias}'
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.GetLocation(), alias, precedingAlias));
                 break;

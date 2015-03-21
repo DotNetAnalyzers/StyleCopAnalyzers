@@ -7,10 +7,6 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using System;
 
-
-
-
-
     /// <summary>
     /// The C# code includes an empty string, written as <c>""</c>.
     /// </summary>

@@ -252,7 +252,6 @@ public interface InterfaceName
     event System.Action MemberName;
 }}";
 
-
             DiagnosticResult[] expected =
                 {
                     this.CSharpDiagnostic().WithLocation(8, 25)
@@ -557,7 +556,6 @@ public class OuterClass
             await this.TestNestedTypeDeclarationDocumentation(type, "protected internal", false, true);
             await this.TestNestedTypeDeclarationDocumentation(type, "public", false, true);
         }
-
 
         [Fact]
         public async Task TestClassWithoutDocumentation()

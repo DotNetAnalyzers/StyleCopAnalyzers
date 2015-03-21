@@ -8,7 +8,6 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers;
 
-
     /// <summary>
     /// A C# partial element is missing a documentation header.
     /// </summary>
