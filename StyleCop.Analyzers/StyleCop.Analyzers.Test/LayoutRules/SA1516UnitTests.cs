@@ -278,7 +278,6 @@ public struct Struct
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
-
             string fixedCode = @"using System;
 
 public interface IInterface
@@ -336,7 +335,6 @@ public class Foo
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-
 
             string fixedCode = @"using System;
 

@@ -562,6 +562,7 @@ public class OuterClass
         {
             await this.TestTypeWithoutDocumentation("class");
         }
+
         [Fact]
         public async Task TestStructWithoutDocumentation()
         {

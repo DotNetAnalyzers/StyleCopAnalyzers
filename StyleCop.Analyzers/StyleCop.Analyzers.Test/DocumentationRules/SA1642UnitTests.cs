@@ -236,7 +236,6 @@
             await this.VerifyCSharpDiagnosticAsync(testCode,
                 expected, CancellationToken.None);
 
-
             var fixedCode = @"namespace FooNamespace
 {{
     public class Foo{0}

@@ -823,7 +823,6 @@ public class FooChild : Foo
     }
 }";
 
-
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
@@ -848,7 +847,6 @@ public class FooChild : Foo
         }
     }
 }";
-
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }

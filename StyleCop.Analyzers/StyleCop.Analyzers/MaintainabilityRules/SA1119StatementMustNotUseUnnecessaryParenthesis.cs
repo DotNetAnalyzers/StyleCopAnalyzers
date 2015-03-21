@@ -55,6 +55,7 @@
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+
         private static readonly DiagnosticDescriptor ParenthesisDescriptor =
             new DiagnosticDescriptor(ParenthesesDiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Hidden, false, Description, HelpLink, customTags: new[] { WellKnownDiagnosticTags.Unnecessary, WellKnownDiagnosticTags.NotConfigurable });
 
