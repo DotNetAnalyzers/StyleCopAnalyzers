@@ -1,0 +1,120 @@
+﻿namespace StyleCop.Analyzers.Test.LayoutRules
+{
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.LayoutRules;
+    using TestHelper;
+    using Xunit;
+
+    /// <summary>
+    /// Unit tests for <see cref="SA1507CodeMustNotContainMultipleBlankLinesInARow"/>.
+    /// </summary>
+    public class SA1507UnitTests : CodeFixVerifier
+    {
+        private const string DiagnosticId = SA1507CodeMustNotContainMultipleBlankLinesInARow.DiagnosticId;
+
+        /// <summary>
+        /// Verifies that the analyzer will properly handle an empty source.
+        /// </summary>
+        [Fact]
+        public async Task TestEmptySource()
+        {
+            var testCode = string.Empty;
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Verifies that empty lines at the start of the file do not trigger any diagnostics.
+        /// (This will be handled by SA1517)
+        /// </summary>
+        [Fact]
+        public async Task TestEmptyLinesAtStartOfFile()
+        {
+            var testCode = @"
+
+public class Foo
+{
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Verifies that empty lines at the end of the file do not trigger any diagnostics.
+        /// (This will be handled by SA1518)
+        /// </summary>
+        [Fact]
+        public async Task TestEmptyLinesAtEndOfFile()
+        {
+            var testCode = @"public class Foo
+{
+}
+
+
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Validate that all invalid multiple blank lines are reported.
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        public async Task TestInvalidMultipleBlankLines()
+        {
+            var testCode = @"public class Foo
+{
+
+
+    using System;
+
+
+    using System.Collections;
+
+    void Bar()
+    {
+
+
+#if !IGNORE
+
+
+        return;
+#else
+
+
+        return;
+#endif
+
+
+/*
+
+
+*/
+    }
+}
+";
+
+            var expectedDiagnostics = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(3, 1),
+                this.CSharpDiagnostic().WithLocation(6, 1),
+                this.CSharpDiagnostic().WithLocation(12, 1),
+                this.CSharpDiagnostic().WithLocation(15, 1),
+                /* line 19 should not report a diagnostic, as its part of the directive is inactive */
+                this.CSharpDiagnostic().WithLocation(23, 1)
+                /* line 26 should not report a diagnostic, as its part of a comment */
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None);
+        }
+
+        /// <inheritdoc/>
+        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        {
+            return new SA1507CodeMustNotContainMultipleBlankLinesInARow();
+        }
+    }
+}
