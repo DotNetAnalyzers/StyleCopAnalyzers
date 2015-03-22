@@ -57,7 +57,10 @@
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return SupportedDiagnosticsValue; }
+            get
+            {
+                return SupportedDiagnosticsValue;
+            }
         }
 
         /// <inheritdoc/>
