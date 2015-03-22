@@ -137,6 +137,7 @@
     <Compile Include="Helpers\DiagnosticResult.cs" />
     <Compile Include="Helpers\DiagnosticVerifier.Helper.cs" />
     <Compile Include="LayoutRules\SA1500UnitTests.Blocks.cs" />
+    <Compile Include="LayoutRules\SA1500UnitTests.Checkeds.cs" />
     <Compile Include="LayoutRules\SA1500UnitTests.cs" />
     <Compile Include="LayoutRules\SA1516UnitTests.cs" />
     <Compile Include="LayoutRules\SA1517UnitTests.cs" />

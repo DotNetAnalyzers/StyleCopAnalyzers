@@ -19,7 +19,7 @@
         /// These blocks are valid for SA1500 only, some will report other diagnostics from the layout (SA15xx) series.
         /// </remarks>
         [Fact]
-        public async Task TestValidBlocks()
+        public async Task TestBlockValid()
         {
             var testCode = @"public class Foo
 {
@@ -34,10 +34,10 @@
             int a;
         }
 
-        // valid block #3
+        // valid block #3 (valid only for SA1500)
         { }
 
-        // valid block #4
+        // valid block #4 (valid only for SA1500)
         { int b; }
     }
 }";
@@ -46,39 +46,31 @@
         }
 
         /// <summary>
-        /// Verifies that not having the opening curly bracket on its own line will report a diagnostic.
+        /// Verifies that diagnostics will be reported for all invalid blocks.
         /// </summary>
         [Fact]
-        public async Task TestInvalidOpeningCurlyBracket()
+        public async Task TestBlockInvalid()
         {
             var testCode = @"public class Foo
 {
     public void Bar()
     {
+        // invalid block #1
         { int a;
         }
-    }
-}";
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(5, 9);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-        }
 
-        /// <summary>
-        /// Verifies that not having the closing curly bracket on its own line will report a diagnostic.
-        /// </summary>
-        [Fact]
-        public async Task TestInvalidClosingCurlyBracket()
-        {
-            var testCode = @"public class Foo
-{
-    public void Bar()
-    {
+        // invalid block #2
         { 
             int a; }
     }
 }";
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(6, 20);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            var expectedDiagnostics = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(6, 9),
+                this.CSharpDiagnostic().WithLocation(11, 20)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
