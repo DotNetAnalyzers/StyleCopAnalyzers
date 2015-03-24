@@ -372,6 +372,38 @@ public class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
+        [Fact]
+        public async Task TestThatCodeFixWorksOnFieldsAdjacentToMultiLineFields()
+        {
+            string testCode = @"using System;
+
+public class Foo
+{
+    private string experiment =
+        string.Empty;
+    private string experiment2;
+}";
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(7, 20)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+
+            string fixedCode = @"using System;
+
+public class Foo
+{
+    private string experiment =
+        string.Empty;
+
+    private string experiment2;
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1516ElementsMustBeSeparatedByBlankLine();
