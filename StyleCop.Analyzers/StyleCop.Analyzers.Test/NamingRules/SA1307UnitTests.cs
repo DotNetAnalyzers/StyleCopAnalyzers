@@ -95,8 +95,6 @@ string Bar, Car, Dar;
             await this.TestThatDiagnosticIsReported_SingleFieldImpl("public");
             await this.TestThatDiagnosticIsReported_SingleFieldImpl("internal");
             await this.TestThatDiagnosticIsReported_SingleFieldImpl("protected internal");
-            await this.TestThatDiagnosticIsReported_SingleFieldImpl("public readonly");
-            await this.TestThatDiagnosticIsReported_SingleFieldImpl("internal readonly");
         }
 
         [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
@@ -105,8 +103,6 @@ string Bar, Car, Dar;
             await this.TestThatDiagnosticIsReported_MultipleFieldsImpl("public");
             await this.TestThatDiagnosticIsReported_MultipleFieldsImpl("internal");
             await this.TestThatDiagnosticIsReported_MultipleFieldsImpl("protected internal");
-            await this.TestThatDiagnosticIsReported_MultipleFieldsImpl("public readonly");
-            await this.TestThatDiagnosticIsReported_MultipleFieldsImpl("internal readonly");
         }
 
         [Fact]
