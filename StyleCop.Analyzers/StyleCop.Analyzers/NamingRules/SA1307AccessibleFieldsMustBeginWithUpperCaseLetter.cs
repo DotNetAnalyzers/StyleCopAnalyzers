@@ -59,7 +59,8 @@
         {
             // To improve performance we are looking for the field instead of the declarator directly. That way we don't get called for local variables.
             FieldDeclarationSyntax declaration = context.Node as FieldDeclarationSyntax;
-            if (declaration != null && declaration.Declaration != null)
+            // Exclude read only fields because they are handled by SA1304
+            if (declaration != null && declaration.Declaration != null && !declaration.Modifiers.Any(SyntaxKind.ReadOnlyKeyword))
             {
                 if (declaration.Modifiers.Any(SyntaxKind.PublicKeyword) || declaration.Modifiers.Any(SyntaxKind.InternalKeyword))
                 {
