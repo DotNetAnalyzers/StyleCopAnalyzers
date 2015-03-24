@@ -61,7 +61,7 @@
 
         private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxNode node)
         {
-            var newSyntaxRoot = root.ReplaceNode(node, StringEmptyExpression);
+            var newSyntaxRoot = root.ReplaceNode(node, StringEmptyExpression.WithTriviaFrom(node));
             return Task.FromResult(document.WithSyntaxRoot(newSyntaxRoot));
         }
     }
