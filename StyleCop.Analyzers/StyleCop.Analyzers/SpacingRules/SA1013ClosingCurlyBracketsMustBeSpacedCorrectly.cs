@@ -108,7 +108,7 @@
                 precedesSpecialCharacter = false;
             }
 
-            if (token.Parent as InterpolationSyntax != null)
+            if (token.Parent is InterpolationSyntax)
             {
                 // Don't report for interpolation string inlets
                 return;
