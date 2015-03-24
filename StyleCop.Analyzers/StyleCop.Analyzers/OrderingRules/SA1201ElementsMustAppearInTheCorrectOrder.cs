@@ -2,7 +2,11 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Helpers;
+
 
     /// <summary>
     /// An element within a C# code file is out of order in relation to the other elements in the code.
@@ -103,7 +107,7 @@
         /// </summary>
         public const string DiagnosticId = "SA1201";
         private const string Title = "Elements must appear in the correct order";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "Elements must appear in the correct order";
         private const string Category = "StyleCop.CSharp.OrderingRules";
         private const string Description = "An element within a C# code file is out of order in relation to the other elements in the code.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1201.html";
@@ -113,6 +117,29 @@
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
+
+        // extern alias and usings are missing here because the compiler itself is enforcing the right order.
+        private readonly static ImmutableArray<SyntaxKind> OuterOrder = ImmutableArray.Create(
+            SyntaxKind.NamespaceDeclaration,
+            SyntaxKind.DelegateDeclaration,
+            SyntaxKind.EnumDeclaration,
+            SyntaxKind.InterfaceDeclaration,
+            SyntaxKind.StructDeclaration,
+            SyntaxKind.ClassDeclaration);
+
+        private readonly static ImmutableArray<SyntaxKind> TypeMemberOrder = ImmutableArray.Create(
+            SyntaxKind.FieldDeclaration,
+            SyntaxKind.ConstructorDeclaration,
+            SyntaxKind.DestructorDeclaration,
+            SyntaxKind.DelegateDeclaration,
+            SyntaxKind.EventDeclaration,
+            SyntaxKind.EnumDeclaration,
+            SyntaxKind.InterfaceDeclaration,
+            SyntaxKind.PropertyDeclaration,
+            SyntaxKind.IndexerDeclaration,
+            SyntaxKind.MethodDeclaration,
+            SyntaxKind.StructDeclaration,
+            SyntaxKind.ClassDeclaration);
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
@@ -126,7 +153,50 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(this.HandleCompilationUnit, SyntaxKind.CompilationUnit);
+            context.RegisterSyntaxNodeAction(this.HandleNamespaceDeclaration, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleTypeDeclaration, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
+        }
+
+        private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var typeDeclaration = context.Node as TypeDeclarationSyntax;
+
+            HandleMemberList(context, typeDeclaration.Members, TypeMemberOrder);
+        }
+
+        private void HandleCompilationUnit(SyntaxNodeAnalysisContext context)
+        {
+            var compilationUnit = context.Node as CompilationUnitSyntax;
+
+            HandleMemberList(context, compilationUnit.Members, OuterOrder);
+        }
+
+        private void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var compilationUnit = context.Node as NamespaceDeclarationSyntax;
+
+            HandleMemberList(context, compilationUnit.Members, OuterOrder);
+        }
+
+        private static void HandleMemberList(SyntaxNodeAnalysisContext context, SyntaxList<MemberDeclarationSyntax> members, ImmutableArray<SyntaxKind> order)
+        {
+            int maxIndex = 0;
+            for (int i = 0; i < members.Count; i++)
+            {
+                int index = order.IndexOf(members[i].Kind());
+
+                if (index >= maxIndex)
+                {
+                    maxIndex = index;
+                }
+                else
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(members[i])));
+                }
+            }
         }
     }
 }

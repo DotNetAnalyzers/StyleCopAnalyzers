@@ -7,6 +7,8 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using System;
     using System.Threading.Tasks;
+    using StyleCop.Analyzers.Helpers;
+
 
     /// <summary>
     /// A C# code file contains more than one unique class.
@@ -75,7 +77,7 @@
                         {
                             continue;
                         }
-                        var location = this.GetClassLocation(node);
+                        var location = NamedTypeHelpers.GetNameOrIdentifierLocation(node);
                         if (location != null)
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
@@ -88,12 +90,6 @@
                     }
                 }
             }
-        }
-
-        private Location GetClassLocation(SyntaxNode node)
-        {
-            var classDeclaration = node as ClassDeclarationSyntax;
-            return classDeclaration?.Identifier.GetLocation();
         }
     }
 }
