@@ -62,7 +62,6 @@ public class Bar : IFoo
 {
 }";
 
-
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 

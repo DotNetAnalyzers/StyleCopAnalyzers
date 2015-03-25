@@ -49,6 +49,7 @@
                 context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context.Document, root, token)), diagnostic);
             }
         }
+
         private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxToken token)
         {
 

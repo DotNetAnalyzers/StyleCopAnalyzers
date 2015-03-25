@@ -19,7 +19,6 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-
         private async Task TestThatDiagnosticIsNotReportedImpl(string modifiers)
         {
             var testCode = @"public class Foo

@@ -40,6 +40,7 @@
             [SpecialType.System_UInt32] = SyntaxKind.UIntKeyword,
             [SpecialType.System_UInt64] = SyntaxKind.ULongKeyword
         };
+
         private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1121UseBuiltInTypeAlias.DiagnosticId);
 

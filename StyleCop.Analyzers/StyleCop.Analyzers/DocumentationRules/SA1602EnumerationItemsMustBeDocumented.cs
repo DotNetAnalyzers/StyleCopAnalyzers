@@ -8,7 +8,6 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers;
 
-
     /// <summary>
     /// An item within a C# enumeration is missing an XML documentation header.
     /// </summary>

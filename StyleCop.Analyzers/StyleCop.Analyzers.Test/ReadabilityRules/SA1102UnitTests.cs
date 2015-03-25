@@ -74,7 +74,6 @@ public class Foo4
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-
         [Fact]
         public async Task TestComplexQueryWithAdditionalEmptyLine()
         {
