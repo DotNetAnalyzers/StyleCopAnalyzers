@@ -33,14 +33,14 @@ public class Foo
 
         // valid block #2
         {
-            Debug.Assert(true);
+            Debug.Indent();
         }
 
         // valid block #3 (valid only for SA1500)
         { }
 
         // valid block #4 (valid only for SA1500)
-        { Debug.Assert(true); }
+        { Debug.Indent(); }
     }
 }";
 
@@ -60,18 +60,18 @@ public class Foo
     public void Bar()
     {
         // invalid block #1
-        { Debug.Assert(true);
+        { Debug.Indent();
         }
 
         // invalid block #2
         { 
-            Debug.Assert(true); }
+            Debug.Indent(); }
     }
 }";
             var expectedDiagnostics = new[]
             {
                 this.CSharpDiagnostic().WithLocation(8, 9),
-                this.CSharpDiagnostic().WithLocation(13, 33)
+                this.CSharpDiagnostic().WithLocation(13, 29)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

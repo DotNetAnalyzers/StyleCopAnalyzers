@@ -43,6 +43,10 @@
 
         // Valid for #4 (Valid only for SA1500)
         for (var y = 0; y < 2; y++) { x += y; }
+
+        // Valid for #5 (Valid only for SA1500)
+        for (var y = 0; y < 2; y++) 
+        { x += y; }
     }
 }";
 
@@ -87,10 +91,6 @@
         for (var y = 0; y < 2; y++)
         { x += y;
         }
-
-        // Invalid for #7
-        for (var y = 0; y < 2; y++)
-        { x += y; }
     }
 }";
 
@@ -108,10 +108,7 @@
                 // Invalid for #5
                 this.CSharpDiagnostic().WithLocation(27, 21),
                 // Invalid for #6
-                this.CSharpDiagnostic().WithLocation(31, 9),
-                // Invalid for #7
-                this.CSharpDiagnostic().WithLocation(36, 9),
-                this.CSharpDiagnostic().WithLocation(36, 19)
+                this.CSharpDiagnostic().WithLocation(31, 9)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

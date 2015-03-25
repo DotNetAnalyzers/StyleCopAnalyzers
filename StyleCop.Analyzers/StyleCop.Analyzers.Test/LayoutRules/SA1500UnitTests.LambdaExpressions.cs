@@ -22,6 +22,7 @@
         public async Task TestLambdaExpressionValid()
         {
             var testCode = @"using System;
+using System.Diagnostics;
 
 public class Foo
 {
@@ -35,7 +36,7 @@ public class Foo
         Action item1 = () => { };
         
         // Valid lambda expression #2
-        Action item2 = () => { int x; };
+        Action item2 = () => { Debug.Indent(); };
 
         // Valid lambda expression #3
         Action item3 = () =>
@@ -45,25 +46,33 @@ public class Foo
         // Valid lambda expression #4
         Action item4 = () =>
         {
-            int x;
+            Debug.Indent();
         };
 
         // Valid lambda expression #5
-        this.TestMethod(() => { });
+        Action item5 = () =>
+        { Debug.Indent(); };
 
         // Valid lambda expression #6
-        this.TestMethod(() =>
-        { 
-        });
+        this.TestMethod(() => { });
 
         // Valid lambda expression #7
-        this.TestMethod(() => { int x; });
-
-        // Valid lambda expression #8
         this.TestMethod(() =>
         { 
-            int x; 
         });
+
+        // Valid lambda expression #8
+        this.TestMethod(() => { Debug.Indent(); });
+
+        // Valid lambda expression #9
+        this.TestMethod(() =>
+        { 
+            Debug.Indent(); 
+        });
+
+        // Valid lambda expression #10
+        this.TestMethod(() =>
+        { Debug.Indent(); });
     }
 }";
 
@@ -92,61 +101,53 @@ public class Foo
         
         // Invalid lambda expression #2
         Action item2 = () => {
-            int x; 
+            Debug.Indent(); 
         };
 
         // Invalid lambda expression #3
         Action item3 = () => {
-            int x; };
+            Debug.Indent(); };
 
         // Invalid lambda expression #4
-        Action item4 = () => { int x; 
+        Action item4 = () => { Debug.Indent(); 
         };
 
         // Invalid lambda expression #5
         Action item5 = () =>
         {
-            int x; };
+            Debug.Indent(); };
 
         // Invalid lambda expression #6
         Action item6 = () =>
-        { int x; 
+        { Debug.Indent(); 
         };
 
         // Invalid lambda expression #7
-        Action item7 = () =>
-        { int x; };
+        this.TestMethod(() => {
+        });
 
         // Invalid lambda expression #8
         this.TestMethod(() => {
+            Debug.Indent();
         });
 
         // Invalid lambda expression #9
         this.TestMethod(() => {
-            int x;
-        });
+            Debug.Indent(); });
 
         // Invalid lambda expression #10
-        this.TestMethod(() => {
-            int x; });
+        this.TestMethod(() => { Debug.Indent();
+        });
 
         // Invalid lambda expression #11
-        this.TestMethod(() => { int x;
-        });
+        this.TestMethod(() =>
+        { 
+            Debug.Indent(); });
 
         // Invalid lambda expression #12
         this.TestMethod(() =>
-        { 
-            int x; });
-
-        // Invalid lambda expression #13
-        this.TestMethod(() =>
-        { int x; 
+        { Debug.Indent(); 
         });
-
-        // Invalid lambda expression #14
-        this.TestMethod(() =>
-        { int x; });
     }
 }";
 
@@ -158,32 +159,26 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(16, 30),
                 // Invalid lambda expression #3
                 this.CSharpDiagnostic().WithLocation(21, 30),
-                this.CSharpDiagnostic().WithLocation(22, 20),
+                this.CSharpDiagnostic().WithLocation(22, 29),
                 // Invalid lambda expression #4
                 this.CSharpDiagnostic().WithLocation(25, 30),
                 // Invalid lambda expression #5
-                this.CSharpDiagnostic().WithLocation(31, 20),
+                this.CSharpDiagnostic().WithLocation(31, 29),
                 // Invalid lambda expression #6
                 this.CSharpDiagnostic().WithLocation(35, 9),
                 // Invalid lambda expression #7
-                this.CSharpDiagnostic().WithLocation(40, 9),
-                this.CSharpDiagnostic().WithLocation(40, 18),
+                this.CSharpDiagnostic().WithLocation(39, 31),
                 // Invalid lambda expression #8
                 this.CSharpDiagnostic().WithLocation(43, 31),
                 // Invalid lambda expression #9
-                this.CSharpDiagnostic().WithLocation(47, 31),
+                this.CSharpDiagnostic().WithLocation(48, 31),
+                this.CSharpDiagnostic().WithLocation(49, 29),
                 // Invalid lambda expression #10
                 this.CSharpDiagnostic().WithLocation(52, 31),
-                this.CSharpDiagnostic().WithLocation(53, 20),
                 // Invalid lambda expression #11
-                this.CSharpDiagnostic().WithLocation(56, 31),
+                this.CSharpDiagnostic().WithLocation(58, 29),
                 // Invalid lambda expression #12
-                this.CSharpDiagnostic().WithLocation(62, 20),
-                // Invalid lambda expression #13
-                this.CSharpDiagnostic().WithLocation(66, 9),
-                // Invalid lambda expression #14
-                this.CSharpDiagnostic().WithLocation(71, 9),
-                this.CSharpDiagnostic().WithLocation(71, 18)
+                this.CSharpDiagnostic().WithLocation(62, 9)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

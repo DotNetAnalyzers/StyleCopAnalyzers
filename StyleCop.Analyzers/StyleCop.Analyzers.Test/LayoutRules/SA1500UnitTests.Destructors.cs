@@ -38,7 +38,7 @@ public class Foo
     {
         ~TestClass2()
         {
-            Debug.Assert(true);
+            Debug.Indent();
         }
     }
 
@@ -51,7 +51,14 @@ public class Foo
     // Valid destructor #4 (Valid only for SA1500)
     public class TestClass4
     {
-        ~TestClass4() { Debug.Assert(true); }
+        ~TestClass4() { Debug.Indent(); }
+    }
+
+    // Valid destructor #5 (Valid only for SA1500)
+    public class TestClass5
+    {
+        ~TestClass5() 
+        { Debug.Indent(); }
     }
 }";
 
@@ -79,7 +86,7 @@ public class Foo
     public class TestClass2
     {
         ~TestClass2() {
-            Debug.Assert(true);
+            Debug.Indent();
         }
     }
 
@@ -87,13 +94,13 @@ public class Foo
     public class TestClass3
     {
         ~TestClass3() {
-            Debug.Assert(true); }
+            Debug.Indent(); }
     }
 
     // Invalid destructor #4
     public class TestClass4
     {
-        ~TestClass4() { Debug.Assert(true);
+        ~TestClass4() { Debug.Indent();
         }
     }
 
@@ -102,22 +109,15 @@ public class Foo
     {
         ~TestClass5()
         {
-            Debug.Assert(true); }
+            Debug.Indent(); }
     }
 
     // Invalid destructor #6
     public class TestClass6
     {
         ~TestClass6()
-        { Debug.Assert(true);
+        { Debug.Indent();
         }
-    }
-
-    // Invalid destructor #7
-    public class TestClass7
-    {
-        ~TestClass7()
-        { Debug.Assert(true); }
     }
 }";
 
@@ -129,16 +129,13 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(15, 23),
                 // Invalid destructor #3
                 this.CSharpDiagnostic().WithLocation(23, 23),
-                this.CSharpDiagnostic().WithLocation(24, 33),
+                this.CSharpDiagnostic().WithLocation(24, 29),
                 // Invalid destructor #4
                 this.CSharpDiagnostic().WithLocation(30, 23),
                 // Invalid destructor #5
-                this.CSharpDiagnostic().WithLocation(39, 33),
+                this.CSharpDiagnostic().WithLocation(39, 29),
                 // Invalid destructor #6
-                this.CSharpDiagnostic().WithLocation(46, 9),
-                // Invalid destructor #7
-                this.CSharpDiagnostic().WithLocation(54, 9),
-                this.CSharpDiagnostic().WithLocation(54, 31)
+                this.CSharpDiagnostic().WithLocation(46, 9)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

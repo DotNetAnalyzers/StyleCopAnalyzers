@@ -43,6 +43,10 @@
 
         // Valid if #4 (Valid only for SA1500)
         if (x == 0) { x = 1; }
+
+        // Valid if #5 (Valid only for SA1500)
+        if (x == 0) 
+        { x = 1; }
     }
 }";
 
@@ -92,6 +96,13 @@
         {
         }
         else { x = 1; }
+
+        // Valid if ... else #5 (Valid only for SA1500)
+        if (x == 0) 
+        {
+        }
+        else 
+        { x = 1; }
     }
 }";
 
@@ -136,10 +147,6 @@
         if (x == 0)
         { x = 1;
         }
-
-        // Invalid if #7
-        if (x == 0)
-        { x = 1; }
     }
 }";
 
@@ -157,10 +164,7 @@
                 // Invalid if #5
                 this.CSharpDiagnostic().WithLocation(27, 20),
                 // Invalid if #6
-                this.CSharpDiagnostic().WithLocation(31, 9),
-                // Invalid if #7
-                this.CSharpDiagnostic().WithLocation(36, 9),
-                this.CSharpDiagnostic().WithLocation(36, 18)
+                this.CSharpDiagnostic().WithLocation(31, 9)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -222,13 +226,6 @@
         else
         { x = 1;
         }
-
-        // Invalid if ... else #7
-        if (x == 0)
-        {
-        }
-        else
-        { x = 1; }
     }
 }";
 
@@ -246,10 +243,7 @@
                 // Invalid if ... else #5
                 this.CSharpDiagnostic().WithLocation(42, 20),
                 // Invalid if ... else #6
-                this.CSharpDiagnostic().WithLocation(49, 9),
-                // Invalid if ... else #7
-                this.CSharpDiagnostic().WithLocation(57, 9),
-                this.CSharpDiagnostic().WithLocation(57, 18)
+                this.CSharpDiagnostic().WithLocation(49, 9)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

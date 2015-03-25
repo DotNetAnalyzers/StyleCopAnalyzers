@@ -35,6 +35,9 @@
     public enum ValidEnum3 { } /* Valid only for SA1500 */
 
     public enum ValidEnum4 { Test }  /* Valid only for SA1500 */
+
+    public enum ValidEnum5 /* Valid only for SA1500 */
+    { Test }  
 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -68,9 +71,6 @@
     public enum InvalidEnum6
     { Test 
     }
-
-    public enum InvalidEnum7
-    { Test }
 }";
 
             var expectedDiagnostics = new[]
@@ -87,10 +87,7 @@
                 // InvalidEnum5
                 this.CSharpDiagnostic().WithLocation(18, 14),
                 // InvalidEnum6
-                this.CSharpDiagnostic().WithLocation(21, 5),
-                // InvalidEnum7
-                this.CSharpDiagnostic().WithLocation(25, 5),
-                this.CSharpDiagnostic().WithLocation(25, 12)
+                this.CSharpDiagnostic().WithLocation(21, 5)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

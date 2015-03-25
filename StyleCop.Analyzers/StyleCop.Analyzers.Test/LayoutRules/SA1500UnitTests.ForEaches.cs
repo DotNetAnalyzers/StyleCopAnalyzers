@@ -44,6 +44,10 @@
 
         // Valid foreach #4 (Valid only for SA1500)
         foreach (var y in array) { x += y; }
+
+        // Valid foreach #5 (Valid only for SA1500)
+        foreach (var y in array) 
+        { x += y; }
     }
 }";
 
@@ -89,10 +93,6 @@
         foreach (var y in array)
         { x += y;
         }
-
-        // Invalid foreach #7
-        foreach (var y in array)
-        { x += y; }
     }
 }";
 
@@ -110,10 +110,7 @@
                 // Invalid foreach #5
                 this.CSharpDiagnostic().WithLocation(28, 21),
                 // Invalid foreach #6
-                this.CSharpDiagnostic().WithLocation(32, 9),
-                // Invalid foreach #7
-                this.CSharpDiagnostic().WithLocation(37, 9),
-                this.CSharpDiagnostic().WithLocation(37, 19)
+                this.CSharpDiagnostic().WithLocation(32, 9)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

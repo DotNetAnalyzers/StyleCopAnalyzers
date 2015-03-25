@@ -45,6 +45,10 @@
 
         // Valid do ... while #4 (Valid only for SA1500)
         do { x = 1; } while (x == 0);
+
+        // Valid do ... while #5 (Valid only for SA1500)
+        do 
+        { x = 1; } while (x == 0);
     }
 }";
 

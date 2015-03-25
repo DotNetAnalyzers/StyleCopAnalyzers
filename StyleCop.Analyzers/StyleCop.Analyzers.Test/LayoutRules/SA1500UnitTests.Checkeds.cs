@@ -42,6 +42,10 @@
 
         // valid checked #4 (valid only for SA1500)
         checked { this.X = 1; }
+
+        // valid checked #5 (valid only for SA1500)
+        checked 
+        { this.X = 1; }
     }
 }";
 
@@ -82,10 +86,6 @@
         checked 
         { this.X = 1;
         }
-
-        // invalid checked #6
-        checked 
-        { this.X = 1; }
     }
 }";
 
@@ -105,11 +105,7 @@
                 this.CSharpDiagnostic().WithLocation(23, 25),
 
                 // invalid checked #5
-                this.CSharpDiagnostic().WithLocation(27, 9),
-
-                // invalid checked #6
-                this.CSharpDiagnostic().WithLocation(32, 9),
-                this.CSharpDiagnostic().WithLocation(32, 23)
+                this.CSharpDiagnostic().WithLocation(27, 9)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

@@ -43,6 +43,10 @@
 
         // Valid fixed #4 (Valid only for SA1500)
         fixed (int* p = y) { p[0] = 1; }
+
+        // Valid fixed #4 (Valid only for SA1500)
+        fixed (int* p = y) 
+        { p[0] = 1; }
     }
 }";
 
@@ -87,10 +91,6 @@
         fixed (int* p = y) 
         { p[0] = 1;
         }
-
-        // Invalid fixed #7
-        fixed (int* p = y) 
-        { p[0] = 1; }
     }
 }";
 
@@ -108,10 +108,7 @@
                 // Invalid fixed #5
                 this.CSharpDiagnostic().WithLocation(27, 23),
                 // Invalid fixed #6
-                this.CSharpDiagnostic().WithLocation(31, 9),
-                // Invalid fixed #7
-                this.CSharpDiagnostic().WithLocation(36, 9),
-                this.CSharpDiagnostic().WithLocation(36, 21)
+                this.CSharpDiagnostic().WithLocation(31, 9)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

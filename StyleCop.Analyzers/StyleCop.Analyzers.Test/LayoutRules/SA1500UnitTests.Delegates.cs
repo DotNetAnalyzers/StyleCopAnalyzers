@@ -37,7 +37,7 @@ public class Foo
         MyDelegate item1 = delegate { };
         
         // Valid delegate #2
-        MyDelegate item2 = delegate { Debug.Assert(true); };
+        MyDelegate item2 = delegate { Debug.Indent(); };
 
         // Valid delegate #3
         MyDelegate item3 = delegate
@@ -47,25 +47,33 @@ public class Foo
         // Valid delegate #4
         MyDelegate item4 = delegate
         {
-            Debug.Assert(true);
+            Debug.Indent();
         };
 
         // Valid delegate #5
-        this.TestMethod(delegate { });
+        MyDelegate item7 = delegate 
+        { Debug.Indent(); };
 
         // Valid delegate #6
-        this.TestMethod(delegate 
-        { 
-        });
+        this.TestMethod(delegate { });
 
         // Valid delegate #7
-        this.TestMethod(delegate { Debug.Assert(true); });
-
-        // Valid delegate #8
         this.TestMethod(delegate 
         { 
-            Debug.Assert(true); 
         });
+
+        // Valid delegate #8
+        this.TestMethod(delegate { Debug.Indent(); });
+
+        // Valid delegate #9
+        this.TestMethod(delegate 
+        { 
+            Debug.Indent(); 
+        });
+
+        // Valid delegate #10
+        this.TestMethod(delegate 
+        { Debug.Indent(); });
     }
 }";
 
@@ -96,61 +104,53 @@ public class Foo
         
         // Invalid delegate #2
         MyDelegate item2 = delegate {
-            Debug.Assert(true); 
+            Debug.Indent(); 
         };
 
         // Invalid delegate #3
         MyDelegate item3 = delegate {
-            Debug.Assert(true); };
+            Debug.Indent(); };
 
         // Invalid delegate #4
-        MyDelegate item4 = delegate { Debug.Assert(true); 
+        MyDelegate item4 = delegate { Debug.Indent(); 
         };
 
         // Invalid delegate #5
         MyDelegate item5 = delegate 
         {
-            Debug.Assert(true); };
+            Debug.Indent(); };
 
         // Invalid delegate #6
         MyDelegate item6 = delegate 
-        { Debug.Assert(true); 
+        { Debug.Indent(); 
         };
 
         // Invalid delegate #7
-        MyDelegate item7 = delegate 
-        { Debug.Assert(true); };
+        this.TestMethod(delegate {
+        });
 
         // Invalid delegate #8
         this.TestMethod(delegate {
+            Debug.Indent();
         });
 
         // Invalid delegate #9
         this.TestMethod(delegate {
-            Debug.Assert(true);
-        });
+            Debug.Indent(); });
 
         // Invalid delegate #10
-        this.TestMethod(delegate {
-            Debug.Assert(true); });
+        this.TestMethod(delegate { Debug.Indent();
+        });
 
         // Invalid delegate #11
-        this.TestMethod(delegate { Debug.Assert(true);
-        });
+        this.TestMethod(delegate 
+        { 
+            Debug.Indent(); });
 
         // Invalid delegate #12
         this.TestMethod(delegate 
-        { 
-            Debug.Assert(true); });
-
-        // Invalid delegate #13
-        this.TestMethod(delegate 
-        { Debug.Assert(true); 
+        { Debug.Indent(); 
         });
-
-        // Invalid delegate #14
-        this.TestMethod(delegate 
-        { Debug.Assert(true); });
     }
 }";
 
@@ -162,32 +162,26 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(18, 37),
                 // Invalid delegate #3
                 this.CSharpDiagnostic().WithLocation(23, 37),
-                this.CSharpDiagnostic().WithLocation(24, 33),
+                this.CSharpDiagnostic().WithLocation(24, 29),
                 // Invalid delegate #4
                 this.CSharpDiagnostic().WithLocation(27, 37),
                 // Invalid delegate #5
-                this.CSharpDiagnostic().WithLocation(33, 33),
+                this.CSharpDiagnostic().WithLocation(33, 29),
                 // Invalid delegate #6
                 this.CSharpDiagnostic().WithLocation(37, 9),
                 // Invalid delegate #7
-                this.CSharpDiagnostic().WithLocation(42, 9),
-                this.CSharpDiagnostic().WithLocation(42, 31),
+                this.CSharpDiagnostic().WithLocation(41, 34),
                 // Invalid delegate #8
                 this.CSharpDiagnostic().WithLocation(45, 34),
                 // Invalid delegate #9
-                this.CSharpDiagnostic().WithLocation(49, 34),
+                this.CSharpDiagnostic().WithLocation(50, 34),
+                this.CSharpDiagnostic().WithLocation(51, 29),
                 // Invalid delegate #10
                 this.CSharpDiagnostic().WithLocation(54, 34),
-                this.CSharpDiagnostic().WithLocation(55, 33),
                 // Invalid delegate #11
-                this.CSharpDiagnostic().WithLocation(58, 34),
+                this.CSharpDiagnostic().WithLocation(60, 29),
                 // Invalid delegate #12
-                this.CSharpDiagnostic().WithLocation(64, 33),
-                // Invalid delegate #13
-                this.CSharpDiagnostic().WithLocation(68, 9),
-                // Invalid delegate #14
-                this.CSharpDiagnostic().WithLocation(73, 9),
-                this.CSharpDiagnostic().WithLocation(73, 31)
+                this.CSharpDiagnostic().WithLocation(64, 9)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

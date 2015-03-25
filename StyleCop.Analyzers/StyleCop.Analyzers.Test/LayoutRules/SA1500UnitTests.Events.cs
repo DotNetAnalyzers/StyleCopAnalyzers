@@ -48,7 +48,7 @@ public class Foo
         }
     }
 
-    // Valid event #3
+    // Valid event #3  (Valid for SA1500 only)
     public event EventHandler Event3
     {
         add { this.test += value; }
@@ -58,7 +58,7 @@ public class Foo
         }
     }
 
-    // Valid event #4
+    // Valid event #4  (Valid for SA1500 only)
     public event EventHandler Event4
     {
         add 

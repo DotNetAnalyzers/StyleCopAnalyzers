@@ -35,6 +35,9 @@
     public class ValidClass3 { } /* Valid only for SA1500 */
 
     public class ValidClass4 { public int Field; }  /* Valid only for SA1500 */
+
+    public class ValidClass5 
+    { public int Field; }  /* Valid only for SA1500 */
 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -71,9 +74,6 @@
     public class InvalidClass6
     { public int Field; 
     }
-
-    public class InvalidClass7
-    { public int Field; }
 }";
 
             var expectedDiagnostics = new[]
@@ -90,10 +90,7 @@
                 // InvalidClass5
                 this.CSharpDiagnostic().WithLocation(18, 27),
                 // InvalidClass6
-                this.CSharpDiagnostic().WithLocation(21, 5),
-                // InvalidClass7
-                this.CSharpDiagnostic().WithLocation(25, 5),
-                this.CSharpDiagnostic().WithLocation(25, 25)
+                this.CSharpDiagnostic().WithLocation(21, 5)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

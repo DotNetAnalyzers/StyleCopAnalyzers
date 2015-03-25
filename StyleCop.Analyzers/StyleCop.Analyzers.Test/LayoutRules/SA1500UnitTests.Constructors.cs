@@ -33,14 +33,18 @@ public class Foo
     // Valid constructor #2
     public Foo(bool a)
     {
-        Debug.Assert(true);
+        Debug.Indent();
     }
 
     // Valid constructor #3 (Valid only for SA1500)
     public Foo(byte a) { }
 
     // Valid constructor #4 (Valid only for SA1500)
-    public Foo(short a) { Debug.Assert(true); }
+    public Foo(short a) { Debug.Indent(); }
+
+    // Valid constructor #5 (Valid only for SA1500)
+    public Foo(short a) 
+    { Debug.Indent(); }
 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -62,30 +66,26 @@ public class Foo
 
     // Invalid constructor #2
     public Foo(bool a) {
-        Debug.Assert(true); 
+        Debug.Indent(); 
     }
 
     // Invalid constructor #3
     public Foo(byte a) {
-        Debug.Assert(true); }
+        Debug.Indent(); }
 
     // Invalid constructor #4
-    public Foo(short a) { Debug.Assert(true); 
+    public Foo(short a) { Debug.Indent(); 
     }
 
     // Invalid constructor #5
     public Foo(ushort a) 
     { 
-        Debug.Assert(true); }
+        Debug.Indent(); }
 
     // Invalid constructor #6
     public Foo(int a) 
-    { Debug.Assert(true); 
+    { Debug.Indent(); 
     }
-
-    // Invalid constructor #7
-    public Foo(uint a) 
-    { Debug.Assert(true); }
 }";
 
             var expectedDiagnostics = new[]
@@ -96,16 +96,13 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(10, 24),
                 // Invalid constructor #3
                 this.CSharpDiagnostic().WithLocation(15, 24),
-                this.CSharpDiagnostic().WithLocation(16, 29),
+                this.CSharpDiagnostic().WithLocation(16, 25),
                 // Invalid constructor #4
                 this.CSharpDiagnostic().WithLocation(19, 25),
                 // Invalid constructor #5
-                this.CSharpDiagnostic().WithLocation(25, 29),
+                this.CSharpDiagnostic().WithLocation(25, 25),
                 // Invalid constructor #6
-                this.CSharpDiagnostic().WithLocation(29, 5),
-                // Invalid constructor #7
-                this.CSharpDiagnostic().WithLocation(34, 5),
-                this.CSharpDiagnostic().WithLocation(34, 27)
+                this.CSharpDiagnostic().WithLocation(29, 5)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
