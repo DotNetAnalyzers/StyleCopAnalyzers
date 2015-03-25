@@ -142,6 +142,7 @@
     <Compile Include="LayoutRules\SA1500UnitTests.Constructors.cs" />
     <Compile Include="LayoutRules\SA1500UnitTests.cs" />
     <Compile Include="LayoutRules\SA1500UnitTests.Delegates.cs" />
+    <Compile Include="LayoutRules\SA1500UnitTests.Destructors.cs" />
     <Compile Include="LayoutRules\SA1500UnitTests.LambdaExpressions.cs" />
     <Compile Include="LayoutRules\SA1516UnitTests.cs" />
     <Compile Include="LayoutRules\SA1517UnitTests.cs" />
