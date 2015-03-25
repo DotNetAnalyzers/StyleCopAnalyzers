@@ -30,6 +30,7 @@
     <DocumentationFile>bin\Debug\StyleCop.Analyzers.Test.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
     <CodeAnalysisRuleSet>..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -42,6 +43,7 @@
     <DocumentationFile>bin\Release\StyleCop.Analyzers.Test.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
     <CodeAnalysisRuleSet>..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CodeAnalysis, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -146,6 +148,7 @@
     <Compile Include="LayoutRules\SA1500UnitTests.DoWhiles.cs" />
     <Compile Include="LayoutRules\SA1500UnitTests.Enums.cs" />
     <Compile Include="LayoutRules\SA1500UnitTests.Events.cs" />
+    <Compile Include="LayoutRules\SA1500UnitTests.Fixeds.cs" />
     <Compile Include="LayoutRules\SA1500UnitTests.LambdaExpressions.cs" />
     <Compile Include="LayoutRules\SA1516UnitTests.cs" />
     <Compile Include="LayoutRules\SA1517UnitTests.cs" />
