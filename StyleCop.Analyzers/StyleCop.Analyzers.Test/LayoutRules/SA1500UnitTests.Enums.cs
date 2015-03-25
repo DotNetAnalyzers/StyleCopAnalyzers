@@ -43,7 +43,7 @@
         /// <summary>
         /// Verifies that diagnostics will be reported for all invalid enum definitions.
         /// </summary>
-        [Fact]
+        [Fact(Skip = "Disabled until the SA1500 implementation is available")]
         public async Task TestEnumInvalid()
         {
             var testCode = @"public class Foo

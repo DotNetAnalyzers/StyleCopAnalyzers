@@ -46,7 +46,7 @@
         /// <remarks>
         /// These will normally also report SA1401, but not in the unit test.
         /// </remarks>
-        [Fact]
+        [Fact(Skip = "Disabled until the SA1500 implementation is available")]
         public async Task TestClassInvalid()
         {
             var testCode = @"public class Foo

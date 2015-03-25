@@ -50,7 +50,7 @@ public class Foo
         /// <summary>
         /// Verifies that diagnostics will be reported for all invalid blocks.
         /// </summary>
-        [Fact]
+        [Fact(Skip = "Disabled until the SA1500 implementation is available")]
         public async Task TestBlockInvalid()
         {
             var testCode = @"using System.Diagnostics;
