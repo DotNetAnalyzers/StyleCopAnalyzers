@@ -89,7 +89,6 @@
             }
         }
 
-
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {

@@ -19,7 +19,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-
         public async Task TestSuppressionWithStringLiteral()
         {
             var testCode = @"public class Foo

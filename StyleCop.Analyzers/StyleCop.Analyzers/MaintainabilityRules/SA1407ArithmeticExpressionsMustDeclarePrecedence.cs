@@ -8,9 +8,6 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using System;
 
-
-
-
     /// <summary>
     /// A C# statement contains a complex arithmetic expression which omits parenthesis around operators.
     /// </summary>

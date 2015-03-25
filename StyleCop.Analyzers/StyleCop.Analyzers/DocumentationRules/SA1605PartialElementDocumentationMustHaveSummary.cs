@@ -8,7 +8,6 @@
     using Microsoft.CodeAnalysis.Diagnostics;
     using Helpers;
 
-
     /// <summary>
     /// The <c>&lt;summary&gt;</c> or <c>&lt;content&gt;</c> tag within the documentation header for a C# code element
     /// is missing or empty.

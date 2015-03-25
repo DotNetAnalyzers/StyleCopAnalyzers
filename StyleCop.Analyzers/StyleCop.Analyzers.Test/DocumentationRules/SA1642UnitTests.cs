@@ -39,7 +39,6 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-
         private async Task TestEmptyConstructor(string modifiers)
         {
             var testCode = @"namespace FooNamespace
@@ -236,7 +235,6 @@
 
             await this.VerifyCSharpDiagnosticAsync(testCode,
                 expected, CancellationToken.None);
-
 
             var fixedCode = @"namespace FooNamespace
 {{

@@ -7,9 +7,6 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
-
-
-
     /// <summary>
     /// The code uses one of the basic C# types, but does not use the built-in alias for the type.
     /// </summary>

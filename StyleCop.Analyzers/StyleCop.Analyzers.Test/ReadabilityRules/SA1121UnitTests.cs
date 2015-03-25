@@ -10,7 +10,6 @@
     using TestHelper;
     using Xunit;
 
-
     /// <summary>
     /// This class contains unit tests for <see cref="SA1121UseBuiltInTypeAlias"/>
     /// </summary>
@@ -21,6 +20,7 @@
             new Tuple<string, string>("object", nameof(Object)),
             new Tuple<string, string>("string", nameof(String))
         };
+
         private static readonly Tuple<string, string>[] ValueTypes = new Tuple<string, string>[]
         {
             new Tuple<string, string>("bool", nameof(Boolean)),
@@ -37,6 +37,7 @@
             new Tuple<string, string>("uint", nameof(UInt32)),
             new Tuple<string, string>("ulong", nameof(UInt64))
         };
+
         private static readonly Tuple<string, string>[] EnumBaseTypes = new Tuple<string, string>[]
         {
             new Tuple<string, string>("byte", nameof(Byte)),
@@ -48,8 +49,8 @@
             new Tuple<string, string>("uint", nameof(UInt32)),
             new Tuple<string, string>("ulong", nameof(UInt64))
         };
-        private static readonly Tuple<string, string>[] AllTypes = ReferenceTypes.Concat(ValueTypes).ToArray();
 
+        private static readonly Tuple<string, string>[] AllTypes = ReferenceTypes.Concat(ValueTypes).ToArray();
 
         public string DiagnosticId { get; } = SA1121UseBuiltInTypeAlias.DiagnosticId;
 
@@ -69,6 +70,7 @@
                 }
             }
         }
+
         private async Task VerifyFixes(string testSource, Tuple<string, string>[] types)
         {
             foreach (var item in types)
@@ -119,7 +121,6 @@
         {
             await this.VerifyFixes(testSource, ReferenceTypes);
         }
-
 
         [Fact]
         public async Task TestEmptySource()

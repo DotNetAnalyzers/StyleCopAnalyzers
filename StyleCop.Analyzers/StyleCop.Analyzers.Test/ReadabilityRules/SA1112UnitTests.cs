@@ -65,7 +65,6 @@ string s)
     }
 }";
 
-
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
@@ -114,7 +113,6 @@ string s)
 
     }
 }";
-
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
@@ -219,7 +217,6 @@ class Foo
         var o = new object();
     }
 }";
-
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
