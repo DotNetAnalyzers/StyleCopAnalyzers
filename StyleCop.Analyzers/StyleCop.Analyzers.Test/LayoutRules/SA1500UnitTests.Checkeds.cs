@@ -15,7 +15,7 @@
         /// Verifies that no diagnostics are reported for the valid checked statements defined in this test.
         /// </summary>
         /// <remarks>
-        /// These statements are valid for SA1500 only, some will report other diagnostics from the layout (SA15xx) series.
+        /// These are valid for SA1500 only, some will report other diagnostics from the layout (SA15xx) series.
         /// </remarks>
         [Fact]
         public async Task TestCheckedValid()

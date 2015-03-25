@@ -16,7 +16,7 @@
         /// Verifies that no diagnostics are reported for the valid delegates defined in this test.
         /// </summary>
         /// <remarks>
-        /// These blocks are valid for SA1500 only, some will report other diagnostics from the layout (SA15xx) series.
+        /// These are valid for SA1500 only, some will report other diagnostics from the layout (SA15xx) series.
         /// </remarks>
         [Fact]
         public async Task TestDelegateValid()
