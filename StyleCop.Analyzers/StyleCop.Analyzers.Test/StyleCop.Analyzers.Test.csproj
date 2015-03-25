@@ -145,6 +145,7 @@
     <Compile Include="LayoutRules\SA1500UnitTests.Destructors.cs" />
     <Compile Include="LayoutRules\SA1500UnitTests.DoWhiles.cs" />
     <Compile Include="LayoutRules\SA1500UnitTests.Enums.cs" />
+    <Compile Include="LayoutRules\SA1500UnitTests.Events.cs" />
     <Compile Include="LayoutRules\SA1500UnitTests.LambdaExpressions.cs" />
     <Compile Include="LayoutRules\SA1516UnitTests.cs" />
     <Compile Include="LayoutRules\SA1517UnitTests.cs" />
