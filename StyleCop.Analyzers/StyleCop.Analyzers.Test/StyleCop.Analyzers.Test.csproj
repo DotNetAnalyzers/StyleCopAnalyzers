@@ -149,6 +149,8 @@
     <Compile Include="LayoutRules\SA1500UnitTests.Enums.cs" />
     <Compile Include="LayoutRules\SA1500UnitTests.Events.cs" />
     <Compile Include="LayoutRules\SA1500UnitTests.Fixeds.cs" />
+    <Compile Include="LayoutRules\SA1500UnitTests.ForEaches.cs" />
+    <Compile Include="LayoutRules\SA1500UnitTests.Fors.cs" />
     <Compile Include="LayoutRules\SA1500UnitTests.LambdaExpressions.cs" />
     <Compile Include="LayoutRules\SA1516UnitTests.cs" />
     <Compile Include="LayoutRules\SA1517UnitTests.cs" />
