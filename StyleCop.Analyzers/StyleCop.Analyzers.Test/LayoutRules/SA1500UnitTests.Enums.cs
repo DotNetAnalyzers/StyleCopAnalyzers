@@ -23,18 +23,18 @@
         {
             var testCode = @"public class Foo
 {
-    public void ValidClass1
+    public enum ValidEnum1
     {
     }
 
-    public void ValidClass2
+    public enum ValidEnum2
     {
-        private int field;
+        Test
     }
 
-    public void ValidClass3 { } /* Valid only for SA1500 */
+    public enum ValidEnum3 { } /* Valid only for SA1500 */
 
-    public void ValidClass4 { private int field; }  /* Valid only for SA1500 */
+    public enum ValidEnum4 { Test }  /* Valid only for SA1500 */
 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -48,49 +48,49 @@
         {
             var testCode = @"public class Foo
 {
-    public void InvalidClass1 {
+    public enum InvalidEnum1 {
     }
 
-    public void InvalidClass2 {
-        private int field; 
+    public enum InvalidEnum2 {
+        Test 
     }
 
-    public void InvalidClass3 {
-        private int field; }
+    public enum InvalidEnum3 {
+        Test }
 
-    public void InvalidClass4 { private int field; 
+    public enum InvalidEnum4 { Test 
     }
 
-    public void InvalidClass5
+    public enum InvalidEnum5
     { 
-        private int field; }
+        Test }
 
-    public void InvalidClass6
-    { private int field; 
+    public enum InvalidEnum6
+    { Test 
     }
 
-    public void InvalidClass7
-    { private int field; }
+    public enum InvalidEnum7
+    { Test }
 }";
 
             var expectedDiagnostics = new[]
             {
-                // InvalidClass1
-                this.CSharpDiagnostic().WithLocation(3, 31),
-                // InvalidClass2
-                this.CSharpDiagnostic().WithLocation(6, 31),
-                // InvalidClass3
-                this.CSharpDiagnostic().WithLocation(10, 31),
-                this.CSharpDiagnostic().WithLocation(11, 28),
-                // InvalidClass4
-                this.CSharpDiagnostic().WithLocation(13, 31),
-                // InvalidClass5
-                this.CSharpDiagnostic().WithLocation(18, 28),
-                // InvalidClass6
+                // InvalidEnum1
+                this.CSharpDiagnostic().WithLocation(3, 30),
+                // InvalidEnum2
+                this.CSharpDiagnostic().WithLocation(6, 30),
+                // InvalidEnum3
+                this.CSharpDiagnostic().WithLocation(10, 30),
+                this.CSharpDiagnostic().WithLocation(11, 14),
+                // InvalidEnum4
+                this.CSharpDiagnostic().WithLocation(13, 30),
+                // InvalidEnum5
+                this.CSharpDiagnostic().WithLocation(18, 14),
+                // InvalidEnum6
                 this.CSharpDiagnostic().WithLocation(21, 5),
-                // InvalidClass7
+                // InvalidEnum7
                 this.CSharpDiagnostic().WithLocation(25, 5),
-                this.CSharpDiagnostic().WithLocation(25, 26)
+                this.CSharpDiagnostic().WithLocation(25, 12)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

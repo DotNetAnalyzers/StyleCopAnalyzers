@@ -21,7 +21,9 @@
         [Fact]
         public async Task TestBlockValid()
         {
-            var testCode = @"public class Foo
+            var testCode = @"using System.Diagnostics;
+
+public class Foo
 {
     public void Bar()
     {
@@ -31,14 +33,14 @@
 
         // valid block #2
         {
-            int a;
+            Debug.Assert(true);
         }
 
         // valid block #3 (valid only for SA1500)
         { }
 
         // valid block #4 (valid only for SA1500)
-        { int b; }
+        { Debug.Assert(true); }
     }
 }";
 
@@ -51,23 +53,25 @@
         [Fact]
         public async Task TestBlockInvalid()
         {
-            var testCode = @"public class Foo
+            var testCode = @"using System.Diagnostics;
+
+public class Foo
 {
     public void Bar()
     {
         // invalid block #1
-        { int a;
+        { Debug.Assert(true);
         }
 
         // invalid block #2
         { 
-            int a; }
+            Debug.Assert(true); }
     }
 }";
             var expectedDiagnostics = new[]
             {
-                this.CSharpDiagnostic().WithLocation(6, 9),
-                this.CSharpDiagnostic().WithLocation(11, 20)
+                this.CSharpDiagnostic().WithLocation(8, 9),
+                this.CSharpDiagnostic().WithLocation(13, 33)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

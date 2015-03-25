@@ -21,7 +21,9 @@
         [Fact]
         public async Task TestDestructorValid()
         {
-            var testCode = @"public class Foo
+            var testCode = @"using System.Diagnostics;
+
+public class Foo
 {
     // Valid destructor #1
     public class TestClass1
@@ -36,7 +38,7 @@
     {
         ~TestClass2()
         {
-            int x;
+            Debug.Assert(true);
         }
     }
 
@@ -49,7 +51,7 @@
     // Valid destructor #4 (Valid only for SA1500)
     public class TestClass4
     {
-        ~TestClass4() { int x; }
+        ~TestClass4() { Debug.Assert(true); }
     }
 }";
 
@@ -62,7 +64,9 @@
         [Fact]
         public async Task TestDestructorInvalid()
         {
-            var testCode = @"public class Foo
+            var testCode = @"using System.Diagnostics;
+
+public class Foo
 {
     // Invalid destructor #1
     public class TestClass1
@@ -75,7 +79,7 @@
     public class TestClass2
     {
         ~TestClass2() {
-            int x;
+            Debug.Assert(true);
         }
     }
 
@@ -83,13 +87,13 @@
     public class TestClass3
     {
         ~TestClass3() {
-            int x; }
+            Debug.Assert(true); }
     }
 
     // Invalid destructor #4
     public class TestClass4
     {
-        ~TestClass4() { int x;
+        ~TestClass4() { Debug.Assert(true);
         }
     }
 
@@ -98,14 +102,14 @@
     {
         ~TestClass5()
         {
-            int x; }
+            Debug.Assert(true); }
     }
 
     // Invalid destructor #6
     public class TestClass6
     {
         ~TestClass6()
-        { int x;
+        { Debug.Assert(true);
         }
     }
 
@@ -113,28 +117,28 @@
     public class TestClass7
     {
         ~TestClass7()
-        { int x; }
+        { Debug.Assert(true); }
     }
 }";
 
             var expectedDiagnostics = new[]
             {
                 // Invalid destructor #1
-                this.CSharpDiagnostic().WithLocation(6, 23),
+                this.CSharpDiagnostic().WithLocation(8, 23),
                 // Invalid destructor #2
-                this.CSharpDiagnostic().WithLocation(13, 23),
+                this.CSharpDiagnostic().WithLocation(15, 23),
                 // Invalid destructor #3
-                this.CSharpDiagnostic().WithLocation(21, 23),
-                this.CSharpDiagnostic().WithLocation(22, 20),
+                this.CSharpDiagnostic().WithLocation(23, 23),
+                this.CSharpDiagnostic().WithLocation(24, 33),
                 // Invalid destructor #4
-                this.CSharpDiagnostic().WithLocation(28, 23),
+                this.CSharpDiagnostic().WithLocation(30, 23),
                 // Invalid destructor #5
-                this.CSharpDiagnostic().WithLocation(37, 20),
+                this.CSharpDiagnostic().WithLocation(39, 33),
                 // Invalid destructor #6
-                this.CSharpDiagnostic().WithLocation(44, 9),
+                this.CSharpDiagnostic().WithLocation(46, 9),
                 // Invalid destructor #7
-                this.CSharpDiagnostic().WithLocation(52, 9),
-                this.CSharpDiagnostic().WithLocation(52, 18)
+                this.CSharpDiagnostic().WithLocation(54, 9),
+                this.CSharpDiagnostic().WithLocation(54, 31)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
