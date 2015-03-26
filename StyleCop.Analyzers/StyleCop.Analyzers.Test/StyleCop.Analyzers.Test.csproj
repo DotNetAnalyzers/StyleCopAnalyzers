@@ -153,6 +153,7 @@
     <Compile Include="LayoutRules\SA1500UnitTests.Fors.cs" />
     <Compile Include="LayoutRules\SA1500UnitTests.Ifs.cs" />
     <Compile Include="LayoutRules\SA1500UnitTests.Indexers.cs" />
+    <Compile Include="LayoutRules\SA1500UnitTests.Interfaces.cs" />
     <Compile Include="LayoutRules\SA1500UnitTests.LambdaExpressions.cs" />
     <Compile Include="LayoutRules\SA1516UnitTests.cs" />
     <Compile Include="LayoutRules\SA1517UnitTests.cs" />
