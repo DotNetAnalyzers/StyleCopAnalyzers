@@ -160,6 +160,7 @@
     <Compile Include="LayoutRules\SA1500UnitTests.Namespaces.cs" />
     <Compile Include="LayoutRules\SA1500UnitTests.Properties.cs" />
     <Compile Include="LayoutRules\SA1500UnitTests.Structs.cs" />
+    <Compile Include="LayoutRules\SA1500UnitTests.Switches.cs" />
     <Compile Include="LayoutRules\SA1516UnitTests.cs" />
     <Compile Include="LayoutRules\SA1517UnitTests.cs" />
     <Compile Include="LayoutRules\SA1518UnitTests.cs" />
