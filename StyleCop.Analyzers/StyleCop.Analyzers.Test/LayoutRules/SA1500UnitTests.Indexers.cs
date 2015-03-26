@@ -198,11 +198,9 @@
                 // Invalid indexer #5
                 this.CSharpDiagnostic().WithLocation(53, 9),
                 this.CSharpDiagnostic().WithLocation(57, 9),
-                // Invalid indexer #6
+                // Invalid indexer #6 (Only report once for accessor statements on a single line)
                 this.CSharpDiagnostic().WithLocation(65, 9),
-                this.CSharpDiagnostic().WithLocation(65, 29),
                 this.CSharpDiagnostic().WithLocation(68, 9),
-                this.CSharpDiagnostic().WithLocation(68, 30),
                 // Invalid indexer #7
                 this.CSharpDiagnostic().WithLocation(72, 34),
                 // Invalid indexer #8
