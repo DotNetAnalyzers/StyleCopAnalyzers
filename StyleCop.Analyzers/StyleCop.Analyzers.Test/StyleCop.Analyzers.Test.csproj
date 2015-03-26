@@ -158,6 +158,7 @@
     <Compile Include="LayoutRules\SA1500UnitTests.Locks.cs" />
     <Compile Include="LayoutRules\SA1500UnitTests.Methods.cs" />
     <Compile Include="LayoutRules\SA1500UnitTests.Namespaces.cs" />
+    <Compile Include="LayoutRules\SA1500UnitTests.Properties.cs" />
     <Compile Include="LayoutRules\SA1516UnitTests.cs" />
     <Compile Include="LayoutRules\SA1517UnitTests.cs" />
     <Compile Include="LayoutRules\SA1518UnitTests.cs" />
