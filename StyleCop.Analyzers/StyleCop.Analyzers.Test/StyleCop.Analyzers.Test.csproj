@@ -155,6 +155,7 @@
     <Compile Include="LayoutRules\SA1500UnitTests.Indexers.cs" />
     <Compile Include="LayoutRules\SA1500UnitTests.Interfaces.cs" />
     <Compile Include="LayoutRules\SA1500UnitTests.LambdaExpressions.cs" />
+    <Compile Include="LayoutRules\SA1500UnitTests.Locks.cs" />
     <Compile Include="LayoutRules\SA1516UnitTests.cs" />
     <Compile Include="LayoutRules\SA1517UnitTests.cs" />
     <Compile Include="LayoutRules\SA1518UnitTests.cs" />
