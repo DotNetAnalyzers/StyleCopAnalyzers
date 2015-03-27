@@ -191,7 +191,7 @@
         {
             Location location = null;
             location = location ?? (member as PropertyDeclarationSyntax)?.Identifier.GetLocation();
-            location = location ?? (member as FieldDeclarationSyntax)?.Declaration?.Variables.FirstOrDefault()?.GetLocation();
+            location = location ?? (member as FieldDeclarationSyntax)?.Declaration?.Variables.FirstOrDefault()?.Identifier.GetLocation();
             location = location ?? (member as MethodDeclarationSyntax)?.Identifier.GetLocation();
             location = location ?? (member as ConstructorDeclarationSyntax)?.Identifier.GetLocation();
             location = location ?? (member as DestructorDeclarationSyntax)?.Identifier.GetLocation();
