@@ -74,11 +74,14 @@
                 break;
 
             case SyntaxKind.CheckedKeyword:
+            case SyntaxKind.UncheckedKeyword:
+                isAddingSpace = token.GetNextToken().IsKind(SyntaxKind.OpenBraceToken);
+                break;
+
             case SyntaxKind.DefaultKeyword:
             case SyntaxKind.NameOfKeyword:
             case SyntaxKind.SizeOfKeyword:
             case SyntaxKind.TypeOfKeyword:
-            case SyntaxKind.UncheckedKeyword:
                 isAddingSpace = false;
                 break;
 
