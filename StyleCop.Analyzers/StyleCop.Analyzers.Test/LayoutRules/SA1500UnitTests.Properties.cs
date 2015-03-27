@@ -75,6 +75,21 @@ public class Foo
     // Valid property #6  (Valid for SA1500 only)
     public bool Property6 
     { get { return this.test; } }
+
+    // Valid property #7
+    public List<int> Property7 { get; set; } = 
+    { 
+        0, 
+        1, 
+        2 
+    };
+
+    // Valid property #8  (Valid for SA1500 only)
+    public int[] Property8 { get; set; } = { 0, 1, 2 };
+
+    // Valid property #9  (Valid for SA1500 only)
+    public int[] Property9 { get; set; } = 
+    { 0, 1, 2 };
 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -180,6 +195,25 @@ public class Foo
     public bool Property11
     { get { return this.test; } 
     }
+
+    // Invalid property #12
+    public int[] Property12 { get; set; } = 
+    { 
+        0, 
+        1, 
+        2 };
+
+    // Invalid property #13
+    public int[] Property13 { get; set; } = {
+        0,
+        1,
+        2
+    };
+
+    // Invalid property #14
+    public int[] Property14 { get; set; } = { 0, 1, 2 
+    };
+
 }";
             var expectedDiagnostics = new[]
             {
@@ -213,7 +247,13 @@ public class Foo
                 // Invalid property #10
                 this.CSharpDiagnostic().WithLocation(88, 28),
                 // Invalid property #11
-                this.CSharpDiagnostic().WithLocation(93, 9)
+                this.CSharpDiagnostic().WithLocation(93, 9),
+                // Invalid property #12
+                this.CSharpDiagnostic().WithLocation(101, 11),
+                // Invalid property #13
+                this.CSharpDiagnostic().WithLocation(104, 49),
+                // Invalid property #14
+                this.CSharpDiagnostic().WithLocation(111, 49)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
