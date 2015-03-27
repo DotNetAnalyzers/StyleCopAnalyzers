@@ -22,6 +22,7 @@
                 yield return new[] { "lock (this)" };
                 yield return new[] { "unchecked" };
                 yield return new[] { "unsafe" };
+                yield return new[] { "using (var x = new System.Threading.ManualResetEvent(true))" };
                 yield return new[] { "while (this.X < 2)" };
             }
         }

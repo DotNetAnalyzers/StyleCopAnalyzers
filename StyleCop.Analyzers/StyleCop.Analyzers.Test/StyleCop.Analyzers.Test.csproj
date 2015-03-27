@@ -150,7 +150,6 @@
     <Compile Include="LayoutRules\SA1500UnitTests.Events.cs" />
     <Compile Include="LayoutRules\SA1500UnitTests.Fixeds.cs" />
     <Compile Include="LayoutRules\SA1500UnitTests.ForEaches.cs" />
-    <Compile Include="LayoutRules\SA1500UnitTests.Fors.cs" />
     <Compile Include="LayoutRules\SA1500UnitTests.Ifs.cs" />
     <Compile Include="LayoutRules\SA1500UnitTests.Indexers.cs" />
     <Compile Include="LayoutRules\SA1500UnitTests.Interfaces.cs" />
