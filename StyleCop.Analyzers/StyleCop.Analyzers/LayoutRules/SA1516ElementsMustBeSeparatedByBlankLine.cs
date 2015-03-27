@@ -187,23 +187,6 @@
             }
         }
 
-        private static Location GetDiagnosticLocation(SyntaxNode member)
-        {
-            Location location = null;
-            location = location ?? (member as PropertyDeclarationSyntax)?.Identifier.GetLocation();
-            location = location ?? (member as FieldDeclarationSyntax)?.Declaration?.Variables.FirstOrDefault()?.GetLocation();
-            location = location ?? (member as MethodDeclarationSyntax)?.Identifier.GetLocation();
-            location = location ?? (member as ConstructorDeclarationSyntax)?.Identifier.GetLocation();
-            location = location ?? (member as DestructorDeclarationSyntax)?.Identifier.GetLocation();
-            location = location ?? (member as BaseTypeDeclarationSyntax)?.Identifier.GetLocation();
-            location = location ?? (member as NamespaceDeclarationSyntax)?.Name.GetLocation();
-            location = location ?? (member as UsingDirectiveSyntax)?.Name.GetLocation();
-            location = location ?? (member as ExternAliasDirectiveSyntax)?.Identifier.GetLocation();
-            location = location ?? (member as AccessorDeclarationSyntax)?.Keyword.GetLocation();
-            location = location ?? member.GetLocation();
-            return location;
-        }
-
         private static bool IsMultiline(SyntaxNode node)
         {
             var lineSpan = node.GetLocation().GetLineSpan();
@@ -230,6 +213,23 @@
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, GetDiagnosticLocation(secondNode)));
             }
+        }
+
+        private static Location GetDiagnosticLocation(SyntaxNode node)
+        {
+            Location nodeLocation = node.GetLocation();
+
+            if (node.HasLeadingTrivia)
+            {
+                return node.GetLeadingTrivia()[0].GetLocation();
+            }
+            var firstToken = node.ChildTokens().FirstOrDefault();
+            if (firstToken != default(SyntaxToken))
+            {
+                return node.ChildTokens().First().GetLocation();
+            }
+
+            return Location.None;
         }
 
         private static bool HasEmptyLine(ImmutableList<SyntaxTrivia> allTrivia)
