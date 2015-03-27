@@ -5,21 +5,36 @@
     using StyleCop.Analyzers.LayoutRules;
     using TestHelper;
     using Xunit;
+    using System.Collections.Generic;
+
 
     /// <summary>
     /// Unit tests for <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
     public partial class SA1500UnitTests : DiagnosticVerifier
     {
+        public static IEnumerable<object[]> StatementBlocksTokenList
+        {
+            get
+            {
+                yield return new[] { "checked" };
+                yield return new[] { "for (var y = 0; y < 2; y++)" };
+                yield return new[] { "lock (this)" };
+                yield return new[] { "unchecked" };
+                yield return new[] { "unsafe" };
+                yield return new[] { "while (this.X < 2)" };
+            }
+        }
+
         /// <summary>
-        /// Verifies that no diagnostics are reported for the valid checked statements defined in this test.
+        /// Verifies that no diagnostics are reported for the valid statements defined in this test.
         /// </summary>
         /// <remarks>
         /// These are valid for SA1500 only, some will report other diagnostics outside of the unit test scenario.
         /// </remarks>
         [Theory]
-        [InlineData("checked"), InlineData("unchecked"), InlineData("unsafe")]
-        public async Task TestCheckedValid(string token)
+        [MemberData(nameof(StatementBlocksTokenList))]
+        public async Task TestStatementBlockValid(string token)
         {
             var testCode = @"public class Foo
 {
@@ -56,11 +71,11 @@
         }
 
         /// <summary>
-        /// Verifies that diagnostics will be reported for all invalid checked statements.
+        /// Verifies that diagnostics will be reported for all invalid statements.
         /// </summary>
         [Theory(Skip = "Disabled until the SA1500 implementation is available")]
-        [InlineData("checked"), InlineData("unchecked"), InlineData("unsafe")]
-        public async Task TestCheckedInvalid(string token)
+        [MemberData(nameof(StatementBlocksTokenList))]
+        public async Task TestStatementBlockInvalid(string token)
         {
             var testCode = @"public class Foo
 {
