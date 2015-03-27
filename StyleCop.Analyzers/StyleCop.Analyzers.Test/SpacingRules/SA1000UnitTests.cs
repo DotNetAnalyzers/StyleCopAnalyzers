@@ -220,7 +220,7 @@ select z;";
 
             await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("join", string.Empty, "followed").WithLocation(8, 16);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("join", string.Empty, "followed").WithLocation(8, 1);
 
             await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
@@ -486,6 +486,16 @@ select z;";
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("checked", " not", "followed").WithLocation(7, 21);
 
             await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
+
+            statementWithoutSpace = @"checked{ };";
+
+            statementWithSpace = @"checked { };";
+
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+
+            expected = this.CSharpDiagnostic().WithArguments("checked", string.Empty, "followed").WithLocation(7, 13);
+
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
 
         [Fact]
@@ -580,6 +590,16 @@ default :
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("unchecked", " not", "followed").WithLocation(7, 21);
 
             await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
+
+            statementWithoutSpace = @"unchecked{ };";
+
+            statementWithSpace = @"unchecked { };";
+
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+
+            expected = this.CSharpDiagnostic().WithArguments("unchecked", string.Empty, "followed").WithLocation(7, 13);
+
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
 
         [Fact]
