@@ -220,7 +220,7 @@ select z;";
 
             await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("join", string.Empty, "followed").WithLocation(8, 16);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("join", string.Empty, "followed").WithLocation(8, 1);
 
             await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
