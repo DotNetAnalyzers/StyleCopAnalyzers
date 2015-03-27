@@ -18,7 +18,7 @@
         /// These are valid for SA1500 only, some will report other diagnostics outside of the unit test scenario.
         /// </remarks>
         [Theory]
-        [InlineData("checked"), InlineData("unchecked")]
+        [InlineData("checked"), InlineData("unchecked"), InlineData("unsafe")]
         public async Task TestCheckedValid(string token)
         {
             var testCode = @"public class Foo
@@ -59,7 +59,7 @@
         /// Verifies that diagnostics will be reported for all invalid checked statements.
         /// </summary>
         [Theory(Skip = "Disabled until the SA1500 implementation is available")]
-        [InlineData("checked"), InlineData("unchecked")]
+        [InlineData("checked"), InlineData("unchecked"), InlineData("unsafe")]
         public async Task TestCheckedInvalid(string token)
         {
             var testCode = @"public class Foo
