@@ -17,8 +17,9 @@
         /// <remarks>
         /// These are valid for SA1500 only, some will report other diagnostics outside of the unit test scenario.
         /// </remarks>
-        [Fact]
-        public async Task TestCheckedValid()
+        [Theory]
+        [InlineData("checked"), InlineData("unchecked")]
+        public async Task TestCheckedValid(string token)
         {
             var testCode = @"public class Foo
 {
@@ -26,28 +27,30 @@
 
     public void Bar()
     {
-        // valid checked #1
-        checked
+        // valid #1
+        #TOKEN#
         {
         }
 
-        // valid checked #2
-        checked
+        // valid #2
+        #TOKEN#
         {
             this.X = 1;
         }
 
-        // valid checked #3 (valid only for SA1500)
-        checked { }
+        // valid #3 (valid only for SA1500)
+        #TOKEN# { }
 
-        // valid checked #4 (valid only for SA1500)
-        checked { this.X = 1; }
+        // valid #4 (valid only for SA1500)
+        #TOKEN# { this.X = 1; }
 
-        // valid checked #5 (valid only for SA1500)
-        checked 
+        // valid #5 (valid only for SA1500)
+        #TOKEN# 
         { this.X = 1; }
     }
 }";
+
+            testCode = testCode.Replace("#TOKEN#", token);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
@@ -55,8 +58,9 @@
         /// <summary>
         /// Verifies that diagnostics will be reported for all invalid checked statements.
         /// </summary>
-        [Fact(Skip = "Disabled until the SA1500 implementation is available")]
-        public async Task TestCheckedInvalid()
+        [Theory(Skip = "Disabled until the SA1500 implementation is available")]
+        [InlineData("checked"), InlineData("unchecked")]
+        public async Task TestCheckedInvalid(string token)
         {
             var testCode = @"public class Foo
 {
@@ -64,47 +68,50 @@
 
     public void Bar()
     {
-        // invalid checked #1
-        checked {
+        // invalid #1
+        #TOKEN# {
             this.X = 1;
         }
 
-        // invalid checked #2
-        checked {
+        // invalid #2
+        #TOKEN# {
             this.X = 1; }
 
-        // invalid checked #3
-        checked { this.X = 1;
+        // invalid #3
+        #TOKEN# { this.X = 1;
         }
 
-        // invalid checked #4
-        checked 
+        // invalid #4
+        #TOKEN# 
         {
             this.X = 1; }
 
-        // invalid checked #5
-        checked 
+        // invalid #5
+        #TOKEN# 
         { this.X = 1;
         }
     }
 }";
 
+            testCode = testCode.Replace("#TOKEN#", token);
+            var tokenLength = token.Length;
+
             var expectedDiagnostics = new[]
             {
-                // invalid checked #1
-                this.CSharpDiagnostic().WithLocation(8, 17),
+                // invalid #1
+                this.CSharpDiagnostic().WithLocation(8, 11 + tokenLength),
 
-                // invalid checked #2
-                this.CSharpDiagnostic().WithLocation(13, 17),
+                // invalid #2
+                this.CSharpDiagnostic().WithLocation(13, 11 + tokenLength),
                 this.CSharpDiagnostic().WithLocation(14, 25),
 
-                // invalid checked #3
-                this.CSharpDiagnostic().WithLocation(17, 17),
+                // invalid #3
+                this.CSharpDiagnostic().WithLocation(17, 11 + tokenLength),
 
-                // invalid checked #4
+                // invalid #4
                 this.CSharpDiagnostic().WithLocation(23, 25),
 
-                // invalid checked #5
+                // invalid #5
                 this.CSharpDiagnostic().WithLocation(27, 9)
             };
 
