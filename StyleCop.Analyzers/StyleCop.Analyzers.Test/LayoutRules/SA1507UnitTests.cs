@@ -13,7 +13,7 @@
     /// </summary>
     public class SA1507UnitTests : CodeFixVerifier
     {
-        private const string TestCode = @"public class Foo
+        private const string TestCode = @"namespace MyTest
 {
 
 
@@ -22,8 +22,12 @@
 
     using System.Collections;
 
-    void Bar()
+    public class Foo
     {
+
+
+        public void Bar()
+        {
 
 
 #if !IGNORE
@@ -41,7 +45,10 @@
 
 
 */
+        }
     }
+
+
 }
 ";
 
@@ -122,10 +129,12 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(3, 1),
                 this.CSharpDiagnostic().WithLocation(6, 1),
                 this.CSharpDiagnostic().WithLocation(12, 1),
-                this.CSharpDiagnostic().WithLocation(15, 1),
-                /* line 19 should not report a diagnostic, as it's part of the directive is inactive */
-                this.CSharpDiagnostic().WithLocation(23, 1)
-                /* line 26 should not report a diagnostic, as it's part of a comment */
+                this.CSharpDiagnostic().WithLocation(16, 1),
+                this.CSharpDiagnostic().WithLocation(19, 1),
+                /* line 23 should not report a diagnostic, as it's part of the directive is inactive */
+                this.CSharpDiagnostic().WithLocation(27, 1),
+                /* line 30 should not report a diagnostic, as it's part of a comment */
+                this.CSharpDiagnostic().WithLocation(35, 1)
             };
 
             await this.VerifyCSharpDiagnosticAsync(TestCode, expectedDiagnostics, CancellationToken.None);
@@ -137,15 +146,18 @@ public class Foo
         [Fact]
         public async Task TestInvalidMultipleBlankLinesCodeFix()
         {
-            var fixedTestCode = @"public class Foo
+            var fixedTestCode = @"namespace MyTest
 {
 
     using System;
 
     using System.Collections;
 
-    void Bar()
+    public class Foo
     {
+
+        public void Bar()
+        {
 
 #if !IGNORE
 
@@ -160,7 +172,9 @@ public class Foo
 
 
 */
+        }
     }
+
 }
 ";
 
