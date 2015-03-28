@@ -12,6 +12,7 @@
     /// Implements a code fix for <see cref="SA1308VariableNamesMustNotBePrefixed"/>.
     /// </summary>
     /// <remarks>
+    /// <para>To fix a violation of this rule, remove the prefix from the beginning of the field name, or place the
     /// item within a <c>NativeMethods</c> class if appropriate.</para>
     /// </remarks>
     [ExportCodeFixProvider(nameof(SA1308CodeFixProvider), LanguageNames.CSharp)]
