@@ -123,9 +123,9 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(6, 1),
                 this.CSharpDiagnostic().WithLocation(12, 1),
                 this.CSharpDiagnostic().WithLocation(15, 1),
-                /* line 19 should not report a diagnostic, as its part of the directive is inactive */
+                /* line 19 should not report a diagnostic, as it's part of the directive is inactive */
                 this.CSharpDiagnostic().WithLocation(23, 1)
-                /* line 26 should not report a diagnostic, as its part of a comment */
+                /* line 26 should not report a diagnostic, as it's part of a comment */
             };
 
             await this.VerifyCSharpDiagnosticAsync(TestCode, expectedDiagnostics, CancellationToken.None);
