@@ -28,8 +28,14 @@ public class Foo
 
     public event EventHandler NameChanged
     {
-        remove { this.nameChanged -= value; }
-        add { this.nameChanged += value; }
+        remove 
+        { 
+            this.nameChanged -= value; 
+        }
+        add 
+        { 
+            this.nameChanged += value; 
+        }
     }
 }";
 
@@ -67,8 +73,14 @@ public class Foo
 
     public event EventHandler NameChanged
     {
-        add { this.nameChanged += value; }
-        remove { this.nameChanged -= value; }
+        add 
+        { 
+            this.nameChanged += value; 
+        }
+        remove 
+        { 
+            this.nameChanged -= value; 
+        }
     }
 }";
 

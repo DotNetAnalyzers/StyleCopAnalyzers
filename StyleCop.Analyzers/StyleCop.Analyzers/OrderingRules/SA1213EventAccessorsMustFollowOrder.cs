@@ -78,7 +78,7 @@
             if (accessors[0].Kind() == SyntaxKind.RemoveAccessorDeclaration &&
                 accessors[1].Kind() == SyntaxKind.AddAccessorDeclaration)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, accessors[0].GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, accessors[0].Keyword.GetLocation()));
             }
         }
     }
