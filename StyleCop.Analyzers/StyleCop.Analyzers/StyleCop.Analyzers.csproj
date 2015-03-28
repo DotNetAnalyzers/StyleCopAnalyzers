@@ -158,6 +158,7 @@
     <Compile Include="NamingRules\SA1306FieldNamesMustBeginWithLowerCaseLetter.cs" />
     <Compile Include="NamingRules\SA1307AccessibleFieldsMustBeginWithUpperCaseLetter.cs" />
     <Compile Include="NamingRules\SA1307CodeFixProvider.cs" />
+    <Compile Include="NamingRules\SA1308CodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1308VariableNamesMustNotBePrefixed.cs" />
     <Compile Include="NamingRules\SA1309CodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1309FieldNamesMustNotBeginWithUnderscore.cs" />
