@@ -183,7 +183,9 @@
         {
             CompilationUnitSyntax syntax = context.Node as CompilationUnitSyntax;
             if (syntax == null)
+            {
                 return;
+            }
 
             List<SyntaxNode> usingDirectives = new List<SyntaxNode>();
             foreach (SyntaxNode child in syntax.ChildNodes())

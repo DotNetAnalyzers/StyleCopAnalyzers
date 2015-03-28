@@ -68,16 +68,22 @@
         private void HandleSemicolonToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             // check for a following space
             bool missingFollowingSpace = true;
             if (token.HasTrailingTrivia)
             {
                 if (token.TrailingTrivia.First().IsKind(SyntaxKind.WhitespaceTrivia))
+                {
                     missingFollowingSpace = false;
+                }
                 else if (token.TrailingTrivia.First().IsKind(SyntaxKind.EndOfLineTrivia))
+                {
                     missingFollowingSpace = false;
+                }
             }
             else
             {
@@ -96,7 +102,9 @@
                 // only the first token on the line has leading trivia, and those are ignored
                 SyntaxToken precedingToken = token.GetPreviousToken();
                 if (precedingToken.HasTrailingTrivia)
+                {
                     hasPrecedingSpace = true;
+                }
 
                 if (precedingToken.IsKind(SyntaxKind.SemicolonToken))
                 {

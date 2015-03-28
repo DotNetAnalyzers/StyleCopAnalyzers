@@ -69,7 +69,9 @@
         private void HandleLessThanToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             switch (token.Parent.Kind())
             {

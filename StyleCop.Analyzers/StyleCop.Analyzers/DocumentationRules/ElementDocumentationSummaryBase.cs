@@ -43,7 +43,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var node = context.Node as BaseTypeDeclarationSyntax;
             if (node == null || node.Identifier.IsMissing)
+            {
                 return;
+            }
 
             if (node.Modifiers.Any(SyntaxKind.PartialKeyword))
             {
@@ -58,7 +60,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var node = context.Node as DelegateDeclarationSyntax;
             if (node == null || node.Identifier.IsMissing)
+            {
                 return;
+            }
 
             this.HandleDeclaration(context, node, node.Identifier.GetLocation());
         }
@@ -67,7 +71,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var node = context.Node as MethodDeclarationSyntax;
             if (node == null || node.Identifier.IsMissing)
+            {
                 return;
+            }
 
             if (node.Modifiers.Any(SyntaxKind.PartialKeyword))
             {
@@ -82,7 +88,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var node = context.Node as ConstructorDeclarationSyntax;
             if (node == null || node.Identifier.IsMissing)
+            {
                 return;
+            }
 
             this.HandleDeclaration(context, node, node.Identifier.GetLocation());
         }
@@ -91,7 +99,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var node = context.Node as DestructorDeclarationSyntax;
             if (node == null || node.Identifier.IsMissing)
+            {
                 return;
+            }
 
             this.HandleDeclaration(context, node, node.Identifier.GetLocation());
         }
@@ -100,7 +110,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var node = context.Node as PropertyDeclarationSyntax;
             if (node == null || node.Identifier.IsMissing)
+            {
                 return;
+            }
 
             this.HandleDeclaration(context, node, node.Identifier.GetLocation());
         }
@@ -109,7 +121,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var node = context.Node as IndexerDeclarationSyntax;
             if (node == null || node.ThisKeyword.IsMissing)
+            {
                 return;
+            }
 
             this.HandleDeclaration(context, node, node.ThisKeyword.GetLocation());
         }
@@ -118,7 +132,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var node = context.Node as BaseFieldDeclarationSyntax;
             if (node == null || node.Declaration == null)
+            {
                 return;
+            }
 
             var locations =
                 from variable in node.Declaration.Variables
@@ -133,7 +149,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var node = context.Node as EventDeclarationSyntax;
             if (node == null || node.Identifier.IsMissing)
+            {
                 return;
+            }
 
             this.HandleDeclaration(context, node, node.Identifier.GetLocation());
         }

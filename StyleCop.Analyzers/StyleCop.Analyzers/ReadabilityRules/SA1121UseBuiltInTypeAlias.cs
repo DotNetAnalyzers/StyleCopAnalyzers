@@ -151,10 +151,14 @@
         {
             IdentifierNameSyntax identifierNameSyntax = context.Node as IdentifierNameSyntax;
             if (identifierNameSyntax == null || identifierNameSyntax.IsVar)
+            {
                 return;
+            }
 
             if (identifierNameSyntax.Identifier.IsMissing)
+            {
                 return;
+            }
 
             switch (identifierNameSyntax.Identifier.Text)
             {
@@ -180,7 +184,9 @@
             }
 
             if (identifierNameSyntax.FirstAncestorOrSelf<UsingDirectiveSyntax>() != null)
+            {
                 return;
+            }
 
             SemanticModel semanticModel = context.SemanticModel;
             INamedTypeSymbol symbol = semanticModel.GetSymbolInfo(identifierNameSyntax, context.CancellationToken).Symbol as INamedTypeSymbol;
@@ -210,7 +216,9 @@
 
             SyntaxNode locationNode = identifierNameSyntax;
             if (identifierNameSyntax.Parent is QualifiedNameSyntax)
+            {
                 locationNode = identifierNameSyntax.Parent;
+            }
 
             // Allow nameof
             if (this.IsNameInNameOfExpression(identifierNameSyntax))

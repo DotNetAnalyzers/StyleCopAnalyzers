@@ -73,7 +73,9 @@
         private void HandleCloseBraceToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             bool precededBySpace;
             bool firstInLine;

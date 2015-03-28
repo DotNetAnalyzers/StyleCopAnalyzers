@@ -102,7 +102,9 @@
 
             case SyntaxKind.NameEquals:
                 if (((NameEqualsSyntax)context.Node.Parent).Name != context.Node)
+                {
                     break;
+                }
 
                 switch (context.Node?.Parent?.Parent?.Kind() ?? SyntaxKind.None)
                 {
@@ -130,10 +132,14 @@
         private void HandleIdentifierNameImpl(SyntaxNodeAnalysisContext context, IdentifierNameSyntax nameExpression)
         {
             if (nameExpression == null)
+            {
                 return;
+            }
 
             if (!this.HasThis(nameExpression))
+            {
                 return;
+            }
 
             SymbolInfo symbolInfo = context.SemanticModel.GetSymbolInfo(nameExpression, context.CancellationToken);
             ImmutableArray<ISymbol> symbolsToAnalyze;
@@ -154,10 +160,14 @@
             foreach (ISymbol symbol in symbolsToAnalyze)
             {
                 if (symbol is ITypeSymbol)
+                {
                     return;
+                }
 
                 if (symbol.IsStatic)
+                {
                     return;
+                }
 
                 if (!(symbol.ContainingSymbol is ITypeSymbol))
                 {
@@ -167,7 +177,9 @@
 
                 IMethodSymbol methodSymbol = symbol as IMethodSymbol;
                 if (methodSymbol != null && methodSymbol.MethodKind == MethodKind.Constructor)
+                {
                     return;
+                }
             }
 
             // Prefix local calls with this

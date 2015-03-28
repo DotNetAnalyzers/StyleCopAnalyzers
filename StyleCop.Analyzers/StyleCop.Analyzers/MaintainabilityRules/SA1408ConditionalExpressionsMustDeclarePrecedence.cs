@@ -97,7 +97,9 @@
                     {
 
                         if (!this.IsSameFamily(binSyntax.OperatorToken, left.OperatorToken))
+                        {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptor, left.GetLocation()));
+                        }
                     }
                 }
                 if (binSyntax.Right is BinaryExpressionSyntax)
@@ -108,7 +110,9 @@
                     if (right.OperatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken) || right.OperatorToken.IsKind(SyntaxKind.BarBarToken))
                     {
                         if (!this.IsSameFamily(binSyntax.OperatorToken, right.OperatorToken))
+                        {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptor, right.GetLocation()));
+                        }
                     }
                 }
             }

@@ -39,11 +39,15 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1000KeywordsMustBeSpacedCorrectly.DiagnosticId))
+                {
                     continue;
+                }
 
                 SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (token.IsMissing)
+                {
                     continue;
+                }
 
                 context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context.Document, root, token)), diagnostic);
             }
@@ -58,7 +62,9 @@
                 {
                     SyntaxToken nextToken = token.GetNextToken();
                     if (nextToken.IsKind(SyntaxKind.OpenBracketToken) || nextToken.IsKind(SyntaxKind.OpenParenToken))
+                    {
                         isAddingSpace = false;
+                    }
                 }
 
                 break;
@@ -68,7 +74,9 @@
                 {
                     SyntaxToken nextToken = token.GetNextToken();
                     if (nextToken.IsKind(SyntaxKind.SemicolonToken))
+                    {
                         isAddingSpace = false;
+                    }
                 }
 
                 break;

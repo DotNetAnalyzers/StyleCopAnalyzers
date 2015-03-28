@@ -69,13 +69,19 @@
         private void HandleQuestionToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             if (token.Parent.Kind() != SyntaxKind.NullableType)
+            {
                 return;
+            }
 
             if (token.IsFirstTokenOnLine(context.CancellationToken))
+            {
                 return;
+            }
 
             SyntaxToken precedingToken = token.GetPreviousToken();
             if (precedingToken.HasTrailingTrivia)

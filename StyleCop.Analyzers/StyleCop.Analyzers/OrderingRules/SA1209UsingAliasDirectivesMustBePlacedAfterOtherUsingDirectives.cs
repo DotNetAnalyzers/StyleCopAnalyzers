@@ -54,7 +54,9 @@
         {
             UsingDirectiveSyntax syntax = context.Node as UsingDirectiveSyntax;
             if (syntax.Alias == null)
+            {
                 return;
+            }
 
             CompilationUnitSyntax compilationUnit = syntax.Parent as CompilationUnitSyntax;
             SyntaxList<UsingDirectiveSyntax>? usingDirectives = compilationUnit?.Usings;
@@ -65,7 +67,9 @@
             }
 
             if (!usingDirectives.HasValue)
+            {
                 return;
+            }
 
             bool foundCurrent = false;
             foreach (var usingDirective in usingDirectives)
@@ -83,12 +87,16 @@
 
                 // ignore following using alias directives
                 if (usingDirective.Alias != null)
+                {
                     continue;
+                }
 
                 SymbolInfo symbolInfo = context.SemanticModel.GetSymbolInfo(usingDirective.Name, context.CancellationToken);
                 INamespaceSymbol followingNamespaceSymbol = symbolInfo.Symbol as INamespaceSymbol;
                 if (followingNamespaceSymbol == null)
+                {
                     continue;
+                }
 
                 string alias = syntax.Alias.Name.ToString();
                 string precedingNamespace = followingNamespaceSymbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat);

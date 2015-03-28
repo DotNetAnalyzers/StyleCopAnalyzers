@@ -74,7 +74,9 @@
             {
                 SyntaxNode node = root.FindNode(diagnostic.Location.SourceSpan);
                 if (node.IsMissing)
+                {
                     continue;
+                }
 
                 root = root.ReplaceNode(node, node.WithAdditionalAnnotations(NeedsParenthesisAnnotation));
             }
@@ -86,7 +88,9 @@
         {
             BinaryExpressionSyntax syntax = rewrittenNode as BinaryExpressionSyntax;
             if (syntax == null)
+            {
                 return rewrittenNode;
+            }
 
             BinaryExpressionSyntax trimmedSyntax = syntax
                 .WithoutTrivia()

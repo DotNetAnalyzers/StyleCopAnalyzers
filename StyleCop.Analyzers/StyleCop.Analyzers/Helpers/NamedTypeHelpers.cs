@@ -25,7 +25,9 @@
         {
             string name = syntax?.Identifier.ValueText;
             if (name == null)
+            {
                 return false;
+            }
 
             return name.EndsWith("NativeMethods", StringComparison.Ordinal);
         }
@@ -60,7 +62,9 @@
             {
                 ClassDeclarationSyntax classDeclarationSyntax = syntax.FirstAncestorOrSelf<ClassDeclarationSyntax>();
                 if (IsNativeMethodsClass(classDeclarationSyntax))
+                {
                     return true;
+                }
 
                 syntax = syntax?.Parent;
             }

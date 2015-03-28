@@ -77,14 +77,20 @@
         private void HandleHashToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             if (!token.HasTrailingTrivia || token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia))
+            {
                 return;
+            }
 
             SyntaxToken targetToken = token.GetNextToken(includeDirectives: true);
             if (targetToken.IsMissing)
+            {
                 return;
+            }
 
             // Preprocessor keyword '{keyword}' must not be preceded by a space.
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, targetToken.GetLocation(), targetToken.Text));

@@ -71,7 +71,9 @@
         {
             BlockSyntax blockSyntax = trivia.Token.Parent.AncestorsAndSelf().OfType<BlockSyntax>().FirstOrDefault();
             if (blockSyntax == null)
+            {
                 return;
+            }
 
             // Region must not be located within a code element.
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, trivia.GetLocation()));
