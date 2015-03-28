@@ -39,11 +39,15 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1017ClosingAttributeBracketsMustBeSpacedCorrectly.DiagnosticId))
+                {
                     continue;
+                }
 
                 SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (!token.IsKind(SyntaxKind.CloseBracketToken))
+                {
                     continue;
+                }
 
                 context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context.Document, root, token)), diagnostic);
             }
@@ -53,11 +57,15 @@
         {
             bool firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
             if (firstInLine)
+            {
                 return Task.FromResult(document);
+            }
 
             SyntaxToken precedingToken = token.GetPreviousToken();
             if (!precedingToken.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
+            {
                 return Task.FromResult(document);
+            }
 
             SyntaxToken corrected = precedingToken.WithoutTrailingWhitespace().WithoutFormatting();
             SyntaxNode transformed = root.ReplaceToken(precedingToken, corrected);

@@ -145,7 +145,7 @@
             await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
 
             test = string.Format(testFormat, this.Sign + " 3");
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(8, 17);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(8, 1);
 
             await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
             await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);

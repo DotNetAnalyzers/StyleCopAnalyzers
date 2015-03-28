@@ -41,11 +41,15 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1101PrefixLocalCallsWithThis.DiagnosticId))
+                {
                     continue;
+                }
 
                 var node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) as SimpleNameSyntax;
                 if (node == null)
+                {
                     return;
+                }
 
                 context.RegisterCodeFix(CodeAction.Create("Prefix reference with 'this.'", token => GetTransformedDocument(context.Document, root, diagnostic, node)), diagnostic);
             }

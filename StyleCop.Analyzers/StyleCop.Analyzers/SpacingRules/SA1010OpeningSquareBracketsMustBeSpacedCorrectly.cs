@@ -71,11 +71,15 @@
         private void HandleOpenBracketToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             // attribute brackets are handled separately
             if (token.Parent.IsKind(SyntaxKind.AttributeList))
+            {
                 return;
+            }
 
             bool precededBySpace;
             bool firstInLine;

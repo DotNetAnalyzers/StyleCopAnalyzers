@@ -41,11 +41,15 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1022PositiveSignsMustBeSpacedCorrectly.DiagnosticId))
+                {
                     continue;
+                }
 
                 SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (!token.IsKind(SyntaxKind.PlusToken))
+                {
                     continue;
+                }
 
                 context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context.Document, root, token)), diagnostic);
             }

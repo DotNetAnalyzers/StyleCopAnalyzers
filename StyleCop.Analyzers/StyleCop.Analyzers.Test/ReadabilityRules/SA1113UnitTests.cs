@@ -804,6 +804,7 @@ public class Foo4
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1113CommaMustBeOnSameLineAsPreviousParameter();

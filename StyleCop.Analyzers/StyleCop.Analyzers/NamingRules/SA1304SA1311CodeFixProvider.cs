@@ -46,11 +46,15 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!FixableDiagnostics.Any(d => diagnostic.Id.Equals(d)))
+                {
                     continue;
+                }
 
                 var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (token.IsMissing)
+                {
                     continue;
+                }
 
                 var newName = char.ToUpper(token.ValueText[0]) + token.ValueText.Substring(1);
                 var typeSyntax = this.GetParentTypeDeclaration(token);

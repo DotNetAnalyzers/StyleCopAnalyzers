@@ -39,19 +39,27 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1018NullableTypeSymbolsMustNotBePrecededBySpace.DiagnosticId))
+                {
                     continue;
+                }
 
                 SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (!token.IsKind(SyntaxKind.QuestionToken))
+                {
                     continue;
+                }
 
                 bool firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
                 if (firstInLine)
+                {
                     continue;
+                }
 
                 SyntaxToken previousToken = token.GetPreviousToken();
                 if (!previousToken.HasTrailingTrivia)
+                {
                     continue;
+                }
 
                 context.RegisterCodeFix(CodeAction.Create("Remove space", t => GetTransformedDocument(context.Document, root, previousToken)), diagnostic);
             }

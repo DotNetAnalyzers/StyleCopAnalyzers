@@ -74,7 +74,9 @@
         private void HandleCloseParenToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             bool precededBySpace;
 

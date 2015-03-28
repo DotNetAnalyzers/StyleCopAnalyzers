@@ -195,8 +195,8 @@ namespace TestHelper
 
             var actualLinePosition = actualSpan.StartLinePosition;
 
-            // Only check line position if there is an actual line in the real diagnostic
-            if (actualLinePosition.Line > 0)
+            // Only check line position if it matters
+            if (expected.Line > 0)
             {
                 if (actualLinePosition.Line + 1 != expected.Line)
                 {
@@ -206,8 +206,8 @@ namespace TestHelper
                 }
             }
 
-            // Only check column position if there is an actual column position in the real diagnostic
-            if (actualLinePosition.Character > 0)
+            // Only check column position if it matters
+            if (expected.Column > 0)
             {
                 if (actualLinePosition.Character + 1 != expected.Column)
                 {

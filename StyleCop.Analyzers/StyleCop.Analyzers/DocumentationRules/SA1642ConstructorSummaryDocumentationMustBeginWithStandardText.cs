@@ -9,8 +9,6 @@
     using Helpers;
     using System;
 
-
-
     /// <summary>
     /// The XML documentation header for a C# constructor does not contain the appropriate summary text.
     /// </summary>

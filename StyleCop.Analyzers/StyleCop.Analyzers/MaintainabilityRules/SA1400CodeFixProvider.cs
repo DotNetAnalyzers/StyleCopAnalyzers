@@ -40,15 +40,21 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1400AccessModifierMustBeDeclared.DiagnosticId))
+                {
                     continue;
+                }
 
                 SyntaxNode node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
                 if (node == null || node.IsMissing)
+                {
                     continue;
+                }
 
                 SyntaxNode declarationNode = FindParentDeclarationNode(node);
                 if (declarationNode == null)
+                {
                     continue;
+                }
 
                 context.RegisterCodeFix(CodeAction.Create("Declare accessibility", token => GetTransformedDocument(context.Document, root, declarationNode)), diagnostic);
             }
@@ -189,7 +195,9 @@
         {
             SyntaxToken triviaToken = node.Keyword;
             if (triviaToken.IsMissing)
+            {
                 return null;
+            }
 
             SyntaxKind defaultVisibility = IsNestedType(node) ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword;
             SyntaxTokenList modifiers = AddModifier(node.Modifiers, ref triviaToken, defaultVisibility);
@@ -203,7 +211,9 @@
         {
             SyntaxToken triviaToken = node.Keyword;
             if (triviaToken.IsMissing)
+            {
                 return null;
+            }
 
             SyntaxKind defaultVisibility = IsNestedType(node) ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword;
             SyntaxTokenList modifiers = AddModifier(node.Modifiers, ref triviaToken, defaultVisibility);
@@ -217,7 +227,9 @@
         {
             SyntaxToken triviaToken = node.EnumKeyword;
             if (triviaToken.IsMissing)
+            {
                 return null;
+            }
 
             SyntaxKind defaultVisibility = IsNestedType(node) ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword;
             SyntaxTokenList modifiers = AddModifier(node.Modifiers, ref triviaToken, defaultVisibility);
@@ -231,7 +243,9 @@
         {
             SyntaxToken triviaToken = node.Keyword;
             if (triviaToken.IsMissing)
+            {
                 return null;
+            }
 
             SyntaxKind defaultVisibility = IsNestedType(node) ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword;
             SyntaxTokenList modifiers = AddModifier(node.Modifiers, ref triviaToken, defaultVisibility);
@@ -245,7 +259,9 @@
         {
             SyntaxToken triviaToken = node.DelegateKeyword;
             if (triviaToken.IsMissing)
+            {
                 return null;
+            }
 
             SyntaxKind defaultVisibility = IsNestedType(node) ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword;
             SyntaxTokenList modifiers = AddModifier(node.Modifiers, ref triviaToken, defaultVisibility);
@@ -259,7 +275,9 @@
         {
             SyntaxToken triviaToken = node.EventKeyword;
             if (triviaToken.IsMissing)
+            {
                 return null;
+            }
 
             SyntaxTokenList modifiers = AddModifier(node.Modifiers, ref triviaToken, SyntaxKind.PrivateKeyword);
             return node
@@ -272,7 +290,9 @@
         {
             SyntaxToken triviaToken = node.EventKeyword;
             if (triviaToken.IsMissing)
+            {
                 return null;
+            }
 
             SyntaxTokenList modifiers = AddModifier(node.Modifiers, ref triviaToken, SyntaxKind.PrivateKeyword);
             return node
@@ -285,7 +305,9 @@
         {
             TypeSyntax type = node.ReturnType;
             if (type == null || type.IsMissing)
+            {
                 return null;
+            }
 
             SyntaxTokenList modifiers = AddModifier(node.Modifiers, ref type, SyntaxKind.PrivateKeyword);
             return node
@@ -298,7 +320,9 @@
         {
             TypeSyntax type = node.Type;
             if (type == null || type.IsMissing)
+            {
                 return null;
+            }
 
             SyntaxTokenList modifiers = AddModifier(node.Modifiers, ref type, SyntaxKind.PrivateKeyword);
             return node
@@ -311,7 +335,9 @@
         {
             VariableDeclarationSyntax declaration = node.Declaration;
             if (declaration == null || declaration.IsMissing)
+            {
                 return null;
+            }
 
             SyntaxTokenList modifiers = AddModifier(node.Modifiers, ref declaration, SyntaxKind.PrivateKeyword);
             return node
@@ -324,7 +350,9 @@
         {
             TypeSyntax type = node.ReturnType;
             if (type == null || type.IsMissing)
+            {
                 return null;
+            }
 
             SyntaxTokenList modifiers = AddModifier(node.Modifiers, ref type, SyntaxKind.PublicKeyword);
             return node
@@ -337,7 +365,9 @@
         {
             SyntaxToken triviaToken = node.ImplicitOrExplicitKeyword;
             if (triviaToken.IsMissing)
+            {
                 return null;
+            }
 
             SyntaxTokenList modifiers = AddModifier(node.Modifiers, ref triviaToken, SyntaxKind.PublicKeyword);
             return node
@@ -350,7 +380,9 @@
         {
             TypeSyntax type = node.Type;
             if (type == null || type.IsMissing)
+            {
                 return null;
+            }
 
             SyntaxTokenList modifiers = AddModifier(node.Modifiers, ref type, SyntaxKind.PrivateKeyword);
             return node
@@ -363,7 +395,9 @@
         {
             SyntaxToken triviaToken = node.Identifier;
             if (triviaToken.IsMissing)
+            {
                 return null;
+            }
 
             SyntaxTokenList modifiers = AddModifier(node.Modifiers, ref triviaToken, SyntaxKind.PrivateKeyword);
             return node

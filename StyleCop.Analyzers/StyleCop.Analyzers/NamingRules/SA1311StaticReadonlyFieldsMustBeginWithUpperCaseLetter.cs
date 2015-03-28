@@ -64,20 +64,28 @@
 
             var variables = fieldDeclaration.Declaration?.Variables;
             if (variables == null)
+            {
                 return;
+            }
 
             foreach (VariableDeclaratorSyntax variableDeclarator in variables.Value)
             {
                 if (variableDeclarator == null)
+                {
                     continue;
+                }
 
                 var identifier = variableDeclarator.Identifier;
                 if (identifier.IsMissing)
+                {
                     continue;
+                }
 
                 string name = identifier.ValueText;
                 if (string.IsNullOrEmpty(name) || !char.IsLower(name[0]))
+                {
                     continue;
+                }
 
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation()));
             }

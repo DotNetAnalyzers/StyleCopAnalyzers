@@ -28,15 +28,21 @@
         {
             var declarationSyntax = context.Node as BaseMethodDeclarationSyntax;
             if (declarationSyntax == null)
+            {
                 return MatchResult.Unknown;
+            }
 
             var documentationStructure = XmlCommentHelper.GetDocumentationStructure(declarationSyntax);
             if (documentationStructure == null)
+            {
                 return MatchResult.Unknown;
+            }
 
             var summaryElement = XmlCommentHelper.GetTopLevelElement(documentationStructure, XmlCommentHelper.SummaryXmlTag) as XmlElementSyntax;
             if (summaryElement == null)
+            {
                 return MatchResult.Unknown;
+            }
 
             // Check if the summary content could be a correct standard text
             if (summaryElement.Content.Count >= 3)
@@ -62,7 +68,9 @@
             }
 
             if (reportDiagnostic)
+            {
                 context.ReportDiagnostic(Diagnostic.Create(this.DiagnosticDescriptor, summaryElement.GetLocation()));
+            }
 
             // TODO: be more specific about the type of error when possible
             return MatchResult.None;
@@ -107,11 +115,15 @@
         {
             string firstTextPartText = XmlCommentHelper.GetText(firstTextPart, normalizeWhitespace: true);
             if (firstText != firstTextPartText.TrimStart())
+            {
                 return false;
+            }
 
             string secondTextPartText = XmlCommentHelper.GetText(secondTextPart, normalizeWhitespace: true);
             if (!secondTextPartText.StartsWith(secondText))
+            {
                 return false;
+            }
 
             return true;
         }
@@ -132,7 +144,6 @@
                     || !classDeclarationSyntax.TypeParameterList.Parameters.Any();
             }
         }
-
 
         /// <summary>
         /// Describes the result of matching a summary element to a specific desired wording.

@@ -39,11 +39,15 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1006PreprocessorKeywordsMustNotBePrecededBySpace.DiagnosticId))
+                {
                     continue;
+                }
 
                 SyntaxToken keywordToken = root.FindToken(diagnostic.Location.SourceSpan.Start, findInsideTrivia: true);
                 if (keywordToken.IsMissing)
+                {
                     continue;
+                }
 
                 context.RegisterCodeFix(CodeAction.Create("Remove space", t => GetTransformedDocument(context.Document, root, keywordToken)), diagnostic);
             }
@@ -53,7 +57,9 @@
         {
             SyntaxToken hashToken = keywordToken.GetPreviousToken(includeDirectives: true);
             if (!hashToken.IsKind(SyntaxKind.HashToken))
+            {
                 return Task.FromResult(document);
+            }
 
             SyntaxToken corrected = hashToken.WithoutTrailingWhitespace().WithoutFormatting();
             Document updatedDocument = document.WithSyntaxRoot(root.ReplaceToken(hashToken, corrected));

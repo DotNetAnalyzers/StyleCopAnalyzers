@@ -253,6 +253,7 @@ public class Foo
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
+
         [Fact]
         public async Task TestConstructorWithQualifiedNameCallOpeningBracketInTheNextLine()
         {
