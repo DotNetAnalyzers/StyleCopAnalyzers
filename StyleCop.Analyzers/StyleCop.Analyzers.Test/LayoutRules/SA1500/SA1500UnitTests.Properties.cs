@@ -213,7 +213,6 @@ public class Foo
     // Invalid property #14
     public int[] Property14 { get; set; } = { 0, 1, 2 
     };
-
 }";
             var expectedDiagnostics = new[]
             {

@@ -18,7 +18,9 @@
             get
             {
                 yield return new[] { "checked" };
+                yield return new[] { "fixed (int* p = new[] { 1, 2, 3 })" };
                 yield return new[] { "for (var y = 0; y < 2; y++)" };
+                yield return new[] { "foreach (var y in new[] { 1, 2, 3 })" };
                 yield return new[] { "lock (this)" };
                 yield return new[] { "unchecked" };
                 yield return new[] { "unsafe" };
@@ -32,12 +34,14 @@
         /// </summary>
         /// <remarks>
         /// These are valid for SA1500 only, some will report other diagnostics outside of the unit test scenario.
+        /// 
+        /// The class is marked unsafe to make testing the fixed statement possible.
         /// </remarks>
         [Theory]
         [MemberData(nameof(StatementBlocksTokenList))]
         public async Task TestStatementBlockValid(string token)
         {
-            var testCode = @"public class Foo
+            var testCode = @"public unsafe class Foo
 {
     public int X { get; set; }
 
@@ -74,11 +78,14 @@
         /// <summary>
         /// Verifies that diagnostics will be reported for all invalid statements.
         /// </summary>
+        /// <remarks>
+        /// The class is marked unsafe to make testing the fixed statement possible.
+        /// </remarks>
         [Theory(Skip = "Disabled until the SA1500 implementation is available")]
         [MemberData(nameof(StatementBlocksTokenList))]
         public async Task TestStatementBlockInvalid(string token)
         {
-            var testCode = @"public class Foo
+            var testCode = @"public unsafe class Foo
 {
     public int X { get; set; }
 

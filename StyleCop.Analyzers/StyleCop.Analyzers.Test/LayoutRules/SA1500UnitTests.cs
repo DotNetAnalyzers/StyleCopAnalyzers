@@ -10,6 +10,9 @@
     /// <summary>
     /// Unit tests for <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
+    /// <remarks>
+    /// The test cases can be found in the SA1500 subfolder.
+    /// </remarks>
     public partial class SA1500UnitTests : DiagnosticVerifier
     {
         /// <summary>
