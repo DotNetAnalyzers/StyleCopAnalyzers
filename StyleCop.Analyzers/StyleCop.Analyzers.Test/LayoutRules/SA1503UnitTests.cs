@@ -18,12 +18,6 @@
     /// </summary>
     public class SA1503UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1503CurlyBracketsMustNotBeOmitted.DiagnosticId;
-        private const string IfTestStatement = "if (i == 0)";
-        private const string WhileTestStatement = "while (i == 0)";
-        private const string ForTestStatement = "for (var j = 0; j < i; j++)";
-        private const string ForEachTestStatement = "foreach (var j in new[] { 1, 2, 3 })";
-
         private int indentSize = FormattingOptions.IndentationSize.DefaultValue;
         
         /// <summary>
@@ -33,7 +27,10 @@
         {
             get
             {
-                return new[] { new[] { IfTestStatement }, new[] { WhileTestStatement }, new[] { ForEachTestStatement }, new[] { ForTestStatement } };
+                yield return new[] { "if (i == 0)" };
+                yield return new[] { "while (i == 0)" };
+                yield return new[] { "for (var j = 0; j < i; j++)" };
+                yield return new[] { "foreach (var j in new[] { 1, 2, 3 })" };
             }
         }
 
@@ -50,27 +47,19 @@
         /// <summary>
         /// Verifies that a statement followed by a block without curly braces will produce a warning.
         /// </summary>
-        [Theory, MemberData("TestStatements")]
+        [Theory]
+        [MemberData("TestStatements")]
         public async Task TestStatementWithoutCurlyBrackets(string statementText)
         {
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Curly brackets must not be omitted",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 7, 13) }
-                }
-            };
-
+            var expected = this.CSharpDiagnostic().WithLocation(7, 13);
             await this.VerifyCSharpDiagnosticAsync(this.GenerateTestStatement(statementText), expected, CancellationToken.None);
         }
 
         /// <summary>
         /// Verifies that a statement followed by a block with curly braces will produce no diagnostics results.
         /// </summary>
-        [Theory, MemberData("TestStatements")]
+        [Theory]
+        [MemberData("TestStatements")]
         public async Task TestStatementWithCurlyBrackets(string statementText)
         {
             await this.VerifyCSharpDiagnosticAsync(this.GenerateFixedTestStatement(statementText), EmptyDiagnosticResults, CancellationToken.None);
@@ -96,21 +85,8 @@ public class Foo
 
             var expected = new[]
             {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Curly brackets must not be omitted",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 7, 13) }
-                },
-
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Curly brackets must not be omitted",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 9, 13) }
-                }
+                this.CSharpDiagnostic().WithLocation(7, 13),
+                this.CSharpDiagnostic().WithLocation(9, 13)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
@@ -158,21 +134,8 @@ public class Foo
 
             var expected = new[]
             {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Curly brackets must not be omitted",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 21) }
-                },
-
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Curly brackets must not be omitted",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 33) }
-                }
+                this.CSharpDiagnostic().WithLocation(6, 21),
+                this.CSharpDiagnostic().WithLocation(6, 33)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
