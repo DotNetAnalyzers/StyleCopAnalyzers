@@ -41,11 +41,15 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!this.FixableDiagnosticIds.Contains(diagnostic.Id))
+                {
                     continue;
+                }
 
                 SyntaxNode node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
                 if (node.IsMissing)
+                {
                     continue;
+                }
 
                 // Check if we are interested in this node
                 node = (SyntaxNode)(node as ParameterListSyntax) ?? node as AttributeArgumentListSyntax;

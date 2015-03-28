@@ -41,11 +41,16 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1119StatementMustNotUseUnnecessaryParenthesis.DiagnosticId))
+                {
                     continue;
+                }
 
                 SyntaxNode node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true, findInsideTrivia: true);
                 if (node.IsMissing)
+                {
                     continue;
+                }
+
                 ParenthesizedExpressionSyntax syntax = node as ParenthesizedExpressionSyntax;
 
                 if (syntax != null)

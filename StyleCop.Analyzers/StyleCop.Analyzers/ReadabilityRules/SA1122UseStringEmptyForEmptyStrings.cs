@@ -68,7 +68,9 @@
                 if (token.IsKind(SyntaxKind.StringLiteralToken))
                 {
                     if (this.HasToBeConstant(literalExpression))
+                    {
                         return;
+                    }
 
                     if (token.ValueText == string.Empty)
                     {
@@ -83,27 +85,37 @@
             ExpressionSyntax outermostExpression = this.FindOutermostExpression(literalExpression);
 
             if (outermostExpression.Parent.IsKind(SyntaxKind.AttributeArgument))
+            {
                 return true;
+            }
 
             EqualsValueClauseSyntax equalsValueClause = outermostExpression.Parent as EqualsValueClauseSyntax;
             if (equalsValueClause != null)
             {
                 ParameterSyntax parameterSyntax = equalsValueClause.Parent as ParameterSyntax;
                 if (parameterSyntax != null)
+                {
                     return true;
+                }
 
                 VariableDeclaratorSyntax variableDeclaratorSyntax = equalsValueClause.Parent as VariableDeclaratorSyntax;
                 VariableDeclarationSyntax variableDeclarationSyntax = variableDeclaratorSyntax.Parent as VariableDeclarationSyntax;
                 if (variableDeclaratorSyntax == null || variableDeclarationSyntax == null)
+                {
                     return false;
+                }
 
                 FieldDeclarationSyntax fieldDeclarationSyntax = variableDeclarationSyntax.Parent as FieldDeclarationSyntax;
                 if (fieldDeclarationSyntax != null && fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.ConstKeyword))
+                {
                     return true;
+                }
 
                 LocalDeclarationStatementSyntax localDeclarationStatementSyntax = variableDeclarationSyntax.Parent as LocalDeclarationStatementSyntax;
                 if (localDeclarationStatementSyntax != null && localDeclarationStatementSyntax.Modifiers.Any(SyntaxKind.ConstKeyword))
+                {
                     return true;
+                }
             }
 
             return false;
@@ -115,7 +127,9 @@
             {
                 ExpressionSyntax parent = node.Parent as ExpressionSyntax;
                 if (parent == null)
+                {
                     break;
+                }
 
                 node = parent;
             }

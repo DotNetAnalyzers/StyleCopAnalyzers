@@ -62,7 +62,9 @@
         {
             AttributeArgumentListSyntax syntax = context.Node as AttributeArgumentListSyntax;
             if (syntax.Arguments.Count != 0)
+            {
                 return;
+            }
 
             // Attribute constructor must not use unnecessary parenthesis
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.GetLocation()));

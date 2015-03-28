@@ -79,10 +79,14 @@ namespace TestHelper
             get
             {
                 if (this.message != null)
+                {
                     return this.message;
+                }
 
                 if (this.MessageFormat != null)
+                {
                     return string.Format(this.MessageFormat.ToString(), this.MessageArguments ?? EmptyArguments);
+                }
 
                 return null;
             }

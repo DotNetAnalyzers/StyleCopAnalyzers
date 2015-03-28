@@ -30,7 +30,10 @@
         internal static bool IsConsideredEmpty(DocumentationCommentTriviaSyntax xmlComment)
         {
             if (xmlComment == null)
+            {
                 return true;
+            }
+
             foreach (XmlNodeSyntax syntax in xmlComment.Content)
             {
                 if (!IsConsideredEmpty(syntax))
@@ -114,7 +117,10 @@
         internal static bool IsMissingOrEmpty(SyntaxTrivia commentTrivia)
         {
             if (!commentTrivia.HasStructure)
+            {
                 return true;
+            }
+
             var structuredTrivia = commentTrivia.GetStructure() as DocumentationCommentTriviaSyntax;
             if (structuredTrivia != null)
             {
@@ -146,7 +152,9 @@
             var commentTrivia = GetCommentTrivia(node);
 
             if (!commentTrivia.HasStructure)
+            {
                 return null;
+            }
 
             return commentTrivia.GetStructure() as DocumentationCommentTriviaSyntax;
         }
@@ -155,7 +163,9 @@
         {
             XmlElementSyntax elementSyntax = syntax.Content.OfType<XmlElementSyntax>().FirstOrDefault(element => string.Equals(element.StartTag.Name.ToString(), tagName));
             if (elementSyntax != null)
+            {
                 return elementSyntax;
+            }
 
             XmlEmptyElementSyntax emptyElementSyntax = syntax.Content.OfType<XmlEmptyElementSyntax>().FirstOrDefault(element => string.Equals(element.Name.ToString(), tagName));
             return emptyElementSyntax;
@@ -182,7 +192,9 @@
 
             string result = stringBuilder.ToString();
             if (normalizeWhitespace)
+            {
                 result = Regex.Replace(result, @"\s+", " ");
+            }
 
             return result;
         }

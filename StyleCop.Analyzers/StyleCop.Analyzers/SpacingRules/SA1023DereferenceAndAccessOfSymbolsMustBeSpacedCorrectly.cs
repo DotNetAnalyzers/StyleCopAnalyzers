@@ -87,7 +87,9 @@
         private void HandleAsteriskToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             bool allowAtLineStart;
             bool allowAtLineEnd;

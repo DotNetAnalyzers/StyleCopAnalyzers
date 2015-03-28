@@ -311,13 +311,17 @@ public class Foo
             foreach (var argument in this.InitialArguments)
             {
                 if (argumentList.Length > 0)
+                {
                     argumentList.Append(", ");
+                }
 
                 argumentList.Append(argument);
             }
 
             if (argumentList.Length > 0)
+            {
                 argumentList.Append(", ");
+            }
 
             return string.Format(format, this.MethodName, argumentList);
         }

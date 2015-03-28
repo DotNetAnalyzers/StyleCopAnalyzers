@@ -68,16 +68,22 @@
         private void HandleCommaToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             // check for a following space
             bool missingFollowingSpace = true;
             if (token.HasTrailingTrivia)
             {
                 if (token.TrailingTrivia.First().IsKind(SyntaxKind.WhitespaceTrivia))
+                {
                     missingFollowingSpace = false;
+                }
                 else if (token.TrailingTrivia.First().IsKind(SyntaxKind.EndOfLineTrivia))
+                {
                     missingFollowingSpace = false;
+                }
             }
             else
             {
@@ -94,7 +100,9 @@
             {
                 SyntaxToken precedingToken = token.GetPreviousToken();
                 if (precedingToken.HasTrailingTrivia)
+                {
                     hasPrecedingSpace = true;
+                }
             }
 
             if (missingFollowingSpace)

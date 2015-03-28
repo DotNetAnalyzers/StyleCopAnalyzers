@@ -67,7 +67,9 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1121UseBuiltInTypeAlias.DiagnosticId))
+                {
                     continue;
+                }
 
                 var node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
 

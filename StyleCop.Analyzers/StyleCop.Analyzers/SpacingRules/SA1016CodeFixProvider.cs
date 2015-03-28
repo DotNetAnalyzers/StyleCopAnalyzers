@@ -39,17 +39,25 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1016OpeningAttributeBracketsMustBeSpacedCorrectly.DiagnosticId))
+                {
                     continue;
+                }
 
                 SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (!token.IsKind(SyntaxKind.OpenBracketToken))
+                {
                     continue;
+                }
 
                 if (token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia))
+                {
                     continue;
+                }
 
                 if (!token.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
+                {
                     continue;
+                }
 
                 context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context.Document, root, token)), diagnostic);
             }
