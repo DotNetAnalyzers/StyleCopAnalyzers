@@ -12,6 +12,9 @@
     /// <summary>
     /// Unit tests for <see cref="SA1502ElementMustNotBeOnASingleLine"/>.
     /// </summary>
+    /// <remarks>
+    /// The test cases can be found in the SA1502 subfolder.
+    /// </remarks>
     public partial class SA1502UnitTests : CodeFixVerifier
     {
         /// <summary>
