@@ -118,6 +118,35 @@ public class Foo
         }
 
         /// <summary>
+        /// Verifies that an if statement followed by a else if, followed by an else statement, all blocks with curly braces will produce no diagnostics results.
+        /// </summary>
+        [Fact]
+        public async Task TestIfElseIfElseStatementWithCurlyBrackets()
+        {
+            var testCode = @"using System.Diagnostics;
+public class Foo
+{
+    public void Bar(int i)
+    {
+        if (i == 0)
+        {
+            Debug.Assert(true);
+        }
+        else if (i == 1)
+        {
+            Debug.Assert(false);
+        }
+        else
+        {
+            Debug.Assert(true);
+        }
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        /// <summary>
         /// Verifies that nested if statements followed by a block without curly braces will produce warnings.
         /// </summary>
         [Fact]

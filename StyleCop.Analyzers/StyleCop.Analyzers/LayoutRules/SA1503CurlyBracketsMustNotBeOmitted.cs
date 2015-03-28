@@ -93,7 +93,11 @@
 
                 if (ifStatement.Else != null)
                 {
-                    this.CheckChildStatement(context, ifStatement.Else.Statement);
+                    // an 'else' directly followed by an 'if' should not trigger this diagnostic.
+                    if (!ifStatement.Else.Statement.IsKind(SyntaxKind.IfStatement))
+                    {
+                        this.CheckChildStatement(context, ifStatement.Else.Statement);
+                    }
                 }
             }
         }
