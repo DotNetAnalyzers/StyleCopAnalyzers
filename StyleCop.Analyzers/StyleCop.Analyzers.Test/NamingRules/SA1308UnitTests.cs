@@ -10,23 +10,23 @@ namespace StyleCop.Analyzers.Test.NamingRules
     using Xunit;
 
     public class SA1308UnitTests : DiagnosticVerifier
-	{
-		private const string DiagnosticId = SA1308VariableNamesMustNotBePrefixed.DiagnosticId;
+    {
+        private const string DiagnosticId = SA1308VariableNamesMustNotBePrefixed.DiagnosticId;
 
-		[Fact]
-		public async Task TestEmptySource()
-		{
-			var testCode = string.Empty;
-			await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
-		}
+        [Fact]
+        public async Task TestEmptySource()
+        {
+            var testCode = string.Empty;
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
 
 
         private readonly string[] modifiers = new[] { "public", "private", "protected", "public readonly", "internal readonly", "public static", "private static" };
-       
 
-		[Fact]
-		public async Task TestFieldStartingWithPrefixesToTriggerDiagnostic()
-		{
+
+        [Fact]
+        public async Task TestFieldStartingWithPrefixesToTriggerDiagnostic()
+        {
             foreach (var modifier in this.modifiers)
             {
                 await this.TestFieldSpecifyingModifierAndPrefix(modifier, "m_", "m_");
@@ -75,8 +75,8 @@ string m_bar = ""baz"";
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-		{            
-            return new SA1308VariableNamesMustNotBePrefixed();   
-		}
+        {
+            return new SA1308VariableNamesMustNotBePrefixed();
+        }
     }
 }
