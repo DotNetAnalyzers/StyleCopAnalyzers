@@ -31,8 +31,8 @@ namespace StyleCop.Analyzers.Test.NamingRules
             {
                 await this.TestFieldSpecifyingModifierAndPrefix(modifier, "m_", "m_");
                 await this.TestFieldSpecifyingModifierAndPrefix(modifier, "s_", "s_");
-                await this.TestFieldSpecifyingModifierAndPrefix(modifier, "m\u005F", "m_");
-                await this.TestFieldSpecifyingModifierAndPrefix(modifier, "s\u005F", "s_");
+                await this.TestFieldSpecifyingModifierAndPrefix(modifier, "m\\u005F", "m_");
+                await this.TestFieldSpecifyingModifierAndPrefix(modifier, "s\\u005F", "s_");
             }
         }
 
