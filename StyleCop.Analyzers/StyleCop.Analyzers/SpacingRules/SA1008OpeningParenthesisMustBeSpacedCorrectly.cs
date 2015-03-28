@@ -72,7 +72,9 @@
         private void HandleOpenParenToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             bool precededBySpace;
             bool firstInLine;

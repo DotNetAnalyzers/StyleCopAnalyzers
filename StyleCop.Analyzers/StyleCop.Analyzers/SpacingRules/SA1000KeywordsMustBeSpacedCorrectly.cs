@@ -96,11 +96,21 @@
                     break;
 
                 case SyntaxKind.CheckedKeyword:
+                case SyntaxKind.UncheckedKeyword:
+                    if (token.GetNextToken().IsKind(SyntaxKind.OpenBraceToken))
+                    {
+                        this.HandleRequiredSpaceToken(context, token);
+                    }
+                    else
+                    {
+                        this.HandleDisallowedSpaceToken(context, token);
+                    }
+                    break;
+
                 case SyntaxKind.DefaultKeyword:
                 case SyntaxKind.NameOfKeyword:
                 case SyntaxKind.SizeOfKeyword:
                 case SyntaxKind.TypeOfKeyword:
-                case SyntaxKind.UncheckedKeyword:
                     this.HandleDisallowedSpaceToken(context, token);
                     break;
 
@@ -127,13 +137,19 @@
             InvocationExpressionSyntax invocationExpressionSyntax = (InvocationExpressionSyntax)context.Node;
             IdentifierNameSyntax identifierNameSyntax = invocationExpressionSyntax.Expression as IdentifierNameSyntax;
             if (identifierNameSyntax == null)
+            {
                 return;
+            }
 
             if (identifierNameSyntax.Identifier.IsMissing)
+            {
                 return;
+            }
 
             if (identifierNameSyntax.Identifier.Text != "nameof")
+            {
                 return;
+            }
 
             var constantValue = context.SemanticModel.GetConstantValue(invocationExpressionSyntax, context.CancellationToken);
             if (constantValue.HasValue && !string.IsNullOrEmpty(constantValue.Value as string))
@@ -146,15 +162,21 @@
         private void HandleRequiredSpaceToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             if (token.HasTrailingTrivia)
             {
                 if (token.TrailingTrivia.First().IsKind(SyntaxKind.WhitespaceTrivia))
+                {
                     return;
+                }
 
                 if (token.TrailingTrivia.First().IsKind(SyntaxKind.EndOfLineTrivia))
+                {
                     return;
+                }
             }
 
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), token.Text, string.Empty));
@@ -163,10 +185,14 @@
         private void HandleDisallowedSpaceToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing || !token.HasTrailingTrivia)
+            {
                 return;
+            }
 
             if (!token.TrailingTrivia.First().IsKind(SyntaxKind.WhitespaceTrivia))
+            {
                 return;
+            }
 
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), token.Text, " not"));
         }
@@ -174,10 +200,14 @@
         private void HandleDisallowedSpaceToken(SyntaxNodeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing || !token.HasTrailingTrivia)
+            {
                 return;
+            }
 
             if (!token.TrailingTrivia.First().IsKind(SyntaxKind.WhitespaceTrivia))
+            {
                 return;
+            }
 
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), token.Text, " not"));
         }
@@ -185,7 +215,9 @@
         private void HandleNewKeywordToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             // if the next token is [ or (, then treat as disallowed
             SyntaxToken nextToken = token.GetNextToken();
@@ -208,7 +240,9 @@
         private void HandleReturnKeywordToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             // if the next token is ; or :, then treat as disallowed
             //   1. return;
@@ -227,7 +261,9 @@
         private void HandleThrowKeywordToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             // if the next token is ;, then treat as disallowed:
             //    throw;

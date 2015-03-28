@@ -60,7 +60,9 @@ namespace StyleCop.Analyzers.NamingRules
         {
             var interfaceDeclaration = (InterfaceDeclarationSyntax) context.Node;
             if (interfaceDeclaration.Identifier.IsMissing)
+            {
                 return;
+            }
 
             if (NamedTypeHelpers.IsContainedInNativeMethodsClass(interfaceDeclaration))
             {

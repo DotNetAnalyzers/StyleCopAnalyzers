@@ -19,7 +19,6 @@
         internal const string SeeXmlTag = "see";
         internal const string CrefArgumentName = "cref";
 
-
         /// <summary>
         /// This helper is used by documentation diagnostics to check if a xml comment should be considered empty.
         /// A comment is empty if 
@@ -31,7 +30,10 @@
         internal static bool IsConsideredEmpty(DocumentationCommentTriviaSyntax xmlComment)
         {
             if (xmlComment == null)
+            {
                 return true;
+            }
+
             foreach (XmlNodeSyntax syntax in xmlComment.Content)
             {
                 if (!IsConsideredEmpty(syntax))
@@ -98,7 +100,6 @@
                 return false;
             }
 
-
             var processingElement = xmlSyntax as XmlProcessingInstructionSyntax;
             if (processingElement != null)
             {
@@ -116,7 +117,10 @@
         internal static bool IsMissingOrEmpty(SyntaxTrivia commentTrivia)
         {
             if (!commentTrivia.HasStructure)
+            {
                 return true;
+            }
+
             var structuredTrivia = commentTrivia.GetStructure() as DocumentationCommentTriviaSyntax;
             if (structuredTrivia != null)
             {
@@ -148,7 +152,9 @@
             var commentTrivia = GetCommentTrivia(node);
 
             if (!commentTrivia.HasStructure)
+            {
                 return null;
+            }
 
             return commentTrivia.GetStructure() as DocumentationCommentTriviaSyntax;
         }
@@ -157,7 +163,9 @@
         {
             XmlElementSyntax elementSyntax = syntax.Content.OfType<XmlElementSyntax>().FirstOrDefault(element => string.Equals(element.StartTag.Name.ToString(), tagName));
             if (elementSyntax != null)
+            {
                 return elementSyntax;
+            }
 
             XmlEmptyElementSyntax emptyElementSyntax = syntax.Content.OfType<XmlEmptyElementSyntax>().FirstOrDefault(element => string.Equals(element.Name.ToString(), tagName));
             return emptyElementSyntax;
@@ -184,7 +192,9 @@
 
             string result = stringBuilder.ToString();
             if (normalizeWhitespace)
+            {
                 result = Regex.Replace(result, @"\s+", " ");
+            }
 
             return result;
         }

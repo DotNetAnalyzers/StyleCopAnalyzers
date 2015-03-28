@@ -71,10 +71,14 @@
         private void HandleMinusToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             if (!token.Parent.IsKind(SyntaxKind.UnaryMinusExpression))
+            {
                 return;
+            }
 
             bool precededBySpace;
             bool firstInLine;

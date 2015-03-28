@@ -38,14 +38,20 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1007OperatorKeywordMustBeFollowedBySpace.DiagnosticId))
+                {
                     continue;
+                }
 
                 SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (token.IsMissing)
+                {
                     continue;
+                }
 
                 if (token.HasTrailingTrivia && token.TrailingTrivia[0].IsKind(SyntaxKind.WhitespaceTrivia))
+                {
                     continue;
+                }
 
                 context.RegisterCodeFix(CodeAction.Create("Insert space", t => GetTransformedDocument(context.Document, root, token)), diagnostic);
             }

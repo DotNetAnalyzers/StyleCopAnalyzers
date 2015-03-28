@@ -51,7 +51,9 @@
         {
             EmptyStatementSyntax syntax = context.Node as EmptyStatementSyntax;
             if (syntax == null)
+            {
                 return;
+            }
 
             LabeledStatementSyntax labeledStatementSyntax = syntax.Parent as LabeledStatementSyntax;
             if (labeledStatementSyntax != null)
@@ -66,10 +68,14 @@
                         // allow an empty statement to be used for a label, but only if no non-empty statements exist
                         // before the end of the block
                         if (blockSyntax.Statements[i] == labeledStatementSyntax)
+                        {
                             return;
+                        }
 
                         if (!statement.IsKind(SyntaxKind.EmptyStatement))
+                        {
                             break;
+                        }
                     }
                 }
             }

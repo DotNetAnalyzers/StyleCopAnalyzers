@@ -87,21 +87,29 @@
             var baseExpressionSyntax = (BaseExpressionSyntax)context.Node;
             var targetSymbol = context.SemanticModel.GetSymbolInfo(baseExpressionSyntax.Parent, context.CancellationToken);
             if (targetSymbol.Symbol == null)
+            {
                 return;
+            }
 
             var memberAccessExpression = baseExpressionSyntax.Parent as MemberAccessExpressionSyntax;
             if (memberAccessExpression == null)
+            {
                 return;
+            }
 
             // make sure to evaluate the complete invocation expression if this is a call, or overload resolution will fail
             ExpressionSyntax speculativeExpression = memberAccessExpression.WithExpression(SyntaxFactory.ThisExpression());
             InvocationExpressionSyntax invocationExpression = memberAccessExpression.Parent as InvocationExpressionSyntax;
             if (invocationExpression != null)
+            {
                 speculativeExpression = invocationExpression.WithExpression(speculativeExpression);
+            }
 
             var speculativeSymbol = context.SemanticModel.GetSpeculativeSymbolInfo(memberAccessExpression.SpanStart, speculativeExpression, SpeculativeBindingOption.BindAsExpression);
             if (speculativeSymbol.Symbol != targetSymbol.Symbol)
+            {
                 return;
+            }
 
             // Do not prefix calls with base unless local implementation exists
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, baseExpressionSyntax.GetLocation()));

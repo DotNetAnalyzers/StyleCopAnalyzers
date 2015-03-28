@@ -53,31 +53,45 @@
         {
             GenericNameSyntax genericNameSyntax = context.Node as GenericNameSyntax;
             if (genericNameSyntax == null)
+            {
                 return;
+            }
 
             if (genericNameSyntax.Identifier.IsMissing || genericNameSyntax.Identifier.Text != "Nullable")
+            {
                 return;
+            }
 
             // The shorthand syntax is not available for the unbound generic form, e.g. typeof(Nullable<>)
             if (genericNameSyntax?.TypeArgumentList?.Arguments.Count == 0)
+            {
                 return;
+            }
 
             // This covers the specific form in an XML comment which cannot be simplified
             if (genericNameSyntax.Parent is NameMemberCrefSyntax)
+            {
                 return;
+            }
 
             // The shorthand syntax is not available in using directives (covers standard, alias, and static)
             if (genericNameSyntax.FirstAncestorOrSelf<UsingDirectiveSyntax>() != null)
+            {
                 return;
+            }
 
             SemanticModel semanticModel = context.SemanticModel;
             INamedTypeSymbol symbol = semanticModel.GetSymbolInfo(genericNameSyntax, context.CancellationToken).Symbol as INamedTypeSymbol;
             if (symbol?.OriginalDefinition?.SpecialType != SpecialType.System_Nullable_T)
+            {
                 return;
+            }
 
             SyntaxNode locationNode = genericNameSyntax;
             if (genericNameSyntax.Parent is QualifiedNameSyntax)
+            {
                 locationNode = genericNameSyntax.Parent;
+            }
 
             // Use shorthand for nullable types
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, locationNode.GetLocation()));

@@ -69,10 +69,14 @@
         private void HandleCloseBracketToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             if (!token.Parent.IsKind(SyntaxKind.AttributeList))
+            {
                 return;
+            }
 
             bool hasPrecedingSpace = false;
             if (!token.HasLeadingTrivia)
@@ -80,7 +84,9 @@
                 // only the first token on the line has leading trivia, and those are ignored
                 SyntaxToken precedingToken = token.GetPreviousToken();
                 if (precedingToken.HasTrailingTrivia)
+                {
                     hasPrecedingSpace = true;
+                }
             }
 
             if (hasPrecedingSpace)

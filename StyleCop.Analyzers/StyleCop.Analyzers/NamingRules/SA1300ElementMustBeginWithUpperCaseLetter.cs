@@ -78,7 +78,9 @@
         private void CheckNameSyntax(SyntaxNodeAnalysisContext context, NameSyntax nameSyntax)
         {
             if (nameSyntax == null || nameSyntax.IsMissing)
+            {
                 return;
+            }
 
             QualifiedNameSyntax qualifiedNameSyntax = nameSyntax as QualifiedNameSyntax;
             if (qualifiedNameSyntax != null)
@@ -128,12 +130,16 @@
             EventFieldDeclarationSyntax eventFieldDeclarationSyntax = (EventFieldDeclarationSyntax)context.Node;
             VariableDeclarationSyntax variableDeclarationSyntax = eventFieldDeclarationSyntax.Declaration;
             if (variableDeclarationSyntax == null || variableDeclarationSyntax.IsMissing)
+            {
                 return;
+            }
 
             foreach (var declarator in variableDeclarationSyntax.Variables)
             {
                 if (declarator == null || declarator.IsMissing)
+                {
                     continue;
+                }
 
                 this.CheckElementNameToken(context, declarator.Identifier);
             }
@@ -152,10 +158,14 @@
         private void CheckElementNameToken(SyntaxNodeAnalysisContext context, SyntaxToken identifier)
         {
             if (identifier.IsMissing)
+            {
                 return;
+            }
 
             if (string.IsNullOrEmpty(identifier.ValueText))
+            {
                 return;
+            }
 
             // This code uses char.IsLower(...) instead of !char.IsUpper(...) for all of the following reasons:
             //  1. Foreign languages may not have upper case variants for certain characters
@@ -164,10 +174,14 @@
             // See DotNetAnalyzers/StyleCopAnalyzers#369 for additional information:
             // https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/369
             if (!char.IsLower(identifier.ValueText[0]) && identifier.ValueText[0] != '_')
+            {
                 return;
+            }
 
             if (NamedTypeHelpers.IsContainedInNativeMethodsClass(context.Node))
+            {
                 return;
+            }
 
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), identifier.ValueText));
         }

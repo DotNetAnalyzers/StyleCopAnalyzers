@@ -40,11 +40,15 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1002SemicolonsMustBeSpacedCorrectly.DiagnosticId))
+                {
                     continue;
+                }
 
                 SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (!token.IsKind(SyntaxKind.SemicolonToken))
+                {
                     continue;
+                }
 
                 context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context.Document, root, token)), diagnostic);
             }
@@ -59,9 +63,13 @@
             if (token.HasTrailingTrivia)
             {
                 if (token.TrailingTrivia.First().IsKind(SyntaxKind.WhitespaceTrivia))
+                {
                     missingFollowingSpace = false;
+                }
                 else if (token.TrailingTrivia.First().IsKind(SyntaxKind.EndOfLineTrivia))
+                {
                     missingFollowingSpace = false;
+                }
             }
 
             bool firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;

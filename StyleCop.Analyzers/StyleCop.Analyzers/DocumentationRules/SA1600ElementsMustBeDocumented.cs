@@ -147,8 +147,6 @@
             }
         }
 
-
-
         private void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)
         {
             IndexerDeclarationSyntax declaration = context.Node as IndexerDeclarationSyntax;

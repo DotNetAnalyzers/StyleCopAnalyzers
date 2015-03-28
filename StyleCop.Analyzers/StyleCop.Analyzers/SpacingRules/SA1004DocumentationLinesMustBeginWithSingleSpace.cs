@@ -92,7 +92,9 @@
         {
             SyntaxToken token = trivia.Token;
             if (token.IsMissing)
+            {
                 return;
+            }
 
             switch (token.Kind())
             {
@@ -109,20 +111,26 @@
             case SyntaxKind.XmlCDataStartToken:
             case SyntaxKind.XmlCDataEndToken:
                 if (!token.HasLeadingTrivia)
+                {
                     break;
+                }
 
                 SyntaxTrivia lastLeadingTrivia = token.LeadingTrivia.Last();
                 switch (lastLeadingTrivia.Kind())
                 {
                 case SyntaxKind.WhitespaceTrivia:
                     if (lastLeadingTrivia.ToFullString().StartsWith(" "))
+                    {
                         return;
+                    }
 
                     break;
 
                 case SyntaxKind.DocumentationCommentExteriorTrivia:
                     if (lastLeadingTrivia.ToFullString().EndsWith(" "))
+                    {
                         return;
+                    }
 
                     break;
 

@@ -73,15 +73,21 @@
         private void HandleRequiredSpaceToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             if (token.HasTrailingTrivia)
             {
                 if (token.TrailingTrivia.First().IsKind(SyntaxKind.WhitespaceTrivia))
+                {
                     return;
+                }
 
                 if (token.TrailingTrivia.First().IsKind(SyntaxKind.EndOfLineTrivia))
+                {
                     return;
+                }
             }
 
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));

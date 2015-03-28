@@ -72,7 +72,9 @@
         private void HandleDotToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             this.HandleMemberAccessSymbol(context, token);
         }
@@ -80,10 +82,14 @@
         private void HandleQuestionToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             if (!token.Parent.IsKind(SyntaxKind.ConditionalAccessExpression))
+            {
                 return;
+            }
 
             this.HandleMemberAccessSymbol(context, token);
         }

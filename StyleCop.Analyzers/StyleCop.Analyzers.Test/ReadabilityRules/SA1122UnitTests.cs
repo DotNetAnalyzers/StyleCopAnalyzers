@@ -293,6 +293,26 @@ public class Foo
             await this.TestSimpleCodeFix(false);
         }
 
+        [Fact]
+        public async Task TestThatFixDoesntRemoveTrivia()
+        {
+            string testCode = @"class Foo
+{
+    void Bar()
+    {
+        string test = /*a*/""""/*b*/;
+    }
+}";
+            string fixedCode = @"class Foo
+{
+    void Bar()
+    {
+        string test = /*a*/string.Empty/*b*/;
+    }
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+        }
+
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new SA1122CodeFixProvider();
