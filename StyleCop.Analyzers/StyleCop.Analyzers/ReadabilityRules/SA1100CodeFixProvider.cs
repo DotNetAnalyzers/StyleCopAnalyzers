@@ -40,7 +40,9 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists.DiagnosticId))
+                {
                     continue;
+                }
 
                 var node = root.FindNode(diagnostic.Location.SourceSpan) as BaseExpressionSyntax;
                 if (node == null)

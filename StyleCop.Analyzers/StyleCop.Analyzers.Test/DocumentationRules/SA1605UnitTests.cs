@@ -254,6 +254,7 @@ public class ClassName
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1605PartialElementDocumentationMustHaveSummary();

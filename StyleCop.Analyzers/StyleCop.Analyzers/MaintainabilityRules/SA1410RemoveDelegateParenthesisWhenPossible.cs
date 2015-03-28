@@ -65,15 +65,21 @@
         {
             AnonymousMethodExpressionSyntax syntax = context.Node as AnonymousMethodExpressionSyntax;
             if (syntax == null)
+            {
                 return;
+            }
 
             // ignore if no parameter list exists
             if (syntax.ParameterList == null)
+            {
                 return;
+            }
 
             // ignore if parameter list is not empty
             if (syntax.ParameterList.Parameters.Count > 0)
+            {
                 return;
+            }
 
             // Remove delegate parenthesis when possible
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.ParameterList.GetLocation()));

@@ -163,6 +163,7 @@
     <Compile Include="NamingRules\SA1309UnitTests.cs" />
     <Compile Include="NamingRules\SA1311UnitTests.cs" />
     <Compile Include="OrderingRules\SA1212UnitTests.cs" />
+    <Compile Include="OrderingRules\SA1213UnitTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReadabilityRules\SA1100UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1101UnitTests.cs" />

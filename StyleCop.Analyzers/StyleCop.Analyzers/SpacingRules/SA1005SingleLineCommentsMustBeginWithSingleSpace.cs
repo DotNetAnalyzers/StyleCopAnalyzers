@@ -98,11 +98,15 @@
         {
             string text = trivia.ToFullString();
             if (text.Equals("//") || text.StartsWith("// "))
+            {
                 return;
+            }
 
             // special case: commented code
             if (text.StartsWith("////"))
+            {
                 return;
+            }
 
             // Single line comment must begin with a space.
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, trivia.GetLocation()));

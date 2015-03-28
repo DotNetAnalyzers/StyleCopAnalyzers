@@ -45,11 +45,15 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!FixableDiagnostics.Contains(diagnostic.Id))
+                {
                     continue;
+                }
 
                 var node = root.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true) as XmlElementSyntax;
                 if (node == null)
+                {
                     continue;
+                }
 
                 context.RegisterCodeFix(CodeAction.Create("Add standard text.", token => GetTransformedDocument(context.Document, root, node)), diagnostic);
             }

@@ -64,23 +64,33 @@
         {
             FieldDeclarationSyntax syntax = (FieldDeclarationSyntax)context.Node;
             if (NamedTypeHelpers.IsContainedInNativeMethodsClass(syntax))
+            {
                 return;
+            }
 
             var variables = syntax.Declaration?.Variables;
             if (variables == null)
+            {
                 return;
+            }
 
             foreach (VariableDeclaratorSyntax variableDeclarator in variables.Value)
             {
                 if (variableDeclarator == null)
+                {
                     continue;
+                }
 
                 var identifier = variableDeclarator.Identifier;
                 if (identifier.IsMissing)
+                {
                     continue;
+                }
 
                 if (!identifier.ValueText.StartsWith("_"))
+                {
                     continue;
+                }
 
                 // Field '{name}' must not begin with an underscore
                 string name = identifier.ValueText;

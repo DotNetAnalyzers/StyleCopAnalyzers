@@ -197,12 +197,15 @@ namespace TestHelper
             DiagnosticAnalyzer analyzer = this.GetCSharpDiagnosticAnalyzer();
             var supportedDiagnostics = analyzer.SupportedDiagnostics;
             if (diagnosticId == null)
+            {
                 return new DiagnosticResult(supportedDiagnostics.Single());
+            }
             else
+            {
                 return new DiagnosticResult(supportedDiagnostics.Single(i => i.Id == diagnosticId));
+            }
         }
 
         #endregion
     }
 }
-

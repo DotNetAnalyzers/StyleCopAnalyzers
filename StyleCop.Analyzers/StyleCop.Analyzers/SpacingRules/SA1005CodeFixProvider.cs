@@ -40,11 +40,15 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1005SingleLineCommentsMustBeginWithSingleSpace.DiagnosticId))
+                {
                     continue;
+                }
 
                 SyntaxTrivia trivia = root.FindTrivia(diagnostic.Location.SourceSpan.Start, findInsideTrivia: true);
                 if (!trivia.IsKind(SyntaxKind.SingleLineCommentTrivia))
+                {
                     continue;
+                }
 
                 context.RegisterCodeFix(CodeAction.Create("Insert space", t => GetTransformedDocument(context.Document, root, trivia)), diagnostic);
             }
@@ -54,7 +58,10 @@
         {
             string text = trivia.ToFullString();
             if (!text.StartsWith("//"))
+            {
                 return Task.FromResult(document);
+            }
+
             string correctedText = "// " + text.Substring(2);
             SyntaxTrivia corrected = SyntaxFactory.Comment(correctedText).WithoutFormatting();
             Document updatedDocument = document.WithSyntaxRoot(root.ReplaceTrivia(trivia, corrected));

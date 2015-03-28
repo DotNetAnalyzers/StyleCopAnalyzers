@@ -54,7 +54,9 @@
         {
             UsingDirectiveSyntax syntax = context.Node as UsingDirectiveSyntax;
             if (syntax.Alias?.Name?.IsMissing != false)
+            {
                 return;
+            }
 
             CompilationUnitSyntax compilationUnit = syntax.Parent as CompilationUnitSyntax;
             SyntaxList<UsingDirectiveSyntax>? usingDirectives = compilationUnit?.Usings;
@@ -65,23 +67,30 @@
             }
 
             if (!usingDirectives.HasValue)
+            {
                 return;
+            }
 
             foreach (var usingDirective in usingDirectives)
             {
                 // we are only interested in nodes before the current node
                 if (usingDirective == syntax)
+                {
                     continue;
+                }
 
                 // only interested in using alias directives
                 if (usingDirective.Alias?.Name?.IsMissing != false)
+                {
                     continue;
+                }
 
                 string alias = syntax.Alias.Name.ToString();
                 string precedingAlias = usingDirective.Alias.Name.ToString();
                 if (string.Compare(alias, precedingAlias, StringComparison.OrdinalIgnoreCase) >= 0)
+                {
                     continue;
-
+                }
 
                 // Using alias directive for '{alias}' must appear before using alias directive for '{precedingAlias}'
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.GetLocation(), alias, precedingAlias));

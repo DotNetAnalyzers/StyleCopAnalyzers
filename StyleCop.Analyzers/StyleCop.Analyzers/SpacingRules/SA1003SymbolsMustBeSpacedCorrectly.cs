@@ -96,7 +96,9 @@
             // let the outer operator handle things like the following, so no error is reported for '++':
             //   c ^= *++buf4;
             if (token.Parent?.Parent is PrefixUnaryExpressionSyntax)
+            {
                 return;
+            }
 
             this.HandleOperatorToken(context, token, false);
         }
@@ -104,7 +106,9 @@
         private void HandleOperatorToken(SyntaxTreeAnalysisContext context, SyntaxToken token, bool isBinaryExpressionOperator)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             bool allowAtLineEnd = isBinaryExpressionOperator;
             bool allowTrailingSpace = isBinaryExpressionOperator;

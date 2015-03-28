@@ -7,9 +7,6 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using System;
 
-
-
-
     /// <summary>
     /// A C# code file contains more than one namespace.
     /// </summary>
