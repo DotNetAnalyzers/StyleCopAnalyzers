@@ -1,11 +1,9 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Xunit;
 using StyleCop.Analyzers.MaintainabilityRules;
 using TestHelper;
+using Xunit;
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
@@ -38,20 +36,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = this.DiagnosticId,
-                    Message = this.Message,
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 3, 15)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 15);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 

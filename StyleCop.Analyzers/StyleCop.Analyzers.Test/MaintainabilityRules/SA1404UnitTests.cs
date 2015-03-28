@@ -1,11 +1,10 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Xunit;
 using StyleCop.Analyzers.MaintainabilityRules;
 using TestHelper;
-using System;
+using Xunit;
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
@@ -19,7 +18,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
-
 
         public async Task TestSuppressionWithStringLiteral()
         {
@@ -47,20 +45,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Code analysis suppression must have justification",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 3, 6)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 6);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -77,20 +62,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Code analysis suppression must have justification",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 3, 66)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 66);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -107,20 +79,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Code analysis suppression must have justification",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 3, 66)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 66);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -137,20 +96,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Code analysis suppression must have justification",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 3, 66)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 66);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -184,20 +130,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Code analysis suppression must have justification",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 66)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 66);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -215,20 +148,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Code analysis suppression must have justification",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 66)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 66);
+
             try
             {
                 await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);

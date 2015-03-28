@@ -6,8 +6,6 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-
-
     /// <summary>
     /// A C# statement contains a complex conditional expression which omits parenthesis around operators.
     /// </summary>

@@ -2,12 +2,11 @@
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.SpacingRules;
     using TestHelper;
+    using Xunit;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1000KeywordsMustBeSpacedCorrectly"/> and
@@ -59,23 +58,7 @@ catch (Exception ex)
 
             await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'catch' must be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 10, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("catch", string.Empty, "followed").WithLocation(10, 1);
 
             await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
@@ -95,23 +78,7 @@ catch (Exception ex)
 
             await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'fixed' must be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 13)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("fixed", string.Empty, "followed").WithLocation(7, 13);
 
             await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
@@ -131,23 +98,7 @@ catch (Exception ex)
 
             await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'for' must be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 13)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("for", string.Empty, "followed").WithLocation(7, 13);
 
             await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
@@ -167,23 +118,7 @@ catch (Exception ex)
 
             await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'foreach' must be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 13)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("foreach", string.Empty, "followed").WithLocation(7, 13);
 
             await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
@@ -197,23 +132,7 @@ catch (Exception ex)
 
             await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'from' must be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 26)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("from", string.Empty, "followed").WithLocation(7, 26);
 
             await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
@@ -231,23 +150,7 @@ select z;";
 
             await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'group' must be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("group", string.Empty, "followed").WithLocation(8, 1);
 
             await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
@@ -267,23 +170,7 @@ select z;";
 
             await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'if' must be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 13)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("if", string.Empty, "followed").WithLocation(7, 13);
 
             await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
@@ -297,23 +184,7 @@ select z;";
 
             await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'in' must be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 33)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("in", string.Empty, "followed").WithLocation(7, 33);
 
             await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
@@ -331,23 +202,7 @@ select z;";
 
             await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'into' must be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 16)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("into", string.Empty, "followed").WithLocation(8, 16);
 
             await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
@@ -365,23 +220,7 @@ select z;";
 
             await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'join' must be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 16)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("join", string.Empty, "followed").WithLocation(8, 1);
 
             await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
@@ -399,23 +238,7 @@ select x;";
 
             await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'let' must be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("let", string.Empty, "followed").WithLocation(8, 1);
 
             await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
@@ -435,23 +258,7 @@ select x;";
 
             await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'lock' must be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 13)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("lock", string.Empty, "followed").WithLocation(7, 13);
 
             await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
@@ -469,23 +276,7 @@ select z;";
 
             await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'orderby' must be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("orderby", string.Empty, "followed").WithLocation(8, 1);
 
             await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
@@ -499,23 +290,7 @@ select z;";
 
             await this.TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'return' must not be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 13)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("return", " not", "followed").WithLocation(7, 13);
 
             await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
         }
@@ -529,23 +304,7 @@ select z;";
 
             await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'return' must be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 13)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("return", string.Empty, "followed").WithLocation(7, 13);
 
             await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
@@ -559,23 +318,7 @@ select z;";
 
             await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'select' must be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 38)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("select", string.Empty, "followed").WithLocation(7, 38);
 
             await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
@@ -589,23 +332,7 @@ select z;";
 
             await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'stackalloc' must be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 22)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("stackalloc", string.Empty, "followed").WithLocation(7, 22);
 
             await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
@@ -629,23 +356,7 @@ default:
 
             await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'switch' must be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 13)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("switch", string.Empty, "followed").WithLocation(7, 13);
 
             await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
@@ -659,23 +370,7 @@ default:
 
             await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'throw' must be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 13)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("throw", string.Empty, "followed").WithLocation(7, 13);
 
             await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
@@ -703,23 +398,7 @@ catch (Exception ex)
 
             await this.TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'throw' must not be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 12, 5)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("throw", " not", "followed").WithLocation(12, 5);
 
             await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
         }
@@ -739,23 +418,7 @@ catch (Exception ex)
 
             await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'using' must be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 13)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("using", string.Empty, "followed").WithLocation(7, 13);
 
             await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
@@ -773,23 +436,7 @@ select z;";
 
             await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'where' must be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("where", string.Empty, "followed").WithLocation(8, 1);
 
             await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
@@ -809,23 +456,7 @@ select z;";
 
             await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'while' must be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 13)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("while", string.Empty, "followed").WithLocation(7, 13);
 
             await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
@@ -852,25 +483,19 @@ select z;";
 
             await this.TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'checked' must not be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 21)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("checked", " not", "followed").WithLocation(7, 21);
 
             await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
+
+            statementWithoutSpace = @"checked{ };";
+
+            statementWithSpace = @"checked { };";
+
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+
+            expected = this.CSharpDiagnostic().WithArguments("checked", string.Empty, "followed").WithLocation(7, 13);
+
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
 
         [Fact]
@@ -892,23 +517,7 @@ default :
 
             await this.TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'default' must not be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 9, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("default", " not", "followed").WithLocation(9, 1);
 
             await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
         }
@@ -922,23 +531,7 @@ default :
 
             await this.TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'default' must not be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 21)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("default", " not", "followed").WithLocation(7, 21);
 
             await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
         }
@@ -952,23 +545,7 @@ default :
 
             await this.TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'nameof' must not be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 24)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("nameof", " not", "followed").WithLocation(7, 24);
 
             await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
         }
@@ -982,23 +559,7 @@ default :
 
             await this.TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'sizeof' must not be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 21)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("sizeof", " not", "followed").WithLocation(7, 21);
 
             await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
         }
@@ -1012,23 +573,7 @@ default :
 
             await this.TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'typeof' must not be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 22)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("typeof", " not", "followed").WithLocation(7, 22);
 
             await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
         }
@@ -1042,25 +587,19 @@ default :
 
             await this.TestKeywordStatement(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'unchecked' must not be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 21)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("unchecked", " not", "followed").WithLocation(7, 21);
 
             await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
+
+            statementWithoutSpace = @"unchecked{ };";
+
+            statementWithSpace = @"unchecked { };";
+
+            await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+
+            expected = this.CSharpDiagnostic().WithArguments("unchecked", string.Empty, "followed").WithLocation(7, 13);
+
+            await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
 
         [Fact]
@@ -1072,23 +611,7 @@ default :
 
             await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'new' must be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 21)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("new", string.Empty, "followed").WithLocation(7, 21);
 
             await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
@@ -1102,23 +625,7 @@ default :
 
             await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'new' must be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 23)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("new", string.Empty, "followed").WithLocation(7, 23);
 
             await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
@@ -1149,23 +656,7 @@ default :
 
             await this.VerifyCSharpDiagnosticAsync(statementWithoutSpace, EmptyDiagnosticResults, CancellationToken.None);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'new' must not be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 43)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("new", " not", "followed").WithLocation(7, 43);
 
             await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
         }
@@ -1183,23 +674,7 @@ default :
 
             await this.VerifyCSharpDiagnosticAsync(statementWithoutSpace, EmptyDiagnosticResults, CancellationToken.None);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'new' must not be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 46)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("new", " not", "followed").WithLocation(7, 46);
 
             await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
         }
@@ -1217,23 +692,7 @@ default :
 
             await this.VerifyCSharpDiagnosticAsync(statementWithoutSpace, EmptyDiagnosticResults, CancellationToken.None);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'new' must not be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 50)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("new", " not", "followed").WithLocation(7, 50);
 
             await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
         }
@@ -1251,23 +710,7 @@ default :
 
             await this.VerifyCSharpDiagnosticAsync(statementWithoutSpace, EmptyDiagnosticResults, CancellationToken.None);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'new' must not be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 44)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("new", " not", "followed").WithLocation(7, 44);
 
             await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
         }
@@ -1285,23 +728,7 @@ default :
 
             await this.VerifyCSharpDiagnosticAsync(statementWithoutSpace, EmptyDiagnosticResults, CancellationToken.None);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'new' must not be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 47)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("new", " not", "followed").WithLocation(7, 47);
 
             await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
         }
@@ -1319,23 +746,7 @@ default :
 
             await this.VerifyCSharpDiagnosticAsync(statementWithoutSpace, EmptyDiagnosticResults, CancellationToken.None);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'new' must not be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 51)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("new", " not", "followed").WithLocation(7, 51);
 
             await this.TestKeywordStatement(statementWithSpace, expected, statementWithoutSpace);
         }
@@ -1360,23 +771,7 @@ default :
 
             await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace, asyncMethod: true);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'await' must be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 26)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("await", string.Empty, "followed").WithLocation(7, 26);
 
             await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace, asyncMethod: true);
         }
@@ -1402,23 +797,7 @@ default:
 
             await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'case' must be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 9, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("case", string.Empty, "followed").WithLocation(9, 1);
 
             await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
         }
@@ -1450,25 +829,14 @@ default:
 
             await this.TestKeywordStatement(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The keyword 'case' must be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 10, 10)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("case", string.Empty, "followed").WithLocation(10, 10);
 
             await this.TestKeywordStatement(statementWithoutSpace, expected, statementWithSpace);
+        }
+
+        private Task TestKeywordStatement(string statement, DiagnosticResult expected, string fixedStatement, bool asyncMethod = false)
+        {
+            return this.TestKeywordStatement(statement, new[] { expected }, fixedStatement, asyncMethod);
         }
 
         private async Task TestKeywordStatement(string statement, DiagnosticResult[] expected, string fixedStatement, bool asyncMethod = false)

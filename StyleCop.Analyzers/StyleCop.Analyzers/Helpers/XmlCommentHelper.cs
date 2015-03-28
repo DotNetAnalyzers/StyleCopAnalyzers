@@ -15,9 +15,9 @@
         internal const string SummaryXmlTag = "summary";
         internal const string ContentXmlTag = "content";
         internal const string InheritdocXmlTag = "inheritdoc";
+        internal const string ValueXmlTag = "value";
         internal const string SeeXmlTag = "see";
         internal const string CrefArgumentName = "cref";
-
 
         /// <summary>
         /// This helper is used by documentation diagnostics to check if a xml comment should be considered empty.
@@ -96,7 +96,6 @@
                 // This includes <inheritdoc/>
                 return false;
             }
-
 
             var processingElement = xmlSyntax as XmlProcessingInstructionSyntax;
             if (processingElement != null)

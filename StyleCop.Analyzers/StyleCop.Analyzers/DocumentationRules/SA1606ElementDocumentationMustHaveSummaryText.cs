@@ -6,7 +6,6 @@
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
 
-
     /// <summary>
     /// The <c>&lt;summary&gt;</c> tag within the documentation header for a C# code element is empty.
     /// </summary>

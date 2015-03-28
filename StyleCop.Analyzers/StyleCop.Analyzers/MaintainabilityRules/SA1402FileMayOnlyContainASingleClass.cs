@@ -8,7 +8,6 @@
     using System;
     using System.Threading.Tasks;
 
-
     /// <summary>
     /// A C# code file contains more than one unique class.
     /// </summary>

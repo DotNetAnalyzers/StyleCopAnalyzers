@@ -3,6 +3,7 @@
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -110,6 +111,12 @@
 
             followedBySpace = token.HasTrailingTrivia;
             lastInLine = followedBySpace && token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia);
+
+            if (token.Parent is InterpolationSyntax)
+            {
+                // Don't report for interpolation string inlets
+                return;
+            }
 
             if (!firstInLine)
             {

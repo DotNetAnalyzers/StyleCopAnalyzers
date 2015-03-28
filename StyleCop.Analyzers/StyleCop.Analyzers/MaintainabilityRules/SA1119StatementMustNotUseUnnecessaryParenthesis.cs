@@ -2,9 +2,9 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
     /// A C# statement contains parenthesis which are unnecessary and should be removed.
@@ -42,6 +42,11 @@
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1119";
+        /// <summary>
+        /// The ID for the helper diagnostic used to mark the parentheses tokens surrounding the expression with
+        /// <see cref="WellKnownDiagnosticTags.Unnecessary"/>.
+        /// </summary>
+        public const string ParenthesesDiagnosticId = DiagnosticId + "_p";
         private const string Title = "Statement must not use unnecessary parenthesis";
         private const string MessageFormat = "Statement must not use unnecessary parenthesis";
         private const string Category = "StyleCop.CSharp.MaintainabilityRules";
@@ -50,11 +55,12 @@
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+
         private static readonly DiagnosticDescriptor ParenthesisDescriptor =
-            new DiagnosticDescriptor(DiagnosticId + "_p", Title, MessageFormat, Category, DiagnosticSeverity.Hidden, true, Description, HelpLink, customTags: new[] { WellKnownDiagnosticTags.Unnecessary, WellKnownDiagnosticTags.NotConfigurable });
+            new DiagnosticDescriptor(ParenthesesDiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Hidden, false, Description, HelpLink, customTags: new[] { WellKnownDiagnosticTags.Unnecessary, WellKnownDiagnosticTags.NotConfigurable });
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
-            ImmutableArray.Create(Descriptor);
+            ImmutableArray.Create(Descriptor, ParenthesisDescriptor);
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics

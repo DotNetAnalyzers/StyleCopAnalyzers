@@ -33,12 +33,13 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1007OperatorKeywordMustBeFollowedBySpace.DiagnosticId))
                     continue;
 
-                var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
                 SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (token.IsMissing)
                     continue;
@@ -46,11 +47,17 @@
                 if (token.HasTrailingTrivia && token.TrailingTrivia[0].IsKind(SyntaxKind.WhitespaceTrivia))
                     continue;
 
-                SyntaxTrivia whitespace = SyntaxFactory.Whitespace(" ");
-                SyntaxToken corrected = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, whitespace)).WithoutFormatting();
-                Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
-                context.RegisterCodeFix(CodeAction.Create("Insert space", t => Task.FromResult(updatedDocument)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Insert space", t => GetTransformedDocument(context.Document, root, token)), diagnostic);
             }
+        }
+
+        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxToken token)
+        {
+            SyntaxTrivia whitespace = SyntaxFactory.Whitespace(" ");
+            SyntaxToken corrected = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, whitespace)).WithoutFormatting();
+            Document updatedDocument = document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
+
+            return Task.FromResult(updatedDocument);
         }
     }
 }

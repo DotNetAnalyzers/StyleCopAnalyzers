@@ -149,7 +149,10 @@
         private void HandleObjectCreation(SyntaxNodeAnalysisContext context)
         {
             var objectCreation = (ObjectCreationExpressionSyntax)context.Node;
-            AnalyzeArgumentList(context, objectCreation.ArgumentList);
+            if (objectCreation?.ArgumentList != null)
+            {
+                AnalyzeArgumentList(context, objectCreation.ArgumentList);
+            }
         }
 
         private void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)

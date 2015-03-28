@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     public abstract class FileMayOnlyContainTestBase : CodeFixVerifier
     {
         public abstract string Keyword { get; }
+
         public abstract string DiagnosticId { get; }
 
         protected string Message
@@ -45,20 +46,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = this.DiagnosticId,
-                    Message = this.Message,
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, this.Keyword.Length + 2)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, this.Keyword.Length + 2);
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("%1", this.Keyword), expected, CancellationToken.None);
         }
@@ -76,31 +64,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = this.DiagnosticId,
-                    Message = this.Message,
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, this.Keyword.Length + 2)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = this.DiagnosticId,
-                    Message = this.Message,
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 7, this.Keyword.Length + 2)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic().WithLocation(4, this.Keyword.Length + 2),
+                    this.CSharpDiagnostic().WithLocation(7, this.Keyword.Length + 2)
+                };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("%1", this.Keyword), expected, CancellationToken.None);
         }

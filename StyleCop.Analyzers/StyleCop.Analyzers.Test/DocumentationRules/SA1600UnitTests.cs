@@ -2,12 +2,10 @@
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.DocumentationRules;
     using TestHelper;
+    using Xunit;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1600ElementsMustBeDocumented"/>-
@@ -36,22 +34,9 @@ TypeName
 {{
 }}";
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Elements must be documented",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 3, 1)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(3, 1)
                 };
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers, type), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None);
@@ -82,22 +67,9 @@ public class OuterClass
     }}
 }}";
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Elements must be documented",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 5)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(8, 5)
                 };
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers, type), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None);
@@ -116,22 +88,9 @@ DelegateName()
 {{
 }}";
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Elements must be documented",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 3, 1)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(3, 1)
                 };
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None);
@@ -162,22 +121,9 @@ public class OuterClass
     }}
 }}";
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Elements must be documented",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 5)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(8, 5)
                 };
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None);
@@ -208,22 +154,9 @@ public class OuterClass
     }}
 }}";
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Elements must be documented",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 5)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(8, 5)
                 };
 
             string explicitInterfaceText = isExplicitInterfaceMethod ? " IInterface." : string.Empty;
@@ -255,22 +188,9 @@ public interface InterfaceName
     }
 }}";
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Elements must be documented",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 5)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(8, 5)
                 };
 
             await this.VerifyCSharpDiagnosticAsync(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, !hasDocumentation ? expected : EmptyDiagnosticResults, CancellationToken.None);
@@ -303,22 +223,9 @@ public interface InterfaceName
     }
 }}";
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Elements must be documented",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 12)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(8, 12)
                 };
 
             await this.VerifyCSharpDiagnosticAsync(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, !hasDocumentation ? expected : EmptyDiagnosticResults, CancellationToken.None);
@@ -345,23 +252,9 @@ public interface InterfaceName
     event System.Action MemberName;
 }}";
 
-
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Elements must be documented",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 25)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(8, 25)
                 };
 
             await this.VerifyCSharpDiagnosticAsync(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, !hasDocumentation ? expected : EmptyDiagnosticResults, CancellationToken.None);
@@ -388,22 +281,9 @@ public interface InterfaceName
     this[string key] { get; set; }
 }}";
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Elements must be documented",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 5)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(8, 5)
                 };
 
             await this.VerifyCSharpDiagnosticAsync(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, !hasDocumentation ? expected : EmptyDiagnosticResults, CancellationToken.None);
@@ -434,22 +314,9 @@ public class OuterClass
     }}
 }}";
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Elements must be documented",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 5)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(8, 5)
                 };
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None);
@@ -478,22 +345,9 @@ public class OuterClass
     }}
 }}";
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Elements must be documented",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 6)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(7, 6)
                 };
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None);
@@ -522,22 +376,9 @@ public class OuterClass
     MemberName {{ get; set; }}
 }}";
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Elements must be documented",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 9, 5)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(9, 5)
                 };
 
             string explicitInterfaceText = isExplicitInterfaceProperty ? " IInterface." : string.Empty;
@@ -567,22 +408,9 @@ public class OuterClass
     this[string key] {{ get {{ return ""; }} set {{ }} }}
 }}";
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Elements must be documented",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 9, 5)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(9, 5)
                 };
 
             string explicitInterfaceText = isExplicitInterfaceIndexer ? " IInterface." : string.Empty;
@@ -634,22 +462,9 @@ public class OuterClass
     }}
 }}";
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Elements must be documented",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 10, 5)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(10, 5)
                 };
 
             string explicitInterfaceText = isExplicitInterfaceEvent ? " IInterface." : string.Empty;
@@ -677,22 +492,9 @@ public class OuterClass
     System.Action Action;
 }}";
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Elements must be documented",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 19)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(8, 19)
                 };
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None);
@@ -719,22 +521,9 @@ public class OuterClass
     System.Action Action;
 }}";
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Elements must be documented",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 19)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(8, 19)
                 };
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None);
@@ -768,12 +557,12 @@ public class OuterClass
             await this.TestNestedTypeDeclarationDocumentation(type, "public", false, true);
         }
 
-
         [Fact]
         public async Task TestClassWithoutDocumentation()
         {
             await this.TestTypeWithoutDocumentation("class");
         }
+
         [Fact]
         public async Task TestStructWithoutDocumentation()
         {
@@ -1051,23 +840,7 @@ public class OuterClass
 {
 }";
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Elements must be documented",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 3, 14)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 14);
 
             await this.VerifyCSharpDiagnosticAsync(testCodeWithDocumentation, EmptyDiagnosticResults, CancellationToken.None);
             await this.VerifyCSharpDiagnosticAsync(testCodeWithEmptyDocumentation, expected, CancellationToken.None);
@@ -1089,23 +862,7 @@ public class OuterClass
 {
 }";
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Elements must be documented",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 4, 14)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 14);
 
             await this.VerifyCSharpDiagnosticAsync(testCodeWithDocumentation, EmptyDiagnosticResults, CancellationToken.None);
             await this.VerifyCSharpDiagnosticAsync(testCodeWithEmptyDocumentation, expected, CancellationToken.None);

@@ -2,12 +2,11 @@
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.DocumentationRules;
     using TestHelper;
+    using Xunit;
     using static StyleCop.Analyzers.DocumentationRules.SA1643DestructorSummaryDocumentationMustBeginWithStandardText;
 
     /// <summary>
@@ -40,7 +39,6 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-
         private async Task TestEmptyDestructor()
         {
             var testCode = @"namespace FooNamespace
@@ -58,6 +56,7 @@
 }";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
+
         private async Task TestDestructorCorrectDocumentation(string part1, string part2, string part3, bool generic)
         {
             // First test it all on one line
@@ -164,27 +163,10 @@
 }}";
             testCode = string.Format(testCode, generic ? "<T1, T2>" : string.Empty);
 
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Destructor summary documentation must begin with standard text",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 5, 13)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 13);
 
             await this.VerifyCSharpDiagnosticAsync(testCode,
                 expected, CancellationToken.None);
-
 
             var fixedCode = @"namespace FooNamespace
 {{

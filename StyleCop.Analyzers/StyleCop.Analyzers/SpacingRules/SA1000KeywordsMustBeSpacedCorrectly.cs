@@ -96,11 +96,21 @@
                     break;
 
                 case SyntaxKind.CheckedKeyword:
+                case SyntaxKind.UncheckedKeyword:
+                    if (token.GetNextToken().IsKind(SyntaxKind.OpenBraceToken))
+                    {
+                        this.HandleRequiredSpaceToken(context, token);
+                    }
+                    else
+                    {
+                        this.HandleDisallowedSpaceToken(context, token);
+                    }
+                    break;
+
                 case SyntaxKind.DefaultKeyword:
                 case SyntaxKind.NameOfKeyword:
                 case SyntaxKind.SizeOfKeyword:
                 case SyntaxKind.TypeOfKeyword:
-                case SyntaxKind.UncheckedKeyword:
                     this.HandleDisallowedSpaceToken(context, token);
                     break;
 

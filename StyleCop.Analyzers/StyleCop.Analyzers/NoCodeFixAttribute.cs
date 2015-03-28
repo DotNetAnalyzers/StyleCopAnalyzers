@@ -3,7 +3,6 @@
     using System;
     using Microsoft.CodeAnalysis.Diagnostics;
 
-
     /// <summary>
     /// This attribute is applied to <see cref="DiagnosticAnalyzer"/>'s if will not get a code fix.
     /// Reasons for this would be:

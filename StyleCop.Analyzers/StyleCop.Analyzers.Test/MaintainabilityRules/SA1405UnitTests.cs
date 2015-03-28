@@ -4,11 +4,10 @@
     using System.Diagnostics;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.MaintainabilityRules;
     using TestHelper;
+    using Xunit;
 
     public class SA1405UnitTests : DebugMessagesUnitTestsBase
     {
@@ -48,20 +47,7 @@ public class Foo
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = this.DiagnosticId,
-                    Message = string.Format("Debug.Assert must provide message text", this.MethodName),
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }

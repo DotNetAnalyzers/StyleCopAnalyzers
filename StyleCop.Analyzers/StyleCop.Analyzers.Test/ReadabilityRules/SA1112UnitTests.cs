@@ -1,10 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Xunit;
 using StyleCop.Analyzers.ReadabilityRules;
 using TestHelper;
+using Xunit;
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
@@ -33,20 +32,7 @@ class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Closing parenthesis must be on line of opening parenthesis",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 5, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -79,7 +65,6 @@ string s)
     }
 }";
 
-
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
@@ -96,20 +81,7 @@ class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Closing parenthesis must be on line of opening parenthesis",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 5, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -142,7 +114,6 @@ string s)
     }
 }";
 
-
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
@@ -159,21 +130,7 @@ class Foo
     }
 }";
 
-
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Closing parenthesis must be on line of opening parenthesis",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -222,20 +179,7 @@ class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Closing parenthesis must be on line of opening parenthesis",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -273,7 +217,6 @@ class Foo
         var o = new object();
     }
 }";
-
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }

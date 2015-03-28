@@ -2,15 +2,15 @@
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Analyzers.NamingRules;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using StyleCop.Analyzers.NamingRules;
     using TestHelper;
     using Xunit;
 
-    public class SA1306UnitTests : CodeFixVerifier
+    public class SA1307UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1306FieldNamesMustBeginWithLowerCaseLetter.DiagnosticId;
+        private const string DiagnosticId = SA1307AccessibleFieldsMustBeginWithUpperCaseLetter.DiagnosticId;
 
         [Fact]
         public async Task TestEmptySource()
@@ -35,17 +35,17 @@ string Bar, car, Dar;
             var testCode = @"public class Foo
 {{
 {0}
-string Bar;
+string bar;
 {0}
-string car;
+string Car;
 {0}
-string Dar;
+string dar;
 }}";
 
             DiagnosticResult[] expected =
                 {
-                    this.CSharpDiagnostic().WithArguments("Bar").WithLocation(4, 8),
-                    this.CSharpDiagnostic().WithArguments("Dar").WithLocation(8, 8)
+                    this.CSharpDiagnostic().WithArguments("bar").WithLocation(4, 8),
+                    this.CSharpDiagnostic().WithArguments("dar").WithLocation(8, 8),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), expected, CancellationToken.None);
@@ -53,11 +53,11 @@ string Dar;
             var fixedCode = @"public class Foo
 {{
 {0}
-string bar;
+string Bar;
 {0}
-string car;
+string Car;
 {0}
-string dar;
+string Dar;
 }}";
 
             await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers));
@@ -68,13 +68,13 @@ string dar;
             var testCode = @"public class Foo
 {{
 {0}
-string Bar, car, Dar;
+string bar, Car, dar;
 }}";
 
             DiagnosticResult[] expected =
                 {
-                    this.CSharpDiagnostic().WithArguments("Bar").WithLocation(4, 8),
-                    this.CSharpDiagnostic().WithArguments("Dar").WithLocation(4, 18)
+                    this.CSharpDiagnostic().WithArguments("bar").WithLocation(4, 8),
+                    this.CSharpDiagnostic().WithArguments("dar").WithLocation(4, 18),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), expected, CancellationToken.None);
@@ -82,7 +82,7 @@ string Bar, car, Dar;
             var fixedCode = @"public class Foo
 {{
 {0}
-string bar, car, dar;
+string Bar, Car, Dar;
 }}";
 
             await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers));
@@ -91,55 +91,47 @@ string bar, car, dar;
         [Fact]
         public async Task TestThatDiagnosticIsReported_SingleField()
         {
-            await this.TestThatDiagnosticIsReported_SingleFieldImpl(string.Empty);
-            await this.TestThatDiagnosticIsReported_SingleFieldImpl("readonly");
-            await this.TestThatDiagnosticIsReported_SingleFieldImpl("private");
-            await this.TestThatDiagnosticIsReported_SingleFieldImpl("private readonly");
+            await this.TestThatDiagnosticIsReported_SingleFieldImpl("public");
+            await this.TestThatDiagnosticIsReported_SingleFieldImpl("internal");
+            await this.TestThatDiagnosticIsReported_SingleFieldImpl("protected internal");
+            await this.TestThatDiagnosticIsReported_SingleFieldImpl("public readonly");
+            await this.TestThatDiagnosticIsReported_SingleFieldImpl("internal readonly");
         }
 
         [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
         public async Task TestThatDiagnosticIsReported_MultipleFields()
         {
-            await this.TestThatDiagnosticIsReported_MultipleFieldsImpl(string.Empty);
-            await this.TestThatDiagnosticIsReported_MultipleFieldsImpl("readonly");
-            await this.TestThatDiagnosticIsReported_MultipleFieldsImpl("private");
-            await this.TestThatDiagnosticIsReported_MultipleFieldsImpl("private readonly");
+            await this.TestThatDiagnosticIsReported_MultipleFieldsImpl("public");
+            await this.TestThatDiagnosticIsReported_MultipleFieldsImpl("internal");
+            await this.TestThatDiagnosticIsReported_MultipleFieldsImpl("protected internal");
+            await this.TestThatDiagnosticIsReported_MultipleFieldsImpl("public readonly");
+            await this.TestThatDiagnosticIsReported_MultipleFieldsImpl("internal readonly");
         }
 
         [Fact]
         public async Task TestThatDiagnosticIsNotReported()
         {
+            await this.TestThatDiagnosticIsNotReportedImpl(string.Empty);
+            await this.TestThatDiagnosticIsNotReportedImpl("readonly");
+            await this.TestThatDiagnosticIsNotReportedImpl("private");
+
             await this.TestThatDiagnosticIsNotReportedImpl("const");
             await this.TestThatDiagnosticIsNotReportedImpl("private const");
-            await this.TestThatDiagnosticIsNotReportedImpl("internal const");
             await this.TestThatDiagnosticIsNotReportedImpl("protected const");
-            await this.TestThatDiagnosticIsNotReportedImpl("protected internal const");
-
-            await this.TestThatDiagnosticIsNotReportedImpl("internal readonly");
+            await this.TestThatDiagnosticIsNotReportedImpl("protected const");
+            
+            await this.TestThatDiagnosticIsNotReportedImpl("private readonly");
             await this.TestThatDiagnosticIsNotReportedImpl("protected readonly");
             await this.TestThatDiagnosticIsNotReportedImpl("protected internal readonly");
-            await this.TestThatDiagnosticIsNotReportedImpl("public");
-            await this.TestThatDiagnosticIsNotReportedImpl("internal");
         }
 
         [Fact]
         public async Task TestFieldStartingWithAnUnderscore()
         {
-            // Makes sure SA1306 is not reported for fields starting with an underscore
+            // Makes sure SA1307 is not reported for fields starting with an underscore
             var testCode = @"public class Foo
 {
     public string _bar = ""baz"";
-}";
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
-        }
-
-        [Fact]
-        public async Task TestFieldStartingWithLetter()
-        {
-            var testCode = @"public class Foo
-{
-    public string bar = ""baz"";
 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
@@ -150,7 +142,7 @@ string bar, car, dar;
         {
             var testCode = @"public class FooNativeMethods
 {
-    string Bar = ""baz"";
+    public string bar = ""baz"";
 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
@@ -158,12 +150,12 @@ string bar, car, dar;
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new SA1306FieldNamesMustBeginWithLowerCaseLetter();
+            return new SA1307AccessibleFieldsMustBeginWithUpperCaseLetter();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1306CodeFixProvider();
+            return new SA1307CodeFixProvider();
         }
     }
 }
