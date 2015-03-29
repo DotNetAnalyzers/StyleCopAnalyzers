@@ -760,8 +760,8 @@
 
         private async Task TestDeclarationWithAttributesAsync(string modifier, string identifier, string keywordLine, string linesAfter, string elementName = null, bool warning = true)
         {
-            var testCode = $@"
-  [Serializable]
+            var testCode = $@"using System;
+  [Obsolete]
  {Tab} {keywordLine}
 {linesAfter}";
 
@@ -775,8 +775,8 @@
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
-            var fixedTestCode = $@"
-  [Serializable]
+            var fixedTestCode = $@"using System;
+  [Obsolete]
  {Tab} {modifier} {keywordLine}
 {linesAfter}";
 
@@ -812,7 +812,7 @@
 
         private async Task TestNestedDeclarationAsync(string modifier, string identifier, string keywordLine, string linesAfter, string containingType = "class", string elementName = null, bool warning = true)
         {
-            var testCode = $@"
+            var testCode = $@"using System;
 public {containingType} OuterTypeName {{
  {Tab} {keywordLine}
 {linesAfter} }}";
@@ -827,7 +827,7 @@ public {containingType} OuterTypeName {{
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
-            var fixedTestCode = $@"
+            var fixedTestCode = $@"using System;
 public {containingType} OuterTypeName {{
  {Tab} {modifier} {keywordLine}
 {linesAfter} }}";
@@ -837,9 +837,9 @@ public {containingType} OuterTypeName {{
 
         private async Task TestNestedDeclarationWithAttributesAsync(string modifier, string identifier, string keywordLine, string linesAfter, string containingType = "class", string elementName = null, bool warning = true)
         {
-            var testCode = $@"
+            var testCode = $@"using System;
 public {containingType} OuterTypeName {{
-  [Serializable]
+  [Obsolete]
  {Tab} {keywordLine}
 {linesAfter} }}";
 
@@ -853,9 +853,9 @@ public {containingType} OuterTypeName {{
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
-            var fixedTestCode = $@"
+            var fixedTestCode = $@"using System;
 public {containingType} OuterTypeName {{
-  [Serializable]
+  [Obsolete]
  {Tab} {modifier} {keywordLine}
 {linesAfter} }}";
 
@@ -864,7 +864,7 @@ public {containingType} OuterTypeName {{
 
         private async Task TestNestedDeclarationWithDirectivesAsync(string modifier, string identifier, string keywordLine, string linesAfter, string containingType = "class", string elementName = null, bool warning = true)
         {
-            var testCode = $@"
+            var testCode = $@"using System;
 public {containingType} OuterTypeName {{
  #  if true
  {Tab} {keywordLine}
@@ -881,7 +881,7 @@ public {containingType} OuterTypeName {{
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
-            var fixedTestCode = $@"
+            var fixedTestCode = $@"using System;
 public {containingType} OuterTypeName {{
  #  if true
  {Tab} {modifier} {keywordLine}
