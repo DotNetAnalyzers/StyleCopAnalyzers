@@ -129,9 +129,10 @@ public class Bar
         public async Task TestComInterfaceInNativeMethodsClass()
         {
             var testCode = @"
+using System.Runtime.InteropServices;
 public class NativeMethods
 {
-    [ComImport]
+    [ComImport, Guid(""C8123315-D374-4DB8-9E7A-CB3499E46F2C"")]
     public interface FileOpenDialog
     {
     }
@@ -144,22 +145,24 @@ public class NativeMethods
         public async Task TestComInterfaceInNativeMethodsClassWithIncorrectName()
         {
             var testCode = @"
+using System.Runtime.InteropServices;
 public class NativeMethodsClass
 {
-    [ComImport]
+    [ComImport, Guid(""C8123315-D374-4DB8-9E7A-CB3499E46F2C"")]
     public interface FileOpenDialog
     {
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 22);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 22);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             var fixedCode = @"
+using System.Runtime.InteropServices;
 public class NativeMethodsClass
 {
-    [ComImport]
+    [ComImport, Guid(""C8123315-D374-4DB8-9E7A-CB3499E46F2C"")]
     public interface IFileOpenDialog
     {
     }
@@ -172,11 +175,12 @@ public class NativeMethodsClass
         public async Task TestComInterfaceInInnerClassInNativeMethodsClass()
         {
             var testCode = @"
+using System.Runtime.InteropServices;
 public class MyNativeMethods
 {
     public class FileOperations
     {
-        [ComImport]
+        [ComImport, Guid(""C8123315-D374-4DB8-9E7A-CB3499E46F2C"")]
         public interface FileOpenDialog111
         {
         }
