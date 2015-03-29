@@ -6,6 +6,8 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
+    using System.Collections.Generic;
+
 
     /// <summary>
     /// The C# code contains multiple blank lines in a row.
@@ -71,48 +73,66 @@
 
         private void HandleSyntaxTreeAnalysis(SyntaxTreeAnalysisContext context)
         {
-            var text = context.Tree.GetText();
-            var syntaxRoot = context.Tree.GetRoot();
-            var blankLinesStart = 0;
-            var blankLinesCount = 0;
-
-            for (var i = 0; i < text.Lines.Count; i++)
+            SyntaxNode root = context.Tree.GetRoot(context.CancellationToken);
+            foreach (var token in root.DescendantTokens(descendIntoTrivia: false))
             {
-                if (string.IsNullOrWhiteSpace(text.Lines[i].ToString()))
+                if (token.IsKind(SyntaxKind.EndOfFileToken))
                 {
-                    blankLinesCount++;
+                    // If the file ends with blanks lines, ignore them, they will be handled by SA1518.
+                    continue;
                 }
-                else
+
+                int blankLineIndex = 0;
+                int blankLineEndIndex = -1;
+                int blankLineCount = 0;
+                SyntaxTriviaList leadingTrivia = token.LeadingTrivia;
+                for (int i = 0; i < leadingTrivia.Count; i++)
                 {
-                    // If the file starts with blank lines, ignore them, they will be handled by SA1517.
-                    if ((blankLinesStart > 0) && (blankLinesCount > 1))
+                    switch (leadingTrivia[i].Kind())
                     {
-                        var blankLinesSpan = TextSpan.FromBounds(text.Lines[blankLinesStart].Span.Start, text.Lines[i - 1].Span.End);
+                        case SyntaxKind.WhitespaceTrivia:
+                            break;
 
-                        var node = syntaxRoot.FindNode(text.Lines[blankLinesStart].Span);
-                        if (!node.IsKind(SyntaxKind.StringLiteralExpression))
-                        {
-                            var trivia = syntaxRoot.FindTrivia(text.Lines[blankLinesStart].Span.Start);
-                            switch (trivia.Kind())
-                            {
-                                case SyntaxKind.DisabledTextTrivia:
-                                case SyntaxKind.MultiLineCommentTrivia:
-                                    // ignore multiple blanks lines
-                                    break;
+                        case SyntaxKind.EndOfLineTrivia:
+                            blankLineEndIndex = i;
+                            blankLineCount++;
+                            break;
 
-                                default:
-                                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, blankLinesSpan)));
-                                    break;
-                            }
-                        }
+                        default:
+                            ReportDiagnosticIfNecessary(context, leadingTrivia, blankLineIndex, blankLineEndIndex, blankLineCount);
+                            blankLineIndex = i + 1;
+                            blankLineCount = 0;
+                            break;
                     }
-
-                    blankLinesStart = i + 1;
-                    blankLinesCount = 0;
                 }
+
+                ReportDiagnosticIfNecessary(context, leadingTrivia, blankLineIndex, blankLineEndIndex, blankLineCount);
+            }
+        }
+
+        private static void ReportDiagnosticIfNecessary(SyntaxTreeAnalysisContext context, SyntaxTriviaList leadingTrivia, int blankLineIndex, int blankLineEndIndex, int blankLineCount)
+        {
+            if (blankLineIndex < 0 || blankLineEndIndex <= blankLineIndex)
+            {
+                // nothing to report
+                return;
             }
 
-            // If the file ends with blanks lines, ignore them, they will be handled by SA1518.
+            if (blankLineCount < 2)
+            {
+                // only care about multiple blank lines in a row
+                return;
+            }
+
+            if (leadingTrivia[blankLineIndex].SpanStart == 0)
+            {
+                // blank lines at the beginning are reported by SA1517
+                return;
+            }
+
+            TextSpan span = TextSpan.FromBounds(leadingTrivia[blankLineIndex].SpanStart, leadingTrivia[blankLineEndIndex].Span.End);
+            Location location = Location.Create(context.Tree, span);
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
         }
     }
 }
