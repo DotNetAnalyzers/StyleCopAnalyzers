@@ -46,6 +46,10 @@
                 if (token.IsMissing)
                     continue;
 
+                // The variable name is the full suffix.  In this case we cannot generate a valid varaible name and thus will not offer a code fix.
+                if (token.ValueText.Length <= 2)
+                    continue;
+
                 if (!string.IsNullOrEmpty(token.ValueText))
                 {
                     var newName = token.ValueText.Substring(2);
