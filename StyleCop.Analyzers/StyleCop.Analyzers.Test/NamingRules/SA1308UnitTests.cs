@@ -52,10 +52,10 @@ string {1}bar = ""baz"";
         public async Task TestFieldStartingWithNonTriggeringPrefix()
         {
             var testCode = @"public class Foo
-{{
+{
     public
 string x_bar = ""baz"";
-}}";
+}";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
@@ -64,10 +64,10 @@ string x_bar = ""baz"";
         public async Task TestFieldInsideNativeMethodsClass()
         {
             var testCode = @"public class TestNativeMethods
-{{
+{
     public
 string m_bar = ""baz"";
-}}";
+}";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
