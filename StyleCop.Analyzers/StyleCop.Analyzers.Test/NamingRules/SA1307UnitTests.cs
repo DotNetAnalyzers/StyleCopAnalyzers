@@ -27,7 +27,7 @@
         [InlineData("const")]
         [InlineData("private const")]
         [InlineData("protected const")]
-        [InlineData("protected const")]
+        [InlineData("protected internal const")]
 
         [InlineData("private readonly")]
         [InlineData("protected readonly")]
