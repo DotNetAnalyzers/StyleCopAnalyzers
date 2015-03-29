@@ -92,44 +92,84 @@
 
         private void HandleNamespaceDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            this.CheckCurlyBracketToken(context, ((NamespaceDeclarationSyntax)context.Node).OpenBraceToken);
-            this.CheckCurlyBracketToken(context, ((NamespaceDeclarationSyntax)context.Node).CloseBraceToken);
+            var syntax = (NamespaceDeclarationSyntax)context.Node;
+            this.CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
         }
 
         private void HandleClassDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            this.CheckCurlyBracketToken(context, ((ClassDeclarationSyntax)context.Node).OpenBraceToken);
-            this.CheckCurlyBracketToken(context, ((ClassDeclarationSyntax)context.Node).CloseBraceToken);
+            var syntax = (ClassDeclarationSyntax)context.Node;
+            this.CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
         }
 
         private void HandleEnumDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            this.CheckCurlyBracketToken(context, ((EnumDeclarationSyntax)context.Node).OpenBraceToken);
-            this.CheckCurlyBracketToken(context, ((EnumDeclarationSyntax)context.Node).CloseBraceToken);
+            var syntax = (EnumDeclarationSyntax)context.Node;
+            this.CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
         }
 
         private void HandleInterfaceDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            this.CheckCurlyBracketToken(context, ((InterfaceDeclarationSyntax)context.Node).OpenBraceToken);
-            this.CheckCurlyBracketToken(context, ((InterfaceDeclarationSyntax)context.Node).CloseBraceToken);
+            var syntax = (InterfaceDeclarationSyntax)context.Node;
+            this.CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
         }
 
         private void HandleStructDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            this.CheckCurlyBracketToken(context, ((StructDeclarationSyntax)context.Node).OpenBraceToken);
-            this.CheckCurlyBracketToken(context, ((StructDeclarationSyntax)context.Node).CloseBraceToken);
+            var syntax = (StructDeclarationSyntax)context.Node;
+            this.CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
         }
 
         private void HandleAccessorListSyntax(SyntaxNodeAnalysisContext context)
         {
-            this.CheckCurlyBracketToken(context, ((AccessorListSyntax)context.Node).OpenBraceToken);
-            this.CheckCurlyBracketToken(context, ((AccessorListSyntax)context.Node).CloseBraceToken);
+            var syntax = (AccessorListSyntax)context.Node;
+            this.CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
         }
 
         private void HandleBlockSyntax(SyntaxNodeAnalysisContext context)
         {
-            this.CheckCurlyBracketToken(context, ((BlockSyntax)context.Node).OpenBraceToken);
-            this.CheckCurlyBracketToken(context, ((BlockSyntax)context.Node).CloseBraceToken);
+            var syntax = (BlockSyntax)context.Node;
+            this.CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
+        }
+
+        private void CheckCurlyBraces(SyntaxNodeAnalysisContext context, SyntaxToken openBraceToken, SyntaxToken closeBraceToken)
+        {
+            bool checkCloseBrace = true;
+
+            if (GetStartLine(openBraceToken) == GetStartLine(closeBraceToken))
+            {
+                switch (context.Node.Parent.Kind())
+                {
+                case SyntaxKind.GetAccessorDeclaration:
+                case SyntaxKind.SetAccessorDeclaration:
+                case SyntaxKind.AddAccessorDeclaration:
+                case SyntaxKind.RemoveAccessorDeclaration:
+                case SyntaxKind.UnknownAccessorDeclaration:
+                    if (GetStartLine(((AccessorDeclarationSyntax)context.Node.Parent).Keyword) == GetStartLine(openBraceToken))
+                    {
+                        // reported as SA1504, if at all
+                        return;
+                    }
+
+                    checkCloseBrace = false;
+                    break;
+
+                default:
+                    // reported by SA1501 or SA1502
+                    return;
+                }
+            }
+
+            this.CheckCurlyBracketToken(context, openBraceToken);
+            if (checkCloseBrace)
+            {
+                this.CheckCurlyBracketToken(context, closeBraceToken);
+            }
+        }
+
+        private static int? GetStartLine(SyntaxToken token)
+        {
+            return token.GetLocation()?.GetLineSpan().StartLinePosition.Line;
         }
 
         private void CheckCurlyBracketToken(SyntaxNodeAnalysisContext context, SyntaxToken token)
