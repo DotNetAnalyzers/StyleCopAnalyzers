@@ -159,6 +159,9 @@
         {{
             {0}
         }}
+        // The following fields and method are referenced by the tests and need definitions.
+        int a, b;
+        void f(int x, int y) {{ }}
     }}
 }}
 ";
