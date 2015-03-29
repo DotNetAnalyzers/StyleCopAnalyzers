@@ -85,7 +85,7 @@ public class Foo
         public async Task TestLambdaExpressionInvalid()
         {
             var testCode = @"using System;
-
+using System.Diagnostics;
 public class Foo
 {
     private void TestMethod(Action action)

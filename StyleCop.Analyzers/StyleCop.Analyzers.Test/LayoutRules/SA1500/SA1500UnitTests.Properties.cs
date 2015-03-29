@@ -21,6 +21,7 @@
         public async Task TestPropertyValid()
         {
             var testCode = @"using System;
+using System.Collections.Generic;
 
 public class Foo
 {
@@ -76,7 +77,7 @@ public class Foo
     { get { return this.test; } }
 
     // Valid property #7
-    public List<int> Property7 { get; set; } = 
+    public int[] Property7 { get; set; } = 
     { 
         0, 
         1, 

@@ -42,7 +42,7 @@ public class Foo
     public Foo(short a) { Debug.Indent(); }
 
     // Valid constructor #5 (Valid only for SA1500)
-    public Foo(short a) 
+    public Foo(ushort a) 
     { Debug.Indent(); }
 }";
 
