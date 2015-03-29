@@ -21,7 +21,12 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        private async Task TestTypeNoDocumentation(string typeName)
+        [Theory]
+        [InlineData("enum")]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
+        public async Task TestTypeNoDocumentation(string typeName)
         {
             var testCode = @"
 partial {0} TypeName
@@ -30,7 +35,11 @@ partial {0} TypeName
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        private async Task TestTypeWithSummaryDocumentation(string typeName)
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
+        public async Task TestTypeWithSummaryDocumentation(string typeName)
         {
             var testCode = @"
 /// <summary>
@@ -42,7 +51,11 @@ partial {0} TypeName
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        private async Task TestTypeWithContentDocumentation(string typeName)
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
+        public async Task TestTypeWithContentDocumentation(string typeName)
         {
             var testCode = @"
 /// <content>
@@ -54,7 +67,11 @@ partial {0} TypeName
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        private async Task TestTypeWithInheritedDocumentation(string typeName)
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
+        public async Task TestTypeWithInheritedDocumentation(string typeName)
         {
             var testCode = @"
 /// <inheritdoc/>
@@ -64,7 +81,11 @@ partial {0} TypeName
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        private async Task TestTypeWithoutDocumentation(string typeName)
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
+        public async Task TestTypeWithoutDocumentation(string typeName)
         {
             var testCode = @"
 ///
@@ -76,102 +97,6 @@ TypeName
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 1);
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), expected, CancellationToken.None);
-        }
-
-        [Fact]
-        public async Task TestClassWithDocumentation()
-        {
-            await this.TestTypeWithSummaryDocumentation("class");
-        }
-
-        [Fact]
-        public async Task TestStructWithDocumentation()
-        {
-            await this.TestTypeWithSummaryDocumentation("struct");
-        }
-
-        [Fact]
-        public async Task TestInterfaceWithDocumentation()
-        {
-            await this.TestTypeWithSummaryDocumentation("interface");
-        }
-
-        [Fact]
-        public async Task TestClassWithContentDocumentation()
-        {
-            await this.TestTypeWithContentDocumentation("class");
-        }
-
-        [Fact]
-        public async Task TestStructWithContentDocumentation()
-        {
-            await this.TestTypeWithContentDocumentation("struct");
-        }
-
-        [Fact]
-        public async Task TestInterfaceWithContentDocumentation()
-        {
-            await this.TestTypeWithContentDocumentation("interface");
-        }
-
-        [Fact]
-        public async Task TestClassWithInheritedDocumentation()
-        {
-            await this.TestTypeWithInheritedDocumentation("class");
-        }
-
-        [Fact]
-        public async Task TestStructWithInheritedDocumentation()
-        {
-            await this.TestTypeWithInheritedDocumentation("struct");
-        }
-
-        [Fact]
-        public async Task TestInterfaceWithInheritedDocumentation()
-        {
-            await this.TestTypeWithInheritedDocumentation("interface");
-        }
-
-        [Fact]
-        public async Task TestClassWithoutDocumentation()
-        {
-            await this.TestTypeWithoutDocumentation("class");
-        }
-
-        [Fact]
-        public async Task TestStructWithoutDocumentation()
-        {
-            await this.TestTypeWithoutDocumentation("struct");
-        }
-
-        [Fact]
-        public async Task TestInterfaceWithoutDocumentation()
-        {
-            await this.TestTypeWithoutDocumentation("interface");
-        }
-
-        [Fact]
-        public async Task TestEnumNoDocumentation()
-        {
-            await this.TestTypeNoDocumentation("enum");
-        }
-
-        [Fact]
-        public async Task TestClassNoDocumentation()
-        {
-            await this.TestTypeNoDocumentation("class");
-        }
-
-        [Fact]
-        public async Task TestStructNoDocumentation()
-        {
-            await this.TestTypeNoDocumentation("struct");
-        }
-
-        [Fact]
-        public async Task TestInterfaceNoDocumentation()
-        {
-            await this.TestTypeNoDocumentation("interface");
         }
 
         [Fact]
