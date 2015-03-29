@@ -194,8 +194,22 @@
             SyntaxToken nextToken = token.GetNextToken();
             if (!nextToken.IsMissing)
             {
+                switch (nextToken.Kind())
+                {
+                case SyntaxKind.CloseParenToken:
+                case SyntaxKind.CommaToken:
+                case SyntaxKind.SemicolonToken:
+                    // these are allowed to appear on the same line
+                    return;
+
+                default:
+                    break;
+                }
+
                 if (nextToken.GetLocation().GetLineSpan().StartLinePosition.Line == line)
+                {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                }
             }
         }
     }
