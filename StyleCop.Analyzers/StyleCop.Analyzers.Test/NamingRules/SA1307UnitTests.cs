@@ -19,7 +19,20 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        private async Task TestThatDiagnosticIsNotReportedImpl(string modifiers)
+        [Theory]
+        [InlineData("")]
+        [InlineData("readonly")]
+        [InlineData("private")]
+
+        [InlineData("const")]
+        [InlineData("private const")]
+        [InlineData("protected const")]
+        [InlineData("protected const")]
+
+        [InlineData("private readonly")]
+        [InlineData("protected readonly")]
+        [InlineData("protected internal readonly")]
+        public async Task TestThatDiagnosticIsNotReported(string modifiers)
         {
             var testCode = @"public class Foo
 {{
@@ -30,7 +43,13 @@ string Bar, car, Dar;
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        private async Task TestThatDiagnosticIsReported_SingleFieldImpl(string modifiers)
+        [Theory]
+        [InlineData("public")]
+        [InlineData("internal")]
+        [InlineData("protected internal")]
+        [InlineData("public readonly")]
+        [InlineData("internal readonly")]
+        public async Task TestThatDiagnosticIsReported_SingleField(string modifiers)
         {
             var testCode = @"public class Foo
 {{
@@ -63,7 +82,13 @@ string Dar;
             await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers));
         }
 
-        private async Task TestThatDiagnosticIsReported_MultipleFieldsImpl(string modifiers)
+        [Theory(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [InlineData("public")]
+        [InlineData("internal")]
+        [InlineData("protected internal")]
+        [InlineData("public readonly")]
+        [InlineData("internal readonly")]
+        public async Task TestThatDiagnosticIsReported_MultipleFields(string modifiers)
         {
             var testCode = @"public class Foo
 {{
@@ -86,43 +111,6 @@ string Bar, Car, Dar;
 }}";
 
             await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers));
-        }
-
-        [Fact]
-        public async Task TestThatDiagnosticIsReported_SingleField()
-        {
-            await this.TestThatDiagnosticIsReported_SingleFieldImpl("public");
-            await this.TestThatDiagnosticIsReported_SingleFieldImpl("internal");
-            await this.TestThatDiagnosticIsReported_SingleFieldImpl("protected internal");
-            await this.TestThatDiagnosticIsReported_SingleFieldImpl("public readonly");
-            await this.TestThatDiagnosticIsReported_SingleFieldImpl("internal readonly");
-        }
-
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
-        public async Task TestThatDiagnosticIsReported_MultipleFields()
-        {
-            await this.TestThatDiagnosticIsReported_MultipleFieldsImpl("public");
-            await this.TestThatDiagnosticIsReported_MultipleFieldsImpl("internal");
-            await this.TestThatDiagnosticIsReported_MultipleFieldsImpl("protected internal");
-            await this.TestThatDiagnosticIsReported_MultipleFieldsImpl("public readonly");
-            await this.TestThatDiagnosticIsReported_MultipleFieldsImpl("internal readonly");
-        }
-
-        [Fact]
-        public async Task TestThatDiagnosticIsNotReported()
-        {
-            await this.TestThatDiagnosticIsNotReportedImpl(string.Empty);
-            await this.TestThatDiagnosticIsNotReportedImpl("readonly");
-            await this.TestThatDiagnosticIsNotReportedImpl("private");
-
-            await this.TestThatDiagnosticIsNotReportedImpl("const");
-            await this.TestThatDiagnosticIsNotReportedImpl("private const");
-            await this.TestThatDiagnosticIsNotReportedImpl("protected const");
-            await this.TestThatDiagnosticIsNotReportedImpl("protected const");
-            
-            await this.TestThatDiagnosticIsNotReportedImpl("private readonly");
-            await this.TestThatDiagnosticIsNotReportedImpl("protected readonly");
-            await this.TestThatDiagnosticIsNotReportedImpl("protected internal readonly");
         }
 
         [Fact]
