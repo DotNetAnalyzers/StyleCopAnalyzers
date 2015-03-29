@@ -48,9 +48,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         [Fact]
         public async Task TestNonEmptyParameterListNamedArgument()
         {
-            var testCode = @"public class Foo
+            var testCode = @"
+using System.Runtime.CompilerServices;
+public class Foo
 {
-    [System.Runtime.CompilerServices.MethodImpl(MethodCodeType = MethodCodeType.IL)]
+    [MethodImpl(MethodCodeType = MethodCodeType.IL)]
     public void Bar()
     {
     }
