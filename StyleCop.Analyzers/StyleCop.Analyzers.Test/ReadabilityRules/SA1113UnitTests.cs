@@ -95,7 +95,7 @@
     {
         var result = string.Compare(string.Empty
                                     , string.Empty
-                                    , StringComparison.Ordinal);
+                                    , System.StringComparison.Ordinal);
     }
 }";
 
@@ -315,7 +315,7 @@
     public void Bar()
     {
         var i = this[string.Empty
-, 5);
+, 5];
     }
 }";
 
@@ -340,7 +340,7 @@
     {
         var i = this[string.Empty
 , 5
-    ,4);
+    ,4];
     }
 }";
 
@@ -382,7 +382,7 @@
 {
     public void Bar()
     {
-         Action<string,int> i = 
+         System.Action<string,int> i = 
             delegate(string s
             , int j)
             {
@@ -403,7 +403,7 @@
 {
     public void Bar()
     {
-         Action<string,int> i = 
+         System.Action<string,int> i = 
             delegate(string s, int j)
             {
 
@@ -465,7 +465,7 @@
 {
         public void Bar()
         {
-            Action<string, int, long> a = (s
+            System.Action<string, int, long> a = (s
                 , i
                 , l) => { };
         }
@@ -487,7 +487,7 @@
 {
             public void Bar()
         {
-            Action<string, int, long> a = (s, i, l) => { };
+            System.Action<string, int, long> a = (s, i, l) => { };
         }
 }";
 
@@ -501,7 +501,7 @@
 {
             public void Bar()
         {
-            Action a = () => { };
+            System.Action a = () => { };
         }
 }";
 
@@ -511,14 +511,16 @@
         [Fact]
         public async Task TestAttributeCommaPlacedAtTheNextLineAsThePreviousParameter()
         {
-            var testCode = @"public class SimpleApiOriginal
+            var testCode = @"using System;
+using System.Runtime.InteropServices;
+public class SimpleApiOriginal
 {
     [DllImport(""user32.dll""
 , CharSet=CharSet.Auto)]
     public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
  }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 1);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -526,7 +528,9 @@
         [Fact]
         public async Task TestAttributeListCommaPlacedAtTheSameLineAsThePreviousParameter()
         {
-            var testCode = @"public class SimpleApiOriginal
+            var testCode = @"using System;
+using System.Runtime.InteropServices;
+public class SimpleApiOriginal
 {
     [DllImport(""user32.dll"", CharSet=CharSet.Auto)]
     public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
@@ -538,7 +542,8 @@
         [Fact]
         public async Task TestAttributeListCommaPlacedAtTheNextLineAsThePreviousParameter()
         {
-            var testCode = @"public class Foo
+            var testCode = @"using System.Diagnostics;
+public class Foo
 {
     [Conditional(""A"")
 , Conditional(""B"")
@@ -550,8 +555,8 @@
 
             DiagnosticResult[] expected =
                 {
-                    this.CSharpDiagnostic().WithLocation(4, 1),
-                    this.CSharpDiagnostic().WithLocation(5, 1)
+                    this.CSharpDiagnostic().WithLocation(5, 1),
+                    this.CSharpDiagnostic().WithLocation(6, 1)
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
@@ -560,7 +565,8 @@
         [Fact]
         public async Task TestAttributeCommaPlacedAtTheSameLineAsThePreviousParameter()
         {
-            var testCode = @"public class Foo
+            var testCode = @"using System.Diagnostics;
+public class Foo
 {
     [Conditional(""A""), Conditional(""B""), Conditional(""C"")]
         public void Bar()

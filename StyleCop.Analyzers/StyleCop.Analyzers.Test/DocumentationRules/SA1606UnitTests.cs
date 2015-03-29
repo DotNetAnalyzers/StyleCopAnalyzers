@@ -168,8 +168,8 @@ TypeName
         public async Task TestDelegateNoDocumentation()
         {
             var testCode = @"
-public delegate 
-TypeName();";
+public delegate
+void TypeName();";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
@@ -180,8 +180,8 @@ TypeName();";
 /// <summary>
 /// Foo
 /// </summary>
-public delegate 
-TypeName();";
+public delegate
+void TypeName();";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
@@ -190,8 +190,8 @@ TypeName();";
         {
             var testCode = @"
 /// <inheritdoc/>
-public delegate 
-TypeName();";
+public delegate
+void TypeName();";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
@@ -202,7 +202,7 @@ TypeName();";
 /// <summary>
 /// 
 /// </summary>
-public delegate 
+public delegate
 void TypeName();";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 6);
@@ -679,12 +679,12 @@ public class ClassName
 /// <summary>
 /// Foo
 /// </summary>
-public interface InterfaceName
+public class ClassName
 {
     /// <summary>
     /// Foo
     /// </summary>
-    event System.Action Foo { add; remove; }
+    event System.Action Foo { add { } remove { } }
 }";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
@@ -696,10 +696,10 @@ public interface InterfaceName
 /// <summary>
 /// Foo
 /// </summary>
-public interface InterfaceName
+public class ClassName
 {
     /// <inheritdoc/>
-    event System.Action Foo { add; remove; }
+    event System.Action Foo { add { } remove { } }
 }";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
@@ -711,9 +711,9 @@ public interface InterfaceName
 /// <summary>
 /// Foo
 /// </summary>
-public interface InterfaceName
+public class ClassName
 {
-    event System.Action Foo { add; remove; }
+    event System.Action Foo { add { } remove { } }
 }";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
@@ -725,12 +725,12 @@ public interface InterfaceName
 /// <summary>
 /// Foo
 /// </summary>
-public interface InterfaceName
+public class ClassName
 {
     /// <summary>
     /// 
     /// </summary>
-    event System.Action Foo { add; remove; }
+    event System.Action Foo { add { } remove { } }
 }";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 25);

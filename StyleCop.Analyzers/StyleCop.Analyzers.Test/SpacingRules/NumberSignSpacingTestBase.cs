@@ -403,7 +403,7 @@
     {
         void Foo()
         {
-            int[] x = new int[" + this.Sign + @"3];
+            int[] x = new int[" + this.Sign + @"0];
         }
     }
 }
@@ -411,11 +411,11 @@
 
             string test;
 
-            test = string.Format(testFormat, this.Sign + "3");
+            test = string.Format(testFormat, this.Sign + "0");
             await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None);
             await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
 
-            test = string.Format(testFormat, " " + this.Sign + "3");
+            test = string.Format(testFormat, " " + this.Sign + "0");
             DiagnosticResult[] expected =
                 {
                     this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 32)
@@ -423,7 +423,7 @@
             await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
             await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
 
-            test = string.Format(testFormat, this.Sign + " 3");
+            test = string.Format(testFormat, this.Sign + " 0");
             expected =
                 new[]
                 {
@@ -432,7 +432,7 @@
             await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
             await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
 
-            test = string.Format(testFormat, " " + this.Sign + " 3");
+            test = string.Format(testFormat, " " + this.Sign + " 0");
             expected =
                 new[]
                 {

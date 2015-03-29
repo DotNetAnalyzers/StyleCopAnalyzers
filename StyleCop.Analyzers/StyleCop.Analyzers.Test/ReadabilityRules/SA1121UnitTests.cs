@@ -58,16 +58,9 @@
         {
             foreach (var item in types)
             {
-                try
-                {
-                    await func(item.Item1, item.Item2);
-                    await func(item.Item1, "System." + item.Item2);
-                    await func(item.Item1, "global::System." + item.Item2);
-                }
-                catch (Exception ex)
-                {
-                    Assert.True(false, "Type failed: " + item.Item1 + Environment.NewLine + ex.Message);
-                }
+                await func(item.Item1, item.Item2);
+                await func(item.Item1, "System." + item.Item2);
+                await func(item.Item1, "global::System." + item.Item2);
             }
         }
 
@@ -76,7 +69,7 @@
             foreach (var item in types)
             {
                 // Allow CS8019 here because the code fix makes the using directive unnecessary
-                await this.VerifyCSharpFixAsync(string.Format(testSource, item.Item2), string.Format(testSource, item.Item1), allowNewCompilerDiagnostics: true);
+                await this.VerifyCSharpFixAsync(string.Format(testSource, item.Item2), string.Format(testSource, item.Item1));
                 await this.VerifyCSharpFixAsync(string.Format(testSource, "System." + item.Item2), string.Format(testSource, item.Item1));
                 await this.VerifyCSharpFixAsync(string.Format(testSource, "global::System." + item.Item2), string.Format(testSource, item.Item1));
             }
@@ -148,13 +141,14 @@ public class Foo
         [Fact]
         public async Task TestVariableDeclarationCodeFix()
         {
-            string testSource = @"using System;
+            string testSource = @"namespace System {{
 public class Foo
 {{
     public void Bar()
     {{
         {0} test;
     }}
+}}
 }}";
 
             await this.VerifyAllFixes(testSource);
@@ -190,13 +184,14 @@ public class Foo
         [Fact]
         public async Task TestDefaultDeclarationCodeFix()
         {
-            string testSource = @"using System;
+            string testSource = @"namespace System {{
 public class Foo
 {{
     public void Bar()
     {{
         var test = default({0});
     }}
+}}
 }}";
 
             await this.VerifyAllFixes(testSource);
@@ -226,13 +221,14 @@ public class Foo
         [Fact]
         public async Task TestTypeOfCodeFix()
         {
-            string testSource = @"using System;
+            string testSource = @"namespace System {{
 public class Foo
 {{
     public void Bar()
     {{
         var test = typeof({0});
     }}
+}}
 }}";
 
             await this.VerifyAllFixes(testSource);
@@ -245,9 +241,14 @@ public class Foo
 {{
     public {0} Bar()
     {{
+        return default({0});
     }}
 }}";
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 12);
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(4, 12),
+                this.CSharpDiagnostic().WithLocation(6, 24),
+            };
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
         }
@@ -261,12 +262,14 @@ public class Foo
         [Fact]
         public async Task TestReturnTypeCodeFix()
         {
-            string testSource = @"using System;
+            string testSource = @"namespace System {{
 public class Foo
 {{
     public {0} Bar()
     {{
+        return default({0});
     }}
+}}
 }}";
 
             await this.VerifyAllFixes(testSource);
@@ -295,12 +298,13 @@ public class Foo
         [Fact]
         public async Task TestEnumBaseTypeCodeFix()
         {
-            string testSource = @"using System;
+            string testSource = @"namespace System {{
 public class Foo
 {{
     public enum Bar : {0}
     {{
     }}
+}}
 }}";
 
             await this.VerifyEnumTypeFixes(testSource);
@@ -330,13 +334,14 @@ public class Foo
         [Fact]
         public async Task TestPointerDeclarationCodeFix()
         {
-            string testSource = @"using System;
+            string testSource = @"namespace System {{
 public class Foo
 {{
     public unsafe void Bar()
     {{
         {0}* test;
     }}
+}}
 }}";
 
             await this.VerifyValueTypeFixes(testSource);
@@ -365,12 +370,13 @@ public class Foo
         [Fact]
         public async Task TestArgumentCodeFix()
         {
-            string testSource = @"using System;
+            string testSource = @"namespace System {{
 public class Foo
 {{
     public void Bar({0} test)
     {{
     }}
+}}
 }}";
 
             await this.VerifyAllFixes(testSource);
@@ -406,7 +412,7 @@ public class Foo
         [Fact]
         public async Task TestIndexerCodeFix()
         {
-            string testSource = @"using System;
+            string testSource = @"namespace System {{
 public class Foo
 {{
     public {0} this
@@ -414,6 +420,7 @@ public class Foo
     {{
         get {{ return default({0}); }}
     }}
+}}
 }}";
 
             await this.VerifyAllFixes(testSource);
@@ -488,13 +495,14 @@ public class Foo
         [Fact]
         public async Task TestArrayCodeFix()
         {
-            string testSource = @"using System;
+            string testSource = @"namespace System {{
 public class Foo
 {{
     public void Bar()
     {{
         var array = new {0}[0];
     }}
+}}
 }}";
 
             await this.VerifyAllFixes(testSource);
@@ -502,6 +510,9 @@ public class Foo
 
         private async Task TestStackAllocArrayImpl(string predefined, string fullName)
         {
+            if (predefined == "object" || predefined == "string")
+                return;
+
             string testCode = @"using System;
 public class Foo
 {{
@@ -524,13 +535,14 @@ public class Foo
         [Fact]
         public async Task TestStackAllocArrayCodeFix()
         {
-            string testSource = @"using System;
+            string testSource = @"namespace System {{
 public class Foo
 {{
     public unsafe void Bar()
     {{
         var array = stackalloc {0}[0];
     }}
+}}
 }}";
 
             await this.VerifyValueTypeFixes(testSource);
@@ -565,7 +577,7 @@ public class Foo
         [Fact]
         public async Task TestImplicitCastCodeFix()
         {
-            string testSource = @"using System;
+            string testSource = @"namespace System {{
 public class Foo
 {{
     public void Bar()
@@ -573,6 +585,7 @@ public class Foo
         var t = ({0})
                     default({0});
     }}
+}}
 }}";
 
             await this.VerifyValueTypeFixes(testSource);
@@ -602,13 +615,14 @@ public class Foo
         [Fact]
         public async Task TestExplicitCastCodeFix()
         {
-            string testSource = @"using System;
+            string testSource = @"namespace System {{
 public class Foo
 {{
     public void Bar()
     {{
-        var t = null as {0};
+        var t = ({0})default({0});
     }}
+}}
 }}";
 
             await this.VerifyValueTypeFixes(testSource);
@@ -638,13 +652,14 @@ public class Foo
         [Fact]
         public async Task TestNullableCodeFix()
         {
-            string testSource = @"using System;
+            string testSource = @"namespace System {{
 public class Foo
 {{
     public void Bar()
     {{
         {0}? t = null;
     }}
+}}
 }}";
 
             await this.VerifyValueTypeFixes(testSource);
@@ -765,7 +780,7 @@ namespace Foo
     {{
     }}
 }}
-public namespace {0} 
+namespace {0} 
 {{
         public class Bar {{ }}
 }}

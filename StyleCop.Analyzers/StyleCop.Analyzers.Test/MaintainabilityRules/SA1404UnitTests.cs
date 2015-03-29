@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using StyleCop.Analyzers.MaintainabilityRules;
 using TestHelper;
@@ -19,12 +20,13 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
+        [Fact]
         public async Task TestSuppressionWithStringLiteral()
         {
             var testCode = @"public class Foo
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = ""a justification"")]
-    public string Bar()
+    public void Bar()
     {
 
     }
@@ -39,7 +41,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             var testCode = @"public class Foo
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null)]
-    public string Bar()
+    public void Bar()
     {
 
     }
@@ -56,7 +58,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             var testCode = @"public class Foo
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = """")]
-    public string Bar()
+    public void Bar()
     {
 
     }
@@ -73,7 +75,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             var testCode = @"public class Foo
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = ""    "")]
-    public string Bar()
+    public void Bar()
     {
 
     }
@@ -90,7 +92,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             var testCode = @"public class Foo
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = null)]
-    public string Bar()
+    public void Bar()
     {
 
     }
@@ -108,7 +110,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     const string JUSTIFICATION = ""Foo"";
     [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = """" + JUSTIFICATION)]
-    public string Bar()
+    public void Bar()
     {
 
     }
@@ -124,7 +126,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     const string JUSTIFICATION = ""    "";
     [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = """" + JUSTIFICATION)]
-    public string Bar()
+    public void Bar()
     {
 
     }
@@ -142,13 +144,23 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = 5)]
-    public string Bar()
+    public void Bar()
     {
 
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 66);
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(4, 66),
+                new DiagnosticResult
+                {
+                    Id = "CS0029",
+                    Message = "Cannot implicitly convert type 'int' to 'string'",
+                    Severity = DiagnosticSeverity.Error,
+                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 4, 82) }
+                }
+            };
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 

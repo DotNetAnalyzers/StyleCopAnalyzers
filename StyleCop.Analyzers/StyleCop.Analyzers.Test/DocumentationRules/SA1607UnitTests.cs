@@ -211,7 +211,7 @@ TypeName
 /// <summary>
 /// Foo
 /// </summary>
-public class ClassName
+public partial class ClassName
 {
     partial void Test();
 }";
@@ -225,7 +225,7 @@ public class ClassName
 /// <summary>
 /// Foo
 /// </summary>
-public class ClassName
+public partial class ClassName
 {
     /// <summary>
     /// Foo
@@ -242,7 +242,7 @@ public class ClassName
 /// <summary>
 /// Foo
 /// </summary>
-public class ClassName
+public partial class ClassName
 {
     /// <content>
     /// Foo
@@ -259,7 +259,7 @@ public class ClassName
 /// <summary>
 /// Foo
 /// </summary>
-public class ClassName
+public partial class ClassName
 {
     /// <inheritdoc/>
     partial void Test();
@@ -274,7 +274,7 @@ public class ClassName
 /// <summary>
 /// Foo
 /// </summary>
-public class ClassName
+public partial class ClassName
 {
 /// <summary>
 /// 
@@ -294,7 +294,7 @@ public class ClassName
 /// <summary>
 /// Foo
 /// </summary>
-public class ClassName
+public partial class ClassName
 {
 /// <content>
 /// 

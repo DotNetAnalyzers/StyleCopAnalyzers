@@ -445,7 +445,7 @@ class Foo
 {
     public void Bar()
     {
-        System.Collection.Generics.List<int> list = new System.Collection.Generics.List<int>();
+        System.Collections.Generic.List<int> list = new System.Collections.Generic.List<int>();
         var i = list[
 
 1];
@@ -465,7 +465,7 @@ class Foo
 {
     public void Bar()
     {
-        System.Collection.Generics.List<int> list = new System.Collection.Generics.List<int>();
+        System.Collections.Generic.List<int> list = new System.Collections.Generic.List<int>();
         var i = list[
 1];
     }
@@ -482,7 +482,7 @@ class Foo
 {
     public void Bar()
     {
-        System.Collection.Generics.List<int> list = new System.Collection.Generics.List<int>();
+        System.Collections.Generic.List<int> list = new System.Collections.Generic.List<int>();
         var i = list[1];
     }
 }";
@@ -552,8 +552,6 @@ class Foo
 {
     public void Bar()
     {
-    public void Bar()
-    {
         int[][,] jaggedArray4 = new int[3][,] 
         {
             new int[,] { {1,3}, {5,7} },
@@ -571,6 +569,7 @@ class Foo
         public async Task TestAttributeParametersList2LinesAfterOpeningParenthesis()
         {
             var testCode = @"
+using System.Diagnostics;
 class Foo
 {
     [Conditional(
@@ -581,7 +580,7 @@ class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -590,6 +589,7 @@ class Foo
         public async Task TestAttributeParametersListOnNextLineAsOpeningParenthesis()
         {
             var testCode = @"
+using System.Diagnostics;
 class Foo
 {
     [Conditional(
@@ -606,6 +606,7 @@ class Foo
         public async Task TestAtributeParametersListOnSameLineAsOpeningParenthesis()
         {
             var testCode = @"
+using System.Diagnostics;
 class Foo
 {
     [Conditional(""DEBUG"")]
@@ -621,7 +622,7 @@ class Foo
         public async Task TestAttributeNoParameters()
         {
             var testCode = @"
-[Serializable]
+[System.Serializable]
 class Foo
 {
 
@@ -634,6 +635,7 @@ class Foo
         public async Task TestAttributesListParametersList2LinesAfterOpeningParenthesis()
         {
             var testCode = @"
+using System.Diagnostics;
 class Foo
 {
     [
@@ -644,7 +646,7 @@ Conditional(""DEBUG""),Conditional(""DEBUG2"")]
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -653,6 +655,7 @@ Conditional(""DEBUG""),Conditional(""DEBUG2"")]
         public async Task TestAttributesListParametersListOnNextLineAsOpeningParenthesis()
         {
             var testCode = @"
+using System.Diagnostics;
 class Foo
 {
     [
@@ -669,6 +672,7 @@ Conditional(""DEBUG""),Conditional(""DEBUG2"")]
         public async Task TestAtributesListParametersListOnSameLineAsOpeningParenthesis()
         {
             var testCode = @"
+using System.Diagnostics;
 class Foo
 {
     [Conditional(""DEBUG""),Conditional(""DEBUG2"")]
@@ -741,7 +745,7 @@ class Foo
 {
     public void Bar()
     {
-        Action<int,int> c = delegate(
+        System.Action<int,int> c = delegate(
 
 int z, int j)
         {
@@ -763,7 +767,7 @@ class Foo
 {
     public void Bar()
     {
-        Action<int,int> c = delegate(
+        System.Action<int,int> c = delegate(
 int z, int j)
         {
 
@@ -782,7 +786,7 @@ class Foo
 {
     public void Bar()
     {
-        Action<int,int> c = delegate(int z, int j)
+        System.Action<int,int> c = delegate(int z, int j)
         {
 
         };
@@ -800,7 +804,7 @@ class Foo
 {
     public void Bar()
     {
-        Action c = delegate()
+        System.Action c = delegate()
         {
 
         };
@@ -818,7 +822,7 @@ class Foo
 {
     public void Bar()
     {
-        Action<int,int> c = (
+        System.Action<int,int> c = (
 
 z,j) =>
         {
@@ -840,7 +844,7 @@ class Foo
 {
     public void Bar()
     {
-        Action<int,int> c = (
+        System.Action<int,int> c = (
 z,j) =>
         {
 
@@ -859,7 +863,7 @@ class Foo
 {
     public void Bar()
     {
-        Action<int,int> c = (z,j) =>
+        System.Action<int,int> c = (z,j) =>
         {
 
         };
@@ -877,7 +881,7 @@ class Foo
 {
     public void Bar()
     {
-        Action c = () => 
+        System.Action c = () => 
         {
 
         };
@@ -1012,7 +1016,7 @@ public class Foo
             var testCode = @"
 public class Foo
 {
-    public static void Foo()
+    public static void Bar()
     {
         var list = new System.Collections.Generic.List<int> { 42 };
     }

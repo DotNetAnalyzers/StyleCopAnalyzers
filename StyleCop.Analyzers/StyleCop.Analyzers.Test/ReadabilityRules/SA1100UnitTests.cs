@@ -660,7 +660,7 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected override void Baz()
+    protected void Baz()
     {
         base.Bar();
     }
@@ -688,7 +688,7 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected override void Baz()
+    protected void Baz()
     {
         base.Bar(string.Empty,5);
     }
@@ -716,9 +716,10 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected override void Baz()
+    protected void Baz()
     {
-        base.Bar(string.Empty,5);
+        int five = 5;
+        base.Bar(string.Empty, ref five);
     }
     protected void Bar(string s, ref int i)
     {
@@ -744,7 +745,7 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected override void Baz()
+    protected void Baz()
     {
         var s = base.Bar;
     }
@@ -762,6 +763,8 @@ public class FooChild : Foo
         public async Task TestChildEventNoOverride()
         {
             var testCode = @"
+using System;
+
 public class Foo
 {
     protected event Action MyEvent;
@@ -771,18 +774,17 @@ public class FooChild : Foo
 {
     protected void Baz()
     {
-        if(base.MyEvent != null)
-        {
-
-        }
+        base.MyEvent += () => { };
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(11, 12);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(13, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             var fixedTest = @"
+using System;
+
 public class Foo
 {
     protected event Action MyEvent;
@@ -792,10 +794,7 @@ public class FooChild : Foo
 {
     protected void Baz()
     {
-        if(this.MyEvent != null)
-        {
-
-        }
+        this.MyEvent += () => { };
     }
 }";
             await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
@@ -805,6 +804,8 @@ public class FooChild : Foo
         public async Task TestChildEventOverrideExists()
         {
             var testCode = @"
+using System;
+
 public class Foo
 {
     protected virtual event Action MyEvent;
@@ -816,10 +817,7 @@ public class FooChild : Foo
 
     protected void Baz()
     {
-        if(base.MyEvent != null)
-        {
-
-        }
+        base.MyEvent += () => { };
     }
 }";
 
@@ -830,6 +828,8 @@ public class FooChild : Foo
         public async Task TestChildEventHidingEventExists()
         {
             var testCode = @"
+using System;
+
 public class Foo
 {
     protected virtual event Action MyEvent;
@@ -841,10 +841,7 @@ public class FooChild : Foo
 
     protected void Baz()
     {
-        if(base.MyEvent != null)
-        {
-
-        }
+        base.MyEvent += () => { };
     }
 }";
 

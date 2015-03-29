@@ -37,7 +37,7 @@
             var testCode = @"public class Foo
 {{
 {0}
-string Bar, car, Dar;
+string Bar = """", car = """", Dar = """";
 }}";
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), EmptyDiagnosticResults, CancellationToken.None);

@@ -22,6 +22,7 @@
         public async Task TestAddAccessorAfterRemoveAccessor()
         {
             var testCode = @"
+using System;
 public class Foo
 {
     private EventHandler nameChanged;
@@ -39,7 +40,7 @@ public class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 9);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(9, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -48,6 +49,7 @@ public class Foo
         public async Task TestAddAccessorAfterRemoveAccessorSameLine()
         {
             var testCode = @"
+using System;
 public class Foo
 {
     private EventHandler nameChanged;
@@ -58,7 +60,7 @@ public class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 9);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(9, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -67,6 +69,7 @@ public class Foo
         public async Task TestAddAccessorBeforeRemoveAccessor()
         {
             var testCode = @"
+using System;
 public class Foo
 {
     private EventHandler nameChanged;
@@ -91,6 +94,7 @@ public class Foo
         public async Task TestAddAccessorBeforeRemoveAccessorSameLine()
         {
             var testCode = @"
+using System;
 public class Foo
 {
     private EventHandler nameChanged;

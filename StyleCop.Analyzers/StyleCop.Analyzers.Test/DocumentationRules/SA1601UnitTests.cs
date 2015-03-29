@@ -79,12 +79,12 @@ TypeName
 /// Some Documentation
 /// </summary>
 public partial class TypeName
-{{
+{
     /// <summary>
     /// Some Documentation
     /// </summary>
     partial void MemberName();
-}}";
+}";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
@@ -96,9 +96,9 @@ public partial class TypeName
 /// Some Documentation
 /// </summary>
 public partial class TypeName
-{{
+{
     partial void MemberName();
-}}";
+}";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 18);
 
@@ -113,12 +113,12 @@ public partial class TypeName
 /// Some Documentation
 /// </summary>
 public partial class TypeName
-{{
+{
     /// <summary>
     /// 
     /// </summary>
     partial void MemberName();
-}}";
+}";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 18);
 
