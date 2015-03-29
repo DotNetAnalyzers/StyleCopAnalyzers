@@ -81,7 +81,7 @@
         /// <summary>
         /// Verifies that diagnostics will be reported for all invalid indexer definitions.
         /// </summary>
-        [Fact(Skip = "Disabled until the SA1500 implementation is available")]
+        [Fact]
         public async Task TestIndexerInvalid()
         {
             var testCode = @"public class Foo

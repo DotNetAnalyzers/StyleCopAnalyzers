@@ -111,7 +111,7 @@
         /// <summary>
         /// Verifies that diagnostics will be reported for all invalid if statement definitions.
         /// </summary>
-        [Fact(Skip = "Disabled until the SA1500 implementation is available")]
+        [Fact]
         public async Task TestIfInvalid()
         {
             var testCode = @"public class Foo
@@ -172,7 +172,7 @@
         /// <summary>
         /// Verifies that diagnostics will be reported for all invalid if ... else statement definitions.
         /// </summary>
-        [Fact(Skip = "Disabled until the SA1500 implementation is available")]
+        [Fact]
         public async Task TestIfElseInvalid()
         {
             var testCode = @"public class Foo

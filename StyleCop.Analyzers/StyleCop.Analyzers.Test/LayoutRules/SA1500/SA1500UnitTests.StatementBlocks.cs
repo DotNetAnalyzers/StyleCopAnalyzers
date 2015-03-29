@@ -80,7 +80,7 @@
         /// <remarks>
         /// The class is marked unsafe to make testing the fixed statement possible.
         /// </remarks>
-        [Theory(Skip = "Disabled until the SA1500 implementation is available")]
+        [Theory]
         [MemberData(nameof(StatementBlocksTokenList))]
         public async Task TestStatementBlockInvalid(string token)
         {

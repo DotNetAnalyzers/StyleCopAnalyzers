@@ -57,7 +57,7 @@
         /// <summary>
         /// Verifies that diagnostics will be reported for all invalid do ... while statement definitions.
         /// </summary>
-        [Fact(Skip = "Disabled until the SA1500 implementation is available")]
+        [Fact]
         public async Task TestDoWhileInvalid()
         {
             var testCode = @"public class Foo
