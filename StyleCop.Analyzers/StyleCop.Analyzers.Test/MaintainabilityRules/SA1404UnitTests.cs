@@ -149,15 +149,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 }";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 66);
-
-            try
-            {
-                await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-            }
-            catch (NullReferenceException)
-            {
-                Assert.True(false, "Diagnostic threw NullReferenceException");
-            }
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
