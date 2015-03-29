@@ -81,55 +81,55 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(HandleNamespaceDeclarationSyntax, SyntaxKind.NamespaceDeclaration);
-            context.RegisterSyntaxNodeAction(HandleClassDeclarationSyntax, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeAction(HandleEnumDeclarationSyntax, SyntaxKind.EnumDeclaration);
-            context.RegisterSyntaxNodeAction(HandleInterfaceDeclarationSyntax, SyntaxKind.InterfaceDeclaration);
-            context.RegisterSyntaxNodeAction(HandleStructDeclarationSyntax, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeAction(HandleAccessorListSyntax, SyntaxKind.AccessorList);
-            context.RegisterSyntaxNodeAction(HandleBlockSyntax, SyntaxKind.Block);
+            context.RegisterSyntaxNodeAction(this.HandleNamespaceDeclarationSyntax, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleClassDeclarationSyntax, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleEnumDeclarationSyntax, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleInterfaceDeclarationSyntax, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleStructDeclarationSyntax, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleAccessorListSyntax, SyntaxKind.AccessorList);
+            context.RegisterSyntaxNodeAction(this.HandleBlockSyntax, SyntaxKind.Block);
         }
 
         private void HandleNamespaceDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            CheckCurlyBracketToken(context, ((NamespaceDeclarationSyntax)context.Node).OpenBraceToken);
-            CheckCurlyBracketToken(context, ((NamespaceDeclarationSyntax)context.Node).CloseBraceToken);
+            this.CheckCurlyBracketToken(context, ((NamespaceDeclarationSyntax)context.Node).OpenBraceToken);
+            this.CheckCurlyBracketToken(context, ((NamespaceDeclarationSyntax)context.Node).CloseBraceToken);
         }
 
         private void HandleClassDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            CheckCurlyBracketToken(context, ((ClassDeclarationSyntax)context.Node).OpenBraceToken);
-            CheckCurlyBracketToken(context, ((ClassDeclarationSyntax)context.Node).CloseBraceToken);
+            this.CheckCurlyBracketToken(context, ((ClassDeclarationSyntax)context.Node).OpenBraceToken);
+            this.CheckCurlyBracketToken(context, ((ClassDeclarationSyntax)context.Node).CloseBraceToken);
         }
 
         private void HandleEnumDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            CheckCurlyBracketToken(context, ((EnumDeclarationSyntax)context.Node).OpenBraceToken);
-            CheckCurlyBracketToken(context, ((EnumDeclarationSyntax)context.Node).CloseBraceToken);
+            this.CheckCurlyBracketToken(context, ((EnumDeclarationSyntax)context.Node).OpenBraceToken);
+            this.CheckCurlyBracketToken(context, ((EnumDeclarationSyntax)context.Node).CloseBraceToken);
         }
 
         private void HandleInterfaceDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            CheckCurlyBracketToken(context, ((InterfaceDeclarationSyntax)context.Node).OpenBraceToken);
-            CheckCurlyBracketToken(context, ((InterfaceDeclarationSyntax)context.Node).CloseBraceToken);
+            this.CheckCurlyBracketToken(context, ((InterfaceDeclarationSyntax)context.Node).OpenBraceToken);
+            this.CheckCurlyBracketToken(context, ((InterfaceDeclarationSyntax)context.Node).CloseBraceToken);
         }
 
         private void HandleStructDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            CheckCurlyBracketToken(context, ((StructDeclarationSyntax)context.Node).OpenBraceToken);
-            CheckCurlyBracketToken(context, ((StructDeclarationSyntax)context.Node).CloseBraceToken);
+            this.CheckCurlyBracketToken(context, ((StructDeclarationSyntax)context.Node).OpenBraceToken);
+            this.CheckCurlyBracketToken(context, ((StructDeclarationSyntax)context.Node).CloseBraceToken);
         }
 
         private void HandleAccessorListSyntax(SyntaxNodeAnalysisContext context)
         {
-            CheckCurlyBracketToken(context, ((AccessorListSyntax)context.Node).OpenBraceToken);
-            CheckCurlyBracketToken(context, ((AccessorListSyntax)context.Node).CloseBraceToken);
+            this.CheckCurlyBracketToken(context, ((AccessorListSyntax)context.Node).OpenBraceToken);
+            this.CheckCurlyBracketToken(context, ((AccessorListSyntax)context.Node).CloseBraceToken);
         }
 
         private void HandleBlockSyntax(SyntaxNodeAnalysisContext context)
         {
-            CheckCurlyBracketToken(context, ((BlockSyntax)context.Node).OpenBraceToken);
-            CheckCurlyBracketToken(context, ((BlockSyntax)context.Node).CloseBraceToken);
+            this.CheckCurlyBracketToken(context, ((BlockSyntax)context.Node).OpenBraceToken);
+            this.CheckCurlyBracketToken(context, ((BlockSyntax)context.Node).CloseBraceToken);
         }
 
         private void CheckCurlyBracketToken(SyntaxNodeAnalysisContext context, SyntaxToken token)
