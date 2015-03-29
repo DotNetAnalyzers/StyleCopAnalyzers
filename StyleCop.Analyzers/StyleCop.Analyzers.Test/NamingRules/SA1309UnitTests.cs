@@ -97,6 +97,24 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
+        [Fact]
+        public async Task TestUnderscoreOnlyVariableName()
+        {
+            var testCode = @"public class FooNativeMethodsClass
+{
+    internal string _ = ""baz"";
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("_").WithLocation(3, 21);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"public class FooNativeMethodsClass
+{
+    internal string _ = ""baz"";
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1309FieldNamesMustNotBeginWithUnderscore();
