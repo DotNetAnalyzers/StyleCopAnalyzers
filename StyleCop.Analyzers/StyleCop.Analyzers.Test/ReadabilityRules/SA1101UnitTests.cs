@@ -13,6 +13,7 @@
         private const string DiagnosticId = SA1101PrefixLocalCallsWithThis.DiagnosticId;
 
         private const string ReferenceCode = @"
+        using System;
         public class BaseTypeName
         {
             public static int BaseStaticFieldName;
@@ -118,7 +119,7 @@
                 {
                     BaseInstanceFieldName = BaseInstanceFieldName,
                     BaseInstancePropertyName = BaseInstancePropertyName,
-                }
+                };
 
                 // the following line is a regression test for #464
                 // https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/464
@@ -128,6 +129,7 @@
         ";
 
         private static string FixedCode = @"
+        using System;
         public class BaseTypeName
         {
             public static int BaseStaticFieldName;
@@ -233,7 +235,7 @@
                 {
                     BaseInstanceFieldName = this.BaseInstanceFieldName,
                     BaseInstancePropertyName = this.BaseInstancePropertyName,
-                }
+                };
 
                 // the following line is a regression test for #464
                 // https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/464
@@ -247,13 +249,13 @@
         {
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(90, 36),
-                this.CSharpDiagnostic().WithLocation(94, 36),
-                this.CSharpDiagnostic().WithLocation(96, 36),
-                this.CSharpDiagnostic().WithLocation(98, 36),
-                this.CSharpDiagnostic().WithLocation(100, 36),
-                this.CSharpDiagnostic().WithLocation(105, 45),
-                this.CSharpDiagnostic().WithLocation(106, 48),
+                this.CSharpDiagnostic().WithLocation(91, 36),
+                this.CSharpDiagnostic().WithLocation(95, 36),
+                this.CSharpDiagnostic().WithLocation(97, 36),
+                this.CSharpDiagnostic().WithLocation(99, 36),
+                this.CSharpDiagnostic().WithLocation(101, 36),
+                this.CSharpDiagnostic().WithLocation(106, 45),
+                this.CSharpDiagnostic().WithLocation(107, 48),
             };
 
             await this.VerifyCSharpDiagnosticAsync(ReferenceCode, expected, CancellationToken.None);
