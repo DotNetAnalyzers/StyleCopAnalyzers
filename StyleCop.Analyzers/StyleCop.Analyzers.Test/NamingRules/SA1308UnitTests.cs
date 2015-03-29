@@ -1,11 +1,9 @@
-﻿
-namespace StyleCop.Analyzers.Test.NamingRules
+﻿namespace StyleCop.Analyzers.Test.NamingRules
 {
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using StyleCop.Analyzers.NamingRules;
-    using System;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.NamingRules;
     using TestHelper;
     using Xunit;
 
@@ -20,9 +18,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-
         private readonly string[] modifiers = new[] { "public", "private", "protected", "public readonly", "internal readonly", "public static", "private static" };
-
 
         [Fact]
         public async Task TestFieldStartingWithPrefixesToTriggerDiagnostic()
@@ -40,12 +36,14 @@ namespace StyleCop.Analyzers.Test.NamingRules
         {
             var testCode = @"public class Foo
 {{
-    {0} 
+    {0}
 string {1}bar = ""baz"";
 }}";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Format("{0}bar", diagnosticPrefix),
-                                                string.Format("{0}", diagnosticPrefix)).WithLocation(4, 8);
+            DiagnosticResult expected =
+                this.CSharpDiagnostic()
+                .WithArguments($"{diagnosticPrefix}bar", diagnosticPrefix)
+                .WithLocation(4, 8);
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifier, codePrefix), expected, CancellationToken.None);
         }
@@ -55,7 +53,7 @@ string {1}bar = ""baz"";
         {
             var testCode = @"public class Foo
 {{
-    public 
+    public
 string x_bar = ""baz"";
 }}";
 
@@ -67,7 +65,7 @@ string x_bar = ""baz"";
         {
             var testCode = @"public class TestNativeMethods
 {{
-    public 
+    public
 string m_bar = ""baz"";
 }}";
 
