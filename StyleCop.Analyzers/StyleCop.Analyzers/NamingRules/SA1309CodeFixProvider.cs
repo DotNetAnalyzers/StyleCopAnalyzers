@@ -50,6 +50,13 @@
                     continue;
                 }
 
+                if (token.ValueText.Length == 1)
+                {
+                    // The variable name is '_'. In this case we cannot generate a valid variable name and thus will not
+                    // offer a code fix. 
+                    continue;
+                }
+
                 if (!string.IsNullOrEmpty(token.ValueText))
                 {
                     var newName = token.ValueText.Substring(1);
