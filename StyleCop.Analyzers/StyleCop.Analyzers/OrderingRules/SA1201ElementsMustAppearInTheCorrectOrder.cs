@@ -6,6 +6,8 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Helpers;
+    using System.Collections.Generic;
+
 
 
     /// <summary>
@@ -107,7 +109,7 @@
         /// </summary>
         public const string DiagnosticId = "SA1201";
         private const string Title = "Elements must appear in the correct order";
-        private const string MessageFormat = "Elements must appear in the correct order";
+        private const string MessageFormat = "A {0} should not follow a {1}.";
         private const string Category = "StyleCop.CSharp.OrderingRules";
         private const string Description = "An element within a C# code file is out of order in relation to the other elements in the code.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1201.html";
@@ -119,7 +121,7 @@
             ImmutableArray.Create(Descriptor);
 
         // extern alias and usings are missing here because the compiler itself is enforcing the right order.
-        private readonly static ImmutableArray<SyntaxKind> OuterOrder = ImmutableArray.Create(
+        private static readonly ImmutableArray<SyntaxKind> OuterOrder = ImmutableArray.Create(
             SyntaxKind.NamespaceDeclaration,
             SyntaxKind.DelegateDeclaration,
             SyntaxKind.EnumDeclaration,
@@ -127,7 +129,7 @@
             SyntaxKind.StructDeclaration,
             SyntaxKind.ClassDeclaration);
 
-        private readonly static ImmutableArray<SyntaxKind> TypeMemberOrder = ImmutableArray.Create(
+        private static readonly ImmutableArray<SyntaxKind> TypeMemberOrder = ImmutableArray.Create(
             SyntaxKind.FieldDeclaration,
             SyntaxKind.ConstructorDeclaration,
             SyntaxKind.DestructorDeclaration,
@@ -140,6 +142,26 @@
             SyntaxKind.MethodDeclaration,
             SyntaxKind.StructDeclaration,
             SyntaxKind.ClassDeclaration);
+
+        private static readonly Dictionary<SyntaxKind, string> MemberNames = new Dictionary<SyntaxKind, string>
+        {
+            [SyntaxKind.NamespaceDeclaration] = "namespace",
+            [SyntaxKind.DelegateDeclaration] = "delegate",
+            [SyntaxKind.EnumDeclaration] = "enum",
+            [SyntaxKind.InterfaceDeclaration] = "interface",
+            [SyntaxKind.StructDeclaration] = "struct",
+            [SyntaxKind.ClassDeclaration] = "class",
+            [SyntaxKind.FieldDeclaration] = "field",
+            [SyntaxKind.ConstructorDeclaration] = "constructor",
+            [SyntaxKind.DestructorDeclaration] = "destructor",
+            [SyntaxKind.DelegateDeclaration] = "delegate",
+            [SyntaxKind.EventDeclaration] = "event",
+            [SyntaxKind.EnumDeclaration] = "enum",
+            [SyntaxKind.InterfaceDeclaration] = "interface",
+            [SyntaxKind.PropertyDeclaration] = "property",
+            [SyntaxKind.IndexerDeclaration] = "indexer",
+            [SyntaxKind.MethodDeclaration] = "method"
+        };
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
@@ -183,18 +205,15 @@
 
         private static void HandleMemberList(SyntaxNodeAnalysisContext context, SyntaxList<MemberDeclarationSyntax> members, ImmutableArray<SyntaxKind> order)
         {
-            int maxIndex = 0;
-            for (int i = 0; i < members.Count; i++)
+            for (int i = 0; i < members.Count - 1; i++)
             {
                 int index = order.IndexOf(members[i].Kind());
 
-                if (index >= maxIndex)
+                int nextIndex = order.IndexOf(members[i + 1].Kind());
+
+                if (index > nextIndex)
                 {
-                    maxIndex = index;
-                }
-                else
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(members[i])));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(members[i + 1]), MemberNames[members[i + 1].Kind()], MemberNames[members[i].Kind()]));
                 }
             }
         }

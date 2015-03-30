@@ -46,8 +46,8 @@ public struct FooStruct { }
 ";
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(4, 22),
-                this.CSharpDiagnostic().WithLocation(7, 15),
+                this.CSharpDiagnostic().WithLocation(4, 22).WithArguments("delegate", "enum"),
+                this.CSharpDiagnostic().WithLocation(7, 15).WithArguments("struct", "class"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
@@ -106,12 +106,10 @@ public struct FooStruct { }
 ";
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(5, 12),
-                this.CSharpDiagnostic().WithLocation(7, 26),
-                this.CSharpDiagnostic().WithLocation(8, 31),
-                this.CSharpDiagnostic().WithLocation(9, 17),
-                this.CSharpDiagnostic().WithLocation(12, 17),
-                this.CSharpDiagnostic().WithLocation(13, 19)
+                this.CSharpDiagnostic().WithLocation(5, 12).WithArguments("constructor", "destructor"),
+                this.CSharpDiagnostic().WithLocation(7, 26).WithArguments("delegate", "interface"),
+                this.CSharpDiagnostic().WithLocation(12, 17).WithArguments("method", "struct"),
+                this.CSharpDiagnostic().WithLocation(13, 19).WithArguments("indexer", "method")
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("%type%", type), expected, CancellationToken.None);
