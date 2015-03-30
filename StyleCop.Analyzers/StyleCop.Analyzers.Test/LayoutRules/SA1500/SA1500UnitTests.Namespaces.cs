@@ -82,7 +82,7 @@ namespace InvalidNamespace6
                 // InvalidNamespace5
                 this.CSharpDiagnostic().WithLocation(16, 19),
                 // InvalidNamespace6
-                this.CSharpDiagnostic().WithLocation(19, 5)
+                this.CSharpDiagnostic().WithLocation(19, 1)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

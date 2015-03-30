@@ -223,13 +223,13 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(22, 13),
                 this.CSharpDiagnostic().WithLocation(23, 31),
                 this.CSharpDiagnostic().WithLocation(25, 13),
-                this.CSharpDiagnostic().WithLocation(26, 31),
+                this.CSharpDiagnostic().WithLocation(26, 32),
                 // Invalid property #3
                 this.CSharpDiagnostic().WithLocation(32, 13),
                 this.CSharpDiagnostic().WithLocation(35, 13),
                 // Invalid property #4
                 this.CSharpDiagnostic().WithLocation(44, 31),
-                this.CSharpDiagnostic().WithLocation(48, 31),
+                this.CSharpDiagnostic().WithLocation(48, 32),
                 // Invalid property #5
                 this.CSharpDiagnostic().WithLocation(55, 9),
                 this.CSharpDiagnostic().WithLocation(59, 9),
@@ -246,13 +246,13 @@ public class Foo
                 // Invalid property #10
                 this.CSharpDiagnostic().WithLocation(88, 28),
                 // Invalid property #11
-                this.CSharpDiagnostic().WithLocation(93, 9),
+                this.CSharpDiagnostic().WithLocation(93, 5),
                 // Invalid property #12
                 this.CSharpDiagnostic().WithLocation(101, 11),
                 // Invalid property #13
-                this.CSharpDiagnostic().WithLocation(104, 49),
+                this.CSharpDiagnostic().WithLocation(104, 45),
                 // Invalid property #14
-                this.CSharpDiagnostic().WithLocation(111, 49)
+                this.CSharpDiagnostic().WithLocation(111, 45)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

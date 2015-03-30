@@ -237,8 +237,10 @@ public class Foo
 
             var expectedDiagnostics = new[]
             {
-                // Invalid object initializer #1 (Single diagnostic per line)
+                // Invalid object initializer #1
+                this.CSharpDiagnostic().WithLocation(14, 32),
                 this.CSharpDiagnostic().WithLocation(14, 34),
+                this.CSharpDiagnostic().WithLocation(14, 36),
                 // Invalid object initializer #2
                 this.CSharpDiagnostic().WithLocation(18, 5),
                 this.CSharpDiagnostic().WithLocation(19, 9),
@@ -247,8 +249,10 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(28, 41),
                 this.CSharpDiagnostic().WithLocation(29, 21),
                 this.CSharpDiagnostic().WithLocation(31, 28),
-                // Invalid object initializer #4 (Single diagnostic per line)
+                // Invalid object initializer #4
+                this.CSharpDiagnostic().WithLocation(49, 36),
                 this.CSharpDiagnostic().WithLocation(49, 38),
+                this.CSharpDiagnostic().WithLocation(49, 40),
                 // Invalid object initializer #5
                 this.CSharpDiagnostic().WithLocation(53, 9),
                 this.CSharpDiagnostic().WithLocation(54, 13),
@@ -257,7 +261,8 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(63, 31),
                 this.CSharpDiagnostic().WithLocation(64, 25),
                 this.CSharpDiagnostic().WithLocation(66, 32),
-                // Invalid object initializer #7 (Single diagnostic per line)
+                // Invalid object initializer #7
+                this.CSharpDiagnostic().WithLocation(79, 32),
                 this.CSharpDiagnostic().WithLocation(79, 34),
                 // Invalid object initializer #8
                 this.CSharpDiagnostic().WithLocation(83, 9),

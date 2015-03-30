@@ -121,14 +121,14 @@
             var expectedDiagnostics = new[]
             {
                 // invalid #1
-                this.CSharpDiagnostic().WithLocation(8, 11 + tokenLength),
+                this.CSharpDiagnostic().WithLocation(8, 10 + tokenLength),
 
                 // invalid #2
-                this.CSharpDiagnostic().WithLocation(13, 11 + tokenLength),
+                this.CSharpDiagnostic().WithLocation(13, 10 + tokenLength),
                 this.CSharpDiagnostic().WithLocation(14, 25),
 
                 // invalid #3
-                this.CSharpDiagnostic().WithLocation(17, 11 + tokenLength),
+                this.CSharpDiagnostic().WithLocation(17, 10 + tokenLength),
 
                 // invalid #4
                 this.CSharpDiagnostic().WithLocation(23, 25),

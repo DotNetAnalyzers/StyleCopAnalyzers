@@ -187,7 +187,7 @@
                 this.CSharpDiagnostic().WithLocation(20, 13),
                 this.CSharpDiagnostic().WithLocation(21, 31),
                 this.CSharpDiagnostic().WithLocation(23, 13),
-                this.CSharpDiagnostic().WithLocation(24, 31),
+                this.CSharpDiagnostic().WithLocation(24, 32),
                 // Invalid indexer #3
                 this.CSharpDiagnostic().WithLocation(30, 13),
                 this.CSharpDiagnostic().WithLocation(33, 13),
@@ -210,7 +210,7 @@
                 // Invalid indexer #10
                 this.CSharpDiagnostic().WithLocation(87, 35),
                 // Invalid indexer #11
-                this.CSharpDiagnostic().WithLocation(91, 9)
+                this.CSharpDiagnostic().WithLocation(91, 5)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
