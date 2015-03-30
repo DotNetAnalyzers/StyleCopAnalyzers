@@ -1,13 +1,15 @@
 ﻿namespace StyleCop.Analyzers.Test.NamingRules
 {
-    using System.Threading;
-    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.NamingRules;
+    using System;
+    using System.Threading;
+    using System.Threading.Tasks;
     using TestHelper;
     using Xunit;
 
-    public class SA1308UnitTests : DiagnosticVerifier
+    public class SA1308UnitTests : CodeFixVerifier
     {
         private const string DiagnosticId = SA1308VariableNamesMustNotBePrefixed.DiagnosticId;
 
@@ -34,7 +36,7 @@
 
         private async Task TestFieldSpecifyingModifierAndPrefix(string modifier, string codePrefix, string diagnosticPrefix)
         {
-            var testCode = @"public class Foo
+            var originalCode = @"public class Foo
 {{
     {0}
 string {1}bar = ""baz"";
@@ -45,7 +47,28 @@ string {1}bar = ""baz"";
                 .WithArguments($"{diagnosticPrefix}bar", diagnosticPrefix)
                 .WithLocation(4, 8);
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifier, codePrefix), expected, CancellationToken.None);
+            var testCode = string.Format(originalCode, modifier, codePrefix);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = string.Format(originalCode, modifier, String.Empty);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+
+        }
+
+        [Fact]
+        private async Task TestMUnderscoreOnly()
+        {
+            var originalCode = @"public class Foo
+{{
+    private string m_ = ""baz"";
+}}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("m_", "m_").WithLocation(3, 20);
+
+            await this.VerifyCSharpDiagnosticAsync(originalCode, expected, CancellationToken.None);
+
+            // When the variable name is simply the unallowed prefix, we will not offer a code fix, as we cannot infer the correct variable name.
+            await this.VerifyCSharpFixAsync(originalCode, originalCode);
         }
 
         [Fact]
@@ -75,6 +98,11 @@ string m_bar = ""baz"";
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1308VariableNamesMustNotBePrefixed();
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1308CodeFixProvider();
         }
     }
 }
