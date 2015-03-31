@@ -4,28 +4,25 @@
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using StyleCop.Analyzers.MaintainabilityRules;
     using TestHelper;
     using StyleCop.Analyzers.DocumentationRules;
+    using Xunit;
 
-    [TestClass]
     public class SA1626UnitTests : CodeFixVerifier
-    { 
-            private const string DiagnosticId = SA1626SingleLineCommentsMustNotUseDocumentationStyleSlashes.DiagnosticId;
-            protected static readonly DiagnosticResult[] EmptyDiagnosticResults = { };
+    {
+        private const string DiagnosticId = SA1626SingleLineCommentsMustNotUseDocumentationStyleSlashes.DiagnosticId;
 
-            [TestMethod]
-            public async Task TestEmptySource()
-            {
-                var testCode = @"";
-                await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
-            }
+        [Fact]
+        public async Task TestEmptySource()
+        {
+            var testCode = string.Empty;
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
 
-            [TestMethod]
-            public async Task TestClassWithXmlComment()
-            {
-                var testCode = @"/// <summary>
+        [Fact]
+        public async Task TestClassWithXmlComment()
+        {
+            var testCode = @"/// <summary>
 /// Xml Documentation
 /// </summary>
 public class Foo
@@ -35,10 +32,10 @@ public class Foo
     }
 }
 ";
-                await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMethodWithComment()
         {
             var testCode = @"public class Foo
@@ -49,10 +46,10 @@ public class Foo
     }
 }
 ";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMethodWithOneLineThreeSlashComment()
         {
             var testCode = @"public class Foo
@@ -65,23 +62,13 @@ public class Foo
 ";
             var expected = new[]
             {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Single-line comments must not use documentation style slashes",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 9)
-                        }
-                }
+                this.CSharpDiagnostic().WithLocation(5, 9)
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestMethodWithMultiLineThreeSlashComment()
         {
             var testCode = @"public class Foo
@@ -93,11 +80,16 @@ public class Foo
     }
 }
 ";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(5, 9)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-        [TestMethod]
-            public async Task TestMethodWithCodeComments()
+        [Fact]
+        public async Task TestMethodWithCodeComments()
         {
             var testCode = @"public class Foo
 {
@@ -107,12 +99,26 @@ public class Foo
     }
 }
 ";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-            protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-            {
-                return new SA1626SingleLineCommentsMustNotUseDocumentationStyleSlashes();
-            }
+        [Fact]
+        public async Task TestMethodWithSingeLineDocumentation()
+        {
+            var testCode = @"public class Foo
+{
+    /// <summary>Summary text</summary>
+    public void Bar()
+    {
+    }
+}
+";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        {
+            return new SA1626SingleLineCommentsMustNotUseDocumentationStyleSlashes();
         }
     }
+}
