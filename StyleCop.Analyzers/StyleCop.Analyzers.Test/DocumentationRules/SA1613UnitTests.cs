@@ -8,7 +8,7 @@
     using Xunit;
 
     /// <summary>
-    /// This class contains unit tests for <see cref="SA1617VoidReturnValueMustNotBeDocumented"/>-
+    /// This class contains unit tests for <see cref="SA1617VoidReturnValueMustNotBeDocumented"/>.
     /// </summary>
     public class SA1613UnitTests : CodeFixVerifier
     {
