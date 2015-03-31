@@ -211,7 +211,7 @@
 
             if (!HasEmptyLine(allTrivia))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(secondNode)));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, GetDiagnosticLocation(secondNode)));
             }
         }
 
