@@ -1,8 +1,14 @@
 ﻿namespace StyleCop.Analyzers.DocumentationRules
 {
+    using System.Linq;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Helpers;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+
 
     /// <summary>
     /// A <c>&lt;param&gt;</c> tag within a C# element's documentation header is missing a <c>name</c> attribute
@@ -27,7 +33,7 @@
         /// </summary>
         public const string DiagnosticId = "SA1613";
         private const string Title = "Element parameter documentation must declare parameter name";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "Element parameter documentation must declare parameter name";
         private const string Category = "StyleCop.CSharp.DocumentationRules";
         private const string Description = "A <param> tag within a C# element's documentation header is missing a name attribute containing the name of the parameter.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1613.html";
@@ -50,7 +56,36 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(this.HandleElement, SyntaxKind.MethodDeclaration);
+        }
+
+        private void HandleElement(SyntaxNodeAnalysisContext context)
+        {
+            var node = context.Node;
+
+            var documentation = XmlCommentHelper.GetDocumentationStructure(node);
+
+            if (documentation != null)
+            {
+                if (XmlCommentHelper.GetTopLevelElement(documentation, XmlCommentHelper.InheritdocXmlTag) != null)
+                {
+                    // Ignore nodes with an <inheritdoc/> tag. 
+                    return;
+                }
+
+                var xmlParameterNames = XmlCommentHelper.GetTopLevelElements(documentation, XmlCommentHelper.ParamTag)
+                                    .ToImmutableArray();
+
+                foreach (var parameter in xmlParameterNames)
+                {
+                    var nameAttribute = XmlCommentHelper.GetAttribute<XmlNameAttributeSyntax>(parameter);
+
+                    if (string.IsNullOrWhiteSpace(nameAttribute?.Identifier?.Identifier.ValueText))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, nameAttribute?.GetLocation() ?? parameter.GetLocation()));
+                    }
+                }
+            }
         }
     }
 }

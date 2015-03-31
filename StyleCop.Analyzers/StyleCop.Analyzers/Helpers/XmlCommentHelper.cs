@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Helpers
 {
+    using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
@@ -18,6 +19,7 @@
         internal const string ReturnsXmlTag = "returns";
         internal const string ValueXmlTag = "value";
         internal const string SeeXmlTag = "see";
+        internal const string ParamTag = "param";
         internal const string CrefArgumentName = "cref";
 
         /// <summary>
@@ -172,6 +174,22 @@
             return emptyElementSyntax;
         }
 
+        internal static IEnumerable<XmlNodeSyntax> GetTopLevelElements(DocumentationCommentTriviaSyntax syntax, string tagName)
+        {
+            var elements = syntax.Content.OfType<XmlElementSyntax>().Where(element => string.Equals(element.StartTag.Name.ToString(), tagName));
+            foreach (var element in elements)
+            {
+                yield return element;
+            }
+
+            var emptyElements = syntax.Content.OfType<XmlEmptyElementSyntax>().Where(element => string.Equals(element.Name.ToString(), tagName));
+
+            foreach (var element in emptyElements)
+            {
+                yield return element;
+            }
+        }
+
         internal static string GetText(XmlTextSyntax textElement)
         {
             return GetText(textElement, false);
@@ -198,6 +216,24 @@
             }
 
             return result;
+        }
+
+        internal static T GetAttribute<T>(XmlNodeSyntax nodeSyntax) where T : XmlAttributeSyntax
+        {
+            var emptyElementSyntax = nodeSyntax as XmlEmptyElementSyntax;
+
+            if (emptyElementSyntax != null)
+            {
+                return emptyElementSyntax.Attributes.OfType<T>().FirstOrDefault();
+            }
+            var elementSyntax = nodeSyntax as XmlElementSyntax;
+
+            if (elementSyntax != null)
+            {
+                return elementSyntax.StartTag?.Attributes.OfType<T>().FirstOrDefault();
+            }
+
+            return null;
         }
 
         private static SyntaxTrivia GetCommentTrivia(SyntaxNode node)
