@@ -1,14 +1,11 @@
 ﻿namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Text;
-
-
-
 
     /// <summary>
     /// The C# code contains a single-line comment which begins with three forward slashes in a row.
@@ -83,8 +80,9 @@
             var node = context.Node as DocumentationCommentTriviaSyntax;
             if (node == null)
                 return;
+
             // Check if the comment is not multi line
-            if (!node.Content.ToString().Trim().Contains("\n"))
+            if (node.Content.All(x => x.IsKind(SyntaxKind.XmlText)))
             {
                 //Add a diagnostic on '///'
                 var trivia = context.Node.GetLeadingTrivia().First();
