@@ -207,6 +207,16 @@
         {
             for (int i = 0; i < members.Count - 1; i++)
             {
+                if (members[i + 1].IsKind(SyntaxKind.IncompleteMember))
+                {
+                    i++;
+                    continue;
+                }
+                if (members[i].IsKind(SyntaxKind.IncompleteMember))
+                {
+                    continue;
+                }
+
                 int index = order.IndexOf(members[i].Kind());
 
                 int nextIndex = order.IndexOf(members[i + 1].Kind());

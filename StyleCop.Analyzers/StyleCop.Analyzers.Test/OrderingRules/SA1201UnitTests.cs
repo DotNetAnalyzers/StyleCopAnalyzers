@@ -2,6 +2,7 @@
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.OrderingRules;
     using TestHelper;
@@ -147,7 +148,6 @@ public struct FooStruct { }
         [Fact]
         public async Task TestTypeMemberOrderWrongOrderStruct()
         {
-            // Constructor and destructors might not be valid for interfaces/structs, but the code does not have to be valid to test the diagnostic
             string testCode = @"public struct OuterType
 {
     public string TestField;
@@ -176,7 +176,6 @@ public struct FooStruct { }
         [Fact]
         public async Task TestTypeMemberOrderWrongOrderInterface()
         {
-            // Constructor and destructors might not be valid for interfaces/structs, but the code does not have to be valid to test the diagnostic
             string testCode = @"public interface OuterType
 {
     event System.Action TestEvent;
@@ -188,6 +187,39 @@ public struct FooStruct { }
             var expected = new[]
             {
                 this.CSharpDiagnostic().WithLocation(6, 12).WithArguments("indexer", "method")
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task TestIncompleteMember()
+        {
+            // Tests that the analyzer does not crash on incomplete members
+            string testCode = @"public interface OuterType
+{
+    event System.Action TestEvent;
+    public string
+    public string
+}
+";
+            // We don't care about the syntax errors.
+            var expected = new[]
+            {
+                 new DiagnosticResult
+                 {
+                     Id = "CS1585",
+                     Message = "Member modifier 'public' must precede the member type and name",
+                     Severity = DiagnosticSeverity.Error,
+                     Locations = new[] { new DiagnosticResultLocation("Test0.cs", 5, 5) }
+                 },
+                 new DiagnosticResult
+                 {
+                     Id = "CS1519",
+                     Message = "Invalid token '}' in class, struct, or interface member declaration",
+                     Severity = DiagnosticSeverity.Error,
+                     Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 1) }
+                 }
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
