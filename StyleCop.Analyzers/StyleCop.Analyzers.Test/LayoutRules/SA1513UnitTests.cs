@@ -229,6 +229,12 @@ public class Foo
         {
             return d[i] * 2;
         });
+
+        // Valid #18
+        if (this.x > 2)
+        {
+            this.x = 3;
+        } /* Some comment */
     }
 
     public void Qux(Func<int, int> function)
@@ -241,6 +247,9 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
+        /// <summary>
+        /// Verifies that all invalid usages of a closing curly brace without a following blank line will report a diagnostic.
+        /// </summary>
         [Fact]
         public async Task TestInvalid()
         {
@@ -321,9 +330,151 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
+        /// <summary>
+        /// Verifies that the code fix will result in the expected fixed code.
+        /// </summary>
+        [Fact]
+        public async Task TestCodeFix()
+        {
+            var testCode = @"using System;
+
+public class Foo
+{
+    private int x;
+
+    // Test #1
+    public int Property1
+    {
+        get
+        {        
+            return this.x;
+        }
+        set
+        {
+            this.x = value;
+        }
+        /* some comment */
+    }
+
+    // Test #2
+    public int Property2
+    {
+        get { return this.x; }
+    }
+    public void Baz()
+    {
+        // Test #3
+        switch (this.x)
+        {
+            case 1:
+            {
+                this.x = 1;
+                break;
+            }
+            case 2:
+                this.x = 2;
+                break;
+        }
+
+        // Test #4
+        {
+            var temp = this.x;
+            this.x = temp * temp;
+        }
+        this.x++;
+
+        // Test #5
+        if (this.x > 1)
+        {
+            this.x = 1;
+        }
+        if (this.x < 0)
+        {
+            this.x = 0;
+        }
+    }
+}
+";
+
+            var fixedTestCode = @"using System;
+
+public class Foo
+{
+    private int x;
+
+    // Test #1
+    public int Property1
+    {
+        get
+        {        
+            return this.x;
+        }
+
+        set
+        {
+            this.x = value;
+        }
+
+        /* some comment */
+    }
+
+    // Test #2
+    public int Property2
+    {
+        get { return this.x; }
+    }
+
+    public void Baz()
+    {
+        // Test #3
+        switch (this.x)
+        {
+            case 1:
+            {
+                this.x = 1;
+                break;
+            }
+
+            case 2:
+                this.x = 2;
+                break;
+        }
+
+        // Test #4
+        {
+            var temp = this.x;
+            this.x = temp * temp;
+        }
+
+        this.x++;
+
+        // Test #5
+        if (this.x > 1)
+        {
+            this.x = 1;
+        }
+
+        if (this.x < 0)
+        {
+            this.x = 0;
+        }
+    }
+}
+";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+        }
+
+        /// <inheritdoc/>
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1513ClosingCurlyBracketMustBeFollowedByBlankLine();
+        }
+
+        /// <inheritdoc/>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1513CodeFixProvider();
         }
     }
 }
