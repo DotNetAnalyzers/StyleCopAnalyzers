@@ -107,12 +107,13 @@ public class Foo
 #endif
 
         // Valid #8
+#if !SOMETHING
         if (this.x > 0)
         {
             this.x = 0;
         }
-#if SOMETHING
-        else        
+#else
+        if (this.x < 0)        
         {
             this.x++;    
         }
@@ -218,9 +219,15 @@ public class Foo
         }
 
         // Valid #16
+        var d = new[]
+        {
+            1, 2, 3
+        };
+
+        // Valid #17
         this.Qux(i =>
         {
-            return i * 2;
+            return d[i] * 2;
         });
     }
 
@@ -256,7 +263,7 @@ public class Foo
         }
         /* some comment */
     }
-    
+
     // Invalid #2
     public int Property2
     {
@@ -265,13 +272,6 @@ public class Foo
     public void Baz()
     {
         // Invalid #3
-        var a = new[]
-        {
-            1, 2, 3
-        };
-        var b = 12;
-
-        // Invalid #4
         switch (this.x)
         {
             case 1:
@@ -284,22 +284,38 @@ public class Foo
                 break;
         }
 
-        // Invalid #5
+        // Invalid #4
         {
             var temp = this.x;
             this.x = temp * temp;
         }
         this.x++;
+
+        // Invalid #5
+        if (this.x > 1)
+        {
+            this.x = 1;
+        }
+        if (this.x < 0)
+        {
+            this.x = 0;
+        }
     }
 }
 ";
             var expected = new[]
             {
+                // Invalid #1
                 this.CSharpDiagnostic().WithLocation(13, 10),
                 this.CSharpDiagnostic().WithLocation(17, 10),
-                this.CSharpDiagnostic().WithLocation(24, 11),
-                this.CSharpDiagnostic().WithLocation(34, 14),
-                this.CSharpDiagnostic().WithLocation(44, 10)
+                // Invalid #2
+                this.CSharpDiagnostic().WithLocation(25, 6),
+                // Invalid #3
+                this.CSharpDiagnostic().WithLocation(35, 14),
+                // Invalid #4
+                this.CSharpDiagnostic().WithLocation(45, 10),
+                // Invalid #5
+                this.CSharpDiagnostic().WithLocation(52, 10)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
