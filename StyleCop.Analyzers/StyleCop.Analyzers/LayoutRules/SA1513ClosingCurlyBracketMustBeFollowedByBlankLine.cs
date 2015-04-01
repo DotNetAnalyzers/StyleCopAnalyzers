@@ -1,16 +1,13 @@
 ﻿namespace StyleCop.Analyzers.LayoutRules
 {
-    using System;
     using System.Collections.Immutable;
     using System.Linq;
 
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-
-
 
     /// <summary>
     /// A closing curly bracket within a C# element, statement, or expression is not followed by a blank line.
@@ -142,7 +139,8 @@
                     return;
                 }
 
-                if (nextToken.IsKind(SyntaxKind.SemicolonToken) && this.IsPartOf<VariableDeclaratorSyntax>(token))
+                if (nextToken.IsKind(SyntaxKind.SemicolonToken) && 
+                    (this.IsPartOf<VariableDeclaratorSyntax>(token) || this.IsPartOf<AssignmentExpressionSyntax>(token)))
                 {
                     // the close brace is part of a variable initialization statement.
                     return;

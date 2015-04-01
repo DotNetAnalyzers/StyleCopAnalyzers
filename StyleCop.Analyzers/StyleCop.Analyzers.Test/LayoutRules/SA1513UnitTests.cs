@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace StyleCop.Analyzers.Test.LayoutRules
+﻿namespace StyleCop.Analyzers.Test.LayoutRules
 {
     using System.Threading;
     using System.Threading.Tasks;
@@ -235,6 +229,15 @@ public class Foo
         {
             this.x = 3;
         } /* Some comment */
+
+        // Valid #19
+        int[] testArray;
+
+        testArray =
+            new[]
+            {
+                1
+            };
     }
 
     public void Qux(Func<int, int> function)
