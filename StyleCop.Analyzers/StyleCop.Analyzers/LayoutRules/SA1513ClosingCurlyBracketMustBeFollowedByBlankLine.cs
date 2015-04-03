@@ -126,12 +126,6 @@
                     return;
                 }
 
-                if (nextToken.IsKind(SyntaxKind.BreakKeyword) && this.IsPartOf<SwitchSectionSyntax>(nextToken))
-                {
-                    // the close brace is followed by the break statement of a case within a switch statement.
-                    return;
-                }
-
                 if (this.IsPartOf<ArgumentListSyntax>(token))
                 {
                     // the close brace is part of an object initializer, anonymous function or lambda expression within an argument list.
