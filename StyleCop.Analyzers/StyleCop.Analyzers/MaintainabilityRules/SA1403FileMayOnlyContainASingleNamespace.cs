@@ -2,10 +2,9 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using System;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A C# code file contains more than one namespace.
@@ -62,7 +61,7 @@
                 {
                     if (foundNode)
                     {
-                        var location = this.GetNamespaceLocation(node);
+                        var location = NamedTypeHelpers.GetNameOrIdentifierLocation(node);
                         if (location != null)
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
@@ -74,12 +73,6 @@
                     }
                 }
             }
-        }
-
-        private Location GetNamespaceLocation(SyntaxNode node)
-        {
-            var namespaceDeclaration = node as NamespaceDeclarationSyntax;
-            return namespaceDeclaration?.Name?.GetLocation();
         }
     }
 }
