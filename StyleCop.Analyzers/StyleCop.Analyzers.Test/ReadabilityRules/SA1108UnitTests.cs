@@ -20,23 +20,26 @@
         public async Task TestIfStatementCommentBetweenStatementDeclarationAndOpeningCurlyBracket()
         {
             var testCode = @"
-public void F()
+public class Foo
 {
-    //comment
-    if (true)
-    // Comment
+    public void F()
     {
         //comment
-    }
-    else
-    //comment
-    {
-        //inner comment
+        if (true)
+        // Comment
+        {
+            //comment
+        }
+        else
+        //comment
+        {
+            //inner comment
+        }
     }
 }";
 
-            var firstDiagnostic = this.CSharpDiagnostic().WithLocation(6, 5);
-            var secondDiagnostic = this.CSharpDiagnostic().WithLocation(11, 5);
+            var firstDiagnostic = this.CSharpDiagnostic().WithLocation(8, 9);
+            var secondDiagnostic = this.CSharpDiagnostic().WithLocation(13, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, new [] {firstDiagnostic, secondDiagnostic}, CancellationToken.None);
         }
@@ -45,11 +48,14 @@ public void F()
         public async Task TestIfStatementCommentBetweenStatementDeclarationAndOpeningCurlyBracketCommentedCode()
         {
             var testCode = @"
-public void F()
+public class Foo
 {
-    if (true)
-    //// if (true)
+    public void F()
     {
+        if (true)
+        //// if (true)
+        {
+        }
     }
 }";
 
@@ -60,18 +66,21 @@ public void F()
         public async Task TestIfWithPreprocessorDirectiveCommentBetweenStatementDeclarationAndOpeningCurlyBracketCommentedCode()
         {
             var testCode = @"
-public void F()
+public class Foo
 {
-    if (true)
-    #if true
-    /* line 1
-       line 2 */
+    public void F()
     {
+        if (true)
+        #if true
+        /* line 1
+           line 2 */
+        {
+        }
+        #endif
     }
-    #endif
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 5);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -80,11 +89,14 @@ public void F()
         public async Task TestCodeBlockInsideMethod()
         {
             var testCode = @"
-public void F()
+public class Foo
 {
-    //comment
+    public void F()
     {
+        //comment
+        {
 
+        }
     }
 }";
 
@@ -95,17 +107,19 @@ public void F()
         public async Task TestWhileStatementCommentBetweenStatementDeclarationAndOpeningCurlyBracket()
         {
             var testCode = @"
-public void F()
+public class Foo
 {
-    //comment
-    while (true)
-    // Comment
+    public void F()
     {
         //comment
+        while (true)
+        // Comment
+        {
+            //comment
+        }
     }
 }";
-
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 5);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -114,13 +128,16 @@ public void F()
         public async Task TestWhileStatementCommentBetweenStatementDeclarationAndOpeningCurlyBracketOneLine()
         {
             var testCode = @"
-public void F()
+public class Foo
 {
-    //comment
-    while (true) /* Comment */ { /*comment */ }
+    public void F()
+    {
+        //comment
+        while (true) /* Comment */ { /*comment */ }
+    }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 18);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 22);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -129,17 +146,20 @@ public void F()
         public async Task TestDoWhileStatementCommentBetweenStatementDeclarationAndOpeningCurlyBracket()
         {
             var testCode = @"
-public void F()
+public class Foo
 {
-    //comment
-    do
-    //aa
+    public void F()
     {
+        //comment
+        do
+        //aa
+        {
 
-    } while (true);
+        } while (true);
+    }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 5);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -148,23 +168,26 @@ public void F()
         public async Task TestCheckedUncheckedStatementCommentBetweenStatementDeclarationAndOpeningCurlyBracket()
         {
             var testCode = @"
-public void F()
+public clas Foo
 {
-    int a = 0;
-    checked
-    //aa
+    public void F()
     {
-        a++;
-    }
-    unchecked
-    //bb
-    {
-        a++;
+        int a = 0;
+        checked
+        //aa
+        {
+            a++;
+        }
+        unchecked
+        //bb
+        {
+            a++;
+        }
     }
 }";
 
-            DiagnosticResult first = this.CSharpDiagnostic().WithLocation(6, 5);
-            DiagnosticResult second = this.CSharpDiagnostic().WithLocation(11, 5);
+            DiagnosticResult first = this.CSharpDiagnostic().WithLocation(8, 9);
+            DiagnosticResult second = this.CSharpDiagnostic().WithLocation(13, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, new []{first, second}, CancellationToken.None);
         }
@@ -201,35 +224,38 @@ public class TestUnsafe
         public async Task TestTryCatchFinallyStatementCommentBetweenStatementDeclarationAndOpeningCurlyBracket()
         {
             var testCode = @"
-public void F()
+public class Foo
 {
-   try
-    //aa
+    public void F()
     {
+       try
+        //aa
+        {
 
-    }
-    catch (NullReferenceException e)
-    //bb
-    {
+        }
+        catch (NullReferenceException e)
+        //bb
+        {
                 
-    }
-    catch
-    //cc
-    {
+        }
+        catch
+        //cc
+        {
                 
-    }
-    finally
-    /* line 1
-       line 2 */
-    {
+        }
+        finally
+        /* line 1
+           line 2 */
+        {
                 
+        }
     }
 }";
 
-            DiagnosticResult first = this.CSharpDiagnostic().WithLocation(5, 5);
-            DiagnosticResult second = this.CSharpDiagnostic().WithLocation(10, 5);
-            DiagnosticResult third = this.CSharpDiagnostic().WithLocation(15, 5);
-            DiagnosticResult fourth = this.CSharpDiagnostic().WithLocation(20, 5);
+            DiagnosticResult first = this.CSharpDiagnostic().WithLocation(7, 9);
+            DiagnosticResult second = this.CSharpDiagnostic().WithLocation(12, 9);
+            DiagnosticResult third = this.CSharpDiagnostic().WithLocation(17, 9);
+            DiagnosticResult fourth = this.CSharpDiagnostic().WithLocation(22, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, new []{first, second, third, fourth}, CancellationToken.None);
         }
@@ -238,22 +264,25 @@ public void F()
         public async Task TestSwitchStatementCommentBetweenStatementDeclarationAndOpeningCurlyBracket()
         {
             var testCode = @"
-public void F()
+public clas Foo
 {
-    var i = 0;
-    //bb
-    switch (i)
-    //aa
+    public void F()
     {
-        // comment
-        case 1:
-            return;
-        default:
-            return;
+        var i = 0;
+        //bb
+        switch (i)
+        //aa
+        {
+            // comment
+            case 1:
+                return;
+            default:
+                return;
+        }
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 5);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(9, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -262,17 +291,20 @@ public void F()
         public async Task TestForStatementCommentBetweenStatementDeclarationAndOpeningCurlyBracket()
         {
             var testCode = @"
-public void F()
+public class Foo
 {
-    //comment
-    for (int i=0; i < 5; i++)
-    // Comment
+    public void F()
     {
         //comment
+        for (int i=0; i < 5; i++)
+        // Comment
+        {
+            //comment
+        }
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 5);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -281,17 +313,20 @@ public void F()
         public async Task TestForeachStatementCommentBetweenStatementDeclarationAndOpeningCurlyBracket()
         {
             var testCode = @"
-public void F()
+public class Foo
 {
-    //comment
-    foreach (var e in Enumerable.Empty<int>())
-    // Comment
+    public void F()
     {
         //comment
+        foreach (var e in Enumerable.Empty<int>())
+        // Comment
+        {
+            //comment
+        }
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 5);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -300,17 +335,20 @@ public void F()
         public async Task TestLockStatementCommentBetweenStatementDeclarationAndOpeningCurlyBracket()
         {
             var testCode = @"
-public void F()
+public class Foo
 {
-    //comment
-    lock(this)
-    // Comment
+    public void F()
     {
         //comment
+        lock(this)
+        // Comment
+        {
+            //comment
+        }
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 5);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
