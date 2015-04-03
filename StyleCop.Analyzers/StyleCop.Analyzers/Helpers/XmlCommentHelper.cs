@@ -22,6 +22,7 @@
         internal const string SeeXmlTag = "see";
         internal const string ParamTag = "param";
         internal const string CrefArgumentName = "cref";
+        internal const string NameArgumentName = "name";
 
         /// <summary>
         /// The &lt;placeholder&gt; tag is a Sandcastle Help File Builder extension to the standard XML documentation
