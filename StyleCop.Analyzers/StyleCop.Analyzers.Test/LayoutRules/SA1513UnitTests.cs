@@ -195,42 +195,24 @@ public class Foo
             by a;
 
         // Valid #15
-        switch (this.x)
-        {
-            case 0:
-            if (this.x < 0)
-            {
-                this.x = -1;
-            }
-            break;
-
-            case 1:
-            {
-                var temp = this.x * this.x;
-                this.x = temp;
-            }
-            break;
-        }
-
-        // Valid #16
         var d = new[]
         {
             1, 2, 3
         };
 
-        // Valid #17
+        // Valid #16
         this.Qux(i =>
         {
             return d[i] * 2;
         });
 
-        // Valid #18
+        // Valid #17
         if (this.x > 2)
         {
             this.x = 3;
         } /* Some comment */
 
-        // Valid #19
+        // Valid #18
         int[] testArray;
 
         testArray =
@@ -312,6 +294,25 @@ public class Foo
         {
             this.x = 0;
         }
+
+        switch (this.x)
+        {
+            // Invalid #6
+            case 0:
+            if (this.x < 0)
+            {
+                this.x = -1;
+            }
+            break;
+
+            // Invalid #7
+            case 1:
+            {
+                var temp = this.x * this.x;
+                this.x = temp;
+            }
+            break;
+        }
     }
 }
 ";
@@ -327,7 +328,11 @@ public class Foo
                 // Invalid #4
                 this.CSharpDiagnostic().WithLocation(45, 10),
                 // Invalid #5
-                this.CSharpDiagnostic().WithLocation(52, 10)
+                this.CSharpDiagnostic().WithLocation(52, 10),
+                // Invalid #6
+                this.CSharpDiagnostic().WithLocation(65, 14),
+                // Invalid #7
+                this.CSharpDiagnostic().WithLocation(73, 14)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
