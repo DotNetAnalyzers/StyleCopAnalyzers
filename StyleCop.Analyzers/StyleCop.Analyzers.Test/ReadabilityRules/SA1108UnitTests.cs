@@ -168,7 +168,7 @@ public class Foo
         public async Task TestCheckedUncheckedStatementCommentBetweenStatementDeclarationAndOpeningCurlyBracket()
         {
             var testCode = @"
-public clas Foo
+public class Foo
 {
     public void F()
     {
@@ -233,7 +233,7 @@ public class Foo
         {
 
         }
-        catch (NullReferenceException e)
+        catch (System.NullReferenceException e)
         //bb
         {
                 
@@ -264,7 +264,7 @@ public class Foo
         public async Task TestSwitchStatementCommentBetweenStatementDeclarationAndOpeningCurlyBracket()
         {
             var testCode = @"
-public clas Foo
+public class Foo
 {
     public void F()
     {
@@ -318,7 +318,7 @@ public class Foo
     public void F()
     {
         //comment
-        foreach (var e in Enumerable.Empty<int>())
+        foreach (var e in System.Linq.Enumerable.Empty<int>())
         // Comment
         {
             //comment
@@ -396,13 +396,16 @@ namespace Foo
     public class Bar
     {
         public int Prop
-        //aa
         {
-            return 0;
-        }
-        set
-        //bb
-        {
+            get
+            //aa
+            {
+                return 0;
+            }
+            set
+            //bb
+            {
+            }
         }
     }
 }";
