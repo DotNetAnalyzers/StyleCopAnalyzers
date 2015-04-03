@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Helpers
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
@@ -177,18 +178,11 @@
         internal static IEnumerable<XmlNodeSyntax> GetTopLevelElements(DocumentationCommentTriviaSyntax syntax, string tagName)
         {
             var elements = syntax.Content.OfType<XmlElementSyntax>().Where(element => string.Equals(element.StartTag.Name.ToString(), tagName));
-            foreach (var element in elements)
-            {
-                yield return element;
-            }
-
             var emptyElements = syntax.Content.OfType<XmlEmptyElementSyntax>().Where(element => string.Equals(element.Name.ToString(), tagName));
-
-            foreach (var element in emptyElements)
-            {
-                yield return element;
-            }
+            Comparison<XmlNodeSyntax> comparison = (x, y) => x.GetLocation().SourceSpan.Start.CompareTo(y.GetLocation().SourceSpan.Start);
+            return EnumerableHelpers.Merge(elements, emptyElements, comparison);
         }
+
 
         internal static string GetText(XmlTextSyntax textElement)
         {
@@ -218,7 +212,7 @@
             return result;
         }
 
-        internal static T GetAttribute<T>(XmlNodeSyntax nodeSyntax) where T : XmlAttributeSyntax
+        internal static T GetFirstAttributeOrDefault<T>(XmlNodeSyntax nodeSyntax) where T : XmlAttributeSyntax
         {
             var emptyElementSyntax = nodeSyntax as XmlEmptyElementSyntax;
 

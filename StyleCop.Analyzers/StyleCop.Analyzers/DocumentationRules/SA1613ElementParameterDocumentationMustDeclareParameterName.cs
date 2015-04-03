@@ -78,7 +78,7 @@
 
                 foreach (var parameter in xmlParameterNames)
                 {
-                    var nameAttribute = XmlCommentHelper.GetAttribute<XmlNameAttributeSyntax>(parameter);
+                    var nameAttribute = XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>(parameter);
 
                     if (string.IsNullOrWhiteSpace(nameAttribute?.Identifier?.Identifier.ValueText))
                     {
