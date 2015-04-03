@@ -6,6 +6,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.SpacingRules;
 
     internal static class DocumentationSyntaxExtensions
     {
@@ -211,6 +212,36 @@
         {
             return node.IsKind(SyntaxKind.XmlTextLiteralToken)
                 && string.IsNullOrWhiteSpace(node.Text);
+        }
+
+        /// <summary>
+        /// Adjust the leading and trailing trivia associated with <see cref="SyntaxKind.XmlTextLiteralNewLineToken"/>
+        /// tokens to ensure the formatter properly indents the exterior trivia.
+        /// </summary>
+        /// <typeparam name="T">The type of syntax node.</typeparam>
+        /// <param name="node">The syntax node to adjust tokens.</param>
+        /// <returns>A <see cref="SyntaxNode"/> equivalent to the input <paramref name="node"/>, adjusted by moving any
+        /// trailing trivia from <see cref="SyntaxKind.XmlTextLiteralNewLineToken"/> tokens to be leading trivia of the
+        /// following token.</returns>
+        public static T AdjustDocumentationCommentNewLineTrivia<T>(this T node)
+            where T : SyntaxNode
+        {
+            var tokensForAdjustment =
+                from token in node.DescendantTokens()
+                where token.IsKind(SyntaxKind.XmlTextLiteralNewLineToken)
+                where token.HasTrailingTrivia
+                let next = token.GetNextToken(includeZeroWidth: true, includeSkipped: true, includeDirectives: true, includeDocumentationComments: true)
+                where !next.IsMissingOrDefault()
+                select new KeyValuePair<SyntaxToken, SyntaxToken>(token, next);
+
+            Dictionary<SyntaxToken, SyntaxToken> replacements = new Dictionary<SyntaxToken, SyntaxToken>();
+            foreach (var pair in tokensForAdjustment)
+            {
+                replacements[pair.Key] = pair.Key.WithTrailingTrivia();
+                replacements[pair.Value] = pair.Value.WithLeadingTrivia(pair.Value.LeadingTrivia.InsertRange(0, pair.Key.TrailingTrivia));
+            }
+
+            return node.ReplaceTokens(replacements.Keys, (originalToken, rewrittenToken) => replacements[originalToken]);
         }
     }
 }
