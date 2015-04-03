@@ -21,6 +21,12 @@
         internal const string CrefArgumentName = "cref";
 
         /// <summary>
+        /// The &lt;placeholder&gt; tag is a Sandcastle Help File Builder extension to the standard XML documentation
+        /// comment tags, and is used to mark sections of documentation which need to be reviewed.
+        /// </summary>
+        internal const string PlaceholderTag = "placeholder";
+
+        /// <summary>
         /// This helper is used by documentation diagnostics to check if a xml comment should be considered empty.
         /// A comment is empty if 
         /// - it is null

@@ -2,13 +2,14 @@
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
     using TestHelper;
     using Xunit;
 
     /// <summary>
-    /// This class contains unit tests for <see cref="SA1610PropertyDocumentationMustHaveValueText"/>-
+    /// This class contains unit tests for <see cref="SA1610PropertyDocumentationMustHaveValueText"/>.
     /// </summary>
     public class SA1610UnitTests : CodeFixVerifier
     {
@@ -68,7 +69,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestPropertyWithoutDocumentation()
+        public async Task TestPropertyWithEmptyDocumentationNoSummary()
         {
             var testCode = @"
 /// <summary>
@@ -84,11 +85,195 @@ public class ClassName
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 22);
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, testCode, cancellationToken: CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task TestPropertyWithEmptySummaryDocumentation()
+        {
+            var testCode = @"
+/// <summary>
+/// 
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <value>
+    /// 
+    /// </value>
+    public ClassName Property { get; set; }
+}";
+
+            // No changes are made.
+            var fixedCode = testCode;
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(13, 22);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task TestPropertyWithStandardSummaryDocumentation()
+        {
+            var testCode = @"
+/// <summary>
+/// 
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Gets or sets a property.
+    /// </summary>
+    /// <value>
+    /// 
+    /// </value>
+    public ClassName Property { get; set; }
+}";
+
+            var fixedCode = @"
+/// <summary>
+/// 
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Gets or sets a property.
+    /// </summary>
+    /// <value>
+    /// <placeholder>A property.</placeholder>
+    /// </value>
+    public ClassName Property { get; set; }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(13, 22);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task TestGetterOnlyPropertyWithStandardSummaryDocumentation()
+        {
+            var testCode = @"
+/// <summary>
+/// 
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Gets a property.
+    /// </summary>
+    /// <value>
+    /// 
+    /// </value>
+    public ClassName Property { get; }
+}";
+
+            var fixedCode = @"
+/// <summary>
+/// 
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Gets a property.
+    /// </summary>
+    /// <value>
+    /// <placeholder>A property.</placeholder>
+    /// </value>
+    public ClassName Property { get; }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(13, 22);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task TestSetterOnlyPropertyWithStandardSummaryDocumentation()
+        {
+            var testCode = @"
+/// <summary>
+/// 
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Sets a property.
+    /// </summary>
+    /// <value>
+    /// 
+    /// </value>
+    public ClassName Property { set { } }
+}";
+
+            var fixedCode = @"
+/// <summary>
+/// 
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Sets a property.
+    /// </summary>
+    /// <value>
+    /// <placeholder>A property.</placeholder>
+    /// </value>
+    public ClassName Property { set { } }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(13, 22);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task TestPropertyWithNonStandardSummaryDocumentation()
+        {
+            var testCode = @"
+/// <summary>
+/// 
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// A property.
+    /// </summary>
+    /// <value>
+    /// 
+    /// </value>
+    public ClassName Property { get; set; }
+}";
+
+            var fixedCode = @"
+/// <summary>
+/// 
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// A property.
+    /// </summary>
+    /// <value>
+    /// <placeholder>A property.</placeholder>
+    /// </value>
+    public ClassName Property { get; set; }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(13, 22);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1610PropertyDocumentationMustHaveValueText();
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1609SA1610CodeFixProvider();
         }
     }
 }
