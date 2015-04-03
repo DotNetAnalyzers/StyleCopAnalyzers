@@ -21,8 +21,11 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [Fact]
-        public async Task TestPartialTypeWithDocumentation()
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
+        public async Task TestPartialTypeWithDocumentation(string typeKeyword)
         {
             var testCode = @"
 /// <summary>
@@ -31,13 +34,14 @@
 public partial {0} TypeName
 {{
 }}";
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "class"), EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "struct"), EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "interface"), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKeyword), EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [Fact]
-        public async Task TestPartialTypeWithoutDocumentation()
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
+        public async Task TestPartialTypeWithoutDocumentation(string typeKeyword)
         {
             var testCode = @"
 public partial {0}
@@ -47,13 +51,14 @@ TypeName
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "class"), expected, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "struct"), expected, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "interface"), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKeyword), expected, CancellationToken.None);
         }
 
-        [Fact]
-        public async Task TestPartialClassWithEmptyDocumentation()
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
+        public async Task TestPartialClassWithEmptyDocumentation(string typeKeyword)
         {
             var testCode = @"
 /// <summary>
@@ -66,9 +71,7 @@ TypeName
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "class"), expected, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "struct"), expected, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "interface"), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKeyword), expected, CancellationToken.None);
         }
 
         [Fact]
