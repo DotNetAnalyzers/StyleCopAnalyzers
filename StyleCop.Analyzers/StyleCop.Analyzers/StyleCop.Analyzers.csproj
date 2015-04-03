@@ -102,6 +102,8 @@
     <Compile Include="DocumentationRules\SA1648InheritDocMustBeUsedWithInheritingClass.cs" />
     <Compile Include="DocumentationRules\SA1649FileHeaderFileNameDocumentationMustMatchTypeName.cs" />
     <Compile Include="DocumentationRules\SA1650ElementDocumentationMustBeSpelledCorrectly.cs" />
+    <Compile Include="DocumentationRules\SA1651CodeFixProvider.cs" />
+    <Compile Include="DocumentationRules\SA1651DoNotUsePlaceholderElements.cs" />
     <Compile Include="DocumentationRules\StandardTextDiagnosticBase.cs" />
     <Compile Include="GeneratedCodeAnalysisExtensions.cs" />
     <Compile Include="Helpers\DocumentationCommentExtensions.cs" />
