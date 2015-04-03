@@ -26,11 +26,11 @@
         /// The ID for diagnostics produced by the <see cref="SA1007OperatorKeywordMustBeFollowedBySpace"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1007";
-        private const string Title = "Operator keyword must be followed by space";
-        private const string MessageFormat = "Operator keyword must be followed by a space.";
-        private const string Category = "StyleCop.CSharp.SpacingRules";
-        private const string Description = "The operator keyword within a C# operator overload method is not followed by any whitespace.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1007.html";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1007Title), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(SpacingResources.SA1007MessageFormat), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly string Category = "StyleCop.CSharp.SpacingRules";
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1007Description), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1007.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

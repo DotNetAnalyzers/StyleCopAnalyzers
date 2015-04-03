@@ -44,11 +44,11 @@
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1004";
-        private const string Title = "Documentation lines must begin with single space";
-        private const string MessageFormat = "Documentation line must begin with a space.";
-        private const string Category = "StyleCop.CSharp.SpacingRules";
-        private const string Description = "A line within a documentation header above a C# element does not begin with a single space.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1004.html";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1004Title), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(SpacingResources.SA1004MessageFormat), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly string Category = "StyleCop.CSharp.SpacingRules";
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1004Description), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1004.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
