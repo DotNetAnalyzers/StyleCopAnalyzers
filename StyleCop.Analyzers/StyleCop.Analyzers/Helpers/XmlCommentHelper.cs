@@ -6,7 +6,6 @@
     using System.Text;
     using System.Text.RegularExpressions;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
@@ -150,46 +149,9 @@
         /// <returns>true if the node has documentation, false otherwise.</returns>
         internal static bool HasDocumentation(SyntaxNode node)
         {
-            var commentTrivia = GetCommentTrivia(node);
+            var commentTrivia = node.GetDocumentationCommentTriviaSyntax();
 
-            return !IsMissingOrEmpty(commentTrivia);
-        }
-
-        internal static DocumentationCommentTriviaSyntax GetDocumentationStructure(SyntaxNode node)
-        {
-            if (node == null)
-            {
-                return null;
-            }
-
-            var commentTrivia = GetCommentTrivia(node);
-
-            if (!commentTrivia.HasStructure)
-            {
-                return null;
-            }
-
-            return commentTrivia.GetStructure() as DocumentationCommentTriviaSyntax;
-        }
-
-        internal static XmlNodeSyntax GetTopLevelElement(DocumentationCommentTriviaSyntax syntax, string tagName)
-        {
-            XmlElementSyntax elementSyntax = syntax.Content.OfType<XmlElementSyntax>().FirstOrDefault(element => string.Equals(element.StartTag.Name.ToString(), tagName));
-            if (elementSyntax != null)
-            {
-                return elementSyntax;
-            }
-
-            XmlEmptyElementSyntax emptyElementSyntax = syntax.Content.OfType<XmlEmptyElementSyntax>().FirstOrDefault(element => string.Equals(element.Name.ToString(), tagName));
-            return emptyElementSyntax;
-        }
-
-        internal static IEnumerable<XmlNodeSyntax> GetTopLevelElements(DocumentationCommentTriviaSyntax syntax, string tagName)
-        {
-            var elements = syntax.Content.OfType<XmlElementSyntax>().Where(element => string.Equals(element.StartTag.Name.ToString(), tagName));
-            var emptyElements = syntax.Content.OfType<XmlEmptyElementSyntax>().Where(element => string.Equals(element.Name.ToString(), tagName));
-            Comparison<XmlNodeSyntax> comparison = (x, y) => x.GetLocation().SourceSpan.Start.CompareTo(y.GetLocation().SourceSpan.Start);
-            return EnumerableHelpers.Merge(elements, emptyElements, comparison);
+            return commentTrivia != null && !IsMissingOrEmpty(commentTrivia.ParentTrivia);
         }
 
         internal static string GetText(XmlTextSyntax textElement)
@@ -237,18 +199,6 @@
             }
 
             return null;
-        }
-
-        private static SyntaxTrivia GetCommentTrivia(SyntaxNode node)
-        {
-            var leadingTrivia = node.GetLeadingTrivia();
-            var commentTrivia = leadingTrivia.FirstOrDefault(x => x.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia));
-            if (commentTrivia != default(SyntaxTrivia))
-            {
-                return commentTrivia;
-            }
-
-            return leadingTrivia.FirstOrDefault(x => x.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia));
         }
     }
 }

@@ -39,21 +39,21 @@
 
         private void HandleDeclaration(SyntaxNodeAnalysisContext context, SyntaxNode node, params Location[] locations)
         {
-            var documentation = XmlCommentHelper.GetDocumentationStructure(node);
+            var documentation = node.GetDocumentationCommentTriviaSyntax();
             if (documentation == null)
             {
                 // missing documentation is reported by SA1600, SA1601, and SA1602
                 return;
             }
 
-            if (XmlCommentHelper.GetTopLevelElement(documentation, XmlCommentHelper.InheritdocXmlTag) != null)
+            if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag) != null)
             {
                 // Ignore nodes with an <inheritdoc/> tag.
                 return;
             }
 
-            var summaryXmlElement = XmlCommentHelper.GetTopLevelElement(documentation, XmlCommentHelper.ValueXmlTag);
-            this.HandleXmlElement(context, summaryXmlElement, locations);
+            var valueXmlElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.ValueXmlTag);
+            this.HandleXmlElement(context, valueXmlElement, locations);
         }
     }
 }
