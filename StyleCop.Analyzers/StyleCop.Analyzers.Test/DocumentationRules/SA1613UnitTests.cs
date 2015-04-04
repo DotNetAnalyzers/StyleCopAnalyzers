@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.DocumentationRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -7,12 +8,22 @@
     using TestHelper;
     using Xunit;
 
+
     /// <summary>
     /// This class contains unit tests for <see cref="SA1617VoidReturnValueMustNotBeDocumented"/>.
     /// </summary>
     public class SA1613UnitTests : CodeFixVerifier
     {
         public string DiagnosticId { get; } = SA1617VoidReturnValueMustNotBeDocumented.DiagnosticId;
+
+        public static IEnumerable<object[]> Declarations
+        {
+            get
+            {
+                yield return new[] { "    public ClassName Method(string foo, string bar) { return null; }" };
+                yield return new[] { "    public ClassName this[string foo, string bar] { get { return null; } set { } }" };
+            }
+        }
 
         [Fact]
         public async Task TestEmptySource()
@@ -35,23 +46,9 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [Fact]
-        public async Task TestMemberWithInheritDoc()
-        {
-            var testCode = @"
-/// <summary>
-/// Foo
-/// </summary>
-public class ClassName
-{
-    /// <inheritdoc/>
-    public ClassName Method() { return null; }
-}";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
-        }
-
-        [Fact]
-        public async Task TestMemberWithoutParams()
+        [Theory]
+        [MemberData(nameof(Declarations))]
+        public async Task TestMemberWithoutParams(string declaration)
         {
             var testCode = @"
 /// <summary>
@@ -62,13 +59,14 @@ public class ClassName
     /// <summary>
     /// Foo
     /// </summary>
-    public ClassName Method(string foo, string bar) { return null; }
+$$
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [Fact]
-        public async Task TestMemberWithValidParams()
+        [Theory]
+        [MemberData(nameof(Declarations))]
+        public async Task TestMemberWithValidParams(string declaration)
         {
             var testCode = @"
 /// <summary>
@@ -81,12 +79,14 @@ public class ClassName
     /// </summary>
     ///<param name=""foo"">Test</param>
     ///<param name=""bar"">Test</param>
-    public ClassName Method(string foo, string bar) { return null; }
+$$
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        public async Task TestMemberWithInvalidParams()
+        [Theory]
+        [MemberData(nameof(Declarations))]
+        public async Task TestMemberWithInvalidParams(string declaration)
         {
             var testCode = @"
 /// <summary>
@@ -101,10 +101,10 @@ public class ClassName
     ///<param/>
     ///<param name="""">Test</param>
     ///<param name=""    "">Test</param>
-    public ClassName Method(string foo, string bar) { return null; }
+$$
 }";
 
-            var expected = new[]
+        var expected = new[]
             {
                 this.CSharpDiagnostic().WithLocation(10, 8),
                 this.CSharpDiagnostic().WithLocation(11, 8),
@@ -112,7 +112,7 @@ public class ClassName
                 this.CSharpDiagnostic().WithLocation(13, 15)
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
