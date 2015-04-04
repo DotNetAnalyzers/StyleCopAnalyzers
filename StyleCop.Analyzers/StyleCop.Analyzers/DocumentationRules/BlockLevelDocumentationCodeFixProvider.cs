@@ -25,7 +25,8 @@
         public override ImmutableArray<string> FixableDiagnosticIds { get; }
             = ImmutableArray.Create(
                 SA1653PlaceTextInParagraphs.DiagnosticId,
-                SA1654UseChildBlocksConsistently.DiagnosticId);
+                SA1654UseChildBlocksConsistently.DiagnosticId,
+                SA1655UseChildBlocksConsistentlyAcrossElementsOfTheSameKind.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
