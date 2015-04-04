@@ -139,6 +139,14 @@
                     return;
                 }
 
+                if (nextToken.IsKind(SyntaxKind.CommaToken) &&
+                    (this.IsPartOf<InitializerExpressionSyntax>(token) ||
+                     this.IsPartOf<AnonymousObjectCreationExpressionSyntax>(token)))
+                {
+                    // the close brace is part of an initializer statement.
+                    return;
+                }
+
                 if (nextToken.IsKind(SyntaxKind.EndOfFileToken))
                 {
                     // this is the last close brace in the file

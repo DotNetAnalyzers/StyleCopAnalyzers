@@ -220,6 +220,58 @@ public class Foo
             {
                 1
             };
+
+        // Valid #19
+        var z1 = new object[]
+        {
+            new
+            {
+                Id = 12
+            },
+            new
+            {
+                Id = 13
+            }
+        };
+
+        // Valid #20
+        var z2 = new System.Action[]
+        {
+            () =>
+            {
+                this.x = 3;
+            },
+            () =>
+            {
+                this.x = 4;
+            }
+        };
+
+        // Valid #21
+        var z3 = new
+        {
+            Value1 = new
+            {   
+                Id = 12
+            },
+            Value2 = new
+            {
+                Id = 13
+            }
+        };
+
+        // Valid #22
+        var z4 = new System.Collections.Generic.List<object>
+        {
+            new
+            {
+                Id = 12
+            },
+            new
+            {
+                Id = 13
+            }
+        };
     }
 
     public void Qux(Func<int, int> function)
