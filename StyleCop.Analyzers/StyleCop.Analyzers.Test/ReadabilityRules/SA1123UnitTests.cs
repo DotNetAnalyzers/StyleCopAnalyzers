@@ -5,27 +5,26 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using StyleCop.Analyzers.ReadabilityRules;
+    using Analyzers.ReadabilityRules;
     using TestHelper;
+    using Xunit;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1123DoNotPlaceRegionsWithinElements"/> and
     /// <see cref="RemoveRegionCodeFixProvider"/>.
     /// </summary>
-    [TestClass]
     public class SA1123UnitTests : CodeFixVerifier
     {
         public string DiagnosticId { get; } = SA1123DoNotPlaceRegionsWithinElements.DiagnosticId;
 
-        [TestMethod]
+        [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestRegionInMethod()
         {
             var testCode = @"public class Foo
@@ -43,17 +42,7 @@
             expected =
                 new[]
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Region must not be located within a code element.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 5, 1)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(5, 1)
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
@@ -69,7 +58,7 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestRegionPartialyInMethod()
         {
             var testCode = @"public class Foo
@@ -85,7 +74,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestRegionPartialyInMethod2()
         {
             var testCode = @"public class Foo
@@ -100,7 +89,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestRegionPartialyMultipleMethods()
         {
             var testCode = @"public class Foo
@@ -119,7 +108,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestEndRegionInMethod()
         {
             var testCode = @"public class Foo
@@ -135,7 +124,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestRegionOutsideMethod()
         {
             var testCode = @"public class Foo
@@ -151,7 +140,7 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        [TestMethod]
+        [Fact]
         public async Task TestRegionOutsideMethod2()
         {
             var testCode = @"public class Foo

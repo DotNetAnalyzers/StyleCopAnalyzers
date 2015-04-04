@@ -23,10 +23,7 @@
             ImmutableArray.Create(SA1123DoNotPlaceRegionsWithinElements.DiagnosticId, SA1124DoNotUseRegions.DiagnosticId);
 
         /// <inheritdoc/>
-        public override ImmutableArray<string> GetFixableDiagnosticIds()
-        {
-            return FixableDiagnostics;
-        }
+        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -36,23 +33,33 @@
         }
 
         /// <inheritdoc/>
-        public override async Task ComputeFixesAsync(CodeFixContext context)
+        public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!this.GetFixableDiagnosticIds().Contains(diagnostic.Id))
-                    continue;
-                var syntaxRoot = await context.Document.GetSyntaxRootAsync().ConfigureAwait(false);
-                var node = syntaxRoot?.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
-                if (node != null && node.IsKind(SyntaxKind.RegionDirectiveTrivia))
+                if (!this.FixableDiagnosticIds.Contains(diagnostic.Id))
                 {
-                    var regionDirective = node as RegionDirectiveTriviaSyntax;
-
-                    var newSyntaxRoot = syntaxRoot.RemoveNodes(regionDirective.GetRelatedDirectives(), SyntaxRemoveOptions.AddElasticMarker);
-
-                    context.RegisterFix(CodeAction.Create("Remove region", context.Document.WithSyntaxRoot(newSyntaxRoot)), diagnostic);
+                    continue;
                 }
+
+                context.RegisterCodeFix(CodeAction.Create("Remove region", token => GetTransformedDocumentAsync(context.Document, diagnostic)), diagnostic);
             }
+
+            return Task.FromResult(true);
+        }
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic)
+        {
+            var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
+            var node = syntaxRoot?.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
+            if (node != null && node.IsKind(SyntaxKind.RegionDirectiveTrivia))
+            {
+                var regionDirective = node as RegionDirectiveTriviaSyntax;
+
+                var newSyntaxRoot = syntaxRoot.RemoveNodes(regionDirective.GetRelatedDirectives(), SyntaxRemoveOptions.AddElasticMarker);
+
+                return document.WithSyntaxRoot(newSyntaxRoot);
+            }
+            return document.WithSyntaxRoot(syntaxRoot);
         }
     }
 }
