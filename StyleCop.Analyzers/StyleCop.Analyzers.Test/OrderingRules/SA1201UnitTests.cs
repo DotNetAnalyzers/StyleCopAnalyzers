@@ -225,6 +225,21 @@ public struct FooStruct { }
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
+        [Fact]
+        public async Task TestEventFields()
+        {
+            // Tests that the analyzer handles event fields as if they were events
+            string testCode = @"public class OuterType
+{
+    event System.Action TestEvent;
+    public event System.Action TestEvent2 { add { } remove { } }
+    event System.Action TestEvent3;
+    public event System.Action TestEvent4 { add { } remove { } }
+}
+";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1201ElementsMustAppearInTheCorrectOrder();
