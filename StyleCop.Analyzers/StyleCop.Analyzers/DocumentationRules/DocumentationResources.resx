@@ -222,4 +222,7 @@
   <data name="SA1652Title" xml:space="preserve">
     <value>Enable XML documentation output</value>
   </data>
+  <data name="SA1653CodeFix" xml:space="preserve">
+    <value>Insert paragraph element</value>
+  </data>
 </root>
