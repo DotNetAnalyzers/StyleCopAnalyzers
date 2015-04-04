@@ -68,7 +68,6 @@
         {
             foreach (var item in types)
             {
-                // Allow CS8019 here because the code fix makes the using directive unnecessary
                 await this.VerifyCSharpFixAsync(string.Format(testSource, item.Item2), string.Format(testSource, item.Item1));
                 await this.VerifyCSharpFixAsync(string.Format(testSource, "System." + item.Item2), string.Format(testSource, item.Item1));
                 await this.VerifyCSharpFixAsync(string.Format(testSource, "global::System." + item.Item2), string.Format(testSource, item.Item1));
