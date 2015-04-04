@@ -547,6 +547,60 @@ public class Foo
         }
 
         [Theory]
+        [MemberData(nameof(AllTypes))]
+        public async Task TestDocumentationCommentDirectReference(string predefined, string fullName)
+        {
+            string testCode = @"using System;
+/// <seealso cref=""{0}""/>
+public class Foo
+{{
+}}";
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 20);
+
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
+        }
+
+        [Theory]
+        [MemberData(nameof(AllTypes))]
+        public async Task TestDocumentationCommentDirectReferenceCodeFix(string predefined, string fullName)
+        {
+            string testCode = @"using System;
+/// <seealso cref=""{0}""/>
+public class Foo
+{{
+}}";
+
+            await this.VerifyCSharpFixAsync(string.Format(testCode, fullName), string.Format(testCode, predefined), cancellationToken: CancellationToken.None);
+        }
+
+        [Theory]
+        [MemberData(nameof(AllTypes))]
+        public async Task TestDocumentationCommentIndirectReference(string predefined, string fullName)
+        {
+            string testCode = @"using System;
+/// <seealso cref=""Convert.ToBoolean({0})""/>
+public class Foo
+{{
+}}";
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 38);
+
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
+        }
+
+        [Theory]
+        [MemberData(nameof(AllTypes))]
+        public async Task TestDocumentationCommentIndirectReferenceCodeFix(string predefined, string fullName)
+        {
+            string testCode = @"using System;
+/// <seealso cref=""Convert.ToBoolean({0})""/>
+public class Foo
+{{
+}}";
+
+            await this.VerifyCSharpFixAsync(string.Format(testCode, fullName), string.Format(testCode, predefined), cancellationToken: CancellationToken.None);
+        }
+
+        [Theory]
         [MemberData(nameof(ReferenceTypes))]
         public async Task TestExplicitCast(string predefined, string fullName)
         {
