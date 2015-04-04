@@ -14,17 +14,16 @@
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// Implements a code fix for <see cref="SA1653PlaceTextInParagraphs"/>.
+    /// Implements a code fix for diagnostics that need to insert &lt;para&gt; elements around inline documentation
+    /// content to form block-level documentation content.
     /// </summary>
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1653CodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(BlockLevelDocumentationCodeFixProvider))]
     [Shared]
-    public class SA1653CodeFixProvider : CodeFixProvider
+    public class BlockLevelDocumentationCodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1653PlaceTextInParagraphs.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; }
+            = ImmutableArray.Create(SA1653PlaceTextInParagraphs.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -37,12 +36,12 @@
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!FixableDiagnostics.Contains(diagnostic.Id))
+                if (!this.FixableDiagnosticIds.Contains(diagnostic.Id))
                 {
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create(DocumentationResources.SA1653CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token), nameof(SA1653CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(DocumentationResources.BlockLevelDocumentationCodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token), nameof(BlockLevelDocumentationCodeFixProvider)), diagnostic);
             }
 
             return Task.FromResult(true);

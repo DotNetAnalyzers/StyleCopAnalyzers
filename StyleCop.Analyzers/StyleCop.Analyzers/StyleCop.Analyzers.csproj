@@ -47,6 +47,8 @@
     <Compile Include="AnalyzerCategory.cs" />
     <Compile Include="AnalyzerConstants.cs" />
     <Compile Include="AnalyzerExtensions.cs" />
+    <Compile Include="DocumentationRules\BlockLevelDocumentationAnalyzerBase.cs" />
+    <Compile Include="DocumentationRules\BlockLevelDocumentationCodeFixProvider.cs" />
     <Compile Include="DocumentationRules\DocumentationResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -105,7 +107,6 @@
     <Compile Include="DocumentationRules\SA1651CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1651DoNotUsePlaceholderElements.cs" />
     <Compile Include="DocumentationRules\SA1652EnableXmlDocumentationOutput.cs" />
-    <Compile Include="DocumentationRules\SA1653CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1653PlaceTextInParagraphs.cs" />
     <Compile Include="DocumentationRules\StandardTextDiagnosticBase.cs" />
     <Compile Include="GeneratedCodeAnalysisExtensions.cs" />

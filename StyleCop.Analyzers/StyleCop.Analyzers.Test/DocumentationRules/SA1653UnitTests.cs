@@ -322,7 +322,7 @@ public class ClassName
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1653CodeFixProvider();
+            return new BlockLevelDocumentationCodeFixProvider();
         }
     }
 }

@@ -18,6 +18,7 @@
                 var codeFixProviders = typeof(SA1110OpeningParenthesisMustBeOnDeclarationLine)
                     .Assembly
                     .GetTypes()
+                    .Where(t => !t.IsAbstract)
                     .Where(t => typeof(CodeFixProvider).IsAssignableFrom(t));
 
                 return codeFixProviders.Select(x => new[] { x });

@@ -62,6 +62,15 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert paragraph element.
+        /// </summary>
+        internal static string BlockLevelDocumentationCodeFix {
+            get {
+                return ResourceManager.GetString("BlockLevelDocumentationCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Document value from summary.
         /// </summary>
         internal static string SA1609SA1610CodeFix {
@@ -373,15 +382,6 @@ namespace StyleCop.Analyzers.DocumentationRules {
         internal static string SA1652Title {
             get {
                 return ResourceManager.GetString("SA1652Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Insert paragraph element.
-        /// </summary>
-        internal static string SA1653CodeFix {
-            get {
-                return ResourceManager.GetString("SA1653CodeFix", resourceCulture);
             }
         }
     }
