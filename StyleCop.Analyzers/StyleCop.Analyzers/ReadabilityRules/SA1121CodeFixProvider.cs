@@ -74,16 +74,14 @@
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-
             if (semanticModel == null)
             {
                 return document;
             }
 
-            var node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
+            var node = root.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
 
             var memberAccess = node.Parent as MemberAccessExpressionSyntax;
-
             if (memberAccess != null)
             {
                 if (node == memberAccess.Name)
@@ -92,19 +90,30 @@
                 }
             }
 
-            var typeInfo = semanticModel.GetTypeInfo(node, cancellationToken);
+            var type = semanticModel.GetSymbolInfo(node, cancellationToken).Symbol as INamedTypeSymbol;
 
-            if (typeInfo.Type == null)
+            SyntaxKind specialKind;
+            if (!PredefinedSpecialTypes.TryGetValue(type.SpecialType, out specialKind))
             {
                 return document;
             }
 
-            SpecialType specialType = typeInfo.Type.SpecialType;
-            var newNode = SyntaxFactory.PredefinedType(SyntaxFactory.Token(PredefinedSpecialTypes[specialType]))
+            SyntaxNode newNode;
+            PredefinedTypeSyntax typeSyntax = SyntaxFactory.PredefinedType(SyntaxFactory.Token(specialKind));
+            if (node is CrefSyntax)
+            {
+                newNode = SyntaxFactory.TypeCref(typeSyntax);
+            }
+            else
+            {
+                newNode = typeSyntax;
+            }
+
+            newNode = newNode
                 .WithTriviaFrom(node)
                 .WithoutFormatting();
-            var newRoot = root.ReplaceNode(node, newNode);
 
+            var newRoot = root.ReplaceNode(node, newNode);
             return document.WithSyntaxRoot(newRoot);
         }
     }
