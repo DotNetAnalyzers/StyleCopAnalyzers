@@ -56,34 +56,37 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleElement, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleXmlElement, SyntaxKind.XmlElement);
+            context.RegisterSyntaxNodeAction(this.HandleXmlEmptyElement, SyntaxKind.XmlEmptyElement);
         }
 
-        private void HandleElement(SyntaxNodeAnalysisContext context)
+        private void HandleXmlElement(SyntaxNodeAnalysisContext context)
         {
-            var node = context.Node;
+            XmlElementSyntax emptyElement = context.Node as XmlElementSyntax;
 
-            var documentation = XmlCommentHelper.GetDocumentationStructure(node);
+            var name = emptyElement?.StartTag?.Name;
 
-            if (documentation != null)
+            HandleElement(context, emptyElement, name, emptyElement?.StartTag?.GetLocation());
+        }
+
+        private void HandleXmlEmptyElement(SyntaxNodeAnalysisContext context)
+        {
+            XmlEmptyElementSyntax emptyElement = context.Node as XmlEmptyElementSyntax;
+
+            var name = emptyElement?.Name;
+
+            HandleElement(context, emptyElement, name, emptyElement?.GetLocation());
+        }
+
+        private static void HandleElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax element, XmlNameSyntax name, Location alternativeDiagnosticLocation)
+        {
+            if (string.Equals(name.ToString(), XmlCommentHelper.ParamTag))
             {
-                if (XmlCommentHelper.GetTopLevelElement(documentation, XmlCommentHelper.InheritdocXmlTag) != null)
+                var nameAttribute = XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>(element);
+
+                if (string.IsNullOrWhiteSpace(nameAttribute?.Identifier?.Identifier.ValueText))
                 {
-                    // Ignore nodes with an <inheritdoc/> tag. 
-                    return;
-                }
-
-                var xmlParameterNames = XmlCommentHelper.GetTopLevelElements(documentation, XmlCommentHelper.ParamTag)
-                                    .ToImmutableArray();
-
-                foreach (var parameter in xmlParameterNames)
-                {
-                    var nameAttribute = XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>(parameter);
-
-                    if (string.IsNullOrWhiteSpace(nameAttribute?.Identifier?.Identifier.ValueText))
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, nameAttribute?.GetLocation() ?? parameter.GetLocation()));
-                    }
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, nameAttribute?.GetLocation() ?? alternativeDiagnosticLocation));
                 }
             }
         }
