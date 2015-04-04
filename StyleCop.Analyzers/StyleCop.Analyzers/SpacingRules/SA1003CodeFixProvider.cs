@@ -82,6 +82,7 @@
                         SyntaxToken correctedPreceding = correctedPrecedingNoSpace.WithTrailingTrivia(correctedPrecedingNoSpace.TrailingTrivia.Insert(0, SyntaxFactory.Whitespace(" ")));
                         replacements[precedingToken] = correctedPreceding;
                     }
+
                     break;
                 }
             }
@@ -105,6 +106,7 @@
                 SyntaxToken correctedOperatorNoSpace = token.WithoutTrailingWhitespace(removeEndOfLineTrivia: true).WithoutFormatting();
                 replacements[token] = correctedOperatorNoSpace;
             }
+
             var transformed = root.ReplaceTokens(replacements.Keys, (original, maybeRewritten) => replacements[original]);
             Document updatedDocument = document.WithSyntaxRoot(transformed);
 

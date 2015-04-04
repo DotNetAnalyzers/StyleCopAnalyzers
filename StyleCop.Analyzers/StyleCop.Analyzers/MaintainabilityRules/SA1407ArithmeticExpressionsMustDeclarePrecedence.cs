@@ -94,6 +94,7 @@
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, left.GetLocation()));
                     }
                 }
+
                 if (binSyntax.Right is BinaryExpressionSyntax)
                 {
                     // Check if the operations are of the same kind

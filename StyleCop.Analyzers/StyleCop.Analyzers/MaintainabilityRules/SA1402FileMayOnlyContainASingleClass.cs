@@ -74,6 +74,7 @@
                         {
                             continue;
                         }
+
                         var location = NamedTypeHelpers.GetNameOrIdentifierLocation(node);
                         if (location != null)
                         {

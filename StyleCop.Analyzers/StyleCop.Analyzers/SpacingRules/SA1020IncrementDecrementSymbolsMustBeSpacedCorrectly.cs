@@ -115,6 +115,7 @@
                     // {Increment|Decrement} symbol '{++|--}' must not be {preceded} by a space.
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), symbolName, token.Text, "preceded"));
                 }
+
                 break;
 
             default:

@@ -68,18 +68,22 @@
                 {
                     return currentNode;
                 }
+
                 if (currentNode is NamespaceDeclarationSyntax)
                 {
                     return currentNode;
                 }
+
                 if (currentNode is UsingDirectiveSyntax)
                 {
                     return currentNode;
                 }
+
                 if (currentNode is MemberDeclarationSyntax)
                 {
                     return currentNode;
                 }
+
                 if (currentNode is AccessorDeclarationSyntax)
                 {
                     return currentNode;
@@ -87,6 +91,7 @@
 
                 currentNode = currentNode.Parent;
             }
+
             return null;
         }
     }

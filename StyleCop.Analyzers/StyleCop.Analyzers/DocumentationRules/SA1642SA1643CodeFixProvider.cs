@@ -116,6 +116,7 @@
             {
                 identifierName = SyntaxFactory.GenericName(identifier.WithoutTrivia(), ParameterToArgumentListSyntax(typeParameters));
             }
+
             var list = new SyntaxList<XmlNodeSyntax>();
 
             list = list.Add(XmlNewLine());

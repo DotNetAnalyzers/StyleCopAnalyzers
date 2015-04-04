@@ -138,6 +138,7 @@
                 {
                     ReportIfThereIsNoBlankLine(context, compilationUnit.Usings[compilationUnit.Usings.Count - 1], members[0]);
                 }
+
                 if (compilationUnit.Usings.Count > 0 && compilationUnit.Externs.Count > 0)
                 {
                     ReportIfThereIsNoBlankLine(context, compilationUnit.Externs[compilationUnit.Externs.Count - 1], compilationUnit.Usings[0]);
@@ -159,6 +160,7 @@
                 {
                     ReportIfThereIsNoBlankLine(context, namespaceDeclaration.Usings[namespaceDeclaration.Usings.Count - 1], members[0]);
                 }
+
                 if (namespaceDeclaration.Usings.Count > 0 && namespaceDeclaration.Externs.Count > 0)
                 {
                     ReportIfThereIsNoBlankLine(context, namespaceDeclaration.Externs[namespaceDeclaration.Externs.Count - 1], namespaceDeclaration.Usings[0]);
@@ -223,6 +225,7 @@
             {
                 return node.GetLeadingTrivia()[0].GetLocation();
             }
+
             var firstToken = node.ChildTokens().FirstOrDefault();
             if (firstToken != default(SyntaxToken))
             {
@@ -250,6 +253,7 @@
                     i++;
                 }
             }
+
             return false;
         }
     }

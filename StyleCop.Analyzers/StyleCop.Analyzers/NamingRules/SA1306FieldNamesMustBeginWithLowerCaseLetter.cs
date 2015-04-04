@@ -115,6 +115,7 @@
                 {
                     continue;
                 }
+
                 if (name[0] == '_')
                 {
                     // `_foo` is handled by SA1309
