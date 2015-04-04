@@ -226,6 +226,19 @@ public class Foo
     {
         this.x = function(this.x);
     }
+
+    public Func<int, int> Quux()
+    {
+        // Valid #19
+#if SOMETHING
+        return null;
+#else
+        return value =>
+        {
+            return value * 2;
+        };
+#endif
+    }
 }
 ";
 

@@ -133,9 +133,11 @@
                 }
 
                 if (nextToken.IsKind(SyntaxKind.SemicolonToken) &&
-                    (this.IsPartOf<VariableDeclaratorSyntax>(token) || this.IsPartOf<AssignmentExpressionSyntax>(token)))
+                    (this.IsPartOf<VariableDeclaratorSyntax>(token) || 
+                     this.IsPartOf<AssignmentExpressionSyntax>(token) ||
+                     this.IsPartOf<ReturnStatementSyntax>(token)))
                 {
-                    // the close brace is part of a variable initialization statement.
+                    // the close brace is part of a variable initialization statement or a return statement
                     return;
                 }
 
