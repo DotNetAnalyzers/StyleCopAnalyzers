@@ -104,6 +104,7 @@
                 {
                     return declarationParent;
                 }
+
                 parent = parent.Parent;
             }
 

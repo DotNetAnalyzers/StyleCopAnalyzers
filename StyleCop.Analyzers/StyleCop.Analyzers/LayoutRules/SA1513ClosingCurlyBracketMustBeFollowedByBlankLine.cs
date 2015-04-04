@@ -210,6 +210,7 @@
                         // found matching brace
                         return currentToken.GetLocation().GetLineSpan().EndLinePosition.Line == token.GetLocation().GetLineSpan().StartLinePosition.Line;
                     }
+
                     break;
 
                 default:

@@ -105,6 +105,7 @@
                     {
                         this.HandleDisallowedSpaceToken(context, token);
                     }
+
                     break;
 
                 case SyntaxKind.DefaultKeyword:

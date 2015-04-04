@@ -210,6 +210,7 @@
                     i++;
                     continue;
                 }
+
                 if (members[i].IsKind(SyntaxKind.IncompleteMember))
                 {
                     continue;

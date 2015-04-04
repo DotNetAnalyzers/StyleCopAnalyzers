@@ -64,6 +64,7 @@
                         return false;
                     }
                 }
+
                 return true;
             }
 
@@ -91,6 +92,7 @@
                         return false;
                     }
                 }
+
                 return true;
             }
 
@@ -208,6 +210,7 @@
             {
                 return commentTrivia;
             }
+
             return leadingTrivia.FirstOrDefault(x => x.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia));
         }
     }

@@ -189,6 +189,7 @@ namespace TestHelper
                 solution = solution.AddDocument(documentId, newFileName, SourceText.From(source));
                 count++;
             }
+
             return solution.GetProject(projectId);
         }
         #endregion
