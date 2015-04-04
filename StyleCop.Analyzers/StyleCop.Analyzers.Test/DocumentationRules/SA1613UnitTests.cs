@@ -10,11 +10,11 @@
 
 
     /// <summary>
-    /// This class contains unit tests for <see cref="SA1617VoidReturnValueMustNotBeDocumented"/>.
+    /// This class contains unit tests for <see cref="SA1613ElementParameterDocumentationMustDeclareParameterName"/>.
     /// </summary>
     public class SA1613UnitTests : CodeFixVerifier
     {
-        public string DiagnosticId { get; } = SA1617VoidReturnValueMustNotBeDocumented.DiagnosticId;
+        public string DiagnosticId { get; } = SA1613ElementParameterDocumentationMustDeclareParameterName.DiagnosticId;
 
         public static IEnumerable<object[]> Declarations
         {
