@@ -108,6 +108,7 @@
     <Compile Include="DocumentationRules\SA1651DoNotUsePlaceholderElements.cs" />
     <Compile Include="DocumentationRules\SA1652EnableXmlDocumentationOutput.cs" />
     <Compile Include="DocumentationRules\SA1653PlaceTextInParagraphs.cs" />
+    <Compile Include="DocumentationRules\SA1654UseChildBlocksConsistently.cs" />
     <Compile Include="DocumentationRules\StandardTextDiagnosticBase.cs" />
     <Compile Include="GeneratedCodeAnalysisExtensions.cs" />
     <Compile Include="Helpers\AccessLevel.cs" />

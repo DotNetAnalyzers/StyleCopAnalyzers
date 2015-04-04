@@ -20,54 +20,57 @@
             context.RegisterSyntaxNodeAction(this.HandleXmlElementSyntax, SyntaxKind.XmlElement);
         }
 
-        private void HandleXmlElementSyntax(SyntaxNodeAnalysisContext context)
+        /// <summary>
+        /// Determines if a particular node is a block-level documentation element.
+        /// </summary>
+        /// <param name="node">The syntax node to examine.</param>
+        /// <param name="includePotentialElements">
+        /// <para><see langword="true"/> to only check for elements that are always block level elements.</para>
+        /// <para>-or-</para>
+        /// <para><see langword="false"/> to check for elements that are allowed to be block-level or inline elements,
+        /// including but not limited to XML comments represented by a <see cref="XmlCommentSyntax"/> node.</para>
+        /// </param>
+        /// <returns>
+        /// <see langword="true"/> if the specified node is a block-level element with respect to the
+        /// <paramref name="includePotentialElements"/> option; otherwise, <see langword="false"/>.
+        /// </returns>
+        protected static bool IsBlockLevelNode(XmlNodeSyntax node, bool includePotentialElements)
         {
-            XmlElementSyntax syntax = (XmlElementSyntax)context.Node;
-            if (!this.ElementRequiresBlockContent(syntax))
+            XmlElementSyntax elementSyntax = node as XmlElementSyntax;
+            if (elementSyntax != null)
             {
-                return;
+                return IsBlockLevelElement(elementSyntax, includePotentialElements);
             }
 
-            int nonBlockStartIndex = -1;
-            int nonBlockEndIndex = -1;
-            for (int i = 0; i < syntax.Content.Count; i++)
+            XmlEmptyElementSyntax emptyElementSyntax = node as XmlEmptyElementSyntax;
+            if (emptyElementSyntax != null)
             {
-                if (IsIgnoredElement(syntax.Content[i]))
-                {
-                    continue;
-                }
-
-                if (IsBlockLevelNode(syntax.Content[i]))
-                {
-                    this.ReportDiagnosticIfRequired(context, syntax.Content, nonBlockStartIndex, nonBlockEndIndex);
-                    nonBlockStartIndex = -1;
-                    continue;
-                }
-                else
-                {
-                    nonBlockEndIndex = i;
-                    if (nonBlockStartIndex < 0)
-                    {
-                        nonBlockStartIndex = i;
-                    }
-                }
+                return IsBlockLevelElement(emptyElementSyntax, includePotentialElements);
             }
 
-            this.ReportDiagnosticIfRequired(context, syntax.Content, nonBlockStartIndex, nonBlockEndIndex);
+            if (!includePotentialElements)
+            {
+                // Caller is only interested in elements which are *certainly* block-level
+                return false;
+            }
+
+            // ignored elements may appear at block level
+            return IsIgnoredElement(node);
         }
 
-        private void ReportDiagnosticIfRequired(SyntaxNodeAnalysisContext context, SyntaxList<XmlNodeSyntax> content, int nonBlockStartIndex, int nonBlockEndIndex)
-        {
-            if (nonBlockStartIndex < 0 || nonBlockEndIndex < nonBlockStartIndex)
-            {
-                return;
-            }
-
-            XmlNodeSyntax startNode = content[nonBlockStartIndex];
-            XmlNodeSyntax stopNode = content[nonBlockEndIndex];
-            Location location = Location.Create(startNode.GetLocation().SourceTree, TextSpan.FromBounds(GetEffectiveStart(startNode), GetEffectiveEnd(stopNode)));
-            context.ReportDiagnostic(Diagnostic.Create(this.SupportedDiagnostics[0], location));
-        }
+        /// <summary>
+        /// Determines if a particular <see cref="XmlElementSyntax"/> syntax node requires its content to be placed in
+        /// block-level elements according to the rules of the current diagnostic.
+        /// </summary>
+        /// <param name="element">The element.</param>
+        /// <param name="semanticModel">The <see cref="SemanticModel"/> for the current analysis context.</param>
+        /// <returns>
+        /// <para><see langword="true"/> if the element requires content to be placed in block-level elements.</para>
+        /// <para>-or-</para>
+        /// <para><see langword="false"/> if the element allows inline content which is not placed in a block-level
+        /// element.</para>
+        /// </returns>
+        protected abstract bool ElementRequiresBlockContent(XmlElementSyntax element, SemanticModel semanticModel);
 
         private static int GetEffectiveStart(XmlNodeSyntax node)
         {
@@ -123,19 +126,6 @@
             return node.Span.End;
         }
 
-        /// <summary>
-        /// Determines if a particular <see cref="XmlElementSyntax"/> syntax node requires its content to be placed in
-        /// block-level elements according to the rules of the current diagnostic.
-        /// </summary>
-        /// <param name="element">The element.</param>
-        /// <returns>
-        /// <para><see langword="true"/> if the element requires content to be placed in block-level elements.</para>
-        /// <para>-or-</para>
-        /// <para><see langword="false"/> if the element allows inline content which is not placed in a block-level
-        /// element.</para>
-        /// </returns>
-        protected abstract bool ElementRequiresBlockContent(XmlElementSyntax element);
-
         private static bool IsIgnoredElement(XmlNodeSyntax node)
         {
             if (node == null)
@@ -146,35 +136,17 @@
             return XmlCommentHelper.IsConsideredEmpty(node);
         }
 
-        private static bool IsBlockLevelNode(XmlNodeSyntax node)
+        private static bool IsBlockLevelElement(XmlElementSyntax element, bool includePotentialElements)
         {
-            XmlElementSyntax elementSyntax = node as XmlElementSyntax;
-            if (elementSyntax != null)
-            {
-                return IsBlockLevelElement(elementSyntax);
-            }
-
-            XmlEmptyElementSyntax emptyElementSyntax = node as XmlEmptyElementSyntax;
-            if (emptyElementSyntax != null)
-            {
-                return IsBlockLevelElement(emptyElementSyntax);
-            }
-
-            // ignored elements may appear at block level
-            return IsIgnoredElement(node);
+            return IsBlockLevelName(element.StartTag?.Name, includePotentialElements);
         }
 
-        private static bool IsBlockLevelElement(XmlElementSyntax element)
+        private static bool IsBlockLevelElement(XmlEmptyElementSyntax element, bool includePotentialElements)
         {
-            return IsBlockLevelName(element.StartTag?.Name);
+            return IsBlockLevelName(element.Name, includePotentialElements);
         }
 
-        private static bool IsBlockLevelElement(XmlEmptyElementSyntax element)
-        {
-            return IsBlockLevelName(element.Name);
-        }
-
-        private static bool IsBlockLevelName(XmlNameSyntax name)
+        private static bool IsBlockLevelName(XmlNameSyntax name, bool includePotentialElements)
         {
             if (name == null || name.LocalName.IsMissingOrDefault())
             {
@@ -211,6 +183,55 @@
             default:
                 return false;
             }
+        }
+
+        private void HandleXmlElementSyntax(SyntaxNodeAnalysisContext context)
+        {
+            XmlElementSyntax syntax = (XmlElementSyntax)context.Node;
+            if (!this.ElementRequiresBlockContent(syntax, context.SemanticModel))
+            {
+                return;
+            }
+
+            int nonBlockStartIndex = -1;
+            int nonBlockEndIndex = -1;
+            for (int i = 0; i < syntax.Content.Count; i++)
+            {
+                if (IsIgnoredElement(syntax.Content[i]))
+                {
+                    continue;
+                }
+
+                if (IsBlockLevelNode(syntax.Content[i], true))
+                {
+                    this.ReportDiagnosticIfRequired(context, syntax.Content, nonBlockStartIndex, nonBlockEndIndex);
+                    nonBlockStartIndex = -1;
+                    continue;
+                }
+                else
+                {
+                    nonBlockEndIndex = i;
+                    if (nonBlockStartIndex < 0)
+                    {
+                        nonBlockStartIndex = i;
+                    }
+                }
+            }
+
+            this.ReportDiagnosticIfRequired(context, syntax.Content, nonBlockStartIndex, nonBlockEndIndex);
+        }
+
+        private void ReportDiagnosticIfRequired(SyntaxNodeAnalysisContext context, SyntaxList<XmlNodeSyntax> content, int nonBlockStartIndex, int nonBlockEndIndex)
+        {
+            if (nonBlockStartIndex < 0 || nonBlockEndIndex < nonBlockStartIndex)
+            {
+                return;
+            }
+
+            XmlNodeSyntax startNode = content[nonBlockStartIndex];
+            XmlNodeSyntax stopNode = content[nonBlockEndIndex];
+            Location location = Location.Create(startNode.GetLocation().SourceTree, TextSpan.FromBounds(GetEffectiveStart(startNode), GetEffectiveEnd(stopNode)));
+            context.ReportDiagnostic(Diagnostic.Create(this.SupportedDiagnostics[0], location));
         }
     }
 }
