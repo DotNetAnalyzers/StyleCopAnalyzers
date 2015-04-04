@@ -9,7 +9,7 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Provides helper methods to work with Xml comments
+    /// Provides helper methods to work with XML comments
     /// </summary>
     internal static class XmlCommentHelper
     {
@@ -30,10 +30,10 @@
         internal const string PlaceholderTag = "placeholder";
 
         /// <summary>
-        /// This helper is used by documentation diagnostics to check if a xml comment should be considered empty.
+        /// This helper is used by documentation diagnostics to check if a XML comment should be considered empty.
         /// A comment is empty if 
         /// - it is null
-        /// - it does not have any text in any xml element and it does not have an empty xml element in it.
+        /// - it does not have any text in any XML element and it does not have an empty XML element in it.
         /// </summary>
         /// <param name="xmlComment">The xmlComment that should be checked</param>
         /// <returns>true, if the comment should be considered empty, false otherwise.</returns>
@@ -56,8 +56,8 @@
         }
 
         /// <summary>
-        /// This helper is used by documentation diagnostics to check if a xml comment should be considered empty.
-        /// A comment is empty if it does not have any text in any xml element and it does not have an empty xml element in it.
+        /// This helper is used by documentation diagnostics to check if a XML comment should be considered empty.
+        /// A comment is empty if it does not have any text in any XML element and it does not have an empty XML element in it.
         /// </summary>
         /// <param name="xmlSyntax">The xmlSyntax that should be checked</param>
         /// <returns>true, if the comment should be considered empty, false otherwise.</returns>
@@ -125,7 +125,7 @@
         /// Checks if a SyntaxTrivia contains a DocumentationCommentTriviaSyntax and returns true if it is considered empty
         /// </summary>
         /// <param name="commentTrivia">A SyntaxTrivia containing possible documentation</param>
-        /// <returns>true if commentTrivia does not have documentation in it orthe documentation in SyntaxTriviais considered empty. False otherwise.</returns>
+        /// <returns>true if commentTrivia does not have documentation in it or the documentation in SyntaxTriviais considered empty. False otherwise.</returns>
         internal static bool IsMissingOrEmpty(SyntaxTrivia commentTrivia)
         {
             if (!commentTrivia.HasStructure)
