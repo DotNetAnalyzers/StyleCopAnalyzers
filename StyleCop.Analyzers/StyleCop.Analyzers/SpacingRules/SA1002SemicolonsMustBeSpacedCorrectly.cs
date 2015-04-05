@@ -28,7 +28,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1002.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -90,6 +90,7 @@
                 SyntaxToken nextToken = token.GetNextToken();
                 if (nextToken.IsKind(SyntaxKind.CloseParenToken))
                 {
+                    // Special handling for the following case:
                     // for (; ;)
                     missingFollowingSpace = false;
                 }
@@ -108,6 +109,7 @@
 
                 if (precedingToken.IsKind(SyntaxKind.SemicolonToken))
                 {
+                    // Special handling for the following case:
                     // for (; ;)
                     ignorePrecedingSpace = true;
                 }
