@@ -90,6 +90,7 @@
                 SyntaxToken nextToken = token.GetNextToken();
                 if (nextToken.IsKind(SyntaxKind.CloseParenToken))
                 {
+                    // Special handling for the following case:
                     // for (; ;)
                     missingFollowingSpace = false;
                 }
@@ -108,6 +109,7 @@
 
                 if (precedingToken.IsKind(SyntaxKind.SemicolonToken))
                 {
+                    // Special handling for the following case:
                     // for (; ;)
                     ignorePrecedingSpace = true;
                 }
