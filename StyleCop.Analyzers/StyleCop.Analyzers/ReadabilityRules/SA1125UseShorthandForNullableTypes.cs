@@ -16,6 +16,7 @@
     /// the shorthand C# style.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    [NoCodeFix("Provided by Visual Studio")]
     public class SA1125UseShorthandForNullableTypes : DiagnosticAnalyzer
     {
         /// <summary>
