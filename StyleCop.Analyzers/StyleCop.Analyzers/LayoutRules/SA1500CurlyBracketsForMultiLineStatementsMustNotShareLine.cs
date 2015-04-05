@@ -82,10 +82,10 @@
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterSyntaxNodeAction(this.HandleNamespaceDeclarationSyntax, SyntaxKind.NamespaceDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleClassDeclarationSyntax, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleEnumDeclarationSyntax, SyntaxKind.EnumDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleInterfaceDeclarationSyntax, SyntaxKind.InterfaceDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleStructDeclarationSyntax, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleBaseTypeDeclarationSyntax, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleBaseTypeDeclarationSyntax, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleBaseTypeDeclarationSyntax, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleBaseTypeDeclarationSyntax, SyntaxKind.StructDeclaration);
             context.RegisterSyntaxNodeAction(this.HandleAccessorListSyntax, SyntaxKind.AccessorList);
             context.RegisterSyntaxNodeAction(this.HandleBlockSyntax, SyntaxKind.Block);
             context.RegisterSyntaxNodeAction(this.HandleSwitchStatementSyntax, SyntaxKind.SwitchStatement);
@@ -99,27 +99,9 @@
             this.CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
         }
 
-        private void HandleClassDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private void HandleBaseTypeDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            var syntax = (ClassDeclarationSyntax)context.Node;
-            this.CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
-        }
-
-        private void HandleEnumDeclarationSyntax(SyntaxNodeAnalysisContext context)
-        {
-            var syntax = (EnumDeclarationSyntax)context.Node;
-            this.CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
-        }
-
-        private void HandleInterfaceDeclarationSyntax(SyntaxNodeAnalysisContext context)
-        {
-            var syntax = (InterfaceDeclarationSyntax)context.Node;
-            this.CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
-        }
-
-        private void HandleStructDeclarationSyntax(SyntaxNodeAnalysisContext context)
-        {
-            var syntax = (StructDeclarationSyntax)context.Node;
+            var syntax = (BaseTypeDeclarationSyntax)context.Node;
             this.CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
         }
 
