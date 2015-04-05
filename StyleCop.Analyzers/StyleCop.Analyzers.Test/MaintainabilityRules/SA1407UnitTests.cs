@@ -10,8 +10,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     public class SA1407UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1407ArithmeticExpressionsMustDeclarePrecedence.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {

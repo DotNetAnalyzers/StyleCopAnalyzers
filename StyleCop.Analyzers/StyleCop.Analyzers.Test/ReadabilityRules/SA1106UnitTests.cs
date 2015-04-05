@@ -9,8 +9,6 @@
 
     public class SA1106UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1106CodeMustNotContainEmptyStatements.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {

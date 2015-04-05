@@ -14,16 +14,6 @@
             get;
         }
 
-        protected abstract string SignName
-        {
-            get;
-        }
-
-        protected abstract string DiagnosticId
-        {
-            get;
-        }
-
         [Fact]
         public async Task TestEmptySource()
         {

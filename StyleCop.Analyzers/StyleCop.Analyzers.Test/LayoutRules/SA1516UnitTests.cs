@@ -10,8 +10,6 @@
 
     public class SA1516UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1516ElementsMustBeSeparatedByBlankLine.DiagnosticId;
-
         private const string CorrectCode = @"extern alias corlib;
 
 using System;

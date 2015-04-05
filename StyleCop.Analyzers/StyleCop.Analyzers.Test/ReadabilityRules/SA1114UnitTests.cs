@@ -9,8 +9,6 @@
 
     public class SA1114UnitTests : CodeFixVerifier
     {
-        public string DiagnosticId { get; } = SA1114ParameterListMustFollowDeclaration.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {

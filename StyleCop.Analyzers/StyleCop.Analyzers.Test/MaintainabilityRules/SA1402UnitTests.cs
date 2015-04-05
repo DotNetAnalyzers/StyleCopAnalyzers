@@ -9,20 +9,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     public class SA1402UnitTests : FileMayOnlyContainTestBase
     {
-
         public override string Keyword
         {
             get
             {
                 return "class";
-            }
-        }
-
-        public override string DiagnosticId
-        {
-            get
-            {
-                return SA1402FileMayOnlyContainASingleClass.DiagnosticId;
             }
         }
 

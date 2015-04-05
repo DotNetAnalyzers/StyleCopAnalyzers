@@ -9,9 +9,6 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     public class SA1112UnitTests : CodeFixVerifier
     {
-
-        public string DiagnosticId { get; } = SA1112ClosingParenthesisMustBeOnLineOfOpeningParenthesis.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {

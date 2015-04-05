@@ -8,14 +8,6 @@
 
     public class SA1406UnitTests : DebugMessagesUnitTestsBase
     {
-        protected override string DiagnosticId
-        {
-            get
-            {
-                return SA1406DebugFailMustProvideMessageText.DiagnosticId;
-            }
-        }
-
         protected override string MethodName
         {
             get

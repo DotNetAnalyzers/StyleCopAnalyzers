@@ -14,8 +14,6 @@
     /// </summary>
     public class SA1122UnitTests : CodeFixVerifier
     {
-        public string DiagnosticId { get; } = SA1122UseStringEmptyForEmptyStrings.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {

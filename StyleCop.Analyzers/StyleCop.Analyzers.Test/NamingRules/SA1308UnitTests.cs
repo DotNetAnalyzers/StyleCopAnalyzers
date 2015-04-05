@@ -10,8 +10,6 @@
 
     public class SA1308UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1308VariableNamesMustNotBePrefixed.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {

@@ -9,8 +9,6 @@
 
     public class SA1300UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1300ElementMustBeginWithUpperCaseLetter.DiagnosticId;
-
         [Fact]
         public async Task TestUpperCaseNamespace()
         {

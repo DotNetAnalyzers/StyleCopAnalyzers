@@ -9,8 +9,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     public class SA1401UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1401FieldsMustBePrivate.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {

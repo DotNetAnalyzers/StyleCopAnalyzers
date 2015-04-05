@@ -10,8 +10,6 @@
 
     public class SA1307UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1307AccessibleFieldsMustBeginWithUpperCaseLetter.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {

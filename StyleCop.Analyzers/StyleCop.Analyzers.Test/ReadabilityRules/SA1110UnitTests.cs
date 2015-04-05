@@ -9,8 +9,6 @@
 
     public class SA1110UnitTests : CodeFixVerifier
     {
-        public string DiagnosticId { get; } = SA1110OpeningParenthesisMustBeOnDeclarationLine.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {

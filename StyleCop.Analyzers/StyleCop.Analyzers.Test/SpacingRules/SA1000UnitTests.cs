@@ -14,8 +14,6 @@
     /// </summary>
     public class SA1000UnitTests : CodeFixVerifier
     {
-        public string DiagnosticId { get; } = SA1000KeywordsMustBeSpacedCorrectly.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {

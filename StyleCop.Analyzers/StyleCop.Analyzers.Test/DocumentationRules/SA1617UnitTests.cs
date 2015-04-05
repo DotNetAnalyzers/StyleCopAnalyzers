@@ -12,8 +12,6 @@
     /// </summary>
     public class SA1617UnitTests : CodeFixVerifier
     {
-        public string DiagnosticId { get; } = SA1617VoidReturnValueMustNotBeDocumented.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {

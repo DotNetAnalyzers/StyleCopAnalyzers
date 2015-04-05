@@ -10,8 +10,6 @@
 
     public class SA1100UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists.DiagnosticId;
-
         [Fact]
         public async Task TestChildClassUsesBaseButNoOverride()
         {

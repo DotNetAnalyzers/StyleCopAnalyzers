@@ -9,8 +9,6 @@
 
     public class SA1102UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1102QueryClauseMustFollowPreviousClause.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {

@@ -9,8 +9,6 @@
 
     public class SA1111UnitTests : CodeFixVerifier
     {
-        public string DiagnosticId { get; } = SA1111ClosingParenthesisMustBeOnLineOfLastParameter.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {

@@ -10,8 +10,6 @@
 
     public class SA1400UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1400AccessModifierMustBeDeclared.DiagnosticId;
-
         private const string Tab = "\t";
 
         [Fact]

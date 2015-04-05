@@ -9,8 +9,6 @@
 
     public class SA1113UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1113CommaMustBeOnSameLineAsPreviousParameter.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {
