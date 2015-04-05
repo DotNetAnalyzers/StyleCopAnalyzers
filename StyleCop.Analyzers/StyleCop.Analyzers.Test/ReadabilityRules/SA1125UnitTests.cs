@@ -19,10 +19,10 @@
         /// UseShorthandForNullableTypes incorrectly reported in XML comment</see>
         /// </summary>
         [Theory]
-        [InlineData("Nullable{T}", "Nullable{T}")]
-        [InlineData("System.Nullable{T}", "System.Nullable{T}")]
-        [InlineData("global::System.Nullable{T}", "global::System.Nullable{T}")]
-        public async Task TestSeeAlsoNullable(string longForm, string shortForm)
+        [InlineData("Nullable{T}")]
+        [InlineData("System.Nullable{T}")]
+        [InlineData("global::System.Nullable{T}")]
+        public async Task TestSeeAlsoNullable(string form)
         {
             string template = @"
 namespace System
@@ -33,7 +33,7 @@ namespace System
     }}
 }}
 ";
-            string testCode = string.Format(template, longForm);
+            string testCode = string.Format(template, form);
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
@@ -43,10 +43,10 @@ namespace System
         /// UseShorthandForNullableTypes incorrectly reported for member in XML comment</see>
         /// </summary>
         [Theory]
-        [InlineData("Nullable{T}", "Nullable{T}")]
-        [InlineData("System.Nullable{T}", "System.Nullable{T}")]
-        [InlineData("global::System.Nullable{T}", "global::System.Nullable{T}")]
-        public async Task TestSeeAlsoNullableValue(string longForm, string shortForm)
+        [InlineData("Nullable{T}")]
+        [InlineData("System.Nullable{T}")]
+        [InlineData("global::System.Nullable{T}")]
+        public async Task TestSeeAlsoNullableValue(string form)
         {
             string template = @"
 namespace System
@@ -57,7 +57,7 @@ namespace System
     }}
 }}
 ";
-            string testCode = string.Format(template, longForm);
+            string testCode = string.Format(template, form);
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
@@ -212,10 +212,10 @@ namespace System
         /// UseShorthandForNullableTypes incorrectly reported in <c>nameof</c> expression</see>
         /// </summary>
         [Theory]
-        [InlineData("Nullable<int>", "Nullable<int>")]
-        [InlineData("System.Nullable<int>", "System.Nullable<int>")]
-        [InlineData("global::System.Nullable<int>", "global::System.Nullable<int>")]
-        public async Task TestNameOfNullable(string longForm, string shortForm)
+        [InlineData("Nullable<int>")]
+        [InlineData("System.Nullable<int>")]
+        [InlineData("global::System.Nullable<int>")]
+        public async Task TestNameOfNullable(string form)
         {
             string template = @"
 namespace System
@@ -227,7 +227,7 @@ namespace System
     }}
 }}
 ";
-            string testCode = string.Format(template, longForm);
+            string testCode = string.Format(template, form);
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
@@ -241,10 +241,10 @@ namespace System
         /// comment.</para>
         /// </remarks>
         [Theory]
-        [InlineData("Nullable<int>", "Nullable<int>")]
-        [InlineData("System.Nullable<int>", "System.Nullable<int>")]
-        [InlineData("global::System.Nullable<int>", "global::System.Nullable<int>")]
-        public async Task TestNameOfNullableValue(string longForm, string shortForm)
+        [InlineData("Nullable<int>")]
+        [InlineData("System.Nullable<int>")]
+        [InlineData("global::System.Nullable<int>")]
+        public async Task TestNameOfNullableValue(string form)
         {
             string template = @"
 namespace System
@@ -256,7 +256,7 @@ namespace System
     }}
 }}
 ";
-            string testCode = string.Format(template, longForm);
+            string testCode = string.Format(template, form);
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
@@ -266,10 +266,10 @@ namespace System
         /// UseShorthandForNullableTypes incorrectly reported for static access through Nullable&lt;int&gt;</see>
         /// </summary>
         [Theory]
-        [InlineData("Nullable<int>", "Nullable<int>")]
-        [InlineData("System.Nullable<int>", "System.Nullable<int>")]
-        [InlineData("global::System.Nullable<int>", "global::System.Nullable<int>")]
-        public async Task TestAccessObjectEqualThroughNullable(string longForm, string shortForm)
+        [InlineData("Nullable<int>")]
+        [InlineData("System.Nullable<int>")]
+        [InlineData("global::System.Nullable<int>")]
+        public async Task TestAccessObjectEqualThroughNullable(string form)
         {
             string template = @"
 namespace System
@@ -281,7 +281,7 @@ namespace System
     }}
 }}
 ";
-            string testCode = string.Format(template, longForm);
+            string testCode = string.Format(template, form);
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
