@@ -30,7 +30,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1125.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -63,15 +63,20 @@
                 return;
             }
 
-            // The shorthand syntax is not available for the unbound generic form, e.g. typeof(Nullable<>)
-            if (genericNameSyntax?.TypeArgumentList?.Arguments.Count == 0)
-            {
-                return;
-            }
-
-            // This covers the specific form in an XML comment which cannot be simplified
+            // This covers the specific forms in an XML comment which cannot be simplified
             if (genericNameSyntax.Parent is NameMemberCrefSyntax)
             {
+                // cref="Nullable{T}"
+                return;
+            }
+            else if (genericNameSyntax.Parent is QualifiedCrefSyntax)
+            {
+                // cref="Nullable{T}.Value"
+                return;
+            }
+            else if (genericNameSyntax.Parent is QualifiedNameSyntax && genericNameSyntax.Parent.Parent is QualifiedCrefSyntax)
+            {
+                // cref="System.Nullable{T}.Value"
                 return;
             }
 
@@ -81,10 +86,29 @@
                 return;
             }
 
+            // This covers special cases of static and instance member access through the type name. It also covers most
+            // special cases for the `nameof` expression.
+            if (genericNameSyntax.Parent is MemberAccessExpressionSyntax)
+            {
+                return;
+            }
+
+            // This covers the special case of `nameof(Nullable<int>)`
+            if (genericNameSyntax.Parent is ArgumentSyntax)
+            {
+                return;
+            }
+
             SemanticModel semanticModel = context.SemanticModel;
             INamedTypeSymbol symbol = semanticModel.GetSymbolInfo(genericNameSyntax, context.CancellationToken).Symbol as INamedTypeSymbol;
             if (symbol?.OriginalDefinition?.SpecialType != SpecialType.System_Nullable_T)
             {
+                return;
+            }
+
+            if (symbol.IsUnboundGenericType)
+            {
+                // There is never a shorthand syntax for the open generic Nullable<>
                 return;
             }
 
