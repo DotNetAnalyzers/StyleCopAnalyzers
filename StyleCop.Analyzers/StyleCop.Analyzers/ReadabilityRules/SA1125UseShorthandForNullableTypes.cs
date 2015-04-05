@@ -92,6 +92,12 @@
                 return;
             }
 
+            // This covers the special case of `nameof(Nullable<int>)`
+            if (genericNameSyntax.Parent is ArgumentSyntax)
+            {
+                return;
+            }
+
             SemanticModel semanticModel = context.SemanticModel;
             INamedTypeSymbol symbol = semanticModel.GetSymbolInfo(genericNameSyntax, context.CancellationToken).Symbol as INamedTypeSymbol;
             if (symbol?.OriginalDefinition?.SpecialType != SpecialType.System_Nullable_T)
