@@ -86,12 +86,8 @@ namespace System
             string testCode = string.Format(template, longForm);
             string fixedCode = string.Format(template, shortForm);
 
-            if (testCode != fixedCode)
-            {
-                DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 55);
-                await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-            }
-
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 55);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
@@ -161,12 +157,8 @@ namespace System
             string testCode = string.Format(template, longForm);
             string fixedCode = string.Format(template, shortForm);
 
-            if (testCode != fixedCode)
-            {
-                DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 9);
-                await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-            }
-
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 9);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
@@ -197,12 +189,8 @@ namespace System
             string testCode = string.Format(template, longForm);
             string fixedCode = string.Format(template, shortForm);
 
-            if (testCode != fixedCode)
-            {
-                DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(9, 41);
-                await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-            }
-
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(9, 41);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
@@ -310,12 +298,8 @@ namespace System
             string testCode = string.Format(template, longForm);
             string fixedCode = string.Format(template, shortForm);
 
-            if (testCode != fixedCode)
-            {
-                DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 43);
-                await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-            }
-
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 43);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
