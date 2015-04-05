@@ -85,6 +85,13 @@
                 return;
             }
 
+            // This covers special cases of static and instance member access through the type name. It also covers most
+            // special cases for the `nameof` expression.
+            if (genericNameSyntax.Parent is MemberAccessExpressionSyntax)
+            {
+                return;
+            }
+
             SemanticModel semanticModel = context.SemanticModel;
             INamedTypeSymbol symbol = semanticModel.GetSymbolInfo(genericNameSyntax, context.CancellationToken).Symbol as INamedTypeSymbol;
             if (symbol?.OriginalDefinition?.SpecialType != SpecialType.System_Nullable_T)
