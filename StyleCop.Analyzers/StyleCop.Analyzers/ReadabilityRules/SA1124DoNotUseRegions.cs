@@ -2,6 +2,8 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -21,7 +23,7 @@
         /// </summary>
         public const string DiagnosticId = "SA1124";
         private const string Title = "Do not use regions";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "Do not use regions";
         private const string Category = "StyleCop.CSharp.ReadabilityRules";
         private const string Description = "The C# code contains a region.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1124.html";
@@ -44,7 +46,19 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(this.HandleRegionDirectiveTrivia, SyntaxKind.RegionDirectiveTrivia);
+        }
+
+        private void HandleRegionDirectiveTrivia(SyntaxNodeAnalysisContext context)
+        {
+            RegionDirectiveTriviaSyntax regionSyntax = context.Node as RegionDirectiveTriviaSyntax;
+
+            // regions that are completely inside a body are handled by SA1123.
+            if (regionSyntax != null && !SA1123DoNotPlaceRegionsWithinElements.IsCompletelyContainedInBody(regionSyntax))
+            {
+                // Regions must not be used.
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, regionSyntax.GetLocation()));
+            }
         }
     }
 }
