@@ -62,12 +62,6 @@
                 return;
             }
 
-            // The shorthand syntax is not available for the unbound generic form, e.g. typeof(Nullable<>)
-            if (genericNameSyntax?.TypeArgumentList?.Arguments.Count == 0)
-            {
-                return;
-            }
-
             // This covers the specific form in an XML comment which cannot be simplified
             if (genericNameSyntax.Parent is NameMemberCrefSyntax)
             {
@@ -84,6 +78,12 @@
             INamedTypeSymbol symbol = semanticModel.GetSymbolInfo(genericNameSyntax, context.CancellationToken).Symbol as INamedTypeSymbol;
             if (symbol?.OriginalDefinition?.SpecialType != SpecialType.System_Nullable_T)
             {
+                return;
+            }
+
+            if (symbol.IsUnboundGenericType)
+            {
+                // There is never a shorthand syntax for the open generic Nullable<>
                 return;
             }
 
