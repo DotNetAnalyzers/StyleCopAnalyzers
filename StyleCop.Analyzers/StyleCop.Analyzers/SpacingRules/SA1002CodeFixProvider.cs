@@ -80,7 +80,7 @@
                 SyntaxToken precedingToken = token.GetPreviousToken();
                 if (precedingToken.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
                 {
-                    SyntaxToken corrected = precedingToken.WithoutLeadingWhitespace().WithoutFormatting();
+                    SyntaxToken corrected = precedingToken.WithoutTrailingWhitespace();
                     replacements[precedingToken] = corrected;
                 }
             }
