@@ -1,0 +1,150 @@
+﻿namespace StyleCop.Analyzers.Test.DocumentationRules
+{
+    using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using Analyzers.DocumentationRules;
+    using TestHelper;
+    using Xunit;
+
+    /// <summary>
+    /// This class contains unit tests for <see cref="SA1614ElementParameterDocumentationMustHaveText"/>-
+    /// </summary>
+    public class SA1614UnitTests : DiagnosticVerifier
+    {
+        public static IEnumerable<object[]> Declarations
+        {
+            get
+            {
+                yield return new[] { "    public ClassName Method(string foo, string bar) { return null; }" };
+                yield return new[] { "    public ClassName this[string foo, string bar] { get { return null; } set { } }" };
+            }
+        }
+
+        [Fact]
+        public async Task TestEmptySource()
+        {
+            var testCode = string.Empty;
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [Theory]
+        [MemberData(nameof(Declarations))]
+        public async Task TestMemberNoDocumentation(string declaration)
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+$$
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [Theory]
+        [MemberData(nameof(Declarations))]
+        public async Task TestMemberWithoutParams(string declaration)
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+$$
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [Theory]
+        [MemberData(nameof(Declarations))]
+        public async Task TestMemberWithValidParams(string declaration)
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    ///<param name=""foo"">Test</param>
+    ///<param name=""bar"">Test</param>
+$$
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [Theory]
+        [MemberData(nameof(Declarations))]
+        public async Task TestMemberWithEmptyParams(string declaration)
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    ///<param name=""foo""></param>
+    ///<param name=""bar"">   
+
+    ///</param>
+$$
+}";
+
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(10, 8),
+                this.CSharpDiagnostic().WithLocation(11, 8)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None);
+        }
+
+        [Theory]
+        [MemberData(nameof(Declarations))]
+        public async Task TestMemberWithEmptyParams2(string declaration)
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    ///<param name=""foo""/>
+    ///<param name=""bar"">
+    ///<para>
+    ///     
+    ///</para>
+    ///</param>
+$$
+}";
+
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(10, 8),
+                this.CSharpDiagnostic().WithLocation(11, 8)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None);
+        }
+
+        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        {
+            return new SA1614ElementParameterDocumentationMustHaveText();
+        }
+    }
+}
