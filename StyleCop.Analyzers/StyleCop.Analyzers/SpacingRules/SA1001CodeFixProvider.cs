@@ -97,8 +97,7 @@
                 SyntaxToken intermediate = token.WithoutTrailingWhitespace();
                 SyntaxToken corrected =
                     intermediate
-                    .WithTrailingTrivia(intermediate.TrailingTrivia.Insert(0, SyntaxFactory.Whitespace(" ")))
-                    .WithoutFormatting();
+                    .WithTrailingTrivia(intermediate.TrailingTrivia.Insert(0, SyntaxFactory.Space));
                 replacements[token] = corrected;
             }
 

@@ -79,7 +79,7 @@
                 default:
                     if (!precedingToken.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
                     {
-                        SyntaxToken correctedPreceding = correctedPrecedingNoSpace.WithTrailingTrivia(correctedPrecedingNoSpace.TrailingTrivia.Insert(0, SyntaxFactory.Whitespace(" ")));
+                        SyntaxToken correctedPreceding = correctedPrecedingNoSpace.WithTrailingTrivia(correctedPrecedingNoSpace.TrailingTrivia.Insert(0, SyntaxFactory.ElasticSpace));
                         replacements[precedingToken] = correctedPreceding;
                     }
 
@@ -95,8 +95,7 @@
                     SyntaxToken correctedOperatorNoSpace = token.WithoutTrailingWhitespace();
                     SyntaxToken correctedOperator =
                         correctedOperatorNoSpace
-                        .WithTrailingTrivia(correctedOperatorNoSpace.TrailingTrivia.Insert(0, SyntaxFactory.Whitespace(" ")))
-                        .WithoutFormatting();
+                        .WithTrailingTrivia(correctedOperatorNoSpace.TrailingTrivia.Insert(0, SyntaxFactory.Space));
                     replacements[token] = correctedOperator;
                 }
             }
