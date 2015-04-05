@@ -151,7 +151,7 @@
             {
                 var separator = list.GetSeparator(i);
                 // Make sure the parameter list looks nice
-                list = list.ReplaceSeparator(separator, separator.WithTrailingTrivia(SyntaxFactory.Whitespace(" ")));
+                list = list.ReplaceSeparator(separator, separator.WithTrailingTrivia(SyntaxFactory.Space));
             }
 
             return SyntaxFactory.TypeArgumentList(list);

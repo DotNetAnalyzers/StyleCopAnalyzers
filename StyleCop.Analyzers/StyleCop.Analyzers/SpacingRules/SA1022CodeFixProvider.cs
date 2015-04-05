@@ -83,7 +83,7 @@
                 else if (!followsSpecialCharacter && !precededBySpace)
                 {
                     SyntaxToken correctedPreceding = precedingToken.WithoutTrailingWhitespace();
-                    SyntaxTrivia whitespace = SyntaxFactory.Whitespace(" ");
+                    SyntaxTrivia whitespace = SyntaxFactory.ElasticSpace;
                     correctedPreceding =
                         correctedPreceding
                         .WithTrailingTrivia(correctedPreceding.TrailingTrivia.Add(whitespace))

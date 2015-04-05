@@ -59,8 +59,7 @@
 
         private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxToken token)
         {
-            SyntaxTrivia whitespace = SyntaxFactory.Whitespace(" ");
-            SyntaxToken corrected = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, whitespace)).WithoutFormatting();
+            SyntaxToken corrected = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, SyntaxFactory.Space));
             Document updatedDocument = document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
 
             return Task.FromResult(updatedDocument);

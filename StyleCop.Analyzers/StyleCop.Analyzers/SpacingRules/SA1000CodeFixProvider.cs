@@ -113,7 +113,7 @@
 
             if (isAddingSpace)
             {
-                SyntaxTrivia whitespace = SyntaxFactory.Whitespace(" ").WithoutFormatting();
+                SyntaxTrivia whitespace = SyntaxFactory.Space;
                 SyntaxToken corrected = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, whitespace));
                 Document updatedDocument = document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
                 return Task.FromResult(updatedDocument);
