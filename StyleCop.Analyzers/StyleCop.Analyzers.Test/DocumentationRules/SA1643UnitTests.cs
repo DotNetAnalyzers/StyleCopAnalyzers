@@ -14,8 +14,6 @@
     /// </summary>
     public class SA1643UnitTests : CodeFixVerifier
     {
-        public string DiagnosticId { get; } = SA1643DestructorSummaryDocumentationMustBeginWithStandardText.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {

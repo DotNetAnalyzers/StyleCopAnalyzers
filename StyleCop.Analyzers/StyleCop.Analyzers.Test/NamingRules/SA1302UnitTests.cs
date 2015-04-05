@@ -10,8 +10,6 @@ namespace StyleCop.Analyzers.Test.NamingRules
 {
     public class SA1302UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1302InterfaceNamesMustBeginWithI.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {

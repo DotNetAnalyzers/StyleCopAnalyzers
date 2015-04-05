@@ -13,8 +13,6 @@
     /// </summary>
     public class SA1613UnitTests : CodeFixVerifier
     {
-        public string DiagnosticId { get; } = SA1613ElementParameterDocumentationMustDeclareParameterName.DiagnosticId;
-
         public static IEnumerable<object[]> Declarations
         {
             get

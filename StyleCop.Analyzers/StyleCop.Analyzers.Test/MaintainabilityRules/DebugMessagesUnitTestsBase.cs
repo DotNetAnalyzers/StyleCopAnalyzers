@@ -11,11 +11,6 @@
 
     public abstract class DebugMessagesUnitTestsBase : CodeFixVerifier
     {
-        protected abstract string DiagnosticId
-        {
-            get;
-        }
-
         protected abstract string MethodName
         {
             get;

@@ -10,8 +10,6 @@
 
     public class SA1201UnitTests : CodeFixVerifier
     {
-        public string DiagnosticId { get; } = SA1201ElementsMustAppearInTheCorrectOrder.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {

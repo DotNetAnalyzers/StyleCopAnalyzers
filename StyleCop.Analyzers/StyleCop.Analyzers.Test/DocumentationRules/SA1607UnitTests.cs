@@ -12,8 +12,6 @@
     /// </summary>
     public class SA1607UnitTests : CodeFixVerifier
     {
-        public string DiagnosticId { get; } = SA1607PartialElementDocumentationMustHaveSummaryText.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {

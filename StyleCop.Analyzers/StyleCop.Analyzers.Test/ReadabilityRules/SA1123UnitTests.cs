@@ -14,8 +14,6 @@
     /// </summary>
     public class SA1123UnitTests : CodeFixVerifier
     {
-        public string DiagnosticId { get; } = SA1123DoNotPlaceRegionsWithinElements.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {

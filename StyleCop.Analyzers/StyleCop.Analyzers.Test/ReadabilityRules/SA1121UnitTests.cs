@@ -100,8 +100,6 @@
             }
         }
 
-        public string DiagnosticId { get; } = SA1121UseBuiltInTypeAlias.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {

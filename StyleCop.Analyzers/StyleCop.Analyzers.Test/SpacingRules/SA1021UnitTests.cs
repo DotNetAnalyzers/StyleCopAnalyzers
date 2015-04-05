@@ -6,27 +6,11 @@
 
     public class SA1021UnitTests : NumberSignSpacingTestBase
     {
-        protected override string DiagnosticId
-        {
-            get
-            {
-                return SA1021NegativeSignsMustBeSpacedCorrectly.DiagnosticId;
-            }
-        }
-
         protected override string Sign
         {
             get
             {
                 return "-";
-            }
-        }
-
-        protected override string SignName
-        {
-            get
-            {
-                return "Negative";
             }
         }
 

@@ -13,8 +13,6 @@
     /// </summary>
     public class SA1518UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1518CodeMustNotContainBlankLinesAtEndOfFile.DiagnosticId;
-
         private const string BaseCode = @"using System.Diagnostics;
 public class Foo
 {

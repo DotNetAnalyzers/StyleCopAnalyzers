@@ -15,8 +15,6 @@
     /// </summary>
     public class SA1001UnitTests : CodeFixVerifier
     {
-        private string DiagnosticId { get; } = SA1001CommasMustBeSpacedCorrectly.DiagnosticId;
-
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new SA1001CodeFixProvider();

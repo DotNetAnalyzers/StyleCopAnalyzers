@@ -11,8 +11,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     public class SA1404UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1404CodeAnalysisSuppressionMustHaveJustification.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {

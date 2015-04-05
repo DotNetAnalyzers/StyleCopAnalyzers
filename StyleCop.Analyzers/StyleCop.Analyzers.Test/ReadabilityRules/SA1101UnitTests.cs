@@ -10,8 +10,6 @@
 
     public class SA1101UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1101PrefixLocalCallsWithThis.DiagnosticId;
-
         private const string ReferenceCode = @"
         using System;
         public class BaseTypeName
