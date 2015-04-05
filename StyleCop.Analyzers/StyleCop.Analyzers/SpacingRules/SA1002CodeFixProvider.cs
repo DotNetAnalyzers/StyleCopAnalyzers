@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
@@ -33,10 +34,8 @@
         }
 
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1002SemicolonsMustBeSpacedCorrectly.DiagnosticId))
@@ -44,18 +43,21 @@
                     continue;
                 }
 
-                SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (!token.IsKind(SyntaxKind.SemicolonToken))
-                {
-                    continue;
-                }
-
-                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context.Document, root, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context.Document, diagnostic, t)), diagnostic);
             }
+
+            return Task.FromResult(true);
         }
 
-        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxToken token)
+        private static async Task<Document> GetTransformedDocument(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
+            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
+            if (!token.IsKind(SyntaxKind.SemicolonToken))
+            {
+                return document;
+            }
+
             Dictionary<SyntaxToken, SyntaxToken> replacements = new Dictionary<SyntaxToken, SyntaxToken>();
 
             // check for a following space
@@ -96,7 +98,7 @@
             var transformed = root.ReplaceTokens(replacements.Keys, (original, maybeRewritten) => replacements[original]);
             Document updatedDocument = document.WithSyntaxRoot(transformed);
 
-            return Task.FromResult(updatedDocument);
+            return updatedDocument;
         }
     }
 }
