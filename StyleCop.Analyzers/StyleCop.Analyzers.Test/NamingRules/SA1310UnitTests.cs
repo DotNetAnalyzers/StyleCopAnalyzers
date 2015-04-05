@@ -71,8 +71,6 @@
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-
             var fixedCode = @"public class ClassNameNativeMethodsClass
 {
     internal string nameBar = ""baz"";
