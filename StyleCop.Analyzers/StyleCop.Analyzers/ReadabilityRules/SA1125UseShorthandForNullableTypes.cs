@@ -62,9 +62,20 @@
                 return;
             }
 
-            // This covers the specific form in an XML comment which cannot be simplified
+            // This covers the specific forms in an XML comment which cannot be simplified
             if (genericNameSyntax.Parent is NameMemberCrefSyntax)
             {
+                // cref="Nullable{T}"
+                return;
+            }
+            else if (genericNameSyntax.Parent is QualifiedCrefSyntax)
+            {
+                // cref="Nullable{T}.Value"
+                return;
+            }
+            else if (genericNameSyntax.Parent is QualifiedNameSyntax && genericNameSyntax.Parent.Parent is QualifiedCrefSyntax)
+            {
+                // cref="System.Nullable{T}.Value"
                 return;
             }
 
