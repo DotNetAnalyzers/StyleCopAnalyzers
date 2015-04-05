@@ -216,13 +216,17 @@
                     continue;
                 }
 
-                int index = order.IndexOf(members[i].Kind());
+                var elementSyntaxKind = members[i].Kind();
+                elementSyntaxKind = elementSyntaxKind == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : elementSyntaxKind;
+                int index = order.IndexOf(elementSyntaxKind);
 
-                int nextIndex = order.IndexOf(members[i + 1].Kind());
+                var nextElementSyntaxKind = members[i + 1].Kind();
+                nextElementSyntaxKind = nextElementSyntaxKind == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : nextElementSyntaxKind;
+                int nextIndex = order.IndexOf(nextElementSyntaxKind);
 
                 if (index > nextIndex)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(members[i + 1]), MemberNames[members[i + 1].Kind()], MemberNames[members[i].Kind()]));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(members[i + 1]), MemberNames[nextElementSyntaxKind], MemberNames[elementSyntaxKind]));
                 }
             }
         }
