@@ -2,6 +2,8 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -56,13 +58,13 @@
         /// </summary>
         public const string DiagnosticId = "SA1500";
         private const string Title = "Curly brackets for multi-line statements must not share line";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "Curly brackets for multi-line statements must not share line";
         private const string Category = "StyleCop.CSharp.LayoutRules";
         private const string Description = "The opening or closing curly bracket within a C# statement, element, or expression is not placed on its own line.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1500.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -79,7 +81,139 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(this.HandleNamespaceDeclarationSyntax, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleBaseTypeDeclarationSyntax, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleBaseTypeDeclarationSyntax, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleBaseTypeDeclarationSyntax, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleBaseTypeDeclarationSyntax, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleAccessorListSyntax, SyntaxKind.AccessorList);
+            context.RegisterSyntaxNodeAction(this.HandleBlockSyntax, SyntaxKind.Block);
+            context.RegisterSyntaxNodeAction(this.HandleSwitchStatementSyntax, SyntaxKind.SwitchStatement);
+            context.RegisterSyntaxNodeAction(this.HandleInitializerExpressionSyntax, SyntaxKind.ObjectInitializerExpression, SyntaxKind.ArrayInitializerExpression, SyntaxKind.CollectionInitializerExpression);
+            context.RegisterSyntaxNodeAction(this.HandleAnonymousObjectCreationExpressionSyntax, SyntaxKind.AnonymousObjectCreationExpression);
+        }
+
+        private void HandleNamespaceDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        {
+            var syntax = (NamespaceDeclarationSyntax)context.Node;
+            this.CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
+        }
+
+        private void HandleBaseTypeDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        {
+            var syntax = (BaseTypeDeclarationSyntax)context.Node;
+            this.CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
+        }
+
+        private void HandleAccessorListSyntax(SyntaxNodeAnalysisContext context)
+        {
+            var syntax = (AccessorListSyntax)context.Node;
+            this.CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
+        }
+
+        private void HandleBlockSyntax(SyntaxNodeAnalysisContext context)
+        {
+            var syntax = (BlockSyntax)context.Node;
+            this.CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
+        }
+
+        private void HandleSwitchStatementSyntax(SyntaxNodeAnalysisContext context)
+        {
+            var syntax = (SwitchStatementSyntax)context.Node;
+            this.CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
+        }
+
+        private void HandleInitializerExpressionSyntax(SyntaxNodeAnalysisContext context)
+        {
+            var syntax = (InitializerExpressionSyntax)context.Node;
+            this.CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
+        }
+
+        private void HandleAnonymousObjectCreationExpressionSyntax(SyntaxNodeAnalysisContext context)
+        {
+            var syntax = (AnonymousObjectCreationExpressionSyntax)context.Node;
+            this.CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
+        }
+
+        private void CheckCurlyBraces(SyntaxNodeAnalysisContext context, SyntaxToken openBraceToken, SyntaxToken closeBraceToken)
+        {
+            bool checkCloseBrace = true;
+
+            if (GetStartLine(openBraceToken) == GetStartLine(closeBraceToken))
+            {
+                switch (context.Node.Parent.Kind())
+                {
+                case SyntaxKind.GetAccessorDeclaration:
+                case SyntaxKind.SetAccessorDeclaration:
+                case SyntaxKind.AddAccessorDeclaration:
+                case SyntaxKind.RemoveAccessorDeclaration:
+                case SyntaxKind.UnknownAccessorDeclaration:
+                    if (GetStartLine(((AccessorDeclarationSyntax)context.Node.Parent).Keyword) == GetStartLine(openBraceToken))
+                    {
+                        // reported as SA1504, if at all
+                        return;
+                    }
+
+                    checkCloseBrace = false;
+                    break;
+
+                default:
+                    // reported by SA1501 or SA1502
+                    return;
+                }
+            }
+
+            this.CheckCurlyBracketToken(context, openBraceToken);
+            if (checkCloseBrace)
+            {
+                this.CheckCurlyBracketToken(context, closeBraceToken);
+            }
+        }
+
+        private static int? GetStartLine(SyntaxToken token)
+        {
+            return token.GetLocation()?.GetLineSpan().StartLinePosition.Line;
+        }
+
+        private void CheckCurlyBracketToken(SyntaxNodeAnalysisContext context, SyntaxToken token)
+        {
+            if (token.IsMissing)
+                return;
+
+            Location location = token.GetLocation();
+            int line = location.GetLineSpan().StartLinePosition.Line;
+
+            SyntaxToken previousToken = token.GetPreviousToken();
+            if (!previousToken.IsMissing)
+            {
+                if (previousToken.GetLocation().GetLineSpan().StartLinePosition.Line == line)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                    // no need to report more than one instance for this token
+                    return;
+                }
+            }
+
+            SyntaxToken nextToken = token.GetNextToken();
+            if (!nextToken.IsMissing)
+            {
+                switch (nextToken.Kind())
+                {
+                case SyntaxKind.CloseParenToken:
+                case SyntaxKind.CommaToken:
+                case SyntaxKind.SemicolonToken:
+                    // these are allowed to appear on the same line
+                    return;
+
+                default:
+                    break;
+                }
+
+                if (nextToken.GetLocation().GetLineSpan().StartLinePosition.Line == line)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                }
+            }
         }
     }
 }
