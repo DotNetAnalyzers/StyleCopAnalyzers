@@ -187,6 +187,7 @@
     <Compile Include="SpacingRules\SA1000UnitTests.cs" />
     <Compile Include="SpacingRules\SA1001UnitTests.cs" />
     <Compile Include="SpacingRules\SA1006UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1007UnitTests.cs" />
     <Compile Include="SpacingRules\SA1021UnitTests.cs" />
     <Compile Include="SpacingRules\SA1022UnitTests.cs" />
     <Compile Include="Verifiers\CodeFixVerifier.cs" />
