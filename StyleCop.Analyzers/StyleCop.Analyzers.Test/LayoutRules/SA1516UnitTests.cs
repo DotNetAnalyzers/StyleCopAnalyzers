@@ -10,9 +10,7 @@
 
     public class SA1516UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1516ElementsMustBeSeparatedByBlankLine.DiagnosticId;
-
-        private const string CorrectCode = @"extern alias Foo1;
+        private const string CorrectCode = @"extern alias corlib;
 
 using System;
 using System.Linq;
@@ -47,7 +45,7 @@ namespace Foo
             }
         }
 
-        public string Foo, Bar;
+        public string FooValue, BarValue;
 
         public enum TestEnum
         {
@@ -64,10 +62,11 @@ namespace Foo
 
 namespace Foot
 {
-    extern alias Foo2;
+    extern alias system;
 
     using System;
 
+    // Foo
     class Foo { }
 }
 ";
@@ -95,7 +94,7 @@ namespace Foot
         [Fact]
         public async Task TestWrongSpacing()
         {
-            var testCode = @"extern alias Foo1;
+            var testCode = @"extern alias corlib;
 using System;
 using System.Linq;
 using a = System.Collections.Generic;
@@ -123,7 +122,7 @@ namespace Foo
                 Test1 = value;
             }
         }
-        public string Foo, Bar;
+        public string FooValue, BarValue;
         public enum TestEnum
         {
             Value1,
@@ -137,26 +136,27 @@ namespace Foo
 }
 namespace Foot
 {
-    extern alias Foo2;
+    extern alias system;
     using System;
+    // Foo
     class Foo { }
 }
 ";
 
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(2, 7),
-                this.CSharpDiagnostic().WithLocation(5, 11),
-                this.CSharpDiagnostic().WithLocation(12, 23),
-                this.CSharpDiagnostic().WithLocation(13, 23),
-                this.CSharpDiagnostic().WithLocation(18, 23),
-                this.CSharpDiagnostic().WithLocation(24, 13),
-                this.CSharpDiagnostic().WithLocation(29, 23),
-                this.CSharpDiagnostic().WithLocation(30, 21),
-                this.CSharpDiagnostic().WithLocation(36, 17),
-                this.CSharpDiagnostic().WithLocation(41, 11),
-                this.CSharpDiagnostic().WithLocation(44, 11),
-                this.CSharpDiagnostic().WithLocation(45, 11)
+                this.CSharpDiagnostic().WithLocation(2, 1),
+                this.CSharpDiagnostic().WithLocation(5, 1),
+                this.CSharpDiagnostic().WithLocation(12, 1),
+                this.CSharpDiagnostic().WithLocation(13, 1),
+                this.CSharpDiagnostic().WithLocation(18, 1),
+                this.CSharpDiagnostic().WithLocation(24, 1),
+                this.CSharpDiagnostic().WithLocation(29, 1),
+                this.CSharpDiagnostic().WithLocation(30, 1),
+                this.CSharpDiagnostic().WithLocation(36, 1),
+                this.CSharpDiagnostic().WithLocation(41, 1),
+                this.CSharpDiagnostic().WithLocation(44, 1),
+                this.CSharpDiagnostic().WithLocation(45, 1)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
@@ -201,7 +201,7 @@ namespace Foo
     public class Bar
     {
         public string TestProperty1 { get; set; }
-        public string Foo()
+        public void Foo()
         {
 
         }
@@ -218,9 +218,9 @@ namespace Foo
 ";
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(8, 23),
-                this.CSharpDiagnostic().WithLocation(12, 16),
-                this.CSharpDiagnostic().WithLocation(16, 10)
+                this.CSharpDiagnostic().WithLocation(8, 1),
+                this.CSharpDiagnostic().WithLocation(12, 1),
+                this.CSharpDiagnostic().WithLocation(16, 1)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
@@ -233,7 +233,7 @@ namespace Foo
     {
         public string TestProperty1 { get; set; }
 
-        public string Foo()
+        public void Foo()
         {
 
         }
@@ -270,14 +270,13 @@ public struct Struct
 }";
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(2, 18),
-                this.CSharpDiagnostic().WithLocation(5, 12),
-                this.CSharpDiagnostic().WithLocation(7, 15),
-                this.CSharpDiagnostic().WithLocation(10, 10),
+                this.CSharpDiagnostic().WithLocation(2, 1),
+                this.CSharpDiagnostic().WithLocation(5, 1),
+                this.CSharpDiagnostic().WithLocation(7, 1),
+                this.CSharpDiagnostic().WithLocation(10, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-
 
             string fixedCode = @"using System;
 
@@ -305,7 +304,7 @@ public struct Struct
 
 public class Foo
 {
-    public string this[int i]
+    public string this[string i]
     {
         get
         {
@@ -331,18 +330,17 @@ public class Foo
 }";
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(11, 9),
-                this.CSharpDiagnostic().WithLocation(23, 9)
+                this.CSharpDiagnostic().WithLocation(11, 1),
+                this.CSharpDiagnostic().WithLocation(23, 1)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-
 
             string fixedCode = @"using System;
 
 public class Foo
 {
-    public string this[int i]
+    public string this[string i]
     {
         get
         {
@@ -367,6 +365,38 @@ public class Foo
 
         }
     }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+        }
+
+        [Fact]
+        public async Task TestThatCodeFixWorksOnFieldsAdjacentToMultiLineFields()
+        {
+            string testCode = @"using System;
+
+public class Foo
+{
+    private string experiment =
+        string.Empty;
+    private string experiment2;
+}";
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(7, 1)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+
+            string fixedCode = @"using System;
+
+public class Foo
+{
+    private string experiment =
+        string.Empty;
+
+    private string experiment2;
 }";
 
             await this.VerifyCSharpFixAsync(testCode, fixedCode);

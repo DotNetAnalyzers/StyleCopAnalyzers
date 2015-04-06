@@ -9,15 +9,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     public abstract class FileMayOnlyContainTestBase : CodeFixVerifier
     {
         public abstract string Keyword { get; }
-        public abstract string DiagnosticId { get; }
-
-        protected string Message
-        {
-            get
-            {
-                return "File may only contain a single " + this.Keyword;
-            }
-        }
 
         [Fact]
         public async Task TestEmptySource()

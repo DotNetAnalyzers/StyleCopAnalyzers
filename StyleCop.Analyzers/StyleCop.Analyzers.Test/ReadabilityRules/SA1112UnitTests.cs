@@ -9,9 +9,6 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     public class SA1112UnitTests : CodeFixVerifier
     {
-
-        public string DiagnosticId { get; } = SA1112ClosingParenthesisMustBeOnLineOfOpeningParenthesis.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {
@@ -65,7 +62,6 @@ string s)
     }
 }";
 
-
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
@@ -114,7 +110,6 @@ string s)
 
     }
 }";
-
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
@@ -219,7 +214,6 @@ class Foo
         var o = new object();
     }
 }";
-
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }

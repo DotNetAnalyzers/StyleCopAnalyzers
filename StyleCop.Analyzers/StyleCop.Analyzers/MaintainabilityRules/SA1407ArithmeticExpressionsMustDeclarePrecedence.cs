@@ -8,9 +8,6 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using System;
 
-
-
-
     /// <summary>
     /// A C# statement contains a complex arithmetic expression which omits parenthesis around operators.
     /// </summary>
@@ -93,8 +90,11 @@
                     var left = (BinaryExpressionSyntax)binSyntax.Left;
 
                     if (!this.IsSameFamily(binSyntax.OperatorToken, left.OperatorToken))
+                    {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, left.GetLocation()));
+                    }
                 }
+
                 if (binSyntax.Right is BinaryExpressionSyntax)
                 {
                     // Check if the operations are of the same kind
@@ -102,7 +102,9 @@
                     var right = (BinaryExpressionSyntax)binSyntax.Right;
 
                     if (!this.IsSameFamily(binSyntax.OperatorToken, right.OperatorToken))
+                    {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, right.GetLocation()));
+                    }
                 }
             }
         }

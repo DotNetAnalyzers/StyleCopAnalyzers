@@ -70,13 +70,19 @@
         private void HandleOpenBracketToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             if (!token.Parent.IsKind(SyntaxKind.AttributeList))
+            {
                 return;
+            }
 
             if (!token.HasTrailingTrivia || token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia))
+            {
                 return;
+            }
 
             // Opening attribute brackets must not be followed by a space.
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));

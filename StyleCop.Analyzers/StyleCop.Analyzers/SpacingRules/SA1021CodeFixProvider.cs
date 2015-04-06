@@ -41,11 +41,15 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1021NegativeSignsMustBeSpacedCorrectly.DiagnosticId))
+                {
                     continue;
+                }
 
                 SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (!token.IsKind(SyntaxKind.MinusToken))
+                {
                     continue;
+                }
 
                 context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context.Document, root, token)), diagnostic);
             }
@@ -78,7 +82,7 @@
                 else if (!followsSpecialCharacter && !precededBySpace)
                 {
                     SyntaxToken correctedPreceding = precedingToken.WithoutTrailingWhitespace();
-                    SyntaxTrivia whitespace = SyntaxFactory.Whitespace(" ");
+                    SyntaxTrivia whitespace = SyntaxFactory.ElasticSpace;
                     correctedPreceding =
                         correctedPreceding
                         .WithTrailingTrivia(correctedPreceding.TrailingTrivia.Add(whitespace))

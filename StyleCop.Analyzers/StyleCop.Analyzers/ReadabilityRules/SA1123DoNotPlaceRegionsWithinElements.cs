@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.ReadabilityRules
 {
+    using System;
     using System.Collections.Immutable;
     using System.Linq;
     using Microsoft.CodeAnalysis;
@@ -30,7 +31,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1123.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -47,34 +48,56 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
+            context.RegisterSyntaxNodeAction(this.HandleRegionDirectiveTrivia, SyntaxKind.RegionDirectiveTrivia);
         }
 
-        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private void HandleRegionDirectiveTrivia(SyntaxNodeAnalysisContext context)
         {
-            SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
-            foreach (var trivia in root.DescendantTrivia(descendIntoTrivia: true))
-            {
-                switch (trivia.Kind())
-                {
-                case SyntaxKind.RegionDirectiveTrivia:
-                    this.HandleRegionDirectiveTrivia(context, trivia);
-                    break;
+            RegionDirectiveTriviaSyntax regionSyntax = context.Node as RegionDirectiveTriviaSyntax;
 
-                default:
-                    break;
-                }
+            if (regionSyntax != null && IsCompletelyContainedInBody(regionSyntax))
+            {
+                // Region must not be located within a code element.
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, regionSyntax.GetLocation()));
             }
         }
 
-        private void HandleRegionDirectiveTrivia(SyntaxTreeAnalysisContext context, SyntaxTrivia trivia)
+        /// <summary>
+        /// Checks if a region is completely part of a body. That means that the <c>#region</c> and <c>#endregion</c>
+        /// tags both have to have a common <see cref="BlockSyntax"/> as one of their ancestors.
+        /// </summary>
+        /// <param name="regionSyntax">The <see cref="RegionDirectiveTriviaSyntax"/> that should be analyzed.</param>
+        /// <returns><see langword="true"/>, if both tags have a common <see cref="BlockSyntax"/> as one of their
+        /// ancestors; otherwise, <see langword="false"/>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// If <paramref name="regionSyntax"/> is <see langword="null"/>.
+        /// </exception>
+        internal static bool IsCompletelyContainedInBody(RegionDirectiveTriviaSyntax regionSyntax)
         {
-            BlockSyntax blockSyntax = trivia.Token.Parent.AncestorsAndSelf().OfType<BlockSyntax>().FirstOrDefault();
-            if (blockSyntax == null)
-                return;
+            if (regionSyntax == null)
+            {
+                throw new ArgumentNullException(nameof(regionSyntax));
+            }
 
-            // Region must not be located within a code element.
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, trivia.GetLocation()));
+            BlockSyntax syntax = null;
+            foreach (var directive in regionSyntax.GetRelatedDirectives())
+            {
+                BlockSyntax blockSyntax = directive.AncestorsAndSelf().OfType<BlockSyntax>().LastOrDefault();
+                if (blockSyntax == null)
+                {
+                    return false;
+                }
+                else if (syntax == null)
+                {
+                    syntax = blockSyntax;
+                }
+                else if (blockSyntax != syntax)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

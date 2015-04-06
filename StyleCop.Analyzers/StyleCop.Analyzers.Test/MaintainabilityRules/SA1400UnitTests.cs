@@ -10,8 +10,6 @@
 
     public class SA1400UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1400AccessModifierMustBeDeclared.DiagnosticId;
-
         private const string Tab = "\t";
 
         [Fact]
@@ -296,19 +294,25 @@
         [Fact]
         public async Task TestExplicitInterfaceEventDeclarationAsync()
         {
-            await this.TestNestedDeclarationAsync("private", "MemberName", "event EventHandler IInterface.MemberName", "{ add { } remove { } }", warning: false);
+            string baseTypeList = ": IInterface";
+            string baseTypeDeclaration = "public interface IInterface { event EventHandler MemberName; }";
+            await this.TestNestedDeclarationAsync("private", "MemberName", "event EventHandler IInterface.MemberName", "{ add { } remove { } }", baseTypeList: baseTypeList, baseTypeDeclarations: baseTypeDeclaration, warning: false);
         }
 
         [Fact]
         public async Task TestExplicitInterfaceEventDeclarationWithAttributesAsync()
         {
-            await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "event EventHandler IInterface.MemberName", "{ add { } remove { } }", warning: false);
+            string baseTypeList = ": IInterface";
+            string baseTypeDeclaration = "public interface IInterface { event EventHandler MemberName; }";
+            await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "event EventHandler IInterface.MemberName", "{ add { } remove { } }", baseTypeList: baseTypeList, baseTypeDeclarations: baseTypeDeclaration, warning: false);
         }
 
         [Fact]
         public async Task TestExplicitInterfaceEventDeclarationWithDirectivesAsync()
         {
-            await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "event EventHandler IInterface.MemberName", "{ add { } remove { } }", warning: false);
+            string baseTypeList = ": IInterface";
+            string baseTypeDeclaration = "public interface IInterface { event EventHandler MemberName; }";
+            await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "event EventHandler IInterface.MemberName", "{ add { } remove { } }", baseTypeList: baseTypeList, baseTypeDeclarations: baseTypeDeclaration, warning: false);
         }
 
         #endregion
@@ -354,19 +358,25 @@
         [Fact]
         public async Task TestExplicitInterfaceMethodDeclarationAsync()
         {
-            await this.TestNestedDeclarationAsync("private", "MemberName", "void IInterface.MemberName", "  ( int\n parameter\n ) { }", warning: false);
+            string baseTypeList = ": IInterface";
+            string baseTypeDeclaration = "public interface IInterface { void MemberName(int parameter); }";
+            await this.TestNestedDeclarationAsync("private", "MemberName", "void IInterface.MemberName", "  ( int\n parameter\n ) { }", baseTypeList: baseTypeList, baseTypeDeclarations: baseTypeDeclaration, warning: false);
         }
 
         [Fact]
         public async Task TestExplicitInterfaceMethodDeclarationWithAttributesAsync()
         {
-            await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "void IInterface.MemberName", "  ( int\n parameter\n ) { }", warning: false);
+            string baseTypeList = ": IInterface";
+            string baseTypeDeclaration = "public interface IInterface { void MemberName(int parameter); }";
+            await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "void IInterface.MemberName", "  ( int\n parameter\n ) { }", baseTypeList: baseTypeList, baseTypeDeclarations: baseTypeDeclaration, warning: false);
         }
 
         [Fact]
         public async Task TestExplicitInterfaceMethodDeclarationWithDirectivesAsync()
         {
-            await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "void IInterface.MemberName", "  ( int\n parameter\n ) { }", warning: false);
+            string baseTypeList = ": IInterface";
+            string baseTypeDeclaration = "public interface IInterface { void MemberName(int parameter); }";
+            await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "void IInterface.MemberName", "  ( int\n parameter\n ) { }", baseTypeList: baseTypeList, baseTypeDeclarations: baseTypeDeclaration, warning: false);
         }
 
         [Fact]
@@ -448,19 +458,25 @@
         [Fact]
         public async Task TestExplicitInterfacePropertyDeclarationAsync()
         {
-            await this.TestNestedDeclarationAsync("private", "MemberName", "EventHandler IInterface.MemberName", "{ get; set; }", warning: false);
+            string baseTypeList = ": IInterface";
+            string baseTypeDeclaration = "public interface IInterface { EventHandler MemberName { get; set; } }";
+            await this.TestNestedDeclarationAsync("private", "MemberName", "EventHandler IInterface.MemberName", "{ get; set; }", baseTypeList: baseTypeList, baseTypeDeclarations: baseTypeDeclaration, warning: false);
         }
 
         [Fact]
         public async Task TestExplicitInterfacePropertyDeclarationWithAttributesAsync()
         {
-            await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "EventHandler IInterface.MemberName", "{ get; set; }", warning: false);
+            string baseTypeList = ": IInterface";
+            string baseTypeDeclaration = "public interface IInterface { EventHandler MemberName { get; set; } }";
+            await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "EventHandler IInterface.MemberName", "{ get; set; }", baseTypeList: baseTypeList, baseTypeDeclarations: baseTypeDeclaration, warning: false);
         }
 
         [Fact]
         public async Task TestExplicitInterfacePropertyDeclarationWithDirectivesAsync()
         {
-            await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "EventHandler IInterface.MemberName", "{ get; set; }", warning: false);
+            string baseTypeList = ": IInterface";
+            string baseTypeDeclaration = "public interface IInterface { EventHandler MemberName { get; set; } }";
+            await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "EventHandler IInterface.MemberName", "{ get; set; }", baseTypeList: baseTypeList, baseTypeDeclarations: baseTypeDeclaration, warning: false);
         }
 
         [Fact]
@@ -583,19 +599,19 @@
 
         #region OperatorDeclarationSyntax
 
-        [Fact]
+        [Fact(Skip = "Access modified is compiler-enforced")]
         public async Task TestOperatorDeclarationAsync()
         {
             await this.TestNestedDeclarationAsync("public", "+", "static OuterTypeName operator +", "  ( OuterTypeName x,OuterTypeName  y ) { throw new System.Exception(); }", elementName: "op_Addition");
         }
 
-        [Fact]
+        [Fact(Skip = "Access modified is compiler-enforced")]
         public async Task TestOperatorDeclarationWithAttributesAsync()
         {
             await this.TestNestedDeclarationWithAttributesAsync("public", "+", "static OuterTypeName operator +", "  ( OuterTypeName x,OuterTypeName  y ) { throw new System.Exception(); }", elementName: "op_Addition");
         }
 
-        [Fact]
+        [Fact(Skip = "Access modified is compiler-enforced")]
         public async Task TestOperatorDeclarationWithDirectivesAsync()
         {
             await this.TestNestedDeclarationWithDirectivesAsync("public", "+", "static OuterTypeName operator +", "  ( OuterTypeName x,OuterTypeName  y ) { throw new System.Exception(); }", elementName: "op_Addition");
@@ -605,19 +621,19 @@
 
         #region ConversionOperatorDeclarationSyntax
 
-        [Fact]
+        [Fact(Skip = "Access modified is compiler-enforced")]
         public async Task TestConversionOperatorDeclarationAsync()
         {
             await this.TestNestedDeclarationAsync("public", "bool", "static explicit operator bool", "  ( OuterTypeName x ) { throw new System.Exception(); }", elementName: "op_Explicit");
         }
 
-        [Fact]
+        [Fact(Skip = "Access modified is compiler-enforced")]
         public async Task TestConversionOperatorDeclarationWithAttributesAsync()
         {
             await this.TestNestedDeclarationWithAttributesAsync("public", "bool", "static explicit operator bool", "  ( OuterTypeName x ) { throw new System.Exception(); }", elementName: "op_Explicit");
         }
 
-        [Fact]
+        [Fact(Skip = "Access modified is compiler-enforced")]
         public async Task TestConversionOperatorDeclarationWithDirectivesAsync()
         {
             await this.TestNestedDeclarationWithDirectivesAsync("public", "bool", "static explicit operator bool", "  ( OuterTypeName x ) { throw new System.Exception(); }", elementName: "op_Explicit");
@@ -648,19 +664,25 @@
         [Fact]
         public async Task TestExplicitInterfaceIndexerDeclarationAsync()
         {
-            await this.TestNestedDeclarationAsync("private", "this", "EventHandler IInterface.this[int", " index ] { get { throw new System.Exception(); } set { throw new System.Exception(); } }", warning: false);
+            string baseTypeList = ": IInterface";
+            string baseTypeDeclaration = "public interface IInterface { EventHandler this[int index] { get; set; } }";
+            await this.TestNestedDeclarationAsync("private", "this", "EventHandler IInterface.this[int", " index ] { get { throw new System.Exception(); } set { throw new System.Exception(); } }", baseTypeList: baseTypeList, baseTypeDeclarations: baseTypeDeclaration, warning: false);
         }
 
         [Fact]
         public async Task TestExplicitInterfaceIndexerDeclarationWithAttributesAsync()
         {
-            await this.TestNestedDeclarationWithAttributesAsync("private", "this", "EventHandler IInterface.this[int", " index ] { get { throw new System.Exception(); } set { throw new System.Exception(); } }", warning: false);
+            string baseTypeList = ": IInterface";
+            string baseTypeDeclaration = "public interface IInterface { EventHandler this[int index] { get; set; } }";
+            await this.TestNestedDeclarationWithAttributesAsync("private", "this", "EventHandler IInterface.this[int", " index ] { get { throw new System.Exception(); } set { throw new System.Exception(); } }", baseTypeList: baseTypeList, baseTypeDeclarations: baseTypeDeclaration, warning: false);
         }
 
         [Fact]
         public async Task TestExplicitInterfaceIndexerDeclarationWithDirectivesAsync()
         {
-            await this.TestNestedDeclarationWithDirectivesAsync("private", "this", "EventHandler IInterface.this[int", " index ] { get { throw new System.Exception(); } set { throw new System.Exception(); } }", warning: false);
+            string baseTypeList = ": IInterface";
+            string baseTypeDeclaration = "public interface IInterface { EventHandler this[int index] { get; set; } }";
+            await this.TestNestedDeclarationWithDirectivesAsync("private", "this", "EventHandler IInterface.this[int", " index ] { get { throw new System.Exception(); } set { throw new System.Exception(); } }", baseTypeList: baseTypeList, baseTypeDeclarations: baseTypeDeclaration, warning: false);
         }
 
         #endregion
@@ -760,8 +782,8 @@
 
         private async Task TestDeclarationWithAttributesAsync(string modifier, string identifier, string keywordLine, string linesAfter, string elementName = null, bool warning = true)
         {
-            var testCode = $@"
-  [Serializable]
+            var testCode = $@"using System;
+  [Obsolete]
  {Tab} {keywordLine}
 {linesAfter}";
 
@@ -775,8 +797,8 @@
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
-            var fixedTestCode = $@"
-  [Serializable]
+            var fixedTestCode = $@"using System;
+  [Obsolete]
  {Tab} {modifier} {keywordLine}
 {linesAfter}";
 
@@ -810,12 +832,13 @@
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
         }
 
-        private async Task TestNestedDeclarationAsync(string modifier, string identifier, string keywordLine, string linesAfter, string containingType = "class", string elementName = null, bool warning = true)
+        private async Task TestNestedDeclarationAsync(string modifier, string identifier, string keywordLine, string linesAfter, string containingType = "class", string baseTypeList = "", string baseTypeDeclarations = "", string elementName = null, bool warning = true)
         {
-            var testCode = $@"
-public {containingType} OuterTypeName {{
+            var testCode = $@"using System;
+public {containingType} OuterTypeName {baseTypeList} {{
  {Tab} {keywordLine}
-{linesAfter} }}";
+{linesAfter} }}
+{baseTypeDeclarations}";
 
             if (!warning)
             {
@@ -827,21 +850,23 @@ public {containingType} OuterTypeName {{
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
-            var fixedTestCode = $@"
-public {containingType} OuterTypeName {{
+            var fixedTestCode = $@"using System;
+public {containingType} OuterTypeName {baseTypeList} {{
  {Tab} {modifier} {keywordLine}
-{linesAfter} }}";
+{linesAfter} }}
+{baseTypeDeclarations}";
 
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
         }
 
-        private async Task TestNestedDeclarationWithAttributesAsync(string modifier, string identifier, string keywordLine, string linesAfter, string containingType = "class", string elementName = null, bool warning = true)
+        private async Task TestNestedDeclarationWithAttributesAsync(string modifier, string identifier, string keywordLine, string linesAfter, string containingType = "class", string baseTypeList = "", string baseTypeDeclarations = "", string elementName = null, bool warning = true)
         {
-            var testCode = $@"
-public {containingType} OuterTypeName {{
-  [Serializable]
+            var testCode = $@"using System;
+public {containingType} OuterTypeName {baseTypeList} {{
+  [Obsolete]
  {Tab} {keywordLine}
-{linesAfter} }}";
+{linesAfter} }}
+{baseTypeDeclarations}";
 
             if (!warning)
             {
@@ -853,23 +878,25 @@ public {containingType} OuterTypeName {{
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
-            var fixedTestCode = $@"
-public {containingType} OuterTypeName {{
-  [Serializable]
+            var fixedTestCode = $@"using System;
+public {containingType} OuterTypeName {baseTypeList} {{
+  [Obsolete]
  {Tab} {modifier} {keywordLine}
-{linesAfter} }}";
+{linesAfter} }}
+{baseTypeDeclarations}";
 
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
         }
 
-        private async Task TestNestedDeclarationWithDirectivesAsync(string modifier, string identifier, string keywordLine, string linesAfter, string containingType = "class", string elementName = null, bool warning = true)
+        private async Task TestNestedDeclarationWithDirectivesAsync(string modifier, string identifier, string keywordLine, string linesAfter, string containingType = "class", string baseTypeList = "", string baseTypeDeclarations = "", string elementName = null, bool warning = true)
         {
-            var testCode = $@"
-public {containingType} OuterTypeName {{
+            var testCode = $@"using System;
+public {containingType} OuterTypeName {baseTypeList} {{
  #  if true
  {Tab} {keywordLine}
 # endif
-{linesAfter} }}";
+{linesAfter} }}
+{baseTypeDeclarations}";
 
             if (!warning)
             {
@@ -881,12 +908,13 @@ public {containingType} OuterTypeName {{
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
-            var fixedTestCode = $@"
-public {containingType} OuterTypeName {{
+            var fixedTestCode = $@"using System;
+public {containingType} OuterTypeName {baseTypeList} {{
  #  if true
  {Tab} {modifier} {keywordLine}
 # endif
-{linesAfter} }}";
+{linesAfter} }}
+{baseTypeDeclarations}";
 
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
         }

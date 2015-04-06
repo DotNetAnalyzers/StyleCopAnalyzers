@@ -28,7 +28,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1002.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -68,22 +68,29 @@
         private void HandleSemicolonToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             // check for a following space
             bool missingFollowingSpace = true;
             if (token.HasTrailingTrivia)
             {
                 if (token.TrailingTrivia.First().IsKind(SyntaxKind.WhitespaceTrivia))
+                {
                     missingFollowingSpace = false;
+                }
                 else if (token.TrailingTrivia.First().IsKind(SyntaxKind.EndOfLineTrivia))
+                {
                     missingFollowingSpace = false;
+                }
             }
             else
             {
                 SyntaxToken nextToken = token.GetNextToken();
                 if (nextToken.IsKind(SyntaxKind.CloseParenToken))
                 {
+                    // Special handling for the following case:
                     // for (; ;)
                     missingFollowingSpace = false;
                 }
@@ -96,10 +103,13 @@
                 // only the first token on the line has leading trivia, and those are ignored
                 SyntaxToken precedingToken = token.GetPreviousToken();
                 if (precedingToken.HasTrailingTrivia)
+                {
                     hasPrecedingSpace = true;
+                }
 
                 if (precedingToken.IsKind(SyntaxKind.SemicolonToken))
                 {
+                    // Special handling for the following case:
                     // for (; ;)
                     ignorePrecedingSpace = true;
                 }

@@ -10,8 +10,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     public class SA1411UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1411AttributeConstructorMustNotUseUnnecessaryParenthesis.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {
@@ -48,9 +46,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         [Fact]
         public async Task TestNonEmptyParameterListNamedArgument()
         {
-            var testCode = @"public class Foo
+            var testCode = @"
+using System.Runtime.CompilerServices;
+public class Foo
 {
-    [System.Runtime.CompilerServices.MethodImpl(MethodCodeType = MethodCodeType.IL)]
+    [MethodImpl(MethodCodeType = MethodCodeType.IL)]
     public void Bar()
     {
     }

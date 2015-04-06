@@ -14,8 +14,6 @@
     /// </summary>
     public class SA1643UnitTests : CodeFixVerifier
     {
-        public string DiagnosticId { get; } = SA1643DestructorSummaryDocumentationMustBeginWithStandardText.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {
@@ -39,7 +37,6 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-
         private async Task TestEmptyDestructor()
         {
             var testCode = @"namespace FooNamespace
@@ -57,6 +54,7 @@
 }";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
+
         private async Task TestDestructorCorrectDocumentation(string part1, string part2, string part3, bool generic)
         {
             // First test it all on one line
@@ -167,7 +165,6 @@
 
             await this.VerifyCSharpDiagnosticAsync(testCode,
                 expected, CancellationToken.None);
-
 
             var fixedCode = @"namespace FooNamespace
 {{

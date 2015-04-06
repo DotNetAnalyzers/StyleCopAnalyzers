@@ -138,6 +138,7 @@
                 {
                     ReportIfThereIsNoBlankLine(context, compilationUnit.Usings[compilationUnit.Usings.Count - 1], members[0]);
                 }
+
                 if (compilationUnit.Usings.Count > 0 && compilationUnit.Externs.Count > 0)
                 {
                     ReportIfThereIsNoBlankLine(context, compilationUnit.Externs[compilationUnit.Externs.Count - 1], compilationUnit.Usings[0]);
@@ -159,6 +160,7 @@
                 {
                     ReportIfThereIsNoBlankLine(context, namespaceDeclaration.Usings[namespaceDeclaration.Usings.Count - 1], members[0]);
                 }
+
                 if (namespaceDeclaration.Usings.Count > 0 && namespaceDeclaration.Externs.Count > 0)
                 {
                     ReportIfThereIsNoBlankLine(context, namespaceDeclaration.Externs[namespaceDeclaration.Externs.Count - 1], namespaceDeclaration.Usings[0]);
@@ -185,23 +187,6 @@
                     }
                 }
             }
-        }
-
-        private static Location GetDiagnosticLocation(SyntaxNode member)
-        {
-            Location location = null;
-            location = location ?? (member as PropertyDeclarationSyntax)?.Identifier.GetLocation();
-            location = location ?? (member as FieldDeclarationSyntax)?.Declaration?.Variables.FirstOrDefault()?.GetLocation();
-            location = location ?? (member as MethodDeclarationSyntax)?.Identifier.GetLocation();
-            location = location ?? (member as ConstructorDeclarationSyntax)?.Identifier.GetLocation();
-            location = location ?? (member as DestructorDeclarationSyntax)?.Identifier.GetLocation();
-            location = location ?? (member as BaseTypeDeclarationSyntax)?.Identifier.GetLocation();
-            location = location ?? (member as NamespaceDeclarationSyntax)?.Name.GetLocation();
-            location = location ?? (member as UsingDirectiveSyntax)?.Name.GetLocation();
-            location = location ?? (member as ExternAliasDirectiveSyntax)?.Identifier.GetLocation();
-            location = location ?? (member as AccessorDeclarationSyntax)?.Keyword.GetLocation();
-            location = location ?? member.GetLocation();
-            return location;
         }
 
         private static bool IsMultiline(SyntaxNode node)
@@ -232,6 +217,24 @@
             }
         }
 
+        private static Location GetDiagnosticLocation(SyntaxNode node)
+        {
+            Location nodeLocation = node.GetLocation();
+
+            if (node.HasLeadingTrivia)
+            {
+                return node.GetLeadingTrivia()[0].GetLocation();
+            }
+
+            var firstToken = node.ChildTokens().FirstOrDefault();
+            if (firstToken != default(SyntaxToken))
+            {
+                return node.ChildTokens().First().GetLocation();
+            }
+
+            return Location.None;
+        }
+
         private static bool HasEmptyLine(ImmutableList<SyntaxTrivia> allTrivia)
         {
             allTrivia = allTrivia.Where(x => !x.IsKind(SyntaxKind.WhitespaceTrivia)).ToImmutableList();
@@ -250,6 +253,7 @@
                     i++;
                 }
             }
+
             return false;
         }
     }

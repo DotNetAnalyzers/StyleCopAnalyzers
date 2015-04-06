@@ -37,13 +37,17 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1307AccessibleFieldsMustBeginWithUpperCaseLetter.DiagnosticId))
+                {
                     continue;
+                }
 
                 var document = context.Document;
                 var root = await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
                 var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (token.IsMissing)
+                {
                     continue;
+                }
 
                 if (!string.IsNullOrEmpty(token.ValueText))
                 {

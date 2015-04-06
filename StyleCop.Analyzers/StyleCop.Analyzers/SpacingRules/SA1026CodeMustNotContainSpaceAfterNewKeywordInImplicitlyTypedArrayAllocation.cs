@@ -72,10 +72,14 @@
         private void HandleNewKeywordToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             if (!token.Parent.IsKind(SyntaxKind.ImplicitArrayCreationExpression))
+            {
                 return;
+            }
 
             this.HandleDisallowedSpaceToken(context, token);
         }
@@ -83,10 +87,14 @@
         private void HandleDisallowedSpaceToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing || !token.HasTrailingTrivia)
+            {
                 return;
+            }
 
             if (!token.TrailingTrivia.First().IsKind(SyntaxKind.WhitespaceTrivia))
+            {
                 return;
+            }
 
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));
         }

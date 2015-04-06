@@ -6,8 +6,6 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-
-
     /// <summary>
     /// A C# statement contains a complex conditional expression which omits parenthesis around operators.
     /// </summary>
@@ -99,9 +97,12 @@
                     {
 
                         if (!this.IsSameFamily(binSyntax.OperatorToken, left.OperatorToken))
+                        {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptor, left.GetLocation()));
+                        }
                     }
                 }
+
                 if (binSyntax.Right is BinaryExpressionSyntax)
                 {
                     // Check if the operations are of the same kind
@@ -110,7 +111,9 @@
                     if (right.OperatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken) || right.OperatorToken.IsKind(SyntaxKind.BarBarToken))
                     {
                         if (!this.IsSameFamily(binSyntax.OperatorToken, right.OperatorToken))
+                        {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptor, right.GetLocation()));
+                        }
                     }
                 }
             }

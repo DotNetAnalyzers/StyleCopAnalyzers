@@ -37,7 +37,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             XmlElementSyntax elementSyntax = syntax.Content.OfType<XmlElementSyntax>().FirstOrDefault(element => string.Equals(element.StartTag.Name.ToString(), tagName));
             if (elementSyntax != null)
+            {
                 return elementSyntax;
+            }
 
             XmlEmptyElementSyntax emptyElementSyntax = syntax.Content.OfType<XmlEmptyElementSyntax>().FirstOrDefault(element => string.Equals(element.Name.ToString(), tagName));
             return emptyElementSyntax;
@@ -47,7 +49,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var node = context.Node as BaseTypeDeclarationSyntax;
             if (node == null || node.Identifier.IsMissing)
+            {
                 return;
+            }
 
             if (!node.Modifiers.Any(SyntaxKind.PartialKeyword))
             {
@@ -62,7 +66,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var node = context.Node as MethodDeclarationSyntax;
             if (node == null || node.Identifier.IsMissing)
+            {
                 return;
+            }
 
             if (!node.Modifiers.Any(SyntaxKind.PartialKeyword))
             {
@@ -90,7 +96,9 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             var xmlElement = GetTopLevelElement(documentation, XmlCommentHelper.SummaryXmlTag);
             if (xmlElement == null)
+            {
                 xmlElement = GetTopLevelElement(documentation, XmlCommentHelper.ContentXmlTag);
+            }
 
             this.HandleXmlElement(context, xmlElement, locations);
         }

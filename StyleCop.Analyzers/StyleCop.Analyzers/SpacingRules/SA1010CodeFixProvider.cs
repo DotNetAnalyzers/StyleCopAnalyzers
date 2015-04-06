@@ -40,15 +40,20 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1010OpeningSquareBracketsMustBeSpacedCorrectly.DiagnosticId))
+                {
                     continue;
+                }
 
                 SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (!token.IsKind(SyntaxKind.OpenBracketToken))
+                {
                     continue;
+                }
 
                 context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context.Document, root, token)), diagnostic);
             }
         }
+
         private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxToken token)
         {
 
@@ -72,7 +77,9 @@
             }
 
             if (replacements.Count == 0)
+            {
                 return Task.FromResult(document);
+            }
 
             var transformed = root.ReplaceTokens(replacements.Keys, (original, maybeRewritten) => replacements[original]);
             Document updatedDocument = document.WithSyntaxRoot(transformed);

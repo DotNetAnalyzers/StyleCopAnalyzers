@@ -14,6 +14,7 @@ namespace TestHelper
             {
                 throw new ArgumentOutOfRangeException("At least one of line and column must be > 0");
             }
+
             if (line < -1 || column < -1)
             {
                 throw new ArgumentOutOfRangeException("Both line and column must be >= -1");
@@ -55,6 +56,7 @@ namespace TestHelper
                 {
                     this.locations = new DiagnosticResultLocation[] { };
                 }
+
                 return this.locations;
             }
 
@@ -79,10 +81,14 @@ namespace TestHelper
             get
             {
                 if (this.message != null)
+                {
                     return this.message;
+                }
 
                 if (this.MessageFormat != null)
+                {
                     return string.Format(this.MessageFormat.ToString(), this.MessageArguments ?? EmptyArguments);
+                }
 
                 return null;
             }

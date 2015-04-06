@@ -85,7 +85,9 @@
         private static void AnalyzeProperty(SyntaxNodeAnalysisContext context, BasePropertyDeclarationSyntax propertyDeclaration)
         {
             if (propertyDeclaration?.AccessorList == null)
+            {
                 return;
+            }
 
             var accessors = propertyDeclaration.AccessorList.Accessors;
             if (propertyDeclaration.AccessorList.IsMissing ||

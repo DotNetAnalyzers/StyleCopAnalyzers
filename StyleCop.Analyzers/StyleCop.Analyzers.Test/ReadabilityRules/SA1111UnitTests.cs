@@ -9,8 +9,6 @@
 
     public class SA1111UnitTests : CodeFixVerifier
     {
-        public string DiagnosticId { get; } = SA1111ClosingParenthesisMustBeOnLineOfLastParameter.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {
@@ -289,7 +287,6 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-
         [Fact]
         public async Task TestConstructorCallWithTwoParametersClosingParanthesisOnTheNextLineAsTheLastParameter()
         {
@@ -509,7 +506,7 @@ class Foo
             var testCode = @"
 class Foo
 {
-    public void Test(System.Collection.Generics.List<int> list)
+    public void Test(System.Collections.Generic.List<int> list)
     {
         var i = list[1
 ];
@@ -529,8 +526,8 @@ class Foo
 {
     public void Test()
     {
-        System.Collection.Generics.List<int> list = new System.Collection.Generics.List<int>();
-        Action a = () => {
+        System.Collections.Generic.List<int> list = new System.Collections.Generic.List<int>();
+        System.Action a = () => {
         var i = list[1
 ];
         };      
@@ -570,7 +567,7 @@ class Foo
             var testCode = @"
 class Bar
 {
-    public System.Collections.Generic.List<int> MyLyst {get;set;}
+    public System.Collections.Generic.List<int> MyList {get;set;}
 }
 class Foo
 {
@@ -715,7 +712,7 @@ public class Foo
 {
     public void Bar()
     {
-        Action<string,string> del = 
+        System.Action<string,string> del = 
         delegate(string s, string s2
         )
         {
@@ -737,7 +734,7 @@ public class Foo
 {
     public void Bar()
     {
-        Action<string,string> del = 
+        System.Action<string,string> del = 
         delegate(string s, string s2)
         {
 
@@ -756,7 +753,7 @@ public class Foo
 {
     public void Bar()
     {
-            Action del = 
+            System.Action del = 
                 delegate(
 )
                 {
@@ -772,6 +769,7 @@ public class Foo
         public async Task TestAttributeLastParameterOnThePreviousLineAsClosingParenthesis()
         {
             var testCode = @"
+using System.Diagnostics;
 public class Foo
 {
 [Conditional(""DEBUG""
@@ -784,8 +782,8 @@ public class Foo
 
             DiagnosticResult[] expected =
                 {
-                    this.CSharpDiagnostic().WithLocation(5, 1),
-                    this.CSharpDiagnostic().WithLocation(6, 1)
+                    this.CSharpDiagnostic().WithLocation(6, 1),
+                    this.CSharpDiagnostic().WithLocation(7, 1)
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
@@ -795,6 +793,7 @@ public class Foo
         public async Task TestAttributeLastParameterOnTheSameLineAsClosingParenthesis()
         {
             var testCode = @"
+using System.Diagnostics;
 public class Foo
 {
 [Conditional(""DEBUG""), Conditional(""TEST1"")]
@@ -823,13 +822,14 @@ public class Foo
         public async Task TestAttributeListLastParameterOnThePreviousLineAsClosingBracket()
         {
             var testCode = @"
+using System.Diagnostics;
 [Conditional(""DEBUG""), Conditional(""TEST1"")
 ]
-public class Foo
+public class FooAttribute : System.Attribute
 {
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 1);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -838,8 +838,9 @@ public class Foo
         public async Task TestAttributeListLastParameterOnTheSameLineAsClosingBracket()
         {
             var testCode = @"
+using System.Diagnostics;
 [Conditional(""DEBUG""), Conditional(""TEST1"")]
-public class Foo
+public class FooAttribute : System.Attribute
 {
 }";
 
@@ -864,7 +865,7 @@ public class Foo
             var testCode = @"
 public class Foo
 {
-    private event Action<int, int> MyEvent;
+    private event System.Action<int, int> MyEvent;
 
     public void Bar()
     {
@@ -884,7 +885,7 @@ public class Foo
             var testCode = @"
 public class Foo
 {
-    private event Action<int, int> MyEvent;
+    private event System.Action<int, int> MyEvent;
 
     public void Bar()
     {
@@ -900,7 +901,7 @@ public class Foo
             var testCode = @"
 public class Foo
 {
-    private event Action MyEvent;
+    private event System.Action MyEvent;
 
     public void Bar()
     {
@@ -919,13 +920,13 @@ public class Foo
 {
     public void Bar()
     {
-        Action<string,string> act = (string s, string s2
+        System.Action<string,string> act = (string s, string s2
 ) =>
         {
                     
         };
     }
-);";
+}";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 1);
 
@@ -964,7 +965,7 @@ public class Foo
 {
     public void Bar()
     {
-        Action<string,string> act = (string s, string s2) =>
+        System.Action<string,string> act = (string s, string s2) =>
         {
                     
         };
@@ -981,7 +982,7 @@ public class Foo
 {
     public void Bar()
     {
-        Action a = () => { };
+        System.Action a = () => { };
     }
 }";
 

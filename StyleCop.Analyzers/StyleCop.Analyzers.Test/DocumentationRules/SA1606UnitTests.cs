@@ -12,8 +12,6 @@
     /// </summary>
     public class SA1606UnitTests : CodeFixVerifier
     {
-        public string DiagnosticId { get; } = SA1606ElementDocumentationMustHaveSummaryText.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {
@@ -21,7 +19,12 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        private async Task TestTypeNoDocumentation(string typeName)
+        [Theory]
+        [InlineData("enum")]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
+        public async Task TestTypeNoDocumentation(string typeName)
         {
             var testCode = @"
 {0} TypeName
@@ -30,7 +33,12 @@
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        private async Task TestTypeWithDocumentation(string typeName)
+        [Theory]
+        [InlineData("enum")]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
+        public async Task TestTypeWithDocumentation(string typeName)
         {
             var testCode = @"
 /// <summary>
@@ -42,7 +50,12 @@
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        private async Task TestTypeWithInheritedDocumentation(string typeName)
+        [Theory]
+        [InlineData("enum")]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
+        public async Task TestTypeWithInheritedDocumentation(string typeName)
         {
             var testCode = @"
 /// <inheritdoc/>
@@ -52,7 +65,12 @@
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
         }
 
-        private async Task TestTypeWithoutDocumentation(string typeName)
+        [Theory]
+        [InlineData("enum")]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
+        public async Task TestTypeWithoutDocumentation(string typeName)
         {
             var testCode = @"
 /// <summary>
@@ -69,107 +87,11 @@ TypeName
         }
 
         [Fact]
-        public async Task TestEnumWithDocumentation()
-        {
-            await this.TestTypeWithDocumentation("enum");
-        }
-
-        [Fact]
-        public async Task TestClassWithDocumentation()
-        {
-            await this.TestTypeWithDocumentation("class");
-        }
-
-        [Fact]
-        public async Task TestStructWithDocumentation()
-        {
-            await this.TestTypeWithDocumentation("struct");
-        }
-
-        [Fact]
-        public async Task TestInterfaceWithDocumentation()
-        {
-            await this.TestTypeWithDocumentation("interface");
-        }
-
-        [Fact]
-        public async Task TestEnumWithInheritedDocumentation()
-        {
-            await this.TestTypeWithInheritedDocumentation("enum");
-        }
-
-        [Fact]
-        public async Task TestClassWithInheritedDocumentation()
-        {
-            await this.TestTypeWithInheritedDocumentation("class");
-        }
-
-        [Fact]
-        public async Task TestStructWithInheritedDocumentation()
-        {
-            await this.TestTypeWithInheritedDocumentation("struct");
-        }
-
-        [Fact]
-        public async Task TestInterfaceWithInheritedDocumentation()
-        {
-            await this.TestTypeWithInheritedDocumentation("interface");
-        }
-
-        [Fact]
-        public async Task TestEnumWithoutDocumentation()
-        {
-            await this.TestTypeWithoutDocumentation("enum");
-        }
-
-        [Fact]
-        public async Task TestClassWithoutDocumentation()
-        {
-            await this.TestTypeWithoutDocumentation("class");
-        }
-
-        [Fact]
-        public async Task TestStructWithoutDocumentation()
-        {
-            await this.TestTypeWithoutDocumentation("struct");
-        }
-
-        [Fact]
-        public async Task TestInterfaceWithoutDocumentation()
-        {
-            await this.TestTypeWithoutDocumentation("interface");
-        }
-
-        [Fact]
-        public async Task TestEnumNoDocumentation()
-        {
-            await this.TestTypeNoDocumentation("enum");
-        }
-
-        [Fact]
-        public async Task TestClassNoDocumentation()
-        {
-            await this.TestTypeNoDocumentation("class");
-        }
-
-        [Fact]
-        public async Task TestStructNoDocumentation()
-        {
-            await this.TestTypeNoDocumentation("struct");
-        }
-
-        [Fact]
-        public async Task TestInterfaceNoDocumentation()
-        {
-            await this.TestTypeNoDocumentation("interface");
-        }
-
-        [Fact]
         public async Task TestDelegateNoDocumentation()
         {
             var testCode = @"
-public delegate 
-TypeName();";
+public delegate
+void TypeName();";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
@@ -180,8 +102,8 @@ TypeName();";
 /// <summary>
 /// Foo
 /// </summary>
-public delegate 
-TypeName();";
+public delegate
+void TypeName();";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
@@ -190,8 +112,8 @@ TypeName();";
         {
             var testCode = @"
 /// <inheritdoc/>
-public delegate 
-TypeName();";
+public delegate
+void TypeName();";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
@@ -202,7 +124,7 @@ TypeName();";
 /// <summary>
 /// 
 /// </summary>
-public delegate 
+public delegate
 void TypeName();";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 6);
@@ -679,12 +601,12 @@ public class ClassName
 /// <summary>
 /// Foo
 /// </summary>
-public interface InterfaceName
+public class ClassName
 {
     /// <summary>
     /// Foo
     /// </summary>
-    event System.Action Foo { add; remove; }
+    event System.Action Foo { add { } remove { } }
 }";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
@@ -696,10 +618,10 @@ public interface InterfaceName
 /// <summary>
 /// Foo
 /// </summary>
-public interface InterfaceName
+public class ClassName
 {
     /// <inheritdoc/>
-    event System.Action Foo { add; remove; }
+    event System.Action Foo { add { } remove { } }
 }";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
@@ -711,9 +633,9 @@ public interface InterfaceName
 /// <summary>
 /// Foo
 /// </summary>
-public interface InterfaceName
+public class ClassName
 {
-    event System.Action Foo { add; remove; }
+    event System.Action Foo { add { } remove { } }
 }";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
@@ -725,12 +647,12 @@ public interface InterfaceName
 /// <summary>
 /// Foo
 /// </summary>
-public interface InterfaceName
+public class ClassName
 {
     /// <summary>
     /// 
     /// </summary>
-    event System.Action Foo { add; remove; }
+    event System.Action Foo { add { } remove { } }
 }";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 25);

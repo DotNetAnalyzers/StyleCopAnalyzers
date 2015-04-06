@@ -45,11 +45,15 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!FixableDiagnostics.Contains(diagnostic.Id))
+                {
                     continue;
+                }
 
                 var node = root.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true) as XmlElementSyntax;
                 if (node == null)
+                {
                     continue;
+                }
 
                 context.RegisterCodeFix(CodeAction.Create("Add standard text.", token => GetTransformedDocument(context.Document, root, node)), diagnostic);
             }
@@ -112,6 +116,7 @@
             {
                 identifierName = SyntaxFactory.GenericName(identifier.WithoutTrivia(), ParameterToArgumentListSyntax(typeParameters));
             }
+
             var list = new SyntaxList<XmlNodeSyntax>();
 
             list = list.Add(XmlNewLine());
@@ -146,7 +151,7 @@
             {
                 var separator = list.GetSeparator(i);
                 // Make sure the parameter list looks nice
-                list = list.ReplaceSeparator(separator, separator.WithTrailingTrivia(SyntaxFactory.Whitespace(" ")));
+                list = list.ReplaceSeparator(separator, separator.WithTrailingTrivia(SyntaxFactory.Space));
             }
 
             return SyntaxFactory.TypeArgumentList(list);

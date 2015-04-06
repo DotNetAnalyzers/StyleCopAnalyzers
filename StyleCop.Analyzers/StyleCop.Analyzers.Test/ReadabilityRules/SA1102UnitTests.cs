@@ -9,8 +9,6 @@
 
     public class SA1102UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1102QueryClauseMustFollowPreviousClause.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {
@@ -22,6 +20,7 @@
         public async Task TestSelectOnSeparateLineWithAdditionalEmptyLine()
         {
             var testCode = @"
+using System.Linq;
 public class Foo4
 {
     public void Bar()
@@ -32,8 +31,9 @@ public class Foo4
                     where m > 0
 
                     select m;
+    }
 }";
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(11, 21);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(12, 21);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -42,6 +42,7 @@ public class Foo4
         public async Task TestWhereSelectOnSameLine()
         {
             var testCode = @"
+using System.Linq;
 public class Foo4
 {
     public void Bar()
@@ -52,7 +53,7 @@ public class Foo4
                     where m > 0 select m;
     }
 }";
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(9, 33);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 33);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -61,6 +62,7 @@ public class Foo4
         public async Task TestWhereOnTheSameLineAsFrom()
         {
             var testCode = @"
+using System.Linq;
 public class Foo4
 {
     public void Bar()
@@ -68,17 +70,18 @@ public class Foo4
         var source = new int[0];
         var query = from m in source where m > 0
                     select m;
+    }
 }";
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 38);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 38);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
-
 
         [Fact]
         public async Task TestComplexQueryWithAdditionalEmptyLine()
         {
             var testCode = @"
+using System.Linq;
 public class Foo4
 {
     public void Bar()
@@ -103,11 +106,11 @@ public class Foo4
 }";
             DiagnosticResult[] expected =
                 {
-                    this.CSharpDiagnostic().WithLocation(11, 21),
-                    this.CSharpDiagnostic().WithLocation(13, 21),
-                    this.CSharpDiagnostic().WithLocation(16, 21),
-                    this.CSharpDiagnostic().WithLocation(19, 21),
-                    this.CSharpDiagnostic().WithLocation(21, 21),
+                    this.CSharpDiagnostic().WithLocation(12, 21),
+                    this.CSharpDiagnostic().WithLocation(14, 21),
+                    this.CSharpDiagnostic().WithLocation(17, 21),
+                    this.CSharpDiagnostic().WithLocation(20, 21),
+                    this.CSharpDiagnostic().WithLocation(22, 21),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
@@ -117,6 +120,7 @@ public class Foo4
         public async Task TestComplexQueryInOneLine()
         {
             var testCode = @"
+using System.Linq;
 public class Foo4
 {
     public void Bar()
@@ -134,19 +138,27 @@ public class Foo4
         [Fact]
         public async Task TestQueryInsideQuery()
         {
-            var testCode = @"        var query = from m in (from s in Enumerable.Empty<int>()
+            var testCode = @"
+using System.Linq;
+public class Foo4
+{
+    public void Bar()
+    {
+                var query = from m in (from s in Enumerable.Empty<int>()
                 where s > 0 select s)
 
                 where m > 0
 
                 orderby m descending 
-                select m;";
+                select m;
+    }
+}";
 
             DiagnosticResult[] expected =
                 {
-                    this.CSharpDiagnostic().WithLocation(2, 29),
-                    this.CSharpDiagnostic().WithLocation(4, 17),
-                    this.CSharpDiagnostic().WithLocation(6, 17),
+                    this.CSharpDiagnostic().WithLocation(8, 29),
+                    this.CSharpDiagnostic().WithLocation(10, 17),
+                    this.CSharpDiagnostic().WithLocation(12, 17),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
@@ -155,7 +167,13 @@ public class Foo4
         [Fact]
         public async Task QueryInsideQueryComplex()
         {
-            var testCode = @"            var query = from m in (from s in Enumerable.Empty<int>()
+            var testCode = @"
+using System.Linq;
+public class Foo4
+{
+    public void Bar()
+    {
+                var query = from m in (from s in Enumerable.Empty<int>()
                 where s > 0 select s)
 
                 where m > 0 && (from zz in Enumerable.Empty<int>()
@@ -166,15 +184,17 @@ public class Foo4
                 orderby m descending
                 select (from pp in new[] {m}
 
-                    select pp);";
+                    select pp);
+    }
+}";
 
             DiagnosticResult[] expected =
                 {
-                    this.CSharpDiagnostic().WithLocation(2, 29),
-                    this.CSharpDiagnostic().WithLocation(4, 17),
-                    this.CSharpDiagnostic().WithLocation(7, 21),
-                    this.CSharpDiagnostic().WithLocation(9, 17),
-                    this.CSharpDiagnostic().WithLocation(12, 21),
+                    this.CSharpDiagnostic().WithLocation(8, 29),
+                    this.CSharpDiagnostic().WithLocation(10, 17),
+                    this.CSharpDiagnostic().WithLocation(13, 21),
+                    this.CSharpDiagnostic().WithLocation(15, 17),
+                    this.CSharpDiagnostic().WithLocation(18, 21),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);

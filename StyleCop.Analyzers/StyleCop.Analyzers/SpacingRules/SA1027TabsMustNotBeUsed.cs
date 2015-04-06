@@ -72,7 +72,9 @@
         private void HandleWhitespaceTrivia(SyntaxTreeAnalysisContext context, SyntaxTrivia trivia)
         {
             if (trivia.ToFullString().IndexOf('\t') < 0)
+            {
                 return;
+            }
 
             // Tabs must not be used.
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, trivia.GetLocation()));

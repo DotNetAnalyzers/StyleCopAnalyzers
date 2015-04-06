@@ -7,8 +7,6 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-
-
     /// <summary>
     /// A Code Analysis SuppressMessage attribute does not include a justification.
     /// </summary>
@@ -84,13 +82,16 @@
 
                                 // If value does not have a value the expression is not constant -> Compilation error
                                 if (!value.HasValue || !string.IsNullOrWhiteSpace(value.Value as string))
+                                {
                                     return;
+                                }
 
                                 // Empty, Whitespace or null justification provided
                                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, attributeArgument.GetLocation()));
                                 return;
                             }
                         }
+
                         // No justification set
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, attribute.GetLocation()));
                     }

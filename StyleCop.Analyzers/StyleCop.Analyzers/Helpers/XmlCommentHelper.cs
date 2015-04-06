@@ -1,5 +1,7 @@
 ﻿namespace StyleCop.Analyzers.Helpers
 {
+    using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
@@ -15,10 +17,11 @@
         internal const string SummaryXmlTag = "summary";
         internal const string ContentXmlTag = "content";
         internal const string InheritdocXmlTag = "inheritdoc";
+        internal const string ReturnsXmlTag = "returns";
         internal const string ValueXmlTag = "value";
         internal const string SeeXmlTag = "see";
+        internal const string ParamTag = "param";
         internal const string CrefArgumentName = "cref";
-
 
         /// <summary>
         /// This helper is used by documentation diagnostics to check if a xml comment should be considered empty.
@@ -31,7 +34,10 @@
         internal static bool IsConsideredEmpty(DocumentationCommentTriviaSyntax xmlComment)
         {
             if (xmlComment == null)
+            {
                 return true;
+            }
+
             foreach (XmlNodeSyntax syntax in xmlComment.Content)
             {
                 if (!IsConsideredEmpty(syntax))
@@ -61,6 +67,7 @@
                         return false;
                     }
                 }
+
                 return true;
             }
 
@@ -88,6 +95,7 @@
                         return false;
                     }
                 }
+
                 return true;
             }
 
@@ -97,7 +105,6 @@
                 // This includes <inheritdoc/>
                 return false;
             }
-
 
             var processingElement = xmlSyntax as XmlProcessingInstructionSyntax;
             if (processingElement != null)
@@ -116,7 +123,10 @@
         internal static bool IsMissingOrEmpty(SyntaxTrivia commentTrivia)
         {
             if (!commentTrivia.HasStructure)
+            {
                 return true;
+            }
+
             var structuredTrivia = commentTrivia.GetStructure() as DocumentationCommentTriviaSyntax;
             if (structuredTrivia != null)
             {
@@ -148,7 +158,9 @@
             var commentTrivia = GetCommentTrivia(node);
 
             if (!commentTrivia.HasStructure)
+            {
                 return null;
+            }
 
             return commentTrivia.GetStructure() as DocumentationCommentTriviaSyntax;
         }
@@ -157,10 +169,20 @@
         {
             XmlElementSyntax elementSyntax = syntax.Content.OfType<XmlElementSyntax>().FirstOrDefault(element => string.Equals(element.StartTag.Name.ToString(), tagName));
             if (elementSyntax != null)
+            {
                 return elementSyntax;
+            }
 
             XmlEmptyElementSyntax emptyElementSyntax = syntax.Content.OfType<XmlEmptyElementSyntax>().FirstOrDefault(element => string.Equals(element.Name.ToString(), tagName));
             return emptyElementSyntax;
+        }
+
+        internal static IEnumerable<XmlNodeSyntax> GetTopLevelElements(DocumentationCommentTriviaSyntax syntax, string tagName)
+        {
+            var elements = syntax.Content.OfType<XmlElementSyntax>().Where(element => string.Equals(element.StartTag.Name.ToString(), tagName));
+            var emptyElements = syntax.Content.OfType<XmlEmptyElementSyntax>().Where(element => string.Equals(element.Name.ToString(), tagName));
+            Comparison<XmlNodeSyntax> comparison = (x, y) => x.GetLocation().SourceSpan.Start.CompareTo(y.GetLocation().SourceSpan.Start);
+            return EnumerableHelpers.Merge(elements, emptyElements, comparison);
         }
 
         internal static string GetText(XmlTextSyntax textElement)
@@ -184,9 +206,29 @@
 
             string result = stringBuilder.ToString();
             if (normalizeWhitespace)
+            {
                 result = Regex.Replace(result, @"\s+", " ");
+            }
 
             return result;
+        }
+
+        internal static T GetFirstAttributeOrDefault<T>(XmlNodeSyntax nodeSyntax) where T : XmlAttributeSyntax
+        {
+            var emptyElementSyntax = nodeSyntax as XmlEmptyElementSyntax;
+
+            if (emptyElementSyntax != null)
+            {
+                return emptyElementSyntax.Attributes.OfType<T>().FirstOrDefault();
+            }
+            var elementSyntax = nodeSyntax as XmlElementSyntax;
+
+            if (elementSyntax != null)
+            {
+                return elementSyntax.StartTag?.Attributes.OfType<T>().FirstOrDefault();
+            }
+
+            return null;
         }
 
         private static SyntaxTrivia GetCommentTrivia(SyntaxNode node)
@@ -197,6 +239,7 @@
             {
                 return commentTrivia;
             }
+
             return leadingTrivia.FirstOrDefault(x => x.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia));
         }
     }

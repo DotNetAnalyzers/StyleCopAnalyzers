@@ -38,14 +38,20 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1007OperatorKeywordMustBeFollowedBySpace.DiagnosticId))
+                {
                     continue;
+                }
 
                 SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (token.IsMissing)
+                {
                     continue;
+                }
 
                 if (token.HasTrailingTrivia && token.TrailingTrivia[0].IsKind(SyntaxKind.WhitespaceTrivia))
+                {
                     continue;
+                }
 
                 context.RegisterCodeFix(CodeAction.Create("Insert space", t => GetTransformedDocument(context.Document, root, token)), diagnostic);
             }
@@ -53,8 +59,7 @@
 
         private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxToken token)
         {
-            SyntaxTrivia whitespace = SyntaxFactory.Whitespace(" ");
-            SyntaxToken corrected = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, whitespace)).WithoutFormatting();
+            SyntaxToken corrected = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, SyntaxFactory.Space));
             Document updatedDocument = document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
 
             return Task.FromResult(updatedDocument);

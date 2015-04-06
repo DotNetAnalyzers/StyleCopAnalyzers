@@ -40,11 +40,22 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1309FieldNamesMustNotBeginWithUnderscore.DiagnosticId))
+                {
                     continue;
+                }
 
                 var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (token.IsMissing)
+                {
                     continue;
+                }
+
+                if (token.ValueText.Length == 1)
+                {
+                    // The variable name is '_'. In this case we cannot generate a valid variable name and thus will not
+                    // offer a code fix. 
+                    continue;
+                }
 
                 if (!string.IsNullOrEmpty(token.ValueText))
                 {

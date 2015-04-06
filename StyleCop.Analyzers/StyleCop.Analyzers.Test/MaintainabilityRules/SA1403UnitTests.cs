@@ -17,14 +17,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             }
         }
 
-        public override string DiagnosticId
-        {
-            get
-            {
-                return SA1403FileMayOnlyContainASingleNamespace.DiagnosticId;
-            }
-        }
-
         [Fact]
         public async Task TestNestedNamespaces()
         {

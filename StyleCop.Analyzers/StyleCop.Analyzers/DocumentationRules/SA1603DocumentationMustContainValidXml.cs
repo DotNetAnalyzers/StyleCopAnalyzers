@@ -73,6 +73,7 @@
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, xmlElementSyntax.StartTag.GetLocation(), "XML element start tag is missing a '>'."));
                 }
+
                 if (xmlElementSyntax.EndTag.IsMissing)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, xmlElementSyntax.StartTag.GetLocation(), $"The XML tag '{xmlElementSyntax.StartTag.Name}' is not closed."));

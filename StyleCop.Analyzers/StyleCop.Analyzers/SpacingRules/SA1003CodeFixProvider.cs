@@ -42,11 +42,15 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1003SymbolsMustBeSpacedCorrectly.DiagnosticId))
+                {
                     continue;
+                }
 
                 SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (token.IsMissing)
+                {
                     continue;
+                }
 
                 context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context.Document, root, token)), diagnostic);
             }
@@ -75,9 +79,10 @@
                 default:
                     if (!precedingToken.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
                     {
-                        SyntaxToken correctedPreceding = correctedPrecedingNoSpace.WithTrailingTrivia(correctedPrecedingNoSpace.TrailingTrivia.Insert(0, SyntaxFactory.Whitespace(" ")));
+                        SyntaxToken correctedPreceding = correctedPrecedingNoSpace.WithTrailingTrivia(correctedPrecedingNoSpace.TrailingTrivia.Insert(0, SyntaxFactory.ElasticSpace));
                         replacements[precedingToken] = correctedPreceding;
                     }
+
                     break;
                 }
             }
@@ -90,8 +95,7 @@
                     SyntaxToken correctedOperatorNoSpace = token.WithoutTrailingWhitespace();
                     SyntaxToken correctedOperator =
                         correctedOperatorNoSpace
-                        .WithTrailingTrivia(correctedOperatorNoSpace.TrailingTrivia.Insert(0, SyntaxFactory.Whitespace(" ")))
-                        .WithoutFormatting();
+                        .WithTrailingTrivia(correctedOperatorNoSpace.TrailingTrivia.Insert(0, SyntaxFactory.Space));
                     replacements[token] = correctedOperator;
                 }
             }
@@ -101,6 +105,7 @@
                 SyntaxToken correctedOperatorNoSpace = token.WithoutTrailingWhitespace(removeEndOfLineTrivia: true).WithoutFormatting();
                 replacements[token] = correctedOperatorNoSpace;
             }
+
             var transformed = root.ReplaceTokens(replacements.Keys, (original, maybeRewritten) => replacements[original]);
             Document updatedDocument = document.WithSyntaxRoot(transformed);
 

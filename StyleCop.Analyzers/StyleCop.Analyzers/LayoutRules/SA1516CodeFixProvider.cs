@@ -49,7 +49,7 @@
         private static Task<Document> GetTransformedDocument(CodeFixContext context, SyntaxNode syntaxRoot, SyntaxNode node, SyntaxTriviaList leadingTrivia)
         {
             var newTriviaList = leadingTrivia;
-            newTriviaList = newTriviaList.Insert(0, SyntaxFactory.ElasticCarriageReturnLineFeed);
+            newTriviaList = newTriviaList.Insert(0, SyntaxFactory.CarriageReturnLineFeed);
 
             var newNode = node.WithLeadingTrivia(newTriviaList);
             var newSyntaxRoot = syntaxRoot.ReplaceNode(node, newNode);
@@ -68,18 +68,22 @@
                 {
                     return currentNode;
                 }
+
                 if (currentNode is NamespaceDeclarationSyntax)
                 {
                     return currentNode;
                 }
+
                 if (currentNode is UsingDirectiveSyntax)
                 {
                     return currentNode;
                 }
+
                 if (currentNode is MemberDeclarationSyntax)
                 {
                     return currentNode;
                 }
+
                 if (currentNode is AccessorDeclarationSyntax)
                 {
                     return currentNode;
@@ -87,6 +91,7 @@
 
                 currentNode = currentNode.Parent;
             }
+
             return null;
         }
     }

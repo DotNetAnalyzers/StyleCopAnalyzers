@@ -30,7 +30,9 @@
         {
             var node = context.Node as PropertyDeclarationSyntax;
             if (node == null || node.Identifier.IsMissing)
+            {
                 return;
+            }
 
             this.HandleDeclaration(context, node, node.Identifier.GetLocation());
         }

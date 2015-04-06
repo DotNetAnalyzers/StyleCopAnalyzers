@@ -71,10 +71,14 @@
         private void HandlePlusToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             if (!token.Parent.IsKind(SyntaxKind.UnaryPlusExpression))
+            {
                 return;
+            }
 
             bool precededBySpace;
             bool firstInLine;

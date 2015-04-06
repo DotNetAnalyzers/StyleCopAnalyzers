@@ -69,10 +69,14 @@
         private void HandleWhitespaceTrivia(SyntaxTreeAnalysisContext context, SyntaxTrivia trivia)
         {
             if (trivia.Span.Length <= 1)
+            {
                 return;
+            }
 
             if (trivia.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0)
+            {
                 return;
+            }
 
             SyntaxToken token = trivia.Token;
             SyntaxToken precedingToken;
@@ -94,7 +98,9 @@
             }
 
             if (precedingToken.IsKind(SyntaxKind.CommaToken) || precedingToken.IsKind(SyntaxKind.SemicolonToken))
+            {
                 return;
+            }
 
             // Code must not contain multiple whitespace characters in a row.
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, trivia.GetLocation()));

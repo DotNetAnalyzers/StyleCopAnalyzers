@@ -9,8 +9,6 @@
 
     public class SA1110UnitTests : CodeFixVerifier
     {
-        public string DiagnosticId { get; } = SA1110OpeningParenthesisMustBeOnDeclarationLine.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {
@@ -203,6 +201,7 @@ Baz();
         public async Task TestStaticMethodCallWithAnotherStaticCallOpeningBracketInTheNextLine()
         {
             var testCode = @"
+using System;
 public class Foo
 {
     public static Foo Baz(int i)
@@ -253,6 +252,7 @@ public class Foo
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
+
         [Fact]
         public async Task TestConstructorWithQualifiedNameCallOpeningBracketInTheNextLine()
         {
@@ -319,7 +319,7 @@ class Foo
             var testCode = @"
 class Foo
 {
-    public int this[index]
+    public int this[int index]
     {
         get
         {
@@ -364,7 +364,7 @@ class Foo
             var testCode = @"
 class Foo
 {
-    public int this[index]
+    public int this[int index]
     {
         get
         {
@@ -435,6 +435,7 @@ class Foo
         public async Task TestAttributeOpeningParenthesisOnTheNextLine()
         {
             var testCode = @"
+using System.Diagnostics;
 public class Foo
 {
 [Conditional
@@ -447,8 +448,8 @@ public class Foo
 
             DiagnosticResult[] expected =
                 {
-                    this.CSharpDiagnostic().WithLocation(5, 1),
-                    this.CSharpDiagnostic().WithLocation(6, 1)
+                    this.CSharpDiagnostic().WithLocation(6, 1),
+                    this.CSharpDiagnostic().WithLocation(7, 1)
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
@@ -458,6 +459,7 @@ public class Foo
         public async Task TestAttributeOpeningParenthesisOnTheSameLine()
         {
             var testCode = @"
+using System.Diagnostics;
 public class Foo
 {
     [Conditional(""DEBUG""), Conditional(""TEST1"")]
@@ -505,7 +507,7 @@ public class Foo
 {
     public void Bar()
     {
-        Action<string,string> del = 
+        System.Action<string,string> del = 
         delegate
 (string s, string s2
         )
@@ -527,7 +529,7 @@ public class Foo
 {
     public void Bar()
     {
-        Action<string,string> del = 
+        System.Action<string,string> del = 
         delegate(string s, string s2)
         {
         };
@@ -545,7 +547,7 @@ public class Foo
 {
     public void Bar()
     {
-            Action del = 
+            System.Action del = 
                 delegate()
                 {
                 };

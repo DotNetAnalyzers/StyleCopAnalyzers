@@ -12,8 +12,6 @@
     /// </summary>
     public class SA1600UnitTests : CodeFixVerifier
     {
-        public string DiagnosticId { get; } = SA1600ElementsMustBeDocumented.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {
@@ -79,14 +77,10 @@ public class OuterClass
         {
             var testCodeWithoutDocumentation = @"
 {0} delegate void
-DelegateName()
-{{
-}}";
+DelegateName();";
             var testCodeWithDocumentation = @"/// <summary> A summary. </summary>
 {0} delegate void
-DelegateName()
-{{
-}}";
+DelegateName();";
 
             DiagnosticResult[] expected =
                 {
@@ -105,9 +99,7 @@ public class OuterClass
 {{
 
     {0} delegate void
-    DelegateName()
-    {{
-    }}
+    DelegateName();
 }}";
             var testCodeWithDocumentation = @"    /// <summary>
     /// A summary
@@ -116,9 +108,7 @@ public class OuterClass
 {{
     /// <summary>A summary.</summary>
     {0} delegate void
-    DelegateName()
-    {{
-    }}
+    DelegateName();
 }}";
 
             DiagnosticResult[] expected =
@@ -134,25 +124,33 @@ public class OuterClass
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
     /// </summary>
-public class OuterClass
+public class OuterClass : BaseClass, IInterface
 {{
 
     {0} void{1}
     MemberName()
     {{
     }}
-}}";
+}}
+#pragma warning disable SA1600 // the following code is used for ensuring the above code compiles
+public class BaseClass : IInterface {{ public void MemberName() {{ }} }}
+public interface IInterface {{ void MemberName(); }}
+";
             var testCodeWithDocumentation = @"    /// <summary>
     /// A summary
     /// </summary>
-public class OuterClass
+public class OuterClass : BaseClass, IInterface
 {{
     /// <summary>A summary.</summary>
     {0} void{1}
     MemberName()
     {{
     }}
-}}";
+}}
+#pragma warning disable SA1600 // the following code is used for ensuring the above code compiles
+public class BaseClass : IInterface {{ public void MemberName() {{ }} }}
+public interface IInterface {{ void MemberName(); }}
+";
 
             DiagnosticResult[] expected =
                 {
@@ -169,24 +167,20 @@ public class OuterClass
     /// A summary
     /// </summary>
 public interface InterfaceName
-{{
+{
 
     void
-    MemberName()
-    {{
-    }}
-}}";
+    MemberName();
+}";
             var testCodeWithDocumentation = @"    /// <summary>
     /// A summary
     /// </summary>
 public interface InterfaceName
-{{
+{
     /// <summary>A summary.</summary>
     void
-    MemberName()
-    {
-    }
-}}";
+    MemberName();
+}";
 
             DiagnosticResult[] expected =
                 {
@@ -202,26 +196,26 @@ public interface InterfaceName
     /// A summary
     /// </summary>
 public interface InterfaceName
-{{
+{
 
     
     string MemberName
     {
         get; set;
     }
-}}";
+}";
             var testCodeWithDocumentation = @"    /// <summary>
     /// A summary
     /// </summary>
 public interface InterfaceName
-{{
+{
     /// <summary>A summary.</summary>
     
     string MemberName
     {
         get; set;
     }
-}}";
+}";
 
             DiagnosticResult[] expected =
                 {
@@ -237,21 +231,20 @@ public interface InterfaceName
     /// A summary
     /// </summary>
 public interface InterfaceName
-{{
+{
 
     
     event System.Action MemberName;
-}}";
+}";
             var testCodeWithDocumentation = @"    /// <summary>
     /// A summary
     /// </summary>
 public interface InterfaceName
-{{
+{
     /// <summary>A summary.</summary>
     
     event System.Action MemberName;
-}}";
-
+}";
 
             DiagnosticResult[] expected =
                 {
@@ -267,20 +260,20 @@ public interface InterfaceName
     /// A summary
     /// </summary>
 public interface InterfaceName
-{{
+{
 
     string
     this[string key] { get; set; }
-}}";
+}";
             var testCodeWithDocumentation = @"    /// <summary>
     /// A summary
     /// </summary>
 public interface InterfaceName
-{{
+{
     /// <summary>A summary.</summary>
     string
     this[string key] { get; set; }
-}}";
+}";
 
             DiagnosticResult[] expected =
                 {
@@ -359,23 +352,31 @@ public class OuterClass
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
     /// </summary>
-public class OuterClass
+public class OuterClass : BaseClass, IInterface
 {{
 
     {0}
     string{1}
     MemberName {{ get; set; }}
-}}";
+}}
+#pragma warning disable SA1600 // the following code is used for ensuring the above code compiles
+public class BaseClass : IInterface {{ public string MemberName {{ get; set; }} }}
+public interface IInterface {{ string MemberName {{ get; set; }} }}
+";
             var testCodeWithDocumentation = @"    /// <summary>
     /// A summary
     /// </summary>
-public class OuterClass
+public class OuterClass : BaseClass, IInterface
 {{
     /// <summary>A summary.</summary>
     {0}
     string{1}
     MemberName {{ get; set; }}
-}}";
+}}
+#pragma warning disable SA1600 // the following code is used for ensuring the above code compiles
+public class BaseClass : IInterface {{ public string MemberName {{ get; set; }} }}
+public interface IInterface {{ string MemberName {{ get; set; }} }}
+";
 
             DiagnosticResult[] expected =
                 {
@@ -391,23 +392,31 @@ public class OuterClass
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
     /// </summary>
-public class OuterClass
+public class OuterClass : BaseClass, IInterface
 {{
 
     {0}
     string{1}
-    this[string key] {{ get {{ return ""; }} set {{ }} }}
-}}";
+    this[string key] {{ get {{ return """"; }} set {{ }} }}
+}}
+#pragma warning disable SA1600 // the following code is used for ensuring the above code compiles
+public class BaseClass : IInterface {{ public string this[string key] {{ get {{ return """"; }} set {{ }} }} }}
+public interface IInterface {{ string this[string key] {{ get; set; }} }}
+";
             var testCodeWithDocumentation = @"    /// <summary>
     /// A summary
     /// </summary>
-public class OuterClass
+public class OuterClass : BaseClass, IInterface
 {{
     /// <summary>A summary.</summary>
     {0}
     string{1}
-    this[string key] {{ get {{ return ""; }} set {{ }} }}
-}}";
+    this[string key] {{ get {{ return """"; }} set {{ }} }}
+}}
+#pragma warning disable SA1600 // the following code is used for ensuring the above code compiles
+public class BaseClass : IInterface {{ public string this[string key] {{ get {{ return """"; }} set {{ }} }} }}
+public interface IInterface {{ string this[string key] {{ get; set; }} }}
+";
 
             DiagnosticResult[] expected =
                 {
@@ -423,7 +432,7 @@ public class OuterClass
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
     /// </summary>
-public class OuterClass
+public class OuterClass : BaseClass, IInterface
 {{
     System.Action _myEvent;
 
@@ -440,11 +449,15 @@ public class OuterClass
             _myEvent -= value;
         }}
     }}
-}}";
+}}
+#pragma warning disable SA1600 // the following code is used for ensuring the above code compiles
+public class BaseClass : IInterface {{ public event System.Action MyEvent; }}
+public interface IInterface {{ event System.Action MyEvent; }}
+";
             var testCodeWithDocumentation = @"    /// <summary>
     /// A summary
     /// </summary>
-public class OuterClass
+public class OuterClass : BaseClass, IInterface
 {{
     System.Action _myEvent;
     /// <summary>A summary.</summary>
@@ -461,7 +474,11 @@ public class OuterClass
             _myEvent -= value;
         }}
     }}
-}}";
+}}
+#pragma warning disable SA1600 // the following code is used for ensuring the above code compiles
+public class BaseClass : IInterface {{ public event System.Action MyEvent; }}
+public interface IInterface {{ event System.Action MyEvent; }}
+";
 
             DiagnosticResult[] expected =
                 {
@@ -558,12 +575,12 @@ public class OuterClass
             await this.TestNestedTypeDeclarationDocumentation(type, "public", false, true);
         }
 
-
         [Fact]
         public async Task TestClassWithoutDocumentation()
         {
             await this.TestTypeWithoutDocumentation("class");
         }
+
         [Fact]
         public async Task TestStructWithoutDocumentation()
         {
@@ -628,12 +645,12 @@ public class OuterClass
             await this.TestDelegateDeclarationDocumentation("internal", false, true);
             await this.TestDelegateDeclarationDocumentation("public", false, true);
 
-            await this.TestDelegateDeclarationDocumentation(string.Empty, false, true);
-            await this.TestDelegateDeclarationDocumentation("private", false, true);
-            await this.TestDelegateDeclarationDocumentation("protected", false, true);
-            await this.TestDelegateDeclarationDocumentation("internal", false, true);
-            await this.TestDelegateDeclarationDocumentation("protected internal", false, true);
-            await this.TestDelegateDeclarationDocumentation("public", false, true);
+            await this.TestNestedDelegateDeclarationDocumentation(string.Empty, false, true);
+            await this.TestNestedDelegateDeclarationDocumentation("private", false, true);
+            await this.TestNestedDelegateDeclarationDocumentation("protected", false, true);
+            await this.TestNestedDelegateDeclarationDocumentation("internal", false, true);
+            await this.TestNestedDelegateDeclarationDocumentation("protected internal", false, true);
+            await this.TestNestedDelegateDeclarationDocumentation("public", false, true);
         }
 
         [Fact]
@@ -883,10 +900,17 @@ public class OuterClass
         [Fact]
         public async Task TestMultiLineDocumentation()
         {
-            var testCodeWithDocumentation = @"/**
+            var testCodeWithDocumentation = @"
+/**
  * <summary>This is a documentation comment summary.</summary>
  */
-public void SomeMethod() { }";
+public class OuterClass
+{
+    /**
+     * <summary>This is a documentation comment summary.</summary>
+     */
+    public void SomeMethod() { }
+}";
 
             await this.VerifyCSharpDiagnosticAsync(testCodeWithDocumentation, EmptyDiagnosticResults, CancellationToken.None);
         }

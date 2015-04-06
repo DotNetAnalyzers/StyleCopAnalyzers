@@ -103,7 +103,7 @@
 {
     public void Bar()
     {
-        int x = ToString();
+        string x = ToString();
     }
 }";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
@@ -144,10 +144,10 @@
         {
             var testCode = @"public class Foo
 {
-    public int Local { get; set; }
+    public string Local { get; set; }
     public void Bar()
     {
-        int x = Local + Local.IndexOf('x');
+        string x = Local + Local.IndexOf('x');
     }
 }";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
@@ -158,7 +158,7 @@
         {
             var testCode = @"public class Foo
 {
-    public int Local { get; set; }
+    public string Local { get; set; }
     public void Bar()
     {
         string x = (Local).ToString() + Local.IndexOf(('x'));
@@ -178,7 +178,7 @@
 
             var fixedCode = @"public class Foo
 {
-    public int Local { get; set; }
+    public string Local { get; set; }
     public void Bar()
     {
         string x = Local.ToString() + Local.IndexOf('x');
@@ -552,7 +552,7 @@
 {
     public void Bar()
     {
-        bool x = "" is string;
+        bool x = """" is string;
     }
 }";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
@@ -715,7 +715,7 @@
     public void Bar()
     {
         string x = (true ? ""foo"" : ""bar"") + ""test"";
-        string x = (true ? ""foo"" : ""bar"").ToString();
+        string y = (true ? ""foo"" : ""bar"").ToString();
     }
 }";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
@@ -771,7 +771,7 @@
     public void Bar()
     {
         string x = (""foo"" ?? ""bar"") + ""test"";
-        string x = (""foo"" ?? ""bar"").ToString();
+        string y = (""foo"" ?? ""bar"").ToString();
     }
 }";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
@@ -832,8 +832,8 @@
 {
     public void Bar()
     {
-        string x = (v => v)(""foo"");
-        string y = ((v) => v)(""foo"");
+        string x = ((System.Func<string, string>)(v => v))(""foo"");
+        string y = ((System.Func<string, string>)((v) => v))(""foo"");
     }
 }";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
@@ -897,7 +897,8 @@
         [Fact]
         public async Task TestQuery()
         {
-            var testCode = @"public class Foo
+            var testCode = @"using System.Linq;
+public class Foo
 {
     public void Bar()
     {
@@ -910,7 +911,8 @@
         [Fact]
         public async Task TestQueryParenthesis()
         {
-            var testCode = @"public class Foo
+            var testCode = @"using System.Linq;
+public class Foo
 {
     public void Bar()
     {
@@ -919,14 +921,15 @@
 }";
             DiagnosticResult[] expected =
                 {
-                    this.CSharpDiagnostic(DiagnosticId).WithLocation(5, 17),
-                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 17),
-                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 52)
+                    this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 17),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 17),
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 52)
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
-            var fixedCode = @"public class Foo
+            var fixedCode = @"using System.Linq;
+public class Foo
 {
     public void Bar()
     {
@@ -939,7 +942,8 @@
         [Fact]
         public async Task TestQueryInner()
         {
-            var testCode = @"public class Foo
+            var testCode = @"using System.Linq;
+public class Foo
 {
     public void Bar()
     {
@@ -956,7 +960,7 @@
 {
     public async void Bar()
     {
-        var x = (await System.Threading.Tasks.Task.Delay(10).ContinueWith(() => System.Threading.Tasks.Task.FromResult(1))).ToString();
+        var x = (await System.Threading.Tasks.Task.Delay(10).ContinueWith(task => System.Threading.Tasks.Task.FromResult(1))).ToString();
     }
 }";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);

@@ -60,7 +60,9 @@
         {
             FieldDeclarationSyntax syntax = (FieldDeclarationSyntax)context.Node;
             if (NamedTypeHelpers.IsContainedInNativeMethodsClass(syntax))
+            {
                 return;
+            }
 
             if (syntax.Modifiers.Any(SyntaxKind.ConstKeyword))
             {
@@ -91,22 +93,29 @@
 
             var variables = syntax.Declaration?.Variables;
             if (variables == null)
+            {
                 return;
+            }
 
             foreach (VariableDeclaratorSyntax variableDeclarator in variables.Value)
             {
                 if (variableDeclarator == null)
+                {
                     continue;
+                }
 
                 var identifier = variableDeclarator.Identifier;
                 if (identifier.IsMissing)
+                {
                     continue;
+                }
 
                 string name = identifier.ValueText;
                 if (string.IsNullOrEmpty(name) || char.IsLower(name[0]))
                 {
                     continue;
                 }
+
                 if (name[0] == '_')
                 {
                     // `_foo` is handled by SA1309
