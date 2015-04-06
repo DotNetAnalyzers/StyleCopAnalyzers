@@ -68,7 +68,7 @@
         [Fact]
         public async Task TestInterfaceWithBlockStartOnSameLine()
         {
-            var testCode = @"public class Foo { 
+            var testCode = @"public interface Foo { 
 void Bar(); }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);

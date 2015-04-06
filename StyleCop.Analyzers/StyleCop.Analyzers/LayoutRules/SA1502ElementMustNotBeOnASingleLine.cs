@@ -62,16 +62,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleTypeDeclarations, SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleBaseTypeDeclarations, SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.EnumDeclaration);
             context.RegisterSyntaxNodeAction(this.HandlePropertyLikeDeclarations, SyntaxKind.PropertyDeclaration, SyntaxKind.EventDeclaration, SyntaxKind.IndexerDeclaration);
             context.RegisterSyntaxNodeAction(this.HandleMethodLikeDeclarations, SyntaxKind.MethodDeclaration, SyntaxKind.ConstructorDeclaration, SyntaxKind.DestructorDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleEnumDeclarations, SyntaxKind.EnumDeclaration);
             context.RegisterSyntaxNodeAction(this.HandleNamespaceDeclarations, SyntaxKind.NamespaceDeclaration);
         }
 
-        private void HandleTypeDeclarations(SyntaxNodeAnalysisContext context)
+        private void HandleBaseTypeDeclarations(SyntaxNodeAnalysisContext context)
         {
-            var typeDeclaration = (TypeDeclarationSyntax)context.Node;
+            var typeDeclaration = (BaseTypeDeclarationSyntax)context.Node;
             CheckViolation(context, typeDeclaration.OpenBraceToken, typeDeclaration.CloseBraceToken);
         }
 
@@ -99,12 +98,6 @@
             {
                 CheckViolation(context, baseMethodDeclaration.Body.OpenBraceToken, baseMethodDeclaration.Body.CloseBraceToken);
             }
-        }
-
-        private void HandleEnumDeclarations(SyntaxNodeAnalysisContext context)
-        {
-            var enumDeclaration = (EnumDeclarationSyntax)context.Node;
-            CheckViolation(context, enumDeclaration.OpenBraceToken, enumDeclaration.CloseBraceToken);
         }
 
         private void HandleNamespaceDeclarations(SyntaxNodeAnalysisContext context)

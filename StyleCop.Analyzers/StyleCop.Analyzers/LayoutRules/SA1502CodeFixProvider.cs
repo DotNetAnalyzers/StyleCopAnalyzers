@@ -64,7 +64,8 @@
                 case SyntaxKind.ClassDeclaration:
                 case SyntaxKind.InterfaceDeclaration:
                 case SyntaxKind.StructDeclaration:
-                    newSyntaxRoot = this.RegisterTypeDeclarationCodeFix(syntaxRoot, (TypeDeclarationSyntax)node, indentationOptions);
+                case SyntaxKind.EnumDeclaration:
+                    newSyntaxRoot = this.RegisterBaseTypeDeclarationCodeFix(syntaxRoot, (BaseTypeDeclarationSyntax)node, indentationOptions);
                     break;
 
                 case SyntaxKind.AccessorList:
@@ -75,10 +76,6 @@
                     newSyntaxRoot = this.RegisterMethodLikeDeclarationCodeFix(syntaxRoot, (BaseMethodDeclarationSyntax)node.Parent, indentationOptions);
                     break;
 
-                case SyntaxKind.EnumDeclaration:
-                    newSyntaxRoot = this.RegisterEnumDeclarationCodeFix(syntaxRoot, (EnumDeclarationSyntax)node, indentationOptions);
-                    break;
-
                 case SyntaxKind.NamespaceDeclaration:
                     newSyntaxRoot = this.RegisterNamespaceDeclarationCodeFix(syntaxRoot, (NamespaceDeclarationSyntax)node, indentationOptions);
                     break;
@@ -87,7 +84,7 @@
             return context.Document.WithSyntaxRoot(newSyntaxRoot);
         }
 
-        private SyntaxNode RegisterTypeDeclarationCodeFix(SyntaxNode syntaxRoot, TypeDeclarationSyntax node, IndentationOptions indentationOptions)
+        private SyntaxNode RegisterBaseTypeDeclarationCodeFix(SyntaxNode syntaxRoot, BaseTypeDeclarationSyntax node, IndentationOptions indentationOptions)
         {
             return this.ReformatElement(syntaxRoot, node, node.OpenBraceToken, node.CloseBraceToken, indentationOptions);
         }
