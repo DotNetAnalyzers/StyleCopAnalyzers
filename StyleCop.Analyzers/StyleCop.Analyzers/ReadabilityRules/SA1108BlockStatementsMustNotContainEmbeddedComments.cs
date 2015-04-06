@@ -98,10 +98,6 @@
             }
 
             var previousToken = openBraceToken.GetPreviousToken();
-            if (previousToken.IsMissing)
-            {
-                return;
-            }
 
             this.FindAllComments(context, previousToken, openBraceToken);
         }
@@ -109,7 +105,7 @@
         private void AnalyzeBlock(SyntaxNodeAnalysisContext context)
         {
             var block = (BlockSyntax) context.Node;
-            if (block.Parent == null || !this.supportedKinds.Any(block.Parent.IsKind))
+            if (!this.supportedKinds.Any(block.Parent.IsKind))
             {
                 return;
             }
@@ -132,8 +128,7 @@
         private void FindAllComments(SyntaxNodeAnalysisContext context, SyntaxToken previousToken, SyntaxToken openBraceToken)
         {
             var comments = previousToken.TrailingTrivia.Where(this.IsComment)
-                .Union(openBraceToken.LeadingTrivia.Where(this.IsComment))
-                .ToList();
+                .Concat(openBraceToken.LeadingTrivia.Where(this.IsComment));
             foreach (var comment in comments)
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, comment.GetLocation()));

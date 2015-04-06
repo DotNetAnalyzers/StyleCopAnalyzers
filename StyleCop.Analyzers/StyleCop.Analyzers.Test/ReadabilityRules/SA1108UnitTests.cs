@@ -41,7 +41,7 @@ public class Foo
             var firstDiagnostic = this.CSharpDiagnostic().WithLocation(8, 9);
             var secondDiagnostic = this.CSharpDiagnostic().WithLocation(13, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, new [] {firstDiagnostic, secondDiagnostic}, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, new [] { firstDiagnostic, secondDiagnostic }, CancellationToken.None);
         }
 
         [Fact]
@@ -189,7 +189,7 @@ public class Foo
             DiagnosticResult first = this.CSharpDiagnostic().WithLocation(8, 9);
             DiagnosticResult second = this.CSharpDiagnostic().WithLocation(13, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, new []{first, second}, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, new []{ first, second }, CancellationToken.None);
         }
 
         [Fact]
@@ -257,7 +257,7 @@ public class Foo
             DiagnosticResult third = this.CSharpDiagnostic().WithLocation(17, 9);
             DiagnosticResult fourth = this.CSharpDiagnostic().WithLocation(22, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, new []{first, second, third, fourth}, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, new []{ first, second, third, fourth }, CancellationToken.None);
         }
 
         [Fact]
