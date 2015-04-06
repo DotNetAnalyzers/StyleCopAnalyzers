@@ -135,7 +135,9 @@ public class Foo
         [Fact]
         public async Task TestSingleLineLambdaExpressionIsAllowed()
         {
-            string testCode = @"using System.Diagnostics;
+            string testCode = @"using System;
+using System.Diagnostics;
+
 public class Foo
 {
     public void Bar(int i)

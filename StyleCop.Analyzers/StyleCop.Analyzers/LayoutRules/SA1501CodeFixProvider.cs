@@ -106,7 +106,7 @@
                 .WithoutTrailingWhitespace();
 
             // only add an end-of-line to the close brace if there is none yet.
-            if (!newCloseBraceTrailingTrivia.Last().IsKind(SyntaxKind.EndOfLineTrivia))
+            if ((newCloseBraceTrailingTrivia.Count == 0) || !newCloseBraceTrailingTrivia.Last().IsKind(SyntaxKind.EndOfLineTrivia))
             {
                 newCloseBraceTrailingTrivia = newCloseBraceTrailingTrivia.Add(SyntaxFactory.CarriageReturnLineFeed);
             }
