@@ -10,8 +10,6 @@
 
     public class SA1311UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {
@@ -129,7 +127,7 @@
 {
     public static readonly string bar;
 
-    static Foo()
+    static Bar()
     {
         bar = ""aa"";
     }
@@ -143,7 +141,7 @@
 {
     public static readonly string BarValue;
 
-    static Foo()
+    static Bar()
     {
         BarValue = ""aa"";
     }

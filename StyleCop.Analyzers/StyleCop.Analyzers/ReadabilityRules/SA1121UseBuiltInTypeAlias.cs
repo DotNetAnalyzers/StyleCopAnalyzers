@@ -219,6 +219,15 @@
             {
                 locationNode = identifierNameSyntax.Parent;
             }
+            else if ((identifierNameSyntax.Parent as MemberAccessExpressionSyntax)?.Name == identifierNameSyntax)
+            {
+                // this "weird" syntax appears for qualified references within a nameof expression
+                locationNode = identifierNameSyntax.Parent;
+            }
+            else if (identifierNameSyntax.Parent is NameMemberCrefSyntax && identifierNameSyntax.Parent.Parent is QualifiedCrefSyntax)
+            {
+                locationNode = identifierNameSyntax.Parent.Parent;
+            }
 
             // Allow nameof
             if (this.IsNameInNameOfExpression(identifierNameSyntax))

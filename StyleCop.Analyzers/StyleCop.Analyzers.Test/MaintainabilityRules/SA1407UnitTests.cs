@@ -10,8 +10,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     public class SA1407UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1407ArithmeticExpressionsMustDeclarePrecedence.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {
@@ -199,22 +197,35 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     public void Bar()
     {
+        int b = 1;
         int x = 1 * 1 + 1 * 1;
-        int y = 5 + y * b / 6 % z - 2;
+        int y = 5 + x * b / 6 % x - 2;
         // the following test makes sure the code fix doesn't alter spacing
-        int z = z ? 4*3+-1 :false;
+        int z = y==1 ? 4*3+-1 :0;
     }
 }";
             var fixedCode = @"public class Foo
 {
     public void Bar()
     {
+        int b = 1;
         int x = (1 * 1) + (1 * 1);
-        int y = 5 + ((y * b / 6) % z) - 2;
+        int y = 5 + ((x * b / 6) % x) - 2;
         // the following test makes sure the code fix doesn't alter spacing
-        int z = z ? (4*3)+-1 :false;
+        int z = y==1 ? (4*3)+-1 :0;
     }
 }";
+
+            DiagnosticResult[] expected =
+                {
+                    this.CSharpDiagnostic().WithLocation(6, 17),
+                    this.CSharpDiagnostic().WithLocation(6, 25),
+                    this.CSharpDiagnostic().WithLocation(7, 21),
+                    this.CSharpDiagnostic().WithLocation(7, 21),
+                    this.CSharpDiagnostic().WithLocation(9, 24),
+                };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }

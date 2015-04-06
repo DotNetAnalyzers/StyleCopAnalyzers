@@ -11,14 +11,6 @@
 
     public class SA1405UnitTests : DebugMessagesUnitTestsBase
     {
-        protected override string DiagnosticId
-        {
-            get
-            {
-                return SA1405DebugAssertMustProvideMessageText.DiagnosticId;
-            }
-        }
-
         protected override string MethodName
         {
             get

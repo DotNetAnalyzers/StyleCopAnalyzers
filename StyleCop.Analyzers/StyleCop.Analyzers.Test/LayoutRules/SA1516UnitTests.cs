@@ -10,9 +10,7 @@
 
     public class SA1516UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1516ElementsMustBeSeparatedByBlankLine.DiagnosticId;
-
-        private const string CorrectCode = @"extern alias Foo1;
+        private const string CorrectCode = @"extern alias corlib;
 
 using System;
 using System.Linq;
@@ -47,7 +45,7 @@ namespace Foo
             }
         }
 
-        public string Foo, Bar;
+        public string FooValue, BarValue;
 
         public enum TestEnum
         {
@@ -64,7 +62,7 @@ namespace Foo
 
 namespace Foot
 {
-    extern alias Foo2;
+    extern alias system;
 
     using System;
 
@@ -96,7 +94,7 @@ namespace Foot
         [Fact]
         public async Task TestWrongSpacing()
         {
-            var testCode = @"extern alias Foo1;
+            var testCode = @"extern alias corlib;
 using System;
 using System.Linq;
 using a = System.Collections.Generic;
@@ -124,7 +122,7 @@ namespace Foo
                 Test1 = value;
             }
         }
-        public string Foo, Bar;
+        public string FooValue, BarValue;
         public enum TestEnum
         {
             Value1,
@@ -138,7 +136,7 @@ namespace Foo
 }
 namespace Foot
 {
-    extern alias Foo2;
+    extern alias system;
     using System;
     // Foo
     class Foo { }
@@ -203,7 +201,7 @@ namespace Foo
     public class Bar
     {
         public string TestProperty1 { get; set; }
-        public string Foo()
+        public void Foo()
         {
 
         }
@@ -235,7 +233,7 @@ namespace Foo
     {
         public string TestProperty1 { get; set; }
 
-        public string Foo()
+        public void Foo()
         {
 
         }
@@ -306,7 +304,7 @@ public struct Struct
 
 public class Foo
 {
-    public string this[int i]
+    public string this[string i]
     {
         get
         {
@@ -342,7 +340,7 @@ public class Foo
 
 public class Foo
 {
-    public string this[int i]
+    public string this[string i]
     {
         get
         {

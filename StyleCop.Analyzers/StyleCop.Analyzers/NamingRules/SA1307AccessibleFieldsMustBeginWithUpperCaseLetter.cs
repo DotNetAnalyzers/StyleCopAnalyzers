@@ -71,7 +71,7 @@
                             && char.IsLower(name[0]) 
                             && !NamedTypeHelpers.IsContainedInNativeMethodsClass(declaration))
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, declarator.GetLocation(), name));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, declarator.Identifier.GetLocation(), name));
                         }
                     }
                 }

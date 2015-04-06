@@ -14,8 +14,6 @@
     /// </summary>
     public class SA1122UnitTests : CodeFixVerifier
     {
-        public string DiagnosticId { get; } = SA1122UseStringEmptyForEmptyStrings.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {
@@ -108,7 +106,7 @@ string test = ({0}"""");
             var testCode = @"using System.Diagnostics.CodeAnalysis;
 public class Foo
 {{
-    [System.Diagnostics.CodeAnalysis.SuppressMessage({0}"""", 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage({0}"""", ""checkId"",
                                                     Justification = ({0}""""))]
     public void Bar()
     {{

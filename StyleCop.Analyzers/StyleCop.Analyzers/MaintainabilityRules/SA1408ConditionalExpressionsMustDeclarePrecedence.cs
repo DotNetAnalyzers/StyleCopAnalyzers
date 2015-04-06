@@ -102,6 +102,7 @@
                         }
                     }
                 }
+
                 if (binSyntax.Right is BinaryExpressionSyntax)
                 {
                     // Check if the operations are of the same kind

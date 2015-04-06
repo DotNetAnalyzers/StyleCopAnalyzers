@@ -10,8 +10,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     public class SA1408UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1408ConditionalExpressionsMustDeclarePrecedence.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {
@@ -184,22 +182,34 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     public void Bar()
     {
+        bool b = true, c = true;
         bool x = true && false || true && false;
-        bool y = true || y && b && c;
+        bool y = true || x && b && c;
         // the following test makes sure the code fix doesn't alter spacing
-        bool z = z ? true&&true||false :false;
+        bool z = b ? true&&true||false :false;
     }
 }";
             var fixedCode = @"public class Foo
 {
     public void Bar()
     {
+        bool b = true, c = true;
         bool x = (true && false) || (true && false);
-        bool y = true || (y && b && c);
+        bool y = true || (x && b && c);
         // the following test makes sure the code fix doesn't alter spacing
-        bool z = z ? (true&&true)||false :false;
+        bool z = b ? (true&&true)||false :false;
     }
 }";
+
+            DiagnosticResult[] expected =
+                {
+                    this.CSharpDiagnostic().WithLocation(6, 18),
+                    this.CSharpDiagnostic().WithLocation(6, 35),
+                    this.CSharpDiagnostic().WithLocation(7, 26),
+                    this.CSharpDiagnostic().WithLocation(9, 22),
+                };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }

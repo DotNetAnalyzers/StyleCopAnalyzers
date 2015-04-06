@@ -91,6 +91,7 @@
                                 return;
                             }
                         }
+
                         // No justification set
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, attribute.GetLocation()));
                     }

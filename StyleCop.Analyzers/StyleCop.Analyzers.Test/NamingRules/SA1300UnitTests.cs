@@ -9,12 +9,10 @@
 
     public class SA1300UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1300ElementMustBeginWithUpperCaseLetter.DiagnosticId;
-
         [Fact]
         public async Task TestUpperCaseNamespace()
         {
-            var testCode = @"public namespace Test 
+            var testCode = @"namespace Test 
 { 
 
 }";
@@ -25,12 +23,12 @@
         [Fact]
         public async Task TestLowerCaseNamespace()
         {
-            var testCode = @"public namespace test 
+            var testCode = @"namespace test 
 { 
 
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("test").WithLocation(1, 18);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("test").WithLocation(1, 11);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
@@ -235,7 +233,7 @@ public delegate void test();
 {
 public void Test()
 {
-
+}
 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
@@ -248,7 +246,7 @@ public void Test()
 {
 public void test()
 {
-
+}
 }";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("test").WithLocation(3, 13);
@@ -307,7 +305,7 @@ internal string Test;
         {
             var testCode = @"public class TestClass
 {
-const string Test;
+const string Test = ""value"";
 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
@@ -375,7 +373,7 @@ internal string test;
         {
             var testCode = @"public class TestClass
 {
-const string test;
+const string test = ""value"";
 }";
 
             // Reported as SA1303

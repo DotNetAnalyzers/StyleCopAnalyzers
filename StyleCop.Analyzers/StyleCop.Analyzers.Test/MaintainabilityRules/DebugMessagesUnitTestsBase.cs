@@ -1,19 +1,16 @@
 ﻿namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
     using TestHelper;
     using Xunit;
 
     public abstract class DebugMessagesUnitTestsBase : CodeFixVerifier
     {
-        protected abstract string DiagnosticId
-        {
-            get;
-        }
-
         protected abstract string MethodName
         {
             get;
@@ -46,7 +43,18 @@
         [Fact]
         public async Task TestConstantMessage_Field_PassWrongType()
         {
-            await this.TestConstantMessage_Field_Pass("3");
+            DiagnosticResult[] expected =
+            {
+                new DiagnosticResult
+                {
+                    Id = "CS0029",
+                    Message = "Cannot implicitly convert type 'int' to 'string'",
+                    Severity = DiagnosticSeverity.Error,
+                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 4, 28) }
+                }
+            };
+
+            await this.TestConstantMessage_Field_Pass("3", expected);
         }
 
         [Fact]
@@ -64,7 +72,18 @@
         [Fact]
         public async Task TestConstantMessage_Local_PassWrongType()
         {
-            await this.TestConstantMessage_Local_Pass("3");
+            DiagnosticResult[] expected =
+            {
+                new DiagnosticResult
+                {
+                    Id = "CS0029",
+                    Message = "Cannot implicitly convert type 'int' to 'string'",
+                    Severity = DiagnosticSeverity.Error,
+                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 32) }
+                }
+            };
+
+            await this.TestConstantMessage_Local_Pass("3", expected);
         }
 
         [Fact]
@@ -82,7 +101,18 @@
         [Fact]
         public async Task TestConstantMessage_Inline_PassWrongType()
         {
-            await this.TestConstantMessage_Inline_Pass("3");
+            DiagnosticResult[] expected =
+            {
+                new DiagnosticResult
+                {
+                    Id = "CS1503",
+                    Message = $"Argument {1 + this.InitialArguments.Count()}: cannot convert from 'int' to 'string'",
+                    Severity = DiagnosticSeverity.Error,
+                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 16 + this.MethodName.Length + this.InitialArguments.Sum(i => i.Length + ", ".Length)) }
+                }
+            };
+
+            await this.TestConstantMessage_Inline_Pass("3", expected);
         }
 
         [Fact]
@@ -157,7 +187,7 @@
             await this.TestConstantMessage_Inline_Fail("\"  \" + \"  \"");
         }
 
-        private async Task TestConstantMessage_Field_Pass(string argument)
+        private async Task TestConstantMessage_Field_Pass(string argument, params DiagnosticResult[] expected)
         {
             var testCodeFormat = @"using System.Diagnostics;
 public class Foo
@@ -169,10 +199,10 @@ public class Foo
     }}}}
 }}}}";
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None);
         }
 
-        private async Task TestConstantMessage_Local_Pass(string argument)
+        private async Task TestConstantMessage_Local_Pass(string argument, params DiagnosticResult[] expected)
         {
             var testCodeFormat = @"using System.Diagnostics;
 public class Foo
@@ -184,10 +214,10 @@ public class Foo
     }}}}
 }}}}";
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None);
         }
 
-        private async Task TestConstantMessage_Inline_Pass(string argument)
+        private async Task TestConstantMessage_Inline_Pass(string argument, params DiagnosticResult[] expected)
         {
             var testCodeFormat = @"using System.Diagnostics;
 public class Foo
@@ -198,7 +228,7 @@ public class Foo
     }}}}
 }}}}";
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None);
         }
 
         private async Task TestConstantMessage_Field_Fail(string argument)
@@ -259,6 +289,7 @@ public class Foo
 {{
     public void Bar()
     {{
+        string message = ""A message"";
         Debug.{0}({1}message);
     }}
 }}";
@@ -284,6 +315,10 @@ class Debug
     {{
 
     }}
+    public static void Fail(string s)
+    {{
+
+    }}
 }}
 ";
 
@@ -295,12 +330,12 @@ class Debug
         {
             var testCode = @"using System.Diagnostics;
 public class Foo
-{{
+{
     public void Bar()
-    {{
+    {
         Debug.Write(null);
-    }}
-}}";
+    }
+}";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }

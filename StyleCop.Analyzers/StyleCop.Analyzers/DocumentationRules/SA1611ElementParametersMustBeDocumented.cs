@@ -1,7 +1,12 @@
 ﻿namespace StyleCop.Analyzers.DocumentationRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Linq;
+    using Helpers;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -26,13 +31,13 @@
         /// </summary>
         public const string DiagnosticId = "SA1611";
         private const string Title = "Element parameters must be documented";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "The documentation for this parameter is missing";
         private const string Category = "StyleCop.CSharp.DocumentationRules";
         private const string Description = "A C# method, constructor, delegate or indexer element is missing documentation for one or more of its parameters.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1611.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -49,7 +54,53 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(this.HandleSyntaxNode, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleSyntaxNode, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleSyntaxNode, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeAction(this.HandleSyntaxNode, SyntaxKind.IndexerDeclaration);
+        }
+
+        private void HandleSyntaxNode(SyntaxNodeAnalysisContext context)
+        {
+            var node = context.Node;
+
+            var documentation = XmlCommentHelper.GetDocumentationStructure(node);
+
+            if (documentation != null)
+            {
+                IEnumerable<ParameterSyntax> parameterList = this.GetParameters(node);
+
+                if (parameterList == null)
+                {
+                    return;
+                }
+
+                if (XmlCommentHelper.GetTopLevelElement(documentation, XmlCommentHelper.InheritdocXmlTag) != null)
+                {
+                    // Ignore nodes with an <inheritdoc/> tag.
+                    return;
+                }
+
+                var xmlParameterNames = XmlCommentHelper.GetTopLevelElements(documentation, XmlCommentHelper.ParamTag)
+                    .Select(XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>)
+                    .Where(x => x != null)
+                    .ToImmutableArray();
+
+                foreach (var parameter in parameterList)
+                {
+                    if (!xmlParameterNames.Any(x => x.Identifier.ToString() == parameter.Identifier.ToString()))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, parameter.Identifier.GetLocation()));
+                    }
+                }
+            }
+        }
+
+        private IEnumerable<ParameterSyntax> GetParameters(SyntaxNode node)
+        {
+            return (node as BaseMethodDeclarationSyntax)?.ParameterList?.Parameters
+                ?? (node as IndexerDeclarationSyntax)?.ParameterList?.Parameters
+                ?? (node as DelegateDeclarationSyntax)?.ParameterList?.Parameters;
         }
     }
 }

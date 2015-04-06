@@ -33,6 +33,7 @@
                 {
                     newSolution = await this.GetProjectFixesAsync(fixAllContext, newSolution.GetProject(projectIds[i]));
                 }
+
                 return CodeAction.Create("Add parentheses", token => Task.FromResult(newSolution));
 
             case FixAllScope.Custom:
@@ -50,6 +51,7 @@
             {
                 newDocuments.Add(this.FixAllInDocumentAsync(fixAllContext, document));
             }
+
             for (int i = 0; i < oldDocuments.Length; i++)
             {
                 var newDocumentRoot = await newDocuments[i];

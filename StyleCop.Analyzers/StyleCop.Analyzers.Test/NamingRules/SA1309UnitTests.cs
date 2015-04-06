@@ -10,8 +10,6 @@
 
     public class SA1309UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1309FieldNamesMustNotBeginWithUnderscore.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {
@@ -73,8 +71,6 @@
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-
             var fixedCode = @"public class FooNativeMethodsClass
 {
     internal string bar = ""baz"";
@@ -95,6 +91,22 @@
 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task TestUnderscoreOnlyVariableName()
+        {
+            var testCode = @"public class FooNativeMethodsClass
+{
+    internal string _ = ""baz"";
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("_").WithLocation(3, 21);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            // no changes will be made
+            var fixedCode = testCode;
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

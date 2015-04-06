@@ -149,13 +149,13 @@
             if (modifiers.Count > 0)
             {
                 modifier = modifier.WithLeadingTrivia(modifiers[0].LeadingTrivia);
-                modifiers = modifiers.Replace(modifiers[0], modifiers[0].WithLeadingTrivia(SyntaxFactory.Whitespace(" ")));
+                modifiers = modifiers.Replace(modifiers[0], modifiers[0].WithLeadingTrivia(SyntaxFactory.ElasticSpace));
                 modifiers = modifiers.Insert(0, modifier);
             }
             else
             {
                 modifiers = SyntaxTokenList.Create(modifier.WithLeadingTrivia(leadingTriviaNode.GetLeadingTrivia()));
-                leadingTriviaNode = leadingTriviaNode.WithLeadingTrivia(SyntaxFactory.Whitespace(" "));
+                leadingTriviaNode = leadingTriviaNode.WithLeadingTrivia(SyntaxFactory.ElasticSpace);
             }
 
             return modifiers;
@@ -179,13 +179,13 @@
             if (modifiers.Count > 0)
             {
                 modifier = modifier.WithLeadingTrivia(modifiers[0].LeadingTrivia);
-                modifiers = modifiers.Replace(modifiers[0], modifiers[0].WithLeadingTrivia(SyntaxFactory.Whitespace(" ")));
+                modifiers = modifiers.Replace(modifiers[0], modifiers[0].WithLeadingTrivia(SyntaxFactory.ElasticSpace));
                 modifiers = modifiers.Insert(0, modifier);
             }
             else
             {
                 modifiers = SyntaxTokenList.Create(modifier.WithLeadingTrivia(leadingTriviaToken.LeadingTrivia));
-                leadingTriviaToken = leadingTriviaToken.WithLeadingTrivia(SyntaxFactory.Whitespace(" "));
+                leadingTriviaToken = leadingTriviaToken.WithLeadingTrivia(SyntaxFactory.ElasticSpace);
             }
 
             return modifiers;

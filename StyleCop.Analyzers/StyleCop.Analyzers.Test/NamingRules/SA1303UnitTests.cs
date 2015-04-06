@@ -9,8 +9,6 @@ namespace StyleCop.Analyzers.Test.NamingRules
 {
     public class SA1303UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1303ConstFieldNamesMustBeginWithUpperCaseLetter.DiagnosticId;
-
         [Fact]
         public async Task TestEmptySource()
         {

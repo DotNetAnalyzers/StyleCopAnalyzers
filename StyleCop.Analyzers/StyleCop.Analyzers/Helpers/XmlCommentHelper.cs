@@ -1,5 +1,7 @@
 ﻿namespace StyleCop.Analyzers.Helpers
 {
+    using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
@@ -15,8 +17,10 @@
         internal const string SummaryXmlTag = "summary";
         internal const string ContentXmlTag = "content";
         internal const string InheritdocXmlTag = "inheritdoc";
+        internal const string ReturnsXmlTag = "returns";
         internal const string ValueXmlTag = "value";
         internal const string SeeXmlTag = "see";
+        internal const string ParamTag = "param";
         internal const string CrefArgumentName = "cref";
 
         /// <summary>
@@ -63,6 +67,7 @@
                         return false;
                     }
                 }
+
                 return true;
             }
 
@@ -90,6 +95,7 @@
                         return false;
                     }
                 }
+
                 return true;
             }
 
@@ -171,6 +177,14 @@
             return emptyElementSyntax;
         }
 
+        internal static IEnumerable<XmlNodeSyntax> GetTopLevelElements(DocumentationCommentTriviaSyntax syntax, string tagName)
+        {
+            var elements = syntax.Content.OfType<XmlElementSyntax>().Where(element => string.Equals(element.StartTag.Name.ToString(), tagName));
+            var emptyElements = syntax.Content.OfType<XmlEmptyElementSyntax>().Where(element => string.Equals(element.Name.ToString(), tagName));
+            Comparison<XmlNodeSyntax> comparison = (x, y) => x.GetLocation().SourceSpan.Start.CompareTo(y.GetLocation().SourceSpan.Start);
+            return EnumerableHelpers.Merge(elements, emptyElements, comparison);
+        }
+
         internal static string GetText(XmlTextSyntax textElement)
         {
             return GetText(textElement, false);
@@ -199,6 +213,24 @@
             return result;
         }
 
+        internal static T GetFirstAttributeOrDefault<T>(XmlNodeSyntax nodeSyntax) where T : XmlAttributeSyntax
+        {
+            var emptyElementSyntax = nodeSyntax as XmlEmptyElementSyntax;
+
+            if (emptyElementSyntax != null)
+            {
+                return emptyElementSyntax.Attributes.OfType<T>().FirstOrDefault();
+            }
+            var elementSyntax = nodeSyntax as XmlElementSyntax;
+
+            if (elementSyntax != null)
+            {
+                return elementSyntax.StartTag?.Attributes.OfType<T>().FirstOrDefault();
+            }
+
+            return null;
+        }
+
         private static SyntaxTrivia GetCommentTrivia(SyntaxNode node)
         {
             var leadingTrivia = node.GetLeadingTrivia();
@@ -207,6 +239,7 @@
             {
                 return commentTrivia;
             }
+
             return leadingTrivia.FirstOrDefault(x => x.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia));
         }
     }

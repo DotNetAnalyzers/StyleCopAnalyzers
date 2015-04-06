@@ -271,6 +271,7 @@ namespace TestHelper
                     }
                 }
             }
+
             return builder.ToString();
         }
         #endregion

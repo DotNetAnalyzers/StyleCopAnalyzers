@@ -15,8 +15,6 @@
     /// </summary>
     public class SA1001UnitTests : CodeFixVerifier
     {
-        private string DiagnosticId { get; } = SA1001CommasMustBeSpacedCorrectly.DiagnosticId;
-
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new SA1001CodeFixProvider();
@@ -159,6 +157,9 @@
         {{
             {0}
         }}
+        // The following fields and method are referenced by the tests and need definitions.
+        int a, b;
+        void f(int x, int y) {{ }}
     }}
 }}
 ";

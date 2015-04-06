@@ -2,6 +2,8 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -39,13 +41,13 @@
         /// </summary>
         public const string DiagnosticId = "SA1213";
         private const string Title = "Event accessors must follow order";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "Event accessors must follow order.";
         private const string Category = "StyleCop.CSharp.OrderingRules";
         private const string Description = "An add accessor appears after a remove accessor within an event.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1213.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -62,7 +64,28 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(this.HandleEventDeclaration, SyntaxKind.EventDeclaration);
+        }
+
+        private void HandleEventDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var eventDeclaration = (EventDeclarationSyntax) context.Node;
+
+            if (eventDeclaration?.AccessorList == null)
+                return;
+
+            var accessors = eventDeclaration.AccessorList.Accessors;
+            if (eventDeclaration.AccessorList.IsMissing ||
+                accessors.Count != 2)
+            {
+                return;
+            }
+
+            if (accessors[0].Kind() == SyntaxKind.RemoveAccessorDeclaration &&
+                accessors[1].Kind() == SyntaxKind.AddAccessorDeclaration)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, accessors[0].Keyword.GetLocation()));
+            }
         }
     }
 }
