@@ -73,7 +73,7 @@
                 return document;
 
             var leadingTrivia = elementSyntax.StartTag.GetLeadingTrivia();
-            leadingTrivia = leadingTrivia.AddRange(elementSyntax.EndTag.GetTrailingTrivia());
+            leadingTrivia = leadingTrivia.AddRange(elementSyntax.StartTag.GetTrailingTrivia());
             leadingTrivia = leadingTrivia.AddRange(content[0].GetLeadingTrivia());
             content = content.Replace(content[0], content[0].WithLeadingTrivia(leadingTrivia));
 
