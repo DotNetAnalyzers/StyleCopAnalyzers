@@ -23,13 +23,13 @@
                 var currentTrivia = triviaList[index];
                 switch (currentTrivia.Kind())
                 {
-                    case SyntaxKind.EndOfLineTrivia:
-                    case SyntaxKind.WhitespaceTrivia:
-                        break;
+                case SyntaxKind.EndOfLineTrivia:
+                case SyntaxKind.WhitespaceTrivia:
+                    break;
 
-                    default:
-                        // encountered non-whitespace trivia -> the search is done.
-                        return index;
+                default:
+                    // encountered non-whitespace trivia -> the search is done.
+                    return index;
                 }
             }
 
@@ -74,25 +74,25 @@
                 var currentTrivia = triviaList[index];
                 switch (currentTrivia.Kind())
                 {
-                    case SyntaxKind.EndOfLineTrivia:
-                        whiteSpaceStartIndex = index;
-                        previousTriviaWasEndOfLine = true;
-                        break;
+                case SyntaxKind.EndOfLineTrivia:
+                    whiteSpaceStartIndex = index;
+                    previousTriviaWasEndOfLine = true;
+                    break;
 
-                    case SyntaxKind.WhitespaceTrivia:
-                        whiteSpaceStartIndex = index;
-                        previousTriviaWasEndOfLine = false;
-                        break;
+                case SyntaxKind.WhitespaceTrivia:
+                    whiteSpaceStartIndex = index;
+                    previousTriviaWasEndOfLine = false;
+                    break;
 
-                    default:
-                        // encountered non-whitespace trivia -> the search is done.
-                        if (previousTriviaWasEndOfLine)
-                        {
-                            whiteSpaceStartIndex++;
-                        }
+                default:
+                    // encountered non-whitespace trivia -> the search is done.
+                    if (previousTriviaWasEndOfLine)
+                    {
+                        whiteSpaceStartIndex++;
+                    }
 
-                        done = true;
-                        break;
+                    done = true;
+                    break;
                 }
             }
 
