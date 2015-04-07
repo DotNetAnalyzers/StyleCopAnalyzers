@@ -52,9 +52,28 @@
                     continue;
                 }
 
+                var numberOfCharsToRemove = 2;
+
+                // If a variable contains multiple prefixes that would result in this diagnostic, 
+                // we should detect that and remove all of the bad prefixes such that after 
+                // the fix is applied there are no more violations of this rule.
+                for (int i = 2; i < token.ValueText.Length; i += 2)
+                {
+                    var nextTwoChars = token.ValueText.Substring(i, 2);
+
+                    if (nextTwoChars.Equals("m_", System.StringComparison.CurrentCultureIgnoreCase) ||
+                        nextTwoChars.Equals("s_", System.StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        numberOfCharsToRemove += 2;
+                        continue;
+                    }
+
+                    break;
+                }
+
                 if (!string.IsNullOrEmpty(token.ValueText))
                 {
-                    var newName = token.ValueText.Substring(2);
+                    var newName = token.ValueText.Substring(numberOfCharsToRemove);
                     context.RegisterCodeFix(CodeAction.Create($"Rename field to '{newName}'", cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken)), diagnostic);
                 }
             }
