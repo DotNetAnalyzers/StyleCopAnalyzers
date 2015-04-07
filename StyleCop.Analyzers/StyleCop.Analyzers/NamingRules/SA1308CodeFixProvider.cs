@@ -7,6 +7,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using System;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1308VariableNamesMustNotBePrefixed"/>.
@@ -55,14 +56,12 @@
                 var numberOfCharsToRemove = 2;
 
                 // If a variable contains multiple prefixes that would result in this diagnostic, 
-                // we should detect that and remove all of the bad prefixes such that after 
+                // we detect that and remove all of the bad prefixes such that after 
                 // the fix is applied there are no more violations of this rule.
                 for (int i = 2; i < token.ValueText.Length; i += 2)
                 {
-                    var nextTwoChars = token.ValueText.Substring(i, 2);
-
-                    if (nextTwoChars.Equals("m_", System.StringComparison.CurrentCultureIgnoreCase) ||
-                        nextTwoChars.Equals("s_", System.StringComparison.CurrentCultureIgnoreCase))
+                    if (string.Compare("m_", 0, token.ValueText, i, 2, StringComparison.Ordinal)==0 
+                        || string.Compare("s_", 0, token.ValueText, i, 2, StringComparison.Ordinal)==0)
                     {
                         numberOfCharsToRemove += 2;
                         continue;

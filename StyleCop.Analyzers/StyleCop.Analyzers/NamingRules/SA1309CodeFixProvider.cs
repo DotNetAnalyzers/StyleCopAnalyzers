@@ -56,7 +56,7 @@
 
                     if (string.IsNullOrEmpty(newName))
                     {
-                        // The variable consistend of only underscores. In this case we cannot 
+                        // The variable consisted of only underscores. In this case we cannot 
                         // generate a valid variable name and thus will not offer a code fix. 
                         continue;
                     }
