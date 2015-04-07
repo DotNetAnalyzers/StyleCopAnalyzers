@@ -109,6 +109,31 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#627.
+        /// </summary>
+        /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/627">#627: Code Fixes For Naming
+        /// Rules SA1308 and SA1309 Do Not Always Fix The Name Entirely</seealso>
+        [Fact]
+        public async Task TestFieldStartingWithMultipleUnderscores()
+        {
+            var testCode = @"public class Foo
+{
+    public string ____bar = ""baz"";
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("____bar").WithLocation(3, 19);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"public class Foo
+{
+    public string bar = ""baz"";
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1309FieldNamesMustNotBeginWithUnderscore();

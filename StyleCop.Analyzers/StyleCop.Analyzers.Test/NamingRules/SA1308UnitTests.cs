@@ -89,6 +89,56 @@ string m_bar = ""baz"";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#627.
+        /// </summary>
+        /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/627">#627: Code Fixes For Naming
+        /// Rules SA1308 and SA1309 Do Not Always Fix The Name Entirely</seealso>
+        [Fact]
+        public async Task TestFixingMultipleIdenticalPrefixes()
+        {
+            var testCode = @"public class Foo
+{
+    private string m_m_bar = ""baz"";
+}";
+
+            DiagnosticResult expected =
+                this.CSharpDiagnostic()
+                .WithArguments("m_m_bar", "m_")
+                .WithLocation(3, 20);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = testCode.Replace("m_", string.Empty);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+        }
+
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#627.
+        /// </summary>
+        /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/627">#627: Code Fixes For Naming
+        /// Rules SA1308 and SA1309 Do Not Always Fix The Name Entirely</seealso>
+        [Fact]
+        public async Task TestFixingMultipleIndependentPrefixes()
+        {
+            var testCode = @"public class Foo
+{
+    private string m_s_bar = ""baz"";
+}";
+
+            DiagnosticResult expected =
+                this.CSharpDiagnostic()
+                .WithArguments("m_s_bar", "m_")
+                .WithLocation(3, 20);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = testCode.Replace("m_", string.Empty);
+            fixedCode = fixedCode.Replace("s_", string.Empty);
+
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1308VariableNamesMustNotBePrefixed();

@@ -50,16 +50,17 @@
                     continue;
                 }
 
-                if (token.ValueText.Length == 1)
-                {
-                    // The variable name is '_'. In this case we cannot generate a valid variable name and thus will not
-                    // offer a code fix. 
-                    continue;
-                }
-
                 if (!string.IsNullOrEmpty(token.ValueText))
                 {
-                    var newName = token.ValueText.Substring(1);
+                    var newName = token.ValueText.TrimStart(new[] { '_' });
+
+                    if (string.IsNullOrEmpty(newName))
+                    {
+                        // The variable consisted of only underscores. In this case we cannot
+                        // generate a valid variable name and thus will not offer a code fix.
+                        continue;
+                    }
+
                     context.RegisterCodeFix(CodeAction.Create($"Rename field to '{newName}'", cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken)), diagnostic);
                 }
             }
