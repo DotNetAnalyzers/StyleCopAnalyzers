@@ -7,9 +7,9 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Formatting;
-    using StyleCop.Analyzers.SpacingRules;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1119StatementMustNotUseUnnecessaryParenthesis"/>.
@@ -62,13 +62,12 @@
 
         private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, ParenthesizedExpressionSyntax syntax)
         {
-            var leadingTrivia = syntax.OpenParenToken.GetAllTrivia().Concat(syntax.Expression.GetLeadingTrivia());
-            var trailingTrivia = syntax.Expression.GetTrailingTrivia().Concat(syntax.CloseParenToken.GetAllTrivia());
+            var leadingTrivia = SyntaxFactory.TriviaList(syntax.OpenParenToken.GetAllTrivia().Concat(syntax.Expression.GetLeadingTrivia()));
+            var trailingTrivia = syntax.Expression.GetTrailingTrivia().AddRange(syntax.CloseParenToken.GetAllTrivia());
 
             var newNode = syntax.Expression
-                .WithLeadingTrivia(leadingTrivia)
-                .WithTrailingTrivia(trailingTrivia)
-                .WithoutFormatting();
+                .WithLeadingTrivia(leadingTrivia.Any() ? leadingTrivia : SyntaxFactory.TriviaList(SyntaxFactory.ElasticMarker))
+                .WithTrailingTrivia(trailingTrivia.Any() ? trailingTrivia : SyntaxFactory.TriviaList(SyntaxFactory.ElasticMarker));
 
             var newSyntaxRoot = root.ReplaceNode(syntax, newNode);
 
