@@ -42,7 +42,29 @@ namespace StyleCop.Analyzers.Helpers
         /// <returns>True if the diagnostic is currently suppressed.</returns>
         internal static bool IsAnalyzerSuppressed(this Compilation compilation, string diagnosticId)
         {
-            return compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(diagnosticId, ReportDiagnostic.Default) == ReportDiagnostic.Suppress;
+            return compilation.Options.IsAnalyzerSuppressed(diagnosticId);
+        }
+
+        /// <summary>
+        /// Determines if the diagnostic identified by the given identifier is currently suppressed.
+        /// </summary>
+        /// <param name="document">The document that will be used to determine if the diagnostic is currently suppressed.</param>
+        /// <param name="diagnosticId">The diagnostic identifier to check.</param>
+        /// <returns>True if the diagnostic is currently suppressed.</returns>
+        internal static bool IsAnalyzerSuppressed(this Document document, string diagnosticId)
+        {
+            return document.Project.CompilationOptions.IsAnalyzerSuppressed(diagnosticId);
+        }
+
+        /// <summary>
+        /// Determines if the diagnostic identified by the given identifier is currently suppressed.
+        /// </summary>
+        /// <param name="compilationOptions">The compilation options that will be used to determine if the diagnostic is currently suppressed.</param>
+        /// <param name="diagnosticId">The diagnostic identifier to check.</param>
+        /// <returns>True if the diagnostic is currently suppressed.</returns>
+        internal static bool IsAnalyzerSuppressed(this CompilationOptions compilationOptions, string diagnosticId)
+        {
+            return compilationOptions.SpecificDiagnosticOptions.GetValueOrDefault(diagnosticId, ReportDiagnostic.Default) == ReportDiagnostic.Suppress;
         }
 
         /// <summary>

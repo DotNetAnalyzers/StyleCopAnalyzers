@@ -3,7 +3,6 @@
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Globalization;
-    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -94,7 +93,7 @@
                     systemUsingDirectives.Clear();
                 }
 
-                if (HasNamespaceAliasQualifier(usingDirective) || !usingDirective.IsSystemUsingDirective())
+                if (usingDirective.HasNamespaceAliasQualifier() || !usingDirective.IsSystemUsingDirective())
                 {
                     usingDirectives.Add(usingDirective);
                 }
@@ -127,7 +126,5 @@
         }
 
         private static bool IsAliasOrStaticUsingDirective(UsingDirectiveSyntax usingDirective) => usingDirective.Alias != null || usingDirective.StaticKeyword.IsKind(SyntaxKind.StaticKeyword);
-
-        private static bool HasNamespaceAliasQualifier(UsingDirectiveSyntax usingDirective) => usingDirective.DescendantNodes().Any(node => node.IsKind(SyntaxKind.AliasQualifiedName));
     }
 }

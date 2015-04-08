@@ -1,6 +1,7 @@
 ﻿namespace StyleCop.Analyzers.Helpers
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -42,6 +43,13 @@
 
             return false;
         }
+
+        /// <summary>
+        /// Check if the name of using direcive contains a namespace alias qualifier.
+        /// </summary>
+        /// <param name="usingDirective">The <see cref="UsingDirectiveSyntax"/> that will be checked.</param>
+        /// <returns>Return true if the <see cref="UsingDirectiveSyntax"/> contains a namespace alias qualifier, otherwise false.</returns>
+        internal static bool HasNamespaceAliasQualifier(this UsingDirectiveSyntax usingDirective) => usingDirective.DescendantNodes().Any(node => node.IsKind(SyntaxKind.AliasQualifiedName));
 
         private static bool ExcludeGlobalKeyword(IdentifierNameSyntax token) => !token.Identifier.IsKind(SyntaxKind.GlobalKeyword);
 
