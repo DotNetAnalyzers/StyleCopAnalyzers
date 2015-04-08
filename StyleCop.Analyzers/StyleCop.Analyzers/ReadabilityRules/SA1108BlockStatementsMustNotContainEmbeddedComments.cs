@@ -138,8 +138,10 @@
 
         private bool IsComment(SyntaxTrivia syntaxTrivia)
         {
-            return (syntaxTrivia.IsKind(SyntaxKind.SingleLineCommentTrivia) && !syntaxTrivia.ToFullString().StartsWith(@"////")) ||
-                   syntaxTrivia.IsKind(SyntaxKind.MultiLineCommentTrivia);
+            var isSingleLineComment = syntaxTrivia.IsKind(SyntaxKind.SingleLineCommentTrivia) 
+                                      && !syntaxTrivia.ToFullString().StartsWith(@"////");
+            return isSingleLineComment
+                   || syntaxTrivia.IsKind(SyntaxKind.MultiLineCommentTrivia);
         }
     }
 }
