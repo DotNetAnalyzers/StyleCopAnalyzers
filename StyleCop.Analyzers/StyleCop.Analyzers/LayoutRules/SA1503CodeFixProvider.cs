@@ -3,6 +3,7 @@
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
@@ -41,27 +42,30 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
             foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
                 var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, true, true) as StatementSyntax;
-                if ((node != null) && (!node.IsMissing))
+                if (node == null || node.IsMissing)
                 {
-                    SyntaxNode newSyntaxRoot = null;
-
-                    // If the parent of the statement contains a conditional directive, stuff will be really hard to fix correctly, so don't offer a code fix.
-                    if (!this.ContainsConditionalDirectiveTrivia(node.Parent))
-                    {
-                        newSyntaxRoot = syntaxRoot.ReplaceNode(node, SyntaxFactory.Block(node));
-                    }
-
-                    if (newSyntaxRoot != null)
-                    {
-                        var newDocument = context.Document.WithSyntaxRoot(newSyntaxRoot);
-                        context.RegisterCodeFix(CodeAction.Create("Wrap with curly brackets", token => Task.FromResult(newDocument)), diagnostic);
-                    }
+                    continue;
                 }
+
+                // If the parent of the statement contains a conditional directive, stuff will be really hard to fix correctly, so don't offer a code fix.
+                if (this.ContainsConditionalDirectiveTrivia(node.Parent))
+                {
+                    continue;
+                }
+
+                context.RegisterCodeFix(CodeAction.Create("Wrap with curly brackets", token => GetTransformedDocumentAsync(context.Document, syntaxRoot, node, token)), diagnostic);
             }
+        }
+
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, StatementSyntax node, CancellationToken cancellationToken)
+        {
+            var newSyntaxRoot = root.ReplaceNode(node, SyntaxFactory.Block(node));
+            return Task.FromResult(document.WithSyntaxRoot(newSyntaxRoot));
         }
 
         private bool ContainsConditionalDirectiveTrivia(SyntaxNode node)
