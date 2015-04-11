@@ -141,35 +141,38 @@ public class ClassName
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
         }
 
-        [Fact]
-        public async Task TestGetterOnlyPropertyWithStandardSummaryDocumentation()
+        [Theory]
+        [InlineData("Gets a property.", "A property.")]
+        [InlineData("Gets a", "A")]
+        [InlineData("property.", "property.")]
+        public async Task TestGetterOnlyPropertyWithStandardSummaryDocumentation(string summaryText, string valueText)
         {
-            var testCode = @"
+            var testCode = $@"
 /// <summary>
 /// 
 /// </summary>
 public class ClassName
-{
+{{
     /// <summary>
-    /// Gets a property.
+    /// {summaryText}
     /// </summary>
-    public ClassName Property { get; }
-}";
+    public ClassName Property {{ get; }}
+}}";
 
-            var fixedCode = @"
+            var fixedCode = $@"
 /// <summary>
 /// 
 /// </summary>
 public class ClassName
-{
+{{
     /// <summary>
-    /// Gets a property.
+    /// {summaryText}
     /// </summary>
     /// <value>
-    /// <placeholder>A property.</placeholder>
+    /// <placeholder>{valueText}</placeholder>
     /// </value>
-    public ClassName Property { get; }
-}";
+    public ClassName Property {{ get; }}
+}}";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 22);
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
