@@ -161,6 +161,7 @@
     <Compile Include="LayoutRules\SA1500\SA1500UnitTests.Structs.cs" />
     <Compile Include="LayoutRules\SA1500\SA1500UnitTests.Switches.cs" />
     <Compile Include="LayoutRules\SA1500\SA1500UnitTests.TryCatchFinallys.cs" />
+    <Compile Include="LayoutRules\SA1504UnitTests.cs" />
     <Compile Include="LayoutRules\SA1507UnitTests.cs" />
     <Compile Include="LayoutRules\SA1513UnitTests.cs" />
     <Compile Include="LayoutRules\SA1516UnitTests.cs" />
