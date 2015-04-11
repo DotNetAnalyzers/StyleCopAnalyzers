@@ -13,6 +13,7 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Formatting;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.SpacingRules;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1609PropertyDocumentationMustHaveValue"/> and
@@ -130,50 +131,48 @@
         {
             XmlNodeSyntax firstContent = summaryContent.FirstOrDefault(IsContentElement);
             XmlTextSyntax firstText = firstContent as XmlTextSyntax;
-            if (firstText != null)
+            if (firstText == null)
+                return false;
+
+            string firstTextContent = string.Concat(firstText.DescendantTokens());
+            if (!firstTextContent.TrimStart().StartsWith(prefix, StringComparison.Ordinal))
+                return false;
+
+            // Find the token containing the prefix, such as "Gets or sets "
+            SyntaxToken prefixToken = default(SyntaxToken);
+            foreach (SyntaxToken textToken in firstText.TextTokens)
             {
-                string firstTextContent = string.Concat(firstText.DescendantTokens());
-                if (firstTextContent.TrimStart().StartsWith(prefix, StringComparison.Ordinal))
-                {
-                    // Find the token containing the prefix, such as "Gets or sets "
-                    SyntaxToken getsToken = default(SyntaxToken);
-                    foreach (SyntaxToken textToken in firstText.TextTokens)
-                    {
-                        if (textToken.IsMissing)
-                            continue;
+                if (textToken.IsMissing)
+                    continue;
 
-                        if (!textToken.Text.TrimStart().StartsWith(prefix, StringComparison.Ordinal))
-                            continue;
+                if (!textToken.Text.TrimStart().StartsWith(prefix, StringComparison.Ordinal))
+                    continue;
 
-                        getsToken = textToken;
-                        break;
-                    }
-
-                    if (!getsToken.IsMissing)
-                    {
-                        string text = getsToken.Text;
-                        string valueText = getsToken.ValueText;
-                        int index = text.IndexOf(prefix);
-                        if (index >= 0)
-                        {
-                            bool additionalCharacters = index + prefix.Length < text.Length;
-                            text = text.Substring(0, index)
-                                + (additionalCharacters ? char.ToUpperInvariant(text[index + prefix.Length]).ToString() : string.Empty)
-                                + text.Substring(index + (additionalCharacters ? (prefix.Length + 1) : prefix.Length));
-                        }
-
-                        index = valueText.IndexOf(prefix);
-                        if (index >= 0)
-                            valueText = valueText.Remove(index, prefix.Length);
-
-                        SyntaxToken replaced = SyntaxFactory.Token(getsToken.LeadingTrivia, getsToken.Kind(), text, valueText, getsToken.TrailingTrivia);
-                        summaryContent = summaryContent.Replace(firstText, firstText.ReplaceToken(getsToken, replaced));
-                        return true;
-                    }
-                }
+                prefixToken = textToken;
+                break;
             }
 
-            return false;
+            if (prefixToken.IsMissingOrDefault())
+                return false;
+
+            string text = prefixToken.Text;
+            string valueText = prefixToken.ValueText;
+            int index = text.IndexOf(prefix);
+            if (index >= 0)
+            {
+                bool additionalCharacters = index + prefix.Length < text.Length;
+                text = text.Substring(0, index)
+                    + (additionalCharacters ? char.ToUpperInvariant(text[index + prefix.Length]).ToString() : string.Empty)
+                    + text.Substring(index + (additionalCharacters ? (prefix.Length + 1) : prefix.Length));
+            }
+
+            index = valueText.IndexOf(prefix);
+            if (index >= 0)
+                valueText = valueText.Remove(index, prefix.Length);
+
+            SyntaxToken replaced = SyntaxFactory.Token(prefixToken.LeadingTrivia, prefixToken.Kind(), text, valueText, prefixToken.TrailingTrivia);
+            summaryContent = summaryContent.Replace(firstText, firstText.ReplaceToken(prefixToken, replaced));
+            return true;
         }
 
         private static bool IsContentElement(XmlNodeSyntax syntax)
