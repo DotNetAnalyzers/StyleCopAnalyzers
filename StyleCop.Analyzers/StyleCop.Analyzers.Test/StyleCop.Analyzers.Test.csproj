@@ -135,6 +135,7 @@
     <Compile Include="DocumentationRules\SA1613UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1614UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1617UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1626UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1642UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1643UnitTests.cs" />
     <Compile Include="Helpers\CodeFixVerifier.Helper.cs" />
