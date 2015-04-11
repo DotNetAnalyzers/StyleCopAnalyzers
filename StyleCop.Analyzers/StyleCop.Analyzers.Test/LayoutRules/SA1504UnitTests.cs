@@ -1,12 +1,12 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Diagnostics;
-using StyleCop.Analyzers.LayoutRules;
-using TestHelper;
-using Xunit;
-
-namespace StyleCop.Analyzers.Test.LayoutRules
+﻿namespace StyleCop.Analyzers.Test.LayoutRules
 {
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.LayoutRules;
+    using TestHelper;
+    using Xunit;
+
     public class SA1504UnitTests : CodeFixVerifier
     {
         [Fact]
