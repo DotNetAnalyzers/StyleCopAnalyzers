@@ -30,11 +30,7 @@ class Foo
 
 }";
 
-            var expected = new[]
-            {
-                this.CSharpDiagnostic().WithLocation(4, 1)
-            };
-
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -58,10 +54,7 @@ class Foo
 
 }";
 
-            var expected = new[]
-            {
-                this.CSharpDiagnostic().WithLocation(6, 1)
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -141,10 +134,7 @@ that spans 2 lines */
 
 }";
 
-            var expected = new[]
-            {
-                this.CSharpDiagnostic().WithLocation(7, 1)
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -169,10 +159,7 @@ struct Foo
 
 }";
 
-            var expected = new[]
-            {
-                this.CSharpDiagnostic().WithLocation(4, 1)
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -208,10 +195,7 @@ class Foo
     }
 }";
 
-            var expected = new[]
-            {
-                this.CSharpDiagnostic().WithLocation(6, 5)
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 5);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -238,10 +222,7 @@ class Foo
     }
 }";
 
-            var expected = new[]
-            {
-                this.CSharpDiagnostic().WithLocation(7, 5)
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 5);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -281,10 +262,7 @@ namespace Bar
     }
 }";
 
-            var expected = new[]
-            {
-                this.CSharpDiagnostic().WithLocation(4, 1)
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -323,10 +301,7 @@ class Foo
         get;set;}
 }";
 
-            var expected = new[]
-            {
-                this.CSharpDiagnostic().WithLocation(6, 5)
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 5);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -371,7 +346,7 @@ class Foo
     }
 }";
 
-            var expected = new[]
+            DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(8, 9),
                 this.CSharpDiagnostic().WithLocation(12, 9),
@@ -427,7 +402,7 @@ class Foo
     }
 }";
 
-            var expected = new[]
+            DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(8, 9)
             };
@@ -477,10 +452,7 @@ class Foo
     }
 }";
 
-            var expected = new[]
-            {
-                this.CSharpDiagnostic().WithLocation(9, 1)
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(9, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -527,10 +499,7 @@ class Foo
     }
 }";
 
-            var expected = new[]
-            {
-                this.CSharpDiagnostic().WithLocation(8, 1)
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -580,10 +549,7 @@ class Foo
     }
 }";
 
-            var expected = new[]
-            {
-                this.CSharpDiagnostic().WithLocation(13, 9)
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(13, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -641,10 +607,7 @@ class Foo
     }
 }";
 
-            var expected = new[]
-            {
-                this.CSharpDiagnostic().WithLocation(8, 9)
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
@@ -707,7 +670,7 @@ class Foo
         }
     }
 }";
-            var expected = new[]
+            DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(3, 5),
                 this.CSharpDiagnostic().WithLocation(6, 5),
