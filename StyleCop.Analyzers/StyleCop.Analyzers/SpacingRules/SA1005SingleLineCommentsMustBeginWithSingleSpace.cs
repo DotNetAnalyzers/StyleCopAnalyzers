@@ -1,6 +1,8 @@
 ﻿namespace StyleCop.Analyzers.SpacingRules
 {
     using System.Collections.Immutable;
+    using System.Linq;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -97,13 +99,25 @@
         private void HandleSingleLineCommentTrivia(SyntaxTreeAnalysisContext context, SyntaxTrivia trivia)
         {
             string text = trivia.ToFullString();
-            if (text.Equals("//") || text.StartsWith("// "))
+
+            if (text.Equals("//"))
             {
                 return;
             }
 
             // special case: commented code
             if (text.StartsWith("////"))
+            {
+                return;
+            }
+
+            var spaceCount = 0;
+            for (var i = 2; (i < text.Length) && (text[i] == ' '); i++)
+            {
+                spaceCount++;
+            }
+
+            if (spaceCount == 1)
             {
                 return;
             }
