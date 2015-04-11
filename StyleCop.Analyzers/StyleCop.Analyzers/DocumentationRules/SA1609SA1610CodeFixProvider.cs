@@ -11,6 +11,7 @@
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Formatting;
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
@@ -87,9 +88,11 @@
                 content = XmlSyntaxFactory.List(XmlSyntaxFactory.PlaceholderElement(content));
             }
 
-            XmlElementSyntax valueElement = XmlSyntaxFactory.MultiLineElement(XmlCommentHelper.ValueXmlTag, content);
+            string newLineText = document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp);
 
-            XmlNodeSyntax leadingNewLine = XmlSyntaxFactory.NewLine();
+            XmlElementSyntax valueElement = XmlSyntaxFactory.MultiLineElement(XmlCommentHelper.ValueXmlTag, newLineText, content);
+
+            XmlNodeSyntax leadingNewLine = XmlSyntaxFactory.NewLine(newLineText);
 
             // HACK: The formatter isn't working when contents are added to an existing documentation comment, so we
             // manually apply the indentation from the last line of the existing comment to each new line of the

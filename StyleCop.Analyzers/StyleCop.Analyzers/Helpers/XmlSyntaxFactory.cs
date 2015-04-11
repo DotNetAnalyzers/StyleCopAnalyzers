@@ -1,23 +1,21 @@
 ﻿namespace StyleCop.Analyzers.Helpers
 {
-    using System;
-    using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class XmlSyntaxFactory
     {
-        public static XmlElementSyntax MultiLineElement(string localName, SyntaxList<XmlNodeSyntax> content)
+        public static XmlElementSyntax MultiLineElement(string localName, string newLineText, SyntaxList<XmlNodeSyntax> content)
         {
-            return MultiLineElement(SyntaxFactory.XmlName(localName), content);
+            return MultiLineElement(SyntaxFactory.XmlName(localName), newLineText, content);
         }
 
-        public static XmlElementSyntax MultiLineElement(XmlNameSyntax name, SyntaxList<XmlNodeSyntax> content)
+        public static XmlElementSyntax MultiLineElement(XmlNameSyntax name, string newLineText, SyntaxList<XmlNodeSyntax> content)
         {
             return SyntaxFactory.XmlElement(
                 SyntaxFactory.XmlElementStartTag(name),
-                content.Insert(0, NewLine()).Add(NewLine()),
+                content.Insert(0, NewLine(newLineText)).Add(NewLine(newLineText)),
                 SyntaxFactory.XmlElementEndTag(name));
         }
 
@@ -44,22 +42,22 @@
             return SyntaxFactory.XmlText(SyntaxFactory.TokenList(textTokens));
         }
 
-        public static XmlTextSyntax NewLine()
+        public static XmlTextSyntax NewLine(string text)
         {
-            return Text(TextNewLine());
+            return Text(TextNewLine(text));
         }
 
-        public static SyntaxToken TextNewLine()
+        public static SyntaxToken TextNewLine(string text)
         {
-            return TextNewLine(true);
+            return TextNewLine(text, true);
         }
 
-        public static SyntaxToken TextNewLine(bool continueComment)
+        public static SyntaxToken TextNewLine(string text, bool continueComment)
         {
             SyntaxToken token = SyntaxFactory.XmlTextNewLine(
                 SyntaxFactory.TriviaList(),
-                Environment.NewLine,
-                Environment.NewLine,
+                text,
+                text,
                 SyntaxFactory.TriviaList());
 
             if (continueComment)
