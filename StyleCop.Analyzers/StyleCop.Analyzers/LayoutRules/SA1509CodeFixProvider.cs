@@ -4,6 +4,7 @@
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
@@ -30,28 +31,36 @@
         }
 
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)).ToList())
             {
-                var syntaxRoot =
-                    await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-
-                var openBrace = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-                var leadingTrivia = openBrace.LeadingTrivia;
-
-                var newTriviaList = SyntaxFactory.TriviaList();
-
-                var previousEmptyLines = this.GetPreviousEmptyLines(openBrace).ToList();
-                newTriviaList = newTriviaList.AddRange(leadingTrivia.Except(previousEmptyLines));
-
-                var newOpenBrace = openBrace.WithLeadingTrivia(newTriviaList);
-                var newSyntaxRoot = syntaxRoot.ReplaceToken(openBrace, newOpenBrace);
-
                 context.RegisterCodeFix(
-                    CodeAction.Create("Remove blank lines preceding this curly bracket",
-                        token => Task.FromResult(context.Document.WithSyntaxRoot(newSyntaxRoot))), diagnostic);
+                    CodeAction.Create(
+                        "Remove blank lines preceding this curly bracket",
+                        token => this.GetTransformedDocumentAsync(context.Document, diagnostic, token)),
+                    diagnostic);
             }
+
+            return Task.FromResult(true);
+        }
+
+        private async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+        {
+            var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+
+            var openBrace = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
+            var leadingTrivia = openBrace.LeadingTrivia;
+
+            var newTriviaList = SyntaxFactory.TriviaList();
+
+            var previousEmptyLines = this.GetPreviousEmptyLines(openBrace).ToList();
+            newTriviaList = newTriviaList.AddRange(leadingTrivia.Except(previousEmptyLines));
+
+            var newOpenBrace = openBrace.WithLeadingTrivia(newTriviaList);
+            var newSyntaxRoot = syntaxRoot.ReplaceToken(openBrace, newOpenBrace);
+
+            return document.WithSyntaxRoot(newSyntaxRoot);
         }
 
         private IEnumerable<SyntaxTrivia> GetPreviousEmptyLines(SyntaxToken openBrace)
