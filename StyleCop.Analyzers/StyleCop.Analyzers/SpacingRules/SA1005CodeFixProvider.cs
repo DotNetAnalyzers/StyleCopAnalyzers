@@ -50,7 +50,7 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Insert space", t => GetTransformedDocument(context.Document, root, trivia)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context.Document, root, trivia)), diagnostic);
             }
         }
 
@@ -62,7 +62,7 @@
                 return Task.FromResult(document);
             }
 
-            string correctedText = "// " + text.Substring(2);
+            string correctedText = "// " + text.Substring(2).TrimStart(' ');
             SyntaxTrivia corrected = SyntaxFactory.Comment(correctedText).WithoutFormatting();
             Document updatedDocument = document.WithSyntaxRoot(root.ReplaceTrivia(trivia, corrected));
 

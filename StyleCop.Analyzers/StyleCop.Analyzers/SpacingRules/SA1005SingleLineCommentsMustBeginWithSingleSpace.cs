@@ -57,7 +57,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1005.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -97,13 +97,24 @@
         private void HandleSingleLineCommentTrivia(SyntaxTreeAnalysisContext context, SyntaxTrivia trivia)
         {
             string text = trivia.ToFullString();
-            if (text.Equals("//") || text.StartsWith("// "))
+            if (text.Equals("//"))
             {
                 return;
             }
 
             // special case: commented code
             if (text.StartsWith("////"))
+            {
+                return;
+            }
+
+            int spaceCount = 0;
+            for (int i = 2; (i < text.Length) && (text[i] == ' '); i++)
+            {
+                spaceCount++;
+            }
+
+            if (spaceCount == 1)
             {
                 return;
             }
