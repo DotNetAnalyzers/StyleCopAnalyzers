@@ -62,13 +62,8 @@
                 return Task.FromResult(document);
             }
 
-            int commentStartIndex = 2;
-            while (text[commentStartIndex] == ' ')
-            {
-                commentStartIndex++;
-            }
+            string correctedText = "// " + text.Substring(2).TrimStart(' ');
 
-            string correctedText = "// " + text.Substring(commentStartIndex);
             SyntaxTrivia corrected = SyntaxFactory.Comment(correctedText).WithoutFormatting();
             Document updatedDocument = document.WithSyntaxRoot(root.ReplaceTrivia(trivia, corrected));
 
