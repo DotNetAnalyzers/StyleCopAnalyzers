@@ -76,7 +76,13 @@
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => SupportedDiagnosticsValue;
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                return SupportedDiagnosticsValue;
+            }
+        }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
