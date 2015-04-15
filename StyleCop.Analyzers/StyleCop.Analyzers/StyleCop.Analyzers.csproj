@@ -102,6 +102,7 @@
     <Compile Include="DocumentationRules\SA1650ElementDocumentationMustBeSpelledCorrectly.cs" />
     <Compile Include="DocumentationRules\StandardTextDiagnosticBase.cs" />
     <Compile Include="Helpers\EnumerableHelpers.cs" />
+    <Compile Include="Helpers\IndentationOptions.cs" />
     <Compile Include="Helpers\NamedTypeHelpers.cs" />
     <Compile Include="Helpers\RenameHelper.cs" />
     <Compile Include="Helpers\TriviaHelper.cs" />
@@ -261,6 +262,7 @@
     <Compile Include="SpacingRules\SA1025CodeMustNotContainMultipleWhitespaceInARow.cs" />
     <Compile Include="SpacingRules\SA1026CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation.cs" />
+    <Compile Include="SpacingRules\SA1027CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1027TabsMustNotBeUsed.cs" />
     <Compile Include="SpacingRules\SpacingExtensions.cs" />
   </ItemGroup>
