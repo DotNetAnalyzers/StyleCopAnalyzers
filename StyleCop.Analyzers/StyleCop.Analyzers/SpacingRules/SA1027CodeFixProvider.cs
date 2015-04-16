@@ -3,6 +3,7 @@
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
+    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -12,7 +13,6 @@
     using Microsoft.CodeAnalysis.CSharp;
 
     using StyleCop.Analyzers.Helpers;
-
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1005SingleLineCommentsMustBeginWithSingleSpace"/>.
@@ -51,11 +51,27 @@
 
             var violatingTrivia = syntaxRoot.FindTrivia(diagnostic.Location.SourceSpan.Start);
 
-            var tabReplacement = new string(' ', indentationOptions.TabSize);
-            var replacementText = violatingTrivia.ToFullString().Replace("\t", tabReplacement);
+            var stringBuilder = new StringBuilder();
 
-            var newSyntaxRoot = syntaxRoot.ReplaceTrivia(violatingTrivia, SyntaxFactory.Whitespace(replacementText));
+            var column = violatingTrivia.GetLocation().GetLineSpan().StartLinePosition.Character;
+            foreach (var c in violatingTrivia.ToFullString())
+            {
+                if (c == '\t')
+                {
+                    var offsetWithinTabColumn = (column - 1) % indentationOptions.TabSize;
+                    var spaceCount = indentationOptions.TabSize - offsetWithinTabColumn;
 
+                    stringBuilder.Append(' ', spaceCount);
+                    column += spaceCount;
+                }
+                else
+                {
+                    stringBuilder.Append(c);
+                    column++;
+                }
+            }
+
+            var newSyntaxRoot = syntaxRoot.ReplaceTrivia(violatingTrivia, SyntaxFactory.Whitespace(stringBuilder.ToString()));
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
     }

@@ -50,9 +50,9 @@
                 "{\r\n" +
                 "\tpublic void Bar()\r\n" +
                 "\t{\r\n" +
-                "\t\t// Comment\r\n" +
-                "\t\tDebug.Indent();\r\n" +
-                "\t}\r\n" +
+                "\t  \t// Comment\r\n" +
+                "\t \tDebug.Indent();\r\n" +
+                "   \t}\r\n" +
                 "}\r\n";
 
             // There is only a single space between the using and the System.Diagnostics, 
