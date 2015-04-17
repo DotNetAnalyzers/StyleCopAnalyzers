@@ -6,6 +6,8 @@
     using Analyzers.DocumentationRules;
     using TestHelper;
     using Xunit;
+    using Microsoft.CodeAnalysis.CodeFixes;
+
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1617VoidReturnValueMustNotBeDocumented"/>-
@@ -152,9 +154,127 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
+
+        [Fact]
+        public async Task TestCodeFixWithNoData()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <value>
+    /// Foo
+    /// </value>
+    /// <returns>null</returns>
+    public void Method() { }
+}";
+
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(10, 9)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <value>
+    /// Foo
+    /// </value>
+    public void Method() { }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+        }
+
+        [Fact]
+        public async Task TestCodeFixShareLineWithValue()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <value>
+    /// Foo
+    /// </value><returns>null</returns>
+    public void Method() { }
+}";
+
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(9, 17)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <value>
+    /// Foo
+    /// </value>
+    public void Method() { }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+        }
+
+        [Fact]
+        public async Task TestCodeFixBeforeValue()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <returns>null</returns> <value>
+    /// Foo
+    /// </value>
+    public void Method() { }
+}";
+
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(7, 9)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+
+            var fixedCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <value>
+    /// Foo
+    /// </value>
+    public void Method() { }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1617VoidReturnValueMustNotBeDocumented();
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1617CodeFixProvider();
         }
     }
 }

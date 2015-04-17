@@ -51,6 +51,7 @@
 
                 if (returnsElement != null)
                 {
+                    // Find the node previous to the <returns> node to determine if it is an xml comment indicator.  If so, we will remove that ndoe from the syntax tree as well.
                     SyntaxNode previous = null;
                     foreach (var item in documentation.ChildNodes())
                     {
