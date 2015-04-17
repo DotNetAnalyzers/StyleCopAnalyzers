@@ -65,7 +65,7 @@
                     if (previous?.ToFullString().Trim() == "///")
                         nodesToFix.Add(previous);
 
-                    context.RegisterCodeFix(CodeAction.Create($"Remove <returns> XML comment.", cancellationToken => RemoveHelper.RemoveSymbolsAsync(document, root, nodesToFix, SyntaxRemoveOptions.KeepNoTrivia, cancellationToken)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create($"Remove <returns> XML comment.", cancellationToken => RemoveHelper.RemoveSymbolsAsync(document, root, nodesToFix, SyntaxRemoveOptions.KeepLeadingTrivia, cancellationToken)), diagnostic);
                 }
             }
         }
