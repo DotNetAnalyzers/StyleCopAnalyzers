@@ -1,16 +1,21 @@
 ﻿namespace StyleCop.Analyzers.DocumentationRules
 {
-    using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using System.Collections.Generic;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Helpers;
 
+    /// <summary>
+    /// Implements a code fix for <see cref="SA1617VoidReturnValueMustNotBeDocumented"/>.
+    /// </summary>
+    /// <remarks>
+    /// <para>To fix a violation of this rule, remove the &lt;returns&gt; tag from the element.</para>
+    /// </remarks>
     [ExportCodeFixProvider(nameof(SA1617CodeFixProvider), LanguageNames.CSharp)]
     [Shared]
     public class SA1617CodeFixProvider : CodeFixProvider
@@ -57,7 +62,9 @@
                     foreach (var item in documentation.ChildNodes())
                     {
                         if (item.Equals(returnsElement))
+                        {
                             break;
+                        }
                                         
                         previous = item;
                     }
@@ -66,8 +73,10 @@
                     nodesToFix.Add(returnsElement);
 
                     var previousAsTextSyntax = previous as XmlTextSyntax;
-                    if (previousAsTextSyntax !=null && XmlCommentHelper.IsConsideredEmpty(previousAsTextSyntax))
+                    if (previousAsTextSyntax != null && XmlCommentHelper.IsConsideredEmpty(previousAsTextSyntax))
+                    {
                         nodesToFix.Add(previous);
+                    }
 
                     context.RegisterCodeFix(CodeAction.Create($"Remove <returns> XML comment.", cancellationToken => RemoveHelper.RemoveSymbolsAsync(document, root, nodesToFix, SyntaxRemoveOptions.KeepLeadingTrivia, cancellationToken)), diagnostic);
                 }

@@ -2,12 +2,11 @@
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Analyzers.DocumentationRules;
     using TestHelper;
     using Xunit;
-    using Microsoft.CodeAnalysis.CodeFixes;
-
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1617VoidReturnValueMustNotBeDocumented"/>-
@@ -153,7 +152,6 @@ public class ClassName
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
-
 
         [Fact]
         public async Task TestCodeFixWithNoData()
