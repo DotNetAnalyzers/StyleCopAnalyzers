@@ -9,6 +9,7 @@
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using System.Collections.Generic;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     [ExportCodeFixProvider(nameof(SA1617CodeFixProvider), LanguageNames.CSharp)]
     [Shared]
@@ -63,7 +64,9 @@
 
                     List<SyntaxNode> nodesToFix = new List<SyntaxNode>();
                     nodesToFix.Add(returnsElement);
-                    if (previous?.ToFullString().Trim() == "///")
+
+                    var previousAsTextSyntax = previous as XmlTextSyntax;
+                    if (previousAsTextSyntax !=null && XmlCommentHelper.IsConsideredEmpty(previousAsTextSyntax))
                         nodesToFix.Add(previous);
 
                     context.RegisterCodeFix(CodeAction.Create($"Remove <returns> XML comment.", cancellationToken => RemoveHelper.RemoveSymbolsAsync(document, root, nodesToFix, SyntaxRemoveOptions.KeepLeadingTrivia, cancellationToken)), diagnostic);
