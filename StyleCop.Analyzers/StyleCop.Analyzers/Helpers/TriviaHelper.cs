@@ -1,5 +1,7 @@
 ﻿namespace StyleCop.Analyzers.Helpers
 {
+    using System.Linq;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
 
@@ -94,6 +96,23 @@
             }
 
             return (whiteSpaceStartIndex < triviaList.Count) ? whiteSpaceStartIndex : -1;
+        }
+
+        /// <summary>
+        /// Strips all trialing whitespace trivia from the trivia list until a non-whitespace trivia is encountered.
+        /// </summary>
+        /// <param name="triviaList">The trivia list to strip of its trailing whitespace.</param>
+        /// <returns>The modified triviaList.</returns>
+        internal static SyntaxTriviaList WithoutTrailingWhitespace(this SyntaxTriviaList triviaList)
+        {
+            var trailingWhitespaceIndex = IndexOfTrailingWhitespace(triviaList);
+            return (trailingWhitespaceIndex >= 0) ? SyntaxFactory.TriviaList(triviaList.Take(trailingWhitespaceIndex)) : triviaList;
+        }
+
+        internal static SyntaxTriviaList WithoutLeadingWhitespace(this SyntaxTriviaList triviaList)
+        {
+            var nonWhitespaceIndex = IndexOfFirstNonWhitespaceTrivia(triviaList);
+            return (nonWhitespaceIndex >= 0) ? SyntaxFactory.TriviaList(triviaList.Take(nonWhitespaceIndex)) : SyntaxFactory.TriviaList();
         }
     }
 }

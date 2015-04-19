@@ -9,7 +9,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
-    public partial class SA1500UnitTests : DiagnosticVerifier
+    public partial class SA1500UnitTests
     {
         /// <summary>
         /// Verifies that no diagnostics are reported for the valid do ... while statements defined in this test.
@@ -67,7 +67,7 @@
         var x = 0;
 
         // Invalid do ... while #1
-        do 
+        do
         {
         } while (x == 0);
 
@@ -139,7 +139,110 @@
     }
 }";
 
-            var expectedDiagnostics = new[]
+            var fixedTestCode = @"public class Foo
+{
+    private void Bar()
+    {
+        var x = 0;
+
+        // Invalid do ... while #1
+        do
+        {
+        }
+        while (x == 0);
+
+        // Invalid do ... while #2
+        do
+        {
+        }
+        while (x == 0);
+
+        // Invalid do ... while #3
+        do
+        {
+        }
+        while (x == 0);
+
+        // Invalid do ... while #4
+        do
+        {
+            x = 1;
+        }
+        while (x == 0);
+
+        // Invalid do ... while #5
+        do
+        {
+            x = 1;
+        }
+        while (x == 0);
+
+        // Invalid do ... while #6
+        do
+        {
+            x = 1;
+        }
+        while (x == 0);
+
+        // Invalid do ... while #7
+        do
+        {
+            x = 1;
+        }
+        while (x == 0);
+
+        // Invalid do ... while #8
+        do
+        {
+            x = 1;
+        }
+        while (x == 0);
+
+        // Invalid do ... while #9
+        do
+        {
+            x = 1;
+        }
+        while (x == 0);
+
+        // Invalid do ... while #10
+        do
+        {
+            x = 1;
+        }
+        while (x == 0);
+
+        // Invalid do ... while #11
+        do
+        {
+            x = 1;
+        }
+        while (x == 0);
+
+        // Invalid do ... while #12
+        do
+        {
+            x = 1;
+        }
+        while (x == 0);
+
+        // Invalid do ... while #13
+        do
+        {
+            x = 1;
+        }
+        while (x == 0);
+
+        // Invalid do ... while #14
+        do
+        {
+            x = 1;
+        }
+        while (x == 0);
+    }
+}";
+
+            DiagnosticResult[] expectedDiagnostics =
             {
                 // Invalid do ... while #1
                 this.CSharpDiagnostic().WithLocation(10, 9),
@@ -178,6 +281,8 @@
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
     }
 }

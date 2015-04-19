@@ -9,7 +9,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
-    public partial class SA1500UnitTests : DiagnosticVerifier
+    public partial class SA1500UnitTests
     {
         /// <summary>
         /// Verifies that no diagnostics are reported for the valid try ... catch ... finally statements defined in this test.
@@ -157,7 +157,98 @@ public class Foo
     }
 }";
 
-            var expectedDiagnostics = new[]
+            var fixedTestCode = @"using System;
+
+public class Foo
+{
+    private void Bar()
+    {
+        var x = 0;
+
+        // Invalid try ... catch ... finally #1
+        try
+        {
+        }
+        catch (Exception)
+        {
+        }
+        finally
+        {
+        }
+
+        // Invalid try ... catch ... finally #2
+        try
+        {
+            x += 1;
+        }
+        catch (Exception)
+        {
+            x += 2;
+        }
+        finally
+        {
+            x += 3;
+        }
+
+        // Invalid try ... catch ... finally #3 (Valid only for SA1500)
+        try
+        {
+            x += 1;
+        }
+        catch (Exception)
+        {
+            x += 2;
+        }
+        finally
+        {
+            x += 3;
+        }
+
+        // Invalid try ... catch ... finally #4
+        try
+        {
+            x += 1;
+        }
+        catch (Exception)
+        {
+            x += 2;
+        }
+        finally
+        {
+            x += 3;
+        }
+
+        // Invalid try ... catch ... finally #5 (Valid only for SA1500)
+        try
+        {
+            x += 1;
+        }
+        catch (Exception)
+        {
+            x += 2;
+        }
+        finally
+        {
+            x += 3;
+        }
+
+        // Invalid try ... catch ... finally #6 (Valid only for SA1500)
+        try
+        {
+            x += 1;
+        }
+        catch (Exception)
+        {
+            x += 2;
+        }
+        finally
+        {
+            x += 3;
+        }
+    }
+}";
+
+            DiagnosticResult[] expectedDiagnostics =
             {
                 // Invalid try ... catch ... finally #1
                 this.CSharpDiagnostic().WithLocation(10, 13),
@@ -189,6 +280,8 @@ public class Foo
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
     }
 }

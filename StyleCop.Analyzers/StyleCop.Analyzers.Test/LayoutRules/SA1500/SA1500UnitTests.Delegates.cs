@@ -9,7 +9,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
-    public partial class SA1500UnitTests : DiagnosticVerifier
+    public partial class SA1500UnitTests
     {
         /// <summary>
         /// Verifies that no diagnostics are reported for the valid delegates defined in this test.
@@ -80,7 +80,7 @@ public class Foo
         }
 
         /// <summary>
-        /// Verifies that diagnostics will be reported for all invalid delegate definitions.
+        /// Verifies diagnostics and codefixes for all invalid delegate definitions.
         /// </summary>
         [Fact]
         public async Task TestDelegateInvalid()
@@ -111,17 +111,17 @@ public class Foo
             Debug.Indent(); };
 
         // Invalid delegate #4
-        MyDelegate item4 = delegate { Debug.Indent(); 
+        MyDelegate item4 = delegate { Debug.Indent();
         };
 
         // Invalid delegate #5
-        MyDelegate item5 = delegate 
+        MyDelegate item5 = delegate
         {
             Debug.Indent(); };
 
         // Invalid delegate #6
-        MyDelegate item6 = delegate 
-        { Debug.Indent(); 
+        MyDelegate item6 = delegate
+        { Debug.Indent();
         };
 
         // Invalid delegate #7
@@ -142,18 +142,102 @@ public class Foo
         });
 
         // Invalid delegate #11
-        this.TestMethod(delegate 
-        { 
+        this.TestMethod(delegate
+        {
             Debug.Indent(); });
 
         // Invalid delegate #12
-        this.TestMethod(delegate 
-        { Debug.Indent(); 
+        this.TestMethod(delegate
+        { Debug.Indent();
         });
     }
 }";
 
-            var expectedDiagnostics = new[]
+            var fixedTestCode = @"using System.Diagnostics;
+
+public class Foo
+{
+    private delegate void MyDelegate();
+
+    private void TestMethod(MyDelegate d)
+    {
+    }
+
+    private void Bar()
+    {
+        // Invalid delegate #1
+        MyDelegate item1 = delegate
+        {
+        };
+        
+        // Invalid delegate #2
+        MyDelegate item2 = delegate
+        {
+            Debug.Indent(); 
+        };
+
+        // Invalid delegate #3
+        MyDelegate item3 = delegate
+        {
+            Debug.Indent();
+        };
+
+        // Invalid delegate #4
+        MyDelegate item4 = delegate
+        {
+            Debug.Indent();
+        };
+
+        // Invalid delegate #5
+        MyDelegate item5 = delegate
+        {
+            Debug.Indent();
+        };
+
+        // Invalid delegate #6
+        MyDelegate item6 = delegate
+        {
+            Debug.Indent();
+        };
+
+        // Invalid delegate #7
+        this.TestMethod(delegate
+        {
+        });
+
+        // Invalid delegate #8
+        this.TestMethod(delegate
+        {
+            Debug.Indent();
+        });
+
+        // Invalid delegate #9
+        this.TestMethod(delegate
+        {
+            Debug.Indent();
+        });
+
+        // Invalid delegate #10
+        this.TestMethod(delegate
+        {
+            Debug.Indent();
+        });
+
+        // Invalid delegate #11
+        this.TestMethod(delegate
+        {
+            Debug.Indent();
+        });
+
+        // Invalid delegate #12
+        this.TestMethod(delegate
+        {
+            Debug.Indent();
+        });
+    }
+}";
+
+            DiagnosticResult[] expectedDiagnostics =
             {
                 // Invalid delegate #1
                 this.CSharpDiagnostic().WithLocation(14, 37),
@@ -184,6 +268,8 @@ public class Foo
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
     }
 }

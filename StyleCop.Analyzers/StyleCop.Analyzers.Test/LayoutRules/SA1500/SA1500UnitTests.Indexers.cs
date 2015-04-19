@@ -9,7 +9,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
-    public partial class SA1500UnitTests : DiagnosticVerifier
+    public partial class SA1500UnitTests
     {
         /// <summary>
         /// Verifies that no diagnostics are reported for the valid indexers defined in this test.
@@ -91,66 +91,66 @@
     // Invalid indexer #1
     public bool this[byte index]
     {
-        get { 
-            return this.test; 
+        get {
+            return this.test;
         }
 
-        set { 
-            this.test = value; 
+        set {
+            this.test = value;
         }
     }
 
     // Invalid indexer #2
     public bool this[sbyte index]
     {
-        get { 
+        get {
             return this.test; }
 
-        set { 
+        set {
             this.test = value; }
     }
 
     // Invalid indexer #3
     public bool this[short index]
     {
-        get { return this.test; 
+        get { return this.test;
         }
 
-        set { this.test = value; 
+        set { this.test = value;
         }
     }
 
     // Invalid indexer #4
     public bool this[ushort index]
     {
-        get 
-        { 
+        get
+        {
             return this.test; }
 
-        set 
-        { 
+        set
+        {
             this.test = value; }
     }
 
     // Invalid indexer #5
     public bool this[int index]
     {
-        get 
-        { return this.test; 
+        get
+        { return this.test;
         }
 
-        set 
-        { this.test = value; 
+        set
+        { this.test = value;
         }
     }
 
     // Invalid indexer #6
     public bool this[uint index]
     {
-        get 
+        get
         { return this.test; }
 
-        set 
+        set
         { this.test = value; }
     }
 
@@ -164,21 +164,134 @@
         get { return this.test; } }
 
     // Invalid indexer #9
-    public bool this[bool index] { get { return this.test; } 
+    public bool this[bool index] { get { return this.test; }
     }
 
     // Invalid indexer #10
-    public bool this[char index] 
+    public bool this[char index]
     {
         get { return this.test; } }
 
     // Invalid indexer #11
-    public bool this[string index] 
+    public bool this[string index]
     { get { return this.test; }
     }
 }";
 
-            var expectedDiagnostics = new[]
+            var fixedTestCode = @"public class Foo
+{
+    private bool test;
+
+    // Invalid indexer #1
+    public bool this[byte index]
+    {
+        get
+        {
+            return this.test;
+        }
+
+        set
+        {
+            this.test = value;
+        }
+    }
+
+    // Invalid indexer #2
+    public bool this[sbyte index]
+    {
+        get
+        {
+            return this.test;
+        }
+
+        set
+        {
+            this.test = value;
+        }
+    }
+
+    // Invalid indexer #3
+    public bool this[short index]
+    {
+        get
+        {
+            return this.test;
+        }
+
+        set
+        {
+            this.test = value;
+        }
+    }
+
+    // Invalid indexer #4
+    public bool this[ushort index]
+    {
+        get
+        {
+            return this.test;
+        }
+
+        set
+        {
+            this.test = value;
+        }
+    }
+
+    // Invalid indexer #5
+    public bool this[int index]
+    {
+        get
+        {
+            return this.test;
+        }
+
+        set
+        {
+            this.test = value;
+        }
+    }
+
+    // Invalid indexer #6
+    public bool this[uint index]
+    {
+        get { return this.test; }
+
+        set { this.test = value; }
+    }
+
+    // Invalid indexer #7
+    public bool this[long index]
+    {
+        get { return this.test; }
+    }
+
+    // Invalid indexer #8
+    public bool this[ulong index]
+    {
+        get { return this.test; }
+    }
+
+    // Invalid indexer #9
+    public bool this[bool index]
+    {
+        get { return this.test; }
+    }
+
+    // Invalid indexer #10
+    public bool this[char index]
+    {
+        get { return this.test; }
+    }
+
+    // Invalid indexer #11
+    public bool this[string index]
+    {
+        get { return this.test; }
+    }
+}";
+
+            DiagnosticResult[] expectedDiagnostics =
             {
                 // Invalid indexer #1
                 this.CSharpDiagnostic().WithLocation(8, 13),
@@ -214,6 +327,8 @@
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
     }
 }

@@ -9,7 +9,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
-    public partial class SA1500UnitTests : DiagnosticVerifier
+    public partial class SA1500UnitTests
     {
         /// <summary>
         /// Verifies that no diagnostics are reported for the valid enums defined in this test.
@@ -54,25 +54,57 @@
     }
 
     public enum InvalidEnum2 {
-        Test 
+        Test
     }
 
     public enum InvalidEnum3 {
         Test }
 
-    public enum InvalidEnum4 { Test 
+    public enum InvalidEnum4 { Test
     }
 
     public enum InvalidEnum5
-    { 
+    {
         Test }
 
     public enum InvalidEnum6
-    { Test 
+    { Test
     }
 }";
 
-            var expectedDiagnostics = new[]
+            var fixedTestCode = @"public class Foo
+{
+    public enum InvalidEnum1
+    {
+    }
+
+    public enum InvalidEnum2
+    {
+        Test
+    }
+
+    public enum InvalidEnum3
+    {
+        Test
+    }
+
+    public enum InvalidEnum4
+    {
+        Test
+    }
+
+    public enum InvalidEnum5
+    {
+        Test
+    }
+
+    public enum InvalidEnum6
+    {
+        Test
+    }
+}";
+
+            DiagnosticResult[] expectedDiagnostics =
             {
                 // InvalidEnum1
                 this.CSharpDiagnostic().WithLocation(3, 30),
@@ -90,6 +122,8 @@
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
     }
 }

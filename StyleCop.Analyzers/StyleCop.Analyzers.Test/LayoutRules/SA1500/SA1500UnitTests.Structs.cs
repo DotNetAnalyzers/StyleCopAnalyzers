@@ -9,7 +9,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
-    public partial class SA1500UnitTests : DiagnosticVerifier
+    public partial class SA1500UnitTests
     {
         /// <summary>
         /// Verifies that no diagnostics are reported for the valid structs defined in this test.
@@ -57,25 +57,57 @@
     }
 
     public struct InvalidStruct2 {
-        public int Field; 
+        public int Field;
     }
 
     public struct InvalidStruct3 {
         public int Field; }
 
-    public struct InvalidStruct4 { public int Field; 
+    public struct InvalidStruct4 { public int Field;
     }
 
     public struct InvalidStruct5
-    { 
+    {
         public int Field; }
 
     public struct InvalidStruct6
-    { public int Field; 
+    { public int Field;
     }
 }";
 
-            var expectedDiagnostics = new[]
+            var fixedTestCode = @"public class Foo
+{
+    public struct InvalidStruct1
+    {
+    }
+
+    public struct InvalidStruct2
+    {
+        public int Field;
+    }
+
+    public struct InvalidStruct3
+    {
+        public int Field;
+    }
+
+    public struct InvalidStruct4
+    {
+        public int Field;
+    }
+
+    public struct InvalidStruct5
+    {
+        public int Field;
+    }
+
+    public struct InvalidStruct6
+    {
+        public int Field;
+    }
+}";
+
+            DiagnosticResult[] expectedDiagnostics =
             {
                 // InvalidStruct1
                 this.CSharpDiagnostic().WithLocation(3, 34),
@@ -93,6 +125,8 @@
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
     }
 }

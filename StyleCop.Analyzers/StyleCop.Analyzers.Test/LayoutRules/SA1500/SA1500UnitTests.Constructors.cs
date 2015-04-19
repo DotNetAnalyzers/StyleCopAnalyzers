@@ -9,7 +9,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
-    public partial class SA1500UnitTests : DiagnosticVerifier
+    public partial class SA1500UnitTests
     {
         /// <summary>
         /// Verifies that no diagnostics are reported for the valid constructors defined in this test.
@@ -50,7 +50,7 @@ public class Foo
         }
 
         /// <summary>
-        /// Verifies that diagnostics will be reported for all invalid constructor definitions.
+        /// Verifies diagnostics and codefixes for all invalid constructor definitions.
         /// </summary>
         [Fact]
         public async Task TestConstructorInvalid()
@@ -65,7 +65,7 @@ public class Foo
 
     // Invalid constructor #2
     public Foo(bool a) {
-        Debug.Indent(); 
+        Debug.Indent();
     }
 
     // Invalid constructor #3
@@ -73,21 +73,61 @@ public class Foo
         Debug.Indent(); }
 
     // Invalid constructor #4
-    public Foo(short a) { Debug.Indent(); 
+    public Foo(short a) { Debug.Indent();
     }
 
     // Invalid constructor #5
-    public Foo(ushort a) 
-    { 
+    public Foo(ushort a)
+    {
         Debug.Indent(); }
 
     // Invalid constructor #6
-    public Foo(int a) 
-    { Debug.Indent(); 
+    public Foo(int a)
+    { Debug.Indent();
     }
 }";
 
-            var expectedDiagnostics = new[]
+            var fixedTestCode = @"using System.Diagnostics;
+
+public class Foo
+{
+    // Invalid constructor #1
+    public Foo()
+    {
+    }
+
+    // Invalid constructor #2
+    public Foo(bool a)
+    {
+        Debug.Indent();
+    }
+
+    // Invalid constructor #3
+    public Foo(byte a)
+    {
+        Debug.Indent();
+    }
+
+    // Invalid constructor #4
+    public Foo(short a)
+    {
+        Debug.Indent();
+    }
+
+    // Invalid constructor #5
+    public Foo(ushort a)
+    {
+        Debug.Indent();
+    }
+
+    // Invalid constructor #6
+    public Foo(int a)
+    {
+        Debug.Indent();
+    }
+}";
+
+            DiagnosticResult[] expectedDiagnostics =
             {
                 // Invalid constructor #1
                 this.CSharpDiagnostic().WithLocation(6, 18),
@@ -105,6 +145,8 @@ public class Foo
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
     }
 }

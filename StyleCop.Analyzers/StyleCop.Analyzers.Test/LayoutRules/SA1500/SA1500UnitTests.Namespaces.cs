@@ -9,7 +9,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
-    public partial class SA1500UnitTests : DiagnosticVerifier
+    public partial class SA1500UnitTests
     {
         /// <summary>
         /// Verifies that no diagnostics are reported for the valid namespace defined in this test.
@@ -50,25 +50,55 @@ namespace ValidNamespace5 /* Valid only for SA1500 */
 }
 
 namespace InvalidNamespace2 {
-    using System; 
+    using System;
 }
 
 namespace InvalidNamespace3 {
     using System; }
 
-namespace InvalidNamespace4 { using System; 
+namespace InvalidNamespace4 { using System;
 }
 
 namespace InvalidNamespace5
-{ 
+{
     using System; }
 
 namespace InvalidNamespace6
-{ using System; 
+{ using System;
 }
 ";
 
-            var expectedDiagnostics = new[]
+            var fixedTestCode = @"namespace InvalidNamespace1
+{
+}
+
+namespace InvalidNamespace2
+{
+    using System;
+}
+
+namespace InvalidNamespace3
+{
+    using System;
+}
+
+namespace InvalidNamespace4
+{
+    using System;
+}
+
+namespace InvalidNamespace5
+{
+    using System;
+}
+
+namespace InvalidNamespace6
+{
+    using System;
+}
+";
+
+            DiagnosticResult[] expectedDiagnostics =
             {
                 // InvalidNamespace1
                 this.CSharpDiagnostic().WithLocation(1, 29),
@@ -86,6 +116,8 @@ namespace InvalidNamespace6
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
     }
 }
