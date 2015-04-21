@@ -87,19 +87,19 @@
                 {
                     switch (leadingTrivia[i].Kind())
                     {
-                    case SyntaxKind.WhitespaceTrivia:
-                        break;
+                        case SyntaxKind.WhitespaceTrivia:
+                            break;
 
-                    case SyntaxKind.EndOfLineTrivia:
-                        blankLineEndIndex = i;
-                        blankLineCount++;
-                        break;
+                        case SyntaxKind.EndOfLineTrivia:
+                            blankLineEndIndex = i;
+                            blankLineCount++;
+                            break;
 
-                    default:
-                        ReportDiagnosticIfNecessary(context, leadingTrivia, blankLineIndex, blankLineEndIndex, blankLineCount);
-                        blankLineIndex = i + 1;
-                        blankLineCount = 0;
-                        break;
+                        default:
+                            ReportDiagnosticIfNecessary(context, leadingTrivia, blankLineIndex, blankLineEndIndex, blankLineCount);
+                            blankLineIndex = i + 1;
+                            blankLineCount = 0;
+                            break;
                     }
                 }
 
@@ -113,6 +113,19 @@
             {
                 // nothing to report
                 return;
+            }
+
+            if (blankLineIndex > 0)
+            {
+                var triviaBeforeBlankLines = leadingTrivia[blankLineIndex - 1];
+                if (triviaBeforeBlankLines.IsKind(SyntaxKind.SingleLineCommentTrivia) ||
+                    triviaBeforeBlankLines.IsKind(SyntaxKind.MultiLineCommentTrivia))
+                {
+                    // when blank lines appear after a comment, skip the first one
+                    // because that's part of the end of the comment trivia.
+                    blankLineIndex++;
+                    blankLineCount--;
+                }
             }
 
             if (blankLineCount < 2)

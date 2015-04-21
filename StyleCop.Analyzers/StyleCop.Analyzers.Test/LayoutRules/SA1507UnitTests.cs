@@ -95,6 +95,53 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
+        [Fact]
+        public async Task TestOneEmptyLineBetweenMultilineCommentAndFirstElement()
+        {
+            string testCode = @"/*
+*/
+
+namespace Microsoft
+{
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task TestOneEmptyLineBetweenSingleLineCommentAndFirstElement()
+        {
+            string testCode = @"//
+
+namespace Microsoft
+{
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task TestMultipleEmptyLinesBetweenMultilineCommentAndFirstElement()
+        {
+            string testCode = @"/*
+*/
+
+
+namespace Microsoft
+{
+}
+";
+
+            var expectedDiagnostics = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(3, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None);
+        }
+
         /// <summary>
         /// Verifies that a verbatim string literal does not trigger any diagnostics.
         /// (This will be handled by SA1518)
@@ -179,6 +226,29 @@ public class Foo
 ";
 
             await this.VerifyCSharpFixAsync(TestCode, fixedTestCode);
+        }
+
+        [Fact]
+        public async Task TestValidBlankLineInVariousPlaces()
+        {
+            string testCode = @"using System;
+
+class FooBar
+{
+    void Foo()
+    {
+    }
+
+    void Bar()
+    {
+        Foo();
+
+        Foo();
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         /// <inheritdoc/>
