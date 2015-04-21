@@ -101,7 +101,6 @@
     <Compile Include="DocumentationRules\SA1649FileHeaderFileNameDocumentationMustMatchTypeName.cs" />
     <Compile Include="DocumentationRules\SA1650ElementDocumentationMustBeSpelledCorrectly.cs" />
     <Compile Include="DocumentationRules\StandardTextDiagnosticBase.cs" />
-    <Compile Include="Helpers\Class1.cs" />
     <Compile Include="Helpers\EnumerableHelpers.cs" />
     <Compile Include="Helpers\IndentationHelper.cs" />
     <Compile Include="Helpers\IndentationOptions.cs" />

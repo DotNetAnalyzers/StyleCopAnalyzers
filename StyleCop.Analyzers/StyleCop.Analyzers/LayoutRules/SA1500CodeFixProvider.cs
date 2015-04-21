@@ -1,5 +1,7 @@
 ﻿namespace StyleCop.Analyzers.LayoutRules
 {
+    using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
@@ -12,8 +14,6 @@
     using Microsoft.CodeAnalysis.Text;
 
     using StyleCop.Analyzers.Helpers;
-    using System.Collections.Generic;
-    using System;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/>.
