@@ -115,6 +115,19 @@
                 return;
             }
 
+            if (blankLineIndex > 0)
+            {
+                var triviaBeforeBlankLines = leadingTrivia[blankLineIndex - 1];
+                if (triviaBeforeBlankLines.IsKind(SyntaxKind.SingleLineCommentTrivia) ||
+                    triviaBeforeBlankLines.IsKind(SyntaxKind.MultiLineCommentTrivia))
+                {
+                    // when blank lines appear after a comment, skip the first one
+                    // because that's part of the end of the comment trivia.
+                    blankLineIndex++;
+                    blankLineCount--;
+                }
+            }
+
             if (blankLineCount < 2)
             {
                 // only care about multiple blank lines in a row
