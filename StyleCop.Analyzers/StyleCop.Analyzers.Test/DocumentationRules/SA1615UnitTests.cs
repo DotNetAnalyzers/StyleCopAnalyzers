@@ -56,7 +56,7 @@ $$
 
         [Theory]
         [MemberData(nameof(WithoutReturnValue))]
-        public async Task TestMethodWithReturnTypeWithoutReturnTypeDocumentation(string declaration)
+        public async Task TestMethodWithoutReturnTypeWithoutReturnTypeDocumentation(string declaration)
         {
             var testCode = @"
 /// <summary>
@@ -93,7 +93,7 @@ $$
 
         [Theory]
         [MemberData(nameof(WithReturnValue))]
-        public async Task TestMethodWithoutVoidWithoutDocumentation(string declaration)
+        public async Task TestMethodWithReturnTypeWithoutReturnTypeDocumentation(string declaration)
         {
             var testCode = @"
 /// <summary>
@@ -116,7 +116,7 @@ $$
         
         [Theory]
         [MemberData(nameof(WithReturnValue))]
-        public async Task TestMethodWithoutVoidWithDocumentation(string declaration)
+        public async Task TestMethodWithReturnTypeWithDocumentation(string declaration)
         {
             var testCode = @"
 /// <summary>

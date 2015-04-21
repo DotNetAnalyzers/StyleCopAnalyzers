@@ -73,9 +73,9 @@
 
         private void HandleDeclaration(SyntaxNodeAnalysisContext context, TypeSyntax returnType)
         {
-            var predefenedType = returnType as PredefinedTypeSyntax;
+            var predefinedType = returnType as PredefinedTypeSyntax;
 
-            if (predefenedType != null && predefenedType.Keyword.IsKind(SyntaxKind.VoidKeyword))
+            if (predefinedType != null && predefinedType.Keyword.IsKind(SyntaxKind.VoidKeyword))
             {
                 // There is no return value
                 return;
@@ -83,18 +83,19 @@
 
             var documentationStructure = XmlCommentHelper.GetDocumentationStructure(context.Node);
 
-            if (documentationStructure != null)
+            if (documentationStructure == null)
             {
-                if (XmlCommentHelper.GetTopLevelElement(documentationStructure, XmlCommentHelper.InheritdocXmlTag) != null)
-                {
-                    // Don't report if the documentation is inherited.
-                    return;
-                }
+                return;
+            }
+            if (XmlCommentHelper.GetTopLevelElement(documentationStructure, XmlCommentHelper.InheritdocXmlTag) != null)
+            {
+                // Don't report if the documentation is inherited.
+                return;
+            }
 
-                if (XmlCommentHelper.GetTopLevelElement(documentationStructure, XmlCommentHelper.ReturnsXmlTag) == null)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, returnType.GetLocation()));
-                }
+            if (XmlCommentHelper.GetTopLevelElement(documentationStructure, XmlCommentHelper.ReturnsXmlTag) == null)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, returnType.GetLocation()));
             }
         }
     }
