@@ -151,6 +151,24 @@ namespace StyleCop.Analyzers
         internal static bool HasAttribute(this SyntaxList<AttributeListSyntax> attributeLists, string attributeName) =>
             attributeLists.SelectMany(a => a.Attributes).Any(a => a.Name.ToString().EndsWith(attributeName, StringComparison.OrdinalIgnoreCase));
 
+        internal static void RegisterSyntaxTreeActionHonorExclusions(this AnalysisContext context, Action<SyntaxTreeAnalysisContext> action)
+        {
+            context.RegisterSyntaxTreeAction(
+                c =>
+                {
+                    if (c.IsGenerated(c.CancellationToken))
+                    {
+                        return;
+                    }
+
+                    // Honor the containing document item's ExcludeFromStylecop=True
+                    // MSBuild metadata, if analyzers have access to it.
+                    //// TODO: code here
+
+                    action(c);
+                });
+        }
+
         internal static void RegisterSyntaxNodeActionHonorExclusions<TLanguageKindEnum>(this AnalysisContext context, Action<SyntaxNodeAnalysisContext> action, params TLanguageKindEnum[] syntaxKinds) where TLanguageKindEnum : struct
         {
             context.RegisterSyntaxNodeAction(

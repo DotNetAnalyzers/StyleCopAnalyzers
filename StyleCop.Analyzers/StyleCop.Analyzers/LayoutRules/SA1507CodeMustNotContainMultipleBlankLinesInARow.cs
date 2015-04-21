@@ -65,7 +65,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(this.HandleSyntaxTreeAnalysis);
+            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTreeAnalysis);
         }
 
         private void HandleSyntaxTreeAnalysis(SyntaxTreeAnalysisContext context)

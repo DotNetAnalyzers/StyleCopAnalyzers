@@ -57,7 +57,7 @@
         public override void Initialize(AnalysisContext context)
         {
             // handle everything except nameof
-            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
+            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
 
             // handle nameof (which appears as an invocation expression??)
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleInvocationExpressionSyntax, SyntaxKind.InvocationExpression);
