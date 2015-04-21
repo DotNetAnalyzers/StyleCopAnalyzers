@@ -11,3 +11,4 @@ packages/
 TestResults/
 .nuget/NuGet.exe
 build/nuget/
+*.log
