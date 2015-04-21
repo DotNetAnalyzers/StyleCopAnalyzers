@@ -45,7 +45,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleFieldDeclarationm, SyntaxKind.FieldDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleFieldDeclarationm, SyntaxKind.FieldDeclaration);
         }
 
         private void HandleFieldDeclarationm(SyntaxNodeAnalysisContext context)

@@ -54,10 +54,10 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleSyntaxNode, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleSyntaxNode, SyntaxKind.ConstructorDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleSyntaxNode, SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleSyntaxNode, SyntaxKind.IndexerDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleSyntaxNode, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleSyntaxNode, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleSyntaxNode, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleSyntaxNode, SyntaxKind.IndexerDeclaration);
         }
 
         private void HandleSyntaxNode(SyntaxNodeAnalysisContext context)

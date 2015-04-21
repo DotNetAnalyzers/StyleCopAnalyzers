@@ -53,7 +53,7 @@ namespace StyleCop.Analyzers.NamingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleInterfaceDeclarationSyntax, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleInterfaceDeclarationSyntax, SyntaxKind.InterfaceDeclaration);
         }
 
         private void HandleInterfaceDeclarationSyntax(SyntaxNodeAnalysisContext context)

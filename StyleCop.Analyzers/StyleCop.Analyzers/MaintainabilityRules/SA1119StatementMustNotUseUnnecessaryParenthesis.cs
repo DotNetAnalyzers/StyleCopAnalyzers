@@ -74,7 +74,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleParenthesizedExpression, SyntaxKind.ParenthesizedExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleParenthesizedExpression, SyntaxKind.ParenthesizedExpression);
         }
 
         private void HandleParenthesizedExpression(SyntaxNodeAnalysisContext context)

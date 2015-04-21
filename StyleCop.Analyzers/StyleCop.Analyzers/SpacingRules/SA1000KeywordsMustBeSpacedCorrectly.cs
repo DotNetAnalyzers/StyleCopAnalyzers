@@ -60,7 +60,7 @@
             context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
 
             // handle nameof (which appears as an invocation expression??)
-            context.RegisterSyntaxNodeAction(this.HandleInvocationExpressionSyntax, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleInvocationExpressionSyntax, SyntaxKind.InvocationExpression);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)

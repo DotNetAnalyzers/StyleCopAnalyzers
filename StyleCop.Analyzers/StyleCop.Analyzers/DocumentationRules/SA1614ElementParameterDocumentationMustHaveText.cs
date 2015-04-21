@@ -53,8 +53,8 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleXmlElement, SyntaxKind.XmlElement);
-            context.RegisterSyntaxNodeAction(this.HandleXmlEmptyElement, SyntaxKind.XmlEmptyElement);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleXmlElement, SyntaxKind.XmlElement);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleXmlEmptyElement, SyntaxKind.XmlEmptyElement);
         }
 
         private void HandleXmlElement(SyntaxNodeAnalysisContext context)
