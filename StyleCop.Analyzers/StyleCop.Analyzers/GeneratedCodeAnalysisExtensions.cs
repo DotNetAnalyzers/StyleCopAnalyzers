@@ -5,6 +5,7 @@
 
 namespace StyleCop.Analyzers
 {
+    using System.IO;
     using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Text.RegularExpressions;
@@ -131,7 +132,7 @@ namespace StyleCop.Analyzers
         private static bool IsGeneratedFileName(this string filePath)
         {
             return Regex.IsMatch(
-                filePath,
+                Path.GetFileName(filePath),
                 @"(^service|^TemporaryGeneratedFile_.*|^assemblyinfo|^assemblyattributes|\.(g\.i|g|designer|generated|assemblyattributes))\.(cs|vb)$",
                 RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
         }
