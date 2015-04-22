@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0"?>
 <package>
-  <metadata>
+  <metadata minClientVersion="2.8">
     <id>StyleCop.Analyzers</id>
     <version>0.0.0</version>
     <title>StyleCop.Analyzers</title>
