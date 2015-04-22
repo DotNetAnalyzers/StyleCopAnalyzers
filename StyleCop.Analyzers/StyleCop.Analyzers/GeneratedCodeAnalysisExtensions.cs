@@ -63,7 +63,7 @@ namespace StyleCop.Analyzers
         /// </summary>
         internal static bool HasGeneratedAttribute(this SyntaxNode node)
         {
-            return node.HasAttributeOnAncestorOrSelf("DebuggerNonUserCode", "GeneratedCode");
+            return node.HasAttributeOnAncestorOrSelf("GeneratedCode");
         }
 
         /// <summary>
