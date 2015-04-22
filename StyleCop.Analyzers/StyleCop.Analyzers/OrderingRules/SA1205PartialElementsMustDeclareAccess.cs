@@ -1,7 +1,11 @@
 ﻿namespace StyleCop.Analyzers.OrderingRules
 {
     using System.Collections.Immutable;
+    using System.Linq;
+
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -19,13 +23,13 @@
         /// </summary>
         public const string DiagnosticId = "SA1205";
         private const string Title = "Partial elements must declare access";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "Partial elements must declare an access modifier";
         private const string Category = "StyleCop.CSharp.OrderingRules";
         private const string Description = "The partial element does not have an access modifier defined. StyleCop may not be able to determine the correct placement of the elements in the file. Please declare an access modifier for all partial elements.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1205.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -42,7 +46,26 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(this.HandleElementDeclaration, SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.InterfaceDeclaration);
+        }
+
+        private void HandleElementDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var typeDeclarationNode = (TypeDeclarationSyntax)context.Node;
+
+            if (ContainsModifier(typeDeclarationNode.Modifiers, SyntaxKind.PartialKeyword))
+            {
+                if (!ContainsModifier(typeDeclarationNode.Modifiers, SyntaxKind.PublicKeyword) &&
+                    !ContainsModifier(typeDeclarationNode.Modifiers, SyntaxKind.InternalKeyword))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, typeDeclarationNode.GetLocation()));
+                }
+            }
+        }
+
+        private static bool ContainsModifier(SyntaxTokenList modifiers, SyntaxKind expectedKeyword)
+        {
+            return modifiers.Any(modifier => modifier.Kind() == expectedKeyword);
         }
     }
 }

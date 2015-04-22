@@ -1,0 +1,81 @@
+﻿namespace StyleCop.Analyzers.OrderingRules
+{
+    using System.Collections.Immutable;
+    using System.Composition;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CodeActions;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Extensions;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+    /// <summary>
+    /// Implements code fixes for <see cref="SA1205PartialElementsMustDeclareAccess"/>.
+    /// </summary>
+    [ExportCodeFixProvider(nameof(SA1205CodeFixProvider), LanguageNames.CSharp)]
+    [Shared]
+    public class SA1205CodeFixProvider : CodeFixProvider
+    {
+        private static readonly ImmutableArray<string> FixableDiagnostics =
+            ImmutableArray.Create(SA1205PartialElementsMustDeclareAccess.DiagnosticId);
+
+        /// <inheritdoc/>
+        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+
+        /// <inheritdoc/>
+        public override FixAllProvider GetFixAllProvider()
+        {
+            return WellKnownFixAllProviders.BatchFixer;
+        }
+
+        /// <inheritdoc/>
+        public override Task RegisterCodeFixesAsync(CodeFixContext context)
+        {
+            foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
+            {
+                context.RegisterCodeFix(CodeAction.Create("Add public access modifier", token => GetTransformedDocumentAsync(context.Document, diagnostic, SyntaxKind.PublicKeyword, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Add internal access modifier", token => GetTransformedDocumentAsync(context.Document, diagnostic, SyntaxKind.InternalKeyword, token)), diagnostic);
+            }
+
+            return Task.FromResult(true);
+        }
+
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, SyntaxKind accessModifierKind, CancellationToken cancellationToken)
+        {
+            var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+
+            var typeDeclarationNode = syntaxRoot.FindNode(diagnostic.Location.SourceSpan) as TypeDeclarationSyntax;
+            if (typeDeclarationNode == null)
+            {
+                return document;
+            }
+
+            var accessModifier = SyntaxFactory.Token(accessModifierKind);
+            var replacementModifiers = typeDeclarationNode.Modifiers.Insert(0, accessModifier);
+            var replacementNode = ReplaceModifiers(typeDeclarationNode, replacementModifiers);
+
+            var newSyntaxRoot = syntaxRoot.ReplaceNode(typeDeclarationNode, replacementNode);
+            return document.WithSyntaxRoot(newSyntaxRoot);
+        }
+
+        // This code was copied from the Roslyn codebase (and slightly modified). It can be removed if TypeDeclarationSyntaxExtensions.WithModifiers is made public (roslyn issue #2186)
+        private static TypeDeclarationSyntax ReplaceModifiers(TypeDeclarationSyntax node, SyntaxTokenList modifiers)
+        {
+            switch (node.Kind())
+            {
+                case SyntaxKind.ClassDeclaration:
+                    return ((ClassDeclarationSyntax)node).WithModifiers(modifiers);
+                case SyntaxKind.InterfaceDeclaration:
+                    return ((InterfaceDeclarationSyntax)node).WithModifiers(modifiers);
+                case SyntaxKind.StructDeclaration:
+                    return ((StructDeclarationSyntax)node).WithModifiers(modifiers);
+            }
+
+            return node;
+        }
+    }
+}
