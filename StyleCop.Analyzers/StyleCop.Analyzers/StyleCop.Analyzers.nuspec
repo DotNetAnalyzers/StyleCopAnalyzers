@@ -13,6 +13,7 @@
     <releaseNotes>https://github.com/DotNetAnalyzers/StyleCopAnalyzers/releases/$version$</releaseNotes>
     <copyright>Copyright Sam Harwell 2015</copyright>
     <tags>StyleCop DotNetAnalyzers Roslyn Diagnostic Analyzer</tags>
+    <developmentDependency>true</developmentDependency>
   </metadata>
   <files>
 
