@@ -79,6 +79,20 @@
                 char.IsLower(symbol.Name[0]) &&
                 symbol.Locations.Any())
             {
+                foreach (var location in context.Symbol.Locations)
+                {
+                    if (!location.IsInSource)
+                    {
+                        // assume symbols not defined in a source document are "out of reach"
+                        return;
+                    }
+
+                    if (location.SourceTree.IsGeneratedDocument(context.CancellationToken))
+                    {
+                        return;
+                    }
+                }
+
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, symbol.Locations[0]));
             }
         }

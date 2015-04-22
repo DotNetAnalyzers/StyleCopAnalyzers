@@ -56,6 +56,20 @@
                 this.IsParentAClass(fieldDeclarationSyntax) &&
                 !fieldDeclarationSyntax.IsConst)
             {
+                foreach (var location in symbolAnalysisContext.Symbol.Locations)
+                {
+                    if (!location.IsInSource)
+                    {
+                        // assume symbols not defined in a source document are "out of reach"
+                        return;
+                    }
+
+                    if (location.SourceTree.IsGeneratedDocument(symbolAnalysisContext.CancellationToken))
+                    {
+                        return;
+                    }
+                }
+
                 symbolAnalysisContext.ReportDiagnostic(Diagnostic.Create(Descriptor, fieldDeclarationSyntax.Locations[0]));
             }
         }
