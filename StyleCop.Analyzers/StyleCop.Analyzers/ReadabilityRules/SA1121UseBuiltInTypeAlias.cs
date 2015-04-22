@@ -144,7 +144,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleIdentifierNameSyntax, SyntaxKind.IdentifierName);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleIdentifierNameSyntax, SyntaxKind.IdentifierName);
         }
 
         private void HandleIdentifierNameSyntax(SyntaxNodeAnalysisContext context)

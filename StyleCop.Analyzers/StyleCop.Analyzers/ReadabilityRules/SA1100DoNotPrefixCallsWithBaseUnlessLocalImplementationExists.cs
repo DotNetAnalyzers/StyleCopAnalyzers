@@ -79,7 +79,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.AnalyzeBaseExpression, SyntaxKind.BaseExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.AnalyzeBaseExpression, SyntaxKind.BaseExpression);
         }
 
         private void AnalyzeBaseExpression(SyntaxNodeAnalysisContext context)

@@ -92,7 +92,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleDestructor, SyntaxKind.DestructorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDestructor, SyntaxKind.DestructorDeclaration);
         }
 
         private void HandleDestructor(SyntaxNodeAnalysisContext context)

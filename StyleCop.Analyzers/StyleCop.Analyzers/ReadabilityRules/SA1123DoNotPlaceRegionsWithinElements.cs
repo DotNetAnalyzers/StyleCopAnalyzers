@@ -48,7 +48,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleRegionDirectiveTrivia, SyntaxKind.RegionDirectiveTrivia);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleRegionDirectiveTrivia, SyntaxKind.RegionDirectiveTrivia);
         }
 
         private void HandleRegionDirectiveTrivia(SyntaxNodeAnalysisContext context)

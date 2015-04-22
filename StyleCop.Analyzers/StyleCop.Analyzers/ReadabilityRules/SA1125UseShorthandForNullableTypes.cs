@@ -47,7 +47,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleGenericNameSyntax, SyntaxKind.GenericName);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleGenericNameSyntax, SyntaxKind.GenericName);
         }
 
         private void HandleGenericNameSyntax(SyntaxNodeAnalysisContext context)

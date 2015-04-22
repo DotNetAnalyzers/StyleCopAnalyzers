@@ -57,8 +57,8 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleMemberAccessExpression, SyntaxKind.SimpleMemberAccessExpression);
-            context.RegisterSyntaxNodeAction(this.HandleIdentifierName, SyntaxKind.IdentifierName);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMemberAccessExpression, SyntaxKind.SimpleMemberAccessExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleIdentifierName, SyntaxKind.IdentifierName);
         }
 
         /// <summary>

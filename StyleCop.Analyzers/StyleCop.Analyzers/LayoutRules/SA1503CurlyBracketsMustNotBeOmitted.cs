@@ -78,10 +78,10 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleIfStatement, SyntaxKind.IfStatement);
-            context.RegisterSyntaxNodeAction(this.HandleWhileStatement, SyntaxKind.WhileStatement);
-            context.RegisterSyntaxNodeAction(this.HandleForStatement, SyntaxKind.ForStatement);
-            context.RegisterSyntaxNodeAction(this.HandleForEachStatement, SyntaxKind.ForEachStatement);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleIfStatement, SyntaxKind.IfStatement);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleWhileStatement, SyntaxKind.WhileStatement);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleForStatement, SyntaxKind.ForStatement);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleForEachStatement, SyntaxKind.ForEachStatement);
         }
 
         private void HandleIfStatement(SyntaxNodeAnalysisContext context)

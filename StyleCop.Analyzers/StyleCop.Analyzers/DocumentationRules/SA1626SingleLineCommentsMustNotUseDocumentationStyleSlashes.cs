@@ -72,7 +72,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleSingleLineDocumentationTrivia, SyntaxKind.SingleLineDocumentationCommentTrivia);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleSingleLineDocumentationTrivia, SyntaxKind.SingleLineDocumentationCommentTrivia);
         }
 
         private void HandleSingleLineDocumentationTrivia(SyntaxNodeAnalysisContext context)

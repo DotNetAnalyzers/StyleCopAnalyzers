@@ -78,8 +78,8 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleLogicalExpression, SyntaxKind.LogicalAndExpression);
-            context.RegisterSyntaxNodeAction(this.HandleLogicalExpression, SyntaxKind.LogicalOrExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleLogicalExpression, SyntaxKind.LogicalAndExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleLogicalExpression, SyntaxKind.LogicalOrExpression);
         }
 
         private void HandleLogicalExpression(SyntaxNodeAnalysisContext context)

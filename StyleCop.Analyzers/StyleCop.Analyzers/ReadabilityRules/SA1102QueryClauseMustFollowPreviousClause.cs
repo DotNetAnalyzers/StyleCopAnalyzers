@@ -70,7 +70,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleQuery, SyntaxKind.QueryExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleQuery, SyntaxKind.QueryExpression);
         }
 
         private void HandleQuery(SyntaxNodeAnalysisContext context)

@@ -58,15 +58,15 @@
             // Note: Interfaces are handled by SA1302
             // Note: Fields are handled by SA1303 through SA1311
 
-            context.RegisterSyntaxNodeAction(this.HandleNamespaceDeclarationSyntax, SyntaxKind.NamespaceDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleClassDeclarationSyntax, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleEnumDeclarationSyntax, SyntaxKind.EnumDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleStructDeclarationSyntax, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleDelegateDeclarationSyntax, SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleEventDeclarationSyntax, SyntaxKind.EventDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleEventFieldDeclarationSyntax, SyntaxKind.EventFieldDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleMethodDeclarationSyntax, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandlePropertyDeclarationSyntax, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleNamespaceDeclarationSyntax, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleClassDeclarationSyntax, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleEnumDeclarationSyntax, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleStructDeclarationSyntax, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDelegateDeclarationSyntax, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleEventDeclarationSyntax, SyntaxKind.EventDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleEventFieldDeclarationSyntax, SyntaxKind.EventFieldDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMethodDeclarationSyntax, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandlePropertyDeclarationSyntax, SyntaxKind.PropertyDeclaration);
         }
 
         private void HandleNamespaceDeclarationSyntax(SyntaxNodeAnalysisContext context)

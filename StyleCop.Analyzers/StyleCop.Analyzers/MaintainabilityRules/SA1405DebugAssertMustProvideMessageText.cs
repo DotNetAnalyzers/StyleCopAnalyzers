@@ -50,7 +50,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleMethodCall, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMethodCall, SyntaxKind.InvocationExpression);
         }
 
         private void HandleMethodCall(SyntaxNodeAnalysisContext context)
