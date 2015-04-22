@@ -156,7 +156,7 @@ namespace StyleCop.Analyzers
             context.RegisterSyntaxTreeAction(
                 c =>
                 {
-                    if (c.IsGeneratedDocument(c.CancellationToken))
+                    if (c.IsGeneratedDocument())
                     {
                         return;
                     }
@@ -174,7 +174,7 @@ namespace StyleCop.Analyzers
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (c.IsGenerated(c.CancellationToken))
+                    if (c.IsGenerated())
                     {
                         return;
                     }
