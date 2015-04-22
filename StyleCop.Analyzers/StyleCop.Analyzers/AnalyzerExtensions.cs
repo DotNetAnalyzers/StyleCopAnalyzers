@@ -15,16 +15,6 @@ namespace StyleCop.Analyzers
 
     internal static class AnalyzerExtensions
     {
-        internal static SyntaxNode WithSameTriviaAs(this SyntaxNode target, SyntaxNode source)
-        {
-            if (target == null) throw new ArgumentNullException(nameof(target));
-            if (source == null) throw new ArgumentNullException(nameof(source));
-
-            return target
-                .WithLeadingTrivia(source.GetLeadingTrivia())
-                .WithTrailingTrivia(source.GetTrailingTrivia());
-        }
-
         internal static T FirstAncestorOrSelfOfType<T>(this SyntaxNode node) where T : SyntaxNode =>
             (T)node.FirstAncestorOrSelfOfType(typeof(T));
 
@@ -42,9 +32,6 @@ namespace StyleCop.Analyzers
             }
             return null;
         }
-
-        internal static T FirstAncestorOfType<T>(this SyntaxNode node) where T : SyntaxNode =>
-            (T)node.FirstAncestorOfType(typeof(T));
 
         internal static SyntaxNode FirstAncestorOfType(this SyntaxNode node, params Type[] types)
         {
@@ -73,36 +60,11 @@ namespace StyleCop.Analyzers
             return methods;
         }
 
-        internal static IEnumerable<INamedTypeSymbol> AllBaseTypesAndSelf(this INamedTypeSymbol typeSymbol)
-        {
-            yield return typeSymbol;
-            foreach (var b in AllBaseTypes(typeSymbol))
-                yield return b;
-        }
-
-        internal static IEnumerable<INamedTypeSymbol> AllBaseTypes(this INamedTypeSymbol typeSymbol)
-        {
-            while (typeSymbol.BaseType != null)
-            {
-                yield return typeSymbol.BaseType;
-                typeSymbol = typeSymbol.BaseType;
-            }
-        }
-
         internal static bool HasAttributeOnAncestorOrSelf(this SyntaxNode node, string attributeName)
         {
             var csharpNode = node as CSharpSyntaxNode;
             if (csharpNode != null)
                 return csharpNode.HasAttributeOnAncestorOrSelf(attributeName);
-            return false;
-        }
-
-        internal static bool HasAttributeOnAncestorOrSelf(this SyntaxNode node, params string[] attributeNames)
-        {
-            var csharpNode = node as CSharpSyntaxNode;
-            if (csharpNode != null)
-                foreach (var attributeName in attributeNames)
-                    if (csharpNode.HasAttributeOnAncestorOrSelf(attributeName)) return true;
             return false;
         }
 
