@@ -55,11 +55,11 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Add standard text.", token => GetTransformedDocument(context.Document, root, node)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Add standard text.", token => GetTransformedDocumentAsync(context.Document, root, node)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, XmlElementSyntax node)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, XmlElementSyntax node)
         {
             var classDeclaration = node.FirstAncestorOrSelf<ClassDeclarationSyntax>();
             var declarationSyntax = node.FirstAncestorOrSelf<BaseMethodDeclarationSyntax>();

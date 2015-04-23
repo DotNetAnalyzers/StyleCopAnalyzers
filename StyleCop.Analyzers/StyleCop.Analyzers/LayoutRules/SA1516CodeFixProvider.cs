@@ -41,12 +41,12 @@
                 var leadingTrivia = node?.GetLeadingTrivia();
                 if (leadingTrivia != null)
                 {
-                    context.RegisterCodeFix(CodeAction.Create("Insert new line", token => GetTransformedDocument(context, syntaxRoot, node, (SyntaxTriviaList)leadingTrivia)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Insert new line", token => GetTransformedDocumentAsync(context, syntaxRoot, node, (SyntaxTriviaList)leadingTrivia)), diagnostic);
                 }
             }
         }
 
-        private static Task<Document> GetTransformedDocument(CodeFixContext context, SyntaxNode syntaxRoot, SyntaxNode node, SyntaxTriviaList leadingTrivia)
+        private static Task<Document> GetTransformedDocumentAsync(CodeFixContext context, SyntaxNode syntaxRoot, SyntaxNode node, SyntaxTriviaList leadingTrivia)
         {
             var newTriviaList = leadingTrivia;
             newTriviaList = newTriviaList.Insert(0, SyntaxFactory.CarriageReturnLineFeed);

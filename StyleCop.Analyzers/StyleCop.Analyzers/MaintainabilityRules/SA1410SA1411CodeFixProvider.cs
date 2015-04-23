@@ -56,12 +56,12 @@
 
                 if (node != null)
                 {
-                    context.RegisterCodeFix(CodeAction.Create("Remove parenthesis", token => GetTransformedDocument(context.Document, root, node)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Remove parenthesis", token => GetTransformedDocumentAsync(context.Document, root, node)), diagnostic);
                 }
             }
         }
 
-        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxNode node)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxNode node)
         {
             // The first token is the open parenthesis token. This token has all the inner trivia
             var firstToken = node.GetFirstToken();

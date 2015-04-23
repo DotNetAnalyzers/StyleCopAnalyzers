@@ -35,13 +35,13 @@
         {
             foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                context.RegisterCodeFix(CodeAction.Create("Remove blank lines at the end of the file", token => GetTransformedDocument(context.Document, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Remove blank lines at the end of the file", token => GetTransformedDocumentAsync(context.Document, token)), diagnostic);
             }
 
             return Task.FromResult(true);
         }
 
-        private static async Task<Document> GetTransformedDocument(Document document, CancellationToken token)
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, CancellationToken token)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(token).ConfigureAwait(false);
 

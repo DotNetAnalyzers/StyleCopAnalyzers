@@ -256,13 +256,13 @@
                 this.CSharpDiagnostic().WithLocation(107, 48),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(ReferenceCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(ReferenceCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestPrefixLocalCallsWithThisCodeFix()
         {
-            await this.VerifyCSharpFixAsync(ReferenceCode, FixedCode, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(ReferenceCode, FixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

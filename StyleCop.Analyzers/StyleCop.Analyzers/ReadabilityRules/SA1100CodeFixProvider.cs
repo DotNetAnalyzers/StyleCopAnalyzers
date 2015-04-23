@@ -50,11 +50,11 @@
                     return;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Replace 'base.' with 'this.'", token => GetTransformedDocument(context.Document, root, node)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Replace 'base.' with 'this.'", token => GetTransformedDocumentAsync(context.Document, root, node)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxNode node)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxNode node)
         {
             var thisExpressionSyntax = SyntaxFactory.ThisExpression()
                 .WithTriviaFrom(node)

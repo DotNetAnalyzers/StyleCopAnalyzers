@@ -29,7 +29,7 @@ public class Foo
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ public class Foo
         public async Task TestWithBlankLinesAtStartOfFile()
         {
             var testCode = "\r\n\r\n" + BaseCode;
-            await this.VerifyCSharpDiagnosticAsync(testCode, this.GenerateExpectedWarning(1, 1), CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.GenerateExpectedWarning(1, 1), CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ public class Foo
         public async Task TestWithBlankLinefeedOnlyLinesAtStartOfFile()
         {
             var testCode = "\n\n" + BaseCode;
-            await this.VerifyCSharpDiagnosticAsync(testCode, this.GenerateExpectedWarning(1, 1), CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.GenerateExpectedWarning(1, 1), CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ public class Foo
         public async Task TestWithNonWhitespaceTrivia()
         {
             var testCode = "#if true\r\n" + BaseCode + "\r\n#endif\r\n";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ public class Foo
         public async Task TestWithNonWhitespaceTriviaAndLeadingBlankLines()
         {
             var testCode = "\r\n\r\n#if true\r\n" + BaseCode + "\r\n#endif\r\n";
-            await this.VerifyCSharpDiagnosticAsync(testCode, this.GenerateExpectedWarning(1, 1), CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.GenerateExpectedWarning(1, 1), CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ public class Foo
         [Fact]
         public async Task TestWithoutCarriageReturnLineFeedAtStartOfFile()
         {
-            await this.VerifyCSharpDiagnosticAsync(BaseCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(BaseCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ public class Foo
         public async Task TestWithInvalidSpacing()
         {
             var testCode = "    " + BaseCode;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ public class Foo
             var testCode = "\r\n\r\n" + BaseCode;
             var fixedTestCode = BaseCode;
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ public class Foo
             var testCode = "\r\n   " + BaseCode;
             var fixedTestCode = "   " + BaseCode;
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ public class Foo
             var testCode = "   \r\n   \r\n" + BaseCode;
             var fixedTestCode = BaseCode;
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ public class Foo
             var testCode = "\r\n\r\n#if true\r\n" + BaseCode + "\r\n#endif\r\n";
             var fixedTestCode = "#if true\r\n" + BaseCode + "\r\n#endif\r\n";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

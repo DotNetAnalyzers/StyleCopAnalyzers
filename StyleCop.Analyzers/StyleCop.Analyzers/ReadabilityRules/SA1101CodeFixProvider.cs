@@ -51,11 +51,11 @@
                     return;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Prefix reference with 'this.'", token => GetTransformedDocument(context.Document, root, diagnostic, node)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Prefix reference with 'this.'", token => GetTransformedDocumentAsync(context.Document, root, diagnostic, node)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, Diagnostic diagnostic, SimpleNameSyntax node)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, Diagnostic diagnostic, SimpleNameSyntax node)
         {
             var qualifiedExpression =
                 SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.ThisExpression(), node.WithoutTrivia().WithoutFormatting())

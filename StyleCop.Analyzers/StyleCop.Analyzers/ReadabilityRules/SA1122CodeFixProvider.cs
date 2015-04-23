@@ -46,7 +46,7 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync().ConfigureAwait(false);
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1122UseStringEmptyForEmptyStrings.DiagnosticId))
@@ -57,12 +57,12 @@
                 var node = root?.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
                 if (node != null && node.IsKind(SyntaxKind.StringLiteralExpression))
                 {
-                    context.RegisterCodeFix(CodeAction.Create($"Replace with string.Empty", token => GetTransformedDocument(context.Document, root, node)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create($"Replace with string.Empty", token => GetTransformedDocumentAsync(context.Document, root, node)), diagnostic);
                 }
             }
         }
 
-        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxNode node)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxNode node)
         {
             var newSyntaxRoot = root.ReplaceNode(node, StringEmptyExpression.WithTriviaFrom(node));
             return Task.FromResult(document.WithSyntaxRoot(newSyntaxRoot));
