@@ -90,14 +90,45 @@
         public async Task TestInvalidDeclaration(string declaration)
         {
             var testCode = TestCodeTemplate.Replace("$$", declaration);
-            var publicFixedTestCode = FixedTestCodeTemplate.Replace("##", "public").Replace("$$", declaration);
-            var internalFixedTestCode = FixedTestCodeTemplate.Replace("##", "internal").Replace("$$", declaration);
+            var fixedTestCode = FixedTestCodeTemplate.Replace("##", "internal").Replace("$$", declaration);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, this.CSharpDiagnostic().WithLocation(1, 1), CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(publicFixedTestCode, EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(internalFixedTestCode, EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(testCode, publicFixedTestCode, 0);
-            await this.VerifyCSharpFixAsync(testCode, internalFixedTestCode, 1);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix will properly copy over the access modifier defined in another fragment of the partial element.
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        public async Task TestProperAccessModifierPropagation()
+        {
+            var testCode = @"public partial class Foo
+{
+    private int field1;
+}
+
+partial class Foo
+{
+    private int field2;
+}
+";
+
+            var fixedTestCode = @"public partial class Foo
+{
+    private int field1;
+}
+
+public partial class Foo
+{
+    private int field2;
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.CSharpDiagnostic().WithLocation(6, 1), CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
         }
 
         /// <inheritdoc/>

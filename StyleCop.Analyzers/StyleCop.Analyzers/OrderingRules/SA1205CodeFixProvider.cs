@@ -10,7 +10,6 @@
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Extensions;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
@@ -37,22 +36,25 @@
         {
             foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                context.RegisterCodeFix(CodeAction.Create("Add public access modifier", token => GetTransformedDocumentAsync(context.Document, diagnostic, SyntaxKind.PublicKeyword, token)), diagnostic);
-                context.RegisterCodeFix(CodeAction.Create("Add internal access modifier", token => GetTransformedDocumentAsync(context.Document, diagnostic, SyntaxKind.InternalKeyword, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Add access modifier", token => GetTransformedDocumentAsync(context.Document, diagnostic, token)), diagnostic);
             }
 
             return Task.FromResult(true);
         }
 
-        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, SyntaxKind accessModifierKind, CancellationToken cancellationToken)
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
             var typeDeclarationNode = syntaxRoot.FindNode(diagnostic.Location.SourceSpan) as TypeDeclarationSyntax;
             if (typeDeclarationNode == null)
             {
                 return document;
             }
+
+            var symbol = semanticModel.GetDeclaredSymbol(typeDeclarationNode);
+            var accessModifierKind = (symbol.DeclaredAccessibility == Accessibility.Public) ? SyntaxKind.PublicKeyword : SyntaxKind.InternalKeyword;
 
             var accessModifier = SyntaxFactory.Token(accessModifierKind);
             var replacementModifiers = typeDeclarationNode.Modifiers.Insert(0, accessModifier);
