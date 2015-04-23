@@ -133,9 +133,9 @@
 
         private class AccessorsAnalysisResult
         {
-            public List<AccessorDeclarationSyntax> MultiLineAccessors { get; set; } = new List<AccessorDeclarationSyntax>();
+            public List<AccessorDeclarationSyntax> MultiLineAccessors { get; } = new List<AccessorDeclarationSyntax>();
 
-            public List<AccessorDeclarationSyntax> SingleLineAccessors { get; set; } = new List<AccessorDeclarationSyntax>();
+            public List<AccessorDeclarationSyntax> SingleLineAccessors { get; } = new List<AccessorDeclarationSyntax>();
         }
     }
 }
