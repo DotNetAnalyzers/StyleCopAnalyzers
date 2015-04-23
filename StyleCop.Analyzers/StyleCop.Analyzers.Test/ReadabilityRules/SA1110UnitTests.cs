@@ -558,6 +558,24 @@ public class Foo
         }
 
         [Fact]
+        public async Task TestAnonymousMethodNoOpeningParenthesis()
+        {
+            var testCode = @"
+public class Foo
+{
+    public void Bar()
+    {
+            System.Action del = 
+                delegate
+                {
+                };
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestArrayCreationOpeningBracketOnTheNextLineAsTypeName()
         {
             var testCode = @"

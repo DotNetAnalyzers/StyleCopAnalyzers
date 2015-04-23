@@ -135,6 +135,7 @@
             var anonymousMethod = (AnonymousMethodExpressionSyntax)context.Node;
 
             if (anonymousMethod.DelegateKeyword.IsMissing ||
+                anonymousMethod.ParameterList == null ||
                 anonymousMethod.ParameterList.IsMissing ||
                 anonymousMethod.ParameterList.OpenParenToken.IsMissing)
             {
