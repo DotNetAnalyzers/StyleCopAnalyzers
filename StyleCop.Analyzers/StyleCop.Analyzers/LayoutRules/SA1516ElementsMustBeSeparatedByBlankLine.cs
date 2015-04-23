@@ -106,7 +106,16 @@
                 {
                     if (accessors[0].Body != null && accessors[1].Body != null)
                     {
-                        ReportIfThereIsNoBlankLine(context, accessors[0], accessors[1]);
+                        // Don't report a diagnostic if all accessors are single line. Example:
+                        //// public string Foo
+                        //// {
+                        ////    get { return "bar"; }
+                        ////    set { }
+                        //// }
+                        if (IsMultiline(accessors[0]) || IsMultiline(accessors[1]))
+                        {
+                            ReportIfThereIsNoBlankLine(context, accessors[0], accessors[1]);
+                        }
                     }
                 }
             }

@@ -402,6 +402,131 @@ public class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
+        [Fact]
+        public async Task TestThatDiagnosticIgnoresSingleLinePropertyAccessors()
+        {
+            string testCode = @"using System;
+
+public class Foo
+{
+    public string FooProperty
+    {
+        get { return ""bar""; }
+        set { }
+    }
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task TestThatDiagnosticIgnoresSingleLineEventAccessors()
+        {
+            string testCode = @"using System;
+
+public class Foo
+{
+    public event System.EventHandler FooProperty
+    {
+        add { }
+        remove { }
+    }
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task TestThatDiagnosticIsReportedOnDifferentLinePropertyAccessors1()
+        {
+            string testCode = @"using System;
+
+public class Foo
+{
+    public string FooProperty
+    {
+        get { return ""bar""; }
+        set
+        {
+        }
+    }
+}";
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(8, 1)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task TestThatDiagnosticIIsReportedOnDifferentLineEventAccessors1()
+        {
+            string testCode = @"using System;
+
+public class Foo
+{
+    public event System.EventHandler FooProperty
+    {
+        add { }
+        remove
+        {
+        }
+    }
+}";
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(8, 1)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task TestThatDiagnosticIsReportedOnDifferentLinePropertyAccessors2()
+        {
+            string testCode = @"using System;
+
+public class Foo
+{
+    public string FooProperty
+    {
+        get
+        {
+            return ""bar"";
+        }
+        set { }
+    }
+}";
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(11, 1)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task TestThatDiagnosticIIsReportedOnDifferentLineEventAccessors2()
+        {
+            string testCode = @"using System;
+
+public class Foo
+{
+    public event System.EventHandler FooProperty
+    {
+        add
+        {
+        }
+        remove { }
+    }
+}";
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(10, 1)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1516ElementsMustBeSeparatedByBlankLine();
