@@ -281,7 +281,7 @@ public class Foo
 
     public Func<int, int> Quux()
     {
-        // Valid #19
+        // Valid #23
 #if SOMETHING
         return null;
 #else
@@ -290,6 +290,51 @@ public class Foo
             return value * 2;
         };
 #endif
+    }
+
+    // Valid #24 (will be handled by SA1516)
+    public int Corge
+    {
+        get 
+        { 
+            return this.x; 
+        }
+        set { this.x = value; }
+    }
+
+    // Valid #25 (will be handled by SA1516)
+    public int Grault
+    {
+        set 
+        { 
+            this.x = value; 
+        }
+        get 
+        { 
+            return this.x; 
+        }
+    }
+
+    // Valid #26 (will be handled by SA1516)
+    public event EventHandler Garply
+    {
+        add
+        {
+        }
+        remove
+        {
+        }
+    }
+
+    // Valid #27 (will be handled by SA1516)
+    public event EventHandler Waldo
+    {
+        remove
+        {
+        }
+        add
+        {
+        }
     }
 }
 ";
@@ -384,7 +429,6 @@ public class Foo
             var expected = new[]
             {
                 // Invalid #1
-                this.CSharpDiagnostic().WithLocation(13, 10),
                 this.CSharpDiagnostic().WithLocation(17, 10),
                 // Invalid #2
                 this.CSharpDiagnostic().WithLocation(25, 6),
@@ -482,7 +526,6 @@ public class Foo
         {        
             return this.x;
         }
-
         set
         {
             this.x = value;

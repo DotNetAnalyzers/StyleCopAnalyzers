@@ -149,6 +149,15 @@
                     return;
                 }
 
+                if (nextToken.IsKind(SyntaxKind.AddKeyword)
+                    || nextToken.IsKind(SyntaxKind.RemoveKeyword)
+                    || nextToken.IsKind(SyntaxKind.GetKeyword)
+                    || nextToken.IsKind(SyntaxKind.SetKeyword))
+                {
+                    // the close brace is followed by an accessor (SA1516 will handle that)
+                    return;
+                }
+
                 if (nextToken.IsKind(SyntaxKind.EndOfFileToken))
                 {
                     // this is the last close brace in the file
