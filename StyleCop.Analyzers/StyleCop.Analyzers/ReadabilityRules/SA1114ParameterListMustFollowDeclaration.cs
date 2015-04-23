@@ -370,8 +370,8 @@
 
         private static void AnalyzeParametersList(SyntaxNodeAnalysisContext context, ParameterListSyntax parameterListSyntax)
         {
-            var openParenToken = parameterListSyntax.OpenParenToken;
-            if (openParenToken.IsMissing ||
+            if (parameterListSyntax == null ||
+                parameterListSyntax.OpenParenToken.IsMissing ||
                 parameterListSyntax.IsMissing ||
                 !parameterListSyntax.Parameters.Any())
             {
@@ -386,7 +386,7 @@
                 return;
             }
 
-            var openParenLineSpan = openParenToken.GetLocation().GetLineSpan();
+            var openParenLineSpan = parameterListSyntax.OpenParenToken.GetLocation().GetLineSpan();
             if (!openParenLineSpan.IsValid)
             {
                 return;
