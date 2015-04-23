@@ -638,6 +638,42 @@ class Foo
         }
 
         [Fact]
+        public async Task TestBlockStatementsAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    void Bar()
+    {
+
+        {
+        }
+
+        {
+        }
+    }
+}";
+
+            var fixedCode = @"
+class Foo
+{
+    void Bar()
+    {
+        {
+        }
+
+        {
+        }
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 9);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestComplex1Async()
         {
             var testCode = @"namespace Test

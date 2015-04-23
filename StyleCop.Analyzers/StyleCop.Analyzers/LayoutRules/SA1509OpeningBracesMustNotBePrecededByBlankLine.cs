@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
 
@@ -79,6 +80,18 @@ namespace StyleCop.Analyzers.LayoutRules
 
             foreach (var openBrace in openBraces)
             {
+                BlockSyntax blockSyntax = openBrace.Parent as BlockSyntax;
+                if (blockSyntax != null)
+                {
+                    BlockSyntax parentBlock = blockSyntax.Parent as BlockSyntax;
+                    if (parentBlock != null && parentBlock.Statements[0] != blockSyntax)
+                    {
+                        // Do not disallow a blank line before an independent block, unless it is the first child of its
+                        // parent.
+                        continue;
+                    }
+                }
+
                 AnalyzeOpenBrace(context, openBrace);
             }
         }
