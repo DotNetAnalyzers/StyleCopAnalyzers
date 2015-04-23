@@ -813,6 +813,24 @@ class Foo
         }
 
         [Fact]
+        public async Task TestAnonymousMethodDeclarationNoOpeningParenthesis()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar()
+    {
+        System.Action c = delegate
+        {
+
+        };
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestLambdaExpressionDeclarationParametersList2LinesAfterOpeningParenthesis()
         {
             var testCode = @"
