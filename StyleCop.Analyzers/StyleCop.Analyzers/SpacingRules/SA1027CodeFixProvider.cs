@@ -8,7 +8,6 @@
     using System.Threading.Tasks;
 
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
 
@@ -38,7 +37,7 @@
         {
             foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                context.RegisterCodeFix(CodeAction.Create("Replace tabs with spaces", token => GetTransformedDocumentAsync(context.Document, diagnostic, token)), diagnostic);
+                context.RegisterCodeFix(new PreservingDocumentChangeAction("Replace tabs with spaces", token => GetTransformedDocumentAsync(context.Document, diagnostic, token)), diagnostic);
             }
 
             return Task.FromResult(true);
@@ -58,7 +57,7 @@
             {
                 if (c == '\t')
                 {
-                    var offsetWithinTabColumn = (column - 1) % indentationOptions.TabSize;
+                    var offsetWithinTabColumn = column % indentationOptions.TabSize;
                     var spaceCount = indentationOptions.TabSize - offsetWithinTabColumn;
 
                     stringBuilder.Append(' ', spaceCount);

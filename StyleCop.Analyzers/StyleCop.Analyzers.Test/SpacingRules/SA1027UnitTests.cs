@@ -64,7 +64,7 @@
             var testCode =
                 "using\tSystem.Diagnostics;\r\n" +
                 "\r\n" +
-                "public class Foo\r\n" +
+                "public\tclass\tFoo\r\n" +
                 "{\r\n" +
                 "\tpublic void Bar()\r\n" +
                 "\t{\r\n" +
@@ -73,11 +73,9 @@
                 "   \t}\r\n" +
                 "}\r\n";
 
-            // There is only a single space between the using and the System.Diagnostics, 
-            // as the auto formatting that happens after a codefix will remove superfluous spaces.
-            var fixedTestCode = @"using System.Diagnostics;
+            var fixedTestCode = @"using   System.Diagnostics;
 
-public class Foo
+public  class   Foo
 {
     public void Bar()
     {
@@ -90,6 +88,8 @@ public class Foo
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(1, 6),
+                this.CSharpDiagnostic().WithLocation(3, 7),
+                this.CSharpDiagnostic().WithLocation(3, 13),
                 this.CSharpDiagnostic().WithLocation(5, 1),
                 this.CSharpDiagnostic().WithLocation(6, 1),
                 this.CSharpDiagnostic().WithLocation(7, 1),
