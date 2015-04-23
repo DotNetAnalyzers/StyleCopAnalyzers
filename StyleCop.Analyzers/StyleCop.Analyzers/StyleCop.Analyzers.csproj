@@ -178,6 +178,7 @@
     <Compile Include="OrderingRules\SA1202ElementsMustBeOrderedByAccess.cs" />
     <Compile Include="OrderingRules\SA1203ConstantsMustAppearBeforeFields.cs" />
     <Compile Include="OrderingRules\SA1204StaticElementsMustAppearBeforeInstanceElements.cs" />
+    <Compile Include="OrderingRules\SA1205CodeFixProvider.cs" />
     <Compile Include="OrderingRules\SA1205PartialElementsMustDeclareAccess.cs" />
     <Compile Include="OrderingRules\SA1206DeclarationKeywordsMustFollowOrder.cs" />
     <Compile Include="OrderingRules\SA1207ProtectedMustComeBeforeInternal.cs" />
