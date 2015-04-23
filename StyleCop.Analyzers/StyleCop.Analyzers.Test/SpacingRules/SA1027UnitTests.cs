@@ -40,6 +40,24 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
+        /// <summary>
+        /// Verifies that tabs used inside disabled code is not producing diagnostics.
+        /// </summary>
+        [Fact]
+        public async Task TestDisabledCode()
+        {
+            var testCode =
+                "public class Foo\r\n" +
+                "{\r\n" +
+                "#if false\r\n" +
+                "\tpublic const string ValidTestString = \"Text\";\r\n" +
+                "\tpublic const char ValidTestChar = 'c';\r\n" +
+                "#endif\r\n" +
+                "}\r\n";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
         [Fact]
         public async Task TestInvalidTabs()
         {
