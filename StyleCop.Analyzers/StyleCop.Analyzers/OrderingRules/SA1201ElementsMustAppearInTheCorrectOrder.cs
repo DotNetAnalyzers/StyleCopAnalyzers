@@ -137,6 +137,7 @@
             SyntaxKind.InterfaceDeclaration,
             SyntaxKind.PropertyDeclaration,
             SyntaxKind.IndexerDeclaration,
+            SyntaxKind.OperatorDeclaration,
             SyntaxKind.MethodDeclaration,
             SyntaxKind.StructDeclaration,
             SyntaxKind.ClassDeclaration);
@@ -158,7 +159,8 @@
             [SyntaxKind.InterfaceDeclaration] = "interface",
             [SyntaxKind.PropertyDeclaration] = "property",
             [SyntaxKind.IndexerDeclaration] = "indexer",
-            [SyntaxKind.MethodDeclaration] = "method"
+            [SyntaxKind.MethodDeclaration] = "method",
+            [SyntaxKind.OperatorDeclaration] = "operator"
         };
 
         /// <inheritdoc/>
