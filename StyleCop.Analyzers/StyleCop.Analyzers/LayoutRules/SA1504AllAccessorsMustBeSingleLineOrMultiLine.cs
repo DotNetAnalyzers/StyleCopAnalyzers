@@ -70,7 +70,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1504.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -96,35 +96,46 @@
 
             if (property.AccessorList == null
                 || property.AccessorList.IsMissing
-                || property.AccessorList.Accessors.Count != 2)
+                || property.AccessorList.Accessors.Count < 2)
             {
                 return;
             }
 
-            if (!this.AreAllAccessorsInMultiLines(property.AccessorList.Accessors)
-               && !this.AreAllAccessorsInOneLine(property.AccessorList.Accessors))
+            var accessorsAnalyzeResult = this.AnalyzeAccessorsLineSpans(property.AccessorList.Accessors);
+            if (accessorsAnalyzeResult.SingleLineAccessors.Count == 1
+                && accessorsAnalyzeResult.MultiLineAccessors.Count == 1)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, property.AccessorList.Accessors[1].GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, accessorsAnalyzeResult.SingleLineAccessors.Single().Keyword.GetLocation()));
             }
 
         }
 
-        private bool AreAllAccessorsInOneLine(IEnumerable<AccessorDeclarationSyntax> accessors)
+        private AccessorsAnalysisResult AnalyzeAccessorsLineSpans(IEnumerable<AccessorDeclarationSyntax> accessors)
         {
-            return accessors.All(a =>
+            var result = new AccessorsAnalysisResult();
+
+            foreach (var accessorDeclarationSyntax in accessors)
             {
-                var fileLinePositionSpan = a.GetLocation().GetLineSpan();
-                return fileLinePositionSpan.StartLinePosition.Line == fileLinePositionSpan.EndLinePosition.Line;
-            });
+                var fileLinePositionSpan = accessorDeclarationSyntax.GetLocation().GetLineSpan();
+
+                if (fileLinePositionSpan.StartLinePosition.Line == fileLinePositionSpan.EndLinePosition.Line)
+                {
+                    result.SingleLineAccessors.Add(accessorDeclarationSyntax);
+                }
+                else
+                {
+                    result.MultiLineAccessors.Add(accessorDeclarationSyntax);
+                }
+            }
+
+            return result;
         }
 
-        private bool AreAllAccessorsInMultiLines(IEnumerable<AccessorDeclarationSyntax> accessors)
+        private class AccessorsAnalysisResult
         {
-            return accessors.All(a =>
-            {
-                var fileLinePositionSpan = a.GetLocation().GetLineSpan();
-                return fileLinePositionSpan.StartLinePosition.Line < fileLinePositionSpan.EndLinePosition.Line;
-            });
+            public List<AccessorDeclarationSyntax> MultiLineAccessors { get; set; } = new List<AccessorDeclarationSyntax>();
+
+            public List<AccessorDeclarationSyntax> SingleLineAccessors { get; set; } = new List<AccessorDeclarationSyntax>();
         }
     }
 }
