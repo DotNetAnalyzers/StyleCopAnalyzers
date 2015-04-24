@@ -137,6 +137,7 @@
             SyntaxKind.InterfaceDeclaration,
             SyntaxKind.PropertyDeclaration,
             SyntaxKind.IndexerDeclaration,
+            SyntaxKind.ConversionOperatorDeclaration,
             SyntaxKind.OperatorDeclaration,
             SyntaxKind.MethodDeclaration,
             SyntaxKind.StructDeclaration,
@@ -160,6 +161,7 @@
             [SyntaxKind.PropertyDeclaration] = "property",
             [SyntaxKind.IndexerDeclaration] = "indexer",
             [SyntaxKind.MethodDeclaration] = "method",
+            [SyntaxKind.ConversionOperatorDeclaration] = "conversion",
             [SyntaxKind.OperatorDeclaration] = "operator"
         };
 
