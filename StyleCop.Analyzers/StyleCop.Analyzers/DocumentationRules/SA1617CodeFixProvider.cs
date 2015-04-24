@@ -3,6 +3,8 @@
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
@@ -33,54 +35,55 @@
         }
 
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var document = context.Document;
-            var root = await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
-            foreach (var diagnostic in context.Diagnostics)
+            foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                if (!diagnostic.Id.Equals(SA1617VoidReturnValueMustNotBeDocumented.DiagnosticId))
-                {
-                    continue;
-                }
-
-                var node = root.FindNode(diagnostic.Location.SourceSpan);
-                if (node.IsMissing)
-                {
-                    continue;
-                }
-
-                var documentation = XmlCommentHelper.GetDocumentationStructure(node);
-                // Check if the return value is documented
-                var returnsElement = XmlCommentHelper.GetTopLevelElement(documentation, XmlCommentHelper.ReturnsXmlTag);
-
-                if (returnsElement != null)
-                {
-                    // Find the node previous to the <returns> node to determine if it is an xml comment indicator.  If so, we will remove that ndoe from the syntax tree as well.
-                    SyntaxNode previous = null;
-                    foreach (var item in documentation.ChildNodes())
-                    {
-                        if (item.Equals(returnsElement))
-                        {
-                            break;
-                        }
-                                        
-                        previous = item;
-                    }
-
-                    List<SyntaxNode> nodesToFix = new List<SyntaxNode>();
-                    nodesToFix.Add(returnsElement);
-
-                    var previousAsTextSyntax = previous as XmlTextSyntax;
-                    if (previousAsTextSyntax != null && XmlCommentHelper.IsConsideredEmpty(previousAsTextSyntax))
-                    {
-                        nodesToFix.Add(previous);
-                    }
-
-                    context.RegisterCodeFix(CodeAction.Create($"Remove <returns> XML comment.", cancellationToken => RemoveHelper.RemoveSymbolsAsync(document, root, nodesToFix, SyntaxRemoveOptions.KeepLeadingTrivia, cancellationToken)), diagnostic);
-                }
+                context.RegisterCodeFix(CodeAction.Create($"Remove <returns> XML comment.", token => GetTransformedDocumentAsync(context.Document, diagnostic, token)), diagnostic);   
             }
+
+            return Task.FromResult(true);
+        }
+
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+        {
+            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var node = root.FindNode(diagnostic.Location.SourceSpan);
+            var documentation = XmlCommentHelper.GetDocumentationStructure(node);
+
+            // Check if the return value is documented
+            var returnsElement = XmlCommentHelper.GetTopLevelElement(documentation, XmlCommentHelper.ReturnsXmlTag);
+
+            if (returnsElement == null)
+            {
+                return document;
+            }
+
+            // Find the node previous to the <returns> node to determine if it is an xml comment indicator.  If so, we will remove that node from the syntax tree as well.
+            SyntaxNode previous = null;
+            foreach (var item in documentation.ChildNodes())
+            {
+                if (item.Equals(returnsElement))
+                {
+                    break;
+                }
+
+                previous = item;
+            }
+
+            List<SyntaxNode> nodesToFix = new List<SyntaxNode>();
+            nodesToFix.Add(returnsElement);
+
+            var previousAsTextSyntax = previous as XmlTextSyntax;
+            if (previousAsTextSyntax != null && XmlCommentHelper.IsConsideredEmpty(previousAsTextSyntax))
+            {
+                nodesToFix.Add(previous);
+            }
+
+            var newSyntaxRoot = root.RemoveNodes(nodesToFix, SyntaxRemoveOptions.KeepLeadingTrivia);
+            return document.WithSyntaxRoot(newSyntaxRoot);
         }
     }
 }
