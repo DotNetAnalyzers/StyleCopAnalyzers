@@ -382,10 +382,8 @@ class ClassName
 
         [Theory]
         [InlineData("class", "class", "class")]
-        [InlineData("class", "struct", "class")]
         [InlineData("class", "struct", "struct")]
         [InlineData("struct", "class", "class")]
-        [InlineData("struct", "struct", "class")]
         [InlineData("struct", "struct", "struct")]
         public async Task TestAllowedOuterQualifiedNames(string outerTypeKind, string nestedTypeKind, string describedTypeKind)
         {

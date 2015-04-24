@@ -172,44 +172,25 @@
 
             if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword))
             {
-                if (isStruct && this.HandleDeclaration(context, StaticConstructorStandardText, " struct.", false) == MatchResult.FoundMatch)
-                {
-                    return;
-                }
-
-                this.HandleDeclaration(context, StaticConstructorStandardText, " class.", true);
+                string secondPartText = isStruct ? " struct." : " class.";
+                this.HandleDeclaration(context, StaticConstructorStandardText, secondPartText, true);
             }
             else if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.PrivateKeyword))
             {
-                if (isStruct)
-                {
-                    if (this.HandleDeclaration(context, PrivateConstructorStandardText[0], " struct" + PrivateConstructorStandardText[1], false) == MatchResult.FoundMatch)
-                    {
-                        return;
-                    }
+                string typeKindText = isStruct ? " struct" : " class";
 
-                    if (this.HandleDeclaration(context, NonPrivateConstructorStandardText, " struct", false) == MatchResult.FoundMatch)
-                    {
-                        return;
-                    }
-                }
-
-                if (this.HandleDeclaration(context, PrivateConstructorStandardText[0], " class" + PrivateConstructorStandardText[1], false) == MatchResult.FoundMatch)
+                if (this.HandleDeclaration(context, PrivateConstructorStandardText[0], typeKindText + PrivateConstructorStandardText[1], false) == MatchResult.FoundMatch)
                 {
                     return;
                 }
 
                 // also allow the non-private wording for private constructors
-                this.HandleDeclaration(context, NonPrivateConstructorStandardText, " class", true);
+                this.HandleDeclaration(context, NonPrivateConstructorStandardText, typeKindText, true);
             }
             else
             {
-                if (isStruct && this.HandleDeclaration(context, NonPrivateConstructorStandardText, " struct", false) == MatchResult.FoundMatch)
-                {
-                    return;
-                }
-
-                this.HandleDeclaration(context, NonPrivateConstructorStandardText, " class", true);
+                string typeKindText = isStruct ? " struct" : " class";
+                this.HandleDeclaration(context, NonPrivateConstructorStandardText, typeKindText, true);
             }
         }
     }
