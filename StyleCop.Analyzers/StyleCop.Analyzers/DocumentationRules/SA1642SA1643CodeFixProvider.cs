@@ -61,8 +61,20 @@
 
         private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, XmlElementSyntax node)
         {
-            var classDeclaration = node.FirstAncestorOrSelf<ClassDeclarationSyntax>();
+            var typeDeclaration = node.FirstAncestorOrSelf<BaseTypeDeclarationSyntax>();
             var declarationSyntax = node.FirstAncestorOrSelf<BaseMethodDeclarationSyntax>();
+            bool isStruct = typeDeclaration.IsKind(SyntaxKind.StructDeclaration);
+
+            TypeParameterListSyntax typeParameterList;
+            ClassDeclarationSyntax classDeclaration = typeDeclaration as ClassDeclarationSyntax;
+            if (classDeclaration != null)
+            {
+                typeParameterList = classDeclaration.TypeParameterList;
+            }
+            else
+            {
+                typeParameterList = (typeDeclaration as StructDeclarationSyntax)?.TypeParameterList;
+            }
 
             ImmutableArray<string> standardText;
             if (declarationSyntax is ConstructorDeclarationSyntax)
@@ -91,7 +103,7 @@
                 throw new InvalidOperationException("XmlElementSyntax has invalid method as its parent");
             }
 
-            var list = BuildStandardText(classDeclaration.Identifier, classDeclaration.TypeParameterList, standardText[0], standardText[1]);
+            var list = BuildStandardText(typeDeclaration.Identifier, typeParameterList, standardText[0], standardText[1]);
 
             var newContent = node.Content.InsertRange(0, list);
             var newNode = node.WithContent(newContent);
