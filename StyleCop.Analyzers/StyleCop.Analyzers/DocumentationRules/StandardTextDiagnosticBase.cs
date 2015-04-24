@@ -60,7 +60,7 @@
                     var secondText = XmlCommentHelper.GetText(secondTextParSyntaxt);
 
                     if (TextPartsMatch(firstTextPart, secondTextPart, firstTextPartSyntax, secondTextParSyntaxt)
-                        && this.SeeTagIsCorrect(classReferencePart, declarationSyntax))
+                        && this.SeeTagIsCorrect(context, classReferencePart, declarationSyntax))
                     {
                         // We found a correct standard text
                         return MatchResult.FoundMatch;
@@ -77,34 +77,20 @@
             return MatchResult.None;
         }
 
-        private bool SeeTagIsCorrect(XmlEmptyElementSyntax classReferencePart, BaseMethodDeclarationSyntax constructorDeclarationSyntax)
+        private bool SeeTagIsCorrect(SyntaxNodeAnalysisContext context, XmlEmptyElementSyntax classReferencePart, BaseMethodDeclarationSyntax constructorDeclarationSyntax)
         {
-            if (classReferencePart.Name.ToString() == XmlCommentHelper.SeeXmlTag)
-            {
-                XmlCrefAttributeSyntax crefAttribute = classReferencePart.Attributes.OfType<XmlCrefAttributeSyntax>().FirstOrDefault();
+            XmlCrefAttributeSyntax crefAttribute = XmlCommentHelper.GetFirstAttributeOrDefault<XmlCrefAttributeSyntax>(classReferencePart);
+            CrefSyntax crefSyntax = crefAttribute?.Cref;
+            if (crefAttribute == null)
+                return false;
 
-                if (crefAttribute != null)
-                {
-                    NameMemberCrefSyntax nameMember = crefAttribute.Cref as NameMemberCrefSyntax;
+            SemanticModel semanticModel = context.SemanticModel;
+            INamedTypeSymbol actualSymbol = semanticModel.GetSymbolInfo(crefSyntax, context.CancellationToken).Symbol as INamedTypeSymbol;
+            if (actualSymbol == null)
+                return false;
 
-                    if (nameMember != null && nameMember.Parameters == null)
-                    {
-                        BaseTypeDeclarationSyntax baseTypeDeclarationSyntax = constructorDeclarationSyntax.FirstAncestorOrSelf<BaseTypeDeclarationSyntax>();
-
-                        if (baseTypeDeclarationSyntax != null
-                            && baseTypeDeclarationSyntax.Identifier.ToString() == this.GetName(nameMember.Name))
-                        {
-                            // Check if type parameters are called the same
-                            if (TypeParameterNamesMatch(baseTypeDeclarationSyntax, nameMember.Name))
-                            {
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-
-            return false;
+            INamedTypeSymbol expectedSymbol = semanticModel.GetDeclaredSymbol(constructorDeclarationSyntax.Parent, context.CancellationToken) as INamedTypeSymbol;
+            return actualSymbol.OriginalDefinition == expectedSymbol;
         }
 
         private string GetName(TypeSyntax name)
