@@ -143,73 +143,73 @@
         [Fact]
         public async Task TestNonPrivateConstructorCorrectDocumentationSimple()
         {
-            await this.TestConstructorCorrectDocumentationSimple("public", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], false).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationSimple("public", NonPrivateConstructorStandardText, " class", false).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestNonPrivateConstructorCorrectDocumentationCustomized()
         {
-            await this.TestConstructorCorrectDocumentationCustomized("public", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], false).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationCustomized("public", NonPrivateConstructorStandardText, " class", false).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestNonPrivateConstructorCorrectDocumentationGenericSimple()
         {
-            await this.TestConstructorCorrectDocumentationSimple("public", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationSimple("public", NonPrivateConstructorStandardText, " class", true).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestNonPrivateConstructorCorrectDocumentationGenericCustomized()
         {
-            await this.TestConstructorCorrectDocumentationCustomized("public", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationCustomized("public", NonPrivateConstructorStandardText, " class", true).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestPrivateConstructorCorrectDocumentation()
         {
-            await this.TestConstructorCorrectDocumentation("private", PrivateConstructorStandardText[0], PrivateConstructorStandardText[1], string.Empty, false).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentation("private", PrivateConstructorStandardText[0], " class" + PrivateConstructorStandardText[1], string.Empty, false).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestPrivateConstructorCorrectDocumentation_NonPrivateSimple()
         {
-            await this.TestConstructorCorrectDocumentationSimple("private", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], false).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationSimple("private", NonPrivateConstructorStandardText, " class", false).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestPrivateConstructorCorrectDocumentation_NonPrivateCustomized()
         {
-            await this.TestConstructorCorrectDocumentationCustomized("private", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], false).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationCustomized("private", NonPrivateConstructorStandardText, " class", false).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestPrivateConstructorCorrectDocumentationGeneric()
         {
-            await this.TestConstructorCorrectDocumentation("private", PrivateConstructorStandardText[0], PrivateConstructorStandardText[1], string.Empty, true).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentation("private", PrivateConstructorStandardText[0], " class" + PrivateConstructorStandardText[1], string.Empty, true).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestPrivateConstructorCorrectDocumentationGeneric_NonPrivateSimple()
         {
-            await this.TestConstructorCorrectDocumentationSimple("private", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationSimple("private", NonPrivateConstructorStandardText, " class", true).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestPrivateConstructorCorrectDocumentationGeneric_NonPrivateCustomized()
         {
-            await this.TestConstructorCorrectDocumentationCustomized("private", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationCustomized("private", NonPrivateConstructorStandardText, " class", true).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestStaticConstructorCorrectDocumentation()
         {
-            await this.TestConstructorCorrectDocumentation("static", StaticConstructorStandardText[0], StaticConstructorStandardText[1], string.Empty, false).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentation("static", StaticConstructorStandardText, " class.", string.Empty, false).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestStaticConstructorCorrectDocumentationGeneric()
         {
-            await this.TestConstructorCorrectDocumentation("static", StaticConstructorStandardText[0], StaticConstructorStandardText[1], string.Empty, true).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentation("static", StaticConstructorStandardText, " class.", string.Empty, true).ConfigureAwait(false);
         }
 
         private async Task TestConstructorMissingDocumentation(string modifiers, string part1, string part2, bool generic)
@@ -257,37 +257,37 @@
         [Fact]
         public async Task TestNonPrivateConstructorMissingDocumentation()
         {
-            await this.TestConstructorMissingDocumentation("public", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], false).ConfigureAwait(false);
+            await this.TestConstructorMissingDocumentation("public", NonPrivateConstructorStandardText, " class", false).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestNonPrivateConstructorMissingDocumentationGeneric()
         {
-            await this.TestConstructorMissingDocumentation("public", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true).ConfigureAwait(false);
+            await this.TestConstructorMissingDocumentation("public", NonPrivateConstructorStandardText, " class", true).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestPrivateConstructorMissingDocumentation()
         {
-            await this.TestConstructorMissingDocumentation("private", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], false).ConfigureAwait(false);
+            await this.TestConstructorMissingDocumentation("private", NonPrivateConstructorStandardText, " class", false).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestPrivateConstructorMissingDocumentationGeneric()
         {
-            await this.TestConstructorMissingDocumentation("private", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true).ConfigureAwait(false);
+            await this.TestConstructorMissingDocumentation("private", NonPrivateConstructorStandardText, " class", true).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestStaticConstructorMissingDocumentation()
         {
-            await this.TestConstructorMissingDocumentation("static", StaticConstructorStandardText[0], StaticConstructorStandardText[1], false).ConfigureAwait(false);
+            await this.TestConstructorMissingDocumentation("static", StaticConstructorStandardText, " class.", false).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestStaticConstructorMissingDocumentationGeneric()
         {
-            await this.TestConstructorMissingDocumentation("static", StaticConstructorStandardText[0], StaticConstructorStandardText[1], true).ConfigureAwait(false);
+            await this.TestConstructorMissingDocumentation("static", StaticConstructorStandardText, " class.", true).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

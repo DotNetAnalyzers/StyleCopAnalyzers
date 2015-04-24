@@ -81,17 +81,28 @@
             {
                 if (declarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword))
                 {
-                    standardText = SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.StaticConstructorStandardText;
-                }
-                else if (declarationSyntax.Modifiers.Any(SyntaxKind.PrivateKeyword))
-                {
-                    // Prefer to insert the "non-private" wording, even though both are considered acceptable by the
-                    // diagnostic. https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/413
-                    standardText = SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.NonPrivateConstructorStandardText;
+                    if (isStruct)
+                    {
+                        standardText = ImmutableArray.Create(SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.StaticConstructorStandardText, " struct.");
+                    }
+                    else
+                    {
+                        standardText = ImmutableArray.Create(SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.StaticConstructorStandardText, " class.");
+                    }
                 }
                 else
                 {
-                    standardText = SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.NonPrivateConstructorStandardText;
+                    // Prefer to insert the "non-private" wording for all constructors, even though both are considered
+                    // acceptable for private constructors by the diagnostic.
+                    // https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/413
+                    if (isStruct)
+                    {
+                        standardText = ImmutableArray.Create(SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.NonPrivateConstructorStandardText, " struct.");
+                    }
+                    else
+                    {
+                        standardText = ImmutableArray.Create(SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.NonPrivateConstructorStandardText, " class.");
+                    }
                 }
             }
             else if (declarationSyntax is DestructorDeclarationSyntax)
