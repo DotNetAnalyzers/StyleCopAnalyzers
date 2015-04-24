@@ -311,6 +311,80 @@ public class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }
 
+        [Fact]
+        public async Task TestGetterOnlyPropertyWithInitializer()
+        {
+            string testCode = @"
+class ClassName
+{
+    string PropertyName { get; } = ""Value"";
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task TestGetterOnlyPropertyWithEmptyInitializer()
+        {
+            string testCode = @"
+class ClassName
+{
+    string PropertyName { get; } = """";
+}
+";
+            string fixedCode = @"
+class ClassName
+{
+    string PropertyName { get; } = string.Empty;
+}
+";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 36);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task TestExpressionPropertyWithLiteralResult()
+        {
+            string testCode = @"
+class ClassName
+{
+    string PropertyName => ""Value"";
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task TestExpressionPropertyWithEmptyLiteralResult()
+        {
+            string testCode = @"
+class ClassName
+{
+    string PropertyName => """";
+}
+";
+            string fixedCode = @"
+class ClassName
+{
+    string PropertyName => string.Empty;
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(4, 28),
+                this.CSharpDiagnostic().WithLocation(4, 28),
+            };
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+        }
+
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new SA1122CodeFixProvider();
