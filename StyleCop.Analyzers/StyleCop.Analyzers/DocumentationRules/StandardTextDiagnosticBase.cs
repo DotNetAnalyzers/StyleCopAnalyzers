@@ -3,6 +3,7 @@
     using System.Linq;
     using Helpers;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -59,7 +60,7 @@
                     var secondText = XmlCommentHelper.GetText(secondTextParSyntaxt);
 
                     if (TextPartsMatch(firstTextPart, secondTextPart, firstTextPartSyntax, secondTextParSyntaxt)
-                        && this.SeeTagIsCorrect(classReferencePart, declarationSyntax))
+                        && this.SeeTagIsCorrect(context, classReferencePart, declarationSyntax))
                     {
                         // We found a correct standard text
                         return MatchResult.FoundMatch;
@@ -76,34 +77,20 @@
             return MatchResult.None;
         }
 
-        private bool SeeTagIsCorrect(XmlEmptyElementSyntax classReferencePart, BaseMethodDeclarationSyntax constructorDeclarationSyntax)
+        private bool SeeTagIsCorrect(SyntaxNodeAnalysisContext context, XmlEmptyElementSyntax classReferencePart, BaseMethodDeclarationSyntax constructorDeclarationSyntax)
         {
-            if (classReferencePart.Name.ToString() == XmlCommentHelper.SeeXmlTag)
-            {
-                XmlCrefAttributeSyntax crefAttribute = classReferencePart.Attributes.OfType<XmlCrefAttributeSyntax>().FirstOrDefault();
+            XmlCrefAttributeSyntax crefAttribute = XmlCommentHelper.GetFirstAttributeOrDefault<XmlCrefAttributeSyntax>(classReferencePart);
+            CrefSyntax crefSyntax = crefAttribute?.Cref;
+            if (crefAttribute == null)
+                return false;
 
-                if (crefAttribute != null)
-                {
-                    NameMemberCrefSyntax nameMember = crefAttribute.Cref as NameMemberCrefSyntax;
+            SemanticModel semanticModel = context.SemanticModel;
+            INamedTypeSymbol actualSymbol = semanticModel.GetSymbolInfo(crefSyntax, context.CancellationToken).Symbol as INamedTypeSymbol;
+            if (actualSymbol == null)
+                return false;
 
-                    if (nameMember != null && nameMember.Parameters == null)
-                    {
-                        ClassDeclarationSyntax classDeclarationSyntax = constructorDeclarationSyntax.FirstAncestorOrSelf<ClassDeclarationSyntax>();
-
-                        if (classDeclarationSyntax != null
-                            && classDeclarationSyntax.Identifier.ToString() == this.GetName(nameMember.Name))
-                        {
-                            // Check if type parameters are called the same
-                            if (TypeParameterNamesMatch(classDeclarationSyntax, nameMember.Name))
-                            {
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-
-            return false;
+            INamedTypeSymbol expectedSymbol = semanticModel.GetDeclaredSymbol(constructorDeclarationSyntax.Parent, context.CancellationToken) as INamedTypeSymbol;
+            return actualSymbol.OriginalDefinition == expectedSymbol;
         }
 
         private string GetName(TypeSyntax name)
@@ -128,20 +115,30 @@
             return true;
         }
 
-        private static bool TypeParameterNamesMatch(ClassDeclarationSyntax classDeclarationSyntax, TypeSyntax name)
+        private static bool TypeParameterNamesMatch(BaseTypeDeclarationSyntax baseTypeDeclarationSyntax, TypeSyntax name)
         {
+            TypeParameterListSyntax typeParameterList;
+            if (baseTypeDeclarationSyntax.IsKind(SyntaxKind.ClassDeclaration))
+            {
+                typeParameterList = (baseTypeDeclarationSyntax as ClassDeclarationSyntax)?.TypeParameterList;
+            }
+            else
+            {
+                typeParameterList = (baseTypeDeclarationSyntax as StructDeclarationSyntax)?.TypeParameterList;
+            }
+
             var genericName = name as GenericNameSyntax;
             if (genericName != null)
             {
                 var genericNameArgumentNames = genericName.TypeArgumentList.Arguments.Cast<SimpleNameSyntax>().Select(p => p.Identifier.ToString());
-                var classParameterNames = classDeclarationSyntax.TypeParameterList?.Parameters.Select(p => p.Identifier.ToString()) ?? Enumerable.Empty<string>();
+                var classParameterNames = typeParameterList?.Parameters.Select(p => p.Identifier.ToString()) ?? Enumerable.Empty<string>();
                 // Make sure the names match up
                 return genericNameArgumentNames.SequenceEqual(classParameterNames);
             }
             else
             {
-                return classDeclarationSyntax.TypeParameterList == null
-                    || !classDeclarationSyntax.TypeParameterList.Parameters.Any();
+                return typeParameterList == null
+                    || !typeParameterList.Parameters.Any();
             }
         }
 

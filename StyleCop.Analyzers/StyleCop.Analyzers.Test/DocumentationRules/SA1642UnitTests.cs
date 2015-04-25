@@ -21,213 +21,248 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestNoDocumentation()
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        public async Task TestNoDocumentation(string typeKind)
         {
-            var testCode = @"namespace FooNamespace
-{
-    public class Foo<TFoo, TBar>
-    {                                                                                                 
-        public Foo()
-        {
-
-        }
-    }
-}";
+            var testCode = $@"namespace FooNamespace
+{{
+    public {typeKind} Foo<TFoo, TBar>
+    {{
+        public Foo(int arg)
+        {{
+        }}
+    }}
+}}";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestEmptyConstructor(string modifiers)
+        private async Task TestEmptyConstructor(string typeKind, string modifiers)
         {
             var testCode = @"namespace FooNamespace
 {{
-    public class Foo<TFoo, TBar>
+    public {0} Foo<TFoo, TBar>
     {{
         /// 
         /// 
-        ///                                                                                                 
-        {0} 
-        Foo()
+        /// 
+        {1} 
+        Foo({2})
         {{
 
         }}
     }}
 }}";
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+
+            string arguments = typeKind == "struct" && modifiers != "static" ? "int argument" : null;
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKind, modifiers, arguments), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestEmptyPublicConstructor()
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        public async Task TestEmptyPublicConstructor(string typeKind)
         {
-            await this.TestEmptyConstructor("public").ConfigureAwait(false);
+            await this.TestEmptyConstructor(typeKind, "public").ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestEmptyNonPublicConstructor()
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        public async Task TestEmptyNonPublicConstructor(string typeKind)
         {
-            await this.TestEmptyConstructor("private").ConfigureAwait(false);
+            await this.TestEmptyConstructor(typeKind, "private").ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestEmptyStaticConstructor()
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        public async Task TestEmptyStaticConstructor(string typeKind)
         {
-            await this.TestEmptyConstructor("static").ConfigureAwait(false);
+            await this.TestEmptyConstructor(typeKind, "static").ConfigureAwait(false);
         }
 
-        private async Task TestConstructorCorrectDocumentation(string modifiers, string part1, string part2, string part3, bool generic)
+        private async Task TestConstructorCorrectDocumentation(string typeKind, string modifiers, string part1, string part2, string part3, bool generic)
         {
             // First test it all on one line
             var testCode = @"namespace FooNamespace
 {{
-    public class Foo{0}
+    public {0} Foo{1}
     {{
         /// <summary>
-        /// {2}<see cref=""Foo{1}""/>{3}{4}
+        /// {3}<see cref=""Foo{2}""/>{4}{5}
         /// </summary>
-        {5} Foo()
+        {6} Foo({7})
         {{
 
         }}
     }}
 }}";
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3, modifiers), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            string arguments = typeKind == "struct" && modifiers != "static" ? "int argument" : null;
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKind, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3, modifiers, arguments), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
 
             // Then test splitting after the <see> element
             testCode = @"namespace FooNamespace
 {{
-    public class Foo{0}
+    public {0} Foo{1}
     {{
         /// <summary>
-        /// {2}<see cref=""Foo{1}""/>
-        /// {3}{4}
+        /// {3}<see cref=""Foo{2}""/>
+        /// {4}{5}
         /// </summary>
-        {5} Foo()
+        {6} Foo({7})
         {{
 
         }}
     }}
 }}";
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3, modifiers), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKind, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3, modifiers, arguments), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
 
             // Then test splitting before the <see> element
             testCode = @"namespace FooNamespace
 {{
-    public class Foo{0}
+    public {0} Foo{1}
     {{
         /// <summary>
-        /// {2}
-        /// <see cref=""Foo{1}""/>{3}{4}
+        /// {3}
+        /// <see cref=""Foo{2}""/>{4}{5}
         /// </summary>
-        {5} Foo()
+        {6} Foo({7})
         {{
 
         }}
     }}
 }}";
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3, modifiers), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKind, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3, modifiers, arguments), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestConstructorCorrectDocumentationSimple(string modifiers, string part1, string part2, bool generic)
+        private async Task TestConstructorCorrectDocumentationSimple(string typeKind, string modifiers, string part1, string part2, bool generic)
         {
-            await this.TestConstructorCorrectDocumentation(modifiers, part1, part2, ".", generic).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentation(typeKind, modifiers, part1, part2, ".", generic).ConfigureAwait(false);
         }
 
-        private async Task TestConstructorCorrectDocumentationCustomized(string modifiers, string part1, string part2, bool generic)
+        private async Task TestConstructorCorrectDocumentationCustomized(string typeKind, string modifiers, string part1, string part2, bool generic)
         {
-            await this.TestConstructorCorrectDocumentation(modifiers, part1, part2, " with A and B.", generic).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentation(typeKind, modifiers, part1, part2, " with A and B.", generic).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestNonPrivateConstructorCorrectDocumentationSimple()
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        public async Task TestNonPrivateConstructorCorrectDocumentationSimple(string typeKind)
         {
-            await this.TestConstructorCorrectDocumentationSimple("public", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], false).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationSimple(typeKind, "public", NonPrivateConstructorStandardText, $" {typeKind}", false).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestNonPrivateConstructorCorrectDocumentationCustomized()
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        public async Task TestNonPrivateConstructorCorrectDocumentationCustomized(string typeKind)
         {
-            await this.TestConstructorCorrectDocumentationCustomized("public", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], false).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationCustomized(typeKind, "public", NonPrivateConstructorStandardText, $" {typeKind}", false).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestNonPrivateConstructorCorrectDocumentationGenericSimple()
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        public async Task TestNonPrivateConstructorCorrectDocumentationGenericSimple(string typeKind)
         {
-            await this.TestConstructorCorrectDocumentationSimple("public", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationSimple(typeKind, "public", NonPrivateConstructorStandardText, $" {typeKind}", true).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestNonPrivateConstructorCorrectDocumentationGenericCustomized()
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        public async Task TestNonPrivateConstructorCorrectDocumentationGenericCustomized(string typeKind)
         {
-            await this.TestConstructorCorrectDocumentationCustomized("public", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationCustomized(typeKind, "public", NonPrivateConstructorStandardText, $" {typeKind}", true).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestPrivateConstructorCorrectDocumentation()
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        public async Task TestPrivateConstructorCorrectDocumentation(string typeKind)
         {
-            await this.TestConstructorCorrectDocumentation("private", PrivateConstructorStandardText[0], PrivateConstructorStandardText[1], string.Empty, false).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentation(typeKind, "private", PrivateConstructorStandardText[0], $" {typeKind}" + PrivateConstructorStandardText[1], string.Empty, false).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestPrivateConstructorCorrectDocumentation_NonPrivateSimple()
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        public async Task TestPrivateConstructorCorrectDocumentation_NonPrivateSimple(string typeKind)
         {
-            await this.TestConstructorCorrectDocumentationSimple("private", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], false).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationSimple(typeKind, "private", NonPrivateConstructorStandardText, $" {typeKind}", false).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestPrivateConstructorCorrectDocumentation_NonPrivateCustomized()
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        public async Task TestPrivateConstructorCorrectDocumentation_NonPrivateCustomized(string typeKind)
         {
-            await this.TestConstructorCorrectDocumentationCustomized("private", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], false).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationCustomized(typeKind, "private", NonPrivateConstructorStandardText, $" {typeKind}", false).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestPrivateConstructorCorrectDocumentationGeneric()
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        public async Task TestPrivateConstructorCorrectDocumentationGeneric(string typeKind)
         {
-            await this.TestConstructorCorrectDocumentation("private", PrivateConstructorStandardText[0], PrivateConstructorStandardText[1], string.Empty, true).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentation(typeKind, "private", PrivateConstructorStandardText[0], $" {typeKind}" + PrivateConstructorStandardText[1], string.Empty, true).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestPrivateConstructorCorrectDocumentationGeneric_NonPrivateSimple()
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        public async Task TestPrivateConstructorCorrectDocumentationGeneric_NonPrivateSimple(string typeKind)
         {
-            await this.TestConstructorCorrectDocumentationSimple("private", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationSimple(typeKind, "private", NonPrivateConstructorStandardText, $" {typeKind}", true).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestPrivateConstructorCorrectDocumentationGeneric_NonPrivateCustomized()
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        public async Task TestPrivateConstructorCorrectDocumentationGeneric_NonPrivateCustomized(string typeKind)
         {
-            await this.TestConstructorCorrectDocumentationCustomized("private", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationCustomized(typeKind, "private", NonPrivateConstructorStandardText, $" {typeKind}", true).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestStaticConstructorCorrectDocumentation()
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        public async Task TestStaticConstructorCorrectDocumentation(string typeKind)
         {
-            await this.TestConstructorCorrectDocumentation("static", StaticConstructorStandardText[0], StaticConstructorStandardText[1], string.Empty, false).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentation(typeKind, "static", StaticConstructorStandardText, $" {typeKind}.", string.Empty, false).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestStaticConstructorCorrectDocumentationGeneric()
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        public async Task TestStaticConstructorCorrectDocumentationGeneric(string typeKind)
         {
-            await this.TestConstructorCorrectDocumentation("static", StaticConstructorStandardText[0], StaticConstructorStandardText[1], string.Empty, true).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentation(typeKind, "static", StaticConstructorStandardText, $" {typeKind}.", string.Empty, true).ConfigureAwait(false);
         }
 
-        private async Task TestConstructorMissingDocumentation(string modifiers, string part1, string part2, bool generic)
+        private async Task TestConstructorMissingDocumentation(string typeKind, string modifiers, string part1, string part2, bool generic)
         {
             var testCode = @"namespace FooNamespace
 {{
-    public class Foo{0}
+    public {0} Foo{1}
     {{
         /// <summary>
         /// </summary>
-        {1} 
-        Foo()
+        {2}
+        Foo({3})
         {{
 
         }}
     }}
 }}";
-            testCode = string.Format(testCode, generic ? "<T1, T2>" : string.Empty, modifiers);
+            string arguments = typeKind == "struct" && modifiers != "static" ? "int argument" : null;
+            testCode = string.Format(testCode, typeKind, generic ? "<T1, T2>" : string.Empty, modifiers, arguments);
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 13);
 
@@ -236,13 +271,13 @@
 
             var fixedCode = @"namespace FooNamespace
 {{
-    public class Foo{0}
+    public {0} Foo{1}
     {{
         /// <summary>
-        /// {2}<see cref=""Foo{1}""/>{3}{4}
+        /// {3}<see cref=""Foo{2}""/>{4}{5}
         /// </summary>
-        {5} 
-        Foo()
+        {6}
+        Foo({7})
         {{
 
         }}
@@ -250,44 +285,124 @@
 }}";
 
             string part3 = part2.EndsWith(".") ? string.Empty : ".";
-            fixedCode = string.Format(fixedCode, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3, modifiers);
+            fixedCode = string.Format(fixedCode, typeKind, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3, modifiers, arguments);
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestNonPrivateConstructorMissingDocumentation()
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        public async Task TestNonPrivateConstructorMissingDocumentation(string typeKind)
         {
-            await this.TestConstructorMissingDocumentation("public", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], false).ConfigureAwait(false);
+            await this.TestConstructorMissingDocumentation(typeKind, "public", NonPrivateConstructorStandardText, $" {typeKind}", false).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestNonPrivateConstructorMissingDocumentationGeneric()
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        public async Task TestNonPrivateConstructorMissingDocumentationGeneric(string typeKind)
         {
-            await this.TestConstructorMissingDocumentation("public", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true).ConfigureAwait(false);
+            await this.TestConstructorMissingDocumentation(typeKind, "public", NonPrivateConstructorStandardText, $" {typeKind}", true).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestPrivateConstructorMissingDocumentation()
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        public async Task TestPrivateConstructorMissingDocumentation(string typeKind)
         {
-            await this.TestConstructorMissingDocumentation("private", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], false).ConfigureAwait(false);
+            await this.TestConstructorMissingDocumentation(typeKind, "private", NonPrivateConstructorStandardText, $" {typeKind}", false).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestPrivateConstructorMissingDocumentationGeneric()
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        public async Task TestPrivateConstructorMissingDocumentationGeneric(string typeKind)
         {
-            await this.TestConstructorMissingDocumentation("private", NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true).ConfigureAwait(false);
+            await this.TestConstructorMissingDocumentation(typeKind, "private", NonPrivateConstructorStandardText, $" {typeKind}", true).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestStaticConstructorMissingDocumentation()
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        public async Task TestStaticConstructorMissingDocumentation(string typeKind)
         {
-            await this.TestConstructorMissingDocumentation("static", StaticConstructorStandardText[0], StaticConstructorStandardText[1], false).ConfigureAwait(false);
+            await this.TestConstructorMissingDocumentation(typeKind, "static", StaticConstructorStandardText, $" {typeKind}.", false).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestStaticConstructorMissingDocumentationGeneric()
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        public async Task TestStaticConstructorMissingDocumentationGeneric(string typeKind)
         {
-            await this.TestConstructorMissingDocumentation("static", StaticConstructorStandardText[0], StaticConstructorStandardText[1], true).ConfigureAwait(false);
+            await this.TestConstructorMissingDocumentation(typeKind, "static", StaticConstructorStandardText, $" {typeKind}.", true).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#676 "SA1642 misfires on nested structs,
+        /// requiring text describing the outer type"
+        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/676
+        /// </summary>
+        /// <returns></returns>
+        [Fact]
+        public async Task TestStructNestedInClass()
+        {
+            string testCode = @"
+class ClassName
+{
+    struct StructName
+    {
+        /// <summary>
+        /// </summary>
+        StructName(int argument)
+        {
+        }
+    }
+}
+";
+            string fixedCode = @"
+class ClassName
+{
+    struct StructName
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref=""StructName""/> struct.
+        /// </summary>
+        StructName(int argument)
+        {
+        }
+    }
+}
+";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 13);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("class", "class", "class")]
+        [InlineData("class", "struct", "struct")]
+        [InlineData("struct", "class", "class")]
+        [InlineData("struct", "struct", "struct")]
+        public async Task TestAllowedOuterQualifiedNames(string outerTypeKind, string nestedTypeKind, string describedTypeKind)
+        {
+            string testCode = $@"
+{outerTypeKind} OuterName
+{{
+    {nestedTypeKind} NestedName
+    {{
+        /// <summary>
+        /// Initializes a new instance of the <see cref=""OuterName.NestedName""/> {describedTypeKind}.
+        /// </summary>
+        NestedName(int argument)
+        {{
+        }}
+    }}
+}}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

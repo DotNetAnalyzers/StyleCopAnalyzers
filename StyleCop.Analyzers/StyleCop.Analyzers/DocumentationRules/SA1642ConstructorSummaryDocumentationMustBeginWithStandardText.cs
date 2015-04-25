@@ -6,8 +6,6 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Helpers;
-    using System;
 
     /// <summary>
     /// The XML documentation header for a C# constructor does not contain the appropriate summary text.
@@ -104,18 +102,19 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1642.html";
 
         /// <summary>
-        /// Gets a two-element array containing the standard text which is expected to appear at the beginning of the
-        /// <c>&lt;summary&gt;</c> documentation for a non-private constructor. The first element appears before the
-        /// name of the containing class, followed by a <c>&lt;see&gt;</c> element targeting the containing type, and
-        /// finally followed by the second element of this array.
+        /// Gets the standard text which is expected to appear at the beginning of the <c>&lt;summary&gt;</c>
+        /// documentation for a non-private constructor. This text appears before the name of the containing class,
+        /// followed by a <c>&lt;see&gt;</c> element targeting the containing type, and finally followed by <c>class</c>
+        /// or <c>struct</c> as appropriate for the containing type.
         /// </summary>
-        public static ImmutableArray<string> NonPrivateConstructorStandardText { get; } = ImmutableArray.Create("Initializes a new instance of the ", " class");
+        public static string NonPrivateConstructorStandardText { get; } = "Initializes a new instance of the ";
 
         /// <summary>
-        /// Gets a two-element array containing the standard text which is expected to appear at the beginning of the
-        /// <c>&lt;summary&gt;</c> documentation for a private constructor. The first element appears before the name of
-        /// the containing class, followed by a <c>&lt;see&gt;</c> element targeting the containing type, and finally
-        /// followed by the second element of this array.
+        /// Gets the standard text which is expected to appear at the beginning of the <c>&lt;summary&gt;</c>
+        /// documentation for a private constructor. The first element appears before the name of the containing class,
+        /// followed by a <c>&lt;see&gt;</c> element targeting the containing type, then by <c>class</c> or
+        /// <c>struct</c> as appropriate for the containing type, and finally followed by the second element of this
+        /// array.
         /// </summary>
         /// <remarks>
         /// <para>In addition to the format given in <see cref="PrivateConstructorStandardText"/>, a private constructor
@@ -125,15 +124,15 @@
         /// superior alternative to private constructors for the purpose of declaring utility types that cannot be
         /// instantiated.</para>
         /// </remarks>
-        public static ImmutableArray<string> PrivateConstructorStandardText { get; } = ImmutableArray.Create("Prevents a default instance of the ", " class from being created.");
+        public static ImmutableArray<string> PrivateConstructorStandardText { get; } = ImmutableArray.Create("Prevents a default instance of the ", " from being created.");
 
         /// <summary>
-        /// Gets a two-element array containing the standard text which is expected to appear at the beginning of the
-        /// <c>&lt;summary&gt;</c> documentation for a static constructor. The first element appears before the name of
-        /// the containing class, followed by a <c>&lt;see&gt;</c> element targeting the containing type, and finally
-        /// followed by the second element of this array.
+        /// Gets the standard text which is expected to appear at the beginning of the <c>&lt;summary&gt;</c>
+        /// documentation for a static constructor. The first element appears before the name of the containing class,
+        /// followed by a <c>&lt;see&gt;</c> element targeting the containing type, and finally followed by <c>class</c>
+        /// or <c>struct</c> as appropriate for the containing type.
         /// </summary>
-        public static ImmutableArray<string> StaticConstructorStandardText { get; } = ImmutableArray.Create("Initializes static members of the ", " class.");
+        public static string StaticConstructorStandardText { get; } = "Initializes static members of the ";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
@@ -169,21 +168,29 @@
         {
             var constructorDeclarationSyntax = context.Node as ConstructorDeclarationSyntax;
 
+            bool isStruct = constructorDeclarationSyntax.Parent?.IsKind(SyntaxKind.StructDeclaration) ?? false;
+
             if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword))
             {
-                this.HandleDeclaration(context, StaticConstructorStandardText[0], StaticConstructorStandardText[1], true);
+                string secondPartText = isStruct ? " struct." : " class.";
+                this.HandleDeclaration(context, StaticConstructorStandardText, secondPartText, true);
             }
             else if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.PrivateKeyword))
             {
-                if (this.HandleDeclaration(context, PrivateConstructorStandardText[0], PrivateConstructorStandardText[1], false) != MatchResult.FoundMatch)
+                string typeKindText = isStruct ? " struct" : " class";
+
+                if (this.HandleDeclaration(context, PrivateConstructorStandardText[0], typeKindText + PrivateConstructorStandardText[1], false) == MatchResult.FoundMatch)
                 {
-                    // also allow the non-private wording for private constructors
-                    this.HandleDeclaration(context, NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true);
+                    return;
                 }
+
+                // also allow the non-private wording for private constructors
+                this.HandleDeclaration(context, NonPrivateConstructorStandardText, typeKindText, true);
             }
             else
             {
-                this.HandleDeclaration(context, NonPrivateConstructorStandardText[0], NonPrivateConstructorStandardText[1], true);
+                string typeKindText = isStruct ? " struct" : " class";
+                this.HandleDeclaration(context, NonPrivateConstructorStandardText, typeKindText, true);
             }
         }
     }
