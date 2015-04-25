@@ -577,41 +577,6 @@
             await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "static System.EventHandler MemberName", ", AnotherMemberName;").ConfigureAwait(false);
         }
 
-        [Fact(Skip = "Access modified is compiler-enforced")]
-        public async Task TestOperatorDeclarationAsync()
-        {
-            await this.TestNestedDeclarationAsync("public", "+", "static OuterTypeName operator +", "  ( OuterTypeName x,OuterTypeName  y ) { throw new System.Exception(); }", elementName: "op_Addition").ConfigureAwait(false);
-        }
-
-        [Fact(Skip = "Access modified is compiler-enforced")]
-        public async Task TestOperatorDeclarationWithAttributesAsync()
-        {
-            await this.TestNestedDeclarationWithAttributesAsync("public", "+", "static OuterTypeName operator +", "  ( OuterTypeName x,OuterTypeName  y ) { throw new System.Exception(); }", elementName: "op_Addition").ConfigureAwait(false);
-        }
-
-        [Fact(Skip = "Access modified is compiler-enforced")]
-        public async Task TestOperatorDeclarationWithDirectivesAsync()
-        {
-            await this.TestNestedDeclarationWithDirectivesAsync("public", "+", "static OuterTypeName operator +", "  ( OuterTypeName x,OuterTypeName  y ) { throw new System.Exception(); }", elementName: "op_Addition").ConfigureAwait(false);
-        }
-
-        [Fact(Skip = "Access modified is compiler-enforced")]
-        public async Task TestConversionOperatorDeclarationAsync()
-        {
-            await this.TestNestedDeclarationAsync("public", "bool", "static explicit operator bool", "  ( OuterTypeName x ) { throw new System.Exception(); }", elementName: "op_Explicit").ConfigureAwait(false);
-        }
-
-        [Fact(Skip = "Access modified is compiler-enforced")]
-        public async Task TestConversionOperatorDeclarationWithAttributesAsync()
-        {
-            await this.TestNestedDeclarationWithAttributesAsync("public", "bool", "static explicit operator bool", "  ( OuterTypeName x ) { throw new System.Exception(); }", elementName: "op_Explicit").ConfigureAwait(false);
-        }
-
-        [Fact(Skip = "Access modified is compiler-enforced")]
-        public async Task TestConversionOperatorDeclarationWithDirectivesAsync()
-        {
-            await this.TestNestedDeclarationWithDirectivesAsync("public", "bool", "static explicit operator bool", "  ( OuterTypeName x ) { throw new System.Exception(); }", elementName: "op_Explicit").ConfigureAwait(false);
-        }
 
         [Fact]
         public async Task TestIndexerDeclarationAsync()
