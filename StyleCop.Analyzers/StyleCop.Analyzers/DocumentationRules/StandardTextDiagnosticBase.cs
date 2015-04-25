@@ -13,6 +13,28 @@
     public abstract class StandardTextDiagnosticBase : DiagnosticAnalyzer
     {
         /// <summary>
+        /// Describes the result of matching a summary element to a specific desired wording.
+        /// </summary>
+        public enum MatchResult
+        {
+            /// <summary>
+            /// The analysis could not be completed due to errors in the syntax tree or a comment structure which was
+            /// not accounted for.
+            /// </summary>
+            Unknown = -1,
+
+            /// <summary>
+            /// No complete or partial match was found.
+            /// </summary>
+            None,
+
+            /// <summary>
+            /// A match to the expected text was found.
+            /// </summary>
+            FoundMatch,
+        }
+
+        /// <summary>
         /// Provides the diagnostic descriptor that should be used when reporting a diagnostic.
         /// </summary>
         protected abstract DiagnosticDescriptor DiagnosticDescriptor { get; }
@@ -140,28 +162,6 @@
                 return typeParameterList == null
                     || !typeParameterList.Parameters.Any();
             }
-        }
-
-        /// <summary>
-        /// Describes the result of matching a summary element to a specific desired wording.
-        /// </summary>
-        public enum MatchResult
-        {
-            /// <summary>
-            /// The analysis could not be completed due to errors in the syntax tree or a comment structure which was
-            /// not accounted for.
-            /// </summary>
-            Unknown = -1,
-
-            /// <summary>
-            /// No complete or partial match was found.
-            /// </summary>
-            None,
-
-            /// <summary>
-            /// A match to the expected text was found.
-            /// </summary>
-            FoundMatch,
         }
     }
 }

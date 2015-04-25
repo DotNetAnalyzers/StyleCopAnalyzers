@@ -101,6 +101,12 @@
         private const string Description = "The XML documentation header for a C# constructor does not contain the appropriate summary text.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1642.html";
 
+        private static readonly DiagnosticDescriptor Descriptor =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+
+        private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
+            ImmutableArray.Create(Descriptor);
+
         /// <summary>
         /// Gets the standard text which is expected to appear at the beginning of the <c>&lt;summary&gt;</c>
         /// documentation for a non-private constructor. This text appears before the name of the containing class,
@@ -134,12 +140,6 @@
         /// </summary>
         public static string StaticConstructorStandardText { get; } = "Initializes static members of the ";
 
-        private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
-
-        private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
-            ImmutableArray.Create(Descriptor);
-        
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
