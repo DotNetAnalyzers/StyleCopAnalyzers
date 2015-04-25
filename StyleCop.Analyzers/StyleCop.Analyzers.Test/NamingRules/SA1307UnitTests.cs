@@ -45,8 +45,6 @@ string Bar = """", car = """", Dar = """";
         [InlineData("public")]
         [InlineData("internal")]
         [InlineData("protected internal")]
-        [InlineData("public readonly")]
-        [InlineData("internal readonly")]
         public async Task TestThatDiagnosticIsReported_SingleField(string modifiers)
         {
             var testCode = @"public class Foo
@@ -84,8 +82,6 @@ string Dar;
         [InlineData("public")]
         [InlineData("internal")]
         [InlineData("protected internal")]
-        [InlineData("public readonly")]
-        [InlineData("internal readonly")]
         public async Task TestThatDiagnosticIsReported_MultipleFields(string modifiers)
         {
             var testCode = @"public class Foo
