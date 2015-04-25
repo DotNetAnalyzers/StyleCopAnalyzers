@@ -17,7 +17,6 @@ namespace TestHelper
     {
         protected static DiagnosticResult[] EmptyDiagnosticResults { get; } = { };
 
-        #region To be implemented by Test classes
         /// <summary>
         /// Get the C# analyzer being tested - to be implemented in non-abstract class.
         /// </summary>
@@ -25,9 +24,6 @@ namespace TestHelper
         {
             return null;
         }
-        #endregion
-
-        #region Verifier wrappers
 
         /// <summary>
         /// Called to test a C# <see cref="DiagnosticAnalyzer"/> when applied on the single input source as a string.
@@ -91,9 +87,6 @@ namespace TestHelper
             VerifyDiagnosticResults(diagnostics, analyzer, expected);
         }
 
-        #endregion
-
-        #region Actual comparisons and verifications
         /// <summary>
         /// Checks each of the actual <see cref="Diagnostic"/>s found and compares them with the corresponding
         /// <see cref="DiagnosticResult"/> in the array of expected results. <see cref="Diagnostic"/>s are considered
@@ -217,9 +210,7 @@ namespace TestHelper
                 }
             }
         }
-        #endregion
 
-        #region Formatting Diagnostics
         /// <summary>
         /// Helper method to format a <see cref="Diagnostic"/> into an easily readable string.
         /// </summary>
@@ -274,6 +265,5 @@ namespace TestHelper
 
             return builder.ToString();
         }
-        #endregion
     }
 }

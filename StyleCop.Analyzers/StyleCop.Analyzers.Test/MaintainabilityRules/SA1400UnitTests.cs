@@ -253,8 +253,6 @@
             await this.TestNestedDeclarationWithDirectivesAsync("private", "TypeName", "delegate int TypeName", "  ( int\n parameter\n );").ConfigureAwait(false);
         }
 
-        #region EventDeclarationSyntax
-
         [Fact]
         public async Task TestEventDeclarationAsync()
         {
@@ -314,10 +312,6 @@
             string baseTypeDeclaration = "public interface IInterface { event EventHandler MemberName; }";
             await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "event EventHandler IInterface.MemberName", "{ add { } remove { } }", baseTypeList: baseTypeList, baseTypeDeclarations: baseTypeDeclaration, warning: false).ConfigureAwait(false);
         }
-
-        #endregion
-
-        #region MethodDeclarationSyntax
 
         [Fact]
         public async Task TestMethodDeclarationAsync()
@@ -415,10 +409,6 @@
             await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "partial void MemberName", "  ( int\n parameter\n );", containingType: "partial class", warning: false).ConfigureAwait(false);
         }
 
-        #endregion
-
-        #region PropertyDeclarationSyntax
-
         [Fact]
         public async Task TestPropertyDeclarationAsync()
         {
@@ -497,10 +487,6 @@
             await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "EventHandler MemberName", "{ get; set; }", containingType: "interface", warning: false).ConfigureAwait(false);
         }
 
-        #endregion
-
-        #region EventFieldDeclarationSyntax
-
         [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
         public async Task TestEventFieldDeclarationAsync()
         {
@@ -555,10 +541,6 @@
             await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "event EventHandler MemberName", ", AnotherMemberName;", containingType: "interface", warning: false).ConfigureAwait(false);
         }
 
-        #endregion
-
-        #region FieldDeclarationSyntax
-
         [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
         public async Task TestFieldDeclarationAsync()
         {
@@ -595,10 +577,6 @@
             await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "static System.EventHandler MemberName", ", AnotherMemberName;").ConfigureAwait(false);
         }
 
-        #endregion
-
-        #region OperatorDeclarationSyntax
-
         [Fact(Skip = "Access modified is compiler-enforced")]
         public async Task TestOperatorDeclarationAsync()
         {
@@ -617,10 +595,6 @@
             await this.TestNestedDeclarationWithDirectivesAsync("public", "+", "static OuterTypeName operator +", "  ( OuterTypeName x,OuterTypeName  y ) { throw new System.Exception(); }", elementName: "op_Addition").ConfigureAwait(false);
         }
 
-        #endregion
-
-        #region ConversionOperatorDeclarationSyntax
-
         [Fact(Skip = "Access modified is compiler-enforced")]
         public async Task TestConversionOperatorDeclarationAsync()
         {
@@ -638,10 +612,6 @@
         {
             await this.TestNestedDeclarationWithDirectivesAsync("public", "bool", "static explicit operator bool", "  ( OuterTypeName x ) { throw new System.Exception(); }", elementName: "op_Explicit").ConfigureAwait(false);
         }
-
-        #endregion
-
-        #region IndexerDeclarationSyntax
 
         [Fact]
         public async Task TestIndexerDeclarationAsync()
@@ -685,10 +655,6 @@
             await this.TestNestedDeclarationWithDirectivesAsync("private", "this", "EventHandler IInterface.this[int", " index ] { get { throw new System.Exception(); } set { throw new System.Exception(); } }", baseTypeList: baseTypeList, baseTypeDeclarations: baseTypeDeclaration, warning: false).ConfigureAwait(false);
         }
 
-        #endregion
-
-        #region ConstructorDeclarationSyntax
-
         [Fact]
         public async Task TestConstructorDeclarationAsync()
         {
@@ -724,8 +690,6 @@
         {
             await this.TestNestedDeclarationWithDirectivesAsync("private", "OuterTypeName", "static OuterTypeName(", " ) { }", warning: false).ConfigureAwait(false);
         }
-
-        #endregion
 
         private async Task TestTypeDeclarationAsync(string keyword, bool warning = true)
         {
