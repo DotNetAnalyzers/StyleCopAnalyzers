@@ -44,6 +44,8 @@
         /// <summary>
         /// Verifies that a statement followed by a block without curly braces will produce a warning.
         /// </summary>
+        /// <param name="statementText">The source code for the first part of a compound statement whose child can be
+        /// either a statement block or a single statement.</param>
         [Theory]
         [MemberData("TestStatements")]
         public async Task TestStatementWithoutCurlyBrackets(string statementText)
@@ -55,6 +57,8 @@
         /// <summary>
         /// Verifies that a statement followed by a block with curly braces will produce no diagnostics results.
         /// </summary>
+        /// <param name="statementText">The source code for the first part of a compound statement whose child can be
+        /// either a statement block or a single statement.</param>
         [Theory]
         [MemberData("TestStatements")]
         public async Task TestStatementWithCurlyBrackets(string statementText)
@@ -170,6 +174,8 @@ public class Foo
         /// <summary>
         /// Verifies that the codefix provider will work properly for a statement.
         /// </summary>
+        /// <param name="statementText">The source code for the first part of a compound statement whose child can be
+        /// either a statement block or a single statement.</param>
         [Theory, MemberData("TestStatements")]
         private async Task TestCodeFixForStatement(string statementText)
         {

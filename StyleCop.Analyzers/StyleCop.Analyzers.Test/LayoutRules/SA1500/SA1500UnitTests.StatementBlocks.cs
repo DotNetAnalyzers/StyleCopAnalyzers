@@ -36,6 +36,7 @@
         /// 
         /// The class is marked unsafe to make testing the fixed statement possible.
         /// </remarks>
+        /// <param name="token">The source code preceding the opening <c>{</c> of a statement block.</param>
         [Theory]
         [MemberData(nameof(StatementBlocksTokenList))]
         public async Task TestStatementBlockValid(string token)
@@ -80,6 +81,7 @@
         /// <remarks>
         /// The class is marked unsafe to make testing the fixed statement possible.
         /// </remarks>
+        /// <param name="token">The source code preceding the opening <c>{</c> of a statement block.</param>
         [Theory]
         [MemberData(nameof(StatementBlocksTokenList))]
         public async Task TestStatementBlockInvalid(string token)

@@ -65,6 +65,7 @@
         /// <see cref="SyntaxKind.SimpleMemberAccessExpression"/> is handled separately so only <c>X</c> is evaluated in
         /// the expression <c>X.Y.Z.A.B.C</c>.
         /// </summary>
+        /// <param name="context">The analysis context for a <see cref="SyntaxNode"/>.</param>
         private void HandleMemberAccessExpression(SyntaxNodeAnalysisContext context)
         {
             MemberAccessExpressionSyntax syntax = (MemberAccessExpressionSyntax)context.Node;

@@ -1,6 +1,8 @@
 ﻿namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -18,6 +20,8 @@
         /// <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/385">SA1125
         /// UseShorthandForNullableTypes incorrectly reported in XML comment</see>
         /// </summary>
+        /// <param name="form">The source code for the content of a <c>cref</c> attribute referencing
+        /// <see cref="Nullable{T}"/> in an XML documentation comment.</param>
         [Theory]
         [InlineData("Nullable{T}")]
         [InlineData("System.Nullable{T}")]
@@ -42,6 +46,8 @@ namespace System
         /// <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/638">SA1125
         /// UseShorthandForNullableTypes incorrectly reported for member in XML comment</see>
         /// </summary>
+        /// <param name="form">The source code for the content of a <c>cref</c> attribute referencing
+        /// <see cref="Nullable{T}"/> in an XML documentation comment.</param>
         [Theory]
         [InlineData("Nullable{T}")]
         [InlineData("System.Nullable{T}")]
@@ -66,6 +72,12 @@ namespace System
         /// <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/385">SA1125
         /// UseShorthandForNullableTypes incorrectly reported in XML comment</see>
         /// </summary>
+        /// <param name="longForm">The source code for the long form of a <c>cref</c> attribute referencing
+        /// an instantiation of <see cref="Nullable{T}"/> in an XML documentation comment (e.g. for the parameter type
+        /// in a reference to <see cref="Enumerable.Average(IEnumerable{int?})"/>.</param>
+        /// <param name="shortForm">The source code for the shorthand form of a <c>cref</c> attribute referencing
+        /// an instantiation of <see cref="Nullable{T}"/> in an XML documentation comment (e.g. for the parameter type
+        /// in a reference to <see cref="Enumerable.Average(IEnumerable{int?})"/>.</param>
         [Theory]
         [InlineData("Nullable{int}", "int?")]
         [InlineData("System.Nullable{int}", "int?")]
@@ -96,6 +108,11 @@ namespace System
         /// <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/386">SA1125
         /// UseShorthandForNullableTypes incorrectly reported in typeof()</see>
         /// </summary>
+        /// <param name="longForm">The source code for the long form of a <c>cref</c> attribute referencing
+        /// an instantiation of <see cref="Nullable{T}"/> in a <c>typeof</c> expression.</param>
+        /// <param name="shortForm">The source code for the shorthand form of a <c>cref</c> attribute referencing
+        /// an instantiation of <see cref="Nullable{T}"/> in a <c>typeof</c> expression. If no shorthand form is
+        /// available, this argument should be the same as <paramref name="longForm"/>.</param>
         [Theory]
 
         [InlineData("Nullable<int>", "int?")]
@@ -199,6 +216,8 @@ namespace System
         /// <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/637">SA1125
         /// UseShorthandForNullableTypes incorrectly reported in <c>nameof</c> expression</see>
         /// </summary>
+        /// <param name="form">The source code for the content of a <c>nameof</c> expression referencing
+        /// <see cref="Nullable{T}"/>.</param>
         [Theory]
         [InlineData("Nullable<int>")]
         [InlineData("System.Nullable<int>")]
@@ -228,6 +247,8 @@ namespace System
         /// <para>This special case of instance access through <c>Nullable&lt;int&gt;</c> was mentioned in a
         /// comment.</para>
         /// </remarks>
+        /// <param name="form">The source code for the content of a <c>nameof</c> expression referencing
+        /// <see cref="Nullable{T}"/>.</param>
         [Theory]
         [InlineData("Nullable<int>")]
         [InlineData("System.Nullable<int>")]
@@ -253,6 +274,8 @@ namespace System
         /// <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/636">SA1125
         /// UseShorthandForNullableTypes incorrectly reported for static access through Nullable&lt;int&gt;</see>
         /// </summary>
+        /// <param name="form">The source code for an instantiation of <see cref="Nullable{T}"/> which does not use the
+        /// shorthand syntax.</param>
         [Theory]
         [InlineData("Nullable<int>")]
         [InlineData("System.Nullable<int>")]
