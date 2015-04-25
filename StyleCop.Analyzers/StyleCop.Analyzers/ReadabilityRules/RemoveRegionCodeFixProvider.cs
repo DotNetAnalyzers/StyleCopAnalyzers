@@ -47,6 +47,7 @@
 
             return Task.FromResult(true);
         }
+
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
@@ -59,6 +60,7 @@
 
                 return document.WithSyntaxRoot(newSyntaxRoot);
             }
+
             return document.WithSyntaxRoot(syntaxRoot);
         }
     }

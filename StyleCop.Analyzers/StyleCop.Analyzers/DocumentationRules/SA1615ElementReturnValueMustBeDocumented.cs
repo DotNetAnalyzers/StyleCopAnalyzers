@@ -85,6 +85,7 @@
             {
                 return;
             }
+
             if (XmlCommentHelper.GetTopLevelElement(documentationStructure, XmlCommentHelper.InheritdocXmlTag) != null)
             {
                 // Don't report if the documentation is inherited.

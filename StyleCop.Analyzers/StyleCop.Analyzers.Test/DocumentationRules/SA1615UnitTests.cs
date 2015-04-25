@@ -21,6 +21,7 @@
                 yield return new[] { "    public delegate ClassName Method(string foo, string bar);" };
             }
         }
+
         public static IEnumerable<object[]> WithoutReturnValue
         {
             get
