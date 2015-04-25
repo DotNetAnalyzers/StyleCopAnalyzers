@@ -126,7 +126,7 @@
         }
         ";
 
-        private static string FixedCode = @"
+        private static string fixedCode = @"
         using System;
         public class BaseTypeName
         {
@@ -262,7 +262,7 @@
         [Fact]
         public async Task TestPrefixLocalCallsWithThisCodeFix()
         {
-            await this.VerifyCSharpFixAsync(ReferenceCode, FixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(ReferenceCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
