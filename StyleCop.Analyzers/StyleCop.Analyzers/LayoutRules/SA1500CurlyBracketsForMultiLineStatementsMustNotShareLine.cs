@@ -178,7 +178,9 @@
         private void CheckCurlyBracketToken(SyntaxNodeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             Location location = token.GetLocation();
             int line = location.GetLineSpan().StartLinePosition.Line;

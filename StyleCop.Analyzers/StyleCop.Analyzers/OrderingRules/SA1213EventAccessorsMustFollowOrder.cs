@@ -72,7 +72,9 @@
             var eventDeclaration = (EventDeclarationSyntax) context.Node;
 
             if (eventDeclaration?.AccessorList == null)
+            {
                 return;
+            }
 
             var accessors = eventDeclaration.AccessorList.Accessors;
             if (eventDeclaration.AccessorList.IsMissing ||

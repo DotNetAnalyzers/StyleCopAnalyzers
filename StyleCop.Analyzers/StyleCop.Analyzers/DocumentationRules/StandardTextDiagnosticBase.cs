@@ -104,12 +104,16 @@
             XmlCrefAttributeSyntax crefAttribute = XmlCommentHelper.GetFirstAttributeOrDefault<XmlCrefAttributeSyntax>(classReferencePart);
             CrefSyntax crefSyntax = crefAttribute?.Cref;
             if (crefAttribute == null)
+            {
                 return false;
+            }
 
             SemanticModel semanticModel = context.SemanticModel;
             INamedTypeSymbol actualSymbol = semanticModel.GetSymbolInfo(crefSyntax, context.CancellationToken).Symbol as INamedTypeSymbol;
             if (actualSymbol == null)
+            {
                 return false;
+            }
 
             INamedTypeSymbol expectedSymbol = semanticModel.GetDeclaredSymbol(constructorDeclarationSyntax.Parent, context.CancellationToken) as INamedTypeSymbol;
             return actualSymbol.OriginalDefinition == expectedSymbol;

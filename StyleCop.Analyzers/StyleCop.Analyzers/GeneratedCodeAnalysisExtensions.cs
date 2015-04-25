@@ -84,18 +84,30 @@ namespace StyleCop.Analyzers
         {
             var root = tree.GetRoot(cancellationToken);
 
-            if (root == null) return false;
+            if (root == null)
+            {
+                return false;
+            }
+
             var firstToken = root.GetFirstToken();
             SyntaxTriviaList trivia;
             if (firstToken == default(SyntaxToken))
             {
                 var token = ((CompilationUnitSyntax)root).EndOfFileToken;
-                if (!token.HasLeadingTrivia) return false;
+                if (!token.HasLeadingTrivia)
+                {
+                    return false;
+                }
+
                 trivia = token.LeadingTrivia;
             }
             else
             {
-                if (!firstToken.HasLeadingTrivia) return false;
+                if (!firstToken.HasLeadingTrivia)
+                {
+                    return false;
+                }
+
                 trivia = firstToken.LeadingTrivia;
             }
 

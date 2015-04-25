@@ -79,7 +79,9 @@
         {
             var node = context.Node as DocumentationCommentTriviaSyntax;
             if (node == null)
+            {
                 return;
+            }
 
             // Check if the comment is not multi line
             if (node.Content.All(x => x.IsKind(SyntaxKind.XmlText)))
