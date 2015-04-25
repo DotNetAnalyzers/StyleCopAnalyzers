@@ -245,9 +245,10 @@
                 return;
             }
 
-            // if the next token is ; or :, then treat as disallowed
-            //   1. return;
-            //   2. [return: Attribute(...)]
+            /* if the next token is ; or :, then treat as disallowed
+             *   1. return;
+             *   2. [return: Attribute(...)]
+             */
             SyntaxToken nextToken = token.GetNextToken();
             if (nextToken.IsKind(SyntaxKind.SemicolonToken) || nextToken.IsKind(SyntaxKind.ColonToken))
             {
@@ -266,8 +267,9 @@
                 return;
             }
 
-            // if the next token is ;, then treat as disallowed:
-            //    throw;
+            /* if the next token is ;, then treat as disallowed:
+             *    throw;
+             */
             SyntaxToken nextToken = token.GetNextToken();
             if (nextToken.IsKind(SyntaxKind.SemicolonToken))
             {

@@ -105,9 +105,10 @@
         public static TNode WithoutFormatting<TNode>(this TNode node)
             where TNode : SyntaxNode
         {
-            // Strategy:
-            //  1. Transform all descendants of the node (nodes, tokens, and trivia), but not the node itself
-            //  2. Transform the resulting node itself
+            /* Strategy:
+             *  1. Transform all descendants of the node (nodes, tokens, and trivia), but not the node itself
+             *  2. Transform the resulting node itself
+             */
             TNode result = node.ReplaceSyntax(
                 node.DescendantNodes(descendIntoTrivia: true),
                 (originalNode, rewrittenNode) => WithoutFormattingImpl(rewrittenNode),
@@ -130,9 +131,10 @@
         /// </returns>
         public static SyntaxToken WithoutFormatting(this SyntaxToken token)
         {
-            // Strategy:
-            //  1. Replace the leading and trailing trivia with copies that will not be reformatted
-            //  2. Remove formatting from the resulting token
+            /* Strategy:
+             *  1. Replace the leading and trailing trivia with copies that will not be reformatted
+             *  2. Remove formatting from the resulting token
+             */
             SyntaxTriviaList newLeadingTrivia = token.LeadingTrivia.Select(WithoutFormatting).ToSyntaxTriviaList();
             SyntaxTriviaList newTrailingTrivia = token.TrailingTrivia.Select(WithoutFormatting).ToSyntaxTriviaList();
             return WithoutFormattingImpl(token.WithLeadingTrivia(newLeadingTrivia).WithTrailingTrivia(newTrailingTrivia));
@@ -149,9 +151,10 @@
         /// </returns>
         public static SyntaxTrivia WithoutFormatting(this SyntaxTrivia trivia)
         {
-            // Strategy
-            //  1. Replace the structure, if any, with a structure that will not be reformatted
-            //  2. Remove formatting from the resulting trivia
+            /* Strategy
+             *  1. Replace the structure, if any, with a structure that will not be reformatted
+             *  2. Remove formatting from the resulting trivia
+             */
             SyntaxTrivia result = trivia;
             if (trivia.HasStructure)
             {

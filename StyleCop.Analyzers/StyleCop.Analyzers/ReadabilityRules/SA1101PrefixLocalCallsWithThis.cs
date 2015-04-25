@@ -93,8 +93,9 @@
                 if (((AssignmentExpressionSyntax)context.Node.Parent).Left == context.Node
                     && (context.Node.Parent.Parent?.IsKind(SyntaxKind.ObjectInitializerExpression) ?? true))
                 {
-                    // Handle 'X' in:
-                    //   new TypeName() { X = 3 }
+                    /* Handle 'X' in:
+                     *   new TypeName() { X = 3 }
+                     */
                     return;
                 }
 

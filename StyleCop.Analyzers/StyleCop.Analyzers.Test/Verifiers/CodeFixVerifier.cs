@@ -87,7 +87,7 @@ namespace TestHelper
                 document = await ApplyFixAsync(document, actions.ElementAt(0), cancellationToken).ConfigureAwait(false);
                 analyzerDiagnostics = await GetSortedDiagnosticsFromDocumentsAsync(analyzer, new[] { document }, cancellationToken).ConfigureAwait(false);
 
-                //check if there are analyzer diagnostics left after the code fix
+                // check if there are analyzer diagnostics left after the code fix
                 if (!analyzerDiagnostics.Any())
                 {
                     break;
@@ -96,7 +96,7 @@ namespace TestHelper
 
             var newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, await GetCompilerDiagnosticsAsync(document, cancellationToken).ConfigureAwait(false));
 
-            //check if applying the code fix introduced any new compiler diagnostics
+            // check if applying the code fix introduced any new compiler diagnostics
             if (!allowNewCompilerDiagnostics && newCompilerDiagnostics.Any())
             {
                 // Format and get the compiler diagnostics again so that the locations make sense in the output
@@ -109,7 +109,7 @@ namespace TestHelper
                         (await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false)).ToFullString()));
             }
 
-            //after applying all of the code fixes, compare the resulting string to the inputted one
+            // after applying all of the code fixes, compare the resulting string to the inputted one
             var actual = await GetStringFromDocumentAsync(document, cancellationToken).ConfigureAwait(false);
             Assert.Equal(newSource, actual);
         }

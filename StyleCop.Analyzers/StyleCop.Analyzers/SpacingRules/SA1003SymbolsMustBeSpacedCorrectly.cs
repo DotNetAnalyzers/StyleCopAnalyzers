@@ -93,8 +93,9 @@
 
         private void HandlePrefixUnaryExpressionOperatorToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
-            // let the outer operator handle things like the following, so no error is reported for '++':
-            //   c ^= *++buf4;
+            /* let the outer operator handle things like the following, so no error is reported for '++':
+             *   c ^= *++buf4;
+             */
             if (token.Parent?.Parent is PrefixUnaryExpressionSyntax)
             {
                 return;
