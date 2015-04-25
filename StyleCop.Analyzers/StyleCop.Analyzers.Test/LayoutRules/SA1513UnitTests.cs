@@ -16,6 +16,7 @@
         /// <summary>
         /// Verifies that the analyzer will properly handle an empty source.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestEmptySource()
         {
@@ -26,6 +27,7 @@
         /// <summary>
         /// Verifies that all valid usages of a closing curly brace without a following blank line will report no diagnostic.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestValid()
         {
@@ -345,6 +347,7 @@ public class Foo
         /// <summary>
         /// Verifies that all invalid usages of a closing curly brace without a following blank line will report a diagnostic.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestInvalid()
         {
@@ -450,6 +453,7 @@ public class Foo
         /// <summary>
         /// Verifies that the code fix will result in the expected fixed code.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestCodeFix()
         {

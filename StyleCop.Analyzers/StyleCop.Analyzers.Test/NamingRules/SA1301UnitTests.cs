@@ -18,6 +18,7 @@
         /// of the <see cref="SA1301ElementMustBeginWithLowerCaseLetter"/> analyzer (e.g. from an incorrect argument to
         /// its <see cref="DiagnosticDescriptor"/>.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestSimpleEmptyNamespace()
         {

@@ -16,6 +16,7 @@
         /// <summary>
         /// Verifies that the analyzer will properly handle an empty source.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestEmptySource()
         {
@@ -26,6 +27,7 @@
         /// <summary>
         /// Verify that a correct single line comment will not trigger a diagnostic.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestCorrectComment()
         {
@@ -46,6 +48,7 @@
         /// <summary>
         /// Verify that a single line comment without a leading space gets detected and fixed properly.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestNoLeadingSpace()
         {
@@ -77,6 +80,7 @@
         /// <summary>
         /// Verify that a single line comment with multiple leading spaces gets detected and fixed properly.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestMultipleLeadingSpaces()
         {
@@ -108,6 +112,7 @@
         /// <summary>
         /// Verify that a commented code will not trigger a diagnostic.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestCommentedCode()
         {

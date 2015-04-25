@@ -17,6 +17,7 @@
         /// <remarks>
         /// These are valid for SA1500 only, some will report other diagnostics outside of the unit test scenario.
         /// </remarks>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestSwitchValid()
         {
@@ -48,6 +49,7 @@
         /// <summary>
         /// Verifies that diagnostics will be reported for all invalid switch statements.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestSwitchInvalid()
         {

@@ -22,6 +22,7 @@
         /// </summary>
         /// <param name="form">The source code for the content of a <c>cref</c> attribute referencing
         /// <see cref="Nullable{T}"/> in an XML documentation comment.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData("Nullable{T}")]
         [InlineData("System.Nullable{T}")]
@@ -48,6 +49,7 @@ namespace System
         /// </summary>
         /// <param name="form">The source code for the content of a <c>cref</c> attribute referencing
         /// <see cref="Nullable{T}"/> in an XML documentation comment.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData("Nullable{T}")]
         [InlineData("System.Nullable{T}")]
@@ -78,6 +80,7 @@ namespace System
         /// <param name="shortForm">The source code for the shorthand form of a <c>cref</c> attribute referencing
         /// an instantiation of <see cref="Nullable{T}"/> in an XML documentation comment (e.g. for the parameter type
         /// in a reference to <see cref="Enumerable.Average(IEnumerable{int?})"/>.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData("Nullable{int}", "int?")]
         [InlineData("System.Nullable{int}", "int?")]
@@ -113,6 +116,7 @@ namespace System
         /// <param name="shortForm">The source code for the shorthand form of a <c>cref</c> attribute referencing
         /// an instantiation of <see cref="Nullable{T}"/> in a <c>typeof</c> expression. If no shorthand form is
         /// available, this argument should be the same as <paramref name="longForm"/>.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
 
         [InlineData("Nullable<int>", "int?")]
@@ -218,6 +222,7 @@ namespace System
         /// </summary>
         /// <param name="form">The source code for the content of a <c>nameof</c> expression referencing
         /// <see cref="Nullable{T}"/>.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData("Nullable<int>")]
         [InlineData("System.Nullable<int>")]
@@ -249,6 +254,7 @@ namespace System
         /// </remarks>
         /// <param name="form">The source code for the content of a <c>nameof</c> expression referencing
         /// <see cref="Nullable{T}"/>.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData("Nullable<int>")]
         [InlineData("System.Nullable<int>")]
@@ -276,6 +282,7 @@ namespace System
         /// </summary>
         /// <param name="form">The source code for an instantiation of <see cref="Nullable{T}"/> which does not use the
         /// shorthand syntax.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData("Nullable<int>")]
         [InlineData("System.Nullable<int>")]

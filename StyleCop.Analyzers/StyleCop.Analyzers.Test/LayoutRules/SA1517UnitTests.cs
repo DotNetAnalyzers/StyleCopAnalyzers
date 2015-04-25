@@ -25,6 +25,7 @@ public class Foo
         /// <summary>
         /// Verifies that the analyzer will properly handle an empty source.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestEmptySource()
         {
@@ -35,6 +36,7 @@ public class Foo
         /// <summary>
         /// Verifies that blank lines at the start of the file will produce a warning.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestWithBlankLinesAtStartOfFile()
         {
@@ -45,6 +47,7 @@ public class Foo
         /// <summary>
         /// Verifies that blank linefeed only lines at the start of the file will produce a warning.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestWithBlankLinefeedOnlyLinesAtStartOfFile()
         {
@@ -55,6 +58,7 @@ public class Foo
         /// <summary>
         /// Verifies that non-whitespace trivia will not produce a warning.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestWithNonWhitespaceTrivia()
         {
@@ -65,6 +69,7 @@ public class Foo
         /// <summary>
         /// Verifies that blank lines followed by non-whitespace trivia will produce a warning.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestWithNonWhitespaceTriviaAndLeadingBlankLines()
         {
@@ -75,6 +80,7 @@ public class Foo
         /// <summary>
         /// Verifies that no blank lines at the start of the file will not produce a warning.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestWithoutCarriageReturnLineFeedAtStartOfFile()
         {
@@ -84,6 +90,7 @@ public class Foo
         /// <summary>
         /// Verifies that invalid spacing will not trigger SA1517.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestWithInvalidSpacing()
         {
@@ -94,6 +101,7 @@ public class Foo
         /// <summary>
         /// Verifies that the code fix provider will strip leading blank lines.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestCodeFixProviderStripsLeadingBlankLines()
         {
@@ -106,6 +114,7 @@ public class Foo
         /// <summary>
         /// Verifies that the code fix provider will not strip leading whitespace other than blank lines.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestCodeFixProviderHandlesWhitespaceProperly()
         {
@@ -118,6 +127,7 @@ public class Foo
         /// <summary>
         /// Verifies that the code fix provider will strip whitespace on blank lines.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestCodeFixProviderHandlesBlankLinesWithWhitespaceProperly()
         {
@@ -130,6 +140,7 @@ public class Foo
         /// <summary>
         /// Verifies that the code fix provider will not strip non-whitespace trivia.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestCodeFixProviderHandlesNonWhitespaceTriviaProperly()
         {

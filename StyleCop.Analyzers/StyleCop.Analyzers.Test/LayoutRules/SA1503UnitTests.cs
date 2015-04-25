@@ -34,6 +34,7 @@
         /// <summary>
         /// Verifies that the analyzer will properly handle an empty source.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestEmptySource()
         {
@@ -46,6 +47,7 @@
         /// </summary>
         /// <param name="statementText">The source code for the first part of a compound statement whose child can be
         /// either a statement block or a single statement.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData("TestStatements")]
         public async Task TestStatementWithoutCurlyBrackets(string statementText)
@@ -59,6 +61,7 @@
         /// </summary>
         /// <param name="statementText">The source code for the first part of a compound statement whose child can be
         /// either a statement block or a single statement.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData("TestStatements")]
         public async Task TestStatementWithCurlyBrackets(string statementText)
@@ -69,6 +72,7 @@
         /// <summary>
         /// Verifies that an if / else statement followed by a block without curly braces will produce a warning.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestIfElseStatementWithoutCurlyBrackets()
         {
@@ -96,6 +100,7 @@ public class Foo
         /// <summary>
         /// Verifies that an if statement followed by a block with curly braces will produce no diagnostics results.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestIfElseStatementWithCurlyBrackets()
         {
@@ -121,6 +126,7 @@ public class Foo
         /// <summary>
         /// Verifies that an if statement followed by a else if, followed by an else statement, all blocks with curly braces will produce no diagnostics results.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestIfElseIfElseStatementWithCurlyBrackets()
         {
@@ -150,6 +156,7 @@ public class Foo
         /// <summary>
         /// Verifies that nested if statements followed by a block without curly braces will produce warnings.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestMultipleIfStatementsWithoutCurlyBrackets()
         {
@@ -176,6 +183,7 @@ public class Foo
         /// </summary>
         /// <param name="statementText">The source code for the first part of a compound statement whose child can be
         /// either a statement block or a single statement.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory, MemberData("TestStatements")]
         private async Task TestCodeFixForStatement(string statementText)
         {
@@ -185,6 +193,7 @@ public class Foo
         /// <summary>
         /// Verifies that the codefix provider will work properly for an if .. else statement.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestCodeFixProviderForIfElseStatement()
         {
@@ -224,6 +233,7 @@ public class Foo
         /// <summary>
         /// Verifies that the codefix provider will properly handle alternate indentations.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/660")]
         public async Task TestCodeFixProviderWithAlternateIndentation()
         {
@@ -255,6 +265,7 @@ public class Foo
         /// <summary>
         /// Verifies that the codefix provider will work properly handle non-whitespace trivia.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestCodeFixProviderWithNonWhitespaceTrivia()
         {
@@ -288,6 +299,7 @@ public class Foo
         /// <summary>
         /// Verifies that the codefix provider will work properly handle multiple cases of missing brackets.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestCodeFixProviderWithMultipleNestings()
         {
@@ -321,6 +333,7 @@ public class Foo
         /// <summary>
         /// Verifies that the code fix provider will not perform a code fix when statement contains a preprocessor directive.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestCodeFixWithPreprocessorDirectives()
         {

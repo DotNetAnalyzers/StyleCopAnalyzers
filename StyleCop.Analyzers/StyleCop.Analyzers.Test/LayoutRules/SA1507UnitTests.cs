@@ -55,6 +55,7 @@
         /// <summary>
         /// Verifies that the analyzer will properly handle an empty source.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestEmptySource()
         {
@@ -66,6 +67,7 @@
         /// Verifies that empty lines at the start of the file do not trigger any diagnostics.
         /// (This will be handled by SA1517)
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestEmptyLinesAtStartOfFile()
         {
@@ -82,6 +84,7 @@ public class Foo
         /// Verifies that empty lines at the end of the file do not trigger any diagnostics.
         /// (This will be handled by SA1518)
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestEmptyLinesAtEndOfFile()
         {
@@ -146,6 +149,7 @@ namespace Microsoft
         /// Verifies that a verbatim string literal does not trigger any diagnostics.
         /// (This will be handled by SA1518)
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestVerbatimStringLiteral()
         {
@@ -168,6 +172,7 @@ namespace Microsoft
         /// <summary>
         /// Validate that all invalid multiple blank lines are reported.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestInvalidMultipleBlankLines()
         {
@@ -190,6 +195,7 @@ namespace Microsoft
         /// <summary>
         /// Validate that the code fixes for all invalid multiple blank lines works properly.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestInvalidMultipleBlankLinesCodeFix()
         {

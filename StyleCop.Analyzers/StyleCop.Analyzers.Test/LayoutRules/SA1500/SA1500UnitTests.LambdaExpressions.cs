@@ -17,6 +17,7 @@
         /// <remarks>
         /// These are valid for SA1500 only, some will report other diagnostics from the layout (SA15xx) series.
         /// </remarks>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestLambdaExpressionValid()
         {
@@ -81,6 +82,7 @@ public class Foo
         /// <summary>
         /// Verifies that diagnostics will be reported for all invalid lambda expression definitions.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestLambdaExpressionInvalid()
         {

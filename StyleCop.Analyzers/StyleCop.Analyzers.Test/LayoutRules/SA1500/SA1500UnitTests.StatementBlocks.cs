@@ -37,6 +37,7 @@
         /// The class is marked unsafe to make testing the fixed statement possible.
         /// </remarks>
         /// <param name="token">The source code preceding the opening <c>{</c> of a statement block.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(StatementBlocksTokenList))]
         public async Task TestStatementBlockValid(string token)
@@ -82,6 +83,7 @@
         /// The class is marked unsafe to make testing the fixed statement possible.
         /// </remarks>
         /// <param name="token">The source code preceding the opening <c>{</c> of a statement block.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(StatementBlocksTokenList))]
         public async Task TestStatementBlockInvalid(string token)

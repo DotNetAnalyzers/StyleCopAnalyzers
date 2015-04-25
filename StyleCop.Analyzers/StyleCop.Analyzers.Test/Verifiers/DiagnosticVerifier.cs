@@ -20,6 +20,9 @@ namespace TestHelper
         /// <summary>
         /// Get the C# analyzer being tested - to be implemented in non-abstract class.
         /// </summary>
+        /// <returns>
+        /// A new instance of the C# analyzer being tested.
+        /// </returns>
         protected virtual DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return null;
@@ -35,6 +38,7 @@ namespace TestHelper
         /// <param name="expected">A <see cref="DiagnosticResult"/>s describing the <see cref="Diagnostic"/> that should
         /// be reported by the analyzer for the specified source.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
         {
             return this.VerifyCSharpDiagnosticAsync(source, new[] { expected }, cancellationToken);
@@ -50,6 +54,7 @@ namespace TestHelper
         /// <param name="expected">A collection of <see cref="DiagnosticResult"/>s describing the
         /// <see cref="Diagnostic"/>s that should be reported by the analyzer for the specified source.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
             return this.VerifyDiagnosticsAsync(new[] { source }, LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzer(), expected, cancellationToken);
@@ -66,6 +71,7 @@ namespace TestHelper
         /// <param name="expected">A collection of <see cref="DiagnosticResult"/>s describing the
         /// <see cref="Diagnostic"/>s that should be reported by the analyzer for the specified sources.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         protected Task VerifyCSharpDiagnosticAsync(string[] sources, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
             return this.VerifyDiagnosticsAsync(sources, LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzer(), expected, cancellationToken);
@@ -81,6 +87,7 @@ namespace TestHelper
         /// <param name="expected">A collection of <see cref="DiagnosticResult"/>s that should appear after the analyzer
         /// is run on the sources.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         private async Task VerifyDiagnosticsAsync(string[] sources, string language, DiagnosticAnalyzer analyzer, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
             var diagnostics = await GetSortedDiagnosticsAsync(sources, language, analyzer, cancellationToken).ConfigureAwait(false);
