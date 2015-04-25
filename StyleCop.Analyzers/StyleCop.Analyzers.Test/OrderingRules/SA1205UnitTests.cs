@@ -59,7 +59,7 @@
         /// <summary>
         /// Verify that the analyzer accepts an empty source.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestEmptySource()
         {
@@ -98,7 +98,7 @@
         /// <summary>
         /// Verifies that the code fix will properly copy over the access modifier defined in another fragment of the partial element.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestProperAccessModifierPropagation()
         {

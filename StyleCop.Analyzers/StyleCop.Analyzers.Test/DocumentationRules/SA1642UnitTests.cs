@@ -342,7 +342,7 @@
         /// requiring text describing the outer type"
         /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/676
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestStructNestedInClass()
         {
