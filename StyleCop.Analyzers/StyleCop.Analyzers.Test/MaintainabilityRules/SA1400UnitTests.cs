@@ -487,37 +487,37 @@
             await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "EventHandler MemberName", "{ get; set; }", containingType: "interface", warning: false).ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Fact]
         public async Task TestEventFieldDeclarationAsync()
         {
             await this.TestNestedDeclarationAsync("private", "MemberName", "event EventHandler MemberName", ", AnotherMemberName;").ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Fact]
         public async Task TestEventFieldDeclarationWithAttributesAsync()
         {
             await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "event EventHandler MemberName", ", AnotherMemberName;").ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Fact]
         public async Task TestEventFieldDeclarationWithDirectivesAsync()
         {
             await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "event EventHandler MemberName", ", AnotherMemberName;").ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Fact]
         public async Task TestStaticEventFieldDeclarationAsync()
         {
             await this.TestNestedDeclarationAsync("private", "MemberName", "static event EventHandler MemberName", ", AnotherMemberName;").ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Fact]
         public async Task TestStaticEventFieldDeclarationWithAttributesAsync()
         {
             await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "static event EventHandler MemberName", ", AnotherMemberName;").ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Fact]
         public async Task TestStaticEventFieldDeclarationWithDirectivesAsync()
         {
             await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "static event EventHandler MemberName", ", AnotherMemberName;").ConfigureAwait(false);
@@ -541,37 +541,37 @@
             await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "event EventHandler MemberName", ", AnotherMemberName;", containingType: "interface", warning: false).ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Fact]
         public async Task TestFieldDeclarationAsync()
         {
             await this.TestNestedDeclarationAsync("private", "MemberName", "System.EventHandler MemberName", ", AnotherMemberName;").ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Fact]
         public async Task TestFieldDeclarationWithAttributesAsync()
         {
             await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "System.EventHandler MemberName", ", AnotherMemberName;").ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Fact]
         public async Task TestFieldDeclarationWithDirectivesAsync()
         {
             await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "System.EventHandler MemberName", ", AnotherMemberName;").ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Fact]
         public async Task TestStaticFieldDeclarationAsync()
         {
             await this.TestNestedDeclarationAsync("private", "MemberName", "static System.EventHandler MemberName", ", AnotherMemberName;").ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Fact]
         public async Task TestStaticFieldDeclarationWithAttributesAsync()
         {
             await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "static System.EventHandler MemberName", ", AnotherMemberName;").ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Fact]
         public async Task TestStaticFieldDeclarationWithDirectivesAsync()
         {
             await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "static System.EventHandler MemberName", ", AnotherMemberName;").ConfigureAwait(false);
