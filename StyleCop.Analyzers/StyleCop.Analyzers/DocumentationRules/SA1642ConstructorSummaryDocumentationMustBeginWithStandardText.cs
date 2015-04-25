@@ -109,18 +109,19 @@
 
         /// <summary>
         /// Gets the standard text which is expected to appear at the beginning of the <c>&lt;summary&gt;</c>
-        /// documentation for a non-private constructor. This text appears before the name of the containing class,
-        /// followed by a <c>&lt;see&gt;</c> element targeting the containing type, and finally followed by <c>class</c>
-        /// or <c>struct</c> as appropriate for the containing type.
+        /// documentation for a non-private constructor.
         /// </summary>
+        /// <value>
+        /// The standard text which is expected to appear at the beginning of the <c>&lt;summary&gt;</c> documentation
+        /// for a non-private constructor. This text appears before the name of the containing class, followed by a
+        /// <c>&lt;see&gt;</c> element targeting the containing type, and finally followed by <c>class</c> or
+        /// <c>struct</c> as appropriate for the containing type.
+        /// </value>
         public static string NonPrivateConstructorStandardText { get; } = "Initializes a new instance of the ";
 
         /// <summary>
         /// Gets the standard text which is expected to appear at the beginning of the <c>&lt;summary&gt;</c>
-        /// documentation for a private constructor. The first element appears before the name of the containing class,
-        /// followed by a <c>&lt;see&gt;</c> element targeting the containing type, then by <c>class</c> or
-        /// <c>struct</c> as appropriate for the containing type, and finally followed by the second element of this
-        /// array.
+        /// documentation for a private constructor.
         /// </summary>
         /// <remarks>
         /// <para>In addition to the format given in <see cref="PrivateConstructorStandardText"/>, a private constructor
@@ -130,14 +131,24 @@
         /// superior alternative to private constructors for the purpose of declaring utility types that cannot be
         /// instantiated.</para>
         /// </remarks>
+        /// <value>
+        /// The standard text which is expected to appear at the beginning of the <c>&lt;summary&gt;</c> documentation
+        /// for a private constructor. The first element appears before the name of the containing class, followed by a
+        /// <c>&lt;see&gt;</c> element targeting the containing type, then by <c>class</c> or <c>struct</c> as
+        /// appropriate for the containing type, and finally followed by the second element of this array.
+        /// </value>
         public static ImmutableArray<string> PrivateConstructorStandardText { get; } = ImmutableArray.Create("Prevents a default instance of the ", " from being created.");
 
         /// <summary>
         /// Gets the standard text which is expected to appear at the beginning of the <c>&lt;summary&gt;</c>
-        /// documentation for a static constructor. The first element appears before the name of the containing class,
-        /// followed by a <c>&lt;see&gt;</c> element targeting the containing type, and finally followed by <c>class</c>
-        /// or <c>struct</c> as appropriate for the containing type.
+        /// documentation for a static constructor.
         /// </summary>
+        /// <value>
+        /// The standard text which is expected to appear at the beginning of the <c>&lt;summary&gt;</c> documentation
+        /// for a static constructor. The first element appears before the name of the containing class, followed by a
+        /// <c>&lt;see&gt;</c> element targeting the containing type, and finally followed by <c>class</c> or
+        /// <c>struct</c> as appropriate for the containing type.
+        /// </value>
         public static string StaticConstructorStandardText { get; } = "Initializes static members of the ";
 
         /// <inheritdoc/>

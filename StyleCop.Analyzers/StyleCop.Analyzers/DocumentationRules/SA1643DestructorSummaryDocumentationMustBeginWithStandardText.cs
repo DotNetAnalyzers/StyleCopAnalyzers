@@ -64,11 +64,15 @@
             ImmutableArray.Create(Descriptor);
 
         /// <summary>
-        /// Gets a two-element array containing the standard text which is expected to appear at the beginning of the
+        /// Gets the standard text which is expected to appear at the beginning of the <c>&lt;summary&gt;</c>
+        /// documentation for a destructor.
+        /// </summary>
+        /// <value>
+        /// A two-element array containing the standard text which is expected to appear at the beginning of the
         /// <c>&lt;summary&gt;</c> documentation for a destructor. The first element appears before the name of the
         /// containing class, followed by a <c>&lt;see&gt;</c> element targeting the containing type, and finally
         /// followed by the second element of this array.
-        /// </summary>
+        /// </value>
         public static ImmutableArray<string> DestructorStandardText { get; } = ImmutableArray.Create("Finalizes an instance of the ", " class.");
         
         /// <inheritdoc/>

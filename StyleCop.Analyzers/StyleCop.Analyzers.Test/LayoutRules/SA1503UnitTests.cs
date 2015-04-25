@@ -15,8 +15,11 @@
     public class SA1503UnitTests : CodeFixVerifier
     {
         /// <summary>
-        /// The statements that will be used in the theory test cases.
+        /// Gets the statements that will be used in the theory test cases.
         /// </summary>
+        /// <value>
+        /// The statements that will be used in the theory test cases.
+        /// </value>
         public static IEnumerable<object[]> TestStatements
         {
             get

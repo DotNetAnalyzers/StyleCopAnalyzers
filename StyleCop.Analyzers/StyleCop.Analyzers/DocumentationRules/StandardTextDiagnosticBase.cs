@@ -35,8 +35,11 @@
         }
 
         /// <summary>
-        /// Provides the diagnostic descriptor that should be used when reporting a diagnostic.
+        /// Gets the diagnostic descriptor that should be used when reporting a diagnostic.
         /// </summary>
+        /// <value>
+        /// The diagnostic descriptor that should be used when reporting a diagnostic.
+        /// </value>
         protected abstract DiagnosticDescriptor DiagnosticDescriptor { get; }
 
         /// <summary>

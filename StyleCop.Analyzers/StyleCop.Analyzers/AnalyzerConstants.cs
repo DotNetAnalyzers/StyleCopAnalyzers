@@ -15,10 +15,15 @@
         }
 
         /// <summary>
-        /// Provides a reference value which can be passed to
+        /// Gets a reference value which can be passed to
         /// <see cref="DiagnosticDescriptor(string, string, string, string, DiagnosticSeverity, bool, string, string, string[])"/>
         /// to disable a diagnostic which is currently untested.
         /// </summary>
+        /// <value>
+        /// A reference value which can be passed to
+        /// <see cref="DiagnosticDescriptor(string, string, string, string, DiagnosticSeverity, bool, string, string, string[])"/>
+        /// to disable a diagnostic which is currently untested.
+        /// </value>
         internal static bool DisabledNoTests { get; }
     }
 }
