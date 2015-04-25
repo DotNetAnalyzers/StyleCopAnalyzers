@@ -31,7 +31,7 @@
         
         static SA1122CodeFixProvider()
         {
-            var identifierNameSyntax = SyntaxFactory.IdentifierName(nameof(String.Empty));
+            var identifierNameSyntax = SyntaxFactory.IdentifierName(nameof(string.Empty));
             var stringKeyword = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.StringKeyword));
             StringEmptyExpression = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, stringKeyword, identifierNameSyntax)
                 .WithoutFormatting();
