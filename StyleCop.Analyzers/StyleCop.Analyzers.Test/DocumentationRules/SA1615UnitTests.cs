@@ -30,7 +30,6 @@
             }
         }
 
-
         [Fact]
         public async Task TestEmptySource()
         {

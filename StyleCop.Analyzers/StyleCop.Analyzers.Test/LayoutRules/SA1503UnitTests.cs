@@ -164,7 +164,6 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
         }
 
-
         /// <summary>
         /// Verifies that the codefix provider will work properly for a statement.
         /// </summary>
