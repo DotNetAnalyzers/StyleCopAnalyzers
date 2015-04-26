@@ -17,6 +17,7 @@
         /// <remarks>
         /// These are valid for SA1500 only, some will report other diagnostics from the layout (SA15xx) series.
         /// </remarks>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestInterfaceValid()
         {
@@ -48,6 +49,7 @@
         /// <remarks>
         /// These will normally also report SA1401, but not in the unit test.
         /// </remarks>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestInterfaceInvalid()
         {

@@ -25,6 +25,7 @@ public class Foo
         /// <summary>
         /// Verifies that the analyzer will properly handle an empty source.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestEmptySource()
         {
@@ -35,6 +36,7 @@ public class Foo
         /// <summary>
         /// Verifies that blank lines at the end of the file will produce a warning.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestWithBlankLinesAtEndOfFile()
         {
@@ -45,6 +47,7 @@ public class Foo
         /// <summary>
         /// Verifies that linefeed only blank lines at the end of the file will produce a warning.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestWithLineFeedOnlyBlankLinesAtEndOfFile()
         {
@@ -55,6 +58,7 @@ public class Foo
         /// <summary>
         /// Verifies that a single carriage return / linefeed at the end of the file will not produce a warning.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestWithSingleCarriageReturnLineFeedAtEndOfFile()
         {
@@ -65,6 +69,7 @@ public class Foo
         /// <summary>
         /// Verifies that a single linefeed at the end of the file will not produce a warning.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestWithSingleLineFeedAtEndOfFile()
         {
@@ -75,6 +80,7 @@ public class Foo
         /// <summary>
         /// Verifies that a source file that ends without a carriage return / linefeed at the end of the file will not produce a warning.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestWithoutCarriageReturnLineFeedAtEndOfFile()
         {
@@ -84,6 +90,7 @@ public class Foo
         /// <summary>
         /// Verifies that a source file that ends with spaces will produce a warning.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestFileEndsWithSpaces()
         {
@@ -94,6 +101,7 @@ public class Foo
         /// <summary>
         /// Verifies that a comment at the end of the file is not flagged.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestFileEndingWithComment()
         {
@@ -104,6 +112,7 @@ public class Foo
         /// <summary>
         /// Verifies that spurious end of lines after a comment at the end of the file are flagged.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestFileEndingWithCommentAndSpuriousWhitespace()
         {
@@ -114,6 +123,7 @@ public class Foo
         /// <summary>
         /// Verifies that an endif at the end of the file is not flagged.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestFileEndingWithEndIf()
         {
@@ -124,6 +134,7 @@ public class Foo
         /// <summary>
         /// Verifies that an endif at the end of the file is not flagged.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestFileEndingWithEndIfWithSpuriousWhitespace()
         {
@@ -135,6 +146,7 @@ public class Foo
         /// Verifies that the code fix provider will strip trailing blank lines.
         /// </summary>
         /// <remarks>The CRLF after the last curly bracket will not be stripped!</remarks>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestCodeFixProviderStripsTrailingBlankLines()
         {
@@ -148,6 +160,7 @@ public class Foo
         /// Verifies that the code fix provider will strip trailing blank lines that include whitespace.
         /// </summary>
         /// <remarks>The CRLF after the last curly bracket will not be stripped!</remarks>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestCodeFixProviderStripsTrailingBlankLinesIncludingWhitespace()
         {
@@ -161,6 +174,7 @@ public class Foo
         /// Verifies that the code fix provider will strip trailing linefeed only blank lines that include whitespace.
         /// </summary>
         /// <remarks>The LF after the last curly bracket will not be stripped!</remarks>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestCodeFixProviderStripsTrailingLinefeedOnlyBlankLinesIncludingWhitespace()
         {
@@ -174,6 +188,7 @@ public class Foo
         /// Verifies that the code fix provider will strip only trailing blank lines.
         /// </summary>
         /// <remarks>The CRLF after the #endif will not be stripped!</remarks>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestCodeFixProviderOnlyStripsTrailingBlankLines()
         {

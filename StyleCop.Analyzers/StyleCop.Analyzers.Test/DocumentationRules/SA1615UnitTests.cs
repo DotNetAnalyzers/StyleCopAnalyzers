@@ -21,6 +21,7 @@
                 yield return new[] { "    public delegate ClassName Method(string foo, string bar);" };
             }
         }
+
         public static IEnumerable<object[]> WithoutReturnValue
         {
             get
@@ -29,7 +30,6 @@
                 yield return new[] { "    public delegate void Method(string foo, string bar);" };
             }
         }
-
 
         [Fact]
         public async Task TestEmptySource()

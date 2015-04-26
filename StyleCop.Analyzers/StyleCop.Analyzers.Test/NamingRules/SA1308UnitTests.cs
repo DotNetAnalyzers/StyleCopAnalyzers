@@ -10,14 +10,14 @@
 
     public class SA1308UnitTests : CodeFixVerifier
     {
+        private readonly string[] modifiers = new[] { "public", "private", "protected", "public readonly", "internal readonly", "public static", "private static" };
+
         [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
-
-        private readonly string[] modifiers = new[] { "public", "private", "protected", "public readonly", "internal readonly", "public static", "private static" };
 
         [Fact]
         public async Task TestFieldStartingWithPrefixesToTriggerDiagnostic()
@@ -94,6 +94,7 @@ string m_bar = ""baz"";
         /// <summary>
         /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#627.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/627">#627: Code Fixes For Naming
         /// Rules SA1308 and SA1309 Do Not Always Fix The Name Entirely</seealso>
         [Fact]
@@ -118,6 +119,7 @@ string m_bar = ""baz"";
         /// <summary>
         /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#627.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/627">#627: Code Fixes For Naming
         /// Rules SA1308 and SA1309 Do Not Always Fix The Name Entirely</seealso>
         [Fact]

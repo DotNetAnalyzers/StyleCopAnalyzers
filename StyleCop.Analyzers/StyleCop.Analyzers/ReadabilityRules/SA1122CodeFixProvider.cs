@@ -21,21 +21,21 @@
     [Shared]
     public class SA1122CodeFixProvider : CodeFixProvider
     {
+        private static readonly SyntaxNode StringEmptyExpression;
+
         private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1122UseStringEmptyForEmptyStrings.DiagnosticId);
 
-        /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
-
-        private static readonly SyntaxNode StringEmptyExpression;
-        
         static SA1122CodeFixProvider()
         {
-            var identifierNameSyntax = SyntaxFactory.IdentifierName(nameof(String.Empty));
+            var identifierNameSyntax = SyntaxFactory.IdentifierName(nameof(string.Empty));
             var stringKeyword = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.StringKeyword));
             StringEmptyExpression = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, stringKeyword, identifierNameSyntax)
                 .WithoutFormatting();
         }
+
+        /// <inheritdoc/>
+        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()

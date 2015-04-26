@@ -34,6 +34,7 @@ namespace TestHelper
         /// <param name="codeFixIndex">Index determining which code fix to apply if there are multiple.</param>
         /// <param name="allowNewCompilerDiagnostics">A value indicating whether or not the test will fail if the code fix introduces other warnings after being applied.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         protected Task VerifyCSharpFixAsync(string oldSource, string newSource, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false, CancellationToken cancellationToken = default(CancellationToken))
         {
             return this.VerifyFixAsync(LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzer(), this.GetCSharpCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics, cancellationToken);
@@ -60,6 +61,7 @@ namespace TestHelper
         /// <param name="allowNewCompilerDiagnostics">A value indicating whether or not the test will fail if the code
         /// fix introduces other warnings after being applied.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         private async Task VerifyFixAsync(string language, DiagnosticAnalyzer analyzer, CodeFixProvider codeFixProvider, string oldSource, string newSource, int? codeFixIndex, bool allowNewCompilerDiagnostics, CancellationToken cancellationToken)
         {
             var document = CreateDocument(oldSource, language);
@@ -87,7 +89,7 @@ namespace TestHelper
                 document = await ApplyFixAsync(document, actions.ElementAt(0), cancellationToken).ConfigureAwait(false);
                 analyzerDiagnostics = await GetSortedDiagnosticsFromDocumentsAsync(analyzer, new[] { document }, cancellationToken).ConfigureAwait(false);
 
-                //check if there are analyzer diagnostics left after the code fix
+                // check if there are analyzer diagnostics left after the code fix
                 if (!analyzerDiagnostics.Any())
                 {
                     break;
@@ -96,7 +98,7 @@ namespace TestHelper
 
             var newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, await GetCompilerDiagnosticsAsync(document, cancellationToken).ConfigureAwait(false));
 
-            //check if applying the code fix introduced any new compiler diagnostics
+            // check if applying the code fix introduced any new compiler diagnostics
             if (!allowNewCompilerDiagnostics && newCompilerDiagnostics.Any())
             {
                 // Format and get the compiler diagnostics again so that the locations make sense in the output
@@ -109,7 +111,7 @@ namespace TestHelper
                         (await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false)).ToFullString()));
             }
 
-            //after applying all of the code fixes, compare the resulting string to the inputted one
+            // after applying all of the code fixes, compare the resulting string to the inputted one
             var actual = await GetStringFromDocumentAsync(document, cancellationToken).ConfigureAwait(false);
             Assert.Equal(newSource, actual);
         }

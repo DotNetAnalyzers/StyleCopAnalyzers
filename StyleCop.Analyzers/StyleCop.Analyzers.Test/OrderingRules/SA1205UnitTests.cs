@@ -59,7 +59,7 @@
         /// <summary>
         /// Verify that the analyzer accepts an empty source.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestEmptySource()
         {
@@ -71,6 +71,7 @@
         /// Verifies that a valid declaration (with an access modifier or not a partial type) will not produce a diagnostic.
         /// </summary>
         /// <param name="declaration">The declaration to verify.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(ValidDeclarations))]
         public async Task TestValidDeclaration(string declaration)
@@ -83,6 +84,7 @@
         /// Verifies that an invalid type declaration will produce a diagnostic.
         /// </summary>
         /// <param name="declaration">The declaration to verify.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(InvalidDeclarations))]
         public async Task TestInvalidDeclaration(string declaration)
@@ -98,7 +100,7 @@
         /// <summary>
         /// Verifies that the code fix will properly copy over the access modifier defined in another fragment of the partial element.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestProperAccessModifierPropagation()
         {

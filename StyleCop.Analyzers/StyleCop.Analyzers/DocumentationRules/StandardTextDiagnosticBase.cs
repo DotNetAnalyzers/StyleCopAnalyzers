@@ -13,8 +13,33 @@
     public abstract class StandardTextDiagnosticBase : DiagnosticAnalyzer
     {
         /// <summary>
-        /// Provides the diagnostic descriptor that should be used when reporting a diagnostic.
+        /// Describes the result of matching a summary element to a specific desired wording.
         /// </summary>
+        public enum MatchResult
+        {
+            /// <summary>
+            /// The analysis could not be completed due to errors in the syntax tree or a comment structure which was
+            /// not accounted for.
+            /// </summary>
+            Unknown = -1,
+
+            /// <summary>
+            /// No complete or partial match was found.
+            /// </summary>
+            None,
+
+            /// <summary>
+            /// A match to the expected text was found.
+            /// </summary>
+            FoundMatch,
+        }
+
+        /// <summary>
+        /// Gets the diagnostic descriptor that should be used when reporting a diagnostic.
+        /// </summary>
+        /// <value>
+        /// The diagnostic descriptor that should be used when reporting a diagnostic.
+        /// </value>
         protected abstract DiagnosticDescriptor DiagnosticDescriptor { get; }
 
         /// <summary>
@@ -82,12 +107,16 @@
             XmlCrefAttributeSyntax crefAttribute = XmlCommentHelper.GetFirstAttributeOrDefault<XmlCrefAttributeSyntax>(classReferencePart);
             CrefSyntax crefSyntax = crefAttribute?.Cref;
             if (crefAttribute == null)
+            {
                 return false;
+            }
 
             SemanticModel semanticModel = context.SemanticModel;
             INamedTypeSymbol actualSymbol = semanticModel.GetSymbolInfo(crefSyntax, context.CancellationToken).Symbol as INamedTypeSymbol;
             if (actualSymbol == null)
+            {
                 return false;
+            }
 
             INamedTypeSymbol expectedSymbol = semanticModel.GetDeclaredSymbol(constructorDeclarationSyntax.Parent, context.CancellationToken) as INamedTypeSymbol;
             return actualSymbol.OriginalDefinition == expectedSymbol;
@@ -140,28 +169,6 @@
                 return typeParameterList == null
                     || !typeParameterList.Parameters.Any();
             }
-        }
-
-        /// <summary>
-        /// Describes the result of matching a summary element to a specific desired wording.
-        /// </summary>
-        public enum MatchResult
-        {
-            /// <summary>
-            /// The analysis could not be completed due to errors in the syntax tree or a comment structure which was
-            /// not accounted for.
-            /// </summary>
-            Unknown = -1,
-
-            /// <summary>
-            /// No complete or partial match was found.
-            /// </summary>
-            None,
-
-            /// <summary>
-            /// A match to the expected text was found.
-            /// </summary>
-            FoundMatch,
         }
     }
 }

@@ -388,7 +388,6 @@ public class Foo
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
-
             string fixedCode = @"using System;
 
 public class Foo
