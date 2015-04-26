@@ -88,7 +88,7 @@
 
                 foreach (var parameter in parameterList)
                 {
-                    if (!xmlParameterNames.Any(x => x.Identifier.ToString() == parameter.Identifier.ToString()))
+                    if (!xmlParameterNames.Any(x => x.Identifier.Identifier.ValueText == parameter.Identifier.ValueText))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, parameter.Identifier.GetLocation(), parameter.Identifier.ValueText));
                     }

@@ -23,6 +23,12 @@
                 yield return new object[] { "void Foooooooooooo(string param1, string param2, string param3) { }" };
                 yield return new object[] { "delegate void Fooo(string param1, string param2, string param3);" };
                 yield return new object[] { "System.String this[string param1, string param2, string param3] { get { return param1; } }" };
+                yield return new object[] { "void Foooooooooooo(string param1, string param2, string @param3) { }" };
+                yield return new object[] { "delegate void Fooo(string param1, string param2, string @param3);" };
+                yield return new object[] { "System.String this[string param1, string param2, string @param3] { get { return param1; } }" };
+                yield return new object[] { "void Foooooooooooo(string param1, string param2, string p\\u0061ram3) { }" };
+                yield return new object[] { "delegate void Fooo(string param1, string param2, string p\\u0061ram3);" };
+                yield return new object[] { "System.String this[string param1, string param2, string p\\u0061ram3] { get { return param1; } }" };
             }
         }
 
@@ -49,6 +55,27 @@ public class ClassName
     /// <param name=""param1"">Param 1</param>
     /// <param name=""param2""></param>
     /// <param name=""param3"">Param 3</param>
+    public ##
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [Theory]
+        [MemberData(nameof(Data))]
+        public async Task TestWithAllDocumentationAlternativeSyntax(string p)
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <param name=""param1"">Param 1</param>
+    /// <param name=""p&#97;ram2""></param>
+    /// <param name=""p&#x61;ram3"">Param 3</param>
     public ##
 }";
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None);
