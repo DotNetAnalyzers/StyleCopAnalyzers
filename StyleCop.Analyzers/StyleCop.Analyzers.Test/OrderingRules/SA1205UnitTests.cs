@@ -92,7 +92,7 @@
             var testCode = TestCodeTemplate.Replace("$$", declaration);
             var fixedTestCode = FixedTestCodeTemplate.Replace("##", "internal").Replace("$$", declaration);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, this.CSharpDiagnostic().WithLocation(1, 1), CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.CSharpDiagnostic().WithLocation(1, 2 + declaration.Length), CancellationToken.None);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
         }
@@ -126,7 +126,7 @@ public partial class Foo
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, this.CSharpDiagnostic().WithLocation(6, 1), CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.CSharpDiagnostic().WithLocation(6, 15), CancellationToken.None);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
         }

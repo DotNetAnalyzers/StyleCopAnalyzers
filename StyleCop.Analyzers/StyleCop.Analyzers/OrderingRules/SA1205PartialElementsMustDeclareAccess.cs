@@ -57,7 +57,7 @@
                 if (!ContainsModifier(typeDeclarationNode.Modifiers, SyntaxKind.PublicKeyword) &&
                     !ContainsModifier(typeDeclarationNode.Modifiers, SyntaxKind.InternalKeyword))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, typeDeclarationNode.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, typeDeclarationNode.Identifier.GetLocation()));
                 }
             }
         }
