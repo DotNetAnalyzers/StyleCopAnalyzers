@@ -123,9 +123,9 @@ public class ClassName
 }";
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(10, 38),
-                this.CSharpDiagnostic().WithLocation(10, 53),
-                this.CSharpDiagnostic().WithLocation(10, 68),
+                this.CSharpDiagnostic().WithLocation(10, 38).WithArguments("param1"),
+                this.CSharpDiagnostic().WithLocation(10, 53).WithArguments("param2"),
+                this.CSharpDiagnostic().WithLocation(10, 68).WithArguments("param3"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None);
