@@ -1,5 +1,4 @@
-﻿
-namespace StyleCop.Analyzers.Test.SpacingRules
+﻿namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
@@ -26,6 +25,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         /// <summary>
         /// Verifies that the analyzer will properly handle an empty source.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestEmptySource()
         {
@@ -36,6 +36,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         /// <summary>
         /// Verifies that valid unary expressions do not produce diagnostics.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestValidUnaryExpressions()
         {
@@ -69,6 +70,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         /// <summary>
         /// Verifies that Invalid unary expressions produce the correct diagnostics and code fixes.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestInvalidUnaryExpressions()
         {
@@ -134,6 +136,7 @@ v1;
         /// <summary>
         /// Verifies that valid binary expressions do not produce diagnostics.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestValidBinaryExpressions()
         {
@@ -160,6 +163,7 @@ public class Foo
         /// <summary>
         /// Verifies that invalid binary expressions produce the correct diagnostics and code fixes.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestInvalidBinaryExpressions()
         {
@@ -282,6 +286,7 @@ public class Foo
         /// <summary>
         /// Verifies that valid type constraints do not produce diagnostics.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestValidTypeConstraints()
         {
@@ -300,6 +305,7 @@ public class Foo
         /// <summary>
         /// Verifies that invalid type constraints produce the correct diagnostics and code fixes.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestInvalidTypeConstraints()
         {
@@ -357,6 +363,7 @@ public class Foo
         /// <summary>
         /// Verifies that valid base class constructor calls do not produce diagnostics.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestValidBaseCall()
         {
@@ -381,6 +388,7 @@ public class Foo : Exception
         /// <summary>
         /// Verifies that invalid base class constructor calls produce the correct diagnostics and code fixes.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestInvalidBaseCall()
         {
@@ -447,6 +455,62 @@ public class Foo : Exception
                 this.CSharpDiagnostic().WithLocation(13, 28).WithArguments(":", BeFollowedBySpace),
                 this.CSharpDiagnostic().WithLocation(18, 9).WithArguments(":", BePrecededBySpace),
                 this.CSharpDiagnostic().WithLocation(22, 27).WithArguments(":", NotAppearAtLineEnd)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+        }
+
+        /// <summary>
+        /// Verifies that valid auto property initializers do not produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestValidAutoPropertyInitializers()
+        {
+            var testCode = @"public class Foo
+{
+    public int Bar { get; } = 1;
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Verifies that invalid auto property initializers produce the correct diagnostics and code fixes.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestInvalidAutoPropertyInitializers()
+        {
+            var testCode = @"public class Foo
+{
+    public int Bar { get; }= 1;
+
+    public int Baz { get; } =2;
+
+    public int Qux { get; }=3;
+}
+";
+
+            var fixedTestCode = @"public class Foo
+{
+    public int Bar { get; } = 1;
+
+    public int Baz { get; } = 2;
+
+    public int Qux { get; } = 3;
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(3, 28).WithArguments("=", BePrecededBySpace),
+                this.CSharpDiagnostic().WithLocation(5, 29).WithArguments("=", BeFollowedBySpace),
+                this.CSharpDiagnostic().WithLocation(7, 28).WithArguments(":", BePrecededBySpace),
+                this.CSharpDiagnostic().WithLocation(7, 28).WithArguments(":", BeFollowedBySpace)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
