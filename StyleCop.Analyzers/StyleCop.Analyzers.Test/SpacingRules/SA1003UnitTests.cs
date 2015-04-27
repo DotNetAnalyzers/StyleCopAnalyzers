@@ -147,12 +147,11 @@ public class Foo
     public void Bar()
     {
         var v1 = 1 + 2;
-        var v2 = v1 > 0 ? 1 : 2;
-        var v3 = (2 * 3);
-        var v4 = new[] { 1, 2, 3 };
-        var v5 = 1;
-        var v6 = v4[v5 + 1];
-        Action<int> v7 = t => { v5 += v6 + t; };
+        var v2 = (2 * 3);
+        var v3 = new[] { 1, 2, 3 };
+        var v4 = 1;
+        var v5 = v3[v4 + 1];
+        Action<int> v6 = t => { v4 += v5 + t; };
     }
 }
 ";
@@ -183,19 +182,6 @@ public class Foo
         var v5 = v1 |v2;
         var v6 = v1>v2;
 
-        // invalid conditionals
-        var v7 = v6? 1 : 0;
-        var v8 = v6 ?1 : 0;
-        var v9 = v6?1 : 0;
-
-        var v10 = v6 ? 1: 0;
-        var v11 = v6 ? 1 :0;
-        var v12 = v6 ? 1:0;
-
-        var v13 = v6? 1: 0;
-        var v14 = v6 ?1 :0;
-        var v15 = v6?1:0;
-
         // invalid lambda expressions
         Action a1 = ()=> { };
         Action a2 = () =>{ };
@@ -220,19 +206,6 @@ public class Foo
         var v5 = v1 | v2;
         var v6 = v1 > v2;
 
-        // invalid conditionals
-        var v7 = v6 ? 1 : 0;
-        var v8 = v6 ? 1 : 0;
-        var v9 = v6 ? 1 : 0;
-
-        var v10 = v6 ? 1 : 0;
-        var v11 = v6 ? 1 : 0;
-        var v12 = v6 ? 1 : 0;
-
-        var v13 = v6 ? 1 : 0;
-        var v14 = v6 ? 1 : 0;
-        var v15 = v6 ? 1 : 0;
-
         // invalid lambda expressions
         Action a1 = () => { };
         Action a2 = () => { };
@@ -252,30 +225,117 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(14, 21).WithArguments("|", BeFollowedBySpace),
                 this.CSharpDiagnostic().WithLocation(15, 20).WithArguments(">", BePrecededBySpace),
                 this.CSharpDiagnostic().WithLocation(15, 20).WithArguments(">", BeFollowedBySpace),
-                // invalid conditionals
-                this.CSharpDiagnostic().WithLocation(18, 20).WithArguments("?", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(19, 21).WithArguments("?", BeFollowedBySpace),
-                this.CSharpDiagnostic().WithLocation(20, 20).WithArguments("?", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(20, 20).WithArguments("?", BeFollowedBySpace),
-
-                this.CSharpDiagnostic().WithLocation(22, 25).WithArguments(":", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(23, 26).WithArguments(":", BeFollowedBySpace),
-                this.CSharpDiagnostic().WithLocation(24, 25).WithArguments(":", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(24, 25).WithArguments(":", BeFollowedBySpace),
-
-                this.CSharpDiagnostic().WithLocation(26, 21).WithArguments("?", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(26, 24).WithArguments(":", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(27, 22).WithArguments("?", BeFollowedBySpace),
-                this.CSharpDiagnostic().WithLocation(27, 25).WithArguments(":", BeFollowedBySpace),
-                this.CSharpDiagnostic().WithLocation(28, 21).WithArguments("?", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(28, 21).WithArguments("?", BeFollowedBySpace),
-                this.CSharpDiagnostic().WithLocation(28, 23).WithArguments(":", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(28, 23).WithArguments(":", BeFollowedBySpace),
                 // invalid lambda expressions
-                this.CSharpDiagnostic().WithLocation(31, 23).WithArguments("=>", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(32, 24).WithArguments("=>", BeFollowedBySpace),
-                this.CSharpDiagnostic().WithLocation(33, 23).WithArguments("=>", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(33, 23).WithArguments("=>", BeFollowedBySpace),
+                this.CSharpDiagnostic().WithLocation(18, 23).WithArguments("=>", BePrecededBySpace),
+                this.CSharpDiagnostic().WithLocation(19, 24).WithArguments("=>", BeFollowedBySpace),
+                this.CSharpDiagnostic().WithLocation(20, 23).WithArguments("=>", BePrecededBySpace),
+                this.CSharpDiagnostic().WithLocation(20, 23).WithArguments("=>", BeFollowedBySpace),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+        }
+
+        /// <summary>
+        /// Verifies that valid ternary expressions do not produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestValidTernaryExpressions()
+        {
+            var testCode = @"using System;
+
+public class Foo
+{
+    public void Bar()
+    {
+        var v1 = 1 + 2;
+        var v2 = v1 > 0 ? 1 : 2;
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Verifies that invalid ternary expressions produce the correct diagnostics and code fixes.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestInvalidTernaryExpressions()
+        {
+            var testCode = @"using System;
+
+public class Foo
+{
+    public void Bar(bool p1)
+    {
+        // invalid conditionals
+        var v1 = p1? 1 : 0;
+        var v2 = p1 ?1 : 0;
+        var v3 = p1?1 : 0;
+
+        var v4 = p1 ? 1: 0;
+        var v5 = p1 ? 1 :0;
+        var v6 = p1 ? 1:0;
+
+        var v7 = p1? 1: 0;
+        var v8 = p1 ?1 :0;
+        var v9 = p1?1:0;
+
+        var v10 = p1 ? (1): 0;
+    }
+}
+";
+
+            var fixedTestCode = @"using System;
+
+public class Foo
+{
+    public void Bar(bool p1)
+    {
+        // invalid conditionals
+        var v1 = p1 ? 1 : 0;
+        var v2 = p1 ? 1 : 0;
+        var v3 = p1 ? 1 : 0;
+
+        var v4 = p1 ? 1 : 0;
+        var v5 = p1 ? 1 : 0;
+        var v6 = p1 ? 1 : 0;
+
+        var v7 = p1 ? 1 : 0;
+        var v8 = p1 ? 1 : 0;
+        var v9 = p1 ? 1 : 0;
+
+        var v10 = p1 ? (1) : 0;
+    }
+}
+";
+            DiagnosticResult[] expected =
+            {
+                // invalid conditionals
+                this.CSharpDiagnostic().WithLocation(8, 20).WithArguments("?", BePrecededBySpace),
+                this.CSharpDiagnostic().WithLocation(9, 21).WithArguments("?", BeFollowedBySpace),
+                this.CSharpDiagnostic().WithLocation(10, 20).WithArguments("?", BePrecededBySpace),
+                this.CSharpDiagnostic().WithLocation(10, 20).WithArguments("?", BeFollowedBySpace),
+
+                this.CSharpDiagnostic().WithLocation(12, 24).WithArguments(":", BePrecededBySpace),
+                this.CSharpDiagnostic().WithLocation(13, 25).WithArguments(":", BeFollowedBySpace),
+                this.CSharpDiagnostic().WithLocation(14, 24).WithArguments(":", BePrecededBySpace),
+                this.CSharpDiagnostic().WithLocation(14, 24).WithArguments(":", BeFollowedBySpace),
+
+                this.CSharpDiagnostic().WithLocation(16, 20).WithArguments("?", BePrecededBySpace),
+                this.CSharpDiagnostic().WithLocation(16, 23).WithArguments(":", BePrecededBySpace),
+                this.CSharpDiagnostic().WithLocation(17, 21).WithArguments("?", BeFollowedBySpace),
+                this.CSharpDiagnostic().WithLocation(17, 24).WithArguments(":", BeFollowedBySpace),
+                this.CSharpDiagnostic().WithLocation(18, 20).WithArguments("?", BePrecededBySpace),
+                this.CSharpDiagnostic().WithLocation(18, 20).WithArguments("?", BeFollowedBySpace),
+                this.CSharpDiagnostic().WithLocation(18, 22).WithArguments(":", BePrecededBySpace),
+                this.CSharpDiagnostic().WithLocation(18, 22).WithArguments(":", BeFollowedBySpace),
+
+                this.CSharpDiagnostic().WithLocation(20, 27).WithArguments(":", BePrecededBySpace)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
@@ -516,6 +576,33 @@ public class Foo : Exception
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+        }
+
+        /// <summary>
+        /// Verifies that valid switch statements do not produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestValidSwitchStatement()
+        {
+            var testCode = @"public class Foo
+{
+    public int Bar(int p1)
+    {
+        switch (p1)
+        {
+            case 1:
+                return 0;
+            case (2):
+                return 1;
+            default:
+                return p1 + 1;
+        }
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         /// <inheritdoc/>
