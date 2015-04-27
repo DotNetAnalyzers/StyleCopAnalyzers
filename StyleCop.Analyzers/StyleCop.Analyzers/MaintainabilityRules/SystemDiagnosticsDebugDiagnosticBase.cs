@@ -22,7 +22,9 @@
         protected internal void HandleMethodCall(SyntaxNodeAnalysisContext context, string methodName, int parameterIndex, DiagnosticDescriptor descriptor)
         {
             var invocationExpressionSyntax = context.Node as InvocationExpressionSyntax;
-            if (invocationExpressionSyntax != null)
+            var memberAccessExpressionSyntax = invocationExpressionSyntax?.Expression as MemberAccessExpressionSyntax;
+
+            if (memberAccessExpressionSyntax?.Name?.Identifier.ValueText == methodName)
             {
                 IMethodSymbol symbolInfo = context.SemanticModel.GetSymbolInfo(invocationExpressionSyntax).Symbol as IMethodSymbol;
 
