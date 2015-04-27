@@ -274,33 +274,22 @@
         private void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
         {
             var constructotDeclarationSyntax = (ConstructorDeclarationSyntax)context.Node;
-            HandleBaseMethodDeclaration(context, constructotDeclarationSyntax);
+            if (constructotDeclarationSyntax.ParameterList != null
+                && !constructotDeclarationSyntax.ParameterList.OpenParenToken.IsMissing
+                && !constructotDeclarationSyntax.Identifier.IsMissing)
+            {
+                CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(context, constructotDeclarationSyntax.ParameterList.OpenParenToken, constructotDeclarationSyntax.Identifier);
+            }
         }
 
         private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
             var methodDeclaration = (MethodDeclarationSyntax)context.Node;
-            HandleBaseMethodDeclaration(context, methodDeclaration);
-        }
-
-        private static void HandleBaseMethodDeclaration(SyntaxNodeAnalysisContext context, BaseMethodDeclarationSyntax baseMethodDeclarationSyntax)
-        {
-            var identifierTokens =
-                baseMethodDeclarationSyntax.ChildTokens()
-                    .Where(t => t.IsKind(SyntaxKind.IdentifierToken))
-                    .ToList();
-            var parameterListSyntax = baseMethodDeclarationSyntax.ParameterList;
-
-            if (identifierTokens.Any() && parameterListSyntax != null)
+            if (methodDeclaration.ParameterList != null
+                && !methodDeclaration.ParameterList.OpenParenToken.IsMissing
+                && !methodDeclaration.Identifier.IsMissing)
             {
-                var identifierToken = identifierTokens.First();
-                var openParenToken =
-                    parameterListSyntax.OpenParenToken;
-
-                if (!openParenToken.IsMissing)
-                {
-                    CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(context, openParenToken, identifierToken);
-                }
+                CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(context, methodDeclaration.ParameterList.OpenParenToken, methodDeclaration.Identifier);
             }
         }
 
