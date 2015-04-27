@@ -936,20 +936,8 @@ public class TestClass : TestInterface
             // We don't care about the syntax errors.
             var expected = new[]
             {
-                 new DiagnosticResult
-                 {
-                     Id = "CS1585",
-                     Message = "Member modifier 'public' must precede the member type and name",
-                     Severity = DiagnosticSeverity.Error,
-                     Locations = new[] { new DiagnosticResultLocation("Test0.cs", 5, 5) }
-                 },
-                 new DiagnosticResult
-                 {
-                     Id = "CS1519",
-                     Message = "Invalid token '}' in class, struct, or interface member declaration",
-                     Severity = DiagnosticSeverity.Error,
-                     Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 1) }
-                 }
+                this.CSharpCompilerError("CS1585", "Member modifier 'public' must precede the member type and name").WithLocation(5, 5),
+                this.CSharpCompilerError("CS1519", "Invalid token '}' in class, struct, or interface member declaration").WithLocation(6, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -971,22 +959,10 @@ public class TestClass : TestInterface
 ";
 
             // We don't care about the syntax errors.
-            var expected = new[]
+            DiagnosticResult[] expected =
             {
-                 new DiagnosticResult
-                 {
-                     Id = "CS1585",
-                     Message = "Member modifier 'public' must precede the member type and name",
-                     Severity = DiagnosticSeverity.Error,
-                     Locations = new[] { new DiagnosticResultLocation("Test0.cs", 5, 5) }
-                 },
-                 new DiagnosticResult
-                 {
-                     Id = "CS1519",
-                     Message = "Invalid token '}' in class, struct, or interface member declaration",
-                     Severity = DiagnosticSeverity.Error,
-                     Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 1) }
-                 }
+                this.CSharpCompilerError("CS1585", "Member modifier 'public' must precede the member type and name").WithLocation(5, 5),
+                this.CSharpCompilerError("CS1519", "Invalid token '}' in class, struct, or interface member declaration").WithLocation(6, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

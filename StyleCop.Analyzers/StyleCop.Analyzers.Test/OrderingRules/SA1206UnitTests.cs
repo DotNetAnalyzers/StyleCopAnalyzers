@@ -191,12 +191,9 @@ public class ExtendedClass : TestClass
     new public string
 }";
 
-            var expected = new DiagnosticResult
+            DiagnosticResult[] expected =
             {
-                Id = "CS1519",
-                Message = "Invalid token '}' in class, struct, or interface member declaration",
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 4, 1) }
+                this.CSharpCompilerError("CS1519", "Invalid token '}' in class, struct, or interface member declaration").WithLocation(4, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
