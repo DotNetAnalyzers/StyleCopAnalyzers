@@ -275,6 +275,31 @@ class Foo
         }
 
         [Fact]
+        public async Task TestGenericTypeConstructorCall()
+        {
+            var testCode = @"
+class Foo<T>
+{
+    Foo(System.Func<int> i) 
+    {    
+    }
+
+    int GetInt(string s)
+    {
+        return 1;
+    }
+
+    public void Bar()
+    {
+        var f = new Foo<string>(
+                () => GetInt(null));
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestIndexerDeclarationOpeningBracketInTheNextLine()
         {
             var testCode = @"

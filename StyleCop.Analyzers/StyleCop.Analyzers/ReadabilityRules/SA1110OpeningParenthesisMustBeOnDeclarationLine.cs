@@ -216,26 +216,39 @@
         private void HandleObjectCreationExpression(SyntaxNodeAnalysisContext context)
         {
             var objectCreation = (ObjectCreationExpressionSyntax) context.Node;
-            var qualifiedNameSyntax = objectCreation.ChildNodes().OfType<QualifiedNameSyntax>().FirstOrDefault();
-            IdentifierNameSyntax identifierNameSyntax = null;
-            if (qualifiedNameSyntax != null)
+            var identifier = this.GetIdentifier(objectCreation);
+
+            if (!identifier.HasValue
+                || identifier.Value.IsMissing)
             {
-                identifierNameSyntax = qualifiedNameSyntax.DescendantNodes().OfType<IdentifierNameSyntax>().LastOrDefault();
-            }
-            else
-            {
-                identifierNameSyntax = objectCreation.DescendantNodes().OfType<IdentifierNameSyntax>().FirstOrDefault();
+                return;
             }
 
-            if (identifierNameSyntax != null)
+            if (objectCreation.ArgumentList != null
+                && !objectCreation.ArgumentList.OpenParenToken.IsMissing)
             {
-                if (objectCreation.ArgumentList != null &&
-                    !objectCreation.ArgumentList.OpenParenToken.IsMissing &&
-                    !identifierNameSyntax.Identifier.IsMissing)
-                {
-                    CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(context,
-                        objectCreation.ArgumentList.OpenParenToken, identifierNameSyntax.Identifier);
-                }
+                CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(context, objectCreation.ArgumentList.OpenParenToken, identifier.Value);
+            }
+        }
+
+        private SyntaxToken? GetIdentifier(ObjectCreationExpressionSyntax objectCreationExpressionSyntax)
+        {
+            switch (objectCreationExpressionSyntax.Type.Kind())
+            {
+                case SyntaxKind.QualifiedName:
+                    var qualifiedNameSyntax = (QualifiedNameSyntax) objectCreationExpressionSyntax.Type;
+                    var identifierNameSyntax = qualifiedNameSyntax.DescendantNodes().OfType<IdentifierNameSyntax>().LastOrDefault();
+                    return identifierNameSyntax?.Identifier;
+
+                case SyntaxKind.IdentifierName:
+                    return ((IdentifierNameSyntax)objectCreationExpressionSyntax.Type).Identifier;
+
+                case SyntaxKind.GenericName:
+                    return ((GenericNameSyntax) objectCreationExpressionSyntax.Type).Identifier;
+
+                default:
+                    return null;
+
             }
         }
 
@@ -260,13 +273,13 @@
 
         private void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var constructotDeclarationSyntax = (ConstructorDeclarationSyntax) context.Node;
+            var constructotDeclarationSyntax = (ConstructorDeclarationSyntax)context.Node;
             HandleBaseMethodDeclaration(context, constructotDeclarationSyntax);
         }
 
         private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var methodDeclaration = (MethodDeclarationSyntax) context.Node;
+            var methodDeclaration = (MethodDeclarationSyntax)context.Node;
             HandleBaseMethodDeclaration(context, methodDeclaration);
         }
 
