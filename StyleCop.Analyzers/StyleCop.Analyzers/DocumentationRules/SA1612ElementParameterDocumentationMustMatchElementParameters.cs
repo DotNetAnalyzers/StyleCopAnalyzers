@@ -98,7 +98,7 @@
         /// <param name="parameterName">The parameter name that should be checked</param>
         /// <returns>
         /// true, if one parent is a <see cref="BaseMethodDeclarationSyntax"/>, <see cref="IndexerDeclarationSyntax"/> or a <see cref="DelegateDeclarationSyntax"/> with a parameter called <paramref name="parameterName"/>.
-        /// true, if one parent is a <see cref="BaseMethodDeclarationSyntax"/>, <see cref="IndexerDeclarationSyntax"/> or a <see cref="DelegateDeclarationSyntax"/> with a parameter called <paramref name="parameterName"/>.
+        /// false, if one parent is a <see cref="BaseMethodDeclarationSyntax"/>, <see cref="IndexerDeclarationSyntax"/> or a <see cref="DelegateDeclarationSyntax"/> without a parameter called <paramref name="parameterName"/>.
         /// null if no parent could be found or invalid syntax is detected.
         /// </returns>
         private static bool? ParentElementHasParameter(SyntaxNode node, string parameterName)
