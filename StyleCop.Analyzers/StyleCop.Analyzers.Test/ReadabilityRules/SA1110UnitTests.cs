@@ -156,6 +156,26 @@ class Foo
         }
 
         [Fact]
+        public async Task TestGenericMethodCall()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Fun<T>(T param)
+    {
+    }
+
+    public void Bar()
+    {
+        var f = new Foo();
+        f.Fun<string>(null);
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestStaticMethodCallOpeningBracketInTheNextLine()
         {
             var testCode = @"
