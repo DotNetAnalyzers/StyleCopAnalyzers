@@ -64,7 +64,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleEventDeclaration, SyntaxKind.EventDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleEventDeclaration, SyntaxKind.EventDeclaration);
         }
 
         private void HandleEventDeclaration(SyntaxNodeAnalysisContext context)
@@ -72,7 +72,9 @@
             var eventDeclaration = (EventDeclarationSyntax) context.Node;
 
             if (eventDeclaration?.AccessorList == null)
+            {
                 return;
+            }
 
             var accessors = eventDeclaration.AccessorList.Accessors;
             if (eventDeclaration.AccessorList.IsMissing ||

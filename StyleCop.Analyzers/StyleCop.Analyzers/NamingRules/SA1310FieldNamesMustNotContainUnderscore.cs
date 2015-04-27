@@ -53,7 +53,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleFieldDeclarationSyntax, SyntaxKind.FieldDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleFieldDeclarationSyntax, SyntaxKind.FieldDeclaration);
         }
 
         private void HandleFieldDeclarationSyntax(SyntaxNodeAnalysisContext context)
@@ -98,7 +98,8 @@
                     {
                     case 'm':
                     case 's':
-                        // m_ or s_ prefixes are reported as SA1308
+                    case 't':
+                        // m_, s_, and t_ prefixes are reported as SA1308
                         continue;
 
                     default:

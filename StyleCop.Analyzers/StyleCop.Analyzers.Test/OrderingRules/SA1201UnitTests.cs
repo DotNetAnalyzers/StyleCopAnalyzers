@@ -67,6 +67,8 @@ public struct FooStruct { }
     public interface ITest { }
     public string TestProperty { get; set; }
     public string this[string arg] { get { return ""foo""; } set { } }
+    public static explicit operator bool(OuterType t1) { return t1.TestField != null; }
+    public static OuterType operator +(OuterType t1, OuterType t2) { return t1; }
     public void TestMethod () { }
     public struct TestStruct { }
     public class TestClass { }
@@ -89,6 +91,8 @@ public struct FooStruct { }
     public interface ITest { }
     public string TestProperty { get; set; }
     public string this[string arg] { get { return ""foo""; } set { } }
+    public static explicit operator bool(OuterType t1) { return t1.TestField != null; }
+    public static OuterType operator +(OuterType t1, OuterType t2) { return t1; }
     public void TestMethod () { }
     public struct TestStruct { }
     public class TestClass { }
@@ -125,6 +129,8 @@ public struct FooStruct { }
     public delegate void TestDelegate();
     public event TestDelegate TestEvent { add { } remove { } }
     public enum TestEnum { }
+    public static OuterType operator +(OuterType t1, OuterType t2) { return t1; }
+    public static explicit operator bool(OuterType t1) { return t1.TestField != null; }
     public string TestProperty { get; set; }
     public struct TestStruct { }
     public void TestMethod () { }
@@ -136,8 +142,10 @@ public struct FooStruct { }
             {
                 this.CSharpDiagnostic().WithLocation(5, 12).WithArguments("constructor", "destructor"),
                 this.CSharpDiagnostic().WithLocation(7, 26).WithArguments("delegate", "interface"),
-                this.CSharpDiagnostic().WithLocation(12, 17).WithArguments("method", "struct"),
-                this.CSharpDiagnostic().WithLocation(13, 19).WithArguments("indexer", "method")
+                this.CSharpDiagnostic().WithLocation(11, 5).WithArguments("conversion", "operator"),
+                this.CSharpDiagnostic().WithLocation(12, 19).WithArguments("property", "conversion"),
+                this.CSharpDiagnostic().WithLocation(14, 17).WithArguments("method", "struct"),
+                this.CSharpDiagnostic().WithLocation(15, 19).WithArguments("indexer", "method")
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
@@ -154,6 +162,8 @@ public struct FooStruct { }
     public delegate void TestDelegate();
     public event TestDelegate TestEvent { add { } remove { } }
     public enum TestEnum { }
+    public static OuterType operator +(OuterType t1, OuterType t2) { return t1; }
+    public static explicit operator bool(OuterType t1) { return t1.TestField != null; }
     public string TestProperty { get; set; }
     public struct TestStruct { }
     public void TestMethod () { }
@@ -164,8 +174,10 @@ public struct FooStruct { }
             var expected = new[]
             {
                 this.CSharpDiagnostic().WithLocation(6, 26).WithArguments("delegate", "interface"),
-                this.CSharpDiagnostic().WithLocation(11, 17).WithArguments("method", "struct"),
-                this.CSharpDiagnostic().WithLocation(12, 19).WithArguments("indexer", "method")
+                this.CSharpDiagnostic().WithLocation(10, 5).WithArguments("conversion", "operator"),
+                this.CSharpDiagnostic().WithLocation(11, 19).WithArguments("property", "conversion"),
+                this.CSharpDiagnostic().WithLocation(13, 17).WithArguments("method", "struct"),
+                this.CSharpDiagnostic().WithLocation(14, 19).WithArguments("indexer", "method")
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);

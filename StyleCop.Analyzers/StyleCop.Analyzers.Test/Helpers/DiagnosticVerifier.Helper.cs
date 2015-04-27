@@ -30,8 +30,6 @@ namespace TestHelper
         private static readonly string VisualBasicDefaultFilePath = DefaultFilePathPrefix + 0 + "." + VisualBasicDefaultExt;
         private static readonly string TestProjectName = "TestProject";
 
-        #region  Get Diagnostics
-
         /// <summary>
         /// Given classes in the form of strings, their language, and an <see cref="DiagnosticAnalyzer"/> to apply to
         /// it, return the <see cref="Diagnostic"/>s found in the string after converting it to a
@@ -110,9 +108,6 @@ namespace TestHelper
             return diagnostics.OrderBy(d => d.Location.SourceSpan.Start).ToArray();
         }
 
-        #endregion
-
-        #region Set up compilation and documents
         /// <summary>
         /// Given an array of strings as sources and a language, turn them into a <see cref="Project"/> and return the
         /// documents and spans of it.
@@ -192,9 +187,6 @@ namespace TestHelper
 
             return solution.GetProject(projectId);
         }
-        #endregion
-
-        #region Generate expected results
 
         protected DiagnosticResult CSharpDiagnostic(string diagnosticId = null)
         {
@@ -209,7 +201,5 @@ namespace TestHelper
                 return new DiagnosticResult(supportedDiagnostics.Single(i => i.Id == diagnosticId));
             }
         }
-
-        #endregion
     }
 }

@@ -56,11 +56,11 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Declare accessibility", token => GetTransformedDocument(context.Document, root, declarationNode)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Declare accessibility", token => GetTransformedDocumentAsync(context.Document, root, declarationNode)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxNode declarationNode)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxNode declarationNode)
         {
             SyntaxNode updatedDeclarationNode;
             switch (declarationNode.Kind())

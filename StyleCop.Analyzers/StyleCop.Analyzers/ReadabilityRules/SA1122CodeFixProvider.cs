@@ -21,21 +21,21 @@
     [Shared]
     public class SA1122CodeFixProvider : CodeFixProvider
     {
+        private static readonly SyntaxNode StringEmptyExpression;
+
         private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1122UseStringEmptyForEmptyStrings.DiagnosticId);
 
-        /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
-
-        private static readonly SyntaxNode StringEmptyExpression;
-        
         static SA1122CodeFixProvider()
         {
-            var identifierNameSyntax = SyntaxFactory.IdentifierName(nameof(String.Empty));
+            var identifierNameSyntax = SyntaxFactory.IdentifierName(nameof(string.Empty));
             var stringKeyword = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.StringKeyword));
             StringEmptyExpression = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, stringKeyword, identifierNameSyntax)
                 .WithoutFormatting();
         }
+
+        /// <inheritdoc/>
+        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -46,7 +46,7 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync().ConfigureAwait(false);
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1122UseStringEmptyForEmptyStrings.DiagnosticId))
@@ -57,12 +57,12 @@
                 var node = root?.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
                 if (node != null && node.IsKind(SyntaxKind.StringLiteralExpression))
                 {
-                    context.RegisterCodeFix(CodeAction.Create($"Replace with string.Empty", token => GetTransformedDocument(context.Document, root, node)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create($"Replace with string.Empty", token => GetTransformedDocumentAsync(context.Document, root, node)), diagnostic);
                 }
             }
         }
 
-        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxNode node)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxNode node)
         {
             var newSyntaxRoot = root.ReplaceNode(node, StringEmptyExpression.WithTriviaFrom(node));
             return Task.FromResult(document.WithSyntaxRoot(newSyntaxRoot));

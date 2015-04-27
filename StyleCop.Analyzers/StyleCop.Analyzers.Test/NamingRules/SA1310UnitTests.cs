@@ -48,6 +48,20 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
+        [Theory]
+        [InlineData("m_")]
+        [InlineData("s_")]
+        [InlineData("t_")]
+        public async Task TestFieldStartingWithSpecialPrefix(string prefix)
+        {
+            var testCode = $@"public class ClassName
+{{
+    public string {prefix}nameBar = ""baz"";
+}}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
         [Fact]
         public async Task TestFieldWithUnderscorePlacedInsideNativeMethodsClass()
         {

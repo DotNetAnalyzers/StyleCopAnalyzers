@@ -1,7 +1,10 @@
 ﻿namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Immutable;
+    using Helpers;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -26,13 +29,13 @@
         /// </summary>
         public const string DiagnosticId = "SA1616";
         private const string Title = "Element return value documentation must have text";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "Element return value documentation must have text";
         private const string Category = "StyleCop.CSharp.DocumentationRules";
         private const string Description = "The <returns> tag within a C# element's documentation header is empty.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1616.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -49,7 +52,31 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleXmlElement, SyntaxKind.XmlElement);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleXmlEmptyElement, SyntaxKind.XmlEmptyElement);
+        }
+
+        private void HandleXmlElement(SyntaxNodeAnalysisContext context)
+        {
+            XmlElementSyntax emptyElement = context.Node as XmlElementSyntax;
+
+            var name = emptyElement?.StartTag?.Name;
+
+            if (string.Equals(name.ToString(), XmlCommentHelper.ReturnsXmlTag) && XmlCommentHelper.IsConsideredEmpty(emptyElement))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, emptyElement.GetLocation()));
+            }
+        }
+
+        private void HandleXmlEmptyElement(SyntaxNodeAnalysisContext context)
+        {
+            XmlEmptyElementSyntax emptyElement = context.Node as XmlEmptyElementSyntax;
+
+            if (string.Equals(emptyElement?.Name.ToString(), XmlCommentHelper.ReturnsXmlTag))
+            {
+                // <returns .../> is empty.
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, emptyElement.GetLocation()));
+            }
         }
     }
 }

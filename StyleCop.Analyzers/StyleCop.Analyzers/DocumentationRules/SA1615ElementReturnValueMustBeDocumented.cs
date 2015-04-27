@@ -2,7 +2,10 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A C# element is missing documentation for its return value.
@@ -25,13 +28,13 @@
         /// </summary>
         public const string DiagnosticId = "SA1615";
         private const string Title = "Element return value must be documented";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "Element return value must be documented";
         private const string Category = "StyleCop.CSharp.DocumentationRules";
         private const string Description = "A C# element is missing documentation for its return value.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1615.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -48,7 +51,51 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
+        }
+
+        private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var node = context.Node as MethodDeclarationSyntax;
+
+            this.HandleDeclaration(context, node.ReturnType);
+        }
+
+        private void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var node = context.Node as DelegateDeclarationSyntax;
+
+            this.HandleDeclaration(context, node.ReturnType);
+        }
+
+        private void HandleDeclaration(SyntaxNodeAnalysisContext context, TypeSyntax returnType)
+        {
+            var predefinedType = returnType as PredefinedTypeSyntax;
+
+            if (predefinedType != null && predefinedType.Keyword.IsKind(SyntaxKind.VoidKeyword))
+            {
+                // There is no return value
+                return;
+            }
+
+            var documentationStructure = XmlCommentHelper.GetDocumentationStructure(context.Node);
+
+            if (documentationStructure == null)
+            {
+                return;
+            }
+
+            if (XmlCommentHelper.GetTopLevelElement(documentationStructure, XmlCommentHelper.InheritdocXmlTag) != null)
+            {
+                // Don't report if the documentation is inherited.
+                return;
+            }
+
+            if (XmlCommentHelper.GetTopLevelElement(documentationStructure, XmlCommentHelper.ReturnsXmlTag) == null)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, returnType.GetLocation()));
+            }
         }
     }
 }

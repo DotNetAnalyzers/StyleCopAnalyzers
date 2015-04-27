@@ -63,7 +63,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(this.HandleSyntaxTreeAction);
+            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTreeAction);
         }
 
         private void HandleSyntaxTreeAction(SyntaxTreeAnalysisContext context)
@@ -146,6 +146,15 @@
                      this.IsPartOf<AnonymousObjectCreationExpressionSyntax>(token)))
                 {
                     // the close brace is part of an initializer statement.
+                    return;
+                }
+
+                if (nextToken.IsKind(SyntaxKind.AddKeyword)
+                    || nextToken.IsKind(SyntaxKind.RemoveKeyword)
+                    || nextToken.IsKind(SyntaxKind.GetKeyword)
+                    || nextToken.IsKind(SyntaxKind.SetKeyword))
+                {
+                    // the close brace is followed by an accessor (SA1516 will handle that)
                     return;
                 }
 

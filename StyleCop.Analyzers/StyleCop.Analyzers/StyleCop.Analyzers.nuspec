@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0"?>
 <package>
-  <metadata>
+  <metadata minClientVersion="2.7">
     <id>StyleCop.Analyzers</id>
     <version>0.0.0</version>
     <title>StyleCop.Analyzers</title>
@@ -13,6 +13,7 @@
     <releaseNotes>https://github.com/DotNetAnalyzers/StyleCopAnalyzers/releases/$version$</releaseNotes>
     <copyright>Copyright Sam Harwell 2015</copyright>
     <tags>StyleCop DotNetAnalyzers Roslyn Diagnostic Analyzer</tags>
+    <developmentDependency>true</developmentDependency>
   </metadata>
   <files>
 

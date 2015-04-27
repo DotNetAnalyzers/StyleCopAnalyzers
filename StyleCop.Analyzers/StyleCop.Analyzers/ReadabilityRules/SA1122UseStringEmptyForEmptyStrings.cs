@@ -55,7 +55,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleStringLiteral, SyntaxKind.StringLiteralExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleStringLiteral, SyntaxKind.StringLiteralExpression);
         }
 
         private void HandleStringLiteral(SyntaxNodeAnalysisContext context)
@@ -99,7 +99,7 @@
                 }
 
                 VariableDeclaratorSyntax variableDeclaratorSyntax = equalsValueClause.Parent as VariableDeclaratorSyntax;
-                VariableDeclarationSyntax variableDeclarationSyntax = variableDeclaratorSyntax.Parent as VariableDeclarationSyntax;
+                VariableDeclarationSyntax variableDeclarationSyntax = variableDeclaratorSyntax?.Parent as VariableDeclarationSyntax;
                 if (variableDeclaratorSyntax == null || variableDeclarationSyntax == null)
                 {
                     return false;

@@ -64,13 +64,13 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Replace with built-in type", token => GetTransformedDocument(context.Document, diagnostic, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Replace with built-in type", token => GetTransformedDocumentAsync(context.Document, diagnostic, token)), diagnostic);
             }
 
             return Task.FromResult(true);
         }
 
-        private static async Task<Document> GetTransformedDocument(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);

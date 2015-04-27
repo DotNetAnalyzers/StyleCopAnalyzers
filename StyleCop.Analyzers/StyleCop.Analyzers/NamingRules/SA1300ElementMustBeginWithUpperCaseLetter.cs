@@ -58,15 +58,15 @@
             // Note: Interfaces are handled by SA1302
             // Note: Fields are handled by SA1303 through SA1311
 
-            context.RegisterSyntaxNodeAction(this.HandleNamespaceDeclarationSyntax, SyntaxKind.NamespaceDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleClassDeclarationSyntax, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleEnumDeclarationSyntax, SyntaxKind.EnumDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleStructDeclarationSyntax, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleDelegateDeclarationSyntax, SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleEventDeclarationSyntax, SyntaxKind.EventDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleEventFieldDeclarationSyntax, SyntaxKind.EventFieldDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleMethodDeclarationSyntax, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandlePropertyDeclarationSyntax, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleNamespaceDeclarationSyntax, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleClassDeclarationSyntax, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleEnumDeclarationSyntax, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleStructDeclarationSyntax, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDelegateDeclarationSyntax, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleEventDeclarationSyntax, SyntaxKind.EventDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleEventFieldDeclarationSyntax, SyntaxKind.EventFieldDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMethodDeclarationSyntax, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandlePropertyDeclarationSyntax, SyntaxKind.PropertyDeclaration);
         }
 
         private void HandleNamespaceDeclarationSyntax(SyntaxNodeAnalysisContext context)
@@ -167,12 +167,13 @@
                 return;
             }
 
-            // This code uses char.IsLower(...) instead of !char.IsUpper(...) for all of the following reasons:
-            //  1. Foreign languages may not have upper case variants for certain characters
-            //  2. This diagnostic appears targeted for "English" identifiers.
-            //
-            // See DotNetAnalyzers/StyleCopAnalyzers#369 for additional information:
-            // https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/369
+            /* This code uses char.IsLower(...) instead of !char.IsUpper(...) for all of the following reasons:
+             *  1. Foreign languages may not have upper case variants for certain characters
+             *  2. This diagnostic appears targeted for "English" identifiers.
+             *
+             * See DotNetAnalyzers/StyleCopAnalyzers#369 for additional information:
+             * https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/369
+             */
             if (!char.IsLower(identifier.ValueText[0]) && identifier.ValueText[0] != '_')
             {
                 return;

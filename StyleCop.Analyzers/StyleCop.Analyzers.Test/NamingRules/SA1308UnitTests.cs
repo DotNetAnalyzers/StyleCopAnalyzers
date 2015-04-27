@@ -10,14 +10,14 @@
 
     public class SA1308UnitTests : CodeFixVerifier
     {
+        private readonly string[] modifiers = new[] { "public", "private", "protected", "public readonly", "internal readonly", "public static", "private static" };
+
         [Fact]
         public async Task TestEmptySource()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
-
-        private readonly string[] modifiers = new[] { "public", "private", "protected", "public readonly", "internal readonly", "public static", "private static" };
 
         [Fact]
         public async Task TestFieldStartingWithPrefixesToTriggerDiagnostic()
@@ -26,8 +26,10 @@
             {
                 await this.TestFieldSpecifyingModifierAndPrefix(modifier, "m_", "m_");
                 await this.TestFieldSpecifyingModifierAndPrefix(modifier, "s_", "s_");
+                await this.TestFieldSpecifyingModifierAndPrefix(modifier, "t_", "t_");
                 await this.TestFieldSpecifyingModifierAndPrefix(modifier, "m\\u005F", "m_");
                 await this.TestFieldSpecifyingModifierAndPrefix(modifier, "s\\u005F", "s_");
+                await this.TestFieldSpecifyingModifierAndPrefix(modifier, "t\\u005F", "t_");
             }
         }
 
@@ -92,6 +94,7 @@ string m_bar = ""baz"";
         /// <summary>
         /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#627.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/627">#627: Code Fixes For Naming
         /// Rules SA1308 and SA1309 Do Not Always Fix The Name Entirely</seealso>
         [Fact]
@@ -116,6 +119,7 @@ string m_bar = ""baz"";
         /// <summary>
         /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#627.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/627">#627: Code Fixes For Naming
         /// Rules SA1308 and SA1309 Do Not Always Fix The Name Entirely</seealso>
         [Fact]
@@ -123,18 +127,19 @@ string m_bar = ""baz"";
         {
             var testCode = @"public class Foo
 {
-    private string m_s_bar = ""baz"";
+    private string m_t_s_bar = ""baz"";
 }";
 
             DiagnosticResult expected =
                 this.CSharpDiagnostic()
-                .WithArguments("m_s_bar", "m_")
+                .WithArguments("m_t_s_bar", "m_")
                 .WithLocation(3, 20);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
 
             var fixedCode = testCode.Replace("m_", string.Empty);
             fixedCode = fixedCode.Replace("s_", string.Empty);
+            fixedCode = fixedCode.Replace("t_", string.Empty);
 
             await this.VerifyCSharpFixAsync(testCode, fixedCode);
         }

@@ -19,11 +19,11 @@
             switch (fixAllContext.Scope)
             {
             case FixAllScope.Document:
-                var newRoot = await this.FixAllInDocumentAsync(fixAllContext, fixAllContext.Document);
+                var newRoot = await this.FixAllInDocumentAsync(fixAllContext, fixAllContext.Document).ConfigureAwait(false);
                 return CodeAction.Create("Add parentheses", token => Task.FromResult(fixAllContext.Document.WithSyntaxRoot(newRoot)));
 
             case FixAllScope.Project:
-                Solution solution = await this.GetProjectFixesAsync(fixAllContext, fixAllContext.Project);
+                Solution solution = await this.GetProjectFixesAsync(fixAllContext, fixAllContext.Project).ConfigureAwait(false);
                 return CodeAction.Create("Add parentheses", token => Task.FromResult(solution));
 
             case FixAllScope.Solution:
@@ -31,7 +31,7 @@
                 var projectIds = newSolution.ProjectIds;
                 for (int i = 0; i < projectIds.Count; i++)
                 {
-                    newSolution = await this.GetProjectFixesAsync(fixAllContext, newSolution.GetProject(projectIds[i]));
+                    newSolution = await this.GetProjectFixesAsync(fixAllContext, newSolution.GetProject(projectIds[i])).ConfigureAwait(false);
                 }
 
                 return CodeAction.Create("Add parentheses", token => Task.FromResult(newSolution));
@@ -54,7 +54,7 @@
 
             for (int i = 0; i < oldDocuments.Length; i++)
             {
-                var newDocumentRoot = await newDocuments[i];
+                var newDocumentRoot = await newDocuments[i].ConfigureAwait(false);
                 solution = solution.WithDocumentSyntaxRoot(oldDocuments[i].Id, newDocumentRoot);
             }
 
@@ -63,7 +63,7 @@
 
         private async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
         {
-            var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document);
+            var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
 
             var newDocument = document;
 

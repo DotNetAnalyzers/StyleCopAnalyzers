@@ -72,14 +72,16 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleSingleLineDocumentationTrivia, SyntaxKind.SingleLineDocumentationCommentTrivia);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleSingleLineDocumentationTrivia, SyntaxKind.SingleLineDocumentationCommentTrivia);
         }
 
         private void HandleSingleLineDocumentationTrivia(SyntaxNodeAnalysisContext context)
         {
             var node = context.Node as DocumentationCommentTriviaSyntax;
             if (node == null)
+            {
                 return;
+            }
 
             // Check if the comment is not multi line
             if (node.Content.All(x => x.IsKind(SyntaxKind.XmlText)))

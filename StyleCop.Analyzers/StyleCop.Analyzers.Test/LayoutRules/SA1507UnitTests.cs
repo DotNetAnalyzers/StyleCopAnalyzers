@@ -55,6 +55,7 @@
         /// <summary>
         /// Verifies that the analyzer will properly handle an empty source.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestEmptySource()
         {
@@ -66,6 +67,7 @@
         /// Verifies that empty lines at the start of the file do not trigger any diagnostics.
         /// (This will be handled by SA1517)
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestEmptyLinesAtStartOfFile()
         {
@@ -82,6 +84,7 @@ public class Foo
         /// Verifies that empty lines at the end of the file do not trigger any diagnostics.
         /// (This will be handled by SA1518)
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestEmptyLinesAtEndOfFile()
         {
@@ -95,10 +98,58 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
+        [Fact]
+        public async Task TestOneEmptyLineBetweenMultilineCommentAndFirstElement()
+        {
+            string testCode = @"/*
+*/
+
+namespace Microsoft
+{
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task TestOneEmptyLineBetweenSingleLineCommentAndFirstElement()
+        {
+            string testCode = @"//
+
+namespace Microsoft
+{
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task TestMultipleEmptyLinesBetweenMultilineCommentAndFirstElement()
+        {
+            string testCode = @"/*
+*/
+
+
+namespace Microsoft
+{
+}
+";
+
+            var expectedDiagnostics = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(3, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None);
+        }
+
         /// <summary>
         /// Verifies that a verbatim string literal does not trigger any diagnostics.
         /// (This will be handled by SA1518)
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestVerbatimStringLiteral()
         {
@@ -121,6 +172,7 @@ public class Foo
         /// <summary>
         /// Validate that all invalid multiple blank lines are reported.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestInvalidMultipleBlankLines()
         {
@@ -143,6 +195,7 @@ public class Foo
         /// <summary>
         /// Validate that the code fixes for all invalid multiple blank lines works properly.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestInvalidMultipleBlankLinesCodeFix()
         {
@@ -179,6 +232,29 @@ public class Foo
 ";
 
             await this.VerifyCSharpFixAsync(TestCode, fixedTestCode);
+        }
+
+        [Fact]
+        public async Task TestValidBlankLineInVariousPlaces()
+        {
+            string testCode = @"using System;
+
+class FooBar
+{
+    void Foo()
+    {
+    }
+
+    void Bar()
+    {
+        Foo();
+
+        Foo();
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         /// <inheritdoc/>

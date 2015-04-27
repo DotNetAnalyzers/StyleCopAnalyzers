@@ -17,17 +17,16 @@ namespace TestHelper
     {
         protected static DiagnosticResult[] EmptyDiagnosticResults { get; } = { };
 
-        #region To be implemented by Test classes
         /// <summary>
         /// Get the C# analyzer being tested - to be implemented in non-abstract class.
         /// </summary>
+        /// <returns>
+        /// A new instance of the C# analyzer being tested.
+        /// </returns>
         protected virtual DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return null;
         }
-        #endregion
-
-        #region Verifier wrappers
 
         /// <summary>
         /// Called to test a C# <see cref="DiagnosticAnalyzer"/> when applied on the single input source as a string.
@@ -39,6 +38,7 @@ namespace TestHelper
         /// <param name="expected">A <see cref="DiagnosticResult"/>s describing the <see cref="Diagnostic"/> that should
         /// be reported by the analyzer for the specified source.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
         {
             return this.VerifyCSharpDiagnosticAsync(source, new[] { expected }, cancellationToken);
@@ -54,6 +54,7 @@ namespace TestHelper
         /// <param name="expected">A collection of <see cref="DiagnosticResult"/>s describing the
         /// <see cref="Diagnostic"/>s that should be reported by the analyzer for the specified source.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
             return this.VerifyDiagnosticsAsync(new[] { source }, LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzer(), expected, cancellationToken);
@@ -70,6 +71,7 @@ namespace TestHelper
         /// <param name="expected">A collection of <see cref="DiagnosticResult"/>s describing the
         /// <see cref="Diagnostic"/>s that should be reported by the analyzer for the specified sources.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         protected Task VerifyCSharpDiagnosticAsync(string[] sources, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
             return this.VerifyDiagnosticsAsync(sources, LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzer(), expected, cancellationToken);
@@ -85,15 +87,13 @@ namespace TestHelper
         /// <param name="expected">A collection of <see cref="DiagnosticResult"/>s that should appear after the analyzer
         /// is run on the sources.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         private async Task VerifyDiagnosticsAsync(string[] sources, string language, DiagnosticAnalyzer analyzer, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
-            var diagnostics = await GetSortedDiagnosticsAsync(sources, language, analyzer, cancellationToken);
+            var diagnostics = await GetSortedDiagnosticsAsync(sources, language, analyzer, cancellationToken).ConfigureAwait(false);
             VerifyDiagnosticResults(diagnostics, analyzer, expected);
         }
 
-        #endregion
-
-        #region Actual comparisons and verifications
         /// <summary>
         /// Checks each of the actual <see cref="Diagnostic"/>s found and compares them with the corresponding
         /// <see cref="DiagnosticResult"/> in the array of expected results. <see cref="Diagnostic"/>s are considered
@@ -217,9 +217,7 @@ namespace TestHelper
                 }
             }
         }
-        #endregion
 
-        #region Formatting Diagnostics
         /// <summary>
         /// Helper method to format a <see cref="Diagnostic"/> into an easily readable string.
         /// </summary>
@@ -274,6 +272,5 @@ namespace TestHelper
 
             return builder.ToString();
         }
-        #endregion
     }
 }

@@ -57,14 +57,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleMemberAccessExpression, SyntaxKind.SimpleMemberAccessExpression);
-            context.RegisterSyntaxNodeAction(this.HandleIdentifierName, SyntaxKind.IdentifierName);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMemberAccessExpression, SyntaxKind.SimpleMemberAccessExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleIdentifierName, SyntaxKind.IdentifierName);
         }
 
         /// <summary>
         /// <see cref="SyntaxKind.SimpleMemberAccessExpression"/> is handled separately so only <c>X</c> is evaluated in
         /// the expression <c>X.Y.Z.A.B.C</c>.
         /// </summary>
+        /// <param name="context">The analysis context for a <see cref="SyntaxNode"/>.</param>
         private void HandleMemberAccessExpression(SyntaxNodeAnalysisContext context)
         {
             MemberAccessExpressionSyntax syntax = (MemberAccessExpressionSyntax)context.Node;
@@ -93,8 +94,9 @@
                 if (((AssignmentExpressionSyntax)context.Node.Parent).Left == context.Node
                     && (context.Node.Parent.Parent?.IsKind(SyntaxKind.ObjectInitializerExpression) ?? true))
                 {
-                    // Handle 'X' in:
-                    //   new TypeName() { X = 3 }
+                    /* Handle 'X' in:
+                     *   new TypeName() { X = 3 }
+                     */
                     return;
                 }
 

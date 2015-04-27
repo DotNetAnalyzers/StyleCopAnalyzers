@@ -55,31 +55,54 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Add standard text.", token => GetTransformedDocument(context.Document, root, node)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Add standard text.", token => GetTransformedDocumentAsync(context.Document, root, node)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, XmlElementSyntax node)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, XmlElementSyntax node)
         {
-            var classDeclaration = node.FirstAncestorOrSelf<ClassDeclarationSyntax>();
+            var typeDeclaration = node.FirstAncestorOrSelf<BaseTypeDeclarationSyntax>();
             var declarationSyntax = node.FirstAncestorOrSelf<BaseMethodDeclarationSyntax>();
+            bool isStruct = typeDeclaration.IsKind(SyntaxKind.StructDeclaration);
+
+            TypeParameterListSyntax typeParameterList;
+            ClassDeclarationSyntax classDeclaration = typeDeclaration as ClassDeclarationSyntax;
+            if (classDeclaration != null)
+            {
+                typeParameterList = classDeclaration.TypeParameterList;
+            }
+            else
+            {
+                typeParameterList = (typeDeclaration as StructDeclarationSyntax)?.TypeParameterList;
+            }
 
             ImmutableArray<string> standardText;
             if (declarationSyntax is ConstructorDeclarationSyntax)
             {
                 if (declarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword))
                 {
-                    standardText = SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.StaticConstructorStandardText;
-                }
-                else if (declarationSyntax.Modifiers.Any(SyntaxKind.PrivateKeyword))
-                {
-                    // Prefer to insert the "non-private" wording, even though both are considered acceptable by the
-                    // diagnostic. https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/413
-                    standardText = SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.NonPrivateConstructorStandardText;
+                    if (isStruct)
+                    {
+                        standardText = ImmutableArray.Create(SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.StaticConstructorStandardText, " struct.");
+                    }
+                    else
+                    {
+                        standardText = ImmutableArray.Create(SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.StaticConstructorStandardText, " class.");
+                    }
                 }
                 else
                 {
-                    standardText = SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.NonPrivateConstructorStandardText;
+                    // Prefer to insert the "non-private" wording for all constructors, even though both are considered
+                    // acceptable for private constructors by the diagnostic.
+                    // https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/413
+                    if (isStruct)
+                    {
+                        standardText = ImmutableArray.Create(SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.NonPrivateConstructorStandardText, " struct.");
+                    }
+                    else
+                    {
+                        standardText = ImmutableArray.Create(SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.NonPrivateConstructorStandardText, " class.");
+                    }
                 }
             }
             else if (declarationSyntax is DestructorDeclarationSyntax)
@@ -91,7 +114,7 @@
                 throw new InvalidOperationException("XmlElementSyntax has invalid method as its parent");
             }
 
-            var list = BuildStandardText(classDeclaration.Identifier, classDeclaration.TypeParameterList, standardText[0], standardText[1]);
+            var list = BuildStandardText(typeDeclaration.Identifier, typeParameterList, standardText[0], standardText[1]);
 
             var newContent = node.Content.InsertRange(0, list);
             var newNode = node.WithContent(newContent);

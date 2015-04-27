@@ -221,6 +221,7 @@
             {
                 return emptyElementSyntax.Attributes.OfType<T>().FirstOrDefault();
             }
+
             var elementSyntax = nodeSyntax as XmlElementSyntax;
 
             if (elementSyntax != null)
