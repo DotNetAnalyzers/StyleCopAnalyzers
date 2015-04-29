@@ -1,12 +1,15 @@
 ﻿namespace StyleCop.Analyzers.LayoutRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
+
 
     /// <summary>
     /// A closing curly bracket within a C# element, statement, or expression is not followed by a blank line.
@@ -66,204 +69,201 @@
             context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTreeAction);
         }
 
-        private void HandleSyntaxTreeAction(SyntaxTreeAnalysisContext context)
+        private async void HandleSyntaxTreeAction(SyntaxTreeAnalysisContext context)
         {
-            var syntaxRoot = context.Tree.GetRoot();
-            var closeBraceTokens = syntaxRoot.DescendantTokens(descendIntoTrivia: true).Where(token => token.IsKind(SyntaxKind.CloseBraceToken));
+            var syntaxRoot = await context.Tree.GetRootAsync(context.CancellationToken).ConfigureAwait(false);
 
-            foreach (var closeBraceToken in closeBraceTokens)
-            {
-                this.AnalyzeCloseBrace(context, closeBraceToken);
-            }
+            var visitor = new CurlyBracketsVisitor(context);
+            visitor.Visit(syntaxRoot);
         }
 
-        private void AnalyzeCloseBrace(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private class CurlyBracketsVisitor : CSharpSyntaxWalker
         {
-            var nextToken = token.GetNextToken(true, true);
+            private SyntaxTreeAnalysisContext context;
+            private Stack<SyntaxToken> curlyBracketsQueue = new Stack<SyntaxToken>();
 
-            if (nextToken.HasLeadingTrivia && this.HasLeadingBlankLine(nextToken.LeadingTrivia))
+            public CurlyBracketsVisitor(SyntaxTreeAnalysisContext context)
+                : base(SyntaxWalkerDepth.Token)
             {
-                // the close brace has a trailing blank line
-                return;
+                this.context = context;
             }
 
-            if (this.IsOnSameLineAsOpeningBrace(token))
+            public override void VisitToken(SyntaxToken token)
             {
-                // the close brace is on the same line as the corresponding opening token
-                return;
+                if (token.IsKind(SyntaxKind.OpenBraceToken))
+                {
+                    this.curlyBracketsQueue.Push(token);
+                }
+                else if (token.IsKind(SyntaxKind.CloseBraceToken))
+                {
+                    this.AnalyzeCloseBrace(token);
+
+                    this.curlyBracketsQueue.Pop();
+                }
+
+                base.VisitToken(token);
             }
 
-            if ((token.Parent is BlockSyntax) && (token.Parent.Parent is DoStatementSyntax))
+            private void AnalyzeCloseBrace(SyntaxToken token)
             {
-                // the close brace is part of do ... while statement
-                return;
-            }
+                var nextToken = token.GetNextToken(true, true);
 
-            // check if the next token is not preceded by significant trivia.
-            if (nextToken.LeadingTrivia.All(trivia => trivia.IsKind(SyntaxKind.WhitespaceTrivia)))
-            {
-                if (nextToken.IsKind(SyntaxKind.CloseBraceToken))
+                if (nextToken.HasLeadingTrivia && this.HasLeadingBlankLine(nextToken.LeadingTrivia))
                 {
-                    // the close brace is followed by another close brace on the next line
+                    // the close brace has a trailing blank line
                     return;
                 }
 
-                if (nextToken.IsKind(SyntaxKind.CatchKeyword) || nextToken.IsKind(SyntaxKind.FinallyKeyword))
+                if (this.IsOnSameLineAsOpeningBrace(token))
                 {
-                    // the close brace is followed by catch or finally statement
+                    // the close brace is on the same line as the corresponding opening token
                     return;
                 }
 
-                if (nextToken.IsKind(SyntaxKind.ElseKeyword))
+                if ((token.Parent is BlockSyntax) && (token.Parent.Parent is DoStatementSyntax))
                 {
-                    // the close brace is followed by else (no need to check for if -> the compiler will handle that)
+                    // the close brace is part of do ... while statement
                     return;
                 }
 
-                if (this.IsPartOf<QueryExpressionSyntax>(token) && ((nextToken.Parent is QueryClauseSyntax) || (nextToken.Parent is SelectOrGroupClauseSyntax)))
+                // check if the next token is not preceded by significant trivia.
+                if (nextToken.LeadingTrivia.All(trivia => trivia.IsKind(SyntaxKind.WhitespaceTrivia)))
                 {
-                    // the close brace is part of a query expression
-                    return;
-                }
-
-                if (this.IsPartOf<ArgumentListSyntax>(token))
-                {
-                    // the close brace is part of an object initializer, anonymous function or lambda expression within an argument list.
-                    return;
-                }
-
-                if (nextToken.IsKind(SyntaxKind.SemicolonToken) &&
-                    (this.IsPartOf<VariableDeclaratorSyntax>(token) || 
-                     this.IsPartOf<AssignmentExpressionSyntax>(token) ||
-                     this.IsPartOf<ReturnStatementSyntax>(token)))
-                {
-                    // the close brace is part of a variable initialization statement or a return statement
-                    return;
-                }
-
-                if (nextToken.IsKind(SyntaxKind.CommaToken) &&
-                    (this.IsPartOf<InitializerExpressionSyntax>(token) ||
-                     this.IsPartOf<AnonymousObjectCreationExpressionSyntax>(token)))
-                {
-                    // the close brace is part of an initializer statement.
-                    return;
-                }
-
-                if (nextToken.IsKind(SyntaxKind.AddKeyword)
-                    || nextToken.IsKind(SyntaxKind.RemoveKeyword)
-                    || nextToken.IsKind(SyntaxKind.GetKeyword)
-                    || nextToken.IsKind(SyntaxKind.SetKeyword))
-                {
-                    // the close brace is followed by an accessor (SA1516 will handle that)
-                    return;
-                }
-
-                if (nextToken.IsKind(SyntaxKind.EndOfFileToken))
-                {
-                    // this is the last close brace in the file
-                    return;
-                }
-            }
-
-            if (this.StartsWithDirectiveTrivia(nextToken.LeadingTrivia))
-            {
-                // the close brace is followed by directive trivia.
-                return;
-            }
-
-            var location = Location.Create(context.Tree, TextSpan.FromBounds(token.Span.End, nextToken.FullSpan.Start));
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
-        }
-
-        private bool HasLeadingBlankLine(SyntaxTriviaList triviaList)
-        {
-            foreach (var trivia in triviaList)
-            {
-                switch (trivia.Kind())
-                {
-                case SyntaxKind.WhitespaceTrivia:
-                    // ignore
-                    break;
-
-                case SyntaxKind.EndOfLineTrivia:
-                    return true;
-
-                default:
-                    return false;
-                }
-            }
-
-            return false;
-        }
-
-        private bool IsOnSameLineAsOpeningBrace(SyntaxToken token)
-        {
-            var depth = 1;
-
-            var currentToken = token.GetPreviousToken();
-            while (true)
-            {
-                switch (currentToken.Kind())
-                {
-                case SyntaxKind.None:
-                    // no more tokens
-                    return false;
-
-                case SyntaxKind.CloseBraceToken:
-                    depth++;
-                    break;
-
-                case SyntaxKind.OpenBraceToken:
-                    if (--depth == 0)
+                    if (nextToken.IsKind(SyntaxKind.CloseBraceToken))
                     {
-                        // found matching brace
-                        return currentToken.GetLocation().GetLineSpan().EndLinePosition.Line == token.GetLocation().GetLineSpan().StartLinePosition.Line;
+                        // the close brace is followed by another close brace on the next line
+                        return;
                     }
 
-                    break;
+                    if (nextToken.IsKind(SyntaxKind.CatchKeyword) || nextToken.IsKind(SyntaxKind.FinallyKeyword))
+                    {
+                        // the close brace is followed by catch or finally statement
+                        return;
+                    }
 
-                default:
-                    break;
+                    if (nextToken.IsKind(SyntaxKind.ElseKeyword))
+                    {
+                        // the close brace is followed by else (no need to check for if -> the compiler will handle that)
+                        return;
+                    }
+
+                    if (this.IsPartOf<QueryExpressionSyntax>(token) && ((nextToken.Parent is QueryClauseSyntax) || (nextToken.Parent is SelectOrGroupClauseSyntax)))
+                    {
+                        // the close brace is part of a query expression
+                        return;
+                    }
+
+                    if (this.IsPartOf<ArgumentListSyntax>(token))
+                    {
+                        // the close brace is part of an object initializer, anonymous function or lambda expression within an argument list.
+                        return;
+                    }
+
+                    if (nextToken.IsKind(SyntaxKind.SemicolonToken) &&
+                        (this.IsPartOf<VariableDeclaratorSyntax>(token) ||
+                         this.IsPartOf<AssignmentExpressionSyntax>(token) ||
+                         this.IsPartOf<ReturnStatementSyntax>(token)))
+                    {
+                        // the close brace is part of a variable initialization statement or a return statement
+                        return;
+                    }
+
+                    if (nextToken.IsKind(SyntaxKind.CommaToken) &&
+                        (this.IsPartOf<InitializerExpressionSyntax>(token) ||
+                         this.IsPartOf<AnonymousObjectCreationExpressionSyntax>(token)))
+                    {
+                        // the close brace is part of an initializer statement.
+                        return;
+                    }
+
+                    if (nextToken.IsKind(SyntaxKind.AddKeyword)
+                        || nextToken.IsKind(SyntaxKind.RemoveKeyword)
+                        || nextToken.IsKind(SyntaxKind.GetKeyword)
+                        || nextToken.IsKind(SyntaxKind.SetKeyword))
+                    {
+                        // the close brace is followed by an accessor (SA1516 will handle that)
+                        return;
+                    }
+
+                    if (nextToken.IsKind(SyntaxKind.EndOfFileToken))
+                    {
+                        // this is the last close brace in the file
+                        return;
+                    }
                 }
 
-                currentToken = currentToken.GetPreviousToken();
-            }
-        }
-
-        private bool StartsWithDirectiveTrivia(SyntaxTriviaList triviaList)
-        {
-            foreach (var trivia in triviaList)
-            {
-                switch (trivia.Kind())
+                if (this.StartsWithDirectiveTrivia(nextToken.LeadingTrivia))
                 {
-                case SyntaxKind.WhitespaceTrivia:
-                    // ignore
-                    break;
-
-                default:
-                    return trivia.IsDirective;
+                    // the close brace is followed by directive trivia.
+                    return;
                 }
+
+                var location = Location.Create(this.context.Tree, TextSpan.FromBounds(token.Span.End, nextToken.FullSpan.Start));
+                this.context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
             }
 
-            return false;
-        }
-
-        private bool IsQueryClause(SyntaxToken token)
-        {
-            return (token.Parent is FromClauseSyntax) ||
-                   (token.Parent is GroupClauseSyntax);
-        }
-
-        private bool IsPartOf<T>(SyntaxToken token)
-        {
-            var result = false;
-
-            for (var current = token.Parent; !result && (current != null); current = current.Parent)
+            private bool HasLeadingBlankLine(SyntaxTriviaList triviaList)
             {
-                result = current is T;
+                foreach (var trivia in triviaList)
+                {
+                    switch (trivia.Kind())
+                    {
+                        case SyntaxKind.WhitespaceTrivia:
+                            // ignore
+                            break;
+
+                        case SyntaxKind.EndOfLineTrivia:
+                            return true;
+
+                        default:
+                            return false;
+                    }
+                }
+
+                return false;
             }
 
-            return result;
+            private bool IsOnSameLineAsOpeningBrace(SyntaxToken closeBrace)
+            {
+                var matchingOpenBrace = this.curlyBracketsQueue.Peek();
+                return matchingOpenBrace.GetLocation().GetLineSpan().EndLinePosition.Line == closeBrace.GetLocation().GetLineSpan().StartLinePosition.Line;
+            }
+
+            private bool StartsWithDirectiveTrivia(SyntaxTriviaList triviaList)
+            {
+                foreach (var trivia in triviaList)
+                {
+                    switch (trivia.Kind())
+                    {
+                        case SyntaxKind.WhitespaceTrivia:
+                            // ignore
+                            break;
+
+                        default:
+                            return trivia.IsDirective;
+                    }
+                }
+
+                return false;
+            }
+
+            private bool IsQueryClause(SyntaxToken token)
+            {
+                return (token.Parent is FromClauseSyntax) ||
+                       (token.Parent is GroupClauseSyntax);
+            }
+
+            private bool IsPartOf<T>(SyntaxToken token)
+            {
+                var result = false;
+
+                for (var current = token.Parent; !result && (current != null); current = current.Parent)
+                {
+                    result = current is T;
+                }
+
+                return result;
+            }
         }
     }
 }
