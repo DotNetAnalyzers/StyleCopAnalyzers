@@ -9,8 +9,7 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
-
-
+    
     /// <summary>
     /// A closing curly bracket within a C# element, statement, or expression is not followed by a blank line.
     /// </summary>
@@ -69,9 +68,9 @@
             context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTreeAction);
         }
 
-        private async void HandleSyntaxTreeAction(SyntaxTreeAnalysisContext context)
+        private void HandleSyntaxTreeAction(SyntaxTreeAnalysisContext context)
         {
-            var syntaxRoot = await context.Tree.GetRootAsync(context.CancellationToken).ConfigureAwait(false);
+            var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
 
             var visitor = new CurlyBracketsVisitor(context);
             visitor.Visit(syntaxRoot);
