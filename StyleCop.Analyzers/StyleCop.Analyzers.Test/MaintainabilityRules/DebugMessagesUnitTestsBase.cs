@@ -340,6 +340,36 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestDifferentIdentifiers()
+        {
+            var testCode = @"using System.Diagnostics;
+using static System.Diagnostics.Debug;
+
+public class Foo
+{{
+    public void Bar()
+    {{
+        Debug.{0}({1}"""");
+        System.Diagnostics.Debug.{0}({1}"""");
+        Debug.{0}({1}"""");
+        global::System.Diagnostics.Debug.{0}({1}"""");
+        {0}({1}"""");
+    }}
+}}";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(8, 9),
+                this.CSharpDiagnostic().WithLocation(9, 9),
+                this.CSharpDiagnostic().WithLocation(10, 9),
+                this.CSharpDiagnostic().WithLocation(11, 9),
+                this.CSharpDiagnostic().WithLocation(12, 9)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(this.BuildTestCode(testCode), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected virtual string BuildTestCode(string format)
         {
             StringBuilder argumentList = new StringBuilder();

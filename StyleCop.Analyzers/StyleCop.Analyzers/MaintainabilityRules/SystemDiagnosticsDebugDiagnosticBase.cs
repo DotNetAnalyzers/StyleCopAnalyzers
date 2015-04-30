@@ -23,8 +23,9 @@
         {
             var invocationExpressionSyntax = context.Node as InvocationExpressionSyntax;
             var memberAccessExpressionSyntax = invocationExpressionSyntax?.Expression as MemberAccessExpressionSyntax;
-
-            if (memberAccessExpressionSyntax?.Name?.Identifier.ValueText == methodName)
+            var identifierNameSyntax = invocationExpressionSyntax?.Expression as IdentifierNameSyntax;
+            var name = memberAccessExpressionSyntax?.Name?.Identifier.ValueText ?? identifierNameSyntax?.Identifier.ValueText;
+            if (name == methodName)
             {
                 IMethodSymbol symbolInfo = context.SemanticModel.GetSymbolInfo(invocationExpressionSyntax).Symbol as IMethodSymbol;
 
