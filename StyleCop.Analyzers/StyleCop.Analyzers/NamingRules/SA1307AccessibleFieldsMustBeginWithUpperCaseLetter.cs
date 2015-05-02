@@ -61,6 +61,12 @@
             FieldDeclarationSyntax declaration = context.Node as FieldDeclarationSyntax;
             if (declaration != null && declaration.Declaration != null)
             {
+                if (declaration.Modifiers.Any(SyntaxKind.ConstKeyword) || declaration.Modifiers.Any(SyntaxKind.ReadOnlyKeyword))
+                {
+                    // These are reported as SA1303 or SA1304, respectively
+                    return;
+                }
+
                 if (declaration.Modifiers.Any(SyntaxKind.PublicKeyword) || declaration.Modifiers.Any(SyntaxKind.InternalKeyword))
                 {
                     foreach (VariableDeclaratorSyntax declarator in declaration.Declaration.Variables)
