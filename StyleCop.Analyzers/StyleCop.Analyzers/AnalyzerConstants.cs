@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers
 {
+    using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
 
     internal static class AnalyzerConstants
@@ -25,5 +26,7 @@
         /// to disable a diagnostic which is currently untested.
         /// </value>
         internal static bool DisabledNoTests { get; }
+
+        internal static Task CompletedTask { get; } = Task.FromResult(false);
     }
 }
