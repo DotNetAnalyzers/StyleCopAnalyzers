@@ -156,6 +156,26 @@ class Foo
         }
 
         [Fact]
+        public async Task TestGenericMethodCall()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Fun<T>(T param)
+    {
+    }
+
+    public void Bar()
+    {
+        var f = new Foo();
+        f.Fun<string>(null);
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestStaticMethodCallOpeningBracketInTheNextLine()
         {
             var testCode = @"
@@ -272,6 +292,31 @@ class Foo
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestGenericTypeConstructorCall()
+        {
+            var testCode = @"
+class Foo<T>
+{
+    Foo(System.Func<int> i) 
+    {    
+    }
+
+    int GetInt(string s)
+    {
+        return 1;
+    }
+
+    public void Bar()
+    {
+        var f = new Foo<string>(
+                () => GetInt(null));
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
