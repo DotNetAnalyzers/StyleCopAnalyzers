@@ -190,6 +190,7 @@
     <Compile Include="OrderingRules\SA1213EventAccessorsMustFollowOrder.cs" />
     <Compile Include="OrderingRules\SA1214StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements.cs" />
     <Compile Include="OrderingRules\SA1215InstanceReadonlyElementsMustAppearBeforeInstanceNonReadonlyElements.cs" />
+    <Compile Include="OrderingRules\SA1216UsingStaticDirectivesMustBePlacedAtCorrectLocation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReadabilityRules\RemoveRegionCodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1100CodeFixProvider.cs" />
