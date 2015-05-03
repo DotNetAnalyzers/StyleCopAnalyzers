@@ -68,6 +68,23 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Fact]
+        public async Task TestSuppressionWithEscapedIdentifierWithJustification()
+        {
+            var testCode = @"public class Foo
+{
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justific\u0061tion = """")]
+    public void Bar()
+    {
+
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 66);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestSuppressionWithWhitespaceJustification()
         {
             var testCode = @"public class Foo
