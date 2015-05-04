@@ -9,6 +9,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Text;
 
     /// <summary>
     /// Discovers any C# lines of code with trailing whitespace.
@@ -57,47 +58,100 @@
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             var root = context.Tree.GetRoot(context.CancellationToken);
+
             foreach (var trivia in root.DescendantTrivia(descendIntoTrivia: true))
             {
-                if (!trivia.IsKind(SyntaxKind.WhitespaceTrivia))
+                switch (trivia.Kind())
                 {
-                    continue;
-                }
+                    case SyntaxKind.WhitespaceTrivia:
+                        bool reportWarning = false;
+                        var token = trivia.Token;
+                        SyntaxTriviaList triviaList;
+                        if (token.LeadingTrivia.Contains(trivia))
+                        {
+                            triviaList = token.LeadingTrivia;
+                        }
+                        else
+                        {
+                            triviaList = token.TrailingTrivia;
+                        }
 
-                bool reportWarning = false;
-                var token = trivia.Token;
-                SyntaxTriviaList triviaList;
-                if (token.LeadingTrivia.Contains(trivia))
-                {
-                    triviaList = token.LeadingTrivia;
-                }
-                else
-                {
-                    triviaList = token.TrailingTrivia;
-                }
+                        bool foundWhitespace = false;
+                        foreach (var innerTrivia in triviaList)
+                        {
+                            if (!foundWhitespace)
+                            {
+                                if (innerTrivia.Equals(trivia))
+                                {
+                                    foundWhitespace = true;
+                                }
 
-                bool foundWhitespace = false;
-                foreach (var innerTrivia in triviaList)
-                {
-                    if (!foundWhitespace)
-                    {
-                        if (innerTrivia.Equals(trivia))
-                            foundWhitespace = true;
+                                continue;
+                            }
 
-                        continue;
-                    }
+                            if (innerTrivia.IsKind(SyntaxKind.EndOfLineTrivia))
+                            {
+                                reportWarning = true;
+                            }
 
-                    if (innerTrivia.IsKind(SyntaxKind.EndOfLineTrivia))
-                        reportWarning = true;
+                            break;
+                        }
 
-                    break;
-                }
+                        if (reportWarning)
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Rule, trivia.GetLocation()));
+                        }
 
-                if (reportWarning)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Rule, trivia.GetLocation()));
+                        break;
+                    case SyntaxKind.SingleLineCommentTrivia:
+                        var text = root.GetText();
+                        TextSpan trailingWhitespace = FindTrailingWhitespace(text, trivia.Span);
+                        if (!trailingWhitespace.IsEmpty)
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Rule, Location.Create(context.Tree, trailingWhitespace)));
+                        }
+
+                        break;
+                    case SyntaxKind.MultiLineCommentTrivia:
+                    case SyntaxKind.SingleLineDocumentationCommentTrivia:
+                        text = root.GetText();
+                        var line = text.Lines.GetLineFromPosition(trivia.Span.Start);
+                        do
+                        {
+                            trailingWhitespace = FindTrailingWhitespace(text, line.Span);
+                            if (!trailingWhitespace.IsEmpty)
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(Rule, Location.Create(context.Tree, trailingWhitespace)));
+                            }
+
+                            if (line.EndIncludingLineBreak == text.Length)
+                            {
+                                // We've reached the end of the document.
+                                break;
+                            }
+
+                            line = text.Lines.GetLineFromPosition(line.EndIncludingLineBreak + 1);
+                        }
+                        while (line.End <= trivia.Span.End);
+
+                        break;
+                    default:
+                        break;
                 }
             }
+        }
+
+        private static TextSpan FindTrailingWhitespace(SourceText text, TextSpan within)
+        {
+            for (int i = within.End - 1; i >= within.Start; i--)
+            {
+                if (!char.IsWhiteSpace(text[i]))
+                {
+                    return TextSpan.FromBounds(i + 1, within.End);
+                }
+            }
+
+            return within;
         }
     }
 }

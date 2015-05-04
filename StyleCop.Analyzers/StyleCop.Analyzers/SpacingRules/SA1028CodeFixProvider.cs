@@ -9,6 +9,8 @@
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.Text;
+
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1028NoTrailingWhitespace"/>.
@@ -58,7 +60,32 @@
             var root = await document.GetSyntaxRootAsync(cancellationToken);
             var diagnosticSpan = diagnostic.Location.SourceSpan;
             var trivia = root.FindTrivia(diagnosticSpan.Start, findInsideTrivia: true);
-            var newRoot = root.ReplaceTrivia(trivia, SyntaxTriviaList.Empty);
+            SyntaxNode newRoot;
+            switch (trivia.Kind())
+            {
+                case SyntaxKind.WhitespaceTrivia:
+                    newRoot = root.ReplaceTrivia(trivia, SyntaxTriviaList.Empty);
+                    break;
+                case SyntaxKind.SingleLineCommentTrivia:
+                    string newTriviaContent = trivia.ToFullString().Substring(0, trivia.FullSpan.Length - diagnosticSpan.Length);
+                    var newTrivia = SyntaxFactory.SyntaxTrivia(SyntaxKind.SingleLineCommentTrivia, newTriviaContent);
+                    newRoot = root.ReplaceTrivia(trivia, newTrivia);
+                    break;
+                case SyntaxKind.MultiLineCommentTrivia:
+                case SyntaxKind.MultiLineDocumentationCommentTrivia:
+                    var triviaLocation = trivia.GetLocation();
+                    string oldTriviaContent = trivia.ToFullString();
+                    TextSpan diagnosticSpanWithinTrivia = TextSpan.FromBounds(diagnosticSpan.Start - triviaLocation.SourceSpan.Start, diagnosticSpan.End - triviaLocation.SourceSpan.Start);
+                    newTriviaContent = string.Concat(
+                        oldTriviaContent.Substring(0, diagnosticSpanWithinTrivia.Start),
+                        oldTriviaContent.Substring(diagnosticSpanWithinTrivia.End));
+                    newTrivia = SyntaxFactory.SyntaxTrivia(trivia.Kind(), newTriviaContent);
+                    newRoot = root.ReplaceTrivia(trivia, newTrivia);
+                    break;
+                default:
+                    newRoot = root;
+                    break;
+            }
 
             var newDocument = document.WithSyntaxRoot(newRoot);
             return newDocument;

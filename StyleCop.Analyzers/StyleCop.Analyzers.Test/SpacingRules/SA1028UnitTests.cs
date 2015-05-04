@@ -72,7 +72,7 @@ class ClassName
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
         }
 
-        [Fact(Skip = "Not yet passing.")]
+        [Fact]
         public async Task TrailingWhitespaceAfterSingleLineComment()
         {
             string testCode = @"
@@ -93,7 +93,7 @@ class ClassName
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
         }
 
-        [Fact(Skip = "Not yet passing.")]
+        [Fact]
         public async Task TrailingWhitespaceInsideMultiLineComment()
         {
             string testCode = @"/* 
@@ -111,9 +111,38 @@ class ClassName
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(1, 3),
-                this.CSharpDiagnostic().WithLocation(2, 4),
-                this.CSharpDiagnostic().WithLocation(3, 5),
+                this.CSharpDiagnostic().WithLocation(2, 5),
+                this.CSharpDiagnostic().WithLocation(3, 6),
                 this.CSharpDiagnostic().WithLocation(4, 3),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+        }
+
+        [Fact(Skip = "Not yet passing.")]
+        public async Task TrailingWhitespaceInsideXmlDocComment()
+        {
+            string testCode = @"
+/// <summary>  
+/// Some description    
+/// </summary>  
+class Foo { }
+";
+
+            string fixedCode = @"
+/// <summary>
+/// Some description
+/// </summary>
+class Foo { }
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(2, 14),
+                this.CSharpDiagnostic().WithLocation(3, 21),
+                this.CSharpDiagnostic().WithLocation(4, 15),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
@@ -150,6 +179,18 @@ more text
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None);
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task NoTrailingWhitespaceAfterBlockComment()
+        {
+            string testCode = @"
+class Program    /* some block comment that follows several spaces */
+{
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
