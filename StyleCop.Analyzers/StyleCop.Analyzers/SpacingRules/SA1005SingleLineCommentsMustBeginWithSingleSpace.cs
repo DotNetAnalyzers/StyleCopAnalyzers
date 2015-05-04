@@ -117,19 +117,25 @@
         private void HandleSingleLineCommentTrivia(SyntaxTreeAnalysisContext context, SyntaxTrivia trivia, bool isFirstSingleLineTrivia)
         {
             string text = trivia.ToFullString();
-            if (text.Equals("//"))
+            if (text.Equals(@"//"))
             {
                 return;
             }
 
             // special case: commented code
-            if (text.StartsWith("////", StringComparison.Ordinal))
+            if (text.StartsWith(@"////", StringComparison.Ordinal))
             {
                 return;
             }
 
             // Special case: multiple dashes at start of comment
-            if (text.StartsWith("//--", StringComparison.Ordinal))
+            if (text.StartsWith(@"//--", StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            // Special case: //\ negates spacing requirements
+            if (text.StartsWith(@"//\", StringComparison.Ordinal))
             {
                 return;
             }
