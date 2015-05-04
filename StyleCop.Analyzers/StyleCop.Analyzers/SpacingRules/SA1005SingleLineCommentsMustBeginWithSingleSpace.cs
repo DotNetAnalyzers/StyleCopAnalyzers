@@ -89,27 +89,27 @@
             {
                 switch (trivia.Kind())
                 {
-                    case SyntaxKind.SingleLineCommentTrivia:
-                        this.HandleSingleLineCommentTrivia(context, trivia, isFirstSingleLineTrivia);
-                        isFirstSingleLineTrivia = false;
-                        newLineCount = 0;
-                        break;
+                case SyntaxKind.SingleLineCommentTrivia:
+                    this.HandleSingleLineCommentTrivia(context, trivia, isFirstSingleLineTrivia);
+                    isFirstSingleLineTrivia = false;
+                    newLineCount = 0;
+                    break;
 
-                    case SyntaxKind.EndOfLineTrivia:
-                        if (++newLineCount == 2)
-                        {
-                            isFirstSingleLineTrivia = true;
-                            newLineCount = 0;
-                        }
-
-                        break;
-
-                    case SyntaxKind.WhitespaceTrivia:
-                        break;
-
-                    default:
+                case SyntaxKind.EndOfLineTrivia:
+                    if (++newLineCount == 2)
+                    {
                         isFirstSingleLineTrivia = true;
-                        break;
+                        newLineCount = 0;
+                    }
+
+                    break;
+
+                case SyntaxKind.WhitespaceTrivia:
+                    break;
+
+                default:
+                    isFirstSingleLineTrivia = true;
+                    break;
                 }
             }
         }
