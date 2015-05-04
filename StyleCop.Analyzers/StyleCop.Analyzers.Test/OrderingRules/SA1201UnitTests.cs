@@ -84,7 +84,7 @@ public struct FooStruct { }
             string testCode = @"public struct OuterType
 {
     public string TestField;
-    public OuterType() { TestField = ""foo""; TestProperty = """"; }
+    public OuterType(int argument) { TestField = ""foo""; TestProperty = """"; }
     public delegate void TestDelegate();
     public event TestDelegate TestEvent { add { } remove { } }
     public enum TestEnum { }
@@ -157,7 +157,7 @@ public struct FooStruct { }
             string testCode = @"public struct OuterType
 {
     public string TestField;
-    public OuterType() { TestField = ""foo""; TestProperty = ""bar""; }
+    public OuterType(int argument) { TestField = ""foo""; TestProperty = ""bar""; }
     public interface ITest { }
     public delegate void TestDelegate();
     public event TestDelegate TestEvent { add { } remove { } }

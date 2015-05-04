@@ -77,7 +77,7 @@ string dar;
             await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers)).ConfigureAwait(false);
         }
 
-        [Theory(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Theory]
         [InlineData("")]
         [InlineData("readonly")]
         [InlineData("private")]

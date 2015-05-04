@@ -74,7 +74,7 @@
                         foreach (var argument in attribute.ArgumentList.ChildNodes())
                         {
                             var attributeArgument = argument as AttributeArgumentSyntax;
-                            if (attributeArgument?.NameEquals?.Name?.ToString() == nameof(SuppressMessageAttribute.Justification))
+                            if (attributeArgument?.NameEquals?.Name?.Identifier.ValueText == nameof(SuppressMessageAttribute.Justification))
                             {
                                 // Check if the justification is not empty
 

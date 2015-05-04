@@ -45,8 +45,6 @@ string Bar = """", car = """", Dar = """";
         [InlineData("public")]
         [InlineData("internal")]
         [InlineData("protected internal")]
-        [InlineData("public readonly")]
-        [InlineData("internal readonly")]
         public async Task TestThatDiagnosticIsReported_SingleField(string modifiers)
         {
             var testCode = @"public class Foo
@@ -80,12 +78,10 @@ string Dar;
             await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers)).ConfigureAwait(false);
         }
 
-        [Theory(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Theory]
         [InlineData("public")]
         [InlineData("internal")]
         [InlineData("protected internal")]
-        [InlineData("public readonly")]
-        [InlineData("internal readonly")]
         public async Task TestThatDiagnosticIsReported_MultipleFields(string modifiers)
         {
             var testCode = @"public class Foo

@@ -375,11 +375,7 @@ class ClassName
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                this.CSharpDiagnostic().WithLocation(4, 28),
-                this.CSharpDiagnostic().WithLocation(4, 28),
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 28);
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None);
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
