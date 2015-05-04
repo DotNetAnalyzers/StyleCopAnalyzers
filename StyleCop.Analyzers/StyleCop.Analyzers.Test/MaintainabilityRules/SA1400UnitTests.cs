@@ -577,7 +577,6 @@
             await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "static System.EventHandler MemberName", ", AnotherMemberName;").ConfigureAwait(false);
         }
 
-
         [Fact]
         public async Task TestIndexerDeclarationAsync()
         {
