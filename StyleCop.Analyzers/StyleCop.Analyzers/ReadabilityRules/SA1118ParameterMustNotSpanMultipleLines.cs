@@ -1,7 +1,10 @@
 ﻿namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -54,7 +57,7 @@
         /// </summary>
         public const string DiagnosticId = "SA1118";
         private const string Title = "Parameter must not span multiple lines";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "The parameter spans multiple lines. If the parameter is short, place the entire parameter on a single line. Otherwise, save the contents of the parameter in a temporary variable and pass the temporary variable as a parameter.";
         private const string Category = "StyleCop.CSharp.ReadabilityRules";
         private const string Description = "A parameter to a C# method or indexer, other than the first parameter, spans across multiple lines.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1118.html";
@@ -64,6 +67,13 @@
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
+
+        private static readonly SyntaxKind[] ParameterExceptionSyntaxKinds = new []
+        {
+            SyntaxKind.AnonymousMethodExpression,
+            SyntaxKind.ParenthesizedLambdaExpression,
+            SyntaxKind.SimpleLambdaExpression
+        };
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
@@ -77,7 +87,38 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeAction(this.HandleParametersList, SyntaxKind.ArgumentList, SyntaxKind.BracketedArgumentList);
+        }
+
+        private void HandleParametersList(SyntaxNodeAnalysisContext context)
+        {
+            var argumentListSyntax = (BaseArgumentListSyntax) context.Node;
+            if (argumentListSyntax.Arguments.Count < 2)
+            {
+                return;
+            }
+
+            for (int i = 1; i < argumentListSyntax.Arguments.Count; i++)
+            {
+                var parameter = argumentListSyntax.Arguments[i];
+                if (this.CheckIfArgumentIsMultiline(parameter)
+                    && !this.IsArgumentAnonymousMethod(parameter))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, parameter.GetLocation()));
+                }
+            }
+        }
+
+        private bool CheckIfArgumentIsMultiline(ArgumentSyntax parameter)
+        {
+            var lineSpan = parameter.GetLocation().GetLineSpan();
+            return lineSpan.EndLinePosition.Line > lineSpan.StartLinePosition.Line;
+        }
+
+        private bool IsArgumentAnonymousMethod(ArgumentSyntax argumentSyntax)
+        {
+            return argumentSyntax.Expression != null
+                   && ParameterExceptionSyntaxKinds.Any(argumentSyntax.Expression.IsKind);
         }
     }
 }
