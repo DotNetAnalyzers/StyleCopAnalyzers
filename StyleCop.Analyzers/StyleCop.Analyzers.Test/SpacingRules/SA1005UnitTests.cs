@@ -165,6 +165,22 @@
         }
 
         /// <summary>
+        /// Verify that a comment that starts with a forward slash not prefixed by a space does not trigger a diagnostic.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestForwardSlashNoSpace()
+        {
+            var testCode = @"//\whatever
+        public class SomeClass
+        {
+        }
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        /// <summary>
         /// Verify that an empty comment does not trigger a diagnostic.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
