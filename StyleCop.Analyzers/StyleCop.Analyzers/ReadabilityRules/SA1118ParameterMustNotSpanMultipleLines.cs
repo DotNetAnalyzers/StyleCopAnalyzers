@@ -68,7 +68,7 @@
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
 
-        private static readonly SyntaxKind[] ParameterExceptionSyntaxKinds = new []
+        private static readonly SyntaxKind[] ArgumentExceptionSyntaxKinds = new []
         {
             SyntaxKind.AnonymousMethodExpression,
             SyntaxKind.ParenthesizedLambdaExpression,
@@ -87,10 +87,10 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleParametersList, SyntaxKind.ArgumentList, SyntaxKind.BracketedArgumentList);
+            context.RegisterSyntaxNodeAction(this.HandleArgumentList, SyntaxKind.ArgumentList, SyntaxKind.BracketedArgumentList);
         }
 
-        private void HandleParametersList(SyntaxNodeAnalysisContext context)
+        private void HandleArgumentList(SyntaxNodeAnalysisContext context)
         {
             var argumentListSyntax = (BaseArgumentListSyntax) context.Node;
             if (argumentListSyntax.Arguments.Count < 2)
@@ -100,25 +100,25 @@
 
             for (int i = 1; i < argumentListSyntax.Arguments.Count; i++)
             {
-                var parameter = argumentListSyntax.Arguments[i];
-                if (this.CheckIfArgumentIsMultiline(parameter)
-                    && !this.IsArgumentAnonymousMethod(parameter))
+                var argument = argumentListSyntax.Arguments[i];
+                if (this.CheckIfArgumentIsMultiline(argument)
+                    && !this.IsArgumentOnExceptionList(argument))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, parameter.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation()));
                 }
             }
         }
 
-        private bool CheckIfArgumentIsMultiline(ArgumentSyntax parameter)
+        private bool CheckIfArgumentIsMultiline(ArgumentSyntax argumentSyntax)
         {
-            var lineSpan = parameter.GetLocation().GetLineSpan();
+            var lineSpan = argumentSyntax.GetLocation().GetLineSpan();
             return lineSpan.EndLinePosition.Line > lineSpan.StartLinePosition.Line;
         }
 
-        private bool IsArgumentAnonymousMethod(ArgumentSyntax argumentSyntax)
+        private bool IsArgumentOnExceptionList(ArgumentSyntax argumentSyntax)
         {
             return argumentSyntax.Expression != null
-                   && ParameterExceptionSyntaxKinds.Any(argumentSyntax.Expression.IsKind);
+                   && ArgumentExceptionSyntaxKinds.Any(argumentSyntax.Expression.IsKind);
         }
     }
 }
