@@ -4,6 +4,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using System;
 
     /// <summary>
     /// A single-line comment within a C# code file does not begin with a single space.
@@ -80,21 +81,40 @@
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
+
+            bool isFirstSingleLineTrivia = true;
+            int newLineCount = 0;
+
             foreach (var trivia in root.DescendantTrivia())
             {
                 switch (trivia.Kind())
                 {
-                case SyntaxKind.SingleLineCommentTrivia:
-                    this.HandleSingleLineCommentTrivia(context, trivia);
-                    break;
+                    case SyntaxKind.SingleLineCommentTrivia:
+                        this.HandleSingleLineCommentTrivia(context, trivia, isFirstSingleLineTrivia);
+                        isFirstSingleLineTrivia = false;
+                        newLineCount = 0;
+                        break;
 
-                default:
-                    break;
+                    case SyntaxKind.EndOfLineTrivia:
+                        if (++newLineCount == 2)
+                        {
+                            isFirstSingleLineTrivia = true;
+                            newLineCount = 0;
+                        }
+
+                        break;
+
+                    case SyntaxKind.WhitespaceTrivia:
+                        break;
+
+                    default:
+                        isFirstSingleLineTrivia = true;
+                        break;
                 }
             }
         }
 
-        private void HandleSingleLineCommentTrivia(SyntaxTreeAnalysisContext context, SyntaxTrivia trivia)
+        private void HandleSingleLineCommentTrivia(SyntaxTreeAnalysisContext context, SyntaxTrivia trivia, bool isFirstSingleLineTrivia)
         {
             string text = trivia.ToFullString();
             if (text.Equals("//"))
@@ -103,10 +123,19 @@
             }
 
             // special case: commented code
-            if (text.StartsWith("////"))
+            if (text.StartsWith("////", StringComparison.Ordinal))
             {
                 return;
             }
+
+            // Special case: multiple dashes at start of comment
+            if (text.StartsWith("//--", StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            // No need to handle documentation comments ("///") because they're not
+            // reported as SingleLineCommentTrivia.
 
             int spaceCount = 0;
             for (int i = 2; (i < text.Length) && (text[i] == ' '); i++)
@@ -115,6 +144,13 @@
             }
 
             if (spaceCount == 1)
+            {
+                return;
+            }
+
+            // Special case: follow-on comment lines may be indented with more than
+            // one space.
+            if (spaceCount > 1 && !isFirstSingleLineTrivia)
             {
                 return;
             }
