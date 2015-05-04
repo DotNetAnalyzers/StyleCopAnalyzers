@@ -121,7 +121,7 @@ class ClassName
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
         }
 
-        [Fact(Skip = "Not yet passing.")]
+        [Fact]
         public async Task TrailingWhitespaceInsideXmlDocComment()
         {
             string testCode = @"
@@ -147,7 +147,9 @@ class Foo { }
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+
+            // Enable this code fix when we have it working.
+            ////await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
         }
 
         [Fact]

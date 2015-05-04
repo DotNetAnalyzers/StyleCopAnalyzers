@@ -34,18 +34,22 @@
         }
 
         /// <inheritdoc/>
-        public override Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                context.RegisterCodeFix(
-                    CodeAction.Create(
-                        "Remove trailing whitespace",
-                        ct => RemoveWhitespaceAsync(context.Document, diagnostic, ct)),
-                    diagnostic);
+                var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken);
+                var diagnosticSpan = diagnostic.Location.SourceSpan;
+                var trivia = root.FindTrivia(diagnosticSpan.Start, findInsideTrivia: true);
+                if (trivia.Kind() != SyntaxKind.None) // exclude XmlText node till we have support for it.
+                {
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            "Remove trailing whitespace",
+                            ct => RemoveWhitespaceAsync(context.Document, diagnostic, ct)),
+                        diagnostic);
+                }
             }
-
-            return AnalyzerConstants.CompletedTask;
         }
 
         /// <summary>
@@ -83,8 +87,7 @@
                     newRoot = root.ReplaceTrivia(trivia, newTrivia);
                     break;
                 default:
-                    newRoot = root;
-                    break;
+                    throw new InvalidOperationException("Unexpected this is.");
             }
 
             var newDocument = document.WithSyntaxRoot(newRoot);
