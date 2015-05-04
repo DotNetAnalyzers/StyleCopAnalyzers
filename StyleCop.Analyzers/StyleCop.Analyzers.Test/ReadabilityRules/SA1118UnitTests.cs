@@ -1,8 +1,8 @@
 ﻿namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using System.Threading;
     using StyleCop.Analyzers.ReadabilityRules;
     using TestHelper;
     using Xunit;

@@ -57,13 +57,13 @@
         /// </summary>
         public const string DiagnosticId = "SA1118";
         private const string Title = "Parameter must not span multiple lines";
-        private const string MessageFormat = "The parameter spans multiple lines. If the parameter is short, place the entire parameter on a single line. Otherwise, save the contents of the parameter in a temporary variable and pass the temporary variable as a parameter.";
+        private const string MessageFormat = "The parameter spans multiple lines.";
         private const string Category = "StyleCop.CSharp.ReadabilityRules";
-        private const string Description = "A parameter to a C# method or indexer, other than the first parameter, spans across multiple lines.";
+        private const string Description = "A parameter to a C# method or indexer, other than the first parameter, spans across multiple lines. If the parameter is short, place the entire parameter on a single line. Otherwise, save the contents of the parameter in a temporary variable and pass the temporary variable as a parameter.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1118.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -93,10 +93,6 @@
         private void HandleArgumentList(SyntaxNodeAnalysisContext context)
         {
             var argumentListSyntax = (BaseArgumentListSyntax) context.Node;
-            if (argumentListSyntax.Arguments.Count < 2)
-            {
-                return;
-            }
 
             for (int i = 1; i < argumentListSyntax.Arguments.Count; i++)
             {
