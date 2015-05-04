@@ -59,6 +59,7 @@ namespace Bar
 {
     using System;
     using Execute = System.Action;
+    using static System.Array;
     using static System.Math;
 }
 ";
@@ -75,6 +76,7 @@ namespace Bar
         {
             var testCode = @"using System;
 using Execute = System.Action;
+using static System.Array;
 using static System.Math;
 
 public class Foo
@@ -102,6 +104,7 @@ public class Foo
 namespace Bar
 {
     using Execute = System.Action;
+    using static System.Array;
     using static System.Math;
     using System;
 }
@@ -110,7 +113,7 @@ namespace Bar
             DiagnosticResult[] expectedDiagnostics =
             {
                 this.CSharpDiagnostic().WithLocation(3, 5),
-                this.CSharpDiagnostic().WithLocation(11, 5)
+                this.CSharpDiagnostic().WithLocation(12, 5)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None);

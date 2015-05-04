@@ -42,35 +42,36 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleUsingDirectiveSyntax, SyntaxKind.UsingDirective);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleCompilationUnit, SyntaxKind.CompilationUnit);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleNamespaceDeclaration, SyntaxKind.NamespaceDeclaration);
         }
 
-        private void HandleUsingDirectiveSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context)
         {
-            UsingDirectiveSyntax usingDirective = context.Node as UsingDirectiveSyntax;
-            if (usingDirective.StaticKeyword.IsKind(SyntaxKind.None))
-            {
-                return;
-            }
+            var compilationUnit = (CompilationUnitSyntax)context.Node;
+            CheckUsingDeclarations(context, compilationUnit.Usings);
+        }
 
-            SyntaxList<UsingDirectiveSyntax> usingDirectives;
-            CompilationUnitSyntax compilationUnit = usingDirective.Parent as CompilationUnitSyntax;
-            if (compilationUnit != null)
-            {
-                usingDirectives = compilationUnit.Usings;
-            }
-            else
-            {
-                var namespaceDeclaration = (NamespaceDeclarationSyntax)usingDirective.Parent;
-                usingDirectives = namespaceDeclaration.Usings;
-            }
+        private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var namespaceDirective = (NamespaceDeclarationSyntax)context.Node;
+            CheckUsingDeclarations(context, namespaceDirective.Usings);
+        }
 
-            for (var i = usingDirectives.IndexOf(usingDirective) + 1; i < usingDirectives.Count; i++)
+        private static void CheckUsingDeclarations(SyntaxNodeAnalysisContext context, SyntaxList<UsingDirectiveSyntax> usingDirectives)
+        {
+            UsingDirectiveSyntax lastStaticUsingDirective = null;
+            
+            foreach (var usingDirective in usingDirectives)
             {
-                var currentUsingDirective = usingDirectives[i];
-                if (currentUsingDirective.StaticKeyword.IsKind(SyntaxKind.None))
+                if (usingDirective.StaticKeyword.IsKind(SyntaxKind.StaticKeyword))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, usingDirective.GetLocation()));
+                    lastStaticUsingDirective = usingDirective;
+                }
+                else if (lastStaticUsingDirective != null)
+                {
+                    // only report a single diagnostic for the last static using directive that is followed by a non-static using directive
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, lastStaticUsingDirective.GetLocation()));
                     break;
                 }
             }
