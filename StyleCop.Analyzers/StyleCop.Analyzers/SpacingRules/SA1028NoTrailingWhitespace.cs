@@ -30,11 +30,15 @@
         /// The ID for diagnostics produced by the <see cref="SA1028NoTrailingWhitespace"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1028";
-        internal const string Title = "Code must not contain trailing whitespace";
-        internal const string MessageFormat = "Remove trailing whitespace";
-        internal const string Category = "Style";
+        private const string Title = "Code must not contain trailing whitespace";
+        private const string MessageFormat = "Remove trailing whitespace";
+        private const string Category = "Style";
+        private const string Description = "There should not be any whitespace at the end of a line of code.";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/wiki/SA1028";
+        private const bool IsEnabledByDefault = true;
 
-        internal static DiagnosticDescriptor Rule { get; } = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, isEnabledByDefault: true, customTags: new[] { WellKnownDiagnosticTags.Unnecessary });
+        private static DiagnosticDescriptor Rule { get; } = 
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, IsEnabledByDefault, Description, HelpLink, customTags: new[] { WellKnownDiagnosticTags.Unnecessary });
 
         /// <inheritdoc />
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
@@ -58,6 +62,7 @@
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             var root = context.Tree.GetRoot(context.CancellationToken);
+            var text = root.GetText();
 
             foreach (var trivia in root.DescendantTrivia(descendIntoTrivia: true))
             {
@@ -104,7 +109,6 @@
 
                         break;
                     case SyntaxKind.SingleLineCommentTrivia:
-                        var text = root.GetText();
                         TextSpan trailingWhitespace = FindTrailingWhitespace(text, trivia.Span);
                         if (!trailingWhitespace.IsEmpty)
                         {
@@ -114,7 +118,6 @@
                         break;
                     case SyntaxKind.MultiLineCommentTrivia:
                     case SyntaxKind.SingleLineDocumentationCommentTrivia:
-                        text = root.GetText();
                         var line = text.Lines.GetLineFromPosition(trivia.Span.Start);
                         do
                         {

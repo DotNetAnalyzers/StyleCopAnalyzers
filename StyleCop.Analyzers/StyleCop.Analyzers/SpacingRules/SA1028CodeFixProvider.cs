@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Diagnostics;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -10,7 +11,6 @@
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Text;
-
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1028NoTrailingWhitespace"/>.
@@ -36,9 +36,9 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken);
             foreach (var diagnostic in context.Diagnostics)
             {
-                var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken);
                 var diagnosticSpan = diagnostic.Location.SourceSpan;
                 var trivia = root.FindTrivia(diagnosticSpan.Start, findInsideTrivia: true);
                 if (trivia.Kind() != SyntaxKind.None) // exclude XmlText node till we have support for it.
@@ -87,7 +87,9 @@
                     newRoot = root.ReplaceTrivia(trivia, newTrivia);
                     break;
                 default:
-                    throw new InvalidOperationException("Unexpected this is.");
+                    Debug.Assert(false, "Unexpected this is.");
+                    newRoot = root;
+                    break;
             }
 
             var newDocument = document.WithSyntaxRoot(newRoot);
