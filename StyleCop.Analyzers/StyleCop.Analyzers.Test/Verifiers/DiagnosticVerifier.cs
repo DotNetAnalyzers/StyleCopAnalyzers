@@ -23,7 +23,10 @@ namespace TestHelper
         /// <returns>
         /// A new instance of the C# analyzer being tested.
         /// </returns>
-        protected abstract DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer();
+        protected virtual DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        {
+            return null;
+        }
 
         /// <summary>
         /// Called to test a C# <see cref="DiagnosticAnalyzer"/> when applied on the single input source as a string.
