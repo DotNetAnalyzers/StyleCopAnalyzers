@@ -498,11 +498,11 @@ select x;";
 
             statementWithSpace = @"checked { };";
 
-            await this.TestKeywordStatementAsync(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestKeywordStatementAsync(statementWithSpace, EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
 
             expected = this.CSharpDiagnostic().WithArguments("checked", string.Empty, "followed").WithLocation(12, 13);
 
-            await this.TestKeywordStatementAsync(statementWithoutSpace, expected, statementWithSpace);
+            await this.TestKeywordStatementAsync(statementWithoutSpace, expected, statementWithSpace).ConfigureAwait(false);
         }
 
         [Fact]
@@ -602,11 +602,11 @@ default :
 
             statementWithSpace = @"unchecked { };";
 
-            await this.TestKeywordStatementAsync(statementWithSpace, EmptyDiagnosticResults, statementWithSpace);
+            await this.TestKeywordStatementAsync(statementWithSpace, EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
 
             expected = this.CSharpDiagnostic().WithArguments("unchecked", string.Empty, "followed").WithLocation(12, 13);
 
-            await this.TestKeywordStatementAsync(statementWithoutSpace, expected, statementWithSpace);
+            await this.TestKeywordStatementAsync(statementWithoutSpace, expected, statementWithSpace).ConfigureAwait(false);
         }
 
         [Fact]
@@ -872,8 +872,8 @@ namespace Namespace
             string testCode = string.Format(testCodeFormat, asyncModifier, statement, unsafeModifier, awaitMethod, returnType);
             string fixedTest = string.Format(testCodeFormat, asyncModifier, fixedStatement, unsafeModifier, awaitMethod, returnType);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         private Task TestKeywordDeclarationAsync(string statement, DiagnosticResult expected, string fixedStatement)

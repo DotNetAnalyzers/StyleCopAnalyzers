@@ -20,7 +20,7 @@
         public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -36,7 +36,7 @@
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -54,7 +54,7 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -72,7 +72,7 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             string fixedCode = @"public class Foo
 {
@@ -82,7 +82,7 @@
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -104,7 +104,7 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             string fixedCode = @"public class Foo
 {
@@ -118,7 +118,7 @@
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -136,7 +136,7 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             string fixedCode = @"public class Foo
 {
@@ -146,7 +146,7 @@
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -164,7 +164,7 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             string fixedCode = @"public class Foo
 {
@@ -174,7 +174,7 @@
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -192,7 +192,7 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             string fixedCode = @"public class Foo
 {
@@ -202,7 +202,7 @@
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

@@ -568,7 +568,7 @@ public class Foo
 {{
 }}";
 
-            await this.VerifyCSharpFixAsync(string.Format(testCode, fullName), string.Format(testCode, predefined), cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(string.Format(testCode, fullName), string.Format(testCode, predefined), cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -582,7 +582,7 @@ public class Foo
 }}";
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 38);
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -595,7 +595,7 @@ public class Foo
 {{
 }}";
 
-            await this.VerifyCSharpFixAsync(string.Format(testCode, fullName), string.Format(testCode, predefined), cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(string.Format(testCode, fullName), string.Format(testCode, predefined), cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]

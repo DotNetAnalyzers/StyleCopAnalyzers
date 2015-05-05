@@ -1041,7 +1041,7 @@ public class Foo
                 this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 19)
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"public class Foo
 {
@@ -1051,7 +1051,7 @@ public class Foo
         return foo;
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -1073,7 +1073,7 @@ public class Foo
         return          foo          ;
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

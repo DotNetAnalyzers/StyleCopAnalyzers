@@ -18,7 +18,7 @@
         public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -33,14 +33,14 @@ class Foo
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
 class Foo
 {
 
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -57,14 +57,14 @@ class Foo
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
 class Foo
 {
 
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -76,7 +76,7 @@ class Foo
 
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -89,7 +89,7 @@ class Foo
 
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -103,7 +103,7 @@ that spans 2 lines */
 
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -119,7 +119,7 @@ that spans 2 lines */
 
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -137,7 +137,7 @@ that spans 2 lines */
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
 class Foo
@@ -147,7 +147,7 @@ that spans 2 lines */
 {
 
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -162,14 +162,14 @@ struct Foo
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
 struct Foo
 {
 
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -181,7 +181,7 @@ struct Foo
 
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -198,7 +198,7 @@ class Foo
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 5);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
 class Foo
@@ -207,7 +207,7 @@ class Foo
     {
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -225,7 +225,7 @@ class Foo
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 5);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
 class Foo
@@ -234,7 +234,7 @@ class Foo
     {
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -248,7 +248,7 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -265,7 +265,7 @@ namespace Bar
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
 namespace Bar
@@ -274,7 +274,7 @@ namespace Bar
     {
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -287,7 +287,7 @@ namespace Bar{
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -304,7 +304,7 @@ class Foo
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 5);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
 class Foo
@@ -313,7 +313,7 @@ class Foo
     {
         get;set;}
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -325,7 +325,7 @@ class Foo
     string Prop { get;set; }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -353,7 +353,7 @@ class Foo
                 this.CSharpDiagnostic().WithLocation(12, 9),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
 class Foo
@@ -367,7 +367,7 @@ class Foo
         }
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -386,7 +386,7 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -408,7 +408,7 @@ class Foo
                 this.CSharpDiagnostic().WithLocation(8, 9)
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
 class Foo
@@ -419,7 +419,7 @@ class Foo
         {}
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -435,7 +435,7 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -455,7 +455,7 @@ class Foo
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(9, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
 using System;
@@ -467,7 +467,7 @@ class Foo
 { };
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -483,7 +483,7 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -502,7 +502,7 @@ class Foo
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
 class Foo
@@ -513,7 +513,7 @@ class Foo
 {1, 2, 3};
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -528,7 +528,7 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -552,7 +552,7 @@ class Foo
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(13, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
 class Person
@@ -568,7 +568,7 @@ class Foo
         { Name = ""qwe""};
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -591,7 +591,7 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -610,7 +610,7 @@ class Foo
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
 class Foo
@@ -621,7 +621,7 @@ class Foo
         { Name = ""qwe""};
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -641,7 +641,7 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -679,7 +679,7 @@ class Foo
                 this.CSharpDiagnostic().WithLocation(19, 1)
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"namespace Test
     {
@@ -700,7 +700,7 @@ class Foo
         }
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

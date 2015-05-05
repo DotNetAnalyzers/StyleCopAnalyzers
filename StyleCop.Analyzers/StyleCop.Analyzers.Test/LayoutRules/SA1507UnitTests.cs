@@ -60,7 +60,7 @@
         public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ public class Foo
 {
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ public class Foo
 
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -109,7 +109,7 @@ namespace Microsoft
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -122,7 +122,7 @@ namespace Microsoft
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -142,7 +142,7 @@ namespace Microsoft
                 this.CSharpDiagnostic().WithLocation(3, 1),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -166,7 +166,7 @@ namespace Microsoft
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -189,7 +189,7 @@ namespace Microsoft
                 this.CSharpDiagnostic().WithLocation(35, 1)
             };
 
-            await this.VerifyCSharpDiagnosticAsync(TestCode, expectedDiagnostics, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(TestCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -231,7 +231,7 @@ namespace Microsoft
 }
 ";
 
-            await this.VerifyCSharpFixAsync(TestCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(TestCode, fixedTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -254,7 +254,7 @@ class FooBar
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

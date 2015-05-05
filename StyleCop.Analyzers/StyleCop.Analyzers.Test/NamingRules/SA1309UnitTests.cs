@@ -102,11 +102,11 @@
 }";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("_").WithLocation(3, 21);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             // no changes will be made
             var fixedCode = testCode;
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -125,14 +125,14 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("____bar").WithLocation(3, 19);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"public class Foo
 {
     public string bar = ""baz"";
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

@@ -16,7 +16,7 @@
         public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -24,12 +24,12 @@
         {
             foreach (var modifier in this.modifiers)
             {
-                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "m_", "m_");
-                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "s_", "s_");
-                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "t_", "t_");
-                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "m\\u005F", "m_");
-                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "s\\u005F", "s_");
-                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "t\\u005F", "t_");
+                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "m_", "m_").ConfigureAwait(false);
+                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "s_", "s_").ConfigureAwait(false);
+                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "t_", "t_").ConfigureAwait(false);
+                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "m\\u005F", "m_").ConfigureAwait(false);
+                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "s\\u005F", "s_").ConfigureAwait(false);
+                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "t\\u005F", "t_").ConfigureAwait(false);
             }
         }
 
@@ -47,10 +47,10 @@ string {1}bar = ""baz"";
                 .WithLocation(4, 8);
 
             var testCode = string.Format(originalCode, modifier, codePrefix);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = string.Format(originalCode, modifier, string.Empty);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -61,10 +61,10 @@ string {1}bar = ""baz"";
 private string m_ = ""baz"";
 }";
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("m_", "m_").WithLocation(3, 16);
-            await this.VerifyCSharpDiagnosticAsync(originalCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(originalCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             // When the variable name is simply the disallowed prefix, we will not offer a code fix, as we cannot infer the correct variable name.
-            await this.VerifyCSharpFixAsync(originalCode, originalCode);
+            await this.VerifyCSharpFixAsync(originalCode, originalCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -76,7 +76,7 @@ private string m_ = ""baz"";
 string x_bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -88,7 +88,7 @@ string x_bar = ""baz"";
 string m_bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -110,10 +110,10 @@ string m_bar = ""baz"";
                 .WithArguments("m_m_bar", "m_")
                 .WithLocation(3, 20);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = testCode.Replace("m_", string.Empty);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -135,13 +135,13 @@ string m_bar = ""baz"";
                 .WithArguments("m_t_s_bar", "m_")
                 .WithLocation(3, 20);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = testCode.Replace("m_", string.Empty);
             fixedCode = fixedCode.Replace("s_", string.Empty);
             fixedCode = fixedCode.Replace("t_", string.Empty);
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
