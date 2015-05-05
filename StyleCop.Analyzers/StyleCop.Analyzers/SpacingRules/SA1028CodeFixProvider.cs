@@ -41,13 +41,18 @@
             {
                 var diagnosticSpan = diagnostic.Location.SourceSpan;
                 var trivia = root.FindTrivia(diagnosticSpan.Start, findInsideTrivia: true);
-                if (trivia.Kind() != SyntaxKind.None) // exclude XmlText node till we have support for it.
+                switch (trivia.Kind())
                 {
-                    context.RegisterCodeFix(
-                        CodeAction.Create(
-                            "Remove trailing whitespace",
-                            ct => RemoveWhitespaceAsync(context.Document, diagnostic, ct)),
-                        diagnostic);
+                    case SyntaxKind.WhitespaceTrivia:
+                    case SyntaxKind.SingleLineCommentTrivia:
+                    case SyntaxKind.MultiLineCommentTrivia:
+                    case SyntaxKind.MultiLineDocumentationCommentTrivia:
+                        context.RegisterCodeFix(
+                            CodeAction.Create(
+                                "Remove trailing whitespace",
+                                ct => RemoveWhitespaceAsync(context.Document, diagnostic, ct)),
+                            diagnostic);
+                        break;
                 }
             }
         }
@@ -87,9 +92,7 @@
                     newRoot = root.ReplaceTrivia(trivia, newTrivia);
                     break;
                 default:
-                    Debug.Assert(false, "Unexpected this is.");
-                    newRoot = root;
-                    break;
+                    return document;
             }
 
             var newDocument = document.WithSyntaxRoot(newRoot);

@@ -184,6 +184,56 @@ more text
         }
 
         [Fact]
+        public async Task TrailingWhitespaceAfterDirectives()
+        {
+            string testCode = @"
+#define Zoot  
+#undef Zoot2  
+using System;  
+#if Foo  
+#elif Bar  
+#else  
+#endif 
+#warning Some warning  
+#region Some region  
+#endregion  
+";
+
+            string fixedCode = @"
+#define Zoot
+#undef Zoot2
+using System;
+#if Foo
+#elif Bar
+#else
+#endif
+#warning Some warning
+#region Some region
+#endregion
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(2, 13),
+                this.CSharpDiagnostic().WithLocation(3, 13),
+                this.CSharpDiagnostic().WithLocation(4, 14),
+                this.CSharpDiagnostic().WithLocation(5, 8),
+                this.CSharpDiagnostic().WithLocation(6, 10),
+                this.CSharpDiagnostic().WithLocation(7, 6),
+                this.CSharpDiagnostic().WithLocation(8, 7),
+                this.CSharpDiagnostic().WithLocation(9, 22),
+                this.CSharpDiagnostic().WithLocation(10, 20),
+                this.CSharpDiagnostic().WithLocation(11, 11),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None);
+
+            // We don't have code fixes available for directives yet.
+            ////await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+        }
+
+        [Fact]
         public async Task NoTrailingWhitespaceAfterBlockComment()
         {
             string testCode = @"

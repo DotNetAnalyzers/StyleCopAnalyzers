@@ -138,6 +138,23 @@
                         while (line.End <= trivia.Span.End);
 
                         break;
+                    case SyntaxKind.IfDirectiveTrivia:
+                    case SyntaxKind.ElifDirectiveTrivia:
+                    case SyntaxKind.ElseDirectiveTrivia:
+                    case SyntaxKind.EndIfDirectiveTrivia:
+                    case SyntaxKind.DefineDirectiveTrivia:
+                    case SyntaxKind.UndefDirectiveTrivia:
+                    case SyntaxKind.WarningDirectiveTrivia:
+                    case SyntaxKind.ErrorDirectiveTrivia:
+                    case SyntaxKind.RegionDirectiveTrivia:
+                    case SyntaxKind.EndRegionDirectiveTrivia:
+                        trailingWhitespace = FindTrailingWhitespace(text, trivia.Span);
+                        if (!trailingWhitespace.IsEmpty)
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Rule, Location.Create(context.Tree, trailingWhitespace)));
+                        }
+
+                        break;
                     default:
                         break;
                 }
