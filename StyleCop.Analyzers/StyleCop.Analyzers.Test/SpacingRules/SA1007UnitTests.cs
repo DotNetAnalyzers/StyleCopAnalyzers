@@ -15,7 +15,7 @@
     public class SA1007UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestOperatorKeywordCases()
+        public async Task TestOperatorKeywordCasesAsync()
         {
             string testCode = @"
 using System;

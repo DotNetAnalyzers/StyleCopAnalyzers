@@ -23,7 +23,7 @@
         }
 
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
@@ -31,7 +31,7 @@
 
         [Theory]
         [MemberData(nameof(Declarations))]
-        public async Task TestMemberNoDocumentation(string declaration)
+        public async Task TestMemberNoDocumentationAsync(string declaration)
         {
             var testCode = @"
 /// <summary>
@@ -46,7 +46,7 @@ $$
 
         [Theory]
         [MemberData(nameof(Declarations))]
-        public async Task TestMemberWithoutParams(string declaration)
+        public async Task TestMemberWithoutParamsAsync(string declaration)
         {
             var testCode = @"
 /// <summary>
@@ -64,7 +64,7 @@ $$
 
         [Theory]
         [MemberData(nameof(Declarations))]
-        public async Task TestMemberWithValidParams(string declaration)
+        public async Task TestMemberWithValidParamsAsync(string declaration)
         {
             var testCode = @"
 /// <summary>
@@ -84,7 +84,7 @@ $$
 
         [Theory]
         [MemberData(nameof(Declarations))]
-        public async Task TestMemberWithEmptyParams(string declaration)
+        public async Task TestMemberWithEmptyParamsAsync(string declaration)
         {
             var testCode = @"
 /// <summary>
@@ -113,7 +113,7 @@ $$
 
         [Theory]
         [MemberData(nameof(Declarations))]
-        public async Task TestMemberWithEmptyParams2(string declaration)
+        public async Task TestMemberWithEmptyParams2Async(string declaration)
         {
             var testCode = @"
 /// <summary>

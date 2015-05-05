@@ -19,7 +19,7 @@
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestDestructorValid()
+        public async Task TestDestructorValidAsync()
         {
             var testCode = @"using System.Diagnostics;
 
@@ -70,7 +70,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestDestructorInvalid()
+        public async Task TestDestructorInvalidAsync()
         {
             var testCode = @"using System.Diagnostics;
 

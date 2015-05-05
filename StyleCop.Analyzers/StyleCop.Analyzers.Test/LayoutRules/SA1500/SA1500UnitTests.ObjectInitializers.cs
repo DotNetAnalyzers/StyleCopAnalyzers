@@ -19,7 +19,7 @@
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestObjectInitializersValid()
+        public async Task TestObjectInitializersValidAsync()
         {
             var testCode = @"using System.Collections.Generic;
 
@@ -130,7 +130,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestObjectInitializersInvalid()
+        public async Task TestObjectInitializersInvalidAsync()
         {
             var testCode = @"using System.Collections.Generic;
 

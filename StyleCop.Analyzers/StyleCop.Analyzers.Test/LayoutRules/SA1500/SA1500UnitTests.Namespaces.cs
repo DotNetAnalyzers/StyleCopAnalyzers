@@ -19,7 +19,7 @@
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestNamespaceValid()
+        public async Task TestNamespaceValidAsync()
         {
             var testCode = @"namespace ValidNamespace1
 {
@@ -46,7 +46,7 @@ namespace ValidNamespace5 /* Valid only for SA1500 */
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestNamespaceInvalid()
+        public async Task TestNamespaceInvalidAsync()
         {
             var testCode = @"namespace InvalidNamespace1 {
 }

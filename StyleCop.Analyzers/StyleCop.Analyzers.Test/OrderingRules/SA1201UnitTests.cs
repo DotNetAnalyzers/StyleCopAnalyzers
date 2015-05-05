@@ -11,14 +11,14 @@
     public class SA1201UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [Fact]
-        public async Task TestOuterOrderCorrectOrder()
+        public async Task TestOuterOrderCorrectOrderAsync()
         {
             string testCode = @"namespace Foo { }
 public delegate void bar();
@@ -33,7 +33,7 @@ public class FooClass { }
         }
 
         [Fact]
-        public async Task TestOuterOrderWrongOrder()
+        public async Task TestOuterOrderWrongOrderAsync()
         {
             string testCode = @"
 namespace Foo { }
@@ -54,7 +54,7 @@ public struct FooStruct { }
         }
         
         [Fact]
-        public async Task TestTypeMemberOrderCorrectOrderClass()
+        public async Task TestTypeMemberOrderCorrectOrderClassAsync()
         {
             string testCode = @"public class OuterType
 {
@@ -79,7 +79,7 @@ public struct FooStruct { }
         }
 
         [Fact]
-        public async Task TestTypeMemberOrderCorrectOrderStruct()
+        public async Task TestTypeMemberOrderCorrectOrderStructAsync()
         {
             string testCode = @"public struct OuterType
 {
@@ -103,7 +103,7 @@ public struct FooStruct { }
         }
 
         [Fact]
-        public async Task TestTypeMemberOrderCorrectOrderInterface()
+        public async Task TestTypeMemberOrderCorrectOrderInterfaceAsync()
         {
             string testCode = @"public interface OuterType
 {
@@ -118,7 +118,7 @@ public struct FooStruct { }
         }
 
         [Fact]
-        public async Task TestTypeMemberOrderWrongOrderClass()
+        public async Task TestTypeMemberOrderWrongOrderClassAsync()
         {
             string testCode = @"public class OuterType
 {
@@ -152,7 +152,7 @@ public struct FooStruct { }
         }
 
         [Fact]
-        public async Task TestTypeMemberOrderWrongOrderStruct()
+        public async Task TestTypeMemberOrderWrongOrderStructAsync()
         {
             string testCode = @"public struct OuterType
 {
@@ -184,7 +184,7 @@ public struct FooStruct { }
         }
 
         [Fact]
-        public async Task TestTypeMemberOrderWrongOrderInterface()
+        public async Task TestTypeMemberOrderWrongOrderInterfaceAsync()
         {
             string testCode = @"public interface OuterType
 {
@@ -203,7 +203,7 @@ public struct FooStruct { }
         }
 
         [Fact]
-        public async Task TestIncompleteMember()
+        public async Task TestIncompleteMemberAsync()
         {
             // Tests that the analyzer does not crash on incomplete members
             string testCode = @"public interface OuterType
@@ -236,7 +236,7 @@ public struct FooStruct { }
         }
 
         [Fact]
-        public async Task TestEventFields()
+        public async Task TestEventFieldsAsync()
         {
             // Tests that the analyzer handles event fields as if they were events
             string testCode = @"public class OuterType

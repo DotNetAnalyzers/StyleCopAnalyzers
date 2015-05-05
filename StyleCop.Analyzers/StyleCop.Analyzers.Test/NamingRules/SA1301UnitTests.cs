@@ -20,7 +20,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestSimpleEmptyNamespace()
+        public async Task TestSimpleEmptyNamespaceAsync()
         {
             var testCode = @"namespace Test { }";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);

@@ -13,14 +13,14 @@
     public class SA1617UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [Fact]
-        public async Task TestMethodWithReturnValueNoDocumentation()
+        public async Task TestMethodWithReturnValueNoDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -42,7 +42,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestMethodWithReturnValueWithDocumentation()
+        public async Task TestMethodWithReturnValueWithDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -66,7 +66,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestNoDocumentation()
+        public async Task TestNoDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -82,7 +82,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestPropertyWithInheritedDocumentation()
+        public async Task TestPropertyWithInheritedDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -100,7 +100,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestMethodWithoutReturnValueNoDocumentation()
+        public async Task TestMethodWithoutReturnValueNoDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -122,7 +122,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestMethodWithoutReturnValueWithDocumentation()
+        public async Task TestMethodWithoutReturnValueWithDocumentationAsync()
         {
             var testCode = @"
 /// <summary>

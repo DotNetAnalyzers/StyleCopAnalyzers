@@ -11,14 +11,14 @@
     public class SA1310UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [Fact]
-        public async Task TestFieldWithUnderscore()
+        public async Task TestFieldWithUnderscoreAsync()
         {
             var testCode = @"public class ClassName
 {
@@ -38,7 +38,7 @@
         }
 
         [Fact]
-        public async Task TestFieldStartingWithoutUnderscore()
+        public async Task TestFieldStartingWithoutUnderscoreAsync()
         {
             var testCode = @"public class ClassName
 {
@@ -52,7 +52,7 @@
         [InlineData("m_")]
         [InlineData("s_")]
         [InlineData("t_")]
-        public async Task TestFieldStartingWithSpecialPrefix(string prefix)
+        public async Task TestFieldStartingWithSpecialPrefixAsync(string prefix)
         {
             var testCode = $@"public class ClassName
 {{
@@ -63,7 +63,7 @@
         }
 
         [Fact]
-        public async Task TestFieldWithUnderscorePlacedInsideNativeMethodsClass()
+        public async Task TestFieldWithUnderscorePlacedInsideNativeMethodsClassAsync()
         {
             var testCode = @"public class ClassNameNativeMethods
 {
@@ -74,7 +74,7 @@
         }
 
         [Fact]
-        public async Task TestFieldWithUnderscorePlacedInsideNativeMethodsClassWithIncorrectName()
+        public async Task TestFieldWithUnderscorePlacedInsideNativeMethodsClassWithIncorrectNameAsync()
         {
             var testCode = @"public class ClassNameNativeMethodsClass
 {
@@ -94,7 +94,7 @@
         }
 
         [Fact]
-        public async Task TestFieldWithUnderscorePlacedInsideOuterNativeMethodsClass()
+        public async Task TestFieldWithUnderscorePlacedInsideOuterNativeMethodsClassAsync()
         {
             var testCode = @"public class ClassNameNativeMethods
 {
@@ -108,7 +108,7 @@
         }
 
         [Fact]
-        public async Task TestUnderscoreOnlyVariableName()
+        public async Task TestUnderscoreOnlyVariableNameAsync()
         {
             var testCode = @"public class ClassNameNativeMethodsClass
 {

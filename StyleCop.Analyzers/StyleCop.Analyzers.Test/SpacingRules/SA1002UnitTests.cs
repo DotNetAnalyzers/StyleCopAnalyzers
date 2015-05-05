@@ -15,7 +15,7 @@
     public class SA1002UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestForLoop()
+        public async Task TestForLoopAsync()
         {
             string testCode = @"
 class ClassName
@@ -52,7 +52,7 @@ class ClassName
         }
 
         [Fact]
-        public async Task TestInfiniteForLoop()
+        public async Task TestInfiniteForLoopAsync()
         {
             string testCode = @"
 class ClassName
@@ -88,7 +88,7 @@ class ClassName
         }
 
         [Fact]
-        public async Task TestReturnValueStatement()
+        public async Task TestReturnValueStatementAsync()
         {
             string testCode = @"
 class ClassName
@@ -120,7 +120,7 @@ class ClassName
         }
 
         [Fact]
-        public async Task TestEmptyReturnStatement()
+        public async Task TestEmptyReturnStatementAsync()
         {
             string testCode = @"
 class ClassName
@@ -152,7 +152,7 @@ class ClassName
         }
 
         [Fact]
-        public async Task TestThrowStatements()
+        public async Task TestThrowStatementsAsync()
         {
             string testCode = @"
 using System;
@@ -201,7 +201,7 @@ class ClassName
         }
 
         [Fact]
-        public async Task TestEmptyStatement()
+        public async Task TestEmptyStatementAsync()
         {
             string testCode = @"
 class ClassName
@@ -217,7 +217,7 @@ class ClassName
         }
 
         [Fact]
-        public async Task TestSingleLineAccessors()
+        public async Task TestSingleLineAccessorsAsync()
         {
             string testCode = @"
 class ClassName
@@ -254,7 +254,7 @@ class ClassName
         }
 
         [Fact]
-        public async Task TestFollowedByLineComment()
+        public async Task TestFollowedByLineCommentAsync()
         {
             string testCode = @"
 class ClassName
@@ -277,7 +277,7 @@ class ClassName
         }
 
         [Fact]
-        public async Task TestFollowedByBlockComment()
+        public async Task TestFollowedByBlockCommentAsync()
         {
             string testCode = @"
 class ClassName

@@ -13,14 +13,14 @@
     public class SA1609UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPropertyWithDocumentation()
+        public async Task TestPropertyWithDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -40,7 +40,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestPropertyWithInheritedDocumentation()
+        public async Task TestPropertyWithInheritedDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -55,7 +55,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestPropertyNoDocumentation()
+        public async Task TestPropertyNoDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -69,7 +69,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestPropertyWithoutDocumentation()
+        public async Task TestPropertyWithoutDocumentationAsync()
         {
             var testCode = @"
 /// <summary>

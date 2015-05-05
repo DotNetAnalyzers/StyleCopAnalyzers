@@ -15,14 +15,14 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [Fact]
-        public async Task TestClassDeclarationOpeningBraceHasBlankLine()
+        public async Task TestClassDeclarationOpeningBraceHasBlankLineAsync()
         {
             var testCode = @"
 class Foo
@@ -44,7 +44,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestClassDeclarationOpeningBraceHasThreeBlankLine()
+        public async Task TestClassDeclarationOpeningBraceHasThreeBlankLineAsync()
         {
             var testCode = @"
 class Foo
@@ -68,7 +68,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestClassDeclarationOpeningBraceDoesntHaveBlankLine()
+        public async Task TestClassDeclarationOpeningBraceDoesntHaveBlankLineAsync()
         {
             var testCode = @"
 class Foo
@@ -80,7 +80,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestClassDeclarationCommentBeforeOpeningBrace()
+        public async Task TestClassDeclarationCommentBeforeOpeningBraceAsync()
         {
             var testCode = @"
 class Foo
@@ -93,7 +93,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestClassDeclarationMultilineCommentBeforeOpeningBrace()
+        public async Task TestClassDeclarationMultilineCommentBeforeOpeningBraceAsync()
         {
             var testCode = @"
 class Foo
@@ -107,7 +107,7 @@ that spans 2 lines */
         }
 
         [Fact]
-        public async Task TestClassDeclarationMultilineCommentBeforeOpeningBraceButBlankLineBetweenCommentsExists()
+        public async Task TestClassDeclarationMultilineCommentBeforeOpeningBraceButBlankLineBetweenCommentsExistsAsync()
         {
             var testCode = @"
 class Foo
@@ -123,7 +123,7 @@ that spans 2 lines */
         }
 
         [Fact]
-        public async Task TestClassDeclarationMultilineCommentBlankLineBeforeOpeningBrace()
+        public async Task TestClassDeclarationMultilineCommentBlankLineBeforeOpeningBraceAsync()
         {
             var testCode = @"
 class Foo
@@ -151,7 +151,7 @@ that spans 2 lines */
         }
 
         [Fact]
-        public async Task TestStructDeclarationOpeningBraceHasBlankLine()
+        public async Task TestStructDeclarationOpeningBraceHasBlankLineAsync()
         {
             var testCode = @"
 struct Foo
@@ -173,7 +173,7 @@ struct Foo
         }
 
         [Fact]
-        public async Task TestStructDeclarationOpeningBraceDoesntHaveBlankLine()
+        public async Task TestStructDeclarationOpeningBraceDoesntHaveBlankLineAsync()
         {
             var testCode = @"
 struct Foo
@@ -185,7 +185,7 @@ struct Foo
         }
 
         [Fact]
-        public async Task TestMethodDeclarationOpeningBraceHasBlankLine()
+        public async Task TestMethodDeclarationOpeningBraceHasBlankLineAsync()
         {
             var testCode = @"
 class Foo
@@ -211,7 +211,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestMethodDeclarationOpeningBraceHasTwoBlankLine()
+        public async Task TestMethodDeclarationOpeningBraceHasTwoBlankLineAsync()
         {
             var testCode = @"
 class Foo
@@ -238,7 +238,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestMethodDeclarationOpeningBraceDoesntHaveBlankLine()
+        public async Task TestMethodDeclarationOpeningBraceDoesntHaveBlankLineAsync()
         {
             var testCode = @"
 class Foo
@@ -252,7 +252,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestNamespaceDeclarationOpeningBraceHasBlankLine()
+        public async Task TestNamespaceDeclarationOpeningBraceHasBlankLineAsync()
         {
             var testCode = @"
 namespace Bar
@@ -278,7 +278,7 @@ namespace Bar
         }
 
         [Fact]
-        public async Task TestNamespaceDeclarationOpeningBraceDoesntHaveBlankLine()
+        public async Task TestNamespaceDeclarationOpeningBraceDoesntHaveBlankLineAsync()
         {
             var testCode = @"
 namespace Bar{
@@ -291,7 +291,7 @@ namespace Bar{
         }
 
         [Fact]
-        public async Task TestPropertyDeclarationOpeningBraceHasBlankLine()
+        public async Task TestPropertyDeclarationOpeningBraceHasBlankLineAsync()
         {
             var testCode = @"
 class Foo
@@ -317,7 +317,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestPropertyDeclarationOpeningBraceDoesntHaveBlankLine()
+        public async Task TestPropertyDeclarationOpeningBraceDoesntHaveBlankLineAsync()
         {
             var testCode = @"
 class Foo
@@ -329,7 +329,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestIfStatementOpeningBraceHasBlankLine()
+        public async Task TestIfStatementOpeningBraceHasBlankLineAsync()
         {
             var testCode = @"
 class Foo
@@ -371,7 +371,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestIfStatementOpeningBraceDoesntHaveBlankLine()
+        public async Task TestIfStatementOpeningBraceDoesntHaveBlankLineAsync()
         {
             var testCode = @"
 class Foo
@@ -390,7 +390,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestWhileStatementOpeningBraceHasBlankLine()
+        public async Task TestWhileStatementOpeningBraceHasBlankLineAsync()
         {
             var testCode = @"
 class Foo
@@ -423,7 +423,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestWhileStatementOpeningBraceDoesntHaveBlankLine()
+        public async Task TestWhileStatementOpeningBraceDoesntHaveBlankLineAsync()
         {
             var testCode = @"
 class Foo
@@ -439,7 +439,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestLambdaOpeningBraceHasBlankLine()
+        public async Task TestLambdaOpeningBraceHasBlankLineAsync()
         {
             var testCode = @"
 using System;
@@ -471,7 +471,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestLambdaOpeningBraceDoesntHaveBlankLine()
+        public async Task TestLambdaOpeningBraceDoesntHaveBlankLineAsync()
         {
             var testCode = @"
 using System;
@@ -487,7 +487,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestArrayInitializationOpeningBraceHasBlankLine()
+        public async Task TestArrayInitializationOpeningBraceHasBlankLineAsync()
         {
             var testCode = @"
 class Foo
@@ -517,7 +517,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestArrayInitializationOpeningBraceDoesntHaveBlankLine()
+        public async Task TestArrayInitializationOpeningBraceDoesntHaveBlankLineAsync()
         {
             var testCode = @"
 class Foo
@@ -532,7 +532,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestPropertyInitializerOpeningBraceHasBlankLine()
+        public async Task TestPropertyInitializerOpeningBraceHasBlankLineAsync()
         {
             var testCode = @"
 class Person
@@ -572,7 +572,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestPropertyInitializerOpeningBraceDoesntHaveBlankLine()
+        public async Task TestPropertyInitializerOpeningBraceDoesntHaveBlankLineAsync()
         {
             var testCode = @"
 class Person
@@ -595,7 +595,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestAnonymousTypeOpeningBraceHasBlankLine()
+        public async Task TestAnonymousTypeOpeningBraceHasBlankLineAsync()
         {
             var testCode = @"
 class Foo
@@ -625,7 +625,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestAnonymousTypeOpeningBraceDoesntHaveBlankLine()
+        public async Task TestAnonymousTypeOpeningBraceDoesntHaveBlankLineAsync()
         {
             var testCode = @"
 class Person
@@ -645,7 +645,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestComplex1()
+        public async Task TestComplex1Async()
         {
             var testCode = @"namespace Test
 

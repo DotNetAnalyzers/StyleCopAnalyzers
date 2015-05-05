@@ -12,14 +12,14 @@
         private const string DiagnosticId = SA1626SingleLineCommentsMustNotUseDocumentationStyleSlashes.DiagnosticId;
 
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [Fact]
-        public async Task TestClassWithXmlComment()
+        public async Task TestClassWithXmlCommentAsync()
         {
             var testCode = @"/// <summary>
 /// Xml Documentation
@@ -35,7 +35,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestMethodWithComment()
+        public async Task TestMethodWithCommentAsync()
         {
             var testCode = @"public class Foo
 {
@@ -49,7 +49,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestMethodWithOneLineThreeSlashComment()
+        public async Task TestMethodWithOneLineThreeSlashCommentAsync()
         {
             var testCode = @"public class Foo
 {
@@ -68,7 +68,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestMethodWithMultiLineThreeSlashComment()
+        public async Task TestMethodWithMultiLineThreeSlashCommentAsync()
         {
             var testCode = @"public class Foo
 {
@@ -88,7 +88,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestMethodWithCodeComments()
+        public async Task TestMethodWithCodeCommentsAsync()
         {
             var testCode = @"public class Foo
 {
@@ -102,7 +102,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestMethodWithSingeLineDocumentation()
+        public async Task TestMethodWithSingeLineDocumentationAsync()
         {
             var testCode = @"public class Foo
 {

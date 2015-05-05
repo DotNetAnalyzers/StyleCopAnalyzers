@@ -27,7 +27,7 @@
         [InlineData("Nullable{T}")]
         [InlineData("System.Nullable{T}")]
         [InlineData("global::System.Nullable{T}")]
-        public async Task TestSeeAlsoNullable(string form)
+        public async Task TestSeeAlsoNullableAsync(string form)
         {
             string template = @"
 namespace System
@@ -54,7 +54,7 @@ namespace System
         [InlineData("Nullable{T}")]
         [InlineData("System.Nullable{T}")]
         [InlineData("global::System.Nullable{T}")]
-        public async Task TestSeeAlsoNullableValue(string form)
+        public async Task TestSeeAlsoNullableValueAsync(string form)
         {
             string template = @"
 namespace System
@@ -85,7 +85,7 @@ namespace System
         [InlineData("Nullable{int}", "int?")]
         [InlineData("System.Nullable{int}", "int?")]
         [InlineData("global::System.Nullable{int}", "int?")]
-        public async Task TestSeeAlsoNullableShorthand(string longForm, string shortForm)
+        public async Task TestSeeAlsoNullableShorthandAsync(string longForm, string shortForm)
         {
             string template = @"
 using System.Collections.Generic;
@@ -130,7 +130,7 @@ namespace System
         [InlineData("Nullable<>", "Nullable<>")]
         [InlineData("System.Nullable<>", "System.Nullable<>")]
         [InlineData("global::System.Nullable<>", "global::System.Nullable<>")]
-        public async Task TestTypeOfNullable(string longForm, string shortForm)
+        public async Task TestTypeOfNullableAsync(string longForm, string shortForm)
         {
             string template = @"
 namespace System
@@ -163,7 +163,7 @@ namespace System
         [InlineData("Nullable<T>", "T?")]
         [InlineData("System.Nullable<T>", "T?")]
         [InlineData("global::System.Nullable<T>", "T?")]
-        public async Task TestNullableField(string longForm, string shortForm)
+        public async Task TestNullableFieldAsync(string longForm, string shortForm)
         {
             string template = @"
 namespace System
@@ -192,7 +192,7 @@ namespace System
         [InlineData("Nullable<T>", "T?")]
         [InlineData("System.Nullable<T>", "T?")]
         [InlineData("global::System.Nullable<T>", "T?")]
-        public async Task TestDefaultNullableValue(string longForm, string shortForm)
+        public async Task TestDefaultNullableValueAsync(string longForm, string shortForm)
         {
             string template = @"
 namespace System
@@ -227,7 +227,7 @@ namespace System
         [InlineData("Nullable<int>")]
         [InlineData("System.Nullable<int>")]
         [InlineData("global::System.Nullable<int>")]
-        public async Task TestNameOfNullable(string form)
+        public async Task TestNameOfNullableAsync(string form)
         {
             string template = @"
 namespace System
@@ -259,7 +259,7 @@ namespace System
         [InlineData("Nullable<int>")]
         [InlineData("System.Nullable<int>")]
         [InlineData("global::System.Nullable<int>")]
-        public async Task TestNameOfNullableValue(string form)
+        public async Task TestNameOfNullableValueAsync(string form)
         {
             string template = @"
 namespace System
@@ -287,7 +287,7 @@ namespace System
         [InlineData("Nullable<int>")]
         [InlineData("System.Nullable<int>")]
         [InlineData("global::System.Nullable<int>")]
-        public async Task TestAccessObjectEqualThroughNullable(string form)
+        public async Task TestAccessObjectEqualThroughNullableAsync(string form)
         {
             string template = @"
 namespace System
@@ -312,7 +312,7 @@ namespace System
         [InlineData("Nullable<T>", "T?")]
         [InlineData("System.Nullable<T>", "T?")]
         [InlineData("global::System.Nullable<T>", "T?")]
-        public async Task TestNameOfListOfNullable(string longForm, string shortForm)
+        public async Task TestNameOfListOfNullableAsync(string longForm, string shortForm)
         {
             string template = @"
 using System.Collections.Generic;

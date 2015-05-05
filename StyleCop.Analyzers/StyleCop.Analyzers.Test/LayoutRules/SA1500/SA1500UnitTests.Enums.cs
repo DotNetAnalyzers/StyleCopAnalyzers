@@ -19,7 +19,7 @@
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEnumValid()
+        public async Task TestEnumValidAsync()
         {
             var testCode = @"public class Foo
 {
@@ -48,7 +48,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEnumInvalid()
+        public async Task TestEnumInvalidAsync()
         {
             var testCode = @"public class Foo
 {

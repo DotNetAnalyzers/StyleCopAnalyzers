@@ -13,14 +13,14 @@
     public class SA1602UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestEnumWithDocumentation()
+        public async Task TestEnumWithDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -37,7 +37,7 @@ enum TypeName
         }
 
         [Fact]
-        public async Task TestEnumWithoutDocumentation()
+        public async Task TestEnumWithoutDocumentationAsync()
         {
             var testCode = @"
 enum TypeName
@@ -51,7 +51,7 @@ enum TypeName
         }
 
         [Fact]
-        public async Task TestEnumWithEmptyDocumentation()
+        public async Task TestEnumWithEmptyDocumentationAsync()
         {
             var testCode = @"
 /// <summary>

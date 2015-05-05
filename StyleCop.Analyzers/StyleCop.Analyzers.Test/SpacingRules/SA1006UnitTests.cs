@@ -15,7 +15,7 @@
     public class SA1006UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestRegionDirectives()
+        public async Task TestRegionDirectivesAsync()
         {
             string testCode = @"
 class ClassName
@@ -51,7 +51,7 @@ class ClassName
         }
 
         [Fact]
-        public async Task TestIfElseDirectives()
+        public async Task TestIfElseDirectivesAsync()
         {
             string testCode = @"
 class ClassName

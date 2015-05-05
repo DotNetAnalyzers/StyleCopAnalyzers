@@ -33,7 +33,7 @@
         }
 
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
@@ -41,7 +41,7 @@
 
         [Theory]
         [MemberData(nameof(Data))]
-        public async Task TestWithAllDocumentation(string p)
+        public async Task TestWithAllDocumentationAsync(string p)
         {
             var testCode = @"
 /// <summary>
@@ -62,7 +62,7 @@ public class ClassName
 
         [Theory]
         [MemberData(nameof(Data))]
-        public async Task TestWithAllDocumentationAlternativeSyntax(string p)
+        public async Task TestWithAllDocumentationAlternativeSyntaxAsync(string p)
         {
             var testCode = @"
 /// <summary>
@@ -83,7 +83,7 @@ public class ClassName
 
         [Theory]
         [MemberData(nameof(Data))]
-        public async Task TestWithAllDocumentationWrongOrder(string p)
+        public async Task TestWithAllDocumentationWrongOrderAsync(string p)
         {
             var testCode = @"
 /// <summary>
@@ -104,7 +104,7 @@ public class ClassName
 
         [Theory]
         [MemberData(nameof(Data))]
-        public async Task TestWithNoDocumentation(string p)
+        public async Task TestWithNoDocumentationAsync(string p)
         {
             var testCode = @"
 /// <summary>
@@ -119,7 +119,7 @@ public class ClassName
 
         [Theory]
         [MemberData(nameof(Data))]
-        public async Task TestInheritDoc(string p)
+        public async Task TestInheritDocAsync(string p)
         {
             var testCode = @"
 /// <summary>
@@ -135,7 +135,7 @@ public class ClassName
 
         [Theory]
         [MemberData(nameof(Data))]
-        public async Task TestMissingParameters(string p)
+        public async Task TestMissingParametersAsync(string p)
         {
             var testCode = @"
 /// <summary>

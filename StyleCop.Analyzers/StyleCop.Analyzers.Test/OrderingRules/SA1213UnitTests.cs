@@ -10,14 +10,14 @@
     public class SA1213UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [Fact]
-        public async Task TestAddAccessorAfterRemoveAccessor()
+        public async Task TestAddAccessorAfterRemoveAccessorAsync()
         {
             var testCode = @"
 using System;
@@ -44,7 +44,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestAddAccessorAfterRemoveAccessorSameLine()
+        public async Task TestAddAccessorAfterRemoveAccessorSameLineAsync()
         {
             var testCode = @"
 using System;
@@ -64,7 +64,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestAddAccessorBeforeRemoveAccessor()
+        public async Task TestAddAccessorBeforeRemoveAccessorAsync()
         {
             var testCode = @"
 using System;
@@ -89,7 +89,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestAddAccessorBeforeRemoveAccessorSameLine()
+        public async Task TestAddAccessorBeforeRemoveAccessorSameLineAsync()
         {
             var testCode = @"
 using System;

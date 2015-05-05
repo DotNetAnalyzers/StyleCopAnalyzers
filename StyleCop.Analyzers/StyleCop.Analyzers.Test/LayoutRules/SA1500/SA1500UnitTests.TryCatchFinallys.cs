@@ -19,7 +19,7 @@
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestTryCatchFinallyValid()
+        public async Task TestTryCatchFinallyValidAsync()
         {
             var testCode = @"using System;
 
@@ -90,7 +90,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestTryCatchFinallyInvalid()
+        public async Task TestTryCatchFinallyInvalidAsync()
         {
             var testCode = @"using System;
 

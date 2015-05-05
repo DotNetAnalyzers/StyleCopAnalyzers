@@ -28,7 +28,7 @@
         }
 
         [Fact]
-        public async Task TestWrongOverload()
+        public async Task TestWrongOverloadAsync()
         {
             var testCode = @"using System.Diagnostics;
 public class Foo

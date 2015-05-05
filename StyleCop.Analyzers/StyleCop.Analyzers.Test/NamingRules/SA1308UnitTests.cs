@@ -13,27 +13,27 @@
         private readonly string[] modifiers = new[] { "public", "private", "protected", "public readonly", "internal readonly", "public static", "private static" };
 
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
         }
 
         [Fact]
-        public async Task TestFieldStartingWithPrefixesToTriggerDiagnostic()
+        public async Task TestFieldStartingWithPrefixesToTriggerDiagnosticAsync()
         {
             foreach (var modifier in this.modifiers)
             {
-                await this.TestFieldSpecifyingModifierAndPrefix(modifier, "m_", "m_");
-                await this.TestFieldSpecifyingModifierAndPrefix(modifier, "s_", "s_");
-                await this.TestFieldSpecifyingModifierAndPrefix(modifier, "t_", "t_");
-                await this.TestFieldSpecifyingModifierAndPrefix(modifier, "m\\u005F", "m_");
-                await this.TestFieldSpecifyingModifierAndPrefix(modifier, "s\\u005F", "s_");
-                await this.TestFieldSpecifyingModifierAndPrefix(modifier, "t\\u005F", "t_");
+                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "m_", "m_");
+                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "s_", "s_");
+                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "t_", "t_");
+                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "m\\u005F", "m_");
+                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "s\\u005F", "s_");
+                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "t\\u005F", "t_");
             }
         }
 
-        private async Task TestFieldSpecifyingModifierAndPrefix(string modifier, string codePrefix, string diagnosticPrefix)
+        private async Task TestFieldSpecifyingModifierAndPrefixAsync(string modifier, string codePrefix, string diagnosticPrefix)
         {
             var originalCode = @"public class Foo
 {{
@@ -54,7 +54,7 @@ string {1}bar = ""baz"";
         }
 
         [Fact]
-        public async Task TestMUnderscoreOnly()
+        public async Task TestMUnderscoreOnlyAsync()
         {
             var originalCode = @"public class Foo
 {
@@ -68,7 +68,7 @@ private string m_ = ""baz"";
         }
 
         [Fact]
-        public async Task TestFieldStartingWithNonTriggeringPrefix()
+        public async Task TestFieldStartingWithNonTriggeringPrefixAsync()
         {
             var testCode = @"public class Foo
 {
@@ -80,7 +80,7 @@ string x_bar = ""baz"";
         }
 
         [Fact]
-        public async Task TestFieldInsideNativeMethodsClass()
+        public async Task TestFieldInsideNativeMethodsClassAsync()
         {
             var testCode = @"public class TestNativeMethods
 {
@@ -98,7 +98,7 @@ string m_bar = ""baz"";
         /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/627">#627: Code Fixes For Naming
         /// Rules SA1308 and SA1309 Do Not Always Fix The Name Entirely</seealso>
         [Fact]
-        public async Task TestFixingMultipleIdenticalPrefixes()
+        public async Task TestFixingMultipleIdenticalPrefixesAsync()
         {
             var testCode = @"public class Foo
 {
@@ -123,7 +123,7 @@ string m_bar = ""baz"";
         /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/627">#627: Code Fixes For Naming
         /// Rules SA1308 and SA1309 Do Not Always Fix The Name Entirely</seealso>
         [Fact]
-        public async Task TestFixingMultipleIndependentPrefixes()
+        public async Task TestFixingMultipleIndependentPrefixesAsync()
         {
             var testCode = @"public class Foo
 {

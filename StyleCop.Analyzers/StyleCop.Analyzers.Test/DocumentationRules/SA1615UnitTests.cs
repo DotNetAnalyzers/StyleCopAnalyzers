@@ -32,7 +32,7 @@
         }
 
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
@@ -41,7 +41,7 @@
         [Theory]
         [MemberData(nameof(WithReturnValue))]
         [MemberData(nameof(WithoutReturnValue))]
-        public async Task TestMethodWithoutDocumentation(string declaration)
+        public async Task TestMethodWithoutDocumentationAsync(string declaration)
         {
             var testCode = @"
 /// <summary>
@@ -56,7 +56,7 @@ $$
 
         [Theory]
         [MemberData(nameof(WithoutReturnValue))]
-        public async Task TestMethodWithoutReturnTypeWithoutReturnTypeDocumentation(string declaration)
+        public async Task TestMethodWithoutReturnTypeWithoutReturnTypeDocumentationAsync(string declaration)
         {
             var testCode = @"
 /// <summary>
@@ -74,7 +74,7 @@ $$
 
         [Theory]
         [MemberData(nameof(WithoutReturnValue))]
-        public async Task TestMethodWithVoidWithDocumentation(string declaration)
+        public async Task TestMethodWithVoidWithDocumentationAsync(string declaration)
         {
             var testCode = @"
 /// <summary>
@@ -93,7 +93,7 @@ $$
 
         [Theory]
         [MemberData(nameof(WithReturnValue))]
-        public async Task TestMethodWithReturnTypeWithoutReturnTypeDocumentation(string declaration)
+        public async Task TestMethodWithReturnTypeWithoutReturnTypeDocumentationAsync(string declaration)
         {
             var testCode = @"
 /// <summary>
@@ -116,7 +116,7 @@ $$
         
         [Theory]
         [MemberData(nameof(WithReturnValue))]
-        public async Task TestMethodWithReturnTypeWithDocumentation(string declaration)
+        public async Task TestMethodWithReturnTypeWithDocumentationAsync(string declaration)
         {
             var testCode = @"
 /// <summary>
@@ -136,7 +136,7 @@ $$
         [Theory]
         [MemberData(nameof(WithReturnValue))]
         [MemberData(nameof(WithoutReturnValue))]
-        public async Task TestMethodWithInheritedDocumentation(string declaration)
+        public async Task TestMethodWithInheritedDocumentationAsync(string declaration)
         {
             var testCode = @"
 /// <summary>

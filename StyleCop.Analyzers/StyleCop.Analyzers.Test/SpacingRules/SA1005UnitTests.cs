@@ -18,7 +18,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
@@ -29,7 +29,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestCorrectComment()
+        public async Task TestCorrectCommentAsync()
         {
             var testCode = @"public class Foo
 {
@@ -50,7 +50,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestNoLeadingSpace()
+        public async Task TestNoLeadingSpaceAsync()
         {
             var testCode = @"public class Foo
 {
@@ -82,7 +82,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestMultipleLeadingSpaces()
+        public async Task TestMultipleLeadingSpacesAsync()
         {
             var testCode = @"public class Foo
 {
@@ -114,7 +114,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestCommentedCode()
+        public async Task TestCommentedCodeAsync()
         {
             var testCode = @"public class Foo
 {

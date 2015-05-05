@@ -19,7 +19,7 @@
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestLambdaExpressionValid()
+        public async Task TestLambdaExpressionValidAsync()
         {
             var testCode = @"using System;
 using System.Diagnostics;
@@ -84,7 +84,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestLambdaExpressionInvalid()
+        public async Task TestLambdaExpressionInvalidAsync()
         {
             var testCode = @"using System;
 using System.Diagnostics;

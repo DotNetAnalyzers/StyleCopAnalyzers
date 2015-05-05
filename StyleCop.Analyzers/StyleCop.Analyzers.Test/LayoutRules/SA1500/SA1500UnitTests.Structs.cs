@@ -19,7 +19,7 @@
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestStructValid()
+        public async Task TestStructValidAsync()
         {
             var testCode = @"public class Foo
 {
@@ -51,7 +51,7 @@
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestStructInvalid()
+        public async Task TestStructInvalidAsync()
         {
             var testCode = @"public class Foo
 {
