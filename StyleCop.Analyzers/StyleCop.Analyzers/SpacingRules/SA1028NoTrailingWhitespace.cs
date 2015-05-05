@@ -37,17 +37,14 @@
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/wiki/SA1028";
         private const bool IsEnabledByDefault = true;
 
-        private static DiagnosticDescriptor Rule { get; } = 
+        private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, IsEnabledByDefault, Description, HelpLink, customTags: new[] { WellKnownDiagnosticTags.Unnecessary });
 
+        private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
+            ImmutableArray.Create(Descriptor);
+
         /// <inheritdoc />
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        {
-            get
-            {
-                return ImmutableArray.Create(Rule);
-            }
-        }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => SupportedDiagnosticsValue;
 
         /// <inheritdoc />
         public override void Initialize(AnalysisContext context)
@@ -104,7 +101,7 @@
 
                         if (reportWarning)
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(Rule, trivia.GetLocation()));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, trivia.GetLocation()));
                         }
 
                         break;
@@ -112,7 +109,7 @@
                         TextSpan trailingWhitespace = FindTrailingWhitespace(text, trivia.Span);
                         if (!trailingWhitespace.IsEmpty)
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(Rule, Location.Create(context.Tree, trailingWhitespace)));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, trailingWhitespace)));
                         }
 
                         break;
@@ -124,7 +121,7 @@
                             trailingWhitespace = FindTrailingWhitespace(text, line.Span);
                             if (!trailingWhitespace.IsEmpty)
                             {
-                                context.ReportDiagnostic(Diagnostic.Create(Rule, Location.Create(context.Tree, trailingWhitespace)));
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, trailingWhitespace)));
                             }
 
                             if (line.EndIncludingLineBreak == text.Length)
@@ -151,7 +148,7 @@
                         trailingWhitespace = FindTrailingWhitespace(text, trivia.Span);
                         if (!trailingWhitespace.IsEmpty)
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(Rule, Location.Create(context.Tree, trailingWhitespace)));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, trailingWhitespace)));
                         }
 
                         break;
