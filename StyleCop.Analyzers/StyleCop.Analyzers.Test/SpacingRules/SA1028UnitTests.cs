@@ -234,6 +234,19 @@ using System;
         }
 
         [Fact]
+        public async Task TrailingWhitespaceFoundWithinFalseConditionalDirectiveBlocks()
+        {
+            string testCode = @"
+#if false
+using System;  
+#endif
+";
+
+            // Note: we verify that no diagnostics are produced inside non-compiled blocks
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+        }
+
+        [Fact]
         public async Task NoTrailingWhitespaceAfterBlockComment()
         {
             string testCode = @"
