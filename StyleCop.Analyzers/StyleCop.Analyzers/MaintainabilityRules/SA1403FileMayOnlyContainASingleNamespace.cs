@@ -47,9 +47,9 @@
             context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTreeAsync);
         }
 
-        private async void HandleSyntaxTreeAsync(SyntaxTreeAnalysisContext context)
+        private void HandleSyntaxTreeAsync(SyntaxTreeAnalysisContext context)
         {
-            var syntaxRoot = await context.Tree.GetRootAsync(context.CancellationToken).ConfigureAwait(false);
+            var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
 
             var descentNodes = syntaxRoot.DescendantNodes(descendIntoChildren: node => node != null && !node.IsKind(SyntaxKind.ClassDeclaration));
 
