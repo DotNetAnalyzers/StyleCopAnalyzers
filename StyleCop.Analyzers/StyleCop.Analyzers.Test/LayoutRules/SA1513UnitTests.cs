@@ -338,6 +338,21 @@ public class Foo
         {
         }
     }
+
+    public void MultiLineLinqQuery()
+    {
+        var someQuery = (from f in Enumerable.Empty<int>()
+                         where f != 0
+                         select new { Fish = ""Face"" }).ToList();
+
+        var someOtherQuery = (from f in Enumerable.Empty<int>()
+                              where f != 0
+                              select new
+                              {
+                                  Fish = ""AreFriends"",
+                                  Not = ""Food""
+                              }).ToList();
+        }
 }
 ";
 
