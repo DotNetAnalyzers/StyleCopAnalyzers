@@ -28,7 +28,7 @@
         private const string MessageFormat = "The using static directive must appear after regular or alias using directives";
         private const string Category = "StyleCop.CSharp.OrderingRules";
         private const string Description = "A using static directive is positioned before a regular or alias using directive.";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/wiki/SA1216";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1216.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
