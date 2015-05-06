@@ -105,10 +105,30 @@
         /// <returns>true if the member is implementing an interface member, otherwise false.</returns>
         internal static bool IsImplementingAnInterfaceMember(ISymbol memberSymbol)
         {
+            IMethodSymbol methodSymbol = memberSymbol as IMethodSymbol;
+            IPropertySymbol propertySymbol = memberSymbol as IPropertySymbol;
+            IEventSymbol eventSymbol = memberSymbol as IEventSymbol;
+
+            // Only methods, properties and events can implement an interface member
+            if (methodSymbol == null && propertySymbol == null && eventSymbol == null)
+            {
+                return false;
+            }
+
+            // Check if the member is implementing an interface explicitly
+            bool isImplementingExplicitly = methodSymbol != null && methodSymbol.ExplicitInterfaceImplementations.Any();
+            isImplementingExplicitly |= propertySymbol != null && propertySymbol.ExplicitInterfaceImplementations.Any();
+            isImplementingExplicitly |= eventSymbol != null && eventSymbol.ExplicitInterfaceImplementations.Any();
+
+            if (isImplementingExplicitly)
+            {
+                return true;
+            }
+
             var typeSymbol = memberSymbol.ContainingType;
 
             return typeSymbol != null && typeSymbol.AllInterfaces
-                .SelectMany(m => m.GetMembers())
+                .SelectMany(m => m.GetMembers(memberSymbol.Name))
                 .Select(typeSymbol.FindImplementationForInterfaceMember)
                 .Any(x => memberSymbol.Equals(x));
         }
