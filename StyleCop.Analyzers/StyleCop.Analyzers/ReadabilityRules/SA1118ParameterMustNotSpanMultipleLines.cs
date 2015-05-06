@@ -98,8 +98,7 @@
             for (int i = 1; i < attributeArgumentList.Arguments.Count; i++)
             {
                 var argument = attributeArgumentList.Arguments[i];
-                if (this.CheckIfArgumentIsMultiline(argument)
-                    && !this.IsArgumentOnExceptionList(argument.Expression))
+                if (this.CheckIfArgumentIsMultiline(argument))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation()));
                 }
