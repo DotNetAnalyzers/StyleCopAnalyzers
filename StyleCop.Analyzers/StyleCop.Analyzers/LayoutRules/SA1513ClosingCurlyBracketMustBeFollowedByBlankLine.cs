@@ -78,7 +78,7 @@
         private class CurlyBracketsVisitor : CSharpSyntaxWalker
         {
             private SyntaxTreeAnalysisContext context;
-            private Stack<SyntaxToken> curlyBracketsQueue = new Stack<SyntaxToken>();
+            private Stack<SyntaxToken> curlyBracketsStack = new Stack<SyntaxToken>();
 
             public CurlyBracketsVisitor(SyntaxTreeAnalysisContext context)
                 : base(SyntaxWalkerDepth.Token)
@@ -90,13 +90,13 @@
             {
                 if (token.IsKind(SyntaxKind.OpenBraceToken))
                 {
-                    this.curlyBracketsQueue.Push(token);
+                    this.curlyBracketsStack.Push(token);
                 }
                 else if (token.IsKind(SyntaxKind.CloseBraceToken))
                 {
                     this.AnalyzeCloseBrace(token);
 
-                    this.curlyBracketsQueue.Pop();
+                    this.curlyBracketsStack.Pop();
                 }
 
                 base.VisitToken(token);
@@ -223,7 +223,7 @@
 
             private bool IsOnSameLineAsOpeningBrace(SyntaxToken closeBrace)
             {
-                var matchingOpenBrace = this.curlyBracketsQueue.Peek();
+                var matchingOpenBrace = this.curlyBracketsStack.Peek();
                 return matchingOpenBrace.GetLocation().GetLineSpan().EndLinePosition.Line == closeBrace.GetLocation().GetLineSpan().StartLinePosition.Line;
             }
 
