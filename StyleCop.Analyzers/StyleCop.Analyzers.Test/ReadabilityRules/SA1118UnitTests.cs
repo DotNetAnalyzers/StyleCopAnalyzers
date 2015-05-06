@@ -244,6 +244,30 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestAttributeSecondParameterSpandsMultipleLines()
+        {
+            var testCode = @"
+[System.AttributeUsage(System.AttributeTargets.Class,AllowMultiple = true)]
+public class MyAttribute : System.Attribute
+{
+    public MyAttribute(int a, int b)
+    {
+    }
+}
+
+[MyAttribute(1,2)]
+[MyAttribute(1,2+
+3)]
+public class Foo
+{
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(11, 16);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1118ParameterMustNotSpanMultipleLines();

@@ -59,7 +59,7 @@
         private const string Title = "Parameter must not span multiple lines";
         private const string MessageFormat = "The parameter spans multiple lines.";
         private const string Category = "StyleCop.CSharp.ReadabilityRules";
-        private const string Description = "A parameter to a C# method or indexer, other than the first parameter, spans across multiple lines. If the parameter is short, place the entire parameter on a single line. Otherwise, save the contents of the parameter in a temporary variable and pass the temporary variable as a parameter.";
+        private const string Description = "A parameter to a C# method/indexer/attribute/array, other than the first parameter, spans across multiple lines. If the parameter is short, place the entire parameter on a single line. Otherwise, save the contents of the parameter in a temporary variable and pass the temporary variable as a parameter.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1118.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
@@ -88,6 +88,22 @@
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterSyntaxNodeAction(this.HandleArgumentList, SyntaxKind.ArgumentList, SyntaxKind.BracketedArgumentList);
+            context.RegisterSyntaxNodeAction(this.HandleAttributeArgumentList, SyntaxKind.AttributeArgumentList);
+        }
+
+        private void HandleAttributeArgumentList(SyntaxNodeAnalysisContext context)
+        {
+            var attributeArgumentList = (AttributeArgumentListSyntax) context.Node;
+
+            for (int i = 1; i < attributeArgumentList.Arguments.Count; i++)
+            {
+                var argument = attributeArgumentList.Arguments[i];
+                if (this.CheckIfArgumentIsMultiline(argument)
+                    && !this.IsArgumentOnExceptionList(argument.Expression))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation()));
+                }
+            }
         }
 
         private void HandleArgumentList(SyntaxNodeAnalysisContext context)
@@ -98,23 +114,23 @@
             {
                 var argument = argumentListSyntax.Arguments[i];
                 if (this.CheckIfArgumentIsMultiline(argument)
-                    && !this.IsArgumentOnExceptionList(argument))
+                    && !this.IsArgumentOnExceptionList(argument.Expression))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation()));
                 }
             }
         }
 
-        private bool CheckIfArgumentIsMultiline(ArgumentSyntax argumentSyntax)
+        private bool CheckIfArgumentIsMultiline(CSharpSyntaxNode argument)
         {
-            var lineSpan = argumentSyntax.GetLocation().GetLineSpan();
+            var lineSpan = argument.GetLocation().GetLineSpan();
             return lineSpan.EndLinePosition.Line > lineSpan.StartLinePosition.Line;
         }
 
-        private bool IsArgumentOnExceptionList(ArgumentSyntax argumentSyntax)
+        private bool IsArgumentOnExceptionList(ExpressionSyntax argumentExpresson)
         {
-            return argumentSyntax.Expression != null
-                   && ArgumentExceptionSyntaxKinds.Any(argumentSyntax.Expression.IsKind);
+            return argumentExpresson != null
+                   && ArgumentExceptionSyntaxKinds.Any(argumentExpresson.IsKind);
         }
     }
 }
