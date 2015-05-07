@@ -33,13 +33,13 @@
         private const string Description = "A using directive which declares a member of the 'System' namespace appears after a using directive which declares a member of a different namespace, within a C# code file.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1208.html";
 
+        private const string SystemUsingDirectiveName = "System";
+
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
-
-        private readonly string SystemUsingDirectiveName = "System";
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
@@ -63,7 +63,7 @@
 
             var usings = compilationUnit.Usings;
 
-            ProcessUsingsAndReportDiagnostic(usings, context);
+           ProcessUsingsAndReportDiagnostic(usings, context);
         }
 
         private void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context)
@@ -75,7 +75,7 @@
             ProcessUsingsAndReportDiagnostic(usings, context);
         }
 
-        private void ProcessUsingsAndReportDiagnostic(SyntaxList<UsingDirectiveSyntax> usings, SyntaxNodeAnalysisContext context)
+        private static void ProcessUsingsAndReportDiagnostic(SyntaxList<UsingDirectiveSyntax> usings, SyntaxNodeAnalysisContext context)
         {
             if (!usings.Any())
             {
