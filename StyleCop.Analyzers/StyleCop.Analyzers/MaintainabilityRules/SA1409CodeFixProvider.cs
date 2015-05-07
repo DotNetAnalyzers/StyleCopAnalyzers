@@ -36,7 +36,7 @@
         }
 
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             foreach (var diagnostic in context.Diagnostics)
             {
@@ -47,6 +47,8 @@
 
                 context.RegisterCodeFix(CodeAction.Create("Remove unnecessary code", t => GetTransformedDocumentAsync(context.Document, diagnostic, t)), diagnostic);
             }
+
+            return Task.FromResult(false);
         }
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
