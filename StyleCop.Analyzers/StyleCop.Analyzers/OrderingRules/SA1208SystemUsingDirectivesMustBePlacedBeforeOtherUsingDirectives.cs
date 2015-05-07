@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Immutable;
+    using System.Linq;
     using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -38,6 +39,8 @@
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
 
+        private readonly string SystemUsingDirectiveName = "System";
+
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -50,93 +53,79 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleUsingDirectiveSyntax, SyntaxKind.UsingDirective);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleCompilationUnit, SyntaxKind.CompilationUnit);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleNamespaceDeclaration, SyntaxKind.NamespaceDeclaration);
         }
 
-        private void HandleUsingDirectiveSyntax(SyntaxNodeAnalysisContext context)
+        private void HandleCompilationUnit(SyntaxNodeAnalysisContext context)
         {
-            UsingDirectiveSyntax syntax = context.Node as UsingDirectiveSyntax;
-            if (syntax.Alias != null)
+            var compilationUnit = context.Node as CompilationUnitSyntax;
+
+            var usings = compilationUnit.Usings;
+
+            ProcessUsingsAndReportDiagnostic(usings, context);
+        }
+
+        private void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var namespaceDeclaration = context.Node as NamespaceDeclarationSyntax;
+
+            var usings = namespaceDeclaration.Usings;
+
+            ProcessUsingsAndReportDiagnostic(usings, context);
+        }
+
+        private void ProcessUsingsAndReportDiagnostic(SyntaxList<UsingDirectiveSyntax> usings, SyntaxNodeAnalysisContext context)
+        {
+            if (!usings.Any())
             {
                 return;
             }
 
-            SemanticModel semanticModel = context.SemanticModel;
-            INamespaceSymbol namespaceSymbol;
-            string topLevelNamespace = GetTopLevelNamespace(semanticModel, syntax, out namespaceSymbol, context.CancellationToken);
-            if (!"System".Equals(topLevelNamespace, StringComparison.Ordinal))
+            string systemUsingDirectivesShouldBeBeforeThisName = null;
+            for (var i = 1; i < usings.Count; i++)
             {
-                return;
-            }
+                var @using = usings[i];
 
-            CompilationUnitSyntax compilationUnit = syntax.Parent as CompilationUnitSyntax;
-            SyntaxList<UsingDirectiveSyntax>? usingDirectives = compilationUnit?.Usings;
-            if (!usingDirectives.HasValue)
-            {
-                NamespaceDeclarationSyntax namespaceDeclaration = syntax.Parent as NamespaceDeclarationSyntax;
-                usingDirectives = namespaceDeclaration?.Usings;
-            }
-
-            if (!usingDirectives.HasValue)
-            {
-                return;
-            }
-
-            foreach (var usingDirective in usingDirectives)
-            {
-                // we are only interested in nodes before the current node
-                if (usingDirective == syntax)
-                {
-                    break;
-                }
-
-                // ignore using alias directives, since they are handled by SA1209
-                if (usingDirective.Alias != null)
+                if (@using.Alias != null || !@using.StaticKeyword.IsKind(SyntaxKind.None))
                 {
                     continue;
                 }
 
-                INamespaceSymbol precedingNamespaceSymbol;
-                string precedingTopLevelNamespace = GetTopLevelNamespace(semanticModel, usingDirective, out precedingNamespaceSymbol, context.CancellationToken);
-                if (precedingTopLevelNamespace == null || "System".Equals(precedingTopLevelNamespace, StringComparison.Ordinal))
+                Func<IdentifierNameSyntax, bool> excludeGlobalKeywordPredicate = 
+                    token => token.Identifier.Kind() != SyntaxKind.GlobalKeyword;
+
+                var firstIdentifierInUsingDirective = @using.DescendantNodes().OfType<IdentifierNameSyntax>().FirstOrDefault(excludeGlobalKeywordPredicate)?.Identifier;
+                if (string.Compare(SystemUsingDirectiveName, firstIdentifierInUsingDirective?.Text, StringComparison.Ordinal) == 0)
                 {
-                    continue;
+                    if (systemUsingDirectivesShouldBeBeforeThisName != null)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, @using.GetLocation(), GetNamespaceNameWithoutAlias(@using.Name.ToString()), systemUsingDirectivesShouldBeBeforeThisName));
+                        continue;
+                    }
+
+                    var previousUsing = usings[i - 1];
+                    var firstIdentifierInPreviousUsingDirective = previousUsing.DescendantNodes().OfType<IdentifierNameSyntax>().FirstOrDefault(excludeGlobalKeywordPredicate)?.Identifier;
+
+                    if (string.Compare(SystemUsingDirectiveName, firstIdentifierInPreviousUsingDirective?.Text, StringComparison.Ordinal) != 0 || previousUsing.StaticKeyword.Kind() != SyntaxKind.None)
+                    {
+                        systemUsingDirectivesShouldBeBeforeThisName = GetNamespaceNameWithoutAlias(previousUsing.Name.ToString());
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, @using.GetLocation(), GetNamespaceNameWithoutAlias(@using.Name.ToString()), systemUsingDirectivesShouldBeBeforeThisName));
+                    }
                 }
-
-                string @namespace = namespaceSymbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat);
-                string precedingNamespace = precedingNamespaceSymbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat);
-
-                // Using directive for '{namespace}' must appear before directive for '{precedingNamespace}'
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.GetLocation(), @namespace, precedingNamespace));
-                break;
             }
         }
 
-        private static string GetTopLevelNamespace(SemanticModel semanticModel, UsingDirectiveSyntax syntax, out INamespaceSymbol namespaceSymbol, CancellationToken cancellationToken)
+        private static string GetNamespaceNameWithoutAlias(string name)
         {
-            SymbolInfo symbolInfo = semanticModel.GetSymbolInfo(syntax.Name, cancellationToken);
-            namespaceSymbol = symbolInfo.Symbol as INamespaceSymbol;
-            if (namespaceSymbol == null)
-            {
-                return null;
-            }
-
-            string fullyQualifiedName = namespaceSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-            string name = fullyQualifiedName;
-
+            var result = name;
             int doubleColon = name.IndexOf("::");
             if (doubleColon >= 0)
             {
-                name = name.Substring(doubleColon + 2);
+                result = name.Substring(doubleColon + 2);
             }
 
-            int dot = name.IndexOf('.');
-            if (dot >= 0)
-            {
-                name = name.Substring(0, dot);
-            }
-
-            return name;
+            return result;
         }
     }
 }
