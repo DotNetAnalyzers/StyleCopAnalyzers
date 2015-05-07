@@ -7,6 +7,8 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
+
 
     /// <summary>
     /// A static using directive is positioned at the wrong location.
@@ -69,8 +71,8 @@
                 {
                     if (lastStaticUsingDirective != null)
                     {
-                        var firstName = lastStaticUsingDirective.Name.ToFullString();
-                        var secondName = usingDirective.Name.ToFullString();
+                        var firstName = lastStaticUsingDirective.Name.ToUnaliasedString();
+                        var secondName = usingDirective.Name.ToUnaliasedString();
 
                         if (string.Compare(firstName, secondName, StringComparison.Ordinal) > 0)
                         {

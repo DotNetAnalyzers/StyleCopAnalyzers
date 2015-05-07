@@ -105,6 +105,7 @@
     <Compile Include="GeneratedCodeAnalysisExtensions.cs" />
     <Compile Include="Helpers\EnumerableHelpers.cs" />
     <Compile Include="Helpers\NamedTypeHelpers.cs" />
+    <Compile Include="Helpers\NameSyntaxHelpers.cs" />
     <Compile Include="Helpers\RenameHelper.cs" />
     <Compile Include="Helpers\TriviaHelper.cs" />
     <Compile Include="Helpers\XmlCommentHelper.cs" />
