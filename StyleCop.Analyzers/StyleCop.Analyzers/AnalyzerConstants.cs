@@ -38,7 +38,5 @@
         /// to indicate that the diagnostic should be enabled by default.
         /// </value>
         internal static bool EnabledByDefault => true;
-
-        internal static Task CompletedTask { get; } = Task.FromResult(false);
     }
 }
