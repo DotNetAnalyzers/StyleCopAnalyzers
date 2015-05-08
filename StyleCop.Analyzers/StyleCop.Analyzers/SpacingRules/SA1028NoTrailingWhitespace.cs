@@ -35,10 +35,9 @@
         private const string Category = "Style";
         private const string Description = "There should not be any whitespace at the end of a line of code.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/wiki/SA1028";
-        private const bool IsEnabledByDefault = true;
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, IsEnabledByDefault, Description, HelpLink, customTags: new[] { WellKnownDiagnosticTags.Unnecessary });
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink, customTags: new[] { WellKnownDiagnosticTags.Unnecessary });
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
