@@ -36,7 +36,7 @@
         private const string SystemUsingDirectiveName = "System";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -63,7 +63,7 @@
 
             var usings = compilationUnit.Usings;
 
-           ProcessUsingsAndReportDiagnostic(usings, context);
+            ProcessUsingsAndReportDiagnostic(usings, context);
         }
 
         private void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context)
@@ -77,43 +77,42 @@
 
         private static void ProcessUsingsAndReportDiagnostic(SyntaxList<UsingDirectiveSyntax> usings, SyntaxNodeAnalysisContext context)
         {
-            if (!usings.Any())
-            {
-                return;
-            }
-
             string systemUsingDirectivesShouldBeBeforeThisName = null;
             for (var i = 1; i < usings.Count; i++)
             {
-                var @using = usings[i];
+                var usingDirective = usings[i];
 
-                if (@using.Alias != null || !@using.StaticKeyword.IsKind(SyntaxKind.None))
+                if (usingDirective.Alias != null || !usingDirective.StaticKeyword.IsKind(SyntaxKind.None))
                 {
                     continue;
                 }
 
-                Func<IdentifierNameSyntax, bool> excludeGlobalKeywordPredicate = 
-                    token => token.Identifier.Kind() != SyntaxKind.GlobalKeyword;
-
-                var firstIdentifierInUsingDirective = @using.DescendantNodes().OfType<IdentifierNameSyntax>().FirstOrDefault(excludeGlobalKeywordPredicate)?.Identifier;
-                if (string.Compare(SystemUsingDirectiveName, firstIdentifierInUsingDirective?.Text, StringComparison.Ordinal) == 0)
+                var firstIdentifierInUsingDirective = GetFirstIdentifierInUsingDirective(usingDirective);
+                if (string.Equals(SystemUsingDirectiveName, firstIdentifierInUsingDirective?.Text, StringComparison.Ordinal))
                 {
                     if (systemUsingDirectivesShouldBeBeforeThisName != null)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, @using.GetLocation(), GetNamespaceNameWithoutAlias(@using.Name.ToString()), systemUsingDirectivesShouldBeBeforeThisName));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, usingDirective.GetLocation(), GetNamespaceNameWithoutAlias(usingDirective.Name.ToString()), systemUsingDirectivesShouldBeBeforeThisName));
                         continue;
                     }
 
                     var previousUsing = usings[i - 1];
-                    var firstIdentifierInPreviousUsingDirective = previousUsing.DescendantNodes().OfType<IdentifierNameSyntax>().FirstOrDefault(excludeGlobalKeywordPredicate)?.Identifier;
+                    var firstIdentifierInPreviousUsingDirective = GetFirstIdentifierInUsingDirective(previousUsing);
 
-                    if (string.Compare(SystemUsingDirectiveName, firstIdentifierInPreviousUsingDirective?.Text, StringComparison.Ordinal) != 0 || previousUsing.StaticKeyword.Kind() != SyntaxKind.None)
+                    if (!string.Equals(SystemUsingDirectiveName, firstIdentifierInPreviousUsingDirective?.Text, StringComparison.Ordinal) || previousUsing.StaticKeyword.Kind() != SyntaxKind.None)
                     {
                         systemUsingDirectivesShouldBeBeforeThisName = GetNamespaceNameWithoutAlias(previousUsing.Name.ToString());
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, @using.GetLocation(), GetNamespaceNameWithoutAlias(@using.Name.ToString()), systemUsingDirectivesShouldBeBeforeThisName));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, usingDirective.GetLocation(), GetNamespaceNameWithoutAlias(usingDirective.Name.ToString()), systemUsingDirectivesShouldBeBeforeThisName));
                     }
                 }
             }
+        }
+
+        private static bool ExcludeGlobalKeyword(IdentifierNameSyntax token) => !token.Identifier.IsKind(SyntaxKind.GlobalKeyword);
+
+        private static SyntaxToken? GetFirstIdentifierInUsingDirective(UsingDirectiveSyntax usingDirective)
+        {
+            return usingDirective.DescendantNodes().OfType<IdentifierNameSyntax>().FirstOrDefault(ExcludeGlobalKeyword)?.Identifier;
         }
 
         private static string GetNamespaceNameWithoutAlias(string name)
