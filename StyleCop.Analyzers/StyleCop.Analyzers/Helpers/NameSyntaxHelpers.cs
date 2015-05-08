@@ -12,7 +12,7 @@
         /// <summary>
         /// Gets the name contained in the <see cref="NameSyntax"/>, without an alias prefix.
         /// </summary>
-        /// <param name="nameSyntax">The <see cref="NameSyntax"/> to get.</param>
+        /// <param name="nameSyntax">The <see cref="NameSyntax"/> from which the name will be extracted.</param>
         /// <returns>The name contained in the <see cref="NameSyntax"/>, with its alias removed (if any).</returns>
         internal static string ToUnaliasedString(this NameSyntax nameSyntax)
         {

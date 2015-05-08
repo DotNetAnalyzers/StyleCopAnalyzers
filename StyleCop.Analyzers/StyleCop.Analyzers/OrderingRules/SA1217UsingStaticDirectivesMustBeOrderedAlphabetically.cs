@@ -9,7 +9,6 @@
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
 
-
     /// <summary>
     /// A static using directive is positioned at the wrong location.
     /// </summary>
