@@ -26,7 +26,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestValidSingleLineComments()
+        public async Task TestValidSingleLineCommentsAsync()
         {
             var testCode = @"// A single line comment at the start of the file is valid
 namespace Foo
@@ -70,7 +70,7 @@ namespace Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestInvalidSingleLineComments()
+        public async Task TestInvalidSingleLineCommentsAsync()
         {
             var testCode = @"namespace Foo
 {
@@ -124,7 +124,7 @@ namespace Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestSingleLineCommentWithinConditionalDirective()
+        public async Task TestSingleLineCommentWithinConditionalDirectiveAsync()
         {
             var testCode = @"// A single line comment at the start of the file is valid
 namespace Foo
