@@ -25,5 +25,17 @@
         /// to disable a diagnostic which is currently untested.
         /// </value>
         internal static bool DisabledNoTests { get; }
+
+        /// <summary>
+        /// Gets a reference value which can be passed to
+        /// <see cref="DiagnosticDescriptor(string, string, string, string, DiagnosticSeverity, bool, string, string, string[])"/>
+        /// to indicate that the diagnostic should be enabled by default.
+        /// </summary>
+        /// <value>
+        /// A reference value which can be passed to
+        /// <see cref="DiagnosticDescriptor(string, string, string, string, DiagnosticSeverity, bool, string, string, string[])"/>
+        /// to indicate that the diagnostic should be enabled by default.
+        /// </value>
+        internal static bool EnabledByDefault => true;
     }
 }

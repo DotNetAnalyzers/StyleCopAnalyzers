@@ -227,6 +227,7 @@
     <Compile Include="SpacingRules\SA1007UnitTests.cs" />
     <Compile Include="SpacingRules\SA1021UnitTests.cs" />
     <Compile Include="SpacingRules\SA1022UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1028UnitTests.cs" />
     <Compile Include="Verifiers\CodeFixVerifier.cs" />
     <Compile Include="Verifiers\DiagnosticVerifier.cs" />
   </ItemGroup>
