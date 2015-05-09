@@ -9,7 +9,7 @@
     using Xunit;
 
     /// <summary>
-    /// This class contains unit tests for <see cref="SA1028NoTrailingWhitespace"/> and
+    /// This class contains unit tests for <see cref="SA1028CodeMustNotContainTrailingWhitespace"/> and
     /// <see cref="SA1028CodeFixProvider"/>.
     /// </summary>
     public class SA1028UnitTests : CodeFixVerifier
@@ -259,7 +259,7 @@ class Program    /* some block comment that follows several spaces */
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new SA1028NoTrailingWhitespace();
+            return new SA1028CodeMustNotContainTrailingWhitespace();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

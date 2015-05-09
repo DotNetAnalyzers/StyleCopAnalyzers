@@ -11,7 +11,7 @@
     using Microsoft.CodeAnalysis.Text;
 
     /// <summary>
-    /// Implements a code fix for <see cref="SA1028NoTrailingWhitespace"/>.
+    /// Implements a code fix for <see cref="SA1028CodeMustNotContainTrailingWhitespace"/>.
     /// </summary>
     /// <remarks>
     /// <para>To fix a violation of this rule, remove any whitespace at the end of a line of code.</para>
@@ -20,7 +20,7 @@
     public class SA1028CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1028NoTrailingWhitespace.DiagnosticId);
+            ImmutableArray.Create(SA1028CodeMustNotContainTrailingWhitespace.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
