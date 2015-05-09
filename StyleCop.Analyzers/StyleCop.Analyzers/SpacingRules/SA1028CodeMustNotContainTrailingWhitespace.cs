@@ -30,7 +30,7 @@
         private const string MessageFormat = "Code must not contain trailing whitespace";
         private const string Category = "StyleCop.CSharp.SpacingRules";
         private const string Description = "There should not be any whitespace at the end of a line of code.";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/wiki/SA1028";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1028.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);
