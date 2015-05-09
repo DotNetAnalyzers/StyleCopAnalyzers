@@ -73,7 +73,7 @@
                         var firstName = lastStaticUsingDirective.Name.ToUnaliasedString();
                         var secondName = usingDirective.Name.ToUnaliasedString();
 
-                        if (string.Compare(firstName, secondName, StringComparison.Ordinal) > 0)
+                        if (string.Compare(firstName, secondName, StringComparison.OrdinalIgnoreCase) > 0)
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptor, lastStaticUsingDirective.GetLocation(), new[] { firstName, secondName }));
                             return;
