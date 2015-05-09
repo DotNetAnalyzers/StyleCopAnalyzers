@@ -37,7 +37,7 @@ namespace TestHelper
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         protected Task VerifyCSharpFixAsync(string oldSource, string newSource, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return this.VerifyFixAsync(LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzer(), this.GetCSharpCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics, cancellationToken);
+            return this.VerifyFixAsync(LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers(), this.GetCSharpCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics, cancellationToken);
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace TestHelper
         /// </summary>
         /// <param name="language">The language the source classes are in. Values may be taken from the
         /// <see cref="LanguageNames"/> class.</param>
-        /// <param name="analyzer">The analyzer to be applied to the source code.</param>
+        /// <param name="analyzers">The analyzer to be applied to the source code.</param>
         /// <param name="codeFixProvider">The code fix to be applied to the code wherever the relevant
         /// <see cref="Diagnostic"/> is found.</param>
         /// <param name="oldSource">A class in the form of a string before the code fix was applied to it.</param>
@@ -62,10 +62,10 @@ namespace TestHelper
         /// fix introduces other warnings after being applied.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        private async Task VerifyFixAsync(string language, DiagnosticAnalyzer analyzer, CodeFixProvider codeFixProvider, string oldSource, string newSource, int? codeFixIndex, bool allowNewCompilerDiagnostics, CancellationToken cancellationToken)
+        private async Task VerifyFixAsync(string language, DiagnosticAnalyzer[] analyzers, CodeFixProvider codeFixProvider, string oldSource, string newSource, int? codeFixIndex, bool allowNewCompilerDiagnostics, CancellationToken cancellationToken)
         {
             var document = CreateDocument(oldSource, language);
-            var analyzerDiagnostics = await GetSortedDiagnosticsFromDocumentsAsync(analyzer, new[] { document }, cancellationToken).ConfigureAwait(false);
+            var analyzerDiagnostics = await GetSortedDiagnosticsFromDocumentsAsync(analyzers, new[] { document }, cancellationToken).ConfigureAwait(false);
             var compilerDiagnostics = await GetCompilerDiagnosticsAsync(document, cancellationToken).ConfigureAwait(false);
             var attempts = analyzerDiagnostics.Length;
 
@@ -87,7 +87,7 @@ namespace TestHelper
                 }
 
                 document = await ApplyFixAsync(document, actions.ElementAt(0), cancellationToken).ConfigureAwait(false);
-                analyzerDiagnostics = await GetSortedDiagnosticsFromDocumentsAsync(analyzer, new[] { document }, cancellationToken).ConfigureAwait(false);
+                analyzerDiagnostics = await GetSortedDiagnosticsFromDocumentsAsync(analyzers, new[] { document }, cancellationToken).ConfigureAwait(false);
 
                 // check if there are analyzer diagnostics left after the code fix
                 if (!analyzerDiagnostics.Any())
