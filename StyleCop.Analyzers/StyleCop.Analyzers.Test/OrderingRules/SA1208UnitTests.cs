@@ -95,10 +95,12 @@ class A
         [Fact]
         public async Task TestSystemUsingDirectivesInCompilationUnitAndInNamespaceDeclaration()
         {
-            var source1 = "namespace Xyz {}";
-            var source2 = "namespace Namespace {}";
-            var source3 = "namespace AnotherNamespace {}";
-            var source4 = @"using AnotherNamespace;
+            var sources = new[]
+            {
+                "namespace Xyz {}",
+                "namespace Namespace {}",
+                "namespace AnotherNamespace {}",
+                @"using AnotherNamespace;
 using System.IO;
 using Namespace;
 
@@ -111,7 +113,7 @@ namespace Test
     class A
     {
     }
-}";
+}"};
 
             var expected = new[]
             {
@@ -120,16 +122,18 @@ namespace Test
                 this.CSharpDiagnostic().WithLocation("Test3.cs", 9, 5).WithArguments("System", "Xyz")
             };
 
-            await this.VerifyCSharpDiagnosticAsync(new[] { source1, source2, source3, source4 }, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(sources, expected, CancellationToken.None);
         }
 
         [Fact]
         public async Task TestPlaceSystemUsingDirectivesWithGlobalContextualKeyword()
         {
-            var source1 = "namespace Xyz {}";
-            var source2 = "namespace Namespace {}";
-            var source3 = "namespace AnotherNamespace {}";
-            var source4 = @"using global::AnotherNamespace;
+            var sources = new[]
+            {
+                "namespace Xyz {}",
+                "namespace Namespace {}",
+                "namespace AnotherNamespace {}",
+                @"using global::AnotherNamespace;
 using global::System.IO;
 using Namespace;
 
@@ -142,16 +146,17 @@ namespace Test
     class A
     {
     }
-}";
+}"
+        };
 
             var expected = new[]
-{
+            {
                 this.CSharpDiagnostic().WithLocation("Test3.cs", 2, 1).WithArguments("System.IO", "AnotherNamespace"),
                 this.CSharpDiagnostic().WithLocation("Test3.cs", 8, 5).WithArguments("System.Threading", "Xyz"),
                 this.CSharpDiagnostic().WithLocation("Test3.cs", 9, 5).WithArguments("System", "Xyz")
             };
 
-            await this.VerifyCSharpDiagnosticAsync(new[] { source1, source2, source3, source4 }, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(sources, expected, CancellationToken.None);
         }
 
         [Fact]
@@ -213,6 +218,66 @@ using System;
 
             await this.VerifyCSharpDiagnosticAsync(namespaceDeclarationWithoutDiagnostic, EmptyDiagnosticResults, CancellationToken.None);
             await this.VerifyCSharpDiagnosticAsync(source, expected, CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task TestWhenThereArePreprocessorDirectivesCloseToUsingDirectives()
+        {
+            var sources = new[]
+            {
+                "namespace Namespace {}",
+                "namespace AnotherNamespace {}",
+                @"#define DEBUG
+namespace Test
+{
+    using Namespace;
+    using System.Threading;
+#if DEBUG
+    using System.IO;
+#endif
+    using AnotherNamespace;
+
+    class A
+    {
+    }
+}"
+        };
+
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation("Test2.cs", 5, 5).WithArguments("System.Threading", "Namespace"),
+                this.CSharpDiagnostic().WithLocation("Test2.cs", 7, 5).WithArguments("System.IO", "Namespace")
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(sources, expected, CancellationToken.None);
+        }
+
+        [Fact]
+        public async Task TestWithInlineCommentsInUsingDirectives()
+        {
+            var sources = new[]
+            {
+                "namespace Namespace {}",
+                "namespace AnotherNamespace {}",
+                @"namespace Test
+{
+    using Namespace;
+    using /* inline comment */ System.Threading;
+    using System.IO;
+    using /* comment */ AnotherNamespace;
+
+    class A
+    {
+    }
+}"      };
+
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation("Test2.cs", 4, 5).WithArguments("System.Threading", "Namespace"),
+                this.CSharpDiagnostic().WithLocation("Test2.cs", 5, 5).WithArguments("System.IO", "Namespace")
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(sources, expected, CancellationToken.None);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
