@@ -17,7 +17,7 @@
     /// <remarks>
     /// <para>To fix a violation of this rule, the violating statement will be converted to a block statement.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1503CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1503CodeFixProvider))]
     [Shared]
     public class SA1503CodeFixProvider : CodeFixProvider
     {

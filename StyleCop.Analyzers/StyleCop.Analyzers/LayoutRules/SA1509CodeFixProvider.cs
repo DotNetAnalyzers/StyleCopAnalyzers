@@ -14,7 +14,7 @@
     /// <summary>
     /// Implements a code fix for <see cref="SA1509OpeningCurlyBracketsMustNotBePrecededByBlankLine"/>.
     /// </summary>
-    [ExportCodeFixProvider(nameof(SA1509CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1509CodeFixProvider))]
     [Shared]
     public class SA1509CodeFixProvider : CodeFixProvider
     {

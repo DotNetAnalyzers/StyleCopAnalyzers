@@ -14,7 +14,7 @@
     /// <para>To fix a violation of this rule, remove any whitespace between the new keyword and the opening array
     /// bracket.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1026CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1026CodeFixProvider))]
     [Shared]
     public class SA1026CodeFixProvider : CodeFixProvider
     {

@@ -17,7 +17,7 @@
     /// <para>To fix a violation of this rule, ensure that the spacing around the positive sign follows the rule
     /// described in <see cref="SA1022PositiveSignsMustBeSpacedCorrectly"/>.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1022CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1022CodeFixProvider))]
     [Shared]
     public class SA1022CodeFixProvider : CodeFixProvider
     {

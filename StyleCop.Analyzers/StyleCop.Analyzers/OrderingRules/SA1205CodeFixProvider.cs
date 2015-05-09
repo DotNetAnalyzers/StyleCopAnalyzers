@@ -14,7 +14,7 @@
     /// <summary>
     /// Implements code fixes for <see cref="SA1205PartialElementsMustDeclareAccess"/>.
     /// </summary>
-    [ExportCodeFixProvider(nameof(SA1205CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1205CodeFixProvider))]
     [Shared]
     public class SA1205CodeFixProvider : CodeFixProvider
     {

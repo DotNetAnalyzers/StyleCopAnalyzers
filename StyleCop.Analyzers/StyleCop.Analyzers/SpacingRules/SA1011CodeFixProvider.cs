@@ -16,7 +16,7 @@
     /// <para>To fix a violation of this rule, ensure that the spacing around the closing square bracket follows the
     /// rule described in <see cref="SA1011ClosingSquareBracketsMustBeSpacedCorrectly"/>.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1011CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1011CodeFixProvider))]
     [Shared]
     public class SA1011CodeFixProvider : CodeFixProvider
     {

@@ -21,7 +21,7 @@
     /// <para>To fix a violation of this rule, add the standard documentation text.
     /// above.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1642SA1643CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1642SA1643CodeFixProvider))]
     [Shared]
     public class SA1642SA1643CodeFixProvider : CodeFixProvider
     {
