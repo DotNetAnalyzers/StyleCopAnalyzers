@@ -18,7 +18,7 @@
     /// <para>To fix a violation of this rule, review the placeholder documentation for accuracy and remove the
     /// &lt;placeholder&gt; tags.</para>
     /// </remarks>
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1642SA1643CodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1651CodeFixProvider))]
     [Shared]
     public class SA1651CodeFixProvider : CodeFixProvider
     {
