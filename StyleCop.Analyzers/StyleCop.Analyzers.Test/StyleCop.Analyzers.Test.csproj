@@ -165,6 +165,17 @@
     <Compile Include="LayoutRules\SA1500\SA1500UnitTests.Structs.cs" />
     <Compile Include="LayoutRules\SA1500\SA1500UnitTests.Switches.cs" />
     <Compile Include="LayoutRules\SA1500\SA1500UnitTests.TryCatchFinallys.cs" />
+    <Compile Include="LayoutRules\SA1502\SA1502UnitTests.Constructors.cs" />
+    <Compile Include="LayoutRules\SA1502\SA1502UnitTests.cs" />
+    <Compile Include="LayoutRules\SA1502\SA1502UnitTests.Destructors.cs" />
+    <Compile Include="LayoutRules\SA1502\SA1502UnitTests.Enums.cs" />
+    <Compile Include="LayoutRules\SA1502\SA1502UnitTests.Events.cs" />
+    <Compile Include="LayoutRules\SA1502\SA1502UnitTests.Indexers.cs" />
+    <Compile Include="LayoutRules\SA1502\SA1502UnitTests.Interfaces.cs" />
+    <Compile Include="LayoutRules\SA1502\SA1502UnitTests.Methods.cs" />
+    <Compile Include="LayoutRules\SA1502\SA1502UnitTests.Namespaces.cs" />
+    <Compile Include="LayoutRules\SA1502\SA1502UnitTests.Properties.cs" />
+    <Compile Include="LayoutRules\SA1502\SA1502UnitTests.TypeDeclarations.cs" />
     <Compile Include="LayoutRules\SA1503UnitTests.cs" />
     <Compile Include="LayoutRules\SA1504UnitTests.cs" />
     <Compile Include="LayoutRules\SA1507UnitTests.cs" />
