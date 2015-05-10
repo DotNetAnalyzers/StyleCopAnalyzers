@@ -265,6 +265,8 @@
     <Compile Include="SpacingRules\SA1026CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation.cs" />
     <Compile Include="SpacingRules\SA1027TabsMustNotBeUsed.cs" />
+    <Compile Include="SpacingRules\SA1028CodeFixProvider.cs" />
+    <Compile Include="SpacingRules\SA1028NoTrailingWhitespace.cs" />
     <Compile Include="SpacingRules\SpacingExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
