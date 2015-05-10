@@ -23,7 +23,7 @@
     /// <para>To fix a violation of this rule, fill-in a description of the value held by the property within the
     /// &lt;value&gt; tag.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1609SA1610CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1609SA1610CodeFixProvider))]
     [Shared]
     public class SA1609SA1610CodeFixProvider : CodeFixProvider
     {
