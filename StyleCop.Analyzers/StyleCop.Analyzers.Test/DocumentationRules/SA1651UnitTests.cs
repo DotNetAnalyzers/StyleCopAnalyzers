@@ -16,14 +16,14 @@
         public string DiagnosticId { get; } = SA1651DoNotUsePlaceholderElements.DiagnosticId;
 
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestEmptyDocumentation()
+        public async Task TestEmptyDocumentationAsync()
         {
             var testCode = @"namespace FooNamespace
 {
@@ -35,11 +35,11 @@
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestDocumentationWithoutPlaceholders()
+        public async Task TestDocumentationWithoutPlaceholdersAsync()
         {
             var testCode = @"namespace FooNamespace
 {
@@ -51,11 +51,11 @@
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestTopLevelPlaceholder()
+        public async Task TestTopLevelPlaceholderAsync()
         {
             var testCode = @"namespace FooNamespace
 {
@@ -79,13 +79,13 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestTopLevelEmptyPlaceholder()
+        public async Task TestTopLevelEmptyPlaceholderAsync()
         {
             var testCode = @"namespace FooNamespace
 {
@@ -100,13 +100,13 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestEmbeddedPlaceholder()
+        public async Task TestEmbeddedPlaceholderAsync()
         {
             var testCode = @"namespace FooNamespace
 {
@@ -130,13 +130,13 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestEmbeddedEmptyPlaceholder()
+        public async Task TestEmbeddedEmptyPlaceholderAsync()
         {
             var testCode = @"namespace FooNamespace
 {
@@ -153,13 +153,13 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 17);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestDeeplyEmbeddedPlaceholder()
+        public async Task TestDeeplyEmbeddedPlaceholderAsync()
         {
             var testCode = @"namespace FooNamespace
 {
@@ -193,13 +193,13 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 15);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestFormattingPreserved()
+        public async Task TestFormattingPreservedAsync()
         {
             var testCode = @"namespace FooNamespace
 {
@@ -229,9 +229,9 @@
                 this.CSharpDiagnostic().WithLocation(4, 18)
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

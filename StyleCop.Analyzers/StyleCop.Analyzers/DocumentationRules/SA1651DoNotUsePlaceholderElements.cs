@@ -41,7 +41,7 @@
         private const string HelpLink = null;
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -66,7 +66,9 @@
         {
             XmlElementSyntax syntax = (XmlElementSyntax)context.Node;
             if (!string.Equals("placeholder", syntax.StartTag?.Name?.ToString(), StringComparison.Ordinal))
+            {
                 return;
+            }
 
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.GetLocation()));
         }
@@ -75,7 +77,9 @@
         {
             XmlEmptyElementSyntax syntax = (XmlEmptyElementSyntax)context.Node;
             if (!string.Equals("placeholder", syntax.Name?.ToString(), StringComparison.Ordinal))
+            {
                 return;
+            }
 
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.GetLocation()));
         }

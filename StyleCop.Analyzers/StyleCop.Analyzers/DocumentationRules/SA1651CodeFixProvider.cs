@@ -18,7 +18,7 @@
     /// <para>To fix a violation of this rule, review the placeholder documentation for accuracy and remove the
     /// &lt;placeholder&gt; tags.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1642SA1643CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1642SA1643CodeFixProvider))]
     [Shared]
     public class SA1651CodeFixProvider : CodeFixProvider
     {
@@ -41,12 +41,16 @@
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!FixableDiagnostics.Contains(diagnostic.Id, StringComparer.Ordinal))
+                {
                     continue;
+                }
 
                 var documentRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
                 SyntaxNode syntax = documentRoot.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
                 if (syntax == null)
+                {
                     continue;
+                }
 
                 XmlElementSyntax xmlElementSyntax = syntax as XmlElementSyntax;
                 if (xmlElementSyntax == null)
@@ -70,7 +74,9 @@
         {
             SyntaxList<XmlNodeSyntax> content = elementSyntax.Content;
             if (content.Count == 0)
+            {
                 return document;
+            }
 
             var leadingTrivia = elementSyntax.StartTag.GetLeadingTrivia();
             leadingTrivia = leadingTrivia.AddRange(elementSyntax.StartTag.GetTrailingTrivia());
