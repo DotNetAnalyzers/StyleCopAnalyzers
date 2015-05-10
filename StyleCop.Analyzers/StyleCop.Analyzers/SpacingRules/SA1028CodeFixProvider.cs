@@ -16,7 +16,8 @@
     /// <remarks>
     /// <para>To fix a violation of this rule, remove any whitespace at the end of a line of code.</para>
     /// </remarks>
-    [ExportCodeFixProvider("WhitespaceDiagnosticCodeFixProvider", LanguageNames.CSharp), Shared]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1028CodeFixProvider))]
+    [Shared]
     public class SA1028CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =

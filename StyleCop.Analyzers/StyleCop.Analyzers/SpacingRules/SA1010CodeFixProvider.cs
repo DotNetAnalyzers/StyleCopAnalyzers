@@ -16,7 +16,7 @@
     /// <para>To fix a violation of this rule, ensure that there is no whitespace on either side of the opening square
     /// bracket.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1010CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1010CodeFixProvider))]
     [Shared]
     public class SA1010CodeFixProvider : CodeFixProvider
     {

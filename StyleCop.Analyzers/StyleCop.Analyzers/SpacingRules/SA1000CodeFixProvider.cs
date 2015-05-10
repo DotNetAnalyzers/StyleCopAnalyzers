@@ -15,7 +15,7 @@
     /// <para>To fix a violation of this rule, add or remove a space after the keyword, according to the description
     /// above.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1000CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1000CodeFixProvider))]
     [Shared]
     public class SA1000CodeFixProvider : CodeFixProvider
     {

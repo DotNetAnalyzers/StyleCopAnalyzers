@@ -16,7 +16,7 @@
     /// <summary>
     /// Implements a code fix for <see cref="SA1502ElementMustNotBeOnASingleLine"/>.
     /// </summary>
-    [ExportCodeFixProvider(nameof(SA1502CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1502CodeFixProvider))]
     [Shared]
     public class SA1502CodeFixProvider : CodeFixProvider
     {

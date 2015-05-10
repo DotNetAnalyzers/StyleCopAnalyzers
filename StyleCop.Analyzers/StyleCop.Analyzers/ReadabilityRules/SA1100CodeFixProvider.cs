@@ -16,7 +16,7 @@
     /// <remarks>
     /// <para>To fix a violation of this rule, change the <c>base.</c> prefix to <c>this.</c>.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1100CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1100CodeFixProvider))]
     [Shared]
     public class SA1100CodeFixProvider : CodeFixProvider
     {
