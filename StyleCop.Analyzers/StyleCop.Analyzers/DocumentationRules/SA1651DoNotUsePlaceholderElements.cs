@@ -8,7 +8,7 @@
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
-    /// The element documentation for the element contains one or more &lt;placeholder&gt; elements.
+    /// The documentation for the element contains one or more &lt;placeholder&gt; elements.
     /// </summary>
     /// <remarks>
     /// <para>A violation of this rule occurs when the element documentation contains &lt;placeholder&gt;
@@ -38,7 +38,7 @@
         private const string MessageFormat = "Do not use placeholder elements";
         private const string Category = "StyleCop.CSharp.DocumentationRules";
         private const string Description = "The element documentation contains a <placeholder> element.";
-        private const string HelpLink = null;
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1651.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
