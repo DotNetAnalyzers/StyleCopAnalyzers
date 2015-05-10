@@ -10,14 +10,14 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     public class SA1401UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestClassWithPublicField()
+        public async Task TestClassWithPublicFieldAsync()
         {
             var testCode = @"public class Foo
 {
@@ -30,7 +30,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Fact]
-        public async Task TestClassWithInternalField()
+        public async Task TestClassWithInternalFieldAsync()
         {
             var testCode = @"public class Foo
 {
@@ -43,7 +43,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Fact]
-        public async Task TestClassWithFieldNoAccessModifier()
+        public async Task TestClassWithFieldNoAccessModifierAsync()
         {
             var testCode = @"public class Foo
 {
@@ -54,7 +54,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Fact]
-        public async Task TestStructWithPublicField()
+        public async Task TestStructWithPublicFieldAsync()
         {
             var testCode = @"public struct Foo
 {
@@ -65,7 +65,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Fact]
-        public async Task TestClassWithConstField()
+        public async Task TestClassWithConstFieldAsync()
         {
             var testCode = @"public class Foo
 {

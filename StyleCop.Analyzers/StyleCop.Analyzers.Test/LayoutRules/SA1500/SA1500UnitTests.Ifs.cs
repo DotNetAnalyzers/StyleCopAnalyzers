@@ -19,7 +19,7 @@
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestIfValid()
+        public async Task TestIfValidAsync()
         {
             var testCode = @"public class Foo
 {
@@ -61,7 +61,7 @@
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestIfElseValid()
+        public async Task TestIfElseValidAsync()
         {
             var testCode = @"public class Foo
 {
@@ -115,7 +115,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestIfInvalid()
+        public async Task TestIfInvalidAsync()
         {
             var testCode = @"public class Foo
 {
@@ -177,7 +177,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestIfElseInvalid()
+        public async Task TestIfElseInvalidAsync()
         {
             var testCode = @"public class Foo
 {

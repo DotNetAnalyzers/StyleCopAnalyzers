@@ -19,7 +19,7 @@
         [Theory]
         [InlineData("class")]
         [InlineData("struct")]
-        public async Task TestValidEmptyConstructor(string elementType)
+        public async Task TestValidEmptyConstructorAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
 {
@@ -39,7 +39,7 @@
         [Theory]
         [InlineData("class")]
         [InlineData("struct")]
-        public async Task TestEmptyConstructorOnSingleLine(string elementType)
+        public async Task TestEmptyConstructorOnSingleLineAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
 {
@@ -58,7 +58,7 @@
         [Theory]
         [InlineData("class")]
         [InlineData("struct")]
-        public async Task TestConstructorOnSingleLine(string elementType)
+        public async Task TestConstructorOnSingleLineAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
 {
@@ -77,7 +77,7 @@
         [Theory]
         [InlineData("class")]
         [InlineData("struct")]
-        public async Task TestConstructorWithBlockOnSingleLine(string elementType)
+        public async Task TestConstructorWithBlockOnSingleLineAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
 {
@@ -97,7 +97,7 @@
         [Theory]
         [InlineData("class")]
         [InlineData("struct")]
-        public async Task TestConstructorWithBlockStartOnSameLine(string elementType)
+        public async Task TestConstructorWithBlockStartOnSameLineAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
 {
@@ -116,7 +116,7 @@
         [Theory]
         [InlineData("class")]
         [InlineData("struct")]
-        public async Task TestEmptyConstructorOnSingleLineCodeFix(string elementType)
+        public async Task TestEmptyConstructorOnSingleLineCodeFixAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
 {
@@ -140,7 +140,7 @@
         [Theory]
         [InlineData("class")]
         [InlineData("struct")]
-        public async Task TestConstructorOnSingleLineCodeFix(string elementType)
+        public async Task TestConstructorOnSingleLineCodeFixAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
 {
@@ -165,7 +165,7 @@
         [Theory]
         [InlineData("class")]
         [InlineData("struct")]
-        public async Task TestConstructorWithBlockOnSingleLineCodeFix(string elementType)
+        public async Task TestConstructorWithBlockOnSingleLineCodeFixAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
 {
@@ -191,7 +191,7 @@
         [Theory]
         [InlineData("class")]
         [InlineData("struct")]
-        public async Task TestConstructorWithLotsOfTriviaCodeFix(string elementType)
+        public async Task TestConstructorWithLotsOfTriviaCodeFixAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
 {

@@ -11,14 +11,14 @@ namespace StyleCop.Analyzers.Test.NamingRules
     public class SA1302UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestInterfaceDeclarationDoesNotStartWithI()
+        public async Task TestInterfaceDeclarationDoesNotStartWithIAsync()
         {
             var testCode = @"
 public interface Foo
@@ -38,7 +38,7 @@ public interface IFoo
         }
 
         [Fact]
-        public async Task TestInterfaceDeclarationDoesNotStartWithIPlusInterfaceUsed()
+        public async Task TestInterfaceDeclarationDoesNotStartWithIPlusInterfaceUsedAsync()
         {
             var testCode = @"
 public interface Foo
@@ -64,7 +64,7 @@ public class Bar : IFoo
         }
 
         [Fact]
-        public async Task TestInterfaceDeclarationStartsWithLowerI()
+        public async Task TestInterfaceDeclarationStartsWithLowerIAsync()
         {
             var testCode = @"
 public interface iFoo
@@ -84,7 +84,7 @@ public interface IiFoo
         }
 
         [Fact]
-        public async Task TestInnerInterfaceDeclarationDoesNotStartWithI()
+        public async Task TestInnerInterfaceDeclarationDoesNotStartWithIAsync()
         {
             var testCode = @"
 public class Bar
@@ -100,7 +100,7 @@ public class Bar
         }
 
         [Fact]
-        public async Task TestInterfaceDeclarationDoesStartWithI()
+        public async Task TestInterfaceDeclarationDoesStartWithIAsync()
         {
             var testCode = @"public interface IFoo
 {
@@ -110,7 +110,7 @@ public class Bar
         }
 
         [Fact]
-        public async Task TestInnerInterfaceDeclarationDoesStartWithI()
+        public async Task TestInnerInterfaceDeclarationDoesStartWithIAsync()
         {
             var testCode = @"
 public class Bar
@@ -124,7 +124,7 @@ public class Bar
         }
 
         [Fact]
-        public async Task TestComInterfaceInNativeMethodsClass()
+        public async Task TestComInterfaceInNativeMethodsClassAsync()
         {
             var testCode = @"
 using System.Runtime.InteropServices;
@@ -140,7 +140,7 @@ public class NativeMethods
         }
 
         [Fact]
-        public async Task TestComInterfaceInNativeMethodsClassWithIncorrectName()
+        public async Task TestComInterfaceInNativeMethodsClassWithIncorrectNameAsync()
         {
             var testCode = @"
 using System.Runtime.InteropServices;
@@ -170,7 +170,7 @@ public class NativeMethodsClass
         }
 
         [Fact]
-        public async Task TestComInterfaceInInnerClassInNativeMethodsClass()
+        public async Task TestComInterfaceInInnerClassInNativeMethodsClassAsync()
         {
             var testCode = @"
 using System.Runtime.InteropServices;

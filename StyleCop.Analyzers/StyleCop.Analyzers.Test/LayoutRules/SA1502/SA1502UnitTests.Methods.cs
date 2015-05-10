@@ -19,7 +19,7 @@
         [Theory]
         [InlineData("class")]
         [InlineData("struct")]
-        public async Task TestValidEmptyMethod(string elementType)
+        public async Task TestValidEmptyMethodAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
 {
@@ -39,7 +39,7 @@
         [Theory]
         [InlineData("class")]
         [InlineData("struct")]
-        public async Task TestEmptyMethodOnSingleLine(string elementType)
+        public async Task TestEmptyMethodOnSingleLineAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
 {
@@ -58,7 +58,7 @@
         [Theory]
         [InlineData("class")]
         [InlineData("struct")]
-        public async Task TestMethodOnSingleLine(string elementType)
+        public async Task TestMethodOnSingleLineAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
 {
@@ -77,7 +77,7 @@
         [Theory]
         [InlineData("class")]
         [InlineData("struct")]
-        public async Task TestMethodWithBlockOnSingleLine(string elementType)
+        public async Task TestMethodWithBlockOnSingleLineAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
 {
@@ -97,7 +97,7 @@
         [Theory]
         [InlineData("class")]
         [InlineData("struct")]
-        public async Task TestMethodWithBlockStartOnSameLine(string elementType)
+        public async Task TestMethodWithBlockStartOnSameLineAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
 {
@@ -116,7 +116,7 @@
         [Theory]
         [InlineData("class")]
         [InlineData("struct")]
-        public async Task TestMethodWithExpressionBody(string elementType)
+        public async Task TestMethodWithExpressionBodyAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
 {
@@ -134,7 +134,7 @@
         [Theory]
         [InlineData("class")]
         [InlineData("struct")]
-        public async Task TestEmptyMethodOnSingleLineCodeFix(string elementType)
+        public async Task TestEmptyMethodOnSingleLineCodeFixAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
 {
@@ -158,7 +158,7 @@
         [Theory]
         [InlineData("class")]
         [InlineData("struct")]
-        public async Task TestMethodOnSingleLineCodeFix(string elementType)
+        public async Task TestMethodOnSingleLineCodeFixAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
 {
@@ -183,7 +183,7 @@
         [Theory]
         [InlineData("class")]
         [InlineData("struct")]
-        public async Task TestMethodWithBlockOnSingleLineCodeFix(string elementType)
+        public async Task TestMethodWithBlockOnSingleLineCodeFixAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
 {
@@ -209,7 +209,7 @@
         [Theory]
         [InlineData("class")]
         [InlineData("struct")]
-        public async Task TestMethodWithLotsOfTriviaCodeFix(string elementType)
+        public async Task TestMethodWithLotsOfTriviaCodeFixAsync(string elementType)
         {
             var testCode = @"public ##PH## Foo
 {

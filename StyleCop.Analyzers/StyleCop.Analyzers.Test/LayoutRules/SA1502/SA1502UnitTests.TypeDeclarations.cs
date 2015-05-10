@@ -28,7 +28,7 @@
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TokensToTest))]
-        public async Task TestValidEmptyType(string token)
+        public async Task TestValidEmptyTypeAsync(string token)
         {
             var testCode = @"public ##PH## Foo 
 {
@@ -44,7 +44,7 @@
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TokensToTest))]
-        public async Task TestEmptyTypeOnSingleLine(string token)
+        public async Task TestEmptyTypeOnSingleLineAsync(string token)
         {
             var testCode = "public ##PH## Foo { }";
 
@@ -59,7 +59,7 @@
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TokensToTest))]
-        public async Task TestTypeOnSingleLine(string token)
+        public async Task TestTypeOnSingleLineAsync(string token)
         {
             var testCode = "public ##PH## Foo { private int bar; }";
 
@@ -74,7 +74,7 @@
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TokensToTest))]
-        public async Task TestTypeWithBlockOnSingleLine(string token)
+        public async Task TestTypeWithBlockOnSingleLineAsync(string token)
         {
             var testCode = @"public ##PH## Foo
 { private int bar; }";
@@ -90,7 +90,7 @@
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TokensToTest))]
-        public async Task TestTypeWithBlockStartOnSameLine(string token)
+        public async Task TestTypeWithBlockStartOnSameLineAsync(string token)
         {
             var testCode = @"public ##PH## Foo { 
     private int bar; 
@@ -106,7 +106,7 @@
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TokensToTest))]
-        public async Task TestEmptyTypeOnSingleLineCodeFix(string token)
+        public async Task TestEmptyTypeOnSingleLineCodeFixAsync(string token)
         {
             var testCode = "public ##PH## Foo { }";
             var fixedTestCode = @"public ##PH## Foo
@@ -124,7 +124,7 @@
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TokensToTest))]
-        public async Task TestTypeOnSingleLineCodeFix(string token)
+        public async Task TestTypeOnSingleLineCodeFixAsync(string token)
         {
             var testCode = "public ##PH## Foo { private int bar; }";
             var fixedTestCode = @"public ##PH## Foo
@@ -143,7 +143,7 @@
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TokensToTest))]
-        public async Task TestTypeOnSingleLineWithMultipleStatementsCodeFix(string token)
+        public async Task TestTypeOnSingleLineWithMultipleStatementsCodeFixAsync(string token)
         {
             var testCode = "public ##PH## Foo { private int bar; private bool baz; }";
             var fixedTestCode = @"public ##PH## Foo
@@ -162,7 +162,7 @@
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TokensToTest))]
-        public async Task TestTypeWithBlockOnSingleLineCodeFix(string token)
+        public async Task TestTypeWithBlockOnSingleLineCodeFixAsync(string token)
         {
             var testCode = @"public ##PH## Foo
 { private int bar; }";
@@ -182,7 +182,7 @@
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TokensToTest))]
-        public async Task TestTypeWithLotsOfTriviaCodeFix(string token)
+        public async Task TestTypeWithLotsOfTriviaCodeFixAsync(string token)
         {
             var testCode = @"public ##PH## Foo /* TR1 */ { /* TR2 */ private int bar; /* TR3 */ private int baz; /* TR4 */ } /* TR5 */";
             var fixedTestCode = @"public ##PH## Foo /* TR1 */

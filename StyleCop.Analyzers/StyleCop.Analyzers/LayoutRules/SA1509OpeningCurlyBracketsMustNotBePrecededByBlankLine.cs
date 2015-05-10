@@ -67,9 +67,9 @@
             context.RegisterSyntaxTreeActionHonorExclusions(this.AnalyzeSyntaxTree);
         }
 
-        private async void AnalyzeSyntaxTree(SyntaxTreeAnalysisContext context)
+        private void AnalyzeSyntaxTree(SyntaxTreeAnalysisContext context)
         {
-            var root = await context.Tree.GetRootAsync().ConfigureAwait(false);
+            var root = context.Tree.GetRoot(context.CancellationToken);
             var openCurlyBraces = root.DescendantTokens()
                                       .Where(t => t.IsKind(SyntaxKind.OpenBraceToken))
                                       .ToList();

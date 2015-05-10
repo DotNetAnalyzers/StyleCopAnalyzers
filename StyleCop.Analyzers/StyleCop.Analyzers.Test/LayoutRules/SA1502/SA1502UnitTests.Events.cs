@@ -16,7 +16,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestValidEvent()
+        public async Task TestValidEventAsync()
         {
             var testCode = @"using System;
 
@@ -52,7 +52,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEventOnSingleLine()
+        public async Task TestEventOnSingleLineAsync()
         {
             var testCode = @"using System;
 
@@ -72,7 +72,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEventWithBlockOnSingleLine()
+        public async Task TestEventWithBlockOnSingleLineAsync()
         {
             var testCode = @"using System;
 
@@ -93,7 +93,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEventWithBlockStartkOnSameLine()
+        public async Task TestEventWithBlockStartkOnSameLineAsync()
         {
             var testCode = @"using System;
 
@@ -114,7 +114,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEventOnSingleLineCodeFix()
+        public async Task TestEventOnSingleLineCodeFixAsync()
         {
             var testCode = @"using System;
 
@@ -144,7 +144,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEventWithBlockOnSingleLineCodeFix()
+        public async Task TestEventWithBlockOnSingleLineCodeFixAsync()
         {
             var testCode = @"using System;
 
@@ -175,7 +175,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEventWithLotsOfTriviaCodeFix()
+        public async Task TestEventWithLotsOfTriviaCodeFixAsync()
         {
             var testCode = @"using System;
 

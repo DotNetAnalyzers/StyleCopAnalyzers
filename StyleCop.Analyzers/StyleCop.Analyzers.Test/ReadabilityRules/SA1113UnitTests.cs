@@ -10,14 +10,14 @@
     public class SA1113UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameter()
+        public async Task TestMethodDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -33,7 +33,7 @@
         }
 
         [Fact]
-        public async Task TestMethodDeclarationWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameter()
+        public async Task TestMethodDeclarationWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -54,7 +54,7 @@
         }
 
         [Fact]
-        public async Task TestMethodDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameter()
+        public async Task TestMethodDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -68,7 +68,7 @@
         }
 
         [Fact]
-        public async Task TestMethodCallWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameter()
+        public async Task TestMethodCallWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -85,7 +85,7 @@
         }
 
         [Fact]
-        public async Task TestMethodCallWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameter()
+        public async Task TestMethodCallWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -107,7 +107,7 @@
         }
 
         [Fact]
-        public async Task TestMethodCallWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameter()
+        public async Task TestMethodCallWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -122,7 +122,7 @@
         }
 
         [Fact]
-        public async Task TestConstructorCallWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameter()
+        public async Task TestConstructorCallWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -142,7 +142,7 @@
         }
 
         [Fact]
-        public async Task TestConstructorCallWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameter()
+        public async Task TestConstructorCallWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -167,7 +167,7 @@
         }
 
         [Fact]
-        public async Task TestConstructorCallWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameter()
+        public async Task TestConstructorCallWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -185,7 +185,7 @@
         }
 
         [Fact]
-        public async Task TestConstructorDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameter()
+        public async Task TestConstructorDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -201,7 +201,7 @@
         }
 
         [Fact]
-        public async Task TestConstructorDeclarationWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameter()
+        public async Task TestConstructorDeclarationWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -222,7 +222,7 @@
         }
 
         [Fact]
-        public async Task TestConstructorDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameter()
+        public async Task TestConstructorDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -236,7 +236,7 @@
         }
 
         [Fact]
-        public async Task TestIndexerDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameter()
+        public async Task TestIndexerDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -256,7 +256,7 @@
         }
 
         [Fact]
-        public async Task TestIndexerDeclarationWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameter()
+        public async Task TestIndexerDeclarationWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -281,7 +281,7 @@
         }
 
         [Fact]
-        public async Task TestIndexerDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameter()
+        public async Task TestIndexerDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -299,7 +299,7 @@
         }
 
         [Fact]
-        public async Task TestIndexerCallUsingThisWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameter()
+        public async Task TestIndexerCallUsingThisWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -323,7 +323,7 @@
         }
 
         [Fact]
-        public async Task TestIndexerCallUsingThisWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameter()
+        public async Task TestIndexerCallUsingThisWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -352,7 +352,7 @@
         }
 
         [Fact]
-        public async Task TestIndexerCallUsingThisWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameter()
+        public async Task TestIndexerCallUsingThisWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -374,7 +374,7 @@
         }
 
         [Fact]
-        public async Task TestAnonymousMethodCommaPlacedAtTheNextLineAsThePreviousParameter()
+        public async Task TestAnonymousMethodCommaPlacedAtTheNextLineAsThePreviousParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -395,7 +395,7 @@
         }
 
         [Fact]
-        public async Task TestAnonymousMethodCommaPlacedAtTheSameLineAsThePreviousParameter()
+        public async Task TestAnonymousMethodCommaPlacedAtTheSameLineAsThePreviousParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -413,7 +413,7 @@
         }
 
         [Fact]
-        public async Task TestDelegateDeclarationCommaPlacedAtTheNextLineAsThePreviousParameter()
+        public async Task TestDelegateDeclarationCommaPlacedAtTheNextLineAsThePreviousParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -427,7 +427,7 @@
         }
 
         [Fact]
-        public async Task TestDelegateDeclarationWith3ParametersCommaPlacedAtTheNextLineAsThePreviousParameter()
+        public async Task TestDelegateDeclarationWith3ParametersCommaPlacedAtTheNextLineAsThePreviousParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -446,7 +446,7 @@
         }
 
         [Fact]
-        public async Task TestDelegateDeclarationCommaPlacedAtTheSameLineAsThePreviousParameter()
+        public async Task TestDelegateDeclarationCommaPlacedAtTheSameLineAsThePreviousParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -457,7 +457,7 @@
         }
 
         [Fact]
-        public async Task TestLambdaExpressionWith3ParametersCommaPlacedAtTheNextLineAsThePreviousParameter()
+        public async Task TestLambdaExpressionWith3ParametersCommaPlacedAtTheNextLineAsThePreviousParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -479,7 +479,7 @@
         }
 
         [Fact]
-        public async Task TestLambdaExpressionCommaPlacedAtTheSameLineAsThePreviousParameter()
+        public async Task TestLambdaExpressionCommaPlacedAtTheSameLineAsThePreviousParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -493,7 +493,7 @@
         }
 
         [Fact]
-        public async Task TestLambdaExpressionNoParameters()
+        public async Task TestLambdaExpressionNoParametersAsync()
         {
             var testCode = @"public class Foo
 {
@@ -507,7 +507,7 @@
         }
 
         [Fact]
-        public async Task TestAttributeCommaPlacedAtTheNextLineAsThePreviousParameter()
+        public async Task TestAttributeCommaPlacedAtTheNextLineAsThePreviousParameterAsync()
         {
             var testCode = @"using System;
 using System.Runtime.InteropServices;
@@ -524,7 +524,7 @@ public class SimpleApiOriginal
         }
 
         [Fact]
-        public async Task TestAttributeListCommaPlacedAtTheSameLineAsThePreviousParameter()
+        public async Task TestAttributeListCommaPlacedAtTheSameLineAsThePreviousParameterAsync()
         {
             var testCode = @"using System;
 using System.Runtime.InteropServices;
@@ -538,7 +538,7 @@ public class SimpleApiOriginal
         }
 
         [Fact]
-        public async Task TestAttributeListCommaPlacedAtTheNextLineAsThePreviousParameter()
+        public async Task TestAttributeListCommaPlacedAtTheNextLineAsThePreviousParameterAsync()
         {
             var testCode = @"using System.Diagnostics;
 public class Foo
@@ -561,7 +561,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestAttributeCommaPlacedAtTheSameLineAsThePreviousParameter()
+        public async Task TestAttributeCommaPlacedAtTheSameLineAsThePreviousParameterAsync()
         {
             var testCode = @"using System.Diagnostics;
 public class Foo
@@ -576,7 +576,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestOperatorDeclarationCommaPlacedAtTheNextLineAsThePreviousParameter()
+        public async Task TestOperatorDeclarationCommaPlacedAtTheNextLineAsThePreviousParameterAsync()
         {
             var testCode = @"
 public class Foo
@@ -594,7 +594,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestOperatorDeclarationCommaPlacedAtTheSameLineAsThePreviousParameter()
+        public async Task TestOperatorDeclarationCommaPlacedAtTheSameLineAsThePreviousParameterAsync()
         {
             var testCode = @"
 public class Foo
@@ -609,7 +609,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestUnaryOperator()
+        public async Task TestUnaryOperatorAsync()
         {
             var testCode = @"
 public class Foo
@@ -625,7 +625,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestArrayDeclarationCommaPlacedAtTheNextLineAsThePreviousParameter()
+        public async Task TestArrayDeclarationCommaPlacedAtTheNextLineAsThePreviousParameterAsync()
         {
             var testCode = @"
 public class Foo
@@ -643,7 +643,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestArrayDeclarationCommaPlacedAtTheSameLineAsThePreviousParameter()
+        public async Task TestArrayDeclarationCommaPlacedAtTheSameLineAsThePreviousParameterAsync()
         {
             var testCode = @"
 public class Foo
@@ -658,7 +658,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestOneDimensionalArrayDeclarationCommaPlacedAtTheSameLineAsThePreviousParameter()
+        public async Task TestOneDimensionalArrayDeclarationCommaPlacedAtTheSameLineAsThePreviousParameterAsync()
         {
             var testCode = @"
 public class Foo
@@ -673,7 +673,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestArrayOfArraysDeclarationCommaPlacedAtTheSameLineAsThePreviousParameter()
+        public async Task TestArrayOfArraysDeclarationCommaPlacedAtTheSameLineAsThePreviousParameterAsync()
         {
             var testCode = @"
 public class Foo
@@ -693,7 +693,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestArrayCallCommaPlacedAtTheNextLineAsThePreviousParameter()
+        public async Task TestArrayCallCommaPlacedAtTheNextLineAsThePreviousParameterAsync()
         {
             var testCode = @"
 public class Foo
@@ -712,7 +712,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestArrayCallCommaPlacedAtTheSameLineAsThePreviousParameter()
+        public async Task TestArrayCallCommaPlacedAtTheSameLineAsThePreviousParameterAsync()
         {
             var testCode = @"
 public class Foo
@@ -728,7 +728,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestOneDimensionalArrayCallCommaPlacedAtTheSameLineAsThePreviousParameter()
+        public async Task TestOneDimensionalArrayCallCommaPlacedAtTheSameLineAsThePreviousParameterAsync()
         {
             var testCode = @"
 public class Foo
@@ -744,7 +744,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestIndexerCallCommaPlacedAtTheNextLineAsThePreviousParameter()
+        public async Task TestIndexerCallCommaPlacedAtTheNextLineAsThePreviousParameterAsync()
         {
             var testCode = @"
 public class Foo3
@@ -768,7 +768,7 @@ public class Foo4
         }
 
         [Fact]
-        public async Task TestIndexerCallCommaPlacedAtTheSameLineAsThePreviousParameter()
+        public async Task TestIndexerCallCommaPlacedAtTheSameLineAsThePreviousParameterAsync()
         {
             var testCode = @"
 public class Foo3
@@ -789,7 +789,7 @@ public class Foo4
         }
 
         [Fact]
-        public async Task TestIndexerWithOneArgumentCallCommaPlacedAtTheSameLineAsThePreviousParameter()
+        public async Task TestIndexerWithOneArgumentCallCommaPlacedAtTheSameLineAsThePreviousParameterAsync()
         {
             var testCode = @"
 public class Foo3

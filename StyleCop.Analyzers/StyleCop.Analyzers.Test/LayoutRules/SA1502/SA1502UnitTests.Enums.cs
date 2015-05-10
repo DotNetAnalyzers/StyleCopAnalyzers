@@ -16,7 +16,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestValidEmptyEnum()
+        public async Task TestValidEmptyEnumAsync()
         {
             var testCode = @"public enum Foo 
 {
@@ -30,7 +30,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEmptyEnumOnSingleLine()
+        public async Task TestEmptyEnumOnSingleLineAsync()
         {
             var testCode = "public enum Foo { }";
 
@@ -43,7 +43,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEnumOnSingleLine()
+        public async Task TestEnumOnSingleLineAsync()
         {
             var testCode = "public enum Foo { Value1 }";
 
@@ -56,7 +56,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEnumWithBlockOnSingleLine()
+        public async Task TestEnumWithBlockOnSingleLineAsync()
         {
             var testCode = @"public enum Foo
 { Value1 }";
@@ -70,7 +70,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEnumWithBlockStartOnSameLine()
+        public async Task TestEnumWithBlockStartOnSameLineAsync()
         {
             var testCode = @"public enum Foo { 
 Value1 }";
@@ -83,7 +83,7 @@ Value1 }";
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEmptyEnumOnSingleLineCodeFix()
+        public async Task TestEmptyEnumOnSingleLineCodeFixAsync()
         {
             var testCode = "public enum Foo { }";
             var fixedTestCode = @"public enum Foo
@@ -99,7 +99,7 @@ Value1 }";
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEnumOnSingleLineCodeFix()
+        public async Task TestEnumOnSingleLineCodeFixAsync()
         {
             var testCode = "public enum Foo { Value1 }";
             var fixedTestCode = @"public enum Foo
@@ -116,7 +116,7 @@ Value1 }";
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestMultiValueEnumOnSingleLineCodeFix()
+        public async Task TestMultiValueEnumOnSingleLineCodeFixAsync()
         {
             var testCode = "public enum Foo { Value1, Value2 }";
             var fixedTestCode = @"public enum Foo
@@ -133,7 +133,7 @@ Value1 }";
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEnumWithBlockOnSingleLineCodeFix()
+        public async Task TestEnumWithBlockOnSingleLineCodeFixAsync()
         {
             var testCode = @"public enum Foo
 { Value1 }";
@@ -151,7 +151,7 @@ Value1 }";
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEnumWithLotsOfTriviaCodeFix()
+        public async Task TestEnumWithLotsOfTriviaCodeFixAsync()
         {
             var testCode = "public enum Foo /* TR1 */ { /* TR2 */ Value1, /* TR3 */ Value2 /* TR4 */ } /* TR5 */";
             var fixedTestCode = @"public enum Foo /* TR1 */

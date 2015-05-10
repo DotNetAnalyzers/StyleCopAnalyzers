@@ -19,7 +19,7 @@
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestPropertyValid()
+        public async Task TestPropertyValidAsync()
         {
             var testCode = @"using System;
 using System.Collections.Generic;
@@ -101,7 +101,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestPropertyInvalid()
+        public async Task TestPropertyInvalidAsync()
         {
             var testCode = @"using System;
 

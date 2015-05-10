@@ -19,7 +19,7 @@
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestDoWhileValid()
+        public async Task TestDoWhileValidAsync()
         {
             var testCode = @"public class Foo
 {
@@ -60,7 +60,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestDoWhileInvalid()
+        public async Task TestDoWhileInvalidAsync()
         {
             var testCode = @"public class Foo
 {

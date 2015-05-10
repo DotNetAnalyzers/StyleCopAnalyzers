@@ -16,7 +16,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestValidEmptyInterface()
+        public async Task TestValidEmptyInterfaceAsync()
         {
             var testCode = @"public interface IFoo 
 {
@@ -30,7 +30,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEmptyInterfaceOnSingleLine()
+        public async Task TestEmptyInterfaceOnSingleLineAsync()
         {
             var testCode = "public interface IFoo { }";
 
@@ -43,7 +43,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestInterfaceOnSingleLine()
+        public async Task TestInterfaceOnSingleLineAsync()
         {
             var testCode = "public interface IFoo { void Bar(); }";
 
@@ -56,7 +56,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestInterfaceWithBlockOnSingleLine()
+        public async Task TestInterfaceWithBlockOnSingleLineAsync()
         {
             var testCode = @"public interface IFoo
 { void Bar(); }";
@@ -70,7 +70,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestInterfaceWithBlockStartOnSameLine()
+        public async Task TestInterfaceWithBlockStartOnSameLineAsync()
         {
             var testCode = @"public interface Foo { 
 void Bar(); }";
@@ -83,7 +83,7 @@ void Bar(); }";
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEmptyInterfaceOnSingleLineCodeFix()
+        public async Task TestEmptyInterfaceOnSingleLineCodeFixAsync()
         {
             var testCode = "public interface Foo { }";
             var fixedTestCode = @"public interface Foo
@@ -99,7 +99,7 @@ void Bar(); }";
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestInterfaceOnSingleLineCodeFix()
+        public async Task TestInterfaceOnSingleLineCodeFixAsync()
         {
             var testCode = "public interface Foo { void Bar(); }";
             var fixedTestCode = @"public interface Foo
@@ -116,7 +116,7 @@ void Bar(); }";
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestInterfaceOnSingleLineWithMultipleStatementsCodeFix()
+        public async Task TestInterfaceOnSingleLineWithMultipleStatementsCodeFixAsync()
         {
             var testCode = "public interface Foo { void Bar(); void Baz(); }";
             var fixedTestCode = @"public interface Foo
@@ -133,7 +133,7 @@ void Bar(); }";
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestInterfaceWithBlockOnSingleLineCodeFix()
+        public async Task TestInterfaceWithBlockOnSingleLineCodeFixAsync()
         {
             var testCode = @"public interface Foo
 { void Bar(); }";
@@ -151,7 +151,7 @@ void Bar(); }";
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestInterfaceWithLotsOfTriviaCodeFix()
+        public async Task TestInterfaceWithLotsOfTriviaCodeFixAsync()
         {
             var testCode = @"public interface Foo /* TR1 */ { /* TR2 */ void Bar(); /* TR3 */ void Baz(); /* TR4 */ } /* TR5 */";
             var fixedTestCode = @"public interface Foo /* TR1 */

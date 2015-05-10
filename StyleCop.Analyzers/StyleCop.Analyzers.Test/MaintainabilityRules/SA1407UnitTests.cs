@@ -11,14 +11,14 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     public class SA1407UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAdditionAndSubtraction()
+        public async Task TestAdditionAndSubtractionAsync()
         {
             var testCode = @"public class Foo
 {
@@ -31,7 +31,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Fact]
-        public async Task TestMultiplicationAndDivision()
+        public async Task TestMultiplicationAndDivisionAsync()
         {
             var testCode = @"public class Foo
 {
@@ -44,7 +44,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Fact]
-        public async Task TestLeftShiftRightShift()
+        public async Task TestLeftShiftRightShiftAsync()
         {
             var testCode = @"public class Foo
 {
@@ -57,7 +57,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Fact]
-        public async Task TestAdditionMultiplication()
+        public async Task TestAdditionMultiplicationAsync()
         {
             var testCode = @"public class Foo
 {
@@ -82,7 +82,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Fact]
-        public async Task TestMultiplicationAddition()
+        public async Task TestMultiplicationAdditionAsync()
         {
             var testCode = @"public class Foo
 {
@@ -107,7 +107,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Fact]
-        public async Task TestAdditionMultiplicationParenthesized()
+        public async Task TestAdditionMultiplicationParenthesizedAsync()
         {
             var testCode = @"public class Foo
 {
@@ -120,7 +120,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Fact]
-        public async Task TestMultiplicationAdditionParenthesized()
+        public async Task TestMultiplicationAdditionParenthesizedAsync()
         {
             var testCode = @"public class Foo
 {
@@ -133,7 +133,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Fact]
-        public async Task TestMultipleViolations()
+        public async Task TestMultipleViolationsAsync()
         {
             var testCode = @"public class Foo
 {
@@ -162,7 +162,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Fact]
-        public async Task TestSubViolations()
+        public async Task TestSubViolationsAsync()
         {
             var testCode = @"public class Foo
 {
@@ -191,7 +191,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Fact]
-        public async Task TestCodeFix()
+        public async Task TestCodeFixAsync()
         {
             var testCode = @"public class Foo
 {

@@ -16,7 +16,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestValidDestructor()
+        public async Task TestValidDestructorAsync()
         {
             var testCode = @"public class Foo
 {
@@ -33,7 +33,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEmptyDestructorOnSingleLine()
+        public async Task TestEmptyDestructorOnSingleLineAsync()
         {
             var testCode = @"public class Foo
 {
@@ -48,7 +48,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestDestructorOnSingleLine()
+        public async Task TestDestructorOnSingleLineAsync()
         {
             var testCode = @"public class Foo
 {
@@ -64,7 +64,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestDestructorWithBlockOnSingleLine()
+        public async Task TestDestructorWithBlockOnSingleLineAsync()
         {
             var testCode = @"public class Foo
 {
@@ -81,7 +81,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestDestructorWithBlockStartOnSameLine()
+        public async Task TestDestructorWithBlockStartOnSameLineAsync()
         {
             var testCode = @"public class Foo
 {
@@ -97,7 +97,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEmptyDestructorOnSingleLineCodeFix()
+        public async Task TestEmptyDestructorOnSingleLineCodeFixAsync()
         {
             var testCode = @"public class Foo
 {
@@ -118,7 +118,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestDestructorOnSingleLineCodeFix()
+        public async Task TestDestructorOnSingleLineCodeFixAsync()
         {
             var testCode = @"public class Foo
 {
@@ -140,7 +140,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestDestructorWithBlockOnSingleLineCodeFix()
+        public async Task TestDestructorWithBlockOnSingleLineCodeFixAsync()
         {
             var testCode = @"public class Foo
 {
@@ -163,7 +163,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestDestructorWithLotsOfTriviaCodeFix()
+        public async Task TestDestructorWithLotsOfTriviaCodeFixAsync()
         {
             var testCode = @"public class Foo
 {

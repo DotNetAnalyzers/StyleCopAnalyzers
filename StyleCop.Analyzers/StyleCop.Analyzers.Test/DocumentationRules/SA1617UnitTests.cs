@@ -13,14 +13,14 @@
     public class SA1617UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodWithReturnValueNoDocumentation()
+        public async Task TestMethodWithReturnValueNoDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -38,11 +38,11 @@ public class ClassName
     /// </value>
     public delegate ClassName MethodDelegate();
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodWithReturnValueWithDocumentation()
+        public async Task TestMethodWithReturnValueWithDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -62,11 +62,11 @@ public class ClassName
     /// <returns>Some value</returns>
     public delegate ClassName MethodDelegate();
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestNoDocumentation()
+        public async Task TestNoDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -78,11 +78,11 @@ public class ClassName
 
     public delegate ClassName MethodDelegate();
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPropertyWithInheritedDocumentation()
+        public async Task TestPropertyWithInheritedDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -96,11 +96,11 @@ public class ClassName
     /// <inheritdoc/>
     public delegate ClassName MethodDelegate();
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodWithoutReturnValueNoDocumentation()
+        public async Task TestMethodWithoutReturnValueNoDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -118,11 +118,11 @@ public class ClassName
     /// </value>
     public delegate void MethodDelegate();
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodWithoutReturnValueWithDocumentation()
+        public async Task TestMethodWithoutReturnValueWithDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -149,7 +149,7 @@ public class ClassName
                 this.CSharpDiagnostic().WithLocation(16, 9)
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

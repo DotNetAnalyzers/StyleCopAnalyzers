@@ -19,7 +19,7 @@
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestMethodValid()
+        public async Task TestMethodValidAsync()
         {
             var testCode = @"using System.Diagnostics;
 
@@ -55,7 +55,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestMethodInvalid()
+        public async Task TestMethodInvalidAsync()
         {
             var testCode = @"using System.Diagnostics;
 

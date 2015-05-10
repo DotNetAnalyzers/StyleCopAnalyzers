@@ -16,7 +16,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestValidIndexers()
+        public async Task TestValidIndexersAsync()
         {
             var testCode = @"public class Foo 
 {
@@ -42,7 +42,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestIndexerOnSingleLine()
+        public async Task TestIndexerOnSingleLineAsync()
         {
             var testCode = @"public class Foo 
 {
@@ -58,7 +58,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestIndexerWithBlockOnSingleLine()
+        public async Task TestIndexerWithBlockOnSingleLineAsync()
         {
             var testCode = @"public class Foo 
 {
@@ -75,7 +75,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestIndexerWithBlockStartkOnSameLine()
+        public async Task TestIndexerWithBlockStartkOnSameLineAsync()
         {
             var testCode = @"public class Foo 
 {
@@ -91,7 +91,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestIndexerWithExpressionBody()
+        public async Task TestIndexerWithExpressionBodyAsync()
         {
             var testCode = @"public class Foo 
 {
@@ -106,7 +106,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestIndexerOnSingleLineCodeFix()
+        public async Task TestIndexerOnSingleLineCodeFixAsync()
         {
             var testCode = @"public class Foo
 {
@@ -128,7 +128,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestIndexerWithBlockOnSingleLineCodeFix()
+        public async Task TestIndexerWithBlockOnSingleLineCodeFixAsync()
         {
             var testCode = @"public class Foo
 {
@@ -151,7 +151,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestIndexerWithLotsOfTriviaCodeFix()
+        public async Task TestIndexerWithLotsOfTriviaCodeFixAsync()
         {
             var testCode = @"public class Foo
 {

@@ -16,7 +16,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestValidEmptyNamespace()
+        public async Task TestValidEmptyNamespaceAsync()
         {
             var testCode = @"namespace Foo 
 {
@@ -30,7 +30,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEmptyNamespaceOnSingleLine()
+        public async Task TestEmptyNamespaceOnSingleLineAsync()
         {
             var testCode = @"namespace Foo { }";
 
@@ -43,7 +43,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestNamespaceOnSingleLine()
+        public async Task TestNamespaceOnSingleLineAsync()
         {
             var testCode = @"namespace Foo { using System; }";
 
@@ -56,7 +56,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestNamespaceWithBlockOnSingleLine()
+        public async Task TestNamespaceWithBlockOnSingleLineAsync()
         {
             var testCode = @"namespace Foo 
 { using System; }";
@@ -70,7 +70,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestNamespaceWithBlockStartkOnSameLine()
+        public async Task TestNamespaceWithBlockStartkOnSameLineAsync()
         {
             var testCode = @"namespace Foo {
     using System;
@@ -84,7 +84,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEmptyNamespaceOnSingleLineCodeFix()
+        public async Task TestEmptyNamespaceOnSingleLineCodeFixAsync()
         {
             var testCode = @"namespace Foo { }";
             var fixedTestCode = @"namespace Foo
@@ -100,7 +100,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestNamespaceOnSingleLineCodeFix()
+        public async Task TestNamespaceOnSingleLineCodeFixAsync()
         {
             var testCode = @"namespace Foo { using System; }";
             var fixedTestCode = @"namespace Foo
@@ -117,7 +117,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestNamespaceWithBlockOnSingleLineCodeFix()
+        public async Task TestNamespaceWithBlockOnSingleLineCodeFixAsync()
         {
             var testCode = @"namespace Foo
 { using System; }";
@@ -135,7 +135,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestNamespaceWithLotsOfTriviaCodeFix()
+        public async Task TestNamespaceWithLotsOfTriviaCodeFixAsync()
         {
             var testCode = @"namespace Foo /* TR1 */ { /* TR2 */ using System; /* TR3 */ } /* TR4 */";
             var fixedTestCode = @"namespace Foo /* TR1 */

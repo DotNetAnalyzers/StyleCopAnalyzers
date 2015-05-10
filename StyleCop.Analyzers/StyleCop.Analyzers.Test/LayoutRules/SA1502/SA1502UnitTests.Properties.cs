@@ -16,7 +16,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestValidProperties()
+        public async Task TestValidPropertiesAsync()
         {
             var testCode = @"public class Foo
 {
@@ -54,7 +54,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestPropertyOnSingleLine()
+        public async Task TestPropertyOnSingleLineAsync()
         {
             var testCode = @"public class Foo
 {
@@ -70,7 +70,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestPropertyWithBlockOnSingleLine()
+        public async Task TestPropertyWithBlockOnSingleLineAsync()
         {
             var testCode = @"public class Foo
 {
@@ -87,7 +87,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestPropertyWithBlockStartOnSameLine()
+        public async Task TestPropertyWithBlockStartOnSameLineAsync()
         {
             var testCode = @"public class Foo
 {
@@ -104,7 +104,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestPropertyWithExpressionBody()
+        public async Task TestPropertyWithExpressionBodyAsync()
         {
             var testCode = @"public class Foo
 {
@@ -122,7 +122,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestPropertyOnSingleLineCodeFix()
+        public async Task TestPropertyOnSingleLineCodeFixAsync()
         {
             var testCode = @"public class Foo
 {
@@ -144,7 +144,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestPropertyWithBlockOnSingleLineCodeFix()
+        public async Task TestPropertyWithBlockOnSingleLineCodeFixAsync()
         {
             var testCode = @"public class Foo
 {
@@ -167,7 +167,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestPropertyWithLotsOfTriviaCodeFix()
+        public async Task TestPropertyWithLotsOfTriviaCodeFixAsync()
         {
             var testCode = @"public class Foo
 {

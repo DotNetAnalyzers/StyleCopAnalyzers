@@ -40,7 +40,7 @@
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(StatementBlocksTokenList))]
-        public async Task TestStatementBlockValid(string token)
+        public async Task TestStatementBlockValidAsync(string token)
         {
             var testCode = @"public unsafe class Foo
 {
@@ -86,7 +86,7 @@
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(StatementBlocksTokenList))]
-        public async Task TestStatementBlockInvalid(string token)
+        public async Task TestStatementBlockInvalidAsync(string token)
         {
             var testCode = @"public unsafe class Foo
 {

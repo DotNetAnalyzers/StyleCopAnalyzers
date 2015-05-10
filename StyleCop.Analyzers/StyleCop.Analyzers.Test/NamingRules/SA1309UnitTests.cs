@@ -11,14 +11,14 @@
     public class SA1309UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestFieldStartingWithAnUnderscore()
+        public async Task TestFieldStartingWithAnUnderscoreAsync()
         {
             var testCode = @"public class Foo
 {
@@ -38,7 +38,7 @@
         }
 
         [Fact]
-        public async Task TestFieldStartingWithLetter()
+        public async Task TestFieldStartingWithLetterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -49,7 +49,7 @@
         }
 
         [Fact]
-        public async Task TestFieldStartingAnUnderscorePlacedInsideNativeMethodsClass()
+        public async Task TestFieldStartingAnUnderscorePlacedInsideNativeMethodsClassAsync()
         {
             var testCode = @"public class FooNativeMethods
 {
@@ -60,7 +60,7 @@
         }
 
         [Fact]
-        public async Task TestFieldStartingAnUnderscorePlacedInsideNativeMethodsClassWithIncorrectName()
+        public async Task TestFieldStartingAnUnderscorePlacedInsideNativeMethodsClassWithIncorrectNameAsync()
         {
             var testCode = @"public class FooNativeMethodsClass
 {
@@ -80,7 +80,7 @@
         }
 
         [Fact]
-        public async Task TestFieldStartingAnUnderscorePlacedInsideOuterNativeMethodsClass()
+        public async Task TestFieldStartingAnUnderscorePlacedInsideOuterNativeMethodsClassAsync()
         {
             var testCode = @"public class FooNativeMethods
 {
@@ -94,7 +94,7 @@
         }
 
         [Fact]
-        public async Task TestUnderscoreOnlyVariableName()
+        public async Task TestUnderscoreOnlyVariableNameAsync()
         {
             var testCode = @"public class FooNativeMethodsClass
 {
@@ -102,11 +102,11 @@
 }";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("_").WithLocation(3, 21);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             // no changes will be made
             var fixedCode = testCode;
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -116,7 +116,7 @@
         /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/627">#627: Code Fixes For Naming
         /// Rules SA1308 and SA1309 Do Not Always Fix The Name Entirely</seealso>
         [Fact]
-        public async Task TestFieldStartingWithMultipleUnderscores()
+        public async Task TestFieldStartingWithMultipleUnderscoresAsync()
         {
             var testCode = @"public class Foo
 {
@@ -125,14 +125,14 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("____bar").WithLocation(3, 19);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"public class Foo
 {
     public string bar = ""baz"";
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
