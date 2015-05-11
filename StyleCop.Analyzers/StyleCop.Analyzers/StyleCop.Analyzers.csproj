@@ -272,6 +272,7 @@
     <Compile Include="SpacingRules\SA1025CodeMustNotContainMultipleWhitespaceInARow.cs" />
     <Compile Include="SpacingRules\SA1026CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation.cs" />
+    <Compile Include="SpacingRules\SA1027CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1027TabsMustNotBeUsed.cs" />
     <Compile Include="SpacingRules\SA1028CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1028CodeMustNotContainTrailingWhitespace.cs" />
