@@ -403,6 +403,90 @@ protected readonly string test;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestLowerCaseOverriddenMembersAsync()
+        {
+            var testCode = @"public class TestClass : BaseClass
+{
+    public override int bar
+    {
+        get
+        {
+            return 0;
+        }
+    }
+
+    public override event System.EventHandler fooBar
+    {
+        add { }
+        remove { }
+    }
+
+    public override void foo()
+    {
+
+    }
+}
+
+public abstract class BaseClass
+{
+    public abstract void foo();
+    public abstract int bar { get; }
+    public abstract event System.EventHandler fooBar;
+}";
+
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(25, 26).WithArguments("foo"),
+                this.CSharpDiagnostic().WithLocation(26, 25).WithArguments("bar"),
+                this.CSharpDiagnostic().WithLocation(27, 47).WithArguments("fooBar"),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestLowerCaseInterfaceMembersAsync()
+        {
+            var testCode = @"public class TestClass : IInterface
+{
+    public int bar
+    {
+        get
+        {
+            return 0;
+        }
+    }
+
+    public event System.EventHandler fooBar
+    {
+        add { }
+        remove { }
+    }
+
+    public void foo()
+    {
+
+    }
+}
+
+public interface IInterface
+{
+    void foo();
+    int bar { get; }
+    event System.EventHandler fooBar;
+}";
+
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(25, 10).WithArguments("foo"),
+                this.CSharpDiagnostic().WithLocation(26, 9).WithArguments("bar"),
+                this.CSharpDiagnostic().WithLocation(27, 31).WithArguments("fooBar"),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
             return new SA1300ElementMustBeginWithUpperCaseLetter();
