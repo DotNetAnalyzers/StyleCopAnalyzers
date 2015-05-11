@@ -114,6 +114,7 @@
     <Compile Include="Helpers\TriviaHelper.cs" />
     <Compile Include="Helpers\XmlCommentHelper.cs" />
     <Compile Include="Helpers\XmlSyntaxFactory.cs" />
+    <Compile Include="LayoutRules\SA1500CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine.cs" />
     <Compile Include="LayoutRules\SA1501StatementMustNotBeOnASingleLine.cs" />
     <Compile Include="LayoutRules\SA1502CodeFixProvider.cs" />

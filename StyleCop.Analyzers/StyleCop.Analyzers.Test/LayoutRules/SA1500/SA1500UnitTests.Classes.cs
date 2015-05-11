@@ -9,7 +9,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
-    public partial class SA1500UnitTests : DiagnosticVerifier
+    public partial class SA1500UnitTests
     {
         /// <summary>
         /// Verifies that no diagnostics are reported for the valid classes defined in this test.
@@ -44,7 +44,7 @@
         }
 
         /// <summary>
-        /// Verifies that diagnostics will be reported for all invalid class definitions.
+        /// Verifies diagnostics and codefixes for all invalid class definitions.
         /// </summary>
         /// <remarks>
         /// These will normally also report SA1401, but not in the unit test.
@@ -59,25 +59,57 @@
     }
 
     public class InvalidClass2 {
-        public int Field; 
+        public int Field;
     }
 
     public class InvalidClass3 {
         public int Field; }
 
-    public class InvalidClass4 { public int Field; 
+    public class InvalidClass4 { public int Field;
     }
 
     public class InvalidClass5
-    { 
+    {
         public int Field; }
 
     public class InvalidClass6
-    { public int Field; 
+    { public int Field;
     }
 }";
 
-            var expectedDiagnostics = new[]
+            var fixedTestCode = @"public class Foo
+{
+    public class InvalidClass1
+    {
+    }
+
+    public class InvalidClass2
+    {
+        public int Field;
+    }
+
+    public class InvalidClass3
+    {
+        public int Field;
+    }
+
+    public class InvalidClass4
+    {
+        public int Field;
+    }
+
+    public class InvalidClass5
+    {
+        public int Field;
+    }
+
+    public class InvalidClass6
+    {
+        public int Field;
+    }
+}";
+
+            DiagnosticResult[] expectedDiagnostics =
             {
                 // InvalidClass1
                 this.CSharpDiagnostic().WithLocation(3, 32),
@@ -95,6 +127,8 @@
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
     }
 }

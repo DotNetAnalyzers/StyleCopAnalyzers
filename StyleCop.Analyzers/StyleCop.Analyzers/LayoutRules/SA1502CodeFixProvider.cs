@@ -125,7 +125,7 @@
                 tokenSubstitutions.Add(parentLastToken, parentLastToken.WithTrailingTrivia(newTrailingTrivia));
             }
 
-            var parentIndentationLevel = IndentationHelper.GetNodeIndentationSteps(indentationOptions, element);
+            var parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationOptions, element);
             var indentationString = IndentationHelper.GenerateIndentationString(indentationOptions, parentIndentationLevel);
             var contentIndentationString = IndentationHelper.GenerateIndentationString(indentationOptions, parentIndentationLevel + 1);
 

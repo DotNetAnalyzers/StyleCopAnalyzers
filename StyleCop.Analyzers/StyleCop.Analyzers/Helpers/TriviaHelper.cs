@@ -107,5 +107,11 @@
             var trailingWhitespaceIndex = IndexOfTrailingWhitespace(triviaList);
             return (trailingWhitespaceIndex >= 0) ? SyntaxFactory.TriviaList(triviaList.Take(trailingWhitespaceIndex)) : triviaList;
         }
+
+        internal static SyntaxTriviaList WithoutLeadingWhitespace(this SyntaxTriviaList triviaList)
+        {
+            var nonWhitespaceIndex = IndexOfFirstNonWhitespaceTrivia(triviaList);
+            return (nonWhitespaceIndex >= 0) ? SyntaxFactory.TriviaList(triviaList.Take(nonWhitespaceIndex)) : SyntaxFactory.TriviaList();
+        }
     }
 }
