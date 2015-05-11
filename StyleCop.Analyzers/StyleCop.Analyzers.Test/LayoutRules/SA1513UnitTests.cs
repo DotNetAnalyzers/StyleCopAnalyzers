@@ -338,6 +338,22 @@ public class Foo
         {
         }
     }
+
+    // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/784
+    public void MultiLineLinqQuery()
+    {
+        var someQuery = (from f in Enumerable.Empty<int>()
+                         where f != 0
+                         select new { Fish = ""Face"" }).ToList();
+
+        var someOtherQuery = (from f in Enumerable.Empty<int>()
+                              where f != 0
+                              select new
+                              {
+                                  Fish = ""AreFriends"",
+                                  Not = ""Food""
+                              }).ToList();
+    }
 }
 ";
 
