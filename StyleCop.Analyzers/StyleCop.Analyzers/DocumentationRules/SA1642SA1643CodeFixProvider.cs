@@ -174,7 +174,8 @@
             {
                 var separator = list.GetSeparator(i);
                 // Make sure the parameter list looks nice
-                list = list.ReplaceSeparator(separator, separator.WithTrailingTrivia(SyntaxFactory.Space));
+                // Cannot use ReplaceSeparator due to dotnet/roslyn#2630: https://github.com/dotnet/roslyn/issues/2630
+                list = SyntaxFactory.SeparatedList<TypeSyntax>(list.GetWithSeparators().Replace(separator, separator.WithTrailingTrivia(SyntaxFactory.Space)));
             }
 
             return SyntaxFactory.TypeArgumentList(list);
