@@ -9,7 +9,10 @@
     using TestHelper;
     using Xunit;
 
-    public class SA1633UnitTests : DiagnosticVerifier
+    /// <summary>
+    /// Unit tests for the <see cref="SA1633FileMustHaveHeader"/> analyzer.
+    /// </summary>
+    public class SA1633UnitTests : FileHeaderTestBase
     {
         /// <summary>
         /// Verifies that the analyzer will properly handle an empty source file and produce the correct diagnostic

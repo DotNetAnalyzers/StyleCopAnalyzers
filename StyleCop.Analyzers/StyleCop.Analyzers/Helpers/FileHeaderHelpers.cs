@@ -31,6 +31,9 @@
             var done = false;
             var fileHeaderStarted = false;
 
+            // wrap the xml from the file header in a single root element to make XML parsing work.
+            sb.AppendLine("<root>");
+
             for (var i = 0; !done && (i < firstToken.LeadingTrivia.Count); i++)
             {
                 var trivia = firstToken.LeadingTrivia[i];
@@ -63,9 +66,18 @@
                 }
             }
 
+            sb.AppendLine("</root>");
+
             try
             {
                 var parsedFileHeaderXml = XElement.Parse(sb.ToString());
+
+                // a header without any XML tags is malformed.
+                if (parsedFileHeaderXml.Descendants().Count() == 0)
+                {
+                    return FileHeader.MalformedFileHeader;
+                }
+
                 return new FileHeader(parsedFileHeaderXml);
             }
             catch (XmlException)

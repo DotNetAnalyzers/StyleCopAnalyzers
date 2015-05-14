@@ -3,6 +3,8 @@
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Text;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The file header at the top of a C# code file is missing a copyright tag.
@@ -35,30 +37,40 @@
         /// </summary>
         public const string DiagnosticId = "SA1634";
         private const string Title = "File header must show copyright";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "The file header must contain a copyright tag.";
         private const string Category = "StyleCop.CSharp.DocumentationRules";
         private const string Description = "The file header at the top of a C# code file is missing a copyright tag.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1634.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        {
-            get
-            {
-                return SupportedDiagnosticsValue;
-            }
-        }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => SupportedDiagnosticsValue;
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTreeAxtion);
+        }
+
+        private static void HandleSyntaxTreeAxtion(SyntaxTreeAnalysisContext context)
+        {
+            var root = context.Tree.GetRoot(context.CancellationToken);
+
+            var fileHeader = FileHeaderHelpers.ParseFileHeader(root);
+            if (fileHeader.IsMissing || fileHeader.IsMalformed)
+            {
+                return;
+            }
+
+            if (fileHeader.GetElement("copyright") == null)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, new TextSpan(0, 0))));
+            }
         }
     }
 }

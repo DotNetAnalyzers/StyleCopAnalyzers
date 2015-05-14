@@ -1,5 +1,7 @@
 ﻿namespace StyleCop.Analyzers.Helpers
 {
+    using System;
+    using System.Linq;
     using System.Xml.Linq;
 
     /// <summary>
@@ -68,5 +70,15 @@
         /// True if the file header is not properly formatted xml.
         /// </value>
         internal bool IsMalformed { get; private set; }
+
+        /// <summary>
+        /// Gets a XML element from the file header with the given tag name.
+        /// </summary>
+        /// <param name="tagName">The tag name for the node.</param>
+        /// <returns>The requested node, or null if the node could not be found.</returns>
+        internal XElement GetElement(string tagName)
+        {
+            return this.headerXml.Descendants().FirstOrDefault(e => e.Name.LocalName.Equals(tagName, StringComparison.Ordinal));
+        }
     }
 }
