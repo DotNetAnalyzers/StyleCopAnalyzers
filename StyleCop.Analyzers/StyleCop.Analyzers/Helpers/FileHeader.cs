@@ -2,7 +2,10 @@
 {
     using System;
     using System.Linq;
+    using System.Xml;
     using System.Xml.Linq;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.Text;
 
     /// <summary>
     /// Class containing the parsed file header information.
@@ -10,6 +13,9 @@
     internal class FileHeader
     {
         private XElement headerXml;
+        private SyntaxTree syntaxTree;
+        private int fileHeaderStart;
+        private int fileHeaderEnd;
 
         /// <summary>
         /// Prevents a default instance of the <see cref="FileHeader"/> class from being created.
@@ -21,10 +27,16 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="FileHeader"/> class.
         /// </summary>
-        /// <param name="headerXml">The XML representing the contents of the file header.</param>
-        internal FileHeader(XElement headerXml)
+        /// <param name="headerXml">The parsed XML tree from the header.</param>
+        /// <param name="syntaxTree">The syntax tree that the header belongs to.</param>
+        /// <param name="fileHeaderStart">The offset within the file at which the header started.</param>
+        /// <param name="fileHeaderEnd">The offset within the file at which the header ended.</param>
+        internal FileHeader(XElement headerXml, SyntaxTree syntaxTree, int fileHeaderStart, int fileHeaderEnd)
         {
             this.headerXml = headerXml;
+            this.syntaxTree = syntaxTree;
+            this.fileHeaderStart = fileHeaderStart;
+            this.fileHeaderEnd = fileHeaderEnd;
         }
 
         /// <summary>
@@ -79,6 +91,17 @@
         internal XElement GetElement(string tagName)
         {
             return this.headerXml.Descendants().FirstOrDefault(e => e.Name.LocalName.Equals(tagName, StringComparison.Ordinal));
+        }
+
+        internal Location GetElementLocation(XElement element)
+        {
+            var headerSourceText = this.syntaxTree.GetText().GetSubText(TextSpan.FromBounds(this.fileHeaderStart, this.fileHeaderEnd)).ToString();
+
+            var tagStart = "<" + element.Name.LocalName;
+            var index = headerSourceText.IndexOf(tagStart);
+
+            var textSpan = TextSpan.FromBounds(this.fileHeaderStart + index, this.fileHeaderStart + index + tagStart.Length);
+            return Location.Create(this.syntaxTree, textSpan);
         }
     }
 }

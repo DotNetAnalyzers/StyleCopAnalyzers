@@ -1,11 +1,8 @@
 ﻿namespace StyleCop.Analyzers.Helpers
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
-    using System.Runtime.CompilerServices;
     using System.Text;
-    using System.Threading.Tasks;
     using System.Xml;
     using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
@@ -29,12 +26,14 @@
             var sb = new StringBuilder();
             var endOfLineCount = 0;
             var done = false;
-            var fileHeaderStarted = false;
+            var fileHeaderStart = int.MaxValue;
+            var fileHeaderEnd = int.MinValue;
 
             // wrap the xml from the file header in a single root element to make XML parsing work.
             sb.AppendLine("<root>");
 
-            for (var i = 0; !done && (i < firstToken.LeadingTrivia.Count); i++)
+            int i;
+            for (i = 0; !done && (i < firstToken.LeadingTrivia.Count); i++)
             {
                 var trivia = firstToken.LeadingTrivia[i];
 
@@ -45,25 +44,33 @@
                         break;
                     case SyntaxKind.SingleLineCommentTrivia:
                         endOfLineCount = 0;
-                        fileHeaderStarted = true;
 
                         var commentString = trivia.ToFullString();
 
                         // ignore borders
-                        if (!commentString.StartsWith("//-", StringComparison.OrdinalIgnoreCase))
+                        if (commentString.StartsWith("//-", StringComparison.OrdinalIgnoreCase))
                         {
-                            sb.AppendLine(commentString.Substring(2));
+                            break;
                         }
 
+                        fileHeaderStart = Math.Min(trivia.FullSpan.Start, fileHeaderStart);
+                        fileHeaderEnd = trivia.FullSpan.End;
+
+                        sb.AppendLine(commentString.Substring(2));
                         break;
                     case SyntaxKind.EndOfLineTrivia:
                         endOfLineCount++;
                         done = endOfLineCount > 1;
                         break;
                     default:
-                        done = fileHeaderStarted || !trivia.IsDirective;
+                        done = (fileHeaderStart < fileHeaderEnd) || !trivia.IsDirective;
                         break;
                 }
+            }
+
+            if (fileHeaderStart > fileHeaderEnd)
+            {
+                return FileHeader.MissingFileHeader;
             }
 
             sb.AppendLine("</root>");
@@ -78,7 +85,7 @@
                     return FileHeader.MalformedFileHeader;
                 }
 
-                return new FileHeader(parsedFileHeaderXml);
+                return new FileHeader(parsedFileHeaderXml, root.SyntaxTree, fileHeaderStart, fileHeaderEnd);
             }
             catch (XmlException)
             {
