@@ -100,11 +100,11 @@
             var fileHeader = FileHeaderHelpers.ParseFileHeader(root);
             if (fileHeader.IsMissing)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, new TextSpan(0, 0)), "is missing or not located at the top of the file."));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, fileHeader.GetLocation(context.Tree), "is missing or not located at the top of the file."));
             }
             else if (fileHeader.IsMalformed)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, new TextSpan(0, 0)), "XML is invalid."));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, fileHeader.GetLocation(context.Tree), "XML is invalid."));
             }
         }
     }

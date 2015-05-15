@@ -96,6 +96,7 @@ namespace Bar
             var testCode = @"// <copyright file=""test0.cs"" company=""FooCorp"">
 //   Copyright (c) FooCorp. All rights reserved.
 // </copyright>
+// <summary>This is a test file.</summary>
 
 namespace Bar
 {
@@ -116,6 +117,7 @@ namespace Bar
 // <copyright file=""test0.cs"" company=""FooCorp"">
 //   Copyright (c) FooCorp. All rights reserved.
 // </copyright>
+// <summary>This is a test file.</summary>
 //----------------------------------------
 
 namespace Bar
@@ -136,6 +138,7 @@ namespace Bar
             var testCode = @"// <author>
 //   John Doe
 // </author>
+// <summary>This is a test file.</summary>
 
 namespace Bar
 {

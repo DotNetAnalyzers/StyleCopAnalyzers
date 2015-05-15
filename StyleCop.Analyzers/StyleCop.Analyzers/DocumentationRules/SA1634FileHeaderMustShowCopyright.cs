@@ -70,7 +70,7 @@
 
             if (fileHeader.GetElement("copyright") == null)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, new TextSpan(0, 0))));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, fileHeader.GetLocation(context.Tree)));
             }
         }
     }

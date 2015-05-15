@@ -93,7 +93,7 @@
 
             if (!fileAttribute.Value.Equals(fileName, StringComparison.OrdinalIgnoreCase))
             {
-                var location = fileHeader.GetElementLocation(copyrightElement);
+                var location = fileHeader.GetElementLocation(context.Tree, copyrightElement);
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
             }
         }

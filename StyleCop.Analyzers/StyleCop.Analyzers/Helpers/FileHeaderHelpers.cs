@@ -85,7 +85,7 @@
                     return FileHeader.MalformedFileHeader;
                 }
 
-                return new FileHeader(parsedFileHeaderXml, root.SyntaxTree, fileHeaderStart, fileHeaderEnd);
+                return new FileHeader(parsedFileHeaderXml, fileHeaderStart, fileHeaderEnd);
             }
             catch (XmlException)
             {

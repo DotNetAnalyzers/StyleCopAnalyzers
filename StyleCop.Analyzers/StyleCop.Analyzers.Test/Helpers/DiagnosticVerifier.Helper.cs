@@ -64,10 +64,21 @@ namespace TestHelper
                 projects.Add(document.Project);
             }
 
+            var supportedDiagnosticsSpecificOptions = new Dictionary<string, ReportDiagnostic>();
+            foreach (var diagnostic in analyzer.SupportedDiagnostics)
+            {
+                supportedDiagnosticsSpecificOptions[diagnostic.Id] = ReportDiagnostic.Warn;
+            }
+
             var diagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
             foreach (var project in projects)
             {
-                var compilation = await project.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
+                // enable all analyzer diagnostics, even the ones that are disabled by default
+                var modifiedSpecificDiagnosticOptions = project.CompilationOptions.SpecificDiagnosticOptions.AddRange(supportedDiagnosticsSpecificOptions);
+                var modifiedCompilationOptions = project.CompilationOptions.WithSpecificDiagnosticOptions(modifiedSpecificDiagnosticOptions);
+                var processedProject = project.WithCompilationOptions(modifiedCompilationOptions);
+
+                var compilation = await processedProject.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
                 var compilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create(analyzer), null, cancellationToken);
                 var compilerDiagnostics = compilation.GetDiagnostics(cancellationToken);
                 var compilerErrors = compilerDiagnostics.Where(i => i.Severity == DiagnosticSeverity.Error);

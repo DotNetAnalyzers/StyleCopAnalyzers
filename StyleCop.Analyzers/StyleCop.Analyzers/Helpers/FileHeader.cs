@@ -13,7 +13,6 @@
     internal class FileHeader
     {
         private XElement headerXml;
-        private SyntaxTree syntaxTree;
         private int fileHeaderStart;
         private int fileHeaderEnd;
 
@@ -28,13 +27,11 @@
         /// Initializes a new instance of the <see cref="FileHeader"/> class.
         /// </summary>
         /// <param name="headerXml">The parsed XML tree from the header.</param>
-        /// <param name="syntaxTree">The syntax tree that the header belongs to.</param>
         /// <param name="fileHeaderStart">The offset within the file at which the header started.</param>
         /// <param name="fileHeaderEnd">The offset within the file at which the header ended.</param>
-        internal FileHeader(XElement headerXml, SyntaxTree syntaxTree, int fileHeaderStart, int fileHeaderEnd)
+        internal FileHeader(XElement headerXml, int fileHeaderStart, int fileHeaderEnd)
         {
             this.headerXml = headerXml;
-            this.syntaxTree = syntaxTree;
             this.fileHeaderStart = fileHeaderStart;
             this.fileHeaderEnd = fileHeaderEnd;
         }
@@ -93,15 +90,36 @@
             return this.headerXml.Descendants().FirstOrDefault(e => e.Name.LocalName.Equals(tagName, StringComparison.Ordinal));
         }
 
-        internal Location GetElementLocation(XElement element)
+        /// <summary>
+        /// Gets the location representing the start of the file header.
+        /// </summary>
+        /// <param name="syntaxTree">The syntrax tree to use for generating the location.</param>
+        /// <returns>The location representing the start of the file header.</returns>
+        internal Location GetLocation(SyntaxTree syntaxTree)
         {
-            var headerSourceText = this.syntaxTree.GetText().GetSubText(TextSpan.FromBounds(this.fileHeaderStart, this.fileHeaderEnd)).ToString();
+            if (this.IsMissing || this.IsMalformed)
+            {
+                return Location.Create(syntaxTree, new TextSpan(0, 0));
+            }
+
+            return Location.Create(syntaxTree, TextSpan.FromBounds(this.fileHeaderStart, Math.Min(this.fileHeaderStart + 2, this.fileHeaderEnd)));
+        }
+
+        /// <summary>
+        /// Gets the location representing the position of the given element in the source file.
+        /// </summary>
+        /// <param name="syntaxTree">The syntrax tree to use for generating the location.</param>
+        /// <param name="element">The XML element to get the location of.</param>
+        /// <returns>The location representing the position of the given element in the source file.</returns>
+        internal Location GetElementLocation(SyntaxTree syntaxTree, XElement element)
+        {
+            var headerSourceText = syntaxTree.GetText().GetSubText(TextSpan.FromBounds(this.fileHeaderStart, this.fileHeaderEnd)).ToString();
 
             var tagStart = "<" + element.Name.LocalName;
             var index = headerSourceText.IndexOf(tagStart);
 
             var textSpan = TextSpan.FromBounds(this.fileHeaderStart + index, this.fileHeaderStart + index + tagStart.Length);
-            return Location.Create(this.syntaxTree, textSpan);
+            return Location.Create(syntaxTree, textSpan);
         }
     }
 }

@@ -79,7 +79,7 @@
 
             if (copyrightElement.Attribute("file") == null)
             {
-                var location = fileHeader.GetElementLocation(copyrightElement);
+                var location = fileHeader.GetElementLocation(context.Tree, copyrightElement);
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
             }
         }
