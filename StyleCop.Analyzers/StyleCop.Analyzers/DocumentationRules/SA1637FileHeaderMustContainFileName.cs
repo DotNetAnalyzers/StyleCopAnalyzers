@@ -66,6 +66,7 @@
             var fileHeader = FileHeaderHelpers.ParseFileHeader(root);
             if (fileHeader.IsMissing || fileHeader.IsMalformed)
             {
+                // this will be handled by SA1633
                 return;
             }
 

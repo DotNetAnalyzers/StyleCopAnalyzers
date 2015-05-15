@@ -1,8 +1,12 @@
 ﻿namespace StyleCop.Analyzers.DocumentationRules
 {
+    using System;
     using System.Collections.Immutable;
+    using System.IO;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Text;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The file tag within the file header at the top of a C# code file does not contain the name of the file.
@@ -40,30 +44,58 @@
         /// </summary>
         public const string DiagnosticId = "SA1638";
         private const string Title = "File header file name documentation must match file name";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "File header file name documentation must match file name";
         private const string Category = "StyleCop.CSharp.DocumentationRules";
-        private const string Description = "The file tag within the file header at the top of a C# code file does not contain the name of the file.";
+        private const string Description = "The file attribute within copyright tag of the file header at the top of a C# code file does not contain the name of the file.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1638.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        {
-            get
-            {
-                return SupportedDiagnosticsValue;
-            }
-        }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => SupportedDiagnosticsValue;
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTreeAxtion);
+        }
+
+        private static void HandleSyntaxTreeAxtion(SyntaxTreeAnalysisContext context)
+        {
+            var root = context.Tree.GetRoot(context.CancellationToken);
+
+            var fileHeader = FileHeaderHelpers.ParseFileHeader(root);
+            if (fileHeader.IsMissing || fileHeader.IsMalformed)
+            {
+                // this will be handled by SA1633
+                return;
+            }
+
+            var copyrightElement = fileHeader.GetElement("copyright");
+            if (copyrightElement == null)
+            {
+                // this will be handled by SA1634
+                return;
+            }
+
+            var fileAttribute = copyrightElement.Attribute("file");
+            if (fileAttribute == null)
+            {
+                // this will be handled by SA1637
+                return;
+            }
+
+            var fileName = Path.GetFileName(context.Tree.FilePath);
+
+            if (!fileAttribute.Value.Equals(fileName, StringComparison.OrdinalIgnoreCase))
+            {
+                var location = fileHeader.GetElementLocation(copyrightElement);
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+            }
         }
     }
 }
