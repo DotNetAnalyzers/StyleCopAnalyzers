@@ -11,14 +11,62 @@
     public abstract class FileHeaderTestBase : DiagnosticVerifier
     {
         /// <summary>
-        /// Verifies that the analyzer will properly handle an empty source file and produce the correct diagnostic
+        /// Gets the diagnostics that will be checked in the <see cref="TestEmptySourceAsync"/> test case.
+        /// </summary>
+        /// <value>
+        /// The diagnostics that should occur when the test case is executed.
+        /// </value>
+        protected virtual DiagnosticResult[] EmptySourceDiagnostics
+        {
+            get { return EmptyDiagnosticResults; }
+        }
+
+        /// <summary>
+        /// Gets the diagnostics that will be checked in the <see cref="TestNoFileHeaderAsync"/> test case.
+        /// </summary>
+        /// <value>
+        /// The diagnostics that should occur when the test case is executed.
+        /// </value>
+        protected virtual DiagnosticResult[] NoFileHeaderDiagnostics
+        {
+            get { return EmptyDiagnosticResults; }
+        }
+
+        /// <summary>
+        /// Gets the diagnostics that will be checked in the <see cref="TestFileHeaderWithMissingCopyrightTagAsync"/> test case.
+        /// </summary>
+        /// <value>
+        /// The diagnostics that should occur when the test case is executed.
+        /// </value>
+        protected virtual DiagnosticResult[] MissingCopyrightTagDiagnostics
+        {
+            get { return EmptyDiagnosticResults; }
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer will properly handle an empty source file and produce the correct diagnostics (if any)
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public virtual async Task TestEmptySourceAsync()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.EmptySourceDiagnostics, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer will report the correct diagnostics (none for the default case) for a file without a header.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public virtual async Task TestNoFileHeaderAsync()
+        {
+            var testCode = @"namespace Foo
+{
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.NoFileHeaderDiagnostics, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -76,6 +124,25 @@ namespace Bar
 ";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a file header without a copyright element will produce the expected diagnostic (none for the default case)
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestFileHeaderWithMissingCopyrightTagAsync()
+        {
+            var testCode = @"// <author>
+//   John Doe
+// </author>
+
+namespace Bar
+{
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.MissingCopyrightTagDiagnostics, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

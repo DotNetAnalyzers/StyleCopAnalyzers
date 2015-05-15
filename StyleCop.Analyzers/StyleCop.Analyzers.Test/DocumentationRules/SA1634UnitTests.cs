@@ -4,6 +4,7 @@
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
+    using TestHelper;
     using Xunit;
 
     /// <summary>
@@ -11,19 +12,16 @@
     /// </summary>
     public class SA1634UnitTests : FileHeaderTestBase
     {
-        /// <summary>
-        /// Verifies that the analyzer will not report diagnostics for a file without a header.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestNoFileHeaderAsync()
+        /// <inheritdoc/>
+        protected override DiagnosticResult[] MissingCopyrightTagDiagnostics
         {
-            var testCode = @"namespace Foo
-{
-}
-";
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            get
+            {
+                return new[]
+                {
+                    this.CSharpDiagnostic().WithLocation(1, 1)
+                };
+            }
         }
 
         /// <summary>
@@ -63,25 +61,6 @@ namespace Bar
 ";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Verifies that a file header without a copyright element will produce the expected diagnostic message.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestInvalidFileHeaderWithMissingCopyrightAsync()
-        {
-            var testCode = @"// <author>
-//   John Doe
-// </author>
-
-namespace Bar
-{
-}
-";
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(1, 1);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>

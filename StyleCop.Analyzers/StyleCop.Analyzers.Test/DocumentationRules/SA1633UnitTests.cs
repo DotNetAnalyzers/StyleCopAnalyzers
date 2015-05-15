@@ -14,16 +14,28 @@
     /// </summary>
     public class SA1633UnitTests : FileHeaderTestBase
     {
-        /// <summary>
-        /// Verifies that the analyzer will properly handle an empty source file and produce the correct diagnostic
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        public override async Task TestEmptySourceAsync()
+        /// <inheritdoc/>
+        protected override DiagnosticResult[] EmptySourceDiagnostics
         {
-            var testCode = string.Empty;
+            get
+            {
+                return new[]
+                {
+                    this.CSharpDiagnostic().WithLocation(1, 1).WithArguments("is missing or not located at the top of the file.")
+                };
+            }
+        }
 
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(1, 1).WithArguments("is missing or not located at the top of the file.");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+        /// <inheritdoc/>
+        protected override DiagnosticResult[] NoFileHeaderDiagnostics
+        {
+            get
+            {
+                return new[]
+                {
+                    this.CSharpDiagnostic().WithLocation(1, 1).WithArguments("is missing or not located at the top of the file.")
+                };
+            }
         }
 
         /// <summary>
@@ -81,22 +93,6 @@ namespace Bar
 ";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Verifies that a file without a header will produce the correct diagnostic message.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestMissingFileHeaderAsync()
-        {
-            var testCode = @"namespace Foo
-{
-}
-";
-
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(1, 1).WithArguments("is missing or not located at the top of the file.");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>

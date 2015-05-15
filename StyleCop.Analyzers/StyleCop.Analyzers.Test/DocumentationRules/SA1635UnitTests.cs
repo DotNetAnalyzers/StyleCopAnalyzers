@@ -7,43 +7,10 @@
     using Xunit;
 
     /// <summary>
-    /// Unit tests for the <see cref="SA1634FileHeaderMustShowCopyright"/> analyzer.
+    /// Unit tests for the <see cref="SA1635FileHeaderMustHaveCopyrightText"/> analyzer.
     /// </summary>
     public class SA1635UnitTests : FileHeaderTestBase
     {
-        /// <summary>
-        /// Verifies that the analyzer will not report diagnostics for a file without a header.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestNoFileHeaderAsync()
-        {
-            var testCode = @"namespace Foo
-{
-}
-";
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Verifies that a file header without a copyright element will produce no diagnostic message.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestFileHeaderWithMissingCopyrightAsync()
-        {
-            var testCode = @"// <author>
-//   John Doe
-// </author>
-
-namespace Bar
-{
-}
-";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
         /// <summary>
         /// Verifies that a file header with a copyright element in short hand notation will produce the expected diagnostic message.
         /// </summary>
@@ -67,7 +34,7 @@ namespace Bar
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestFileHeaderWithWhitespacOnlyCopyrightAsync()
+        public async Task TestFileHeaderWithWhitespaceOnlyCopyrightAsync()
         {
             var testCode =
                 "// <copyright file=\"test0.cs\" company=\"FooCorp\">\r\n" +
