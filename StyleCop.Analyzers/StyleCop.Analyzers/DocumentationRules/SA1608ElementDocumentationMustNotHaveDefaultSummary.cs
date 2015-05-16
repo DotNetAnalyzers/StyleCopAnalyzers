@@ -68,7 +68,7 @@
 
             if (documentationTrivia != null)
             {
-                var summaryElement = XmlCommentHelper.GetTopLevelElement(documentationTrivia, XmlCommentHelper.SummaryXmlTag) as XmlElementSyntax;
+                var summaryElement = documentationTrivia.Content.GetFirstXmlElement(XmlCommentHelper.SummaryXmlTag) as XmlElementSyntax;
 
                 if (summaryElement != null)
                 {

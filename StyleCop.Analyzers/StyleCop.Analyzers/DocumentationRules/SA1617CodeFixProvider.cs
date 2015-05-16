@@ -49,10 +49,10 @@
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var node = root.FindNode(diagnostic.Location.SourceSpan);
-            var documentation = XmlCommentHelper.GetDocumentationStructure(node);
+            var documentation = node.GetDocumentationCommentTriviaSyntax();
 
             // Check if the return value is documented
-            var returnsElement = XmlCommentHelper.GetTopLevelElement(documentation, XmlCommentHelper.ReturnsXmlTag);
+            var returnsElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.ReturnsXmlTag);
 
             if (returnsElement == null)
             {
