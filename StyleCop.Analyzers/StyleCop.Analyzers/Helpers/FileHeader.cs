@@ -102,7 +102,7 @@
                 return Location.Create(syntaxTree, new TextSpan(0, 0));
             }
 
-            return Location.Create(syntaxTree, TextSpan.FromBounds(this.fileHeaderStart, Math.Min(this.fileHeaderStart + 2, this.fileHeaderEnd)));
+            return Location.Create(syntaxTree, TextSpan.FromBounds(this.fileHeaderStart, this.fileHeaderStart + 2));
         }
 
         /// <summary>

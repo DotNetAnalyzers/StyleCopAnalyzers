@@ -91,7 +91,7 @@
 
             var fileName = Path.GetFileName(context.Tree.FilePath);
 
-            if (!fileAttribute.Value.Equals(fileName, StringComparison.OrdinalIgnoreCase))
+            if (!fileAttribute.Value.Equals(fileName, StringComparison.Ordinal))
             {
                 var location = fileHeader.GetElementLocation(context.Tree, copyrightElement);
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
