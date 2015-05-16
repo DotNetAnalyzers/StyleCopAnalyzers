@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.OrderingRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -163,9 +164,9 @@ namespace Bar
         }
 
         /// <inheritdoc/>
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1217UsingStaticDirectivesMustBeOrderedAlphabetically();
+            yield return new SA1217UsingStaticDirectivesMustBeOrderedAlphabetically();
         }
     }
 }
