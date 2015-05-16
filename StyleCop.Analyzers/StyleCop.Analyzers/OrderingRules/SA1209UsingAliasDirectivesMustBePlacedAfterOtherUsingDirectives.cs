@@ -91,6 +91,12 @@
                     continue;
                 }
 
+                // ignore following using static directives
+                if (usingDirective.StaticKeyword.IsKind(SyntaxKind.StaticKeyword))
+                {
+                    continue;
+                }
+
                 SymbolInfo symbolInfo = context.SemanticModel.GetSymbolInfo(usingDirective.Name, context.CancellationToken);
                 INamespaceSymbol followingNamespaceSymbol = symbolInfo.Symbol as INamespaceSymbol;
                 if (followingNamespaceSymbol == null)
