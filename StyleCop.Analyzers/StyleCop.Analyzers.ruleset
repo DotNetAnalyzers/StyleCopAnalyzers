@@ -107,5 +107,6 @@
     <Rule Id="SA1603" Action="Error" />
     <Rule Id="SA1642" Action="Error" />
     <Rule Id="SA1643" Action="Error" />
+    <Rule Id="SA1615" Action="None" />
   </Rules>
 </RuleSet>
