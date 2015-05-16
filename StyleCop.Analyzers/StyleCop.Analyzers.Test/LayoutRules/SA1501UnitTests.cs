@@ -21,8 +21,9 @@
         /// <summary>
         /// Verifies that the analyzer will properly handle an empty source.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -31,8 +32,9 @@
         /// <summary>
         /// Verifies that lock statement with single line block statement will trigger a warning.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestLockWithSingleLineBlock()
+        public async Task TestLockWithSingleLineBlockAsync()
         {
           string testCode = @"using System.Diagnostics;
 public class Foo
@@ -51,8 +53,9 @@ public class Foo
         /// <remarks>
         /// The analyzer will only trigger on the second block, as the first block will be marked as DisabledTextTrivia due to the preprocessor statements.
         /// </remarks>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestLockWithPreProcessorTrivia()
+        public async Task TestLockWithPreProcessorTriviaAsync()
         {
             string testCode = @"using System.Diagnostics;
 public class Foo
@@ -74,8 +77,9 @@ public class Foo
         /// <summary>
         /// Verifies that lock statement with a block statement spread over multiple lines will not trigger a warning.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestLockWithMultilineBlock()
+        public async Task TestLockWithMultilineBlockAsync()
         {
             string testCode = @"using System.Diagnostics;
 public class Foo
@@ -95,8 +99,9 @@ public class Foo
         /// Verifies that lock statement with an invalid formatted block statement spread over multiple lines will not trigger a warning.
         /// </summary>
         /// <remarks>This will trigger SA1500.</remarks>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestLockWithInvalidMultilineBlock()
+        public async Task TestLockWithInvalidMultilineBlockAsync()
         {
             string testCode = @"using System.Diagnostics;
 public class Foo
@@ -113,8 +118,9 @@ public class Foo
         /// <summary>
         /// Verifies that a single line anonymous method definition is allowed.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestSingleLineAnonymousMethodIsAllowed()
+        public async Task TestSingleLineAnonymousMethodIsAllowedAsync()
         {
             string testCode = @"using System.Diagnostics;
 public class Foo
@@ -132,8 +138,9 @@ public class Foo
         /// <summary>
         /// Verifies that a single line lambda expression definition is allowed.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestSingleLineLambdaExpressionIsAllowed()
+        public async Task TestSingleLineLambdaExpressionIsAllowedAsync()
         {
             string testCode = @"using System;
 using System.Diagnostics;
@@ -151,8 +158,9 @@ public class Foo
         /// <summary>
         /// Verifies that a single line method definition is not flagged by this analyzer.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestSingleLineMethodIsAllowed()
+        public async Task TestSingleLineMethodIsAllowedAsync()
         {
             string testCode = @"using System.Diagnostics;
 public class Foo
@@ -165,8 +173,9 @@ public class Foo
         /// <summary>
         /// Verifies that a single line property accessors are not flagged by this analyzer.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestSingleLinePropertyAccessorsAreAllowed()
+        public async Task TestSingleLinePropertyAccessorsAreAllowedAsync()
         {
             string testCode = @"using System.Diagnostics;
 public class Foo
@@ -183,8 +192,9 @@ public class Foo
         /// <summary>
         /// Verifies that the code fix provider will correctly expand the block to a multiline statement.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestCodeFixProviderCorrectlyExpandsBlock()
+        public async Task TestCodeFixProviderCorrectlyExpandsBlockAsync()
         {
             string testCode = @"using System.Diagnostics;
 public class Foo
@@ -213,8 +223,9 @@ public class Foo
         /// <summary>
         /// Verifies that the code fix provider will correctly expand the block to a multiline statement, when it starts on the same line as the parent.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestCodeFixProviderCorrectlyExpandsBlockWithParentOnSameLine()
+        public async Task TestCodeFixProviderCorrectlyExpandsBlockWithParentOnSameLineAsync()
         {
             string testCode = @"using System.Diagnostics;
 public class Foo
@@ -242,8 +253,9 @@ public class Foo
         /// <summary>
         /// Verifies that the code fix provider will correctly expand the block to a multiline statement, when it starts on the same line as the parent.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact(Skip = "Disabled until pull request #522 is merged.")]
-        public async Task TestCodeFixProviderCorrectlyExpandsBlockInSourceFileWithTabs()
+        public async Task TestCodeFixProviderCorrectlyExpandsBlockInSourceFileWithTabsAsync()
         {
             string testCode = 
                 "using System.Diagnostics;\r\n" + 
@@ -274,8 +286,9 @@ public class Foo
         /// <summary>
         /// Verifies that the code fix provider will correctly handle non-whitespace trivia.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestCodeFixProviderCorrectlyHandlesTrivia()
+        public async Task TestCodeFixProviderCorrectlyHandlesTriviaAsync()
         {
             string testCode = @"using System.Diagnostics;
 public class Foo
@@ -306,8 +319,9 @@ public class Foo
         /// <remarks>
         /// Only the second block will be fixed, as the first block is marked as DisabledTextTrivia.
         /// </remarks>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestCodeFixProviderCorrectlyHandlesPreProcessorTrivia()
+        public async Task TestCodeFixProviderCorrectlyHandlesPreProcessorTriviaAsync()
         {
             string testCode = @"using System.Diagnostics;
 public class Foo

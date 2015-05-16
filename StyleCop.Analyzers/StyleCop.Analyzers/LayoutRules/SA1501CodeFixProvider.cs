@@ -85,7 +85,7 @@
         private BlockSyntax ReformatBlock(CodeFixContext context, BlockSyntax block)
         {
             var indentationOptions = IndentationOptions.FromDocument(context.Document);
-            var parentIndentationLevel = IndentationHelper.GetNodeIndentationSteps(indentationOptions, block.Parent);
+            var parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationOptions, block.Parent);
 
             var indentationString = IndentationHelper.GenerateIndentationString(indentationOptions, parentIndentationLevel);
             var statementIndentationString = IndentationHelper.GenerateIndentationString(indentationOptions, parentIndentationLevel + 1);
@@ -177,4 +177,3 @@
         }
     }
 }
-
