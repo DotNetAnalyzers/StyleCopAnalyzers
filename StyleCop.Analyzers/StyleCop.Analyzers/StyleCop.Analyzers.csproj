@@ -182,6 +182,9 @@
     <Compile Include="NamingRules\SA1310CodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1310FieldNamesMustNotContainUnderscore.cs" />
     <Compile Include="NamingRules\SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter.cs" />
+    <Compile Include="NamingRules\SX1309CodeFixProvider.cs" />
+    <Compile Include="NamingRules\SX1309FieldNamesMustBeginWithUnderscore.cs" />
+    <Compile Include="NamingRules\SX1309SStaticFieldNamesMustBeginWithUnderscore.cs" />
     <Compile Include="NoCodeFixAttribute.cs" />
     <Compile Include="OrderingRules\SA1200UsingDirectivesMustBePlacedWithinNamespace.cs" />
     <Compile Include="OrderingRules\SA1201ElementsMustAppearInTheCorrectOrder.cs" />
