@@ -34,6 +34,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "documentation", "documentation", "{19DD9E9D-877A-4492-9B7F-2E681DD58308}"
 	ProjectSection(SolutionItems) = preProject
 		documentation\SA1028.md = documentation\SA1028.md
+		documentation\SX1309.md = documentation\SX1309.md
+		documentation\SX1309S.md = documentation\SX1309S.md
 	EndProjectSection
 EndProject
 Global
