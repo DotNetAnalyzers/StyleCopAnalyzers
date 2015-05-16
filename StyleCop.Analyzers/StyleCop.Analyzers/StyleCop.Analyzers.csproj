@@ -71,6 +71,7 @@
     <Compile Include="DocumentationRules\SA1613ElementParameterDocumentationMustDeclareParameterName.cs" />
     <Compile Include="DocumentationRules\SA1614ElementParameterDocumentationMustHaveText.cs" />
     <Compile Include="DocumentationRules\SA1615ElementReturnValueMustBeDocumented.cs" />
+    <Compile Include="DocumentationRules\SA1615SA1616CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1616ElementReturnValueDocumentationMustHaveText.cs" />
     <Compile Include="DocumentationRules\SA1617CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1617VoidReturnValueMustNotBeDocumented.cs" />
