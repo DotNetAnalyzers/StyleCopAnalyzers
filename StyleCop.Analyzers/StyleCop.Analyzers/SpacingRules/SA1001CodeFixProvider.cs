@@ -17,7 +17,7 @@
     /// <para>To fix a violation of this rule, ensure that the comma is followed by a single space, and is not preceded
     /// by any space.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1001CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1001CodeFixProvider))]
     [Shared]
     public class SA1001CodeFixProvider : CodeFixProvider
     {
@@ -50,11 +50,11 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context.Document, root, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocumentAsync(context.Document, root, token)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxToken token)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxToken token)
         {
             Dictionary<SyntaxToken, SyntaxToken> replacements = new Dictionary<SyntaxToken, SyntaxToken>();
 

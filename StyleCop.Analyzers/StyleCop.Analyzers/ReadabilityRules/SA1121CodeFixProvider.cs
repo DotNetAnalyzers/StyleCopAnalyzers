@@ -19,7 +19,7 @@
     /// <para>To fix a violation of this rule, ensure that the comma is followed by a single space, and is not preceded
     /// by any space.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1121CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1121CodeFixProvider))]
     [Shared]
     public class SA1121CodeFixProvider : CodeFixProvider
     {
@@ -64,13 +64,13 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Replace with built-in type", token => GetTransformedDocument(context.Document, diagnostic, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Replace with built-in type", token => GetTransformedDocumentAsync(context.Document, diagnostic, token)), diagnostic);
             }
 
             return Task.FromResult(true);
         }
 
-        private static async Task<Document> GetTransformedDocument(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);

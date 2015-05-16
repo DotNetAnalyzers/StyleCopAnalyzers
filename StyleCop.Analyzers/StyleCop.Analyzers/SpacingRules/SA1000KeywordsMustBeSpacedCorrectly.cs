@@ -39,7 +39,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1000.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -57,10 +57,10 @@
         public override void Initialize(AnalysisContext context)
         {
             // handle everything except nameof
-            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
+            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
 
             // handle nameof (which appears as an invocation expression??)
-            context.RegisterSyntaxNodeAction(this.HandleInvocationExpressionSyntax, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleInvocationExpressionSyntax, SyntaxKind.InvocationExpression);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -245,9 +245,10 @@
                 return;
             }
 
-            // if the next token is ; or :, then treat as disallowed
-            //   1. return;
-            //   2. [return: Attribute(...)]
+            /* if the next token is ; or :, then treat as disallowed
+             *   1. return;
+             *   2. [return: Attribute(...)]
+             */
             SyntaxToken nextToken = token.GetNextToken();
             if (nextToken.IsKind(SyntaxKind.SemicolonToken) || nextToken.IsKind(SyntaxKind.ColonToken))
             {
@@ -266,8 +267,9 @@
                 return;
             }
 
-            // if the next token is ;, then treat as disallowed:
-            //    throw;
+            /* if the next token is ;, then treat as disallowed:
+             *    throw;
+             */
             SyntaxToken nextToken = token.GetNextToken();
             if (nextToken.IsKind(SyntaxKind.SemicolonToken))
             {

@@ -90,7 +90,7 @@ namespace TestHelper
         private static async Task<string> GetStringFromDocumentAsync(Document document, CancellationToken cancellationToken)
         {
             var simplifiedDoc = await Simplifier.ReduceAsync(document, Simplifier.Annotation, cancellationToken: cancellationToken).ConfigureAwait(false);
-            var formatted = await Formatter.FormatAsync(simplifiedDoc, Formatter.Annotation, cancellationToken: cancellationToken);
+            var formatted = await Formatter.FormatAsync(simplifiedDoc, Formatter.Annotation, cancellationToken: cancellationToken).ConfigureAwait(false);
             var sourceText = await formatted.GetTextAsync(cancellationToken).ConfigureAwait(false);
             return sourceText.ToString();
         }

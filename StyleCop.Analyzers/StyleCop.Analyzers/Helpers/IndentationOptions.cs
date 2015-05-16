@@ -17,6 +17,30 @@
         }
 
         /// <summary>
+        /// Gets the indentation size.
+        /// </summary>
+        /// <value>
+        /// The indentation size.
+        /// </value>
+        public int IndentationSize { get; }
+
+        /// <summary>
+        /// Gets the tab size.
+        /// </summary>
+        /// <value>
+        /// The tab size.
+        /// </value>
+        public int TabSize { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether tabs should be used instead of spaces.
+        /// </summary>
+        /// <value>
+        /// <see langword="true"/> if tabs should be used instead of spaces; otherwise, <see langword="false"/>.
+        /// </value>
+        public bool UseTabs { get; }
+
+        /// <summary>
         /// Retrieves the indentation options from a document.
         /// </summary>
         /// <param name="document">The document for which the indentation options should be retrieved.</param>
@@ -25,20 +49,5 @@
         {
             return new IndentationOptions(document.Project.Solution.Workspace);
         }
-
-        /// <summary>
-        /// Gets the indentation size.
-        /// </summary>
-        public int IndentationSize { get; private set; }
-
-        /// <summary>
-        /// Gets the tab size.
-        /// </summary>
-        public int TabSize { get; private set; }
-
-        /// <summary>
-        /// Gets a value indicating whether tabs should be used instead of spaces.
-        /// </summary>
-        public bool UseTabs { get; private set; }
     }
 }

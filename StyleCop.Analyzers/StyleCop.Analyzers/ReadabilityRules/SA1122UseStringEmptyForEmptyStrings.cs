@@ -38,7 +38,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1122.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -55,7 +55,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleStringLiteral, SyntaxKind.StringLiteralExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleStringLiteral, SyntaxKind.StringLiteralExpression);
         }
 
         private void HandleStringLiteral(SyntaxNodeAnalysisContext context)
@@ -99,7 +99,7 @@
                 }
 
                 VariableDeclaratorSyntax variableDeclaratorSyntax = equalsValueClause.Parent as VariableDeclaratorSyntax;
-                VariableDeclarationSyntax variableDeclarationSyntax = variableDeclaratorSyntax.Parent as VariableDeclarationSyntax;
+                VariableDeclarationSyntax variableDeclarationSyntax = variableDeclaratorSyntax?.Parent as VariableDeclarationSyntax;
                 if (variableDeclaratorSyntax == null || variableDeclarationSyntax == null)
                 {
                     return false;

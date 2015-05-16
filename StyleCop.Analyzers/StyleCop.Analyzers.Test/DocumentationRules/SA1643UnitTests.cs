@@ -15,14 +15,14 @@
     public class SA1643UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestNoDocumentation()
+        public async Task TestNoDocumentationAsync()
         {
             var testCode = @"namespace FooNamespace
 {
@@ -34,10 +34,10 @@
         }
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestEmptyDestructor()
+        private async Task TestEmptyDestructorAsync()
         {
             var testCode = @"namespace FooNamespace
 {
@@ -52,10 +52,10 @@
         }
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestDestructorCorrectDocumentation(string part1, string part2, string part3, bool generic)
+        private async Task TestDestructorCorrectDocumentationAsync(string part1, string part2, string part3, bool generic)
         {
             // First test it all on one line
             var testCode = @"namespace FooNamespace
@@ -72,7 +72,7 @@
     }}
 }}";
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
 
             // Then test splitting after the <see> element
             testCode = @"namespace FooNamespace
@@ -90,7 +90,7 @@
     }}
 }}";
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
 
             // Then test splitting before the <see> element
             testCode = @"namespace FooNamespace
@@ -108,44 +108,44 @@
     }}
 }}";
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestDestructorCorrectDocumentationSimpleImpl(string part1, string part2, bool generic)
+        private async Task TestDestructorCorrectDocumentationSimpleImplAsync(string part1, string part2, bool generic)
         {
-            await this.TestDestructorCorrectDocumentation(part1, part2, ".", generic);
+            await this.TestDestructorCorrectDocumentationAsync(part1, part2, ".", generic).ConfigureAwait(false);
         }
 
-        private async Task TestDestructorCorrectDocumentationCustomizedImpl(string part1, string part2, bool generic)
+        private async Task TestDestructorCorrectDocumentationCustomizedImplAsync(string part1, string part2, bool generic)
         {
-            await this.TestDestructorCorrectDocumentation(part1, part2, " with A and B.", generic);
+            await this.TestDestructorCorrectDocumentationAsync(part1, part2, " with A and B.", generic).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestDestructorCorrectDocumentationSimple()
+        public async Task TestDestructorCorrectDocumentationSimpleAsync()
         {
-            await this.TestDestructorCorrectDocumentationSimpleImpl(DestructorStandardText[0], DestructorStandardText[1], false);
+            await this.TestDestructorCorrectDocumentationSimpleImplAsync(DestructorStandardText[0], DestructorStandardText[1], false).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestDestructorCorrectDocumentationCustomized()
+        public async Task TestDestructorCorrectDocumentationCustomizedAsync()
         {
-            await this.TestDestructorCorrectDocumentationCustomizedImpl(DestructorStandardText[0], DestructorStandardText[1], false);
+            await this.TestDestructorCorrectDocumentationCustomizedImplAsync(DestructorStandardText[0], DestructorStandardText[1], false).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestNonPrivateConstructorCorrectDocumentationGenericSimple()
+        public async Task TestNonPrivateConstructorCorrectDocumentationGenericSimpleAsync()
         {
-            await this.TestDestructorCorrectDocumentationSimpleImpl(DestructorStandardText[0], DestructorStandardText[1], true);
+            await this.TestDestructorCorrectDocumentationSimpleImplAsync(DestructorStandardText[0], DestructorStandardText[1], true).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestDestructorCorrectDocumentationGenericCustomized()
+        public async Task TestDestructorCorrectDocumentationGenericCustomizedAsync()
         {
-            await this.TestDestructorCorrectDocumentationCustomizedImpl(DestructorStandardText[0], DestructorStandardText[1], true);
+            await this.TestDestructorCorrectDocumentationCustomizedImplAsync(DestructorStandardText[0], DestructorStandardText[1], true).ConfigureAwait(false);
         }
 
-        private async Task TestDestructorMissingDocumentationImpl(string part1, string part2, bool generic)
+        private async Task TestDestructorMissingDocumentationImplAsync(string part1, string part2, bool generic)
         {
             var testCode = @"namespace FooNamespace
 {{
@@ -164,7 +164,7 @@
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 13);
 
             await this.VerifyCSharpDiagnosticAsync(testCode,
-                expected, CancellationToken.None);
+                expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"namespace FooNamespace
 {{
@@ -182,19 +182,19 @@
 
             string part3 = part2.EndsWith(".") ? string.Empty : ".";
             fixedCode = string.Format(fixedCode, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestDestructorMissingDocumentation()
+        public async Task TestDestructorMissingDocumentationAsync()
         {
-            await this.TestDestructorMissingDocumentationImpl(DestructorStandardText[0], DestructorStandardText[1], false);
+            await this.TestDestructorMissingDocumentationImplAsync(DestructorStandardText[0], DestructorStandardText[1], false).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestDestructorMissingDocumentationGeneric()
+        public async Task TestDestructorMissingDocumentationGenericAsync()
         {
-            await this.TestDestructorMissingDocumentationImpl(DestructorStandardText[0], DestructorStandardText[1], true);
+            await this.TestDestructorMissingDocumentationImplAsync(DestructorStandardText[0], DestructorStandardText[1], true).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

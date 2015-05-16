@@ -36,7 +36,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1603.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -53,9 +53,9 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleXmlElement, SyntaxKind.XmlElement);
-            context.RegisterSyntaxNodeAction(this.HandleXmlEmptyElement, SyntaxKind.XmlEmptyElement);
-            context.RegisterSyntaxNodeAction(this.HandleXmlCDataSection, SyntaxKind.XmlCDataSection);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleXmlElement, SyntaxKind.XmlElement);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleXmlEmptyElement, SyntaxKind.XmlEmptyElement);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleXmlCDataSection, SyntaxKind.XmlCDataSection);
         }
 
         private void HandleXmlElement(SyntaxNodeAnalysisContext context)

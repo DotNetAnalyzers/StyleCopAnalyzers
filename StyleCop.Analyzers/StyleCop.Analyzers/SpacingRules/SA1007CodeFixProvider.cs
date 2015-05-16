@@ -14,7 +14,7 @@
     /// <remarks>
     /// <para>To fix a violation of this rule, add a single space after the operator keyword.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1007CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1007CodeFixProvider))]
     [Shared]
     public class SA1007CodeFixProvider : CodeFixProvider
     {
@@ -53,11 +53,11 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Insert space", t => GetTransformedDocument(context.Document, root, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Insert space", t => GetTransformedDocumentAsync(context.Document, root, token)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxToken token)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxToken token)
         {
             SyntaxToken corrected = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, SyntaxFactory.Space));
             Document updatedDocument = document.WithSyntaxRoot(root.ReplaceToken(token, corrected));

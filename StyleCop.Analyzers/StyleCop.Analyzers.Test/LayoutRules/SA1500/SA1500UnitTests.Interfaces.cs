@@ -9,7 +9,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
-    public partial class SA1500UnitTests : DiagnosticVerifier
+    public partial class SA1500UnitTests
     {
         /// <summary>
         /// Verifies that no diagnostics are reported for the valid interfaces defined in this test.
@@ -17,8 +17,9 @@
         /// <remarks>
         /// These are valid for SA1500 only, some will report other diagnostics from the layout (SA15xx) series.
         /// </remarks>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestInterfaceValid()
+        public async Task TestInterfaceValidAsync()
         {
             var testCode = @"public class Foo
 {
@@ -48,8 +49,9 @@
         /// <remarks>
         /// These will normally also report SA1401, but not in the unit test.
         /// </remarks>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestInterfaceInvalid()
+        public async Task TestInterfaceInvalidAsync()
         {
             var testCode = @"public class Foo
 {
@@ -67,15 +69,47 @@
     }
 
     public interface InvalidInterface5
-    { 
+    {
         void Bar(); }
 
     public interface InvalidInterface6
-    { void Bar(); 
+    { void Bar();
     }
 }";
 
-            var expectedDiagnostics = new[]
+            var fixedTestCode = @"public class Foo
+{
+    public interface InvalidInterface1
+    {
+    }
+
+    public interface InvalidInterface2
+    {
+        void Bar();
+    }
+
+    public interface InvalidInterface3
+    {
+        void Bar();
+    }
+
+    public interface InvalidInterface4
+    {
+        void Bar();
+    }
+
+    public interface InvalidInterface5
+    {
+        void Bar();
+    }
+
+    public interface InvalidInterface6
+    {
+        void Bar();
+    }
+}";
+
+            DiagnosticResult[] expectedDiagnostics =
             {
                 // InvalidInterface1
                 this.CSharpDiagnostic().WithLocation(3, 40),
@@ -93,6 +127,8 @@
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
     }
 }

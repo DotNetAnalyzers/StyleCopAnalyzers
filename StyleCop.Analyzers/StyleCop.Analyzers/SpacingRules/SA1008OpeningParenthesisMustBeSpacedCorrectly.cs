@@ -49,7 +49,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
+            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -105,17 +105,17 @@
                 case SyntaxKind.FixedKeyword:
                 case SyntaxKind.ForKeyword:
                 case SyntaxKind.ForEachKeyword:
-                //case SyntaxKind.FromKeyword: // ?
+                ////case SyntaxKind.FromKeyword: // ?
                 case SyntaxKind.GroupKeyword: // ?
                 case SyntaxKind.IfKeyword:
-                //case SyntaxKind.IntoKeyword: // ?
-                //case SyntaxKind.JoinKeyword: // ?
-                //case SyntaxKind.LetKeyword: // ?
+                ////case SyntaxKind.IntoKeyword: // ?
+                ////case SyntaxKind.JoinKeyword: // ?
+                ////case SyntaxKind.LetKeyword: // ?
                 case SyntaxKind.LockKeyword:
                 case SyntaxKind.OrderByKeyword: // ?
                 case SyntaxKind.ReturnKeyword:
                 case SyntaxKind.SelectKeyword: // ?
-                //case SyntaxKind.StackAllocKeyword: // ?
+                ////case SyntaxKind.StackAllocKeyword: // ?
                 case SyntaxKind.SwitchKeyword:
                 case SyntaxKind.UsingKeyword:
                 case SyntaxKind.WhereKeyword: // ?

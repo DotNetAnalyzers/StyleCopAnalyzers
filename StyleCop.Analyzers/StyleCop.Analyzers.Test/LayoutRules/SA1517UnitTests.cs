@@ -25,118 +25,129 @@ public class Foo
         /// <summary>
         /// Verifies that the analyzer will properly handle an empty source.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Verifies that blank lines at the start of the file will produce a warning.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestWithBlankLinesAtStartOfFile()
+        public async Task TestWithBlankLinesAtStartOfFileAsync()
         {
             var testCode = "\r\n\r\n" + BaseCode;
-            await this.VerifyCSharpDiagnosticAsync(testCode, this.GenerateExpectedWarning(1, 1), CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.GenerateExpectedWarning(1, 1), CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Verifies that blank linefeed only lines at the start of the file will produce a warning.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestWithBlankLinefeedOnlyLinesAtStartOfFile()
+        public async Task TestWithBlankLinefeedOnlyLinesAtStartOfFileAsync()
         {
             var testCode = "\n\n" + BaseCode;
-            await this.VerifyCSharpDiagnosticAsync(testCode, this.GenerateExpectedWarning(1, 1), CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.GenerateExpectedWarning(1, 1), CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Verifies that non-whitespace trivia will not produce a warning.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestWithNonWhitespaceTrivia()
+        public async Task TestWithNonWhitespaceTriviaAsync()
         {
             var testCode = "#if true\r\n" + BaseCode + "\r\n#endif\r\n";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Verifies that blank lines followed by non-whitespace trivia will produce a warning.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestWithNonWhitespaceTriviaAndLeadingBlankLines()
+        public async Task TestWithNonWhitespaceTriviaAndLeadingBlankLinesAsync()
         {
             var testCode = "\r\n\r\n#if true\r\n" + BaseCode + "\r\n#endif\r\n";
-            await this.VerifyCSharpDiagnosticAsync(testCode, this.GenerateExpectedWarning(1, 1), CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.GenerateExpectedWarning(1, 1), CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Verifies that no blank lines at the start of the file will not produce a warning.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestWithoutCarriageReturnLineFeedAtStartOfFile()
+        public async Task TestWithoutCarriageReturnLineFeedAtStartOfFileAsync()
         {
-            await this.VerifyCSharpDiagnosticAsync(BaseCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(BaseCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Verifies that invalid spacing will not trigger SA1517.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestWithInvalidSpacing()
+        public async Task TestWithInvalidSpacingAsync()
         {
             var testCode = "    " + BaseCode;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Verifies that the code fix provider will strip leading blank lines.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestCodeFixProviderStripsLeadingBlankLines()
+        public async Task TestCodeFixProviderStripsLeadingBlankLinesAsync()
         {
             var testCode = "\r\n\r\n" + BaseCode;
             var fixedTestCode = BaseCode;
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Verifies that the code fix provider will not strip leading whitespace other than blank lines.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestCodeFixProviderHandlesWhitespaceProperly()
+        public async Task TestCodeFixProviderHandlesWhitespaceProperlyAsync()
         {
             var testCode = "\r\n   " + BaseCode;
             var fixedTestCode = "   " + BaseCode;
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Verifies that the code fix provider will strip whitespace on blank lines.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestCodeFixProviderHandlesBlankLinesWithWhitespaceProperly()
+        public async Task TestCodeFixProviderHandlesBlankLinesWithWhitespaceProperlyAsync()
         {
             var testCode = "   \r\n   \r\n" + BaseCode;
             var fixedTestCode = BaseCode;
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Verifies that the code fix provider will not strip non-whitespace trivia.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestCodeFixProviderHandlesNonWhitespaceTriviaProperly()
+        public async Task TestCodeFixProviderHandlesNonWhitespaceTriviaProperlyAsync()
         {
             var testCode = "\r\n\r\n#if true\r\n" + BaseCode + "\r\n#endif\r\n";
             var fixedTestCode = "#if true\r\n" + BaseCode + "\r\n#endif\r\n";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

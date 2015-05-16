@@ -47,7 +47,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1213.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -64,7 +64,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleEventDeclaration, SyntaxKind.EventDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleEventDeclaration, SyntaxKind.EventDeclaration);
         }
 
         private void HandleEventDeclaration(SyntaxNodeAnalysisContext context)
@@ -72,7 +72,9 @@
             var eventDeclaration = (EventDeclarationSyntax) context.Node;
 
             if (eventDeclaration?.AccessorList == null)
+            {
                 return;
+            }
 
             var accessors = eventDeclaration.AccessorList.Accessors;
             if (eventDeclaration.AccessorList.IsMissing ||

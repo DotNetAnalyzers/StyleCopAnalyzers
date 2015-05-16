@@ -113,7 +113,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1201.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -137,6 +137,8 @@
             SyntaxKind.InterfaceDeclaration,
             SyntaxKind.PropertyDeclaration,
             SyntaxKind.IndexerDeclaration,
+            SyntaxKind.ConversionOperatorDeclaration,
+            SyntaxKind.OperatorDeclaration,
             SyntaxKind.MethodDeclaration,
             SyntaxKind.StructDeclaration,
             SyntaxKind.ClassDeclaration);
@@ -158,7 +160,9 @@
             [SyntaxKind.InterfaceDeclaration] = "interface",
             [SyntaxKind.PropertyDeclaration] = "property",
             [SyntaxKind.IndexerDeclaration] = "indexer",
-            [SyntaxKind.MethodDeclaration] = "method"
+            [SyntaxKind.MethodDeclaration] = "method",
+            [SyntaxKind.ConversionOperatorDeclaration] = "conversion",
+            [SyntaxKind.OperatorDeclaration] = "operator"
         };
 
         /// <inheritdoc/>
@@ -173,11 +177,11 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleCompilationUnit, SyntaxKind.CompilationUnit);
-            context.RegisterSyntaxNodeAction(this.HandleNamespaceDeclaration, SyntaxKind.NamespaceDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleTypeDeclaration, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleCompilationUnit, SyntaxKind.CompilationUnit);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleNamespaceDeclaration, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
         }
 
         private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)

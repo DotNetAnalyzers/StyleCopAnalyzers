@@ -16,7 +16,7 @@
     /// <remarks>
     /// <para>To fix a violation of this rule, insert parenthesis within the arithmetic expression to declare the precedence of the operations.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1407SA1408CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1407SA1408CodeFixProvider))]
     [Shared]
     public class SA1407SA1408CodeFixProvider : CodeFixProvider
     {
@@ -53,12 +53,12 @@
                 BinaryExpressionSyntax syntax = node as BinaryExpressionSyntax;
                 if (syntax != null)
                 {
-                    context.RegisterCodeFix(CodeAction.Create("Add parenthesis", token => GetTransformedDocument(context.Document, root, syntax)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Add parenthesis", token => GetTransformedDocumentAsync(context.Document, root, syntax)), diagnostic);
                 }
             }
         }
 
-        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, BinaryExpressionSyntax syntax)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, BinaryExpressionSyntax syntax)
         {
             var newNode = SyntaxFactory.ParenthesizedExpression(syntax.WithoutTrivia())
                 .WithTriviaFrom(syntax)

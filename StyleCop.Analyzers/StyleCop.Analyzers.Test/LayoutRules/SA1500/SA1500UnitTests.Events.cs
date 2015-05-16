@@ -9,7 +9,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
-    public partial class SA1500UnitTests : DiagnosticVerifier
+    public partial class SA1500UnitTests
     {
         /// <summary>
         /// Verifies that no diagnostics are reported for the valid events defined in this test.
@@ -17,8 +17,9 @@
         /// <remarks>
         /// These are valid for SA1500 only, some will report other diagnostics from the layout (SA15xx) series.
         /// </remarks>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEventValid()
+        public async Task TestEventValidAsync()
         {
             var testCode = @"using System;
 
@@ -75,8 +76,9 @@ public class Foo
         /// <summary>
         /// Verifies that diagnostics will be reported for all invalid event definitions.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEventInvalid()
+        public async Task TestEventInvalidAsync()
         {
             var testCode = @"using System;
 
@@ -87,32 +89,32 @@ public class Foo
     // Invalid event #1
     public event EventHandler Event1
     {
-        add { 
-            this.test += value; 
+        add {
+            this.test += value;
         }
 
-        remove { 
-            this.test -= value; 
+        remove {
+            this.test -= value;
         }
     }
 
     // Invalid event #2
     public event EventHandler Event2
     {
-        add { 
+        add {
             this.test += value; }
 
-        remove { 
+        remove {
             this.test -= value; }
     }
 
     // Invalid event #3
     public event EventHandler Event3
     {
-        add { this.test += value; 
+        add { this.test += value;
         }
 
-        remove { this.test -= value; 
+        remove { this.test -= value;
         }
     }
 
@@ -120,37 +122,123 @@ public class Foo
     public event EventHandler Event4
     {
         add 
-        { 
+        {
             this.test += value; }
 
         remove 
-        { 
+        {
             this.test -= value; }
     }
 
     // Invalid event #5
     public event EventHandler Event5
     {
-        add 
-        { this.test += value; 
+        add
+        { this.test += value;
         }
 
-        remove 
-        { this.test -= value; 
+        remove
+        { this.test -= value;
         }
     }
 
     // Invalid event #6
     public event EventHandler Event6
     {
-        add 
+        add
         { this.test += value; }
 
-        remove 
+        remove
         { this.test -= value; }
     }
 }";
-            var expectedDiagnostics = new[]
+
+            var fixedTestCode = @"using System;
+
+public class Foo
+{
+    private EventHandler test;
+
+    // Invalid event #1
+    public event EventHandler Event1
+    {
+        add
+        {
+            this.test += value;
+        }
+
+        remove
+        {
+            this.test -= value;
+        }
+    }
+
+    // Invalid event #2
+    public event EventHandler Event2
+    {
+        add
+        {
+            this.test += value;
+        }
+
+        remove
+        {
+            this.test -= value;
+        }
+    }
+
+    // Invalid event #3
+    public event EventHandler Event3
+    {
+        add
+        {
+            this.test += value;
+        }
+
+        remove
+        {
+            this.test -= value;
+        }
+    }
+
+    // Invalid event #4
+    public event EventHandler Event4
+    {
+        add 
+        {
+            this.test += value;
+        }
+
+        remove 
+        {
+            this.test -= value;
+        }
+    }
+
+    // Invalid event #5
+    public event EventHandler Event5
+    {
+        add
+        {
+            this.test += value;
+        }
+
+        remove
+        {
+            this.test -= value;
+        }
+    }
+
+    // Invalid event #6
+    public event EventHandler Event6
+    {
+        add { this.test += value; }
+
+        remove { this.test -= value; }
+    }
+}";
+
+            DiagnosticResult[] expectedDiagnostics =
             {
                 // Invalid event #1
                 this.CSharpDiagnostic().WithLocation(10, 13),
@@ -175,6 +263,8 @@ public class Foo
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
     }
 }

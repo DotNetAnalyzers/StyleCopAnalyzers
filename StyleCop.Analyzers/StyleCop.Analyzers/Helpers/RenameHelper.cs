@@ -14,13 +14,13 @@
             var annotatedSolution = document.Project.Solution.WithDocumentSyntaxRoot(document.Id, annotatedRoot);
             var annotatedDocument = annotatedSolution.GetDocument(document.Id);
 
-            annotatedRoot = await annotatedDocument.GetSyntaxRootAsync(cancellationToken);
+            annotatedRoot = await annotatedDocument.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var annotatedToken = annotatedRoot.FindToken(declarationToken.SpanStart);
 
-            var semanticModel = await annotatedDocument.GetSemanticModelAsync(cancellationToken);
+            var semanticModel = await annotatedDocument.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             var symbol = semanticModel?.GetDeclaredSymbol(annotatedToken.Parent, cancellationToken);
 
-            var newSolution = await Renamer.RenameSymbolAsync(annotatedSolution, symbol, newName, null, cancellationToken);
+            var newSolution = await Renamer.RenameSymbolAsync(annotatedSolution, symbol, newName, null, cancellationToken).ConfigureAwait(false);
 
             // TODO: return annotatedSolution instead of newSolution if newSolution contains any new errors (for any project)
             return newSolution;

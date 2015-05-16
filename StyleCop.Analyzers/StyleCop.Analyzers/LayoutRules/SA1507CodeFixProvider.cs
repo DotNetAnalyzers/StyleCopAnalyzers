@@ -13,7 +13,7 @@
     /// <summary>
     /// Implements a code fix for <see cref="SA1507CodeMustNotContainMultipleBlankLinesInARow"/>.
     /// </summary>
-    [ExportCodeFixProvider(nameof(SA1507CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1507CodeFixProvider))]
     [Shared]
     public class SA1507CodeFixProvider : CodeFixProvider
     {

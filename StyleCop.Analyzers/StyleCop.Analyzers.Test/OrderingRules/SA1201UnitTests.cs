@@ -11,14 +11,14 @@
     public class SA1201UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestOuterOrderCorrectOrder()
+        public async Task TestOuterOrderCorrectOrderAsync()
         {
             string testCode = @"namespace Foo { }
 public delegate void bar();
@@ -28,12 +28,12 @@ public struct FooStruct { }
 public class FooClass { }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync("namespace OuterNamespace { " + testCode + " }", EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync("namespace OuterNamespace { " + testCode + " }", EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestOuterOrderWrongOrder()
+        public async Task TestOuterOrderWrongOrderAsync()
         {
             string testCode = @"
 namespace Foo { }
@@ -49,12 +49,12 @@ public struct FooStruct { }
                 this.CSharpDiagnostic().WithLocation(7, 15).WithArguments("struct", "class"),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync("namespace OuterNamespace { " + testCode + " }", expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync("namespace OuterNamespace { " + testCode + " }", expected, CancellationToken.None).ConfigureAwait(false);
         }
         
         [Fact]
-        public async Task TestTypeMemberOrderCorrectOrderClass()
+        public async Task TestTypeMemberOrderCorrectOrderClassAsync()
         {
             string testCode = @"public class OuterType
 {
@@ -67,39 +67,43 @@ public struct FooStruct { }
     public interface ITest { }
     public string TestProperty { get; set; }
     public string this[string arg] { get { return ""foo""; } set { } }
+    public static explicit operator bool(OuterType t1) { return t1.TestField != null; }
+    public static OuterType operator +(OuterType t1, OuterType t2) { return t1; }
     public void TestMethod () { }
     public struct TestStruct { }
     public class TestClass { }
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestTypeMemberOrderCorrectOrderStruct()
+        public async Task TestTypeMemberOrderCorrectOrderStructAsync()
         {
             string testCode = @"public struct OuterType
 {
     public string TestField;
-    public OuterType() { TestField = ""foo""; TestProperty = """"; }
+    public OuterType(int argument) { TestField = ""foo""; TestProperty = """"; }
     public delegate void TestDelegate();
     public event TestDelegate TestEvent { add { } remove { } }
     public enum TestEnum { }
     public interface ITest { }
     public string TestProperty { get; set; }
     public string this[string arg] { get { return ""foo""; } set { } }
+    public static explicit operator bool(OuterType t1) { return t1.TestField != null; }
+    public static OuterType operator +(OuterType t1, OuterType t2) { return t1; }
     public void TestMethod () { }
     public struct TestStruct { }
     public class TestClass { }
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestTypeMemberOrderCorrectOrderInterface()
+        public async Task TestTypeMemberOrderCorrectOrderInterfaceAsync()
         {
             string testCode = @"public interface OuterType
 {
@@ -110,11 +114,11 @@ public struct FooStruct { }
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestTypeMemberOrderWrongOrderClass()
+        public async Task TestTypeMemberOrderWrongOrderClassAsync()
         {
             string testCode = @"public class OuterType
 {
@@ -125,6 +129,8 @@ public struct FooStruct { }
     public delegate void TestDelegate();
     public event TestDelegate TestEvent { add { } remove { } }
     public enum TestEnum { }
+    public static OuterType operator +(OuterType t1, OuterType t2) { return t1; }
+    public static explicit operator bool(OuterType t1) { return t1.TestField != null; }
     public string TestProperty { get; set; }
     public struct TestStruct { }
     public void TestMethod () { }
@@ -136,24 +142,28 @@ public struct FooStruct { }
             {
                 this.CSharpDiagnostic().WithLocation(5, 12).WithArguments("constructor", "destructor"),
                 this.CSharpDiagnostic().WithLocation(7, 26).WithArguments("delegate", "interface"),
-                this.CSharpDiagnostic().WithLocation(12, 17).WithArguments("method", "struct"),
-                this.CSharpDiagnostic().WithLocation(13, 19).WithArguments("indexer", "method")
+                this.CSharpDiagnostic().WithLocation(11, 5).WithArguments("conversion", "operator"),
+                this.CSharpDiagnostic().WithLocation(12, 19).WithArguments("property", "conversion"),
+                this.CSharpDiagnostic().WithLocation(14, 17).WithArguments("method", "struct"),
+                this.CSharpDiagnostic().WithLocation(15, 19).WithArguments("indexer", "method")
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestTypeMemberOrderWrongOrderStruct()
+        public async Task TestTypeMemberOrderWrongOrderStructAsync()
         {
             string testCode = @"public struct OuterType
 {
     public string TestField;
-    public OuterType() { TestField = ""foo""; TestProperty = ""bar""; }
+    public OuterType(int argument) { TestField = ""foo""; TestProperty = ""bar""; }
     public interface ITest { }
     public delegate void TestDelegate();
     public event TestDelegate TestEvent { add { } remove { } }
     public enum TestEnum { }
+    public static OuterType operator +(OuterType t1, OuterType t2) { return t1; }
+    public static explicit operator bool(OuterType t1) { return t1.TestField != null; }
     public string TestProperty { get; set; }
     public struct TestStruct { }
     public void TestMethod () { }
@@ -164,15 +174,17 @@ public struct FooStruct { }
             var expected = new[]
             {
                 this.CSharpDiagnostic().WithLocation(6, 26).WithArguments("delegate", "interface"),
-                this.CSharpDiagnostic().WithLocation(11, 17).WithArguments("method", "struct"),
-                this.CSharpDiagnostic().WithLocation(12, 19).WithArguments("indexer", "method")
+                this.CSharpDiagnostic().WithLocation(10, 5).WithArguments("conversion", "operator"),
+                this.CSharpDiagnostic().WithLocation(11, 19).WithArguments("property", "conversion"),
+                this.CSharpDiagnostic().WithLocation(13, 17).WithArguments("method", "struct"),
+                this.CSharpDiagnostic().WithLocation(14, 19).WithArguments("indexer", "method")
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestTypeMemberOrderWrongOrderInterface()
+        public async Task TestTypeMemberOrderWrongOrderInterfaceAsync()
         {
             string testCode = @"public interface OuterType
 {
@@ -187,11 +199,11 @@ public struct FooStruct { }
                 this.CSharpDiagnostic().WithLocation(6, 12).WithArguments("indexer", "method")
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIncompleteMember()
+        public async Task TestIncompleteMemberAsync()
         {
             // Tests that the analyzer does not crash on incomplete members
             string testCode = @"public interface OuterType
@@ -220,11 +232,11 @@ public struct FooStruct { }
                  }
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestEventFields()
+        public async Task TestEventFieldsAsync()
         {
             // Tests that the analyzer handles event fields as if they were events
             string testCode = @"public class OuterType
@@ -235,7 +247,7 @@ public struct FooStruct { }
     public event System.Action TestEvent4 { add { } remove { } }
 }
 ";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

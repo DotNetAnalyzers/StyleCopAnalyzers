@@ -16,7 +16,7 @@
     /// <remarks>
     /// <para>To fix a violation of this rule, insert parenthesis within the arithmetic expression to declare the precedence of the operations.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1410SA1411CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1410SA1411CodeFixProvider))]
     [Shared]
     public class SA1410SA1411CodeFixProvider : CodeFixProvider
     {
@@ -56,12 +56,12 @@
 
                 if (node != null)
                 {
-                    context.RegisterCodeFix(CodeAction.Create("Remove parenthesis", token => GetTransformedDocument(context.Document, root, node)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Remove parenthesis", token => GetTransformedDocumentAsync(context.Document, root, node)), diagnostic);
                 }
             }
         }
 
-        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxNode node)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxNode node)
         {
             // The first token is the open parenthesis token. This token has all the inner trivia
             var firstToken = node.GetFirstToken();

@@ -58,17 +58,21 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1643.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
 
         /// <summary>
-        /// Gets a two-element array containing the standard text which is expected to appear at the beginning of the
+        /// Gets the standard text which is expected to appear at the beginning of the <c>&lt;summary&gt;</c>
+        /// documentation for a destructor.
+        /// </summary>
+        /// <value>
+        /// A two-element array containing the standard text which is expected to appear at the beginning of the
         /// <c>&lt;summary&gt;</c> documentation for a destructor. The first element appears before the name of the
         /// containing class, followed by a <c>&lt;see&gt;</c> element targeting the containing type, and finally
         /// followed by the second element of this array.
-        /// </summary>
+        /// </value>
         public static ImmutableArray<string> DestructorStandardText { get; } = ImmutableArray.Create("Finalizes an instance of the ", " class.");
         
         /// <inheritdoc/>
@@ -92,7 +96,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleDestructor, SyntaxKind.DestructorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDestructor, SyntaxKind.DestructorDeclaration);
         }
 
         private void HandleDestructor(SyntaxNodeAnalysisContext context)

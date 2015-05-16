@@ -23,7 +23,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Fact]
-        public async Task TestPartialClasses()
+        public async Task TestPartialClassesAsync()
         {
             var testCode = @"public partial class Foo
 {
@@ -33,12 +33,12 @@ public partial class Foo
 
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
 
         }
 
         [Fact]
-        public async Task TestDifferentPartialClasses()
+        public async Task TestDifferentPartialClassesAsync()
         {
             var testCode = @"public partial class Foo
 {
@@ -50,12 +50,12 @@ public partial class Bar
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 22);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
         }
 
         [Fact]
-        public async Task TestNestedClasses()
+        public async Task TestNestedClassesAsync()
         {
             var testCode = @"public class Foo
 {
@@ -65,7 +65,7 @@ public partial class Bar
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
 
         }
     }

@@ -15,7 +15,7 @@
     /// <para>To fix a violation of this rule, ensure that there is no whitespace after the opening attribute
     /// bracket.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1016CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1016CodeFixProvider))]
     [Shared]
     public class SA1016CodeFixProvider : CodeFixProvider
     {
@@ -59,11 +59,11 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context.Document, root, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocumentAsync(context.Document, root, token)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxToken token)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxToken token)
         {
             SyntaxToken corrected = token.WithoutTrailingWhitespace().WithoutFormatting();
             SyntaxNode transformed = root.ReplaceToken(token, corrected);

@@ -51,7 +51,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1407.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -68,13 +68,13 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleMathExpression, SyntaxKind.AddExpression);
-            context.RegisterSyntaxNodeAction(this.HandleMathExpression, SyntaxKind.SubtractExpression);
-            context.RegisterSyntaxNodeAction(this.HandleMathExpression, SyntaxKind.MultiplyExpression);
-            context.RegisterSyntaxNodeAction(this.HandleMathExpression, SyntaxKind.DivideExpression);
-            context.RegisterSyntaxNodeAction(this.HandleMathExpression, SyntaxKind.ModuloExpression);
-            context.RegisterSyntaxNodeAction(this.HandleMathExpression, SyntaxKind.LeftShiftExpression);
-            context.RegisterSyntaxNodeAction(this.HandleMathExpression, SyntaxKind.RightShiftExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMathExpression, SyntaxKind.AddExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMathExpression, SyntaxKind.SubtractExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMathExpression, SyntaxKind.MultiplyExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMathExpression, SyntaxKind.DivideExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMathExpression, SyntaxKind.ModuloExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMathExpression, SyntaxKind.LeftShiftExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMathExpression, SyntaxKind.RightShiftExpression);
         }
 
         private void HandleMathExpression(SyntaxNodeAnalysisContext context)

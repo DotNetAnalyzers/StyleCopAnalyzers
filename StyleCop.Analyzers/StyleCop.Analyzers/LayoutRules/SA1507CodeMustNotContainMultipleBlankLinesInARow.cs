@@ -48,7 +48,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1507.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -65,7 +65,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(this.HandleSyntaxTreeAnalysis);
+            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTreeAnalysis);
         }
 
         private void HandleSyntaxTreeAnalysis(SyntaxTreeAnalysisContext context)
@@ -113,6 +113,19 @@
             {
                 // nothing to report
                 return;
+            }
+
+            if (blankLineIndex > 0)
+            {
+                var triviaBeforeBlankLines = leadingTrivia[blankLineIndex - 1];
+                if (triviaBeforeBlankLines.IsKind(SyntaxKind.SingleLineCommentTrivia) ||
+                    triviaBeforeBlankLines.IsKind(SyntaxKind.MultiLineCommentTrivia))
+                {
+                    // when blank lines appear after a comment, skip the first one
+                    // because that's part of the end of the comment trivia.
+                    blankLineIndex++;
+                    blankLineCount--;
+                }
             }
 
             if (blankLineCount < 2)

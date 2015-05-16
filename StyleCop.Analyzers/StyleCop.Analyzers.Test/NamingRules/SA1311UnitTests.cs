@@ -11,14 +11,14 @@
     public class SA1311UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestStaticReadonlyFieldStartingWithLoweCase()
+        public async Task TestStaticReadonlyFieldStartingWithLoweCaseAsync()
         {
             var testCode = @"public class Foo
 {
@@ -27,18 +27,18 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 35);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"public class Foo
 {
     public static readonly string Bar = ""baz"";
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestStaticReadonlyFieldStartingWithLoweCaseFieldIsJustOneLetter()
+        public async Task TestStaticReadonlyFieldStartingWithLoweCaseFieldIsJustOneLetterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -47,18 +47,18 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 37);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"public class Foo
 {
     internal static readonly string B = ""baz"";
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestStaticReadonlyFieldAssignmentInConstructor()
+        public async Task TestStaticReadonlyFieldAssignmentInConstructorAsync()
         {
             var testCode = @"public class Foo
 {
@@ -72,7 +72,7 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 35);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"public class Foo
 {
@@ -84,44 +84,44 @@
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestStaticReadonlyFieldStartingWithUpperCase()
+        public async Task TestStaticReadonlyFieldStartingWithUpperCaseAsync()
         {
             var testCode = @"public class Foo
 {
     public static readonly string Bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestReadonlyFieldStartingWithLoweCase()
+        public async Task TestReadonlyFieldStartingWithLoweCaseAsync()
         {
             var testCode = @"public class Foo
 {
     public readonly string bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestStaticFieldStartingWithLoweCase()
+        public async Task TestStaticFieldStartingWithLoweCaseAsync()
         {
             var testCode = @"public class Foo
 {
     public static string bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestClassNameConflict()
+        public async Task TestClassNameConflictAsync()
         {
             var testCode = @"public class Bar
 {
@@ -135,7 +135,7 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 35);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"public class Bar
 {
@@ -147,11 +147,11 @@
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMemberNameConflict()
+        public async Task TestMemberNameConflictAsync()
         {
             var testCode = @"public class Foo
 {
@@ -167,7 +167,7 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 35);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"public class Foo
 {
@@ -181,7 +181,7 @@
     public static readonly string Bar;
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

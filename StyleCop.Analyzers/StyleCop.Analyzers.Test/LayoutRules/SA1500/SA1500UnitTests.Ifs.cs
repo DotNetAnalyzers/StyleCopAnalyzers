@@ -9,7 +9,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
-    public partial class SA1500UnitTests : DiagnosticVerifier
+    public partial class SA1500UnitTests
     {
         /// <summary>
         /// Verifies that no diagnostics are reported for the valid if statements defined in this test.
@@ -17,8 +17,9 @@
         /// <remarks>
         /// These are valid for SA1500 only, some will report other diagnostics from the layout (SA15xx) series.
         /// </remarks>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestIfValid()
+        public async Task TestIfValidAsync()
         {
             var testCode = @"public class Foo
 {
@@ -58,8 +59,9 @@
         /// <remarks>
         /// These are valid for SA1500 only, some will report other diagnostics from the layout (SA15xx) series.
         /// </remarks>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestIfElseValid()
+        public async Task TestIfElseValidAsync()
         {
             var testCode = @"public class Foo
 {
@@ -111,8 +113,9 @@
         /// <summary>
         /// Verifies that diagnostics will be reported for all invalid if statement definitions.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestIfInvalid()
+        public async Task TestIfInvalidAsync()
         {
             var testCode = @"public class Foo
 {
@@ -149,7 +152,50 @@
     }
 }";
 
-            var expectedDiagnostics = new[]
+            var fixedTestCode = @"public class Foo
+{
+    private void Bar()
+    {
+        var x = 0;
+
+        // Invalid if #1
+        if (x == 0)
+        {
+        }
+
+        // Invalid if #2
+        if (x == 0)
+        {
+            x = 1;
+        }
+
+        // Invalid if #3
+        if (x == 0)
+        {
+            x = 1;
+        }
+
+        // Invalid if #4
+        if (x == 0)
+        {
+            x = 1;
+        }
+
+        // Invalid if #5
+        if (x == 0)
+        {
+            x = 1;
+        }
+
+        // Invalid if #6
+        if (x == 0)
+        {
+            x = 1;
+        }
+    }
+}";
+
+            DiagnosticResult[] expectedDiagnostics =
             {
                 // Invalid if #1
                 this.CSharpDiagnostic().WithLocation(8, 21),
@@ -167,13 +213,16 @@
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Verifies that diagnostics will be reported for all invalid if ... else statement definitions.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestIfElseInvalid()
+        public async Task TestIfElseInvalidAsync()
         {
             var testCode = @"public class Foo
 {
@@ -228,7 +277,68 @@
     }
 }";
 
-            var expectedDiagnostics = new[]
+            var fixedTestCode = @"public class Foo
+{
+    private void Bar()
+    {
+        var x = 0;
+
+        // Invalid if ... else #1
+        if (x == 0)
+        {
+        }
+        else
+        {
+        }
+
+        // Invalid if ... else #2
+        if (x == 0)
+        {
+        }
+        else
+        {
+            x = 1;
+        }
+
+        // Invalid if ... else #3
+        if (x == 0)
+        {
+        }
+        else
+        {
+            x = 1;
+        }
+
+        // Invalid if ... else #4
+        if (x == 0)
+        {
+        }
+        else
+        {
+            x = 1;
+        }
+
+        // Invalid if ... else #5
+        if (x == 0)
+        {
+        }
+        else
+        {
+            x = 1;
+        }
+
+        // Invalid if ... else #6
+        if (x == 0)
+        {
+        }
+        else
+        {
+            x = 1;
+        }
+    }
+}";
+
+            DiagnosticResult[] expectedDiagnostics =
             {
                 // Invalid if ... else #1
                 this.CSharpDiagnostic().WithLocation(11, 14),
@@ -246,6 +356,8 @@
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
     }
 }

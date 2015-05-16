@@ -54,7 +54,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1119.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly DiagnosticDescriptor ParenthesisDescriptor =
             new DiagnosticDescriptor(ParenthesesDiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Hidden, false, Description, HelpLink, customTags: new[] { WellKnownDiagnosticTags.Unnecessary, WellKnownDiagnosticTags.NotConfigurable });
@@ -74,7 +74,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleParenthesizedExpression, SyntaxKind.ParenthesizedExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleParenthesizedExpression, SyntaxKind.ParenthesizedExpression);
         }
 
         private void HandleParenthesizedExpression(SyntaxNodeAnalysisContext context)

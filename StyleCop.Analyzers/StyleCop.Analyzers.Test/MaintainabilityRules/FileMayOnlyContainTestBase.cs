@@ -11,23 +11,23 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         public abstract string Keyword { get; }
 
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestOneElement()
+        public async Task TestOneElementAsync()
         {
             var testCode = @"%1 Foo
 {
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("%1", this.Keyword), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("%1", this.Keyword), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestTwoElements()
+        public async Task TestTwoElementsAsync()
         {
             var testCode = @"%1 Foo
 {
@@ -38,11 +38,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, this.Keyword.Length + 2);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("%1", this.Keyword), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("%1", this.Keyword), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestThreeElements()
+        public async Task TestThreeElementsAsync()
         {
             var testCode = @"%1 Foo
 {
@@ -60,7 +60,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                     this.CSharpDiagnostic().WithLocation(7, this.Keyword.Length + 2)
                 };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("%1", this.Keyword), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("%1", this.Keyword), expected, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

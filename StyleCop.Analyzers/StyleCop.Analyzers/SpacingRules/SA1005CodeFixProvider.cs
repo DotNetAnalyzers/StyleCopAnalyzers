@@ -16,7 +16,7 @@
     /// being used to comment out a line of code, ensure that the comment begins with four forward slashes, in which
     /// case the leading space can be omitted.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1005CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1005CodeFixProvider))]
     [Shared]
     public class SA1005CodeFixProvider : CodeFixProvider
     {
@@ -50,11 +50,11 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Insert space", t => GetTransformedDocument(context.Document, root, trivia)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocumentAsync(context.Document, root, trivia)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxTrivia trivia)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxTrivia trivia)
         {
             string text = trivia.ToFullString();
             if (!text.StartsWith("//"))
@@ -62,7 +62,7 @@
                 return Task.FromResult(document);
             }
 
-            string correctedText = "// " + text.Substring(2);
+            string correctedText = "// " + text.Substring(2).TrimStart(' ');
             SyntaxTrivia corrected = SyntaxFactory.Comment(correctedText).WithoutFormatting();
             Document updatedDocument = document.WithSyntaxRoot(root.ReplaceTrivia(trivia, corrected));
 

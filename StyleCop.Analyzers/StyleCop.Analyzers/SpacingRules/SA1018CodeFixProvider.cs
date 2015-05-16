@@ -15,7 +15,7 @@
     /// <para>To fix a violation of this rule, ensure that there is no whitespace before the nullable type
     /// symbol.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1018CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1018CodeFixProvider))]
     [Shared]
     public class SA1018CodeFixProvider : CodeFixProvider
     {
@@ -61,11 +61,11 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Remove space", t => GetTransformedDocument(context.Document, root, previousToken)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Remove space", t => GetTransformedDocumentAsync(context.Document, root, previousToken)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxToken previousToken)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxToken previousToken)
         {
             SyntaxToken corrected = previousToken.WithoutTrailingWhitespace().WithoutFormatting();
             Document updatedDocument = document.WithSyntaxRoot(root.ReplaceToken(previousToken, corrected));

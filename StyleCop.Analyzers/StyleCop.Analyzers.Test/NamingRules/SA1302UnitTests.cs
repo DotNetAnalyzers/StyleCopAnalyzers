@@ -11,14 +11,14 @@ namespace StyleCop.Analyzers.Test.NamingRules
     public class SA1302UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestInterfaceDeclarationDoesNotStartWithI()
+        public async Task TestInterfaceDeclarationDoesNotStartWithIAsync()
         {
             var testCode = @"
 public interface Foo
@@ -27,18 +27,18 @@ public interface Foo
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 18);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
 public interface IFoo
 {
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestInterfaceDeclarationDoesNotStartWithIPlusInterfaceUsed()
+        public async Task TestInterfaceDeclarationDoesNotStartWithIPlusInterfaceUsedAsync()
         {
             var testCode = @"
 public interface Foo
@@ -50,7 +50,7 @@ public class Bar : Foo
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 18);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
 public interface IFoo
@@ -60,11 +60,11 @@ public class Bar : IFoo
 {
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestInterfaceDeclarationStartsWithLowerI()
+        public async Task TestInterfaceDeclarationStartsWithLowerIAsync()
         {
             var testCode = @"
 public interface iFoo
@@ -73,18 +73,18 @@ public interface iFoo
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 18);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
 public interface IiFoo
 {
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestInnerInterfaceDeclarationDoesNotStartWithI()
+        public async Task TestInnerInterfaceDeclarationDoesNotStartWithIAsync()
         {
             var testCode = @"
 public class Bar
@@ -96,21 +96,21 @@ public class Bar
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 22);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestInterfaceDeclarationDoesStartWithI()
+        public async Task TestInterfaceDeclarationDoesStartWithIAsync()
         {
             var testCode = @"public interface IFoo
 {
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestInnerInterfaceDeclarationDoesStartWithI()
+        public async Task TestInnerInterfaceDeclarationDoesStartWithIAsync()
         {
             var testCode = @"
 public class Bar
@@ -120,11 +120,11 @@ public class Bar
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestComInterfaceInNativeMethodsClass()
+        public async Task TestComInterfaceInNativeMethodsClassAsync()
         {
             var testCode = @"
 using System.Runtime.InteropServices;
@@ -136,11 +136,11 @@ public class NativeMethods
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestComInterfaceInNativeMethodsClassWithIncorrectName()
+        public async Task TestComInterfaceInNativeMethodsClassWithIncorrectNameAsync()
         {
             var testCode = @"
 using System.Runtime.InteropServices;
@@ -154,7 +154,7 @@ public class NativeMethodsClass
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 22);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"
 using System.Runtime.InteropServices;
@@ -166,11 +166,11 @@ public class NativeMethodsClass
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestComInterfaceInInnerClassInNativeMethodsClass()
+        public async Task TestComInterfaceInInnerClassInNativeMethodsClassAsync()
         {
             var testCode = @"
 using System.Runtime.InteropServices;
@@ -185,7 +185,7 @@ public class MyNativeMethods
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

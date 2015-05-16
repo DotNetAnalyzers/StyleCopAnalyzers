@@ -34,7 +34,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1303.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -68,17 +68,32 @@
                 return;
             }
 
-            // This code uses char.IsLower(...) instead of !char.IsUpper(...) for all of the following reasons:
-            //  1. Fields starting with `_` should be reported as SA1309 instead of this diagnostic
-            //  2. Foreign languages may not have upper case variants for certain characters
-            //  3. This diagnostic appears targeted for "English" identifiers.
-            //
-            // See DotNetAnalyzers/StyleCopAnalyzers#369 for additional information:
-            // https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/369
+            /* This code uses char.IsLower(...) instead of !char.IsUpper(...) for all of the following reasons:
+             *  1. Fields starting with `_` should be reported as SA1309 instead of this diagnostic
+             *  2. Foreign languages may not have upper case variants for certain characters
+             *  3. This diagnostic appears targeted for "English" identifiers.
+             *
+             * See DotNetAnalyzers/StyleCopAnalyzers#369 for additional information:
+             * https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/369
+             */
             if (!string.IsNullOrEmpty(symbol.Name) &&
                 char.IsLower(symbol.Name[0]) &&
                 symbol.Locations.Any())
             {
+                foreach (var location in context.Symbol.Locations)
+                {
+                    if (!location.IsInSource)
+                    {
+                        // assume symbols not defined in a source document are "out of reach"
+                        return;
+                    }
+
+                    if (location.SourceTree.IsGeneratedDocument(context.CancellationToken))
+                    {
+                        return;
+                    }
+                }
+
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, symbol.Locations[0]));
             }
         }

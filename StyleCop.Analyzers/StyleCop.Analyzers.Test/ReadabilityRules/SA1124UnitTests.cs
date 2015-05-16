@@ -17,14 +17,14 @@
         public string DiagnosticId { get; } = SA1124DoNotUseRegions.DiagnosticId;
 
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestRegionInMethod()
+        public async Task TestRegionInMethodAsync()
         {
             var testCode = @"public class Foo
 {
@@ -36,11 +36,11 @@
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestRegionPartialyInMethod()
+        public async Task TestRegionPartialyInMethodAsync()
         {
             var testCode = @"public class Foo
 {
@@ -54,11 +54,11 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestRegionPartialyInMethod2()
+        public async Task TestRegionPartialyInMethod2Async()
         {
             var testCode = @"public class Foo
 {
@@ -72,7 +72,7 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             string fixedCode = @"public class Foo
 {
@@ -82,11 +82,11 @@
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestRegionPartialyMultipleMethods()
+        public async Task TestRegionPartialyMultipleMethodsAsync()
         {
             var testCode = @"public class Foo
 {
@@ -104,7 +104,7 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             string fixedCode = @"public class Foo
 {
@@ -118,11 +118,11 @@
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestEndRegionInMethod()
+        public async Task TestEndRegionInMethodAsync()
         {
             var testCode = @"public class Foo
 {
@@ -136,7 +136,7 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             string fixedCode = @"public class Foo
 {
@@ -146,11 +146,11 @@
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestRegionOutsideMethod()
+        public async Task TestRegionOutsideMethodAsync()
         {
             var testCode = @"public class Foo
 {
@@ -164,7 +164,7 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             string fixedCode = @"public class Foo
 {
@@ -174,11 +174,11 @@
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestRegionOutsideMethod2()
+        public async Task TestRegionOutsideMethod2Async()
         {
             var testCode = @"public class Foo
 {
@@ -192,7 +192,7 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             string fixedCode = @"public class Foo
 {
@@ -202,7 +202,7 @@
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

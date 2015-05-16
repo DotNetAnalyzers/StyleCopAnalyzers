@@ -10,14 +10,14 @@
     public class SA1102UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestSelectOnSeparateLineWithAdditionalEmptyLine()
+        public async Task TestSelectOnSeparateLineWithAdditionalEmptyLineAsync()
         {
             var testCode = @"
 using System.Linq;
@@ -35,11 +35,11 @@ public class Foo4
 }";
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(12, 21);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestWhereSelectOnSameLine()
+        public async Task TestWhereSelectOnSameLineAsync()
         {
             var testCode = @"
 using System.Linq;
@@ -55,11 +55,11 @@ public class Foo4
 }";
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 33);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestWhereOnTheSameLineAsFrom()
+        public async Task TestWhereOnTheSameLineAsFromAsync()
         {
             var testCode = @"
 using System.Linq;
@@ -74,11 +74,11 @@ public class Foo4
 }";
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 38);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestComplexQueryWithAdditionalEmptyLine()
+        public async Task TestComplexQueryWithAdditionalEmptyLineAsync()
         {
             var testCode = @"
 using System.Linq;
@@ -113,11 +113,11 @@ public class Foo4
                     this.CSharpDiagnostic().WithLocation(22, 21),
                 };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestComplexQueryInOneLine()
+        public async Task TestComplexQueryInOneLineAsync()
         {
             var testCode = @"
 using System.Linq;
@@ -132,11 +132,11 @@ public class Foo4
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestQueryInsideQuery()
+        public async Task TestQueryInsideQueryAsync()
         {
             var testCode = @"
 using System.Linq;
@@ -161,11 +161,11 @@ public class Foo4
                     this.CSharpDiagnostic().WithLocation(12, 17),
                 };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task QueryInsideQueryComplex()
+        public async Task QueryInsideQueryComplexAsync()
         {
             var testCode = @"
 using System.Linq;
@@ -197,7 +197,7 @@ public class Foo4
                     this.CSharpDiagnostic().WithLocation(18, 21),
                 };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

@@ -18,7 +18,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Fact]
-        public async Task TestNestedNamespaces()
+        public async Task TestNestedNamespacesAsync()
         {
             var testCode = @"namespace Foo
 {
@@ -30,7 +30,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 15);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
         }
 

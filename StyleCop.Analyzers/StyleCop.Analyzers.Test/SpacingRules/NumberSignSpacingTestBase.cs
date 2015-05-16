@@ -15,14 +15,14 @@
         }
 
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPrefixUnaryOperatorAtEndOfLine()
+        public async Task TestPrefixUnaryOperatorAtEndOfLineAsync()
         {
             string testCode = @"namespace Namespace
 {
@@ -51,12 +51,12 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 21);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPrefixUnaryOperatorAtBeginningOfLine_LeadingTrivia()
+        public async Task TestPrefixUnaryOperatorAtBeginningOfLine_LeadingTriviaAsync()
         {
             string testFormat = @"namespace Namespace
 {{
@@ -88,18 +88,18 @@
             string test;
 
             test = string.Format(testFormat, this.Sign + "3");
-            await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
             test = string.Format(testFormat, this.Sign + " 3");
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(8, 17);
 
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPrefixUnaryOperatorAtBeginningOfLine_NoLeadingTrivia()
+        public async Task TestPrefixUnaryOperatorAtBeginningOfLine_NoLeadingTriviaAsync()
         {
             string testFormat = @"namespace Namespace
 {{
@@ -131,18 +131,18 @@
             string test;
 
             test = string.Format(testFormat, this.Sign + "3");
-            await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
             test = string.Format(testFormat, this.Sign + " 3");
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(8, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPrefixUnaryOperatorAfterEquals()
+        public async Task TestPrefixUnaryOperatorAfterEqualsAsync()
         {
             string testFormat = @"namespace Namespace
 {{
@@ -172,8 +172,8 @@
             string test;
 
             test = string.Format(testFormat, " " + this.Sign + "3");
-            await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
             test = string.Format(testFormat, this.Sign + "3");
             DiagnosticResult[] expected =
@@ -181,8 +181,8 @@
                     this.CSharpDiagnostic().WithArguments(string.Empty, "preceded").WithLocation(7, 20)
                 };
 
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
             test = string.Format(testFormat, " " + this.Sign + " 3");
             expected =
@@ -191,8 +191,8 @@
                     this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 21)
                 };
 
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
             test = string.Format(testFormat, this.Sign + " 3");
             expected =
@@ -202,12 +202,12 @@
                     this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 20)
                 };
 
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPrefixUnaryOperatorAfterBinaryOperator()
+        public async Task TestPrefixUnaryOperatorAfterBinaryOperatorAsync()
         {
             string testFormat = @"namespace Namespace
 {{
@@ -237,18 +237,18 @@
             string test;
 
             test = string.Format(testFormat, this.Sign + "3");
-            await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
             test = string.Format(testFormat, this.Sign + " 3");
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 25);
 
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPrefixUnaryOperatorAfterCast()
+        public async Task TestPrefixUnaryOperatorAfterCastAsync()
         {
             string testFormat = @"namespace Namespace
 {{
@@ -278,16 +278,16 @@
             string test;
 
             test = string.Format(testFormat, this.Sign + "3");
-            await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
             test = string.Format(testFormat, " " + this.Sign + "3");
             DiagnosticResult[] expected =
                 {
                     this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 27)
                 };
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
             test = string.Format(testFormat, this.Sign + " 3");
             expected =
@@ -295,8 +295,8 @@
                 {
                     this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 26)
                 };
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
             test = string.Format(testFormat, " " + this.Sign + " 3");
             expected =
@@ -305,12 +305,12 @@
                     this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 27),
                     this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 27)
                 };
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPrefixUnaryOperatorInParentheses()
+        public async Task TestPrefixUnaryOperatorInParenthesesAsync()
         {
             string testFormat = @"namespace Namespace
 {{
@@ -340,16 +340,16 @@
             string test;
 
             test = string.Format(testFormat, this.Sign + "3");
-            await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
             test = string.Format(testFormat, " " + this.Sign + "3");
             DiagnosticResult[] expected =
                 {
                     this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 23)
                 };
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
             test = string.Format(testFormat, this.Sign + " 3");
             expected =
@@ -357,8 +357,8 @@
                 {
                     this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 22)
                 };
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
             test = string.Format(testFormat, " " + this.Sign + " 3");
             expected =
@@ -367,12 +367,12 @@
                     this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 23),
                     this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 23)
                 };
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPrefixUnaryOperatorInBrackets()
+        public async Task TestPrefixUnaryOperatorInBracketsAsync()
         {
             string testFormat = @"namespace Namespace
 {{
@@ -402,16 +402,16 @@
             string test;
 
             test = string.Format(testFormat, this.Sign + "0");
-            await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
             test = string.Format(testFormat, " " + this.Sign + "0");
             DiagnosticResult[] expected =
                 {
                     this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 32)
                 };
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
             test = string.Format(testFormat, this.Sign + " 0");
             expected =
@@ -419,8 +419,8 @@
                 {
                     this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 31)
                 };
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
             test = string.Format(testFormat, " " + this.Sign + " 0");
             expected =
@@ -429,8 +429,8 @@
                     this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 32),
                     this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 32)
                 };
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override abstract CodeFixProvider GetCSharpCodeFixProvider();

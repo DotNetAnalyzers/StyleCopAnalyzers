@@ -13,14 +13,14 @@
     public class SA1602UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestEnumWithDocumentation()
+        public async Task TestEnumWithDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -33,11 +33,11 @@ enum TypeName
     /// </summary>
     Bar
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestEnumWithoutDocumentation()
+        public async Task TestEnumWithoutDocumentationAsync()
         {
             var testCode = @"
 enum TypeName
@@ -47,11 +47,11 @@ enum TypeName
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 5);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestEnumWithEmptyDocumentation()
+        public async Task TestEnumWithEmptyDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -67,7 +67,7 @@ enum TypeName
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 5);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

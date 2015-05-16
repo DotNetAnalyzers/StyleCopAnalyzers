@@ -11,14 +11,14 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     public class SA1411UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMissingParenthesis()
+        public async Task TestMissingParenthesisAsync()
         {
             var testCode = @"public class Foo
 {
@@ -27,11 +27,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     {
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestNonEmptyParameterList()
+        public async Task TestNonEmptyParameterListAsync()
         {
             var testCode = @"public class Foo
 {
@@ -40,11 +40,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     {
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestNonEmptyParameterListNamedArgument()
+        public async Task TestNonEmptyParameterListNamedArgumentAsync()
         {
             var testCode = @"
 using System.Runtime.CompilerServices;
@@ -55,11 +55,11 @@ public class Foo
     {
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestEmptyParameterList()
+        public async Task TestEmptyParameterListAsync()
         {
             var testCode = @"public class Foo
 {
@@ -70,11 +70,11 @@ public class Foo
 }";
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 21);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestEmptyParameterListMultipleAttributes()
+        public async Task TestEmptyParameterListMultipleAttributesAsync()
         {
             var testCode = @"public class Foo
 {
@@ -89,11 +89,11 @@ public class Foo
                     this.CSharpDiagnostic().WithLocation(3, 67)
                 };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestCodeFix()
+        public async Task TestCodeFixAsync()
         {
             var oldSource = @"public class Foo
 {
@@ -111,11 +111,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpFixAsync(oldSource, newSource, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(oldSource, newSource, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestCodeFixDoesNotRemoveExteriorTrivia()
+        public async Task TestCodeFixDoesNotRemoveExteriorTriviaAsync()
         {
             var oldSource = @"public class Foo
 {
@@ -133,11 +133,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpFixAsync(oldSource, newSource, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(oldSource, newSource, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestCodeFixMultipleAttributes()
+        public async Task TestCodeFixMultipleAttributesAsync()
         {
             var oldSource = @"public class Foo
 {
@@ -155,7 +155,7 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpFixAsync(oldSource, newSource, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(oldSource, newSource, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

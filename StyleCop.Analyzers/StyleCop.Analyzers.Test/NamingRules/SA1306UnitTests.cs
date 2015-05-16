@@ -11,10 +11,10 @@
     public class SA1306UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -28,7 +28,7 @@
         [InlineData("protected internal readonly")]
         [InlineData("public")]
         [InlineData("internal")]
-        public async Task TestThatDiagnosticIsNotReported(string modifiers)
+        public async Task TestThatDiagnosticIsNotReportedAsync(string modifiers)
         {
             var testCode = @"public class Foo
 {{
@@ -36,7 +36,7 @@
 string Bar = """", car = """", Dar = """";
 }}";
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -44,7 +44,7 @@ string Bar = """", car = """", Dar = """";
         [InlineData("readonly")]
         [InlineData("private")]
         [InlineData("private readonly")]
-        public async Task TestThatDiagnosticIsReported_SingleField(string modifiers)
+        public async Task TestThatDiagnosticIsReported_SingleFieldAsync(string modifiers)
         {
             var testCode = @"public class Foo
 {{
@@ -62,7 +62,7 @@ string Dar;
                     this.CSharpDiagnostic().WithArguments("Dar").WithLocation(8, 8)
                 };
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"public class Foo
 {{
@@ -74,15 +74,15 @@ string car;
 string dar;
 }}";
 
-            await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers));
+            await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers)).ConfigureAwait(false);
         }
 
-        [Theory(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Theory]
         [InlineData("")]
         [InlineData("readonly")]
         [InlineData("private")]
         [InlineData("private readonly")]
-        public async Task TestThatDiagnosticIsReported_MultipleFields(string modifiers)
+        public async Task TestThatDiagnosticIsReported_MultipleFieldsAsync(string modifiers)
         {
             var testCode = @"public class Foo
 {{
@@ -96,7 +96,7 @@ string Bar, car, Dar;
                     this.CSharpDiagnostic().WithArguments("Dar").WithLocation(4, 18)
                 };
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"public class Foo
 {{
@@ -104,11 +104,11 @@ string Bar, car, Dar;
 string bar, car, dar;
 }}";
 
-            await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers));
+            await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers)).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestFieldStartingWithAnUnderscore()
+        public async Task TestFieldStartingWithAnUnderscoreAsync()
         {
             // Makes sure SA1306 is not reported for fields starting with an underscore
             var testCode = @"public class Foo
@@ -116,29 +116,29 @@ string bar, car, dar;
     public string _bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestFieldStartingWithLetter()
+        public async Task TestFieldStartingWithLetterAsync()
         {
             var testCode = @"public class Foo
 {
     public string bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestFieldPlacedInsideNativeMethodsClass()
+        public async Task TestFieldPlacedInsideNativeMethodsClassAsync()
         {
             var testCode = @"public class FooNativeMethods
 {
     string Bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

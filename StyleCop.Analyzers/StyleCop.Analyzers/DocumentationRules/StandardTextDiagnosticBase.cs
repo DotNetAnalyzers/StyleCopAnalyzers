@@ -3,6 +3,7 @@
     using System.Linq;
     using Helpers;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -12,8 +13,33 @@
     public abstract class StandardTextDiagnosticBase : DiagnosticAnalyzer
     {
         /// <summary>
-        /// Provides the diagnostic descriptor that should be used when reporting a diagnostic.
+        /// Describes the result of matching a summary element to a specific desired wording.
         /// </summary>
+        public enum MatchResult
+        {
+            /// <summary>
+            /// The analysis could not be completed due to errors in the syntax tree or a comment structure which was
+            /// not accounted for.
+            /// </summary>
+            Unknown = -1,
+
+            /// <summary>
+            /// No complete or partial match was found.
+            /// </summary>
+            None,
+
+            /// <summary>
+            /// A match to the expected text was found.
+            /// </summary>
+            FoundMatch,
+        }
+
+        /// <summary>
+        /// Gets the diagnostic descriptor that should be used when reporting a diagnostic.
+        /// </summary>
+        /// <value>
+        /// The diagnostic descriptor that should be used when reporting a diagnostic.
+        /// </value>
         protected abstract DiagnosticDescriptor DiagnosticDescriptor { get; }
 
         /// <summary>
@@ -59,7 +85,7 @@
                     var secondText = XmlCommentHelper.GetText(secondTextParSyntaxt);
 
                     if (TextPartsMatch(firstTextPart, secondTextPart, firstTextPartSyntax, secondTextParSyntaxt)
-                        && this.SeeTagIsCorrect(classReferencePart, declarationSyntax))
+                        && this.SeeTagIsCorrect(context, classReferencePart, declarationSyntax))
                     {
                         // We found a correct standard text
                         return MatchResult.FoundMatch;
@@ -76,34 +102,24 @@
             return MatchResult.None;
         }
 
-        private bool SeeTagIsCorrect(XmlEmptyElementSyntax classReferencePart, BaseMethodDeclarationSyntax constructorDeclarationSyntax)
+        private bool SeeTagIsCorrect(SyntaxNodeAnalysisContext context, XmlEmptyElementSyntax classReferencePart, BaseMethodDeclarationSyntax constructorDeclarationSyntax)
         {
-            if (classReferencePart.Name.ToString() == XmlCommentHelper.SeeXmlTag)
+            XmlCrefAttributeSyntax crefAttribute = XmlCommentHelper.GetFirstAttributeOrDefault<XmlCrefAttributeSyntax>(classReferencePart);
+            CrefSyntax crefSyntax = crefAttribute?.Cref;
+            if (crefAttribute == null)
             {
-                XmlCrefAttributeSyntax crefAttribute = classReferencePart.Attributes.OfType<XmlCrefAttributeSyntax>().FirstOrDefault();
-
-                if (crefAttribute != null)
-                {
-                    NameMemberCrefSyntax nameMember = crefAttribute.Cref as NameMemberCrefSyntax;
-
-                    if (nameMember != null && nameMember.Parameters == null)
-                    {
-                        ClassDeclarationSyntax classDeclarationSyntax = constructorDeclarationSyntax.FirstAncestorOrSelf<ClassDeclarationSyntax>();
-
-                        if (classDeclarationSyntax != null
-                            && classDeclarationSyntax.Identifier.ToString() == this.GetName(nameMember.Name))
-                        {
-                            // Check if type parameters are called the same
-                            if (TypeParameterNamesMatch(classDeclarationSyntax, nameMember.Name))
-                            {
-                                return true;
-                            }
-                        }
-                    }
-                }
+                return false;
             }
 
-            return false;
+            SemanticModel semanticModel = context.SemanticModel;
+            INamedTypeSymbol actualSymbol = semanticModel.GetSymbolInfo(crefSyntax, context.CancellationToken).Symbol as INamedTypeSymbol;
+            if (actualSymbol == null)
+            {
+                return false;
+            }
+
+            INamedTypeSymbol expectedSymbol = semanticModel.GetDeclaredSymbol(constructorDeclarationSyntax.Parent, context.CancellationToken) as INamedTypeSymbol;
+            return actualSymbol.OriginalDefinition == expectedSymbol;
         }
 
         private string GetName(TypeSyntax name)
@@ -128,43 +144,31 @@
             return true;
         }
 
-        private static bool TypeParameterNamesMatch(ClassDeclarationSyntax classDeclarationSyntax, TypeSyntax name)
+        private static bool TypeParameterNamesMatch(BaseTypeDeclarationSyntax baseTypeDeclarationSyntax, TypeSyntax name)
         {
+            TypeParameterListSyntax typeParameterList;
+            if (baseTypeDeclarationSyntax.IsKind(SyntaxKind.ClassDeclaration))
+            {
+                typeParameterList = (baseTypeDeclarationSyntax as ClassDeclarationSyntax)?.TypeParameterList;
+            }
+            else
+            {
+                typeParameterList = (baseTypeDeclarationSyntax as StructDeclarationSyntax)?.TypeParameterList;
+            }
+
             var genericName = name as GenericNameSyntax;
             if (genericName != null)
             {
                 var genericNameArgumentNames = genericName.TypeArgumentList.Arguments.Cast<SimpleNameSyntax>().Select(p => p.Identifier.ToString());
-                var classParameterNames = classDeclarationSyntax.TypeParameterList?.Parameters.Select(p => p.Identifier.ToString()) ?? Enumerable.Empty<string>();
+                var classParameterNames = typeParameterList?.Parameters.Select(p => p.Identifier.ToString()) ?? Enumerable.Empty<string>();
                 // Make sure the names match up
                 return genericNameArgumentNames.SequenceEqual(classParameterNames);
             }
             else
             {
-                return classDeclarationSyntax.TypeParameterList == null
-                    || !classDeclarationSyntax.TypeParameterList.Parameters.Any();
+                return typeParameterList == null
+                    || !typeParameterList.Parameters.Any();
             }
-        }
-
-        /// <summary>
-        /// Describes the result of matching a summary element to a specific desired wording.
-        /// </summary>
-        public enum MatchResult
-        {
-            /// <summary>
-            /// The analysis could not be completed due to errors in the syntax tree or a comment structure which was
-            /// not accounted for.
-            /// </summary>
-            Unknown = -1,
-
-            /// <summary>
-            /// No complete or partial match was found.
-            /// </summary>
-            None,
-
-            /// <summary>
-            /// A match to the expected text was found.
-            /// </summary>
-            FoundMatch,
         }
     }
 }

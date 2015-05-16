@@ -45,6 +45,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AnalyzerConstants.cs" />
+    <Compile Include="AnalyzerExtensions.cs" />
     <Compile Include="DocumentationRules\ElementDocumentationSummaryBase.cs" />
     <Compile Include="DocumentationRules\PartialElementDocumentationSummaryBase.cs" />
     <Compile Include="DocumentationRules\PropertyDocumentationSummaryBase.cs" />
@@ -58,6 +59,7 @@
     <Compile Include="DocumentationRules\SA1607PartialElementDocumentationMustHaveSummaryText.cs" />
     <Compile Include="DocumentationRules\SA1608ElementDocumentationMustNotHaveDefaultSummary.cs" />
     <Compile Include="DocumentationRules\SA1609PropertyDocumentationMustHaveValue.cs" />
+    <Compile Include="DocumentationRules\SA1609SA1610CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1610PropertyDocumentationMustHaveValueText.cs" />
     <Compile Include="DocumentationRules\SA1611ElementParametersMustBeDocumented.cs" />
     <Compile Include="DocumentationRules\SA1612ElementParameterDocumentationMustMatchElementParameters.cs" />
@@ -65,6 +67,7 @@
     <Compile Include="DocumentationRules\SA1614ElementParameterDocumentationMustHaveText.cs" />
     <Compile Include="DocumentationRules\SA1615ElementReturnValueMustBeDocumented.cs" />
     <Compile Include="DocumentationRules\SA1616ElementReturnValueDocumentationMustHaveText.cs" />
+    <Compile Include="DocumentationRules\SA1617CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1617VoidReturnValueMustNotBeDocumented.cs" />
     <Compile Include="DocumentationRules\SA1618GenericTypeParametersMustBeDocumented.cs" />
     <Compile Include="DocumentationRules\SA1619GenericTypeParametersMustBeDocumentedPartialClass.cs" />
@@ -101,6 +104,8 @@
     <Compile Include="DocumentationRules\SA1649FileHeaderFileNameDocumentationMustMatchTypeName.cs" />
     <Compile Include="DocumentationRules\SA1650ElementDocumentationMustBeSpelledCorrectly.cs" />
     <Compile Include="DocumentationRules\StandardTextDiagnosticBase.cs" />
+    <Compile Include="GeneratedCodeAnalysisExtensions.cs" />
+    <Compile Include="Helpers\DocumentationCommentExtensions.cs" />
     <Compile Include="Helpers\EnumerableHelpers.cs" />
     <Compile Include="Helpers\IndentationHelper.cs" />
     <Compile Include="Helpers\IndentationOptions.cs" />
@@ -108,10 +113,14 @@
     <Compile Include="Helpers\RenameHelper.cs" />
     <Compile Include="Helpers\TriviaHelper.cs" />
     <Compile Include="Helpers\XmlCommentHelper.cs" />
+    <Compile Include="Helpers\XmlSyntaxFactory.cs" />
+    <Compile Include="LayoutRules\SA1500CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine.cs" />
     <Compile Include="LayoutRules\SA1501CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1501StatementMustNotBeOnASingleLine.cs" />
+    <Compile Include="LayoutRules\SA1502CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1502ElementMustNotBeOnASingleLine.cs" />
+    <Compile Include="LayoutRules\SA1503CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1503CurlyBracketsMustNotBeOmitted.cs" />
     <Compile Include="LayoutRules\SA1504AllAccessorsMustBeSingleLineOrMultiLine.cs" />
     <Compile Include="LayoutRules\SA1505OpeningCurlyBracketsMustNotBeFollowedByBlankLine.cs" />
@@ -119,6 +128,7 @@
     <Compile Include="LayoutRules\SA1507CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1507CodeMustNotContainMultipleBlankLinesInARow.cs" />
     <Compile Include="LayoutRules\SA1508ClosingCurlyBracketsMustNotBePrecededByBlankLine.cs" />
+    <Compile Include="LayoutRules\SA1509CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1509OpeningCurlyBracketsMustNotBePrecededByBlankLine.cs" />
     <Compile Include="LayoutRules\SA1510ChainedStatementBlocksMustNotBePrecededByBlankLine.cs" />
     <Compile Include="LayoutRules\SA1511WhileDoFooterMustNotBePrecededByBlankLine.cs" />
@@ -177,6 +187,7 @@
     <Compile Include="OrderingRules\SA1202ElementsMustBeOrderedByAccess.cs" />
     <Compile Include="OrderingRules\SA1203ConstantsMustAppearBeforeFields.cs" />
     <Compile Include="OrderingRules\SA1204StaticElementsMustAppearBeforeInstanceElements.cs" />
+    <Compile Include="OrderingRules\SA1205CodeFixProvider.cs" />
     <Compile Include="OrderingRules\SA1205PartialElementsMustDeclareAccess.cs" />
     <Compile Include="OrderingRules\SA1206DeclarationKeywordsMustFollowOrder.cs" />
     <Compile Include="OrderingRules\SA1207ProtectedMustComeBeforeInternal.cs" />
@@ -262,7 +273,10 @@
     <Compile Include="SpacingRules\SA1025CodeMustNotContainMultipleWhitespaceInARow.cs" />
     <Compile Include="SpacingRules\SA1026CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation.cs" />
+    <Compile Include="SpacingRules\SA1027CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1027TabsMustNotBeUsed.cs" />
+    <Compile Include="SpacingRules\SA1028CodeFixProvider.cs" />
+    <Compile Include="SpacingRules\SA1028CodeMustNotContainTrailingWhitespace.cs" />
     <Compile Include="SpacingRules\SpacingExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -287,48 +301,44 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CodeAnalysis">
-      <HintPath>..\..\packages\Microsoft.CodeAnalysis.Common.1.0.0-rc1\lib\portable-net45+win8\Microsoft.CodeAnalysis.dll</HintPath>
+      <HintPath>..\..\packages\Microsoft.CodeAnalysis.Common.1.0.0-rc2\lib\portable-net45+win8\Microsoft.CodeAnalysis.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.CSharp">
-      <HintPath>..\..\packages\Microsoft.CodeAnalysis.CSharp.1.0.0-rc1\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
+      <HintPath>..\..\packages\Microsoft.CodeAnalysis.CSharp.1.0.0-rc2\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.CSharp.Workspaces">
-      <HintPath>..\..\packages\Microsoft.CodeAnalysis.CSharp.Workspaces.1.0.0-rc1\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.Workspaces.dll</HintPath>
+      <HintPath>..\..\packages\Microsoft.CodeAnalysis.CSharp.Workspaces.1.0.0-rc2\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.Workspaces.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.Workspaces">
-      <HintPath>..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.0.0-rc1\lib\portable-net45+win8\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
+      <HintPath>..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.0.0-rc2\lib\portable-net45+win8\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
     </Reference>
     <Reference Include="System.Collections.Immutable">
       <HintPath>..\..\packages\System.Collections.Immutable.1.1.33-beta\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
     </Reference>
     <Reference Include="System.Composition.AttributedModel">
       <HintPath>..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.AttributedModel.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="System.Composition.Convention">
       <HintPath>..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Convention.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="System.Composition.Hosting">
       <HintPath>..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Hosting.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="System.Composition.Runtime">
       <HintPath>..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Runtime.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="System.Composition.TypedParts">
       <HintPath>..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.TypedParts.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="System.Reflection.Metadata">
       <HintPath>..\..\packages\System.Reflection.Metadata.1.0.18-beta\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0-rc1\tools\analyzers\C#\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
-    <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0-rc1\tools\analyzers\Microsoft.CodeAnalysis.Analyzers.dll" />
-    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0-alpha004\tools\analyzers\StyleCop.Analyzers.dll" />
+    <Analyzer Include="..\..\packages\AsyncUsageAnalyzers.1.0.0-alpha001\tools\analyzers\AsyncUsageAnalyzers.dll" />
+    <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0-rc2\tools\analyzers\C#\Microsoft.CodeAnalysis.Analyzers.dll" />
+    <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0-rc2\tools\analyzers\C#\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
+    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0-alpha006\tools\analyzers\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

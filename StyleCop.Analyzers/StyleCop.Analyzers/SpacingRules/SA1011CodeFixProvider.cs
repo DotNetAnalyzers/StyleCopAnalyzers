@@ -16,7 +16,7 @@
     /// <para>To fix a violation of this rule, ensure that the spacing around the closing square bracket follows the
     /// rule described in <see cref="SA1011ClosingSquareBracketsMustBeSpacedCorrectly"/>.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1011CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1011CodeFixProvider))]
     [Shared]
     public class SA1011CodeFixProvider : CodeFixProvider
     {
@@ -50,11 +50,11 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context.Document, root, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocumentAsync(context.Document, root, token)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxToken token)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxToken token)
         {
 
             Dictionary<SyntaxToken, SyntaxToken> replacements = new Dictionary<SyntaxToken, SyntaxToken>();

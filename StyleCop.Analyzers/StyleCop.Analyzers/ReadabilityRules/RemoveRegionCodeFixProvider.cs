@@ -15,7 +15,7 @@
     /// <remarks>
     /// <para>To fix a violation of this rule, remove the region.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(RemoveRegionCodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RemoveRegionCodeFixProvider))]
     [Shared]
     public class RemoveRegionCodeFixProvider : CodeFixProvider
     {
@@ -47,6 +47,7 @@
 
             return Task.FromResult(true);
         }
+
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
@@ -59,6 +60,7 @@
 
                 return document.WithSyntaxRoot(newSyntaxRoot);
             }
+
             return document.WithSyntaxRoot(syntaxRoot);
         }
     }

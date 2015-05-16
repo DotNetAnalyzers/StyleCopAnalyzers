@@ -9,7 +9,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
-    public partial class SA1500UnitTests : DiagnosticVerifier
+    public partial class SA1500UnitTests
     {
         /// <summary>
         /// Verifies that no diagnostics are reported for the valid object initializers defined in this test.
@@ -17,8 +17,9 @@
         /// <remarks>
         /// These are valid for SA1500 only, some will report other diagnostics.
         /// </remarks>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestObjectInitializersValid()
+        public async Task TestObjectInitializersValidAsync()
         {
             var testCode = @"using System.Collections.Generic;
 
@@ -127,8 +128,9 @@ public class Foo
         /// <summary>
         /// Verifies that diagnostics will be reported for all invalid object initializer definitions.
         /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestObjectInitializersInvalid()
+        public async Task TestObjectInitializersInvalidAsync()
         {
             var testCode = @"using System.Collections.Generic;
 
@@ -140,18 +142,18 @@ public class Foo
         new Contact
         {
             Name = ""Baz Foo"",
-            PhoneNumbers = 
-            { 
-                ""000-000-0000"", 
+            PhoneNumbers =
+            {
+                ""000-000-0000"",
                 ""000-000-0000"" } } };
 
     // Invalid object initializer #2
     private Contact[] contacts2 = new[]
     {   new Contact
         {   Name = ""Baz Foo"",
-            PhoneNumbers = 
-            {   ""000-000-0000"", 
-                ""000-000-0000"" 
+            PhoneNumbers =
+            {   ""000-000-0000"",
+                ""000-000-0000""
             }
         }
     };
@@ -161,8 +163,8 @@ public class Foo
         new Contact {
             Name = ""Baz Foo"",
             PhoneNumbers = {
-                ""000-000-0000"", 
-                ""000-000-0000"" 
+                ""000-000-0000"",
+                ""000-000-0000""
             }
         }
     };
@@ -175,18 +177,18 @@ public class Foo
             new Contact
             {
                 Name = ""Baz Foo"",
-                PhoneNumbers = 
-                { 
-                    ""000-000-0000"", 
+                PhoneNumbers =
+                {
+                    ""000-000-0000"",
                     ""000-000-0000"" } } };
 
         // Invalid object initializer #5
         var contacts5 = new[]
         {   new Contact
             {   Name = ""Baz Foo"",
-                PhoneNumbers = 
-                {   ""000-000-0000"", 
-                    ""000-000-0000"" 
+                PhoneNumbers =
+                {   ""000-000-0000"",
+                    ""000-000-0000""
                 }
             }
         };
@@ -196,8 +198,8 @@ public class Foo
             new Contact {
                 Name = ""Baz Foo"",
                 PhoneNumbers = {
-                    ""000-000-0000"", 
-                    ""000-000-0000"" 
+                    ""000-000-0000"",
+                    ""000-000-0000""
                 }
             }
         };
@@ -207,7 +209,7 @@ public class Foo
         {
             Name = ""Baz Foo"",
             PhoneNumbers = new[]
-            { 
+            {
                 ""000-000-0000"" } };
 
         // Invalid object initializer #8
@@ -235,7 +237,136 @@ public class Foo
     }
 }";
 
-            var expectedDiagnostics = new[]
+            var fixedTestCode = @"using System.Collections.Generic;
+
+public class Foo
+{
+    // Invalid object initializer #1
+    private Contact[] contact1 = new[]
+    {
+        new Contact
+        {
+            Name = ""Baz Foo"",
+            PhoneNumbers =
+            {
+                ""000-000-0000"",
+                ""000-000-0000""
+            }
+        }
+    };
+
+    // Invalid object initializer #2
+    private Contact[] contacts2 = new[]
+    {
+        new Contact
+        {
+            Name = ""Baz Foo"",
+            PhoneNumbers =
+            {
+                ""000-000-0000"",
+                ""000-000-0000""
+            }
+        }
+    };
+
+    // Invalid object initializer #3
+    private Contact[] contacts3 = new[]
+    {
+        new Contact
+        {
+            Name = ""Baz Foo"",
+            PhoneNumbers =
+            {
+                ""000-000-0000"",
+                ""000-000-0000""
+            }
+        }
+    };
+
+    public void Bar()
+    {
+        // Invalid object initializer #4
+        var contact4 = new[]
+        {
+            new Contact
+            {
+                Name = ""Baz Foo"",
+                PhoneNumbers =
+                {
+                    ""000-000-0000"",
+                    ""000-000-0000""
+                }
+            }
+        };
+
+        // Invalid object initializer #5
+        var contacts5 = new[]
+        {
+            new Contact
+            {
+                Name = ""Baz Foo"",
+                PhoneNumbers =
+                {
+                    ""000-000-0000"",
+                    ""000-000-0000""
+                }
+            }
+        };
+
+        // Invalid object initializer #6
+        var contacts6 = new[]
+        {
+            new Contact
+            {
+                Name = ""Baz Foo"",
+                PhoneNumbers =
+                {
+                    ""000-000-0000"",
+                    ""000-000-0000""
+                }
+            }
+        };
+
+        // Invalid object initializer #7
+        var contact7 = new
+        {
+            Name = ""Baz Foo"",
+            PhoneNumbers = new[]
+            {
+                ""000-000-0000""
+            }
+        };
+
+        // Invalid object initializer #8
+        var contacts8 = new
+        {
+            Name = ""Baz Foo"",
+            PhoneNumbers = new[]
+            {
+                ""000-000-0000""
+            }
+        };
+
+        // Invalid object initializer #9
+        var contacts9 = new
+        {
+            Name = ""Baz Foo"",
+            PhoneNumbers = new[]
+            {
+                ""000-000-0000""
+            }
+        };
+    }
+
+    private class Contact
+    {
+        public string Name { get; set; }
+
+        public List<string> PhoneNumbers { get; set; }
+    }
+}";
+
+            DiagnosticResult[] expectedDiagnostics =
             {
                 // Invalid object initializer #1
                 this.CSharpDiagnostic().WithLocation(14, 32),
@@ -273,6 +404,8 @@ public class Foo
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
     }
 }

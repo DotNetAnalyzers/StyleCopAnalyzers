@@ -15,7 +15,7 @@
     /// <para>To fix a violation of this rule, add or remove a space after the keyword, according to the description
     /// above.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1000CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1000CodeFixProvider))]
     [Shared]
     public class SA1000CodeFixProvider : CodeFixProvider
     {
@@ -49,11 +49,11 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocument(context.Document, root, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocumentAsync(context.Document, root, token)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxToken token)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxToken token)
         {
             bool isAddingSpace = true;
             switch (token.Kind())

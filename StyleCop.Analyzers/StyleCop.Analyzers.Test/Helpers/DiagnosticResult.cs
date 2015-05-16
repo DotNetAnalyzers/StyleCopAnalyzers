@@ -8,6 +8,10 @@ namespace TestHelper
     /// </summary>
     public struct DiagnosticResultLocation
     {
+        public string Path;
+        public int Line;
+        public int Column;
+
         public DiagnosticResultLocation(string path, int line, int column)
         {
             if (line < 0 && column < 0)
@@ -24,10 +28,6 @@ namespace TestHelper
             this.Line = line;
             this.Column = column;
         }
-
-        public string Path;
-        public int Line;
-        public int Column;
     }
 
     /// <summary>

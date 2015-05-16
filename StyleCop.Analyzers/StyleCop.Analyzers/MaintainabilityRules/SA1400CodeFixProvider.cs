@@ -17,7 +17,7 @@
     /// <remarks>
     /// <para>To fix a violation of this rule, add an access modifier to the declaration of the element.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1400CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1400CodeFixProvider))]
     [Shared]
     public class SA1400CodeFixProvider : CodeFixProvider
     {
@@ -56,11 +56,11 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Declare accessibility", token => GetTransformedDocument(context.Document, root, declarationNode)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Declare accessibility", token => GetTransformedDocumentAsync(context.Document, root, declarationNode)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocument(Document document, SyntaxNode root, SyntaxNode declarationNode)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxNode declarationNode)
         {
             SyntaxNode updatedDeclarationNode;
             switch (declarationNode.Kind())

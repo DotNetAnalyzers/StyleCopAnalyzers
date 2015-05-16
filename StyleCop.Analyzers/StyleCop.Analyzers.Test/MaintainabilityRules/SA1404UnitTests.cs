@@ -12,14 +12,14 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     public class SA1404UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestSuppressionWithStringLiteral()
+        public async Task TestSuppressionWithStringLiteralAsync()
         {
             var testCode = @"public class Foo
 {
@@ -30,11 +30,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestSuppressionWithNoJustification()
+        public async Task TestSuppressionWithNoJustificationAsync()
         {
             var testCode = @"public class Foo
 {
@@ -47,11 +47,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 6);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestSuppressionWithEmptyJustification()
+        public async Task TestSuppressionWithEmptyJustificationAsync()
         {
             var testCode = @"public class Foo
 {
@@ -64,11 +64,28 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 66);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestSuppressionWithWhitespaceJustification()
+        public async Task TestSuppressionWithEscapedIdentifierWithJustificationAsync()
+        {
+            var testCode = @"public class Foo
+{
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justific\u0061tion = """")]
+    public void Bar()
+    {
+
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 66);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestSuppressionWithWhitespaceJustificationAsync()
         {
             var testCode = @"public class Foo
 {
@@ -81,11 +98,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 66);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestSuppressionWithNullJustification()
+        public async Task TestSuppressionWithNullJustificationAsync()
         {
             var testCode = @"public class Foo
 {
@@ -98,11 +115,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 66);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestSuppressionWithComplexJustification()
+        public async Task TestSuppressionWithComplexJustificationAsync()
         {
             var testCode = @"public class Foo
 {
@@ -114,11 +131,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestSuppressionWithComplexWhitespaceJustification()
+        public async Task TestSuppressionWithComplexWhitespaceJustificationAsync()
         {
             var testCode = @"public class Foo
 {
@@ -132,11 +149,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 66);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestDiagnosticDoesNotThrowNullReferenceForWrongConstantType()
+        public async Task TestDiagnosticDoesNotThrowNullReferenceForWrongConstantTypeAsync()
         {
             var testCode = @"public class Foo
 {
@@ -159,7 +176,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                     Locations = new[] { new DiagnosticResultLocation("Test0.cs", 4, 82) }
                 }
             };
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

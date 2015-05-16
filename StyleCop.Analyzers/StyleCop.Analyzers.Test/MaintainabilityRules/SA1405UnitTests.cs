@@ -28,7 +28,7 @@
         }
 
         [Fact]
-        public async Task TestWrongOverload()
+        public async Task TestWrongOverloadAsync()
         {
             var testCode = @"using System.Diagnostics;
 public class Foo
@@ -41,7 +41,7 @@ public class Foo
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
