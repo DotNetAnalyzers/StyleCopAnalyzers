@@ -67,14 +67,15 @@ namespace TestHelper
             var supportedDiagnosticsSpecificOptions = new Dictionary<string, ReportDiagnostic>();
             foreach (var diagnostic in analyzer.SupportedDiagnostics)
             {
-                supportedDiagnosticsSpecificOptions[diagnostic.Id] = ReportDiagnostic.Warn;
+                // make sure the analyzers we are testing are enabled
+                supportedDiagnosticsSpecificOptions[diagnostic.Id] = ReportDiagnostic.Default;
             }
 
             var diagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
             foreach (var project in projects)
             {
-                // enable all analyzer diagnostics, even the ones that are disabled by default
-                var modifiedSpecificDiagnosticOptions = project.CompilationOptions.SpecificDiagnosticOptions.AddRange(supportedDiagnosticsSpecificOptions);
+                // update the project compilation options
+                var modifiedSpecificDiagnosticOptions = project.CompilationOptions.SpecificDiagnosticOptions.SetItems(supportedDiagnosticsSpecificOptions);
                 var modifiedCompilationOptions = project.CompilationOptions.WithSpecificDiagnosticOptions(modifiedSpecificDiagnosticOptions);
                 var processedProject = project.WithCompilationOptions(modifiedCompilationOptions);
 
