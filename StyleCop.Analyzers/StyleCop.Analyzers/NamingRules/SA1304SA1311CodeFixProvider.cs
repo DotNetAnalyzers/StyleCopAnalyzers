@@ -18,7 +18,7 @@
     /// <para>To fix a violation of this rule, change the name of the field so that it begins with an upper-case
     /// letter.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1304SA1311CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1304SA1311CodeFixProvider))]
     [Shared]
     public class SA1304SA1311CodeFixProvider : CodeFixProvider
     {

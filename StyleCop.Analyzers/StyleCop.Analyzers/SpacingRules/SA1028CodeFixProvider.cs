@@ -11,16 +11,17 @@
     using Microsoft.CodeAnalysis.Text;
 
     /// <summary>
-    /// Implements a code fix for <see cref="SA1028NoTrailingWhitespace"/>.
+    /// Implements a code fix for <see cref="SA1028CodeMustNotContainTrailingWhitespace"/>.
     /// </summary>
     /// <remarks>
     /// <para>To fix a violation of this rule, remove any whitespace at the end of a line of code.</para>
     /// </remarks>
-    [ExportCodeFixProvider("WhitespaceDiagnosticCodeFixProvider", LanguageNames.CSharp), Shared]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1028CodeFixProvider))]
+    [Shared]
     public class SA1028CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1028NoTrailingWhitespace.DiagnosticId);
+            ImmutableArray.Create(SA1028CodeMustNotContainTrailingWhitespace.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
@@ -34,7 +35,7 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken);
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
                 var diagnosticSpan = diagnostic.Location.SourceSpan;
@@ -64,7 +65,7 @@
         /// <returns>The transformed document.</returns>
         private static async Task<Document> RemoveWhitespaceAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
-            var root = await document.GetSyntaxRootAsync(cancellationToken);
+            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var diagnosticSpan = diagnostic.Location.SourceSpan;
             var trivia = root.FindTrivia(diagnosticSpan.Start, findInsideTrivia: true);
             SyntaxNode newRoot;

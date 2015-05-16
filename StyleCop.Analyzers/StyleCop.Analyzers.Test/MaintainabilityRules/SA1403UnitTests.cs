@@ -18,7 +18,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Fact]
-        public async Task TestNestedNamespaces()
+        public async Task TestNestedNamespacesAsync()
         {
             var testCode = @"namespace Foo
 {

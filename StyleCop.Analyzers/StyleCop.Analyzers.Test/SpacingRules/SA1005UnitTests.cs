@@ -18,10 +18,10 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -29,7 +29,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestCorrectComment()
+        public async Task TestCorrectCommentAsync()
         {
             var testCode = @"public class Foo
 {
@@ -42,7 +42,7 @@
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -50,7 +50,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestNoLeadingSpace()
+        public async Task TestNoLeadingSpaceAsync()
         {
             var testCode = @"public class Foo
 {
@@ -72,9 +72,9 @@
 
             var expected = this.CSharpDiagnostic().WithLocation(3, 5);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -82,7 +82,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestMultipleLeadingSpaces()
+        public async Task TestMultipleLeadingSpacesAsync()
         {
             var testCode = @"public class Foo
 {
@@ -104,9 +104,146 @@
 
             var expected = this.CSharpDiagnostic().WithLocation(3, 5);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verify that multiple leading spaces in a file header do not trigger a diagnostic.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestMultipleLeadingSpacesInFileHeaderAsync()
+        {
+            var testCode = @"// --------------------------------------------------------------------------------------------------------------------
+// <copyright file=""SomeClass.cs"" company=""SomeCompany"">
+//   Copyright © 2015 Some Company.
+//   All rights reserved.
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
+
+        public class SomeClass
+        {
+        }
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verify that three leading slashes followed by a non-space character do not trigger
+        /// a diagnostic.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestThreeLeadingSlashesAsync()
+        {
+            var testCode = @"///whatever
+        public class SomeClass
+        {
+        }
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verify that two or more dashes at the start of a comment do not trigger a diagnostic.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestTwoDashesAsync()
+        {
+            var testCode = @"//-----------------------
+        public class SomeClass
+        {
+        }
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verify that a comment that starts with a forward slash not prefixed by a space does not trigger a diagnostic.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestForwardSlashNoSpaceAsync()
+        {
+            var testCode = @"//\whatever
+        public class SomeClass
+        {
+        }
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verify that an empty comment does not trigger a diagnostic.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestEmptyCommentAsync()
+        {
+            var testCode = @"//
+        public class SomeClass
+        {
+        }
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verify that multiple leading spaces do not trigger a diagnostic on a comment that follows directly
+        /// after another single line comment.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestIndentedSecondCommentLineAsync()
+        {
+            var testCode = @"// Some comment:
+        //     Some indented comment.
+        //         Even more indented comment.
+        public class SomeClass
+        {
+        }
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verify that multiple leading spaces trigger a diagnostic on a comment that follows directly
+        /// after a blank line.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestIndentedFirstCommentLineAfterBlankLineAsync()
+        {
+            var testCode = @"// Some comment:
+
+        //         Even more indented comment.
+        public class SomeClass
+        {
+        }
+";
+
+            var fixedTestCode = @"// Some comment:
+
+        // Even more indented comment.
+        public class SomeClass
+        {
+        }
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(3, 9);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -114,7 +251,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestCommentedCode()
+        public async Task TestCommentedCodeAsync()
         {
             var testCode = @"public class Foo
 {
@@ -126,7 +263,7 @@
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

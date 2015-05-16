@@ -9,7 +9,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
-    public partial class SA1500UnitTests : DiagnosticVerifier
+    public partial class SA1500UnitTests
     {
         /// <summary>
         /// Verifies that no diagnostics are reported for the valid switch statements defined in this test.
@@ -19,7 +19,7 @@
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestSwitchValid()
+        public async Task TestSwitchValidAsync()
         {
             var testCode = @"public class Foo
 {
@@ -51,7 +51,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestSwitchInvalid()
+        public async Task TestSwitchInvalidAsync()
         {
             var testCode = @"public class Foo
 {
@@ -76,20 +76,63 @@
         }
 
         // invalid switch #4
-        switch (this.X) 
+        switch (this.X)
         {
             case 0:
                 break; }
 
         // invalid switch #5
-        switch (this.X) 
+        switch (this.X)
         { case 0:
                 break;
         }
     }
 }";
 
-            var expectedDiagnostics = new[]
+            var fixedTestCode = @"public class Foo
+{
+    public int X { get; set; }
+
+    public void Bar()
+    {
+        // invalid switch #1
+        switch (this.X)
+        {
+            case 0:
+                break;
+        }
+
+        // invalid switch #2
+        switch (this.X)
+        {
+            case 0:
+                break;
+        }
+
+        // invalid switch #3
+        switch (this.X)
+        {
+            case 0:
+                break;
+        }
+
+        // invalid switch #4
+        switch (this.X)
+        {
+            case 0:
+                break;
+        }
+
+        // invalid switch #5
+        switch (this.X)
+        {
+            case 0:
+                break;
+        }
+    }
+}";
+
+            DiagnosticResult[] expectedDiagnostics =
             {
                 // invalid switch #1
                 this.CSharpDiagnostic().WithLocation(8, 25),
@@ -109,6 +152,8 @@
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
     }
 }

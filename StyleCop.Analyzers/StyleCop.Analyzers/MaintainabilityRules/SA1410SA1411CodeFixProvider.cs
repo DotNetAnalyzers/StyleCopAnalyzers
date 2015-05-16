@@ -16,7 +16,7 @@
     /// <remarks>
     /// <para>To fix a violation of this rule, insert parenthesis within the arithmetic expression to declare the precedence of the operations.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1410SA1411CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1410SA1411CodeFixProvider))]
     [Shared]
     public class SA1410SA1411CodeFixProvider : CodeFixProvider
     {

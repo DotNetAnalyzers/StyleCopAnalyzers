@@ -9,7 +9,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
-    public partial class SA1500UnitTests : DiagnosticVerifier
+    public partial class SA1500UnitTests
     {
         /// <summary>
         /// Verifies that no diagnostics are reported for the valid lambda expressions defined in this test.
@@ -19,7 +19,7 @@
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestLambdaExpressionValid()
+        public async Task TestLambdaExpressionValidAsync()
         {
             var testCode = @"using System;
 using System.Diagnostics;
@@ -84,7 +84,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestLambdaExpressionInvalid()
+        public async Task TestLambdaExpressionInvalidAsync()
         {
             var testCode = @"using System;
 using System.Diagnostics;
@@ -102,7 +102,7 @@ public class Foo
         
         // Invalid lambda expression #2
         Action item2 = () => {
-            Debug.Indent(); 
+            Debug.Indent();
         };
 
         // Invalid lambda expression #3
@@ -110,7 +110,7 @@ public class Foo
             Debug.Indent(); };
 
         // Invalid lambda expression #4
-        Action item4 = () => { Debug.Indent(); 
+        Action item4 = () => { Debug.Indent();
         };
 
         // Invalid lambda expression #5
@@ -120,7 +120,7 @@ public class Foo
 
         // Invalid lambda expression #6
         Action item6 = () =>
-        { Debug.Indent(); 
+        { Debug.Indent();
         };
 
         // Invalid lambda expression #7
@@ -142,17 +142,99 @@ public class Foo
 
         // Invalid lambda expression #11
         this.TestMethod(() =>
-        { 
+        {
             Debug.Indent(); });
 
         // Invalid lambda expression #12
         this.TestMethod(() =>
-        { Debug.Indent(); 
+        { Debug.Indent();
         });
     }
 }";
 
-            var expectedDiagnostics = new[]
+            var fixedTestCode = @"using System;
+using System.Diagnostics;
+public class Foo
+{
+    private void TestMethod(Action action)
+    {
+    }
+
+    private void Bar()
+    {
+        // Invalid lambda expression #1
+        Action item1 = () =>
+        {
+        };
+        
+        // Invalid lambda expression #2
+        Action item2 = () =>
+        {
+            Debug.Indent();
+        };
+
+        // Invalid lambda expression #3
+        Action item3 = () =>
+        {
+            Debug.Indent();
+        };
+
+        // Invalid lambda expression #4
+        Action item4 = () =>
+        {
+            Debug.Indent();
+        };
+
+        // Invalid lambda expression #5
+        Action item5 = () =>
+        {
+            Debug.Indent();
+        };
+
+        // Invalid lambda expression #6
+        Action item6 = () =>
+        {
+            Debug.Indent();
+        };
+
+        // Invalid lambda expression #7
+        this.TestMethod(() =>
+        {
+        });
+
+        // Invalid lambda expression #8
+        this.TestMethod(() =>
+        {
+            Debug.Indent();
+        });
+
+        // Invalid lambda expression #9
+        this.TestMethod(() =>
+        {
+            Debug.Indent();
+        });
+
+        // Invalid lambda expression #10
+        this.TestMethod(() =>
+        {
+            Debug.Indent();
+        });
+
+        // Invalid lambda expression #11
+        this.TestMethod(() =>
+        {
+            Debug.Indent();
+        });
+
+        // Invalid lambda expression #12
+        this.TestMethod(() =>
+        {
+            Debug.Indent();
+        });
+    }
+}";
+
+            DiagnosticResult[] expectedDiagnostics =
             {
                 // Invalid lambda expression #1
                 this.CSharpDiagnostic().WithLocation(12, 30),
@@ -183,6 +265,8 @@ public class Foo
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
     }
 }

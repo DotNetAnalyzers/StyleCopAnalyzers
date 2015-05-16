@@ -16,7 +16,7 @@
     /// <remarks>
     /// <para>To fix a violation of this rule, ensure a blank line follows closing curly brackets.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1513CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1513CodeFixProvider))]
     [Shared]
     public class SA1513CodeFixProvider : CodeFixProvider
     {

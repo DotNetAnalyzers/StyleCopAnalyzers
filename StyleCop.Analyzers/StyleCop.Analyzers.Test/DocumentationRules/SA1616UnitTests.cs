@@ -23,7 +23,7 @@
         }
 
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -31,7 +31,7 @@
 
         [Theory]
         [MemberData(nameof(Declarations))]
-        public async Task TestMemberNoDocumentation(string declaration)
+        public async Task TestMemberNoDocumentationAsync(string declaration)
         {
             var testCode = @"
 /// <summary>
@@ -46,7 +46,7 @@ $$
 
         [Theory]
         [MemberData(nameof(Declarations))]
-        public async Task TestMemberWithoutReturns(string declaration)
+        public async Task TestMemberWithoutReturnsAsync(string declaration)
         {
             var testCode = @"
 /// <summary>
@@ -64,7 +64,7 @@ $$
 
         [Theory]
         [MemberData(nameof(Declarations))]
-        public async Task TestMemberWithValidReturns(string declaration)
+        public async Task TestMemberWithValidReturnsAsync(string declaration)
         {
             var testCode = @"
 /// <summary>
@@ -83,7 +83,7 @@ $$
 
         [Theory]
         [MemberData(nameof(Declarations))]
-        public async Task TestMemberWithEmptyReturns(string declaration)
+        public async Task TestMemberWithEmptyReturnsAsync(string declaration)
         {
             var testCode = @"
 /// <summary>
@@ -110,7 +110,7 @@ $$
 
         [Theory]
         [MemberData(nameof(Declarations))]
-        public async Task TestMemberWithEmptyReturns2(string declaration)
+        public async Task TestMemberWithEmptyReturns2Async(string declaration)
         {
             var testCode = @"
 /// <summary>
@@ -135,7 +135,7 @@ $$
 
         [Theory]
         [MemberData(nameof(Declarations))]
-        public async Task TestMemberWithEmptyReturns3(string declaration)
+        public async Task TestMemberWithEmptyReturns3Async(string declaration)
         {
             var testCode = @"
 /// <summary>

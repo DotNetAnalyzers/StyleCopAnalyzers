@@ -18,10 +18,10 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -29,7 +29,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestValid()
+        public async Task TestValidAsync()
         {
             var testCode = @"using System;
 using System.Linq;
@@ -338,10 +338,26 @@ public class Foo
         {
         }
     }
+
+    // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/784
+    public void MultiLineLinqQuery()
+    {
+        var someQuery = (from f in Enumerable.Empty<int>()
+                         where f != 0
+                         select new { Fish = ""Face"" }).ToList();
+
+        var someOtherQuery = (from f in Enumerable.Empty<int>()
+                              where f != 0
+                              select new
+                              {
+                                  Fish = ""AreFriends"",
+                                  Not = ""Food""
+                              }).ToList();
+    }
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -349,7 +365,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestInvalid()
+        public async Task TestInvalidAsync()
         {
             var testCode = @"using System;
 
@@ -447,7 +463,7 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(73, 14)
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -455,7 +471,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestCodeFix()
+        public async Task TestCodeFixAsync()
         {
             var testCode = @"using System;
 
@@ -582,7 +598,7 @@ public class Foo
 }
 ";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

@@ -243,7 +243,7 @@
         ";
 
         [Fact]
-        public async Task TestPrefixLocalCallsWithThisDiagnostics()
+        public async Task TestPrefixLocalCallsWithThisDiagnosticsAsync()
         {
             var expected = new[]
             {
@@ -260,7 +260,7 @@
         }
 
         [Fact]
-        public async Task TestPrefixLocalCallsWithThisCodeFix()
+        public async Task TestPrefixLocalCallsWithThisCodeFixAsync()
         {
             await this.VerifyCSharpFixAsync(ReferenceCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }

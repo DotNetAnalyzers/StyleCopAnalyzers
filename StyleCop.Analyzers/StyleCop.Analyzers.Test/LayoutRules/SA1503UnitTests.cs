@@ -36,10 +36,10 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -50,10 +50,10 @@
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData("TestStatements")]
-        public async Task TestStatementWithoutCurlyBrackets(string statementText)
+        public async Task TestStatementWithoutCurlyBracketsAsync(string statementText)
         {
             var expected = this.CSharpDiagnostic().WithLocation(7, 13);
-            await this.VerifyCSharpDiagnosticAsync(this.GenerateTestStatement(statementText), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(this.GenerateTestStatement(statementText), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -64,9 +64,9 @@
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData("TestStatements")]
-        public async Task TestStatementWithCurlyBrackets(string statementText)
+        public async Task TestStatementWithCurlyBracketsAsync(string statementText)
         {
-            await this.VerifyCSharpDiagnosticAsync(this.GenerateFixedTestStatement(statementText), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(this.GenerateFixedTestStatement(statementText), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -74,7 +74,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestIfElseStatementWithoutCurlyBrackets()
+        public async Task TestIfElseStatementWithoutCurlyBracketsAsync()
         {
             var testCode = @"using System.Diagnostics;
 public class Foo
@@ -94,7 +94,7 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(9, 13)
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestIfElseStatementWithCurlyBrackets()
+        public async Task TestIfElseStatementWithCurlyBracketsAsync()
         {
             var testCode = @"using System.Diagnostics;
 public class Foo
@@ -120,7 +120,7 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -128,7 +128,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestIfElseIfElseStatementWithCurlyBrackets()
+        public async Task TestIfElseIfElseStatementWithCurlyBracketsAsync()
         {
             var testCode = @"using System.Diagnostics;
 public class Foo
@@ -150,7 +150,7 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -158,7 +158,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestMultipleIfStatementsWithoutCurlyBrackets()
+        public async Task TestMultipleIfStatementsWithoutCurlyBracketsAsync()
         {
             var testCode = @"using System.Diagnostics;
 public class Foo
@@ -175,7 +175,7 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(6, 33)
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -185,9 +185,9 @@ public class Foo
         /// either a statement block or a single statement.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory, MemberData("TestStatements")]
-        private async Task TestCodeFixForStatement(string statementText)
+        private async Task TestCodeFixForStatementAsync(string statementText)
         {
-            await this.VerifyCSharpFixAsync(this.GenerateTestStatement(statementText), this.GenerateFixedTestStatement(statementText));
+            await this.VerifyCSharpFixAsync(this.GenerateTestStatement(statementText), this.GenerateFixedTestStatement(statementText)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -195,7 +195,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestCodeFixProviderForIfElseStatement()
+        public async Task TestCodeFixProviderForIfElseStatementAsync()
         {
             var testCode = @"using System.Diagnostics;
 public class Foo
@@ -227,7 +227,7 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -235,7 +235,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/660")]
-        public async Task TestCodeFixProviderWithAlternateIndentation()
+        public async Task TestCodeFixProviderWithAlternateIndentationAsync()
         {
             var testCode = @"using System.Diagnostics;
 public class Foo
@@ -259,7 +259,7 @@ public class Foo
  }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -267,7 +267,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestCodeFixProviderWithNonWhitespaceTrivia()
+        public async Task TestCodeFixProviderWithNonWhitespaceTriviaAsync()
         {
             var testCode = @"using System.Diagnostics;
 public class Foo
@@ -293,7 +293,7 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -301,7 +301,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestCodeFixProviderWithMultipleNestings()
+        public async Task TestCodeFixProviderWithMultipleNestingsAsync()
         {
             var testCode = @"using System.Diagnostics;
 public class Foo
@@ -327,7 +327,7 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -335,7 +335,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestCodeFixWithPreprocessorDirectives()
+        public async Task TestCodeFixWithPreprocessorDirectivesAsync()
         {
             var testCode = @"using System.Diagnostics;
 public class Foo
@@ -350,7 +350,7 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, testCode);
+            await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

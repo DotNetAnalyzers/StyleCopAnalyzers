@@ -9,13 +9,13 @@
     using Xunit;
 
     /// <summary>
-    /// This class contains unit tests for <see cref="SA1028NoTrailingWhitespace"/> and
+    /// This class contains unit tests for <see cref="SA1028CodeMustNotContainTrailingWhitespace"/> and
     /// <see cref="SA1028CodeFixProvider"/>.
     /// </summary>
     public class SA1028UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TrailingWhitespaceAfterStatement()
+        public async Task TrailingWhitespaceAfterStatementAsync()
         {
             string testCode = @"
 class ClassName
@@ -41,13 +41,13 @@ class ClassName
                 this.CSharpDiagnostic().WithLocation(6, 36),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TrailingWhitespaceAfterDeclaration()
+        public async Task TrailingWhitespaceAfterDeclarationAsync()
         {
             string testCode = @"
 class ClassName 
@@ -66,13 +66,13 @@ class ClassName
                 this.CSharpDiagnostic().WithLocation(2, 16),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TrailingWhitespaceAfterSingleLineComment()
+        public async Task TrailingWhitespaceAfterSingleLineCommentAsync()
         {
             string testCode = @"
 // hi there    
@@ -87,13 +87,13 @@ class ClassName
                 this.CSharpDiagnostic().WithLocation(2, 12),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TrailingWhitespaceInsideMultiLineComment()
+        public async Task TrailingWhitespaceInsideMultiLineCommentAsync()
         {
             string testCode = @"/* 
  foo   
@@ -115,13 +115,13 @@ class ClassName
                 this.CSharpDiagnostic().WithLocation(4, 3),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TrailingWhitespaceInsideXmlDocComment()
+        public async Task TrailingWhitespaceInsideXmlDocCommentAsync()
         {
             string testCode = @"
 /// <summary>  
@@ -144,15 +144,15 @@ class Foo { }
                 this.CSharpDiagnostic().WithLocation(4, 15),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
 
             // Enable this code fix when we have it working.
             ////await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
         }
 
         [Fact]
-        public async Task TrailingWhitespaceWithinAndAfterHereString()
+        public async Task TrailingWhitespaceWithinAndAfterHereStringAsync()
         {
             string testCode = @"
 class ClassName
@@ -177,13 +177,13 @@ more text
                 this.CSharpDiagnostic().WithLocation(6, 3),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TrailingWhitespaceAfterDirectives()
+        public async Task TrailingWhitespaceAfterDirectivesAsync()
         {
             string testCode = @"
 #define Zoot  
@@ -225,15 +225,15 @@ using System;
                 this.CSharpDiagnostic().WithLocation(11, 11),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
 
             // We don't have code fixes available for directives yet.
             ////await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
         }
 
         [Fact]
-        public async Task TrailingWhitespaceFoundWithinFalseConditionalDirectiveBlocks()
+        public async Task TrailingWhitespaceFoundWithinFalseConditionalDirectiveBlocksAsync()
         {
             string testCode = @"
 #if false
@@ -242,11 +242,11 @@ using System;
 ";
 
             // Note: we verify that no diagnostics are produced inside non-compiled blocks
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task NoTrailingWhitespaceAfterBlockComment()
+        public async Task NoTrailingWhitespaceAfterBlockCommentAsync()
         {
             string testCode = @"
 class Program    /* some block comment that follows several spaces */
@@ -254,12 +254,12 @@ class Program    /* some block comment that follows several spaces */
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new SA1028NoTrailingWhitespace();
+            return new SA1028CodeMustNotContainTrailingWhitespace();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

@@ -13,7 +13,7 @@
     /// <summary>
     /// Implements a code fix for <see cref="SA1516ElementsMustBeSeparatedByBlankLine"/>.
     /// </summary>
-    [ExportCodeFixProvider(nameof(SA1516CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1516CodeFixProvider))]
     [Shared]
     public class SA1516CodeFixProvider : CodeFixProvider
     {

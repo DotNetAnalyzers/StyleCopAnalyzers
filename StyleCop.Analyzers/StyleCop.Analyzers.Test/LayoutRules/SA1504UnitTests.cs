@@ -10,14 +10,14 @@
     public class SA1504UnitTests : DiagnosticVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPropertyGetInOneLineSetInMultipleLines()
+        public async Task TestPropertyGetInOneLineSetInMultipleLinesAsync()
         {
             var testCode = @"
 public class Foo
@@ -33,11 +33,11 @@ public class Foo
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPropertyGetAndSetOnOneLine()
+        public async Task TestPropertyGetAndSetOnOneLineAsync()
         {
             var testCode = @"
 public class Foo
@@ -49,11 +49,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPropertyGetAndSetOnOneLineWithComments()
+        public async Task TestPropertyGetAndSetOnOneLineWithCommentsAsync()
         {
             var testCode = @"
 public class Foo
@@ -66,11 +66,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPropertyGetAndSetOnMultipleLines()
+        public async Task TestPropertyGetAndSetOnMultipleLinesAsync()
         {
             var testCode = @"
 public class Foo
@@ -87,11 +87,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPropertyOnlyGetter()
+        public async Task TestPropertyOnlyGetterAsync()
         {
             var testCode = @"
 public class Foo
@@ -105,11 +105,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAutoProperty()
+        public async Task TestAutoPropertyAsync()
         {
             var testCode = @"
 public class Foo
@@ -120,11 +120,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPropertyExpressionBody()
+        public async Task TestPropertyExpressionBodyAsync()
         {
             var testCode = @"
 public class Foo
@@ -132,11 +132,11 @@ public class Foo
     public int Prop => 1;
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerSetInOneLineGetInMultipleLines()
+        public async Task TestIndexerSetInOneLineGetInMultipleLinesAsync()
         {
             var testCode = @"
 public class Foo
@@ -153,11 +153,11 @@ public class Foo
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerOnlyGetter()
+        public async Task TestIndexerOnlyGetterAsync()
         {
             var testCode = @"
 public class Foo
@@ -168,11 +168,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerGetAndSetOnOneLine()
+        public async Task TestIndexerGetAndSetOnOneLineAsync()
         {
             var testCode = @"
 public class Foo
@@ -184,11 +184,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerGetAndSetOnOneLineWithComments()
+        public async Task TestIndexerGetAndSetOnOneLineWithCommentsAsync()
         {
             var testCode = @"
 public class Foo
@@ -201,11 +201,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerGetAndSetOnMultipleLines()
+        public async Task TestIndexerGetAndSetOnMultipleLinesAsync()
         {
             var testCode = @"
 public class Foo
@@ -222,11 +222,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestEventAddIsOnMultipleLinesAndRemoveIsOnOneLine()
+        public async Task TestEventAddIsOnMultipleLinesAndRemoveIsOnOneLineAsync()
         {
             var testCode = @"
 public class Foo
@@ -245,11 +245,11 @@ public class Foo
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(12, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestEventAddAndRemoveAreOnOneLine()
+        public async Task TestEventAddAndRemoveAreOnOneLineAsync()
         {
             var testCode = @"
 public class Foo
@@ -263,11 +263,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestEventAddAndRemoveAreOnMultipleLines()
+        public async Task TestEventAddAndRemoveAreOnMultipleLinesAsync()
         {
             var testCode = @"
 public class Foo
@@ -287,11 +287,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestEventAddAndRemoveAreOnOneLineWithComment()
+        public async Task TestEventAddAndRemoveAreOnOneLineWithCommentAsync()
         {
             var testCode = @"
 public class Foo
@@ -306,7 +306,7 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

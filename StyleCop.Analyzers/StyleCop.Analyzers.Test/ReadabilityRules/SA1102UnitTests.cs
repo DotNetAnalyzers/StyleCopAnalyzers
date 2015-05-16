@@ -10,14 +10,14 @@
     public class SA1102UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestSelectOnSeparateLineWithAdditionalEmptyLine()
+        public async Task TestSelectOnSeparateLineWithAdditionalEmptyLineAsync()
         {
             var testCode = @"
 using System.Linq;
@@ -39,7 +39,7 @@ public class Foo4
         }
 
         [Fact]
-        public async Task TestWhereSelectOnSameLine()
+        public async Task TestWhereSelectOnSameLineAsync()
         {
             var testCode = @"
 using System.Linq;
@@ -59,7 +59,7 @@ public class Foo4
         }
 
         [Fact]
-        public async Task TestWhereOnTheSameLineAsFrom()
+        public async Task TestWhereOnTheSameLineAsFromAsync()
         {
             var testCode = @"
 using System.Linq;
@@ -78,7 +78,7 @@ public class Foo4
         }
 
         [Fact]
-        public async Task TestComplexQueryWithAdditionalEmptyLine()
+        public async Task TestComplexQueryWithAdditionalEmptyLineAsync()
         {
             var testCode = @"
 using System.Linq;
@@ -117,7 +117,7 @@ public class Foo4
         }
 
         [Fact]
-        public async Task TestComplexQueryInOneLine()
+        public async Task TestComplexQueryInOneLineAsync()
         {
             var testCode = @"
 using System.Linq;
@@ -136,7 +136,7 @@ public class Foo4
         }
 
         [Fact]
-        public async Task TestQueryInsideQuery()
+        public async Task TestQueryInsideQueryAsync()
         {
             var testCode = @"
 using System.Linq;
@@ -165,7 +165,7 @@ public class Foo4
         }
 
         [Fact]
-        public async Task QueryInsideQueryComplex()
+        public async Task QueryInsideQueryComplexAsync()
         {
             var testCode = @"
 using System.Linq;

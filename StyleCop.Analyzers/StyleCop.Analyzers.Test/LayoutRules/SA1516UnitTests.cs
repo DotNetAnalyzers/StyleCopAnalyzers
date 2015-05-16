@@ -78,21 +78,21 @@ namespace Foot
         }
 
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestCorrectSpacing()
+        public async Task TestCorrectSpacingAsync()
         {
             
             await this.VerifyCSharpDiagnosticAsync(CorrectCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestWrongSpacing()
+        public async Task TestWrongSpacingAsync()
         {
             var testCode = @"extern alias corlib;
 using System;
@@ -165,7 +165,7 @@ namespace Foot
         }
 
         [Fact]
-        public async Task HasEmptyLineWorksCorrectly()
+        public async Task HasEmptyLineWorksCorrectlyAsync()
         {
             // This test increases code coverage in SA1516ElementsMustBeSeparatedByBlankLine.HasEmptyLine
 
@@ -190,7 +190,7 @@ namespace Foo
         }
 
         [Fact]
-        public async Task GetDiagnosticLocationWorksCorrectly()
+        public async Task GetDiagnosticLocationWorksCorrectlyAsync()
         {
             // This test increases code coverage in SA1516ElementsMustBeSeparatedByBlankLine.GetDiagnosticLocation
 
@@ -255,7 +255,7 @@ namespace Foo
         }
 
         [Fact]
-        public async Task TestInterfacesAndStructs()
+        public async Task TestInterfacesAndStructsAsync()
         {
             string testCode = @"using System;
 public interface IInterface
@@ -298,7 +298,7 @@ public struct Struct
         }
 
         [Fact]
-        public async Task TestIndexerAndEvents()
+        public async Task TestIndexerAndEventsAsync()
         {
             string testCode = @"using System;
 
@@ -371,7 +371,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestThatCodeFixWorksOnFieldsAdjacentToMultiLineFields()
+        public async Task TestThatCodeFixWorksOnFieldsAdjacentToMultiLineFieldsAsync()
         {
             string testCode = @"using System;
 
@@ -386,7 +386,7 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(7, 1)
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             string fixedCode = @"using System;
 
@@ -398,11 +398,11 @@ public class Foo
     private string experiment2;
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestThatDiagnosticIgnoresSingleLinePropertyAccessors()
+        public async Task TestThatDiagnosticIgnoresSingleLinePropertyAccessorsAsync()
         {
             string testCode = @"using System;
 
@@ -414,11 +414,11 @@ public class Foo
         set { }
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestThatDiagnosticIgnoresSingleLineEventAccessors()
+        public async Task TestThatDiagnosticIgnoresSingleLineEventAccessorsAsync()
         {
             string testCode = @"using System;
 
@@ -430,11 +430,11 @@ public class Foo
         remove { }
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestThatDiagnosticIsReportedOnDifferentLinePropertyAccessors1()
+        public async Task TestThatDiagnosticIsReportedOnDifferentLinePropertyAccessors1Async()
         {
             string testCode = @"using System;
 
@@ -453,11 +453,11 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(8, 1)
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestThatDiagnosticIIsReportedOnDifferentLineEventAccessors1()
+        public async Task TestThatDiagnosticIIsReportedOnDifferentLineEventAccessors1Async()
         {
             string testCode = @"using System;
 
@@ -476,11 +476,11 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(8, 1)
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestThatDiagnosticIsReportedOnDifferentLinePropertyAccessors2()
+        public async Task TestThatDiagnosticIsReportedOnDifferentLinePropertyAccessors2Async()
         {
             string testCode = @"using System;
 
@@ -500,11 +500,11 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(11, 1)
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestThatDiagnosticIIsReportedOnDifferentLineEventAccessors2()
+        public async Task TestThatDiagnosticIIsReportedOnDifferentLineEventAccessors2Async()
         {
             string testCode = @"using System;
 
@@ -523,7 +523,7 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(10, 1)
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()

@@ -10,14 +10,14 @@
     public class SA1106UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestEmptyStatementAsBlock()
+        public async Task TestEmptyStatementAsBlockAsync()
         {
             var testCode = @"
 class TestClass
@@ -35,7 +35,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task TestEmptyStatementInForStatement()
+        public async Task TestEmptyStatementInForStatementAsync()
         {
             var testCode = @"
 class TestClass
@@ -52,7 +52,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task TestEmptyStatement()
+        public async Task TestEmptyStatementAsync()
         {
             var testCode = @"
 class TestClass
@@ -69,7 +69,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task TestLabeledEmptyStatement()
+        public async Task TestLabeledEmptyStatementAsync()
         {
             var testCode = @"
 class TestClass
@@ -85,7 +85,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task TestLabeledEmptyStatementFollowedByEmptyStatement()
+        public async Task TestLabeledEmptyStatementFollowedByEmptyStatementAsync()
         {
             var testCode = @"
 class TestClass
@@ -104,7 +104,7 @@ class TestClass
         }
 
         [Fact]
-        public async Task TestLabeledEmptyStatementFollowedByNonEmptyStatement()
+        public async Task TestLabeledEmptyStatementFollowedByNonEmptyStatementAsync()
         {
             var testCode = @"
 class TestClass

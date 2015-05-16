@@ -15,7 +15,7 @@
     /// <remarks>
     /// <para>To fix a violation of this rule, remove the region.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(RemoveRegionCodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RemoveRegionCodeFixProvider))]
     [Shared]
     public class RemoveRegionCodeFixProvider : CodeFixProvider
     {

@@ -11,7 +11,7 @@
     public class SA1307UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -30,7 +30,7 @@
         [InlineData("private readonly")]
         [InlineData("protected readonly")]
         [InlineData("protected internal readonly")]
-        public async Task TestThatDiagnosticIsNotReported(string modifiers)
+        public async Task TestThatDiagnosticIsNotReportedAsync(string modifiers)
         {
             var testCode = @"public class Foo
 {{
@@ -45,7 +45,7 @@ string Bar = """", car = """", Dar = """";
         [InlineData("public")]
         [InlineData("internal")]
         [InlineData("protected internal")]
-        public async Task TestThatDiagnosticIsReported_SingleField(string modifiers)
+        public async Task TestThatDiagnosticIsReported_SingleFieldAsync(string modifiers)
         {
             var testCode = @"public class Foo
 {{
@@ -82,7 +82,7 @@ string Dar;
         [InlineData("public")]
         [InlineData("internal")]
         [InlineData("protected internal")]
-        public async Task TestThatDiagnosticIsReported_MultipleFields(string modifiers)
+        public async Task TestThatDiagnosticIsReported_MultipleFieldsAsync(string modifiers)
         {
             var testCode = @"public class Foo
 {{
@@ -108,7 +108,7 @@ string Bar, Car, Dar;
         }
 
         [Fact]
-        public async Task TestFieldStartingWithAnUnderscore()
+        public async Task TestFieldStartingWithAnUnderscoreAsync()
         {
             // Makes sure SA1307 is not reported for fields starting with an underscore
             var testCode = @"public class Foo
@@ -120,7 +120,7 @@ string Bar, Car, Dar;
         }
 
         [Fact]
-        public async Task TestFieldPlacedInsideNativeMethodsClass()
+        public async Task TestFieldPlacedInsideNativeMethodsClassAsync()
         {
             var testCode = @"public class FooNativeMethods
 {

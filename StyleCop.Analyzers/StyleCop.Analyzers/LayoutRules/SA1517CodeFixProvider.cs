@@ -14,7 +14,7 @@
     /// <summary>
     /// Implements a code fix for <see cref="SA1517CodeMustNotContainBlankLinesAtStartOfFile"/>.
     /// </summary>
-    [ExportCodeFixProvider(nameof(SA1517CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1517CodeFixProvider))]
     [Shared]
     public class SA1517CodeFixProvider : CodeFixProvider
     {

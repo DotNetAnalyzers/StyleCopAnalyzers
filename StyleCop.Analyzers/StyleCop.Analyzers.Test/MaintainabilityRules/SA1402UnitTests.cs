@@ -23,7 +23,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Fact]
-        public async Task TestPartialClasses()
+        public async Task TestPartialClassesAsync()
         {
             var testCode = @"public partial class Foo
 {
@@ -38,7 +38,7 @@ public partial class Foo
         }
 
         [Fact]
-        public async Task TestDifferentPartialClasses()
+        public async Task TestDifferentPartialClassesAsync()
         {
             var testCode = @"public partial class Foo
 {
@@ -55,7 +55,7 @@ public partial class Bar
         }
 
         [Fact]
-        public async Task TestNestedClasses()
+        public async Task TestNestedClassesAsync()
         {
             var testCode = @"public class Foo
 {

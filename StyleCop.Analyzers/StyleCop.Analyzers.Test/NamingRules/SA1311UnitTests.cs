@@ -11,14 +11,14 @@
     public class SA1311UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestStaticReadonlyFieldStartingWithLoweCase()
+        public async Task TestStaticReadonlyFieldStartingWithLoweCaseAsync()
         {
             var testCode = @"public class Foo
 {
@@ -38,7 +38,7 @@
         }
 
         [Fact]
-        public async Task TestStaticReadonlyFieldStartingWithLoweCaseFieldIsJustOneLetter()
+        public async Task TestStaticReadonlyFieldStartingWithLoweCaseFieldIsJustOneLetterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -58,7 +58,7 @@
         }
 
         [Fact]
-        public async Task TestStaticReadonlyFieldAssignmentInConstructor()
+        public async Task TestStaticReadonlyFieldAssignmentInConstructorAsync()
         {
             var testCode = @"public class Foo
 {
@@ -88,7 +88,7 @@
         }
 
         [Fact]
-        public async Task TestStaticReadonlyFieldStartingWithUpperCase()
+        public async Task TestStaticReadonlyFieldStartingWithUpperCaseAsync()
         {
             var testCode = @"public class Foo
 {
@@ -99,7 +99,7 @@
         }
 
         [Fact]
-        public async Task TestReadonlyFieldStartingWithLoweCase()
+        public async Task TestReadonlyFieldStartingWithLoweCaseAsync()
         {
             var testCode = @"public class Foo
 {
@@ -110,7 +110,7 @@
         }
 
         [Fact]
-        public async Task TestStaticFieldStartingWithLoweCase()
+        public async Task TestStaticFieldStartingWithLoweCaseAsync()
         {
             var testCode = @"public class Foo
 {
@@ -121,7 +121,7 @@
         }
 
         [Fact]
-        public async Task TestClassNameConflict()
+        public async Task TestClassNameConflictAsync()
         {
             var testCode = @"public class Bar
 {
@@ -151,7 +151,7 @@
         }
 
         [Fact]
-        public async Task TestMemberNameConflict()
+        public async Task TestMemberNameConflictAsync()
         {
             var testCode = @"public class Foo
 {

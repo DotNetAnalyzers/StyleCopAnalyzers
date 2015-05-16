@@ -12,14 +12,14 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     public class SA1404UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestSuppressionWithStringLiteral()
+        public async Task TestSuppressionWithStringLiteralAsync()
         {
             var testCode = @"public class Foo
 {
@@ -34,7 +34,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Fact]
-        public async Task TestSuppressionWithNoJustification()
+        public async Task TestSuppressionWithNoJustificationAsync()
         {
             var testCode = @"public class Foo
 {
@@ -51,7 +51,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Fact]
-        public async Task TestSuppressionWithEmptyJustification()
+        public async Task TestSuppressionWithEmptyJustificationAsync()
         {
             var testCode = @"public class Foo
 {
@@ -68,7 +68,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Fact]
-        public async Task TestSuppressionWithEscapedIdentifierWithJustification()
+        public async Task TestSuppressionWithEscapedIdentifierWithJustificationAsync()
         {
             var testCode = @"public class Foo
 {
@@ -85,7 +85,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Fact]
-        public async Task TestSuppressionWithWhitespaceJustification()
+        public async Task TestSuppressionWithWhitespaceJustificationAsync()
         {
             var testCode = @"public class Foo
 {
@@ -102,7 +102,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Fact]
-        public async Task TestSuppressionWithNullJustification()
+        public async Task TestSuppressionWithNullJustificationAsync()
         {
             var testCode = @"public class Foo
 {
@@ -119,7 +119,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Fact]
-        public async Task TestSuppressionWithComplexJustification()
+        public async Task TestSuppressionWithComplexJustificationAsync()
         {
             var testCode = @"public class Foo
 {
@@ -135,7 +135,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Fact]
-        public async Task TestSuppressionWithComplexWhitespaceJustification()
+        public async Task TestSuppressionWithComplexWhitespaceJustificationAsync()
         {
             var testCode = @"public class Foo
 {
@@ -153,7 +153,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         }
 
         [Fact]
-        public async Task TestDiagnosticDoesNotThrowNullReferenceForWrongConstantType()
+        public async Task TestDiagnosticDoesNotThrowNullReferenceForWrongConstantTypeAsync()
         {
             var testCode = @"public class Foo
 {

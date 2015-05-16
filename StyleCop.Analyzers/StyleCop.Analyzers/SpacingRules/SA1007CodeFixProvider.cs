@@ -14,7 +14,7 @@
     /// <remarks>
     /// <para>To fix a violation of this rule, add a single space after the operator keyword.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1007CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1007CodeFixProvider))]
     [Shared]
     public class SA1007CodeFixProvider : CodeFixProvider
     {

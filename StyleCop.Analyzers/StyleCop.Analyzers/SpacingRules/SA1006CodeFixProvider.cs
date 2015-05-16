@@ -15,7 +15,7 @@
     /// <para>To fix a violation of this rule, ensure that there is no whitespace between the opening hash mark and the
     /// preprocessor-type keyword.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1006CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1006CodeFixProvider))]
     [Shared]
     public class SA1006CodeFixProvider : CodeFixProvider
     {
