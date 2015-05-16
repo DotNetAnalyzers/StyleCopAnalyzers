@@ -11,6 +11,7 @@
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Formatting;
     using SpacingRules;
 
     /// <summary>
@@ -114,10 +115,11 @@
                 throw new InvalidOperationException("XmlElementSyntax has invalid method as its parent");
             }
 
-            var list = BuildStandardText(typeDeclaration.Identifier, typeParameterList, standardText[0], standardText[1]);
+            string newLineText = document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp);
+            var list = BuildStandardText(typeDeclaration.Identifier, typeParameterList, newLineText, standardText[0], standardText[1]);
 
             var newContent = node.Content.InsertRange(0, list);
-            var newNode = node.WithContent(newContent);
+            var newNode = node.WithContent(newContent).AdjustDocumentationCommentNewLineTrivia();
 
             var newRoot = root.ReplaceNode(node, newNode);
 
@@ -126,7 +128,7 @@
             return Task.FromResult(newDocument);
         }
 
-        private static SyntaxList<XmlNodeSyntax> BuildStandardText(SyntaxToken identifier, TypeParameterListSyntax typeParameters, string preText, string postText)
+        private static SyntaxList<XmlNodeSyntax> BuildStandardText(SyntaxToken identifier, TypeParameterListSyntax typeParameters, string newLineText, string preText, string postText)
         {
             TypeSyntax identifierName;
 
@@ -140,29 +142,11 @@
                 identifierName = SyntaxFactory.GenericName(identifier.WithoutTrivia(), ParameterToArgumentListSyntax(typeParameters));
             }
 
-            var list = new SyntaxList<XmlNodeSyntax>();
-
-            list = list.Add(XmlNewLine());
-            list = list.Add(CreateTextSyntax(preText).WithLeadingTrivia(XmlLineStart()));
-            list = list.Add(CreateSeeSyntax(identifierName));
-            list = list.Add(CreateTextSyntax(postText.EndsWith(".") ? postText : (postText + ".")));
-
-            return list;
-        }
-
-        private static SyntaxTriviaList XmlLineStart()
-        {
-            return SyntaxFactory.TriviaList(
-                SyntaxFactory.ElasticMarker,
-                SyntaxFactory.DocumentationCommentExterior("/// "));
-        }
-
-        private static XmlTextSyntax XmlNewLine()
-        {
-            var tokenList = new SyntaxTokenList();
-            tokenList = tokenList.Add(SyntaxFactory.XmlTextNewLine(default(SyntaxTriviaList), "\r\n", "\r\n", default(SyntaxTriviaList)));
-
-            return SyntaxFactory.XmlText(tokenList);
+            return XmlSyntaxFactory.List(
+                XmlSyntaxFactory.NewLine(newLineText),
+                XmlSyntaxFactory.Text(preText),
+                XmlSyntaxFactory.SeeElement(SyntaxFactory.TypeCref(identifierName)),
+                XmlSyntaxFactory.Text(postText.EndsWith(".") ? postText : (postText + ".")));
         }
 
         private static TypeArgumentListSyntax ParameterToArgumentListSyntax(TypeParameterListSyntax typeParameters)
@@ -179,46 +163,6 @@
             }
 
             return SyntaxFactory.TypeArgumentList(list);
-        }
-
-        private static  XmlNodeSyntax CreateSeeSyntax(TypeSyntax identifier)
-        {
-            NameMemberCrefSyntax cref;
-
-            var genericName = identifier as GenericNameSyntax;
-
-            if (genericName != null)
-            {
-                // In Xml a type argument list is enclosed in braces, not greater/less than tokens.
-                var lessThanToken = SyntaxFactory.Token(default(SyntaxTriviaList), SyntaxKind.LessThanToken, "{", "{", default(SyntaxTriviaList));
-                var greaterThanToken = SyntaxFactory.Token(default(SyntaxTriviaList), SyntaxKind.GreaterThanToken, "}", "}", default(SyntaxTriviaList));
-                var newList = SyntaxFactory.TypeArgumentList(lessThanToken, genericName.TypeArgumentList.Arguments, greaterThanToken);
-                genericName = genericName.WithTypeArgumentList(newList);
-                cref = SyntaxFactory.NameMemberCref(genericName);
-            }
-            else
-            {
-                cref = SyntaxFactory.NameMemberCref(identifier).WithoutFormatting();
-            }
-
-            var attributes = new SyntaxList<XmlAttributeSyntax>();
-
-            attributes = attributes.Add(SyntaxFactory.XmlCrefAttribute(SyntaxFactory.XmlName(XmlCommentHelper.CrefArgumentName), SyntaxFactory.Token(SyntaxKind.DoubleQuoteToken), cref, SyntaxFactory.Token(SyntaxKind.DoubleQuoteToken)));
-
-            return SyntaxFactory.XmlEmptyElement(SyntaxFactory.XmlName(XmlCommentHelper.SeeXmlTag).WithTrailingTrivia(SyntaxFactory.ElasticSpace), attributes);
-        }
-
-        private static XmlTextSyntax CreateTextSyntax(string text)
-        {
-            var tokenList = new SyntaxTokenList();
-            tokenList = tokenList.Add(XmlTextLiteral(text));
-
-            return SyntaxFactory.XmlText(tokenList);
-        }
-
-        private static SyntaxToken XmlTextLiteral(string text)
-        {
-            return SyntaxFactory.XmlTextLiteral(default(SyntaxTriviaList), text, text, default(SyntaxTriviaList));
         }
     }
 }

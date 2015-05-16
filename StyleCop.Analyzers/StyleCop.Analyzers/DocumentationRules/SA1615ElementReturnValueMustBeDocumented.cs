@@ -79,20 +79,20 @@
                 return;
             }
 
-            var documentationStructure = XmlCommentHelper.GetDocumentationStructure(context.Node);
+            var documentationStructure = context.Node.GetDocumentationCommentTriviaSyntax();
 
             if (documentationStructure == null)
             {
                 return;
             }
 
-            if (XmlCommentHelper.GetTopLevelElement(documentationStructure, XmlCommentHelper.InheritdocXmlTag) != null)
+            if (documentationStructure.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag) != null)
             {
                 // Don't report if the documentation is inherited.
                 return;
             }
 
-            if (XmlCommentHelper.GetTopLevelElement(documentationStructure, XmlCommentHelper.ReturnsXmlTag) == null)
+            if (documentationStructure.Content.GetFirstXmlElement(XmlCommentHelper.ReturnsXmlTag) == null)
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, returnType.GetLocation()));
             }

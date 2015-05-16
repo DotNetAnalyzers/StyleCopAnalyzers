@@ -166,6 +166,7 @@
     <Compile Include="LayoutRules\SA1500\SA1500UnitTests.Structs.cs" />
     <Compile Include="LayoutRules\SA1500\SA1500UnitTests.Switches.cs" />
     <Compile Include="LayoutRules\SA1500\SA1500UnitTests.TryCatchFinallys.cs" />
+    <Compile Include="LayoutRules\SA1501UnitTests.cs" />
     <Compile Include="LayoutRules\SA1502\SA1502UnitTests.Constructors.cs" />
     <Compile Include="LayoutRules\SA1502\SA1502UnitTests.cs" />
     <Compile Include="LayoutRules\SA1502\SA1502UnitTests.Destructors.cs" />
@@ -214,6 +215,8 @@
     <Compile Include="OrderingRules\SA1205UnitTests.cs" />
     <Compile Include="OrderingRules\SA1212UnitTests.cs" />
     <Compile Include="OrderingRules\SA1213UnitTests.cs" />
+    <Compile Include="OrderingRules\SA1216UnitTests.cs" />
+    <Compile Include="OrderingRules\SA1217UnitTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReadabilityRules\SA1100UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1101UnitTests.cs" />

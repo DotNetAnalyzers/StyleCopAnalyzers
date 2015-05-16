@@ -64,7 +64,7 @@
         {
             var node = context.Node;
 
-            var documentation = XmlCommentHelper.GetDocumentationStructure(node);
+            var documentation = node.GetDocumentationCommentTriviaSyntax();
 
             if (documentation != null)
             {
@@ -75,13 +75,13 @@
                     return;
                 }
 
-                if (XmlCommentHelper.GetTopLevelElement(documentation, XmlCommentHelper.InheritdocXmlTag) != null)
+                if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag) != null)
                 {
                     // Ignore nodes with an <inheritdoc/> tag.
                     return;
                 }
 
-                var xmlParameterNames = XmlCommentHelper.GetTopLevelElements(documentation, XmlCommentHelper.ParamTag)
+                var xmlParameterNames = documentation.Content.GetXmlElements(XmlCommentHelper.ParamTag)
                     .Select(XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>)
                     .Where(x => x != null)
                     .ToImmutableArray();
