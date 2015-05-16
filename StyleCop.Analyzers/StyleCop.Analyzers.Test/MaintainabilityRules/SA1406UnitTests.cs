@@ -24,9 +24,9 @@
             }
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1406DebugFailMustProvideMessageText();
+            yield return new SA1406DebugFailMustProvideMessageText();
         }
     }
 }

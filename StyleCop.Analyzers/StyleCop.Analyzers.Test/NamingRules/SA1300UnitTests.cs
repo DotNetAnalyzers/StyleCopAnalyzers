@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.NamingRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -487,9 +488,9 @@ public interface IInterface
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1300ElementMustBeginWithUpperCaseLetter();
+            yield return new SA1300ElementMustBeginWithUpperCaseLetter();
         }
     }
 }

@@ -1,13 +1,14 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using StyleCop.Analyzers.MaintainabilityRules;
-using TestHelper;
-using Xunit;
-
-namespace StyleCop.Analyzers.Test.MaintainabilityRules
+﻿namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
+    using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.MaintainabilityRules;
+    using TestHelper;
+    using Xunit;
+
     public class SA1408UnitTests : CodeFixVerifier
     {
         [Fact]
@@ -214,9 +215,9 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1408ConditionalExpressionsMustDeclarePrecedence();
+            yield return new SA1408ConditionalExpressionsMustDeclarePrecedence();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

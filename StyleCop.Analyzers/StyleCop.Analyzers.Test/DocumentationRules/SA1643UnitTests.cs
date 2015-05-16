@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.DocumentationRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -197,9 +198,9 @@
             await this.TestDestructorMissingDocumentationImplAsync(DestructorStandardText[0], DestructorStandardText[1], true).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1643DestructorSummaryDocumentationMustBeginWithStandardText();
+            yield return new SA1643DestructorSummaryDocumentationMustBeginWithStandardText();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

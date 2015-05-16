@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.LayoutRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -258,9 +259,9 @@ class FooBar
         }
 
         /// <inheritdoc/>
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1507CodeMustNotContainMultipleBlankLinesInARow();
+            yield return new SA1507CodeMustNotContainMultipleBlankLinesInARow();
         }
 
         /// <inheritdoc/>

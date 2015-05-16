@@ -354,9 +354,9 @@ public class Foo
         }
 
         /// <inheritdoc/>
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1503CurlyBracketsMustNotBeOmitted();
+            yield return new SA1503CurlyBracketsMustNotBeOmitted();
         }
 
         /// <inheritdoc/>

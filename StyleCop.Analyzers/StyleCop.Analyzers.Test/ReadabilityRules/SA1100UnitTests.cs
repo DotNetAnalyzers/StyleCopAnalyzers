@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -1024,9 +1025,9 @@ public class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists();
+            yield return new SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

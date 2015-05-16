@@ -4,11 +4,12 @@
     using Microsoft.CodeAnalysis.Diagnostics;
     using Xunit;
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using System.Linq;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
-
+    
     /// <summary>
     /// Superclass of all unit tests for <see cref="DiagnosticAnalyzer"/>s.
     /// </summary>
@@ -17,40 +18,12 @@
         protected static DiagnosticResult[] EmptyDiagnosticResults { get; } = { };
 
         /// <summary>
-        /// Get the C# analyzer being tested
-        /// </summary>
-        /// <returns>
-        /// A new instance of the C# analyzer being tested.
-        /// </returns>
-        /// <remarks>
-        /// <para>
-        /// This method or <see cref="GetCSharpDiagnosticAnalyzers"/> must be implemented in a non-abstract base class.
-        /// </para>
-        /// </remarks>
-        protected virtual DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return null;
-        }
-
-        /// <summary>
         /// Gets the C# analyzers being tested
         /// </summary>
         /// <returns>
         /// New instances of all the C# analyzers being tested.
         /// </returns>
-        /// <remarks>
-        /// <para>
-        /// This method or <see cref="GetCSharpDiagnosticAnalyzer"/> must be implemented in a non-abstract base class.
-        /// </para>
-        /// <para>
-        /// The default implementation of this method will call <see cref="GetCSharpDiagnosticAnalyzer"/>.
-        /// Overriding this method will therefore ignore any override of <see cref="GetCSharpDiagnosticAnalyzer"/>.
-        /// </para>
-        /// </remarks>
-        protected virtual DiagnosticAnalyzer[] GetCSharpDiagnosticAnalyzers()
-        {
-            return new[] { this.GetCSharpDiagnosticAnalyzer() };
-        }
+        protected abstract IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers();
 
         /// <summary>
         /// Called to test a C# <see cref="DiagnosticAnalyzer"/> when applied on the single input source as a string.
@@ -81,7 +54,7 @@
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
-            return this.VerifyDiagnosticsAsync(new[] { source }, LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers(), expected, cancellationToken);
+            return this.VerifyDiagnosticsAsync(new[] { source }, LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), expected, cancellationToken);
         }
 
         /// <summary>
@@ -98,7 +71,7 @@
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         protected Task VerifyCSharpDiagnosticAsync(string[] sources, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
-            return this.VerifyDiagnosticsAsync(sources, LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers(), expected, cancellationToken);
+            return this.VerifyDiagnosticsAsync(sources, LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), expected, cancellationToken);
         }
 
         /// <summary>
@@ -112,9 +85,9 @@
         /// is run on the sources.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        private async Task VerifyDiagnosticsAsync(string[] sources, string language, DiagnosticAnalyzer[] analyzers, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        private async Task VerifyDiagnosticsAsync(string[] sources, string language, ImmutableArray<DiagnosticAnalyzer> analyzers, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
-            var diagnostics = await GetSortedDiagnosticsAsync(sources, language, analyzers, cancellationToken).ConfigureAwait(false);
+            var diagnostics = await GetSortedDiagnosticsAsync(sources, language, analyzers.ToImmutableArray(), cancellationToken).ConfigureAwait(false);
             VerifyDiagnosticResults(diagnostics, analyzers, expected);
         }
 
@@ -130,7 +103,7 @@
         /// <param name="analyzers">The analyzers that have been run on the sources.</param>
         /// <param name="expectedResults">A collection of <see cref="DiagnosticResult"/>s describing the expected
         /// diagnostics for the sources.</param>
-        private static void VerifyDiagnosticResults(IEnumerable<Diagnostic> actualResults, DiagnosticAnalyzer[] analyzers, params DiagnosticResult[] expectedResults)
+        private static void VerifyDiagnosticResults(IEnumerable<Diagnostic> actualResults, ImmutableArray<DiagnosticAnalyzer> analyzers, params DiagnosticResult[] expectedResults)
         {
             int expectedCount = expectedResults.Count();
             int actualCount = actualResults.Count();
@@ -209,7 +182,7 @@
         /// <param name="actual">The location of the diagnostic found in the code.</param>
         /// <param name="expected">The <see cref="DiagnosticResultLocation"/> describing the expected location of the
         /// diagnostic.</param>
-        private static void VerifyDiagnosticLocation(DiagnosticAnalyzer[] analyzers, Diagnostic diagnostic, Location actual, DiagnosticResultLocation expected)
+        private static void VerifyDiagnosticLocation(ImmutableArray<DiagnosticAnalyzer> analyzers, Diagnostic diagnostic, Location actual, DiagnosticResultLocation expected)
         {
             var actualSpan = actual.GetLineSpan();
 
@@ -248,7 +221,7 @@
         /// <param name="analyzers">The analyzers that this verifier tests.</param>
         /// <param name="diagnostics">A collection of <see cref="Diagnostic"/>s to be formatted.</param>
         /// <returns>The <paramref name="diagnostics"/> formatted as a string.</returns>
-        private static string FormatDiagnostics(DiagnosticAnalyzer[] analyzers, params Diagnostic[] diagnostics)
+        private static string FormatDiagnostics(ImmutableArray<DiagnosticAnalyzer> analyzers, params Diagnostic[] diagnostics)
         {
             var builder = new StringBuilder();
             for (int i = 0; i < diagnostics.Length; ++i)

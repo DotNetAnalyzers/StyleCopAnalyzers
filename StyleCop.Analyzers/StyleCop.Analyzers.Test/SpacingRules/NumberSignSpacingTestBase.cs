@@ -434,7 +434,5 @@
         }
 
         protected override abstract CodeFixProvider GetCSharpCodeFixProvider();
-
-        protected override abstract DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer();
     }
 }

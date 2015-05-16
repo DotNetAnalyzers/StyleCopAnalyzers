@@ -158,9 +158,9 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1611ElementParametersMustBeDocumented();
+            yield return new SA1611ElementParametersMustBeDocumented();
         }
     }
 }

@@ -42,7 +42,7 @@ namespace TestHelper
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>A collection of <see cref="Diagnostic"/>s that surfaced in the source code, sorted by
         /// <see cref="Diagnostic.Location"/>.</returns>
-        private static Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsAsync(string[] sources, string language, DiagnosticAnalyzer[] analyzers, CancellationToken cancellationToken)
+        private static Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsAsync(string[] sources, string language, ImmutableArray<DiagnosticAnalyzer> analyzers, CancellationToken cancellationToken)
         {
             return GetSortedDiagnosticsFromDocumentsAsync(analyzers, GetDocuments(sources, language), cancellationToken);
         }
@@ -56,7 +56,7 @@ namespace TestHelper
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>A collection of <see cref="Diagnostic"/>s that surfaced in the source code, sorted by
         /// <see cref="Diagnostic.Location"/>.</returns>
-        protected static async Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsFromDocumentsAsync(DiagnosticAnalyzer[] analyzers, Document[] documents, CancellationToken cancellationToken)
+        protected static async Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsFromDocumentsAsync(ImmutableArray<DiagnosticAnalyzer> analyzers, Document[] documents, CancellationToken cancellationToken)
         {
             var projects = new HashSet<Project>();
             foreach (var document in documents)
@@ -83,7 +83,7 @@ namespace TestHelper
                 var processedProject = project.WithCompilationOptions(modifiedCompilationOptions);
 
                 var compilation = await processedProject.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
-                var compilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create(analyzers), null, cancellationToken);
+                var compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, null, cancellationToken);
                 var compilerDiagnostics = compilation.GetDiagnostics(cancellationToken);
                 var compilerErrors = compilerDiagnostics.Where(i => i.Severity == DiagnosticSeverity.Error);
                 var diags = await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
@@ -205,8 +205,8 @@ namespace TestHelper
 
         protected DiagnosticResult CSharpDiagnostic(string diagnosticId = null)
         {
-            DiagnosticAnalyzer analyzer = this.GetCSharpDiagnosticAnalyzer();
-            var supportedDiagnostics = analyzer.SupportedDiagnostics;
+            var analyzers = this.GetCSharpDiagnosticAnalyzers();
+            var supportedDiagnostics = analyzers.SelectMany(analyzer => analyzer.SupportedDiagnostics);
             if (diagnosticId == null)
             {
                 return new DiagnosticResult(supportedDiagnostics.Single());

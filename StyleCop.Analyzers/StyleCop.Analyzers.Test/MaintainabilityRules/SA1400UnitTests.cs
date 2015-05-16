@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Analyzers.MaintainabilityRules;
@@ -847,9 +848,9 @@ public {containingType} OuterTypeName {baseTypeList} {{
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1400AccessModifierMustBeDeclared();
+            yield return new SA1400AccessModifierMustBeDeclared();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Analyzers.ReadabilityRules;
@@ -205,9 +206,9 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1124DoNotUseRegions();
+            yield return new SA1124DoNotUseRegions();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

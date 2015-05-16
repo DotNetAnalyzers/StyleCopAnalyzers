@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.NamingRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -118,9 +119,9 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1310FieldNamesMustNotContainUnderscore();
+            yield return new SA1310FieldNamesMustNotContainUnderscore();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
