@@ -49,7 +49,7 @@
                 case SyntaxKind.MultiLineDocumentationCommentTrivia:
                     context.RegisterCodeFix(
                         CodeAction.Create(
-                            "Remove trailing whitespace",
+                            SpacingResources.SA1028CodeFix,
                             ct => RemoveWhitespaceAsync(context.Document, diagnostic, ct)),
                         diagnostic);
                     break;
@@ -60,7 +60,7 @@
                     case SyntaxKind.XmlText:
                         context.RegisterCodeFix(
                             CodeAction.Create(
-                                "Remove trailing whitespace",
+                                SpacingResources.SA1028CodeFix,
                                 ct => RemoveWhitespaceAsync(context.Document, diagnostic, ct)),
                             diagnostic);
                         break;

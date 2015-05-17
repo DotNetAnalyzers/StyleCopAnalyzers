@@ -51,11 +51,11 @@
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1005";
-        private const string Title = "Single line comments must begin with single space";
-        private const string MessageFormat = "Single line comment must begin with a space.";
-        private const string Category = "StyleCop.CSharp.SpacingRules";
-        private const string Description = "A single-line comment within a C# code file does not begin with a single space.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1005.html";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1005Title), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(SpacingResources.SA1005MessageFormat), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly string Category = "StyleCop.CSharp.SpacingRules";
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1005Description), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1005.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

@@ -57,7 +57,7 @@
                 var node = root?.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
                 if (node != null && node.IsKind(SyntaxKind.StringLiteralExpression))
                 {
-                    context.RegisterCodeFix(CodeAction.Create($"Replace with string.Empty", token => GetTransformedDocumentAsync(context.Document, root, node)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create(ReadabilityResources.SA1122CodeFix, token => GetTransformedDocumentAsync(context.Document, root, node)), diagnostic);
                 }
             }
         }

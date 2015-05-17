@@ -64,7 +64,7 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Replace with built-in type", token => GetTransformedDocumentAsync(context.Document, diagnostic, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(ReadabilityResources.SA1121CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token)), diagnostic);
             }
 
             return Task.FromResult(true);

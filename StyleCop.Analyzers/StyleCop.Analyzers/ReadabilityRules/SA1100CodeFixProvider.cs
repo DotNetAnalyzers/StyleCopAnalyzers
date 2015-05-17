@@ -50,7 +50,7 @@
                     return;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Replace 'base.' with 'this.'", token => GetTransformedDocumentAsync(context.Document, root, node)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(ReadabilityResources.SA1100CodeFix, token => GetTransformedDocumentAsync(context.Document, root, node)), diagnostic);
             }
         }
 
