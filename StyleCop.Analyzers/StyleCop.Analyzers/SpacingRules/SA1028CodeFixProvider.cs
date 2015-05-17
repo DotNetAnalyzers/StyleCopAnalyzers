@@ -8,6 +8,7 @@
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Text;
 
     /// <summary>
@@ -42,16 +43,30 @@
                 var trivia = root.FindTrivia(diagnosticSpan.Start, findInsideTrivia: true);
                 switch (trivia.Kind())
                 {
-                case SyntaxKind.WhitespaceTrivia:
-                case SyntaxKind.SingleLineCommentTrivia:
-                case SyntaxKind.MultiLineCommentTrivia:
-                case SyntaxKind.MultiLineDocumentationCommentTrivia:
-                    context.RegisterCodeFix(
-                        CodeAction.Create(
-                            "Remove trailing whitespace",
-                            ct => RemoveWhitespaceAsync(context.Document, diagnostic, ct)),
-                        diagnostic);
-                    break;
+                    case SyntaxKind.WhitespaceTrivia:
+                    case SyntaxKind.SingleLineCommentTrivia:
+                    case SyntaxKind.MultiLineCommentTrivia:
+                    case SyntaxKind.MultiLineDocumentationCommentTrivia:
+                        context.RegisterCodeFix(
+                            CodeAction.Create(
+                                "Remove trailing whitespace",
+                                ct => RemoveWhitespaceAsync(context.Document, diagnostic, ct)),
+                            diagnostic);
+                        break;
+                    default:
+                        var node = root.FindNode(diagnosticSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
+                        switch (node.Kind())
+                        {
+                            case SyntaxKind.XmlText:
+                                context.RegisterCodeFix(
+                                    CodeAction.Create(
+                                        "Remove trailing whitespace",
+                                        ct => RemoveWhitespaceAsync(context.Document, diagnostic, ct)),
+                                    diagnostic);
+                                break;
+                        }
+
+                        break;
                 }
             }
         }
@@ -71,27 +86,55 @@
             SyntaxNode newRoot;
             switch (trivia.Kind())
             {
-            case SyntaxKind.WhitespaceTrivia:
-                newRoot = root.ReplaceTrivia(trivia, SyntaxTriviaList.Empty);
-                break;
-            case SyntaxKind.SingleLineCommentTrivia:
-                string newTriviaContent = trivia.ToFullString().Substring(0, trivia.FullSpan.Length - diagnosticSpan.Length);
-                var newTrivia = SyntaxFactory.SyntaxTrivia(SyntaxKind.SingleLineCommentTrivia, newTriviaContent);
-                newRoot = root.ReplaceTrivia(trivia, newTrivia);
-                break;
-            case SyntaxKind.MultiLineCommentTrivia:
-            case SyntaxKind.MultiLineDocumentationCommentTrivia:
-                var triviaLocation = trivia.GetLocation();
-                string oldTriviaContent = trivia.ToFullString();
-                TextSpan diagnosticSpanWithinTrivia = TextSpan.FromBounds(diagnosticSpan.Start - triviaLocation.SourceSpan.Start, diagnosticSpan.End - triviaLocation.SourceSpan.Start);
-                newTriviaContent = string.Concat(
-                    oldTriviaContent.Substring(0, diagnosticSpanWithinTrivia.Start),
-                    oldTriviaContent.Substring(diagnosticSpanWithinTrivia.End));
-                newTrivia = SyntaxFactory.SyntaxTrivia(trivia.Kind(), newTriviaContent);
-                newRoot = root.ReplaceTrivia(trivia, newTrivia);
-                break;
-            default:
-                return document;
+                case SyntaxKind.WhitespaceTrivia:
+                    newRoot = root.ReplaceTrivia(trivia, SyntaxTriviaList.Empty);
+                    break;
+                case SyntaxKind.SingleLineCommentTrivia:
+                    string newTriviaContent = trivia.ToFullString().Substring(0, trivia.FullSpan.Length - diagnosticSpan.Length);
+                    var newTrivia = SyntaxFactory.SyntaxTrivia(SyntaxKind.SingleLineCommentTrivia, newTriviaContent);
+                    newRoot = root.ReplaceTrivia(trivia, newTrivia);
+                    break;
+                case SyntaxKind.MultiLineCommentTrivia:
+                case SyntaxKind.MultiLineDocumentationCommentTrivia:
+                    var triviaLocation = trivia.GetLocation();
+                    string oldTriviaContent = trivia.ToFullString();
+                    TextSpan diagnosticSpanWithinTrivia = TextSpan.FromBounds(diagnosticSpan.Start - triviaLocation.SourceSpan.Start, diagnosticSpan.End - triviaLocation.SourceSpan.Start);
+                    newTriviaContent = string.Concat(
+                        oldTriviaContent.Substring(0, diagnosticSpanWithinTrivia.Start),
+                        oldTriviaContent.Substring(diagnosticSpanWithinTrivia.End));
+                    newTrivia = SyntaxFactory.SyntaxTrivia(trivia.Kind(), newTriviaContent);
+                    newRoot = root.ReplaceTrivia(trivia, newTrivia);
+                    break;
+                default:
+                    var node = root.FindNode(diagnosticSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
+                    switch (node.Kind())
+                    {
+                        case SyntaxKind.XmlText:
+                            var xmlNode = (XmlTextSyntax)node;
+                            var newTextTokens = xmlNode.TextTokens;
+                            foreach (var textToken in newTextTokens)
+                            {
+                                if (textToken.Span.IntersectsWith(diagnosticSpan))
+                                {
+                                    diagnosticSpanWithinTrivia = TextSpan.FromBounds(diagnosticSpan.Start - textToken.Span.Start, diagnosticSpan.End - textToken.Span.Start);
+                                    oldTriviaContent = textToken.ValueText;
+                                    newTriviaContent = string.Concat(
+                                        oldTriviaContent.Substring(0, diagnosticSpanWithinTrivia.Start),
+                                        oldTriviaContent.Substring(diagnosticSpanWithinTrivia.End));
+                                    var newToken = SyntaxFactory.Token(textToken.LeadingTrivia, textToken.Kind(), newTriviaContent, newTriviaContent, textToken.TrailingTrivia);
+                                    newTextTokens = newTextTokens.Replace(textToken, newToken);
+                                    break;
+                                }
+                            }
+
+                            var newNode = xmlNode.Update(newTextTokens);
+                            newRoot = root.ReplaceNode(node, newNode);
+                            break;
+                        default:
+                            return document;
+                    }
+
+                    break;
             }
 
             var newDocument = document.WithSyntaxRoot(newRoot);
