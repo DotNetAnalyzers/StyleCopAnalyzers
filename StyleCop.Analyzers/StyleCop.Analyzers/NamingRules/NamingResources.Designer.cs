@@ -60,5 +60,77 @@ namespace StyleCop.Analyzers.NamingRules {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rename interface to &apos;{0}&apos;.
+        /// </summary>
+        internal static string SA1302CodeFix {
+            get {
+                return ResourceManager.GetString("SA1302CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rename field to &apos;{0}&apos;.
+        /// </summary>
+        internal static string SA1304SA1311CodeFix {
+            get {
+                return ResourceManager.GetString("SA1304SA1311CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rename field to &apos;{0}&apos;.
+        /// </summary>
+        internal static string SA1306CodeFix {
+            get {
+                return ResourceManager.GetString("SA1306CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rename field to &apos;{0}&apos;.
+        /// </summary>
+        internal static string SA1307CodeFix {
+            get {
+                return ResourceManager.GetString("SA1307CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rename field to &apos;{0}&apos;.
+        /// </summary>
+        internal static string SA1308CodeFix {
+            get {
+                return ResourceManager.GetString("SA1308CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rename field to &apos;{0}&apos;.
+        /// </summary>
+        internal static string SA1309CodeFix {
+            get {
+                return ResourceManager.GetString("SA1309CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rename field to &apos;{0}&apos;.
+        /// </summary>
+        internal static string SA1310CodeFix {
+            get {
+                return ResourceManager.GetString("SA1310CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rename field to &apos;{0}&apos;.
+        /// </summary>
+        internal static string SX1309CodeFix {
+            get {
+                return ResourceManager.GetString("SX1309CodeFix", resourceCulture);
+            }
+        }
     }
 }
