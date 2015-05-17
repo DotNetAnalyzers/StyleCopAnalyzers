@@ -60,5 +60,41 @@ namespace StyleCop.Analyzers.DocumentationRules {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Document value from summary.
+        /// </summary>
+        internal static string SA1609SA1610CodeFix {
+            get {
+                return ResourceManager.GetString("SA1609SA1610CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove &lt;returns&gt; XML comment.
+        /// </summary>
+        internal static string SA1617CodeFix {
+            get {
+                return ResourceManager.GetString("SA1617CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add standard text.
+        /// </summary>
+        internal static string SA1642SA1643CodeFix {
+            get {
+                return ResourceManager.GetString("SA1642SA1643CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Finalize placeholder text.
+        /// </summary>
+        internal static string SA1651CodeFix {
+            get {
+                return ResourceManager.GetString("SA1651CodeFix", resourceCulture);
+            }
+        }
     }
 }
