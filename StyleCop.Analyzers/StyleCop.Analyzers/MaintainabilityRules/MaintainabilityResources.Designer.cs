@@ -60,5 +60,41 @@ namespace StyleCop.Analyzers.MaintainabilityRules {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove parentheses.
+        /// </summary>
+        internal static string SA1119CodeFix {
+            get {
+                return ResourceManager.GetString("SA1119CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Declare accessibility.
+        /// </summary>
+        internal static string SA1400CodeFix {
+            get {
+                return ResourceManager.GetString("SA1400CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add parentheses.
+        /// </summary>
+        internal static string SA1407SA1408CodeFix {
+            get {
+                return ResourceManager.GetString("SA1407SA1408CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove parentheses.
+        /// </summary>
+        internal static string SA1410SA1411CodeFix {
+            get {
+                return ResourceManager.GetString("SA1410SA1411CodeFix", resourceCulture);
+            }
+        }
     }
 }

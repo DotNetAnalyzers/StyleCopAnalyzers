@@ -53,7 +53,7 @@
                 BinaryExpressionSyntax syntax = node as BinaryExpressionSyntax;
                 if (syntax != null)
                 {
-                    context.RegisterCodeFix(CodeAction.Create("Add parenthesis", token => GetTransformedDocumentAsync(context.Document, root, syntax)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create(MaintainabilityResources.SA1407SA1408CodeFix, token => GetTransformedDocumentAsync(context.Document, root, syntax)), diagnostic);
                 }
             }
         }
