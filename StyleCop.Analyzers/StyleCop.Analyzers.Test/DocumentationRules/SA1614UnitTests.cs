@@ -142,9 +142,9 @@ $$
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1614ElementParameterDocumentationMustHaveText();
+            yield return new SA1614ElementParameterDocumentationMustHaveText();
         }
     }
 }

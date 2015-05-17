@@ -132,9 +132,9 @@ public partial class Foo
         }
 
         /// <inheritdoc/>
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1205PartialElementsMustDeclareAccess();
+            yield return new SA1205PartialElementsMustDeclareAccess();
         }
 
         /// <inheritdoc/>

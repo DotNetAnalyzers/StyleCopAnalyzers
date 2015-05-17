@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.SpacingRules
 {
+    using System.Collections.Generic;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.SpacingRules;
@@ -14,14 +15,14 @@
             }
         }
 
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        {
+            yield return new SA1021NegativeSignsMustBeSpacedCorrectly();
+        }
+
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new SA1021CodeFixProvider();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new SA1021NegativeSignsMustBeSpacedCorrectly();
         }
     }
 }

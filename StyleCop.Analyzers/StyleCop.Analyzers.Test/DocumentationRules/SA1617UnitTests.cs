@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.DocumentationRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Analyzers.DocumentationRules;
@@ -265,9 +266,9 @@ public class ClassName
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1617VoidReturnValueMustNotBeDocumented();
+            yield return new SA1617VoidReturnValueMustNotBeDocumented();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

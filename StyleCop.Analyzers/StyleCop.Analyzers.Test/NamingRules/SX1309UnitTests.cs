@@ -159,9 +159,9 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SX1309FieldNamesMustBeginWithUnderscore();
+            yield return new SX1309FieldNamesMustBeginWithUnderscore();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
