@@ -31,8 +31,7 @@
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            // Require users review each removal of placeholder tags.
-            return null;
+            return WellKnownFixAllProviders.BatchFixer;
         }
 
         /// <inheritdoc/>
