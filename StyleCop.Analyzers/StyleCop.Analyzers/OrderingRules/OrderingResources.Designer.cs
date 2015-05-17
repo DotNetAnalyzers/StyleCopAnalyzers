@@ -60,5 +60,14 @@ namespace StyleCop.Analyzers.OrderingRules {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add access modifier.
+        /// </summary>
+        internal static string SA1205CodeFix {
+            get {
+                return ResourceManager.GetString("SA1205CodeFix", resourceCulture);
+            }
+        }
     }
 }
