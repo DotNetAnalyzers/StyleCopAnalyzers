@@ -37,7 +37,7 @@
         {
             foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                context.RegisterCodeFix(CodeAction.Create("Insert blank line after curly brace", token => GetTransformedDocumentAsync(context.Document, diagnostic, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1513CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token)), diagnostic);
             }
 
             return Task.FromResult(true);

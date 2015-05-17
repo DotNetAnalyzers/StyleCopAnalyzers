@@ -45,7 +45,7 @@
         {
             foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                context.RegisterCodeFix(CodeAction.Create("Align curly brackets", token => GetTransformedDocumentAsync(context.Document, diagnostic, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1500CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token)), diagnostic);
             }
 
             return Task.FromResult(true);

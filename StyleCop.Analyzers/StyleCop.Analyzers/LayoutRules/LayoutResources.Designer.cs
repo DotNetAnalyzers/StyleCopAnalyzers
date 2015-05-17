@@ -60,5 +60,95 @@ namespace StyleCop.Analyzers.LayoutRules {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Align curly brackets.
+        /// </summary>
+        internal static string SA1500CodeFix {
+            get {
+                return ResourceManager.GetString("SA1500CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Expand single line block.
+        /// </summary>
+        internal static string SA1501CodeFix {
+            get {
+                return ResourceManager.GetString("SA1501CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Expand element.
+        /// </summary>
+        internal static string SA1502CodeFix {
+            get {
+                return ResourceManager.GetString("SA1502CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wrap with curly brackets.
+        /// </summary>
+        internal static string SA1503CodeFix {
+            get {
+                return ResourceManager.GetString("SA1503CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove multiple blank lines.
+        /// </summary>
+        internal static string SA1507CodeFix {
+            get {
+                return ResourceManager.GetString("SA1507CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove blank lines preceding this curly bracket.
+        /// </summary>
+        internal static string SA1509CodeFix {
+            get {
+                return ResourceManager.GetString("SA1509CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert blank line after curly brace.
+        /// </summary>
+        internal static string SA1513CodeFix {
+            get {
+                return ResourceManager.GetString("SA1513CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert new line.
+        /// </summary>
+        internal static string SA1516CodeFix {
+            get {
+                return ResourceManager.GetString("SA1516CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove blank lines at the start of the file.
+        /// </summary>
+        internal static string SA1517CodeFix {
+            get {
+                return ResourceManager.GetString("SA1517CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove blank lines at the end of the file.
+        /// </summary>
+        internal static string SA1518CodeFix {
+            get {
+                return ResourceManager.GetString("SA1518CodeFix", resourceCulture);
+            }
+        }
     }
 }
