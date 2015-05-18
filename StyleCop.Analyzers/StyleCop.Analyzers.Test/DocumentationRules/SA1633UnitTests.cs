@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.DocumentationRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -14,18 +15,6 @@
     /// </summary>
     public class SA1633UnitTests : FileHeaderTestBase
     {
-        /// <inheritdoc/>
-        protected override DiagnosticResult[] EmptySourceDiagnostics
-        {
-            get
-            {
-                return new[]
-                {
-                    this.CSharpDiagnostic().WithLocation(1, 1).WithArguments("is missing or not located at the top of the file.")
-                };
-            }
-        }
-
         /// <inheritdoc/>
         protected override DiagnosticResult[] NoFileHeaderDiagnostics
         {
@@ -151,9 +140,9 @@ namespace Foo
         }
 
         /// <inheritdoc/>
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1633FileMustHaveHeader();
+            yield return new SA1633FileMustHaveHeader();
         }
     }
 }

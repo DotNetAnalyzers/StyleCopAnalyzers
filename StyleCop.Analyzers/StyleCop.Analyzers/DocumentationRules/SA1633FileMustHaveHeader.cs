@@ -97,6 +97,12 @@
         {
             var root = context.Tree.GetRoot(context.CancellationToken);
 
+            // don't process empty files
+            if (root.FullSpan.IsEmpty)
+            {
+                return;
+            }
+
             var fileHeader = FileHeaderHelpers.ParseFileHeader(root);
             if (fileHeader.IsMissing)
             {

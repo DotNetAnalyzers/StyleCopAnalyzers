@@ -11,17 +11,6 @@
     public abstract class FileHeaderTestBase : DiagnosticVerifier
     {
         /// <summary>
-        /// Gets the diagnostics that will be checked in the <see cref="TestEmptySourceAsync"/> test case.
-        /// </summary>
-        /// <value>
-        /// The diagnostics that should occur when the test case is executed.
-        /// </value>
-        protected virtual DiagnosticResult[] EmptySourceDiagnostics
-        {
-            get { return EmptyDiagnosticResults; }
-        }
-
-        /// <summary>
         /// Gets the diagnostics that will be checked in the <see cref="TestNoFileHeaderAsync"/> test case.
         /// </summary>
         /// <value>
@@ -51,7 +40,7 @@
         public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, this.EmptySourceDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -93,7 +82,7 @@ namespace Bar
         [Fact]
         public async Task TestValidFileHeaderAsync()
         {
-            var testCode = @"// <copyright file=""test0.cs"" company=""FooCorp"">
+            var testCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
 //   Copyright (c) FooCorp. All rights reserved.
 // </copyright>
 // <summary>This is a test file.</summary>
@@ -114,7 +103,7 @@ namespace Bar
         public async Task TestValidFileHeaderWithBordersAsync()
         {
             var testCode = @"//----------------------------------------
-// <copyright file=""test0.cs"" company=""FooCorp"">
+// <copyright file=""Test0.cs"" company=""FooCorp"">
 //   Copyright (c) FooCorp. All rights reserved.
 // </copyright>
 // <summary>This is a test file.</summary>
