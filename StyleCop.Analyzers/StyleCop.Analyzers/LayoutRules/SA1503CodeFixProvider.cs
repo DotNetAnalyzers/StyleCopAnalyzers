@@ -22,7 +22,7 @@
     public class SA1503CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1503CurlyBracketsMustNotBeOmitted.DiagnosticId);
+            ImmutableArray.Create(SA1503CurlyBracketsMustNotBeOmitted.DiagnosticId, SA1519CurlyBrackets.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds
