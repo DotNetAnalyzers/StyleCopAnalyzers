@@ -105,20 +105,36 @@
         /// <returns>true if the member is implementing an interface member, otherwise false.</returns>
         internal static bool IsImplementingAnInterfaceMember(ISymbol memberSymbol)
         {
-            IMethodSymbol methodSymbol = memberSymbol as IMethodSymbol;
-            IPropertySymbol propertySymbol = memberSymbol as IPropertySymbol;
-            IEventSymbol eventSymbol = memberSymbol as IEventSymbol;
-
-            // Only methods, properties and events can implement an interface member
-            if (methodSymbol == null && propertySymbol == null && eventSymbol == null)
+            if (memberSymbol.IsStatic)
             {
                 return false;
             }
 
-            // Check if the member is implementing an interface explicitly
-            bool isImplementingExplicitly = methodSymbol != null && methodSymbol.ExplicitInterfaceImplementations.Any();
-            isImplementingExplicitly |= propertySymbol != null && propertySymbol.ExplicitInterfaceImplementations.Any();
-            isImplementingExplicitly |= eventSymbol != null && eventSymbol.ExplicitInterfaceImplementations.Any();
+            IMethodSymbol methodSymbol;
+            IPropertySymbol propertySymbol;
+            IEventSymbol eventSymbol;
+            bool isImplementingExplicitly;
+
+            // Only methods, properties and events can implement an interface member
+            if ((methodSymbol = memberSymbol as IMethodSymbol) != null)
+            {
+                // Check if the member is implementing an interface explicitly
+                isImplementingExplicitly = methodSymbol.ExplicitInterfaceImplementations.Any();
+            }
+            else if ((propertySymbol = memberSymbol as IPropertySymbol) != null)
+            {
+                // Check if the member is implementing an interface explicitly
+                isImplementingExplicitly = propertySymbol.ExplicitInterfaceImplementations.Any();
+            }
+            else if ((eventSymbol = memberSymbol as IEventSymbol) != null)
+            {
+                // Check if the member is implementing an interface explicitly
+                isImplementingExplicitly = eventSymbol.ExplicitInterfaceImplementations.Any();
+            }
+            else
+            {
+                return false;
+            }
 
             if (isImplementingExplicitly)
             {
