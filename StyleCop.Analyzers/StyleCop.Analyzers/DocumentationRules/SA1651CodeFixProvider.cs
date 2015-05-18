@@ -31,8 +31,7 @@
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            // Require users review each removal of placeholder tags.
-            return null;
+            return WellKnownFixAllProviders.BatchFixer;
         }
 
         /// <inheritdoc/>
@@ -65,7 +64,7 @@
                     continue;
                 }
 
-                string description = "Finalize placeholder text";
+                string description = DocumentationResources.SA1651CodeFix;
                 context.RegisterCodeFix(CodeAction.Create(description, cancellationToken => this.GetTransformedDocumentAsync(context.Document, xmlElementSyntax, cancellationToken)), diagnostic);
             }
         }

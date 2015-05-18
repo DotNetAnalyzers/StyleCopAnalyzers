@@ -55,7 +55,7 @@
 
                 if (syntax != null)
                 {
-                    context.RegisterCodeFix(CodeAction.Create("Remove parenthesis", token => GetTransformedDocumentAsync(context.Document, root, syntax)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create(MaintainabilityResources.SA1119CodeFix, token => GetTransformedDocumentAsync(context.Document, root, syntax)), diagnostic);
                 }
             }
         }

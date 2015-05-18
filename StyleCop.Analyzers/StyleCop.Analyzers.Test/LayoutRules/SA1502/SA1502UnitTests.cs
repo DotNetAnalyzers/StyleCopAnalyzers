@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.LayoutRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -28,9 +29,9 @@
         }
 
         /// <inheritdoc/>
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1502ElementMustNotBeOnASingleLine();
+            yield return new SA1502ElementMustNotBeOnASingleLine();
         }
 
         /// <inheritdoc/>

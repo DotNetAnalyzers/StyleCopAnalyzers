@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Analyzers.MaintainabilityRules;
@@ -1076,9 +1077,9 @@ public class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1119StatementMustNotUseUnnecessaryParenthesis();
+            yield return new SA1119StatementMustNotUseUnnecessaryParenthesis();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

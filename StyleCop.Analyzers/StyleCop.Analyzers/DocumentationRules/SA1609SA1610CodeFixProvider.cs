@@ -49,7 +49,7 @@
                     continue;
                 }
 
-                string description = "Document value from summary";
+                string description = DocumentationResources.SA1609SA1610CodeFix;
                 context.RegisterCodeFix(CodeAction.Create(description, cancellationToken => this.GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken)), diagnostic);
             }
 

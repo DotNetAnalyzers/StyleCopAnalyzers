@@ -8,6 +8,7 @@
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Text;
 
     /// <summary>
@@ -48,9 +49,23 @@
                 case SyntaxKind.MultiLineDocumentationCommentTrivia:
                     context.RegisterCodeFix(
                         CodeAction.Create(
-                            "Remove trailing whitespace",
+                            SpacingResources.SA1028CodeFix,
                             ct => RemoveWhitespaceAsync(context.Document, diagnostic, ct)),
                         diagnostic);
+                    break;
+                default:
+                    var node = root.FindNode(diagnosticSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
+                    switch (node.Kind())
+                    {
+                    case SyntaxKind.XmlText:
+                        context.RegisterCodeFix(
+                            CodeAction.Create(
+                                SpacingResources.SA1028CodeFix,
+                                ct => RemoveWhitespaceAsync(context.Document, diagnostic, ct)),
+                            diagnostic);
+                        break;
+                    }
+
                     break;
                 }
             }
@@ -91,7 +106,35 @@
                 newRoot = root.ReplaceTrivia(trivia, newTrivia);
                 break;
             default:
-                return document;
+                var node = root.FindNode(diagnosticSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
+                switch (node.Kind())
+                {
+                case SyntaxKind.XmlText:
+                    var xmlNode = (XmlTextSyntax)node;
+                    var newTextTokens = xmlNode.TextTokens;
+                    foreach (var textToken in newTextTokens)
+                    {
+                        if (textToken.Span.IntersectsWith(diagnosticSpan))
+                        {
+                            diagnosticSpanWithinTrivia = TextSpan.FromBounds(diagnosticSpan.Start - textToken.Span.Start, diagnosticSpan.End - textToken.Span.Start);
+                            oldTriviaContent = textToken.ValueText;
+                            newTriviaContent = string.Concat(
+                                oldTriviaContent.Substring(0, diagnosticSpanWithinTrivia.Start),
+                                oldTriviaContent.Substring(diagnosticSpanWithinTrivia.End));
+                            var newToken = SyntaxFactory.Token(textToken.LeadingTrivia, textToken.Kind(), newTriviaContent, newTriviaContent, textToken.TrailingTrivia);
+                            newTextTokens = newTextTokens.Replace(textToken, newToken);
+                            break;
+                        }
+                    }
+
+                    var newNode = xmlNode.Update(newTextTokens);
+                    newRoot = root.ReplaceNode(node, newNode);
+                    break;
+                default:
+                    return document;
+                }
+
+                break;
             }
 
             var newDocument = document.WithSyntaxRoot(newRoot);

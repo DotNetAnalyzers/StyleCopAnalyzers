@@ -1,5 +1,7 @@
 ﻿namespace StyleCop.Analyzers.Test.LayoutRules
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -74,7 +76,7 @@ namespace Foot
         [Fact]
         public void DiagnosticMessageFormatIsCorrect()
         {
-            Assert.Equal("Elements must be separated by blank line", this.GetCSharpDiagnosticAnalyzer().SupportedDiagnostics[0].MessageFormat.ToString());
+            Assert.Equal("Elements must be separated by blank line", this.GetCSharpDiagnosticAnalyzers().Single().SupportedDiagnostics.Single().MessageFormat.ToString());
         }
 
         [Fact]
@@ -526,9 +528,9 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1516ElementsMustBeSeparatedByBlankLine();
+            yield return new SA1516ElementsMustBeSeparatedByBlankLine();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

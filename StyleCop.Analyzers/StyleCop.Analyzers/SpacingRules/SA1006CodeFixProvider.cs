@@ -49,7 +49,7 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Remove space", t => GetTransformedDocumentAsync(context.Document, root, keywordToken)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1006CodeFix, t => GetTransformedDocumentAsync(context.Document, root, keywordToken)), diagnostic);
             }
         }
 

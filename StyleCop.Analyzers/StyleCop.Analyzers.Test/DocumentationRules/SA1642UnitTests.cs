@@ -1,6 +1,7 @@
 ﻿namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -471,9 +472,9 @@ internal abstract class CustomizableBlockSubscriberBase<TSource, TTarget, TSubsc
             Assert.Null(exception.ParamName);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1642ConstructorSummaryDocumentationMustBeginWithStandardText();
+            yield return new SA1642ConstructorSummaryDocumentationMustBeginWithStandardText();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
