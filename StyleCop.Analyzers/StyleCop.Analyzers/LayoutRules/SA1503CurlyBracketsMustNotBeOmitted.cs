@@ -1,6 +1,8 @@
 ﻿namespace StyleCop.Analyzers.LayoutRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -87,19 +89,32 @@
 
         private void HandleIfStatement(SyntaxNodeAnalysisContext context)
         {
-            var ifStatement = context.Node as IfStatementSyntax;
-            if (ifStatement != null)
+            var ifStatement = (IfStatementSyntax)context.Node;
+            if (ifStatement.Parent.IsKind(SyntaxKind.ElseClause))
             {
-                this.CheckChildStatement(context, ifStatement.Statement);
+                // this will be analyzed as a clause of the outer if statement
+                return;
+            }
 
-                if (ifStatement.Else != null)
+            List<StatementSyntax> clauses = new List<StatementSyntax>();
+            for (IfStatementSyntax current = ifStatement; current != null; current = current.Else?.Statement as IfStatementSyntax)
+            {
+                clauses.Add(current.Statement);
+                if (current.Else != null && !(current.Else.Statement is IfStatementSyntax))
                 {
-                    // an 'else' directly followed by an 'if' should not trigger this diagnostic.
-                    if (!ifStatement.Else.Statement.IsKind(SyntaxKind.IfStatement))
-                    {
-                        this.CheckChildStatement(context, ifStatement.Else.Statement);
-                    }
+                    clauses.Add(current.Else.Statement);
                 }
+            }
+
+            if (clauses.OfType<BlockSyntax>().Any())
+            {
+                // inconsistencies will be reported as SA1520
+                return;
+            }
+
+            foreach (StatementSyntax clause in clauses)
+            {
+                this.CheckChildStatement(context, clause);
             }
         }
 

@@ -240,14 +240,15 @@ public class Foo
     public void Bar(int i)
     {
         if (i == 0)
-        {
             Debug.Assert(true);
-        }
         else
             Debug.Assert(false);
     }
 }";
 
+            // While it looks like only one instance is fixed, what actually happened is fixing the first warning caused
+            // the second warning to change from SA1503 to SA1520. Since the testing framework is only testing SA1503,
+            // from its perspective all warnings have been corrected so it stops iterating.
             var fixedTestCode = @"using System.Diagnostics;
 public class Foo
 {
@@ -258,13 +259,11 @@ public class Foo
             Debug.Assert(true);
         }
         else
-        {
             Debug.Assert(false);
-        }
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
