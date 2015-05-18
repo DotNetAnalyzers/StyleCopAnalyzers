@@ -57,6 +57,43 @@
         }
 
         /// <summary>
+        /// Verifies that a <c>do</c> statement followed by a block without curly braces will produce a warning, and the
+        /// code fix for this warning results in valid code.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestDoStatementAsync()
+        {
+            var testCode = @"using System.Diagnostics;
+public class Foo
+{
+    public void Bar(int i)
+    {
+        do
+            Debug.Assert(true);
+        while (false);
+    }
+}";
+            var fixedCode = @"using System.Diagnostics;
+public class Foo
+{
+    public void Bar(int i)
+    {
+        do
+        {
+            Debug.Assert(true);
+        }
+        while (false);
+    }
+}";
+
+            var expected = this.CSharpDiagnostic().WithLocation(7, 13);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that a statement followed by a block with curly braces will produce no diagnostics results.
         /// </summary>
         /// <param name="statementText">The source code for the first part of a compound statement whose child can be
