@@ -20,11 +20,11 @@
             {
             case FixAllScope.Document:
                 var newRoot = await this.FixAllInDocumentAsync(fixAllContext, fixAllContext.Document).ConfigureAwait(false);
-                return CodeAction.Create("Add parentheses", token => Task.FromResult(fixAllContext.Document.WithSyntaxRoot(newRoot)));
+                return CodeAction.Create(MaintainabilityResources.SA1407SA1408CodeFix, token => Task.FromResult(fixAllContext.Document.WithSyntaxRoot(newRoot)));
 
             case FixAllScope.Project:
                 Solution solution = await this.GetProjectFixesAsync(fixAllContext, fixAllContext.Project).ConfigureAwait(false);
-                return CodeAction.Create("Add parentheses", token => Task.FromResult(solution));
+                return CodeAction.Create(MaintainabilityResources.SA1407SA1408CodeFix, token => Task.FromResult(solution));
 
             case FixAllScope.Solution:
                 var newSolution = fixAllContext.Solution;
@@ -34,7 +34,7 @@
                     newSolution = await this.GetProjectFixesAsync(fixAllContext, newSolution.GetProject(projectIds[i])).ConfigureAwait(false);
                 }
 
-                return CodeAction.Create("Add parentheses", token => Task.FromResult(newSolution));
+                return CodeAction.Create(MaintainabilityResources.SA1407SA1408CodeFix, token => Task.FromResult(newSolution));
 
             case FixAllScope.Custom:
             default:

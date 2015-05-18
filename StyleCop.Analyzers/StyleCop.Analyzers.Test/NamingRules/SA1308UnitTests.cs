@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.NamingRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -144,9 +145,9 @@ string m_bar = ""baz"";
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1308VariableNamesMustNotBePrefixed();
+            yield return new SA1308VariableNamesMustNotBePrefixed();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

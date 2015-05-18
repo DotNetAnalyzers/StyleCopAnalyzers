@@ -150,9 +150,9 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1615ElementReturnValueMustBeDocumented();
+            yield return new SA1615ElementReturnValueMustBeDocumented();
         }
     }
 }

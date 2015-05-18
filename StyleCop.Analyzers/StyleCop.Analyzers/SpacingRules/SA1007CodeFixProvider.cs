@@ -53,7 +53,7 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Insert space", t => GetTransformedDocumentAsync(context.Document, root, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1007CodeFix, t => GetTransformedDocumentAsync(context.Document, root, token)), diagnostic);
             }
         }
 

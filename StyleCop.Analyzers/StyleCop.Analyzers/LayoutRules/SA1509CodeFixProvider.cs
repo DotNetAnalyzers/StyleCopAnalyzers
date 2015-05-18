@@ -37,7 +37,7 @@
             {
                 context.RegisterCodeFix(
                     CodeAction.Create(
-                        "Remove blank lines preceding this curly bracket",
+                        LayoutResources.SA1509CodeFix,
                         token => this.GetTransformedDocumentAsync(context.Document, diagnostic, token)),
                     diagnostic);
             }

@@ -22,11 +22,11 @@
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1018";
-        private const string Title = "Nullable type symbols must be spaced correctly";
-        private const string MessageFormat = "Nullable type symbol must not be preceded by a space.";
-        private const string Category = "StyleCop.CSharp.SpacingRules";
-        private const string Description = "A nullable type symbol within a C# element is not spaced correctly.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1018.html";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1018Title), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(SpacingResources.SA1018MessageFormat), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly string Category = "StyleCop.CSharp.SpacingRules";
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1018Description), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1018.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);

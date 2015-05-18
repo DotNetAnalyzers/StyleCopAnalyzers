@@ -56,7 +56,7 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Declare accessibility", token => GetTransformedDocumentAsync(context.Document, root, declarationNode)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(MaintainabilityResources.SA1400CodeFix, token => GetTransformedDocumentAsync(context.Document, root, declarationNode)), diagnostic);
             }
         }
 

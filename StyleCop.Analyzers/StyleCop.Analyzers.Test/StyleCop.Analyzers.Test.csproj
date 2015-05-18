@@ -149,6 +149,7 @@
     <Compile Include="DocumentationRules\SA1640UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1642UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1643UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1651UnitTests.cs" />
     <Compile Include="ExportCodeFixProviderAttributeNameTest.cs" />
     <Compile Include="Helpers\CodeFixVerifier.Helper.cs" />
     <Compile Include="Helpers\DiagnosticResult.cs" />
@@ -174,6 +175,7 @@
     <Compile Include="LayoutRules\SA1500\SA1500UnitTests.Structs.cs" />
     <Compile Include="LayoutRules\SA1500\SA1500UnitTests.Switches.cs" />
     <Compile Include="LayoutRules\SA1500\SA1500UnitTests.TryCatchFinallys.cs" />
+    <Compile Include="LayoutRules\SA1501UnitTests.cs" />
     <Compile Include="LayoutRules\SA1502\SA1502UnitTests.Constructors.cs" />
     <Compile Include="LayoutRules\SA1502\SA1502UnitTests.cs" />
     <Compile Include="LayoutRules\SA1502\SA1502UnitTests.Destructors.cs" />
@@ -218,10 +220,14 @@
     <Compile Include="NamingRules\SA1309UnitTests.cs" />
     <Compile Include="NamingRules\SA1310UnitTests.cs" />
     <Compile Include="NamingRules\SA1311UnitTests.cs" />
+    <Compile Include="NamingRules\SX1309SUnitTests.cs" />
+    <Compile Include="NamingRules\SX1309UnitTests.cs" />
     <Compile Include="OrderingRules\SA1201UnitTests.cs" />
     <Compile Include="OrderingRules\SA1205UnitTests.cs" />
     <Compile Include="OrderingRules\SA1212UnitTests.cs" />
     <Compile Include="OrderingRules\SA1213UnitTests.cs" />
+    <Compile Include="OrderingRules\SA1216UnitTests.cs" />
+    <Compile Include="OrderingRules\SA1217UnitTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReadabilityRules\SA1100UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1101UnitTests.cs" />
