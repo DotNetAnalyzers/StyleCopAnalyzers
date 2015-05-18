@@ -79,6 +79,7 @@
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleIfStatement, SyntaxKind.IfStatement);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDoStatement, SyntaxKind.DoStatement);
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleWhileStatement, SyntaxKind.WhileStatement);
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleForStatement, SyntaxKind.ForStatement);
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleForEachStatement, SyntaxKind.ForEachStatement);
@@ -99,6 +100,15 @@
                         this.CheckChildStatement(context, ifStatement.Else.Statement);
                     }
                 }
+            }
+        }
+
+        private void HandleDoStatement(SyntaxNodeAnalysisContext context)
+        {
+            var doStatement = context.Node as DoStatementSyntax;
+            if (doStatement != null)
+            {
+                this.CheckChildStatement(context, doStatement.Statement);
             }
         }
 
