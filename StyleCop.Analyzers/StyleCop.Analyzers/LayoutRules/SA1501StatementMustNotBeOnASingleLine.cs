@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.LayoutRules
 {
+    using System;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -74,7 +75,7 @@
             if ((block != null) &&
                 !block.OpenBraceToken.IsMissing &&
                 !block.CloseBraceToken.IsMissing &&
-                this.IsPartOfStatement(block))
+                IsPartOfStatement(block))
             {
                 var openBraceLineNumber = block.SyntaxTree.GetLineSpan(block.OpenBraceToken.Span).StartLinePosition.Line;
                 var closeBraceLineNumber = block.SyntaxTree.GetLineSpan(block.CloseBraceToken.Span).StartLinePosition.Line;
@@ -83,21 +84,36 @@
                 {
                     switch (block.Parent.Kind())
                     {
-                    case SyntaxKind.AnonymousMethodExpression:
-                        // Single line anonymous method declarations are allowed.
-                        break;
-                    case SyntaxKind.SimpleLambdaExpression:
-                        // Single line lambda expressions are allowed.
-                        break;
-                    default:
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, block.OpenBraceToken.GetLocation()));
-                        break;
+                        case SyntaxKind.AnonymousMethodExpression:
+                        case SyntaxKind.SimpleLambdaExpression:
+                        case SyntaxKind.ParenthesizedLambdaExpression:
+                            var containingExpression = GetContainingExpression(block.Parent);
+                            if (IsSingleLineExpression(containingExpression))
+                            {
+                                // Single line lambda expressions and anonymous method declarations are allowed for single line expressions.
+                                return;
+                            }
+
+                            break;
                     }
+
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, block.OpenBraceToken.GetLocation()));
                 }
             }
         }
 
-        private bool IsPartOfStatement(BlockSyntax block)
+        private static bool IsSingleLineExpression(ExpressionSyntax containingExpression)
+        {
+            if (containingExpression == null)
+            {
+                return false;
+            }
+
+            var lineSpan = containingExpression.SyntaxTree.GetLineSpan(containingExpression.Span);
+            return lineSpan.StartLinePosition.Line == lineSpan.EndLinePosition.Line;
+        }
+
+        private static bool IsPartOfStatement(BlockSyntax block)
         {
             var parent = block.Parent;
 
@@ -107,6 +123,22 @@
             }
 
             return parent != null;
+        }
+
+        private static ExpressionSyntax GetContainingExpression(SyntaxNode node)
+        {
+            while (node != null)
+            {
+                var expressionNode = node as ExpressionSyntax;
+                if (expressionNode != null)
+                {
+                    return expressionNode;
+                }
+
+                node = node.Parent;
+            }
+
+            return null;
         }
     }
 }

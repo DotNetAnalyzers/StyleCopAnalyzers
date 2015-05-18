@@ -3,6 +3,7 @@
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
@@ -10,6 +11,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.SpacingRules;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1501StatementMustNotBeOnASingleLine"/>.
@@ -31,32 +33,32 @@
         }
 
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-                var block = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) as BlockSyntax;
-
-                if (block != null)
-                {
-                    var newSyntaxRoot = this.ReformatBlockAndParent(context, syntaxRoot, block);
-                    var newDocument = context.Document.WithSyntaxRoot(newSyntaxRoot);
-
-                    context.RegisterCodeFix(CodeAction.Create("Expand single line block", token => this.GetTransformedDocumentAsync(context, syntaxRoot, block)), diagnostic);
-                }
+                context.RegisterCodeFix(CodeAction.Create("Expand single line block", cancellationToken => this.GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken)), diagnostic);
             }
+
+            return Task.FromResult(true);
         }
 
-        private Task<Document> GetTransformedDocumentAsync(CodeFixContext context, SyntaxNode syntaxRoot, BlockSyntax block)
+        private async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
-            var newSyntaxRoot = this.ReformatBlockAndParent(context, syntaxRoot, block);
-            var newDocument = context.Document.WithSyntaxRoot(newSyntaxRoot);
+            var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var block = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) as BlockSyntax;
+            if (block == null)
+            {
+                return document;
+            }
 
-            return Task.FromResult(newDocument);
+            var newSyntaxRoot = this.ReformatBlockAndParent(document, syntaxRoot, block);
+            var newDocument = document.WithSyntaxRoot(newSyntaxRoot);
+
+            return newDocument;
         }
 
-        private SyntaxNode ReformatBlockAndParent(CodeFixContext context, SyntaxNode syntaxRoot, BlockSyntax block)
+        private SyntaxNode ReformatBlockAndParent(Document document, SyntaxNode syntaxRoot, BlockSyntax block)
         {
             var parentLastToken = block.OpenBraceToken.GetPreviousToken();
 
@@ -73,17 +75,27 @@
                 newParentLastToken = newParentLastToken.WithTrailingTrivia(newTrailingTrivia);
             }
 
-            var newBlock = this.ReformatBlock(context, block);
+            var newBlock = this.ReformatBlock(document, block);
             var rewriter = new BlockRewriter(parentLastToken, newParentLastToken, block, newBlock);
 
             var newSyntaxRoot = rewriter.Visit(syntaxRoot);
-            return newSyntaxRoot;
+            return newSyntaxRoot.WithoutFormatting();
         }
 
-        private BlockSyntax ReformatBlock(CodeFixContext context, BlockSyntax block)
+        private BlockSyntax ReformatBlock(Document document, BlockSyntax block)
         {
-            var indentationOptions = IndentationOptions.FromDocument(context.Document);
-            var parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationOptions, block.Parent);
+            var indentationOptions = IndentationOptions.FromDocument(document);
+            var parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationOptions, GetStatementParent(block.Parent));
+
+            // use one additional step of indentation for lambdas / anonymous methods
+            switch (block.Parent.Kind())
+            {
+                case SyntaxKind.AnonymousMethodExpression:
+                case SyntaxKind.SimpleLambdaExpression:
+                case SyntaxKind.ParenthesizedLambdaExpression:
+                    parentIndentationLevel++;
+                    break;
+            }
 
             var indentationString = IndentationHelper.GenerateIndentationString(indentationOptions, parentIndentationLevel);
             var statementIndentationString = IndentationHelper.GenerateIndentationString(indentationOptions, parentIndentationLevel + 1);
@@ -103,8 +115,20 @@
             var newCloseBraceTrailingTrivia = block.CloseBraceToken.TrailingTrivia
                 .WithoutTrailingWhitespace();
 
-            // only add an end-of-line to the close brace if there is none yet.
-            if ((newCloseBraceTrailingTrivia.Count == 0) || !newCloseBraceTrailingTrivia.Last().IsKind(SyntaxKind.EndOfLineTrivia))
+            bool addNewLineAfterCloseBrace;
+            switch (block.CloseBraceToken.GetNextToken().Kind())
+            {
+                case SyntaxKind.CloseParenToken:
+                case SyntaxKind.CommaToken:
+                case SyntaxKind.SemicolonToken:
+                    addNewLineAfterCloseBrace = false;
+                    break;
+                default:
+                    addNewLineAfterCloseBrace = (newCloseBraceTrailingTrivia.Count == 0) || !newCloseBraceTrailingTrivia.Last().IsKind(SyntaxKind.EndOfLineTrivia);
+                    break;
+            }
+
+            if (addNewLineAfterCloseBrace)
             {
                 newCloseBraceTrailingTrivia = newCloseBraceTrailingTrivia.Add(SyntaxFactory.CarriageReturnLineFeed);
             }
@@ -136,6 +160,16 @@
             }
 
             return SyntaxFactory.Block(openBraceToken, statements, closeBraceToken);
+        }
+
+        private static SyntaxNode GetStatementParent(SyntaxNode node)
+        {
+            while ((node != null) && !(node is StatementSyntax))
+            {
+                node = node.Parent;
+            }
+
+            return node;
         }
 
         private class BlockRewriter : CSharpSyntaxRewriter
