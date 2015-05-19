@@ -108,12 +108,15 @@
                 return;
             }
 
-            Location location = childStatement.GetLocation();
-            FileLinePositionSpan lineSpan = location.GetLineSpan();
-            if (lineSpan.StartLinePosition.Line != lineSpan.EndLinePosition.Line)
+            if (context.SemanticModel.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(SA1519CurlyBrackets.DiagnosticId, ReportDiagnostic.Default) != ReportDiagnostic.Suppress)
             {
-                // diagnostics for multi-line statements is handled by SA1519
-                return;
+                // diagnostics for multi-line statements is handled by SA1519, as long as it's not suppressed
+                Location location = childStatement.GetLocation();
+                FileLinePositionSpan lineSpan = location.GetLineSpan();
+                if (lineSpan.StartLinePosition.Line != lineSpan.EndLinePosition.Line)
+                {
+                    return;
+                }
             }
 
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, childStatement.GetLocation()));
