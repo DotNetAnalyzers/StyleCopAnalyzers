@@ -130,7 +130,7 @@
             this.Write(";\r\n");
         }
 
-        public void WriteFinalizer(string name, DocumentationOptions documentationOptions, ExpectedResult expectError)
+        public void WriteDestructor(string name, DocumentationOptions documentationOptions, ExpectedResult expectError)
         {
             switch (documentationOptions)
             {

@@ -220,11 +220,11 @@
         [Theory]
         [InlineData(DocumentationOptions.WriteSampleDocumentation, NoDiagnostic)]
         [InlineData(DocumentationOptions.OmitSampleDocumentation, DiagnosticId)]
-        public async Task TestFinalizerWithoutDocumentationAsync(DocumentationOptions options, string expectedDiagnosticId)
+        public async Task TestDestructorWithoutDocumentationAsync(DocumentationOptions options, string expectedDiagnosticId)
         {
             var gen = new DocumentationRuleTestSampleCodeBuilder();
             gen.WriteClassStart("TestClass", DocumentationOptions.WriteSampleDocumentation, ExpectedResult.NoDiagnostic, "public");
-            gen.WriteFinalizer("TestClass", options, ExpectedResult.Diagnostic);
+            gen.WriteDestructor("TestClass", options, ExpectedResult.Diagnostic);
             gen.WriteBlockEnd();
 
             await this.VerifyCSharpDiagnosticAsync(gen, expectedDiagnosticId, CancellationToken.None).ConfigureAwait(false);
