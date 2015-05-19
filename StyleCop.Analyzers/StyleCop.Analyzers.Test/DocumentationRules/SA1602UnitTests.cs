@@ -37,18 +37,42 @@ enum TypeName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestEnumWithoutDocumentationAsync()
+        [Theory]
+        [InlineData("public", SA1602EnumerationItemsMustBeDocumented.DiagnosticId)]
+        [InlineData("internal", SA1602EnumerationItemsMustBeDocumented.DiagnosticIdInternal)]
+        public async Task TestEnumWithoutDocumentationAsync(string enumModifier, string expectedDiagnosticId)
         {
             var testCode = @"
-enum TypeName
-{
+{0} enum TypeName
+{{
     Bar
-}";
+}}";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 5);
+            DiagnosticResult expected = this.CSharpDiagnostic(expectedDiagnosticId).WithLocation(4, 5);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, enumModifier), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("public", SA1602EnumerationItemsMustBeDocumented.DiagnosticId)]
+        [InlineData("protected internal", SA1602EnumerationItemsMustBeDocumented.DiagnosticId)]
+        [InlineData("protected internal", SA1602EnumerationItemsMustBeDocumented.DiagnosticId)]
+        [InlineData("internal", SA1602EnumerationItemsMustBeDocumented.DiagnosticIdInternal)]
+        [InlineData("private", SA1602EnumerationItemsMustBeDocumented.DiagnosticIdPrivate)]
+        public async Task TestNestedEnumWithoutDocumentationAsync(string enumModifier, string expectedDiagnosticId)
+        {
+            var testCode = @"
+public class OuterClass
+{{
+{0} enum TypeName
+{{
+    Bar
+}}
+}}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic(expectedDiagnosticId).WithLocation(6, 5);
+
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, enumModifier), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -58,7 +82,7 @@ enum TypeName
 /// <summary>
 /// Some Documentation
 /// </summary>
-enum TypeName
+public enum TypeName
 {
     /// <summary>
     /// 
@@ -66,7 +90,7 @@ enum TypeName
     Bar
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 5);
+            DiagnosticResult expected = this.CSharpDiagnostic(SA1602EnumerationItemsMustBeDocumented.DiagnosticId).WithLocation(10, 5);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }

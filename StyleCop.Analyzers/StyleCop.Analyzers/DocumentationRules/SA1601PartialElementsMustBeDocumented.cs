@@ -7,6 +7,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers;
+    using System;
 
     /// <summary>
     /// A C# partial element is missing a documentation header.
@@ -69,17 +70,45 @@
         /// The ID for diagnostics produced by the <see cref="SA1601PartialElementsMustBeDocumented"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1601";
+
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1601PartialElementsMustBeDocumented"/> analyzer
+        /// for internal members.
+        /// </summary>
+        public const string DiagnosticIdInternal = "SA1601In";
+
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1601PartialElementsMustBeDocumented"/> analyzer
+        /// for private members.
+        /// </summary>
+        public const string DiagnosticIdPrivate = "SA1601Pr";
+
         private const string Title = "Partial elements must be documented";
         private const string MessageFormat = "Partial elements must be documented";
+        private const string Description = "A publicly visible C# partial element is missing a documentation header.";
+
+        private const string TitleInternal = "Partial elements must be documented (internal visibility)";
+        private const string MessageFormatInternal = "Partial elements must be documented (internal visibility)";
+        private const string DescriptionInternal = "An internal C# partial element is missing a documentation header.";
+
+        private const string TitlePrivate = "Partial elements must be documented (private visibility)";
+        private const string MessageFormatPrivate = "Partial elements must be documented (private visibility)";
+        private const string DescriptionPrivate = "A private C# partial element is missing a documentation header.";
+
         private const string Category = "StyleCop.CSharp.DocumentationRules";
-        private const string Description = "A C# partial element is missing a documentation header.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1601.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
+        private static readonly DiagnosticDescriptor DescriptorInternal =
+            new DiagnosticDescriptor(DiagnosticIdInternal, TitleInternal, MessageFormatInternal, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, DescriptionInternal, HelpLink);
+
+        private static readonly DiagnosticDescriptor DescriptorPrivate =
+            new DiagnosticDescriptor(DiagnosticIdPrivate, TitlePrivate, MessageFormatPrivate, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, DescriptionPrivate, HelpLink);
+
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
-            ImmutableArray.Create(Descriptor);
+            ImmutableArray.Create(Descriptor, DescriptorInternal, DescriptorPrivate);
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
@@ -99,6 +128,24 @@
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
         }
 
+        private static DiagnosticDescriptor DescriptorFromEffectiveVisibility(SyntaxKind visibility)
+        {
+            switch (visibility)
+            {
+            case SyntaxKind.PublicKeyword:
+                return Descriptor;
+
+            case SyntaxKind.InternalKeyword:
+                return DescriptorInternal;
+
+            case SyntaxKind.PrivateKeyword:
+                return DescriptorPrivate;
+
+            default:
+                throw new ArgumentOutOfRangeException("visibility");
+            }
+        }
+
         private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
             TypeDeclarationSyntax typeDeclaration = context.Node as TypeDeclarationSyntax;
@@ -108,7 +155,12 @@
                 {
                     if (!XmlCommentHelper.HasDocumentation(typeDeclaration))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, typeDeclaration.Identifier.GetLocation()));
+                        bool isNested = typeDeclaration.Parent is BaseTypeDeclarationSyntax;
+                        var effective = EffectiveVisibilityHelper.ResolveVisibilityForChild(
+                            EffectiveVisibilityHelper.EffectiveVisibility(typeDeclaration.Modifiers, isNested ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword),
+                            typeDeclaration.Parent as BaseTypeDeclarationSyntax);
+
+                        context.ReportDiagnostic(Diagnostic.Create(DescriptorFromEffectiveVisibility(effective), typeDeclaration.Identifier.GetLocation()));
                     }
                 }
             }
@@ -123,7 +175,7 @@
                 {
                     if (!XmlCommentHelper.HasDocumentation(methodDeclaration))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, methodDeclaration.Identifier.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(DescriptorPrivate, methodDeclaration.Identifier.GetLocation()));
                     }
                 }
             }

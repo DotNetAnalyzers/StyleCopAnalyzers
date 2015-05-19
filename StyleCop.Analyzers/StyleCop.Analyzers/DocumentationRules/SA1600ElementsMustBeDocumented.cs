@@ -5,8 +5,8 @@
     using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
     /// A C# code element is missing a documentation header.
@@ -28,17 +28,45 @@
         /// The ID for diagnostics produced by the <see cref="SA1600ElementsMustBeDocumented"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1600";
+
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1600ElementsMustBeDocumented"/> analyzer
+        /// for internal members.
+        /// </summary>
+        public const string DiagnosticIdInternal = "SA1600In";
+
+        /// <summary>
+        /// The ID for diagnostics produced by the <see cref="SA1600ElementsMustBeDocumented"/> analyzer
+        /// for private members.
+        /// </summary>
+        public const string DiagnosticIdPrivate = "SA1600Pr";
+
         private const string Title = "Elements must be documented";
         private const string MessageFormat = "Elements must be documented";
+        private const string Description = "A publicly visible C# code element is missing a documentation header.";
+
+        private const string TitleInternal = "Elements must be documented (internal visibility)";
+        private const string MessageFormatInternal = "Elements must be documented (internal visibility)";
+        private const string DescriptionInternal = "An internal C# code element is missing a documentation header.";
+
+        private const string TitlePrivate = "Elements must be documented (private visibility)";
+        private const string MessageFormatPrivate = "Elements must be documented (private visibility)";
+        private const string DescriptionPrivate = "A private C# code element is missing a documentation header.";
+
         private const string Category = "StyleCop.CSharp.DocumentationRules";
-        private const string Description = "A C# code element is missing a documentation header.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1600.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
+        private static readonly DiagnosticDescriptor DescriptorInternal =
+            new DiagnosticDescriptor(DiagnosticIdInternal, TitleInternal, MessageFormatInternal, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, DescriptionInternal, HelpLink);
+
+        private static readonly DiagnosticDescriptor DescriptorPrivate =
+            new DiagnosticDescriptor(DiagnosticIdPrivate, TitlePrivate, MessageFormatPrivate, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, DescriptionPrivate, HelpLink);
+
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
-            ImmutableArray.Create(Descriptor);
+            ImmutableArray.Create(Descriptor, DescriptorInternal, DescriptorPrivate);
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
@@ -58,7 +86,7 @@
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.EnumDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDestructorDeclaration, SyntaxKind.DestructorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleFinalizerDeclaration, SyntaxKind.DestructorDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandlePropertyDeclaration, SyntaxKind.PropertyDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleFieldDeclaration, SyntaxKind.FieldDeclaration);
@@ -67,18 +95,37 @@
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleEventFieldDeclaration, SyntaxKind.EventFieldDeclaration);
         }
 
+        private static DiagnosticDescriptor DescriptorFromEffectiveVisibility(SyntaxKind visibility)
+        {
+            switch (visibility)
+            {
+            case SyntaxKind.PublicKeyword:
+                return Descriptor;
+
+            case SyntaxKind.InternalKeyword:
+                return DescriptorInternal;
+
+            case SyntaxKind.PrivateKeyword:
+                return DescriptorPrivate;
+
+            default:
+                throw new ArgumentOutOfRangeException("visibility");
+            }
+        }
+
         private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
             BaseTypeDeclarationSyntax declaration = context.Node as BaseTypeDeclarationSyntax;
 
             bool isNestedInClassOrStruct = this.IsNestedType(declaration);
 
-            if (declaration != null && this.NeedsComment(declaration.Modifiers, isNestedInClassOrStruct ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword))
+            if (declaration != null && !XmlCommentHelper.HasDocumentation(declaration))
             {
-                if (!XmlCommentHelper.HasDocumentation(declaration))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
-                }
+                var effective = EffectiveVisibilityHelper.ResolveVisibilityForChild(
+                    EffectiveVisibilityHelper.EffectiveVisibility(declaration.Modifiers, isNestedInClassOrStruct ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword),
+                    declaration.Parent as BaseTypeDeclarationSyntax);
+
+                context.ReportDiagnostic(Diagnostic.Create(DescriptorFromEffectiveVisibility(effective), declaration.Identifier.GetLocation()));
             }
         }
 
@@ -92,12 +139,13 @@
                 defaultVisibility = SyntaxKind.PublicKeyword;
             }
 
-            if (declaration != null && this.NeedsComment(declaration.Modifiers, defaultVisibility))
+            if (declaration != null && !XmlCommentHelper.HasDocumentation(declaration))
             {
-                if (!XmlCommentHelper.HasDocumentation(declaration))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
-                }
+                var effective = EffectiveVisibilityHelper.ResolveVisibilityForChild(
+                    EffectiveVisibilityHelper.EffectiveVisibility(declaration.Modifiers, defaultVisibility),
+                    declaration.Parent as BaseTypeDeclarationSyntax);
+
+                context.ReportDiagnostic(Diagnostic.Create(DescriptorFromEffectiveVisibility(effective), declaration.Identifier.GetLocation()));
             }
         }
 
@@ -105,25 +153,27 @@
         {
             ConstructorDeclarationSyntax declaration = context.Node as ConstructorDeclarationSyntax;
 
-            if (declaration != null && this.NeedsComment(declaration.Modifiers, SyntaxKind.PrivateKeyword))
+            if (declaration != null && !XmlCommentHelper.HasDocumentation(declaration))
             {
-                if (!XmlCommentHelper.HasDocumentation(declaration))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
-                }
+                var effective = EffectiveVisibilityHelper.ResolveVisibilityForChild(
+                    EffectiveVisibilityHelper.EffectiveVisibility(declaration.Modifiers, SyntaxKind.PrivateKeyword),
+                    declaration.Parent as BaseTypeDeclarationSyntax);
+
+                context.ReportDiagnostic(Diagnostic.Create(DescriptorFromEffectiveVisibility(effective), declaration.Identifier.GetLocation()));
             }
         }
 
-        private void HandleDestructorDeclaration(SyntaxNodeAnalysisContext context)
+        private void HandleFinalizerDeclaration(SyntaxNodeAnalysisContext context)
         {
             DestructorDeclarationSyntax declaration = context.Node as DestructorDeclarationSyntax;
 
-            if (declaration != null)
+            if (declaration != null && !XmlCommentHelper.HasDocumentation(declaration))
             {
-                if (!XmlCommentHelper.HasDocumentation(declaration))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
-                }
+                var effective = EffectiveVisibilityHelper.ResolveVisibilityForChild(
+                    SyntaxKind.PublicKeyword,
+                    declaration.Parent as BaseTypeDeclarationSyntax);
+
+                context.ReportDiagnostic(Diagnostic.Create(DescriptorFromEffectiveVisibility(effective), declaration.Identifier.GetLocation()));
             }
         }
 
@@ -137,12 +187,13 @@
                 defaultVisibility = SyntaxKind.PublicKeyword;
             }
 
-            if (declaration != null && this.NeedsComment(declaration.Modifiers, defaultVisibility))
+            if (declaration != null && !XmlCommentHelper.HasDocumentation(declaration))
             {
-                if (!XmlCommentHelper.HasDocumentation(declaration))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
-                }
+                var effective = EffectiveVisibilityHelper.ResolveVisibilityForChild(
+                    EffectiveVisibilityHelper.EffectiveVisibility(declaration.Modifiers, defaultVisibility),
+                    declaration.Parent as BaseTypeDeclarationSyntax);
+
+                context.ReportDiagnostic(Diagnostic.Create(DescriptorFromEffectiveVisibility(effective), declaration.Identifier.GetLocation()));
             }
         }
 
@@ -156,12 +207,13 @@
                 defaultVisibility = SyntaxKind.PublicKeyword;
             }
 
-            if (declaration != null && this.NeedsComment(declaration.Modifiers, defaultVisibility))
+            if (declaration != null && !XmlCommentHelper.HasDocumentation(declaration))
             {
-                if (!XmlCommentHelper.HasDocumentation(declaration))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.ThisKeyword.GetLocation()));
-                }
+                var effective = EffectiveVisibilityHelper.ResolveVisibilityForChild(
+                    EffectiveVisibilityHelper.EffectiveVisibility(declaration.Modifiers, defaultVisibility),
+                    declaration.Parent as BaseTypeDeclarationSyntax);
+
+                context.ReportDiagnostic(Diagnostic.Create(DescriptorFromEffectiveVisibility(effective), declaration.ThisKeyword.GetLocation()));
             }
         }
 
@@ -170,15 +222,18 @@
             FieldDeclarationSyntax declaration = context.Node as FieldDeclarationSyntax;
             var variableDeclaration = declaration?.Declaration;
 
-            if (variableDeclaration != null && this.NeedsComment(declaration.Modifiers, SyntaxKind.PrivateKeyword))
+            if (variableDeclaration != null && !XmlCommentHelper.HasDocumentation(declaration))
             {
-                if (!XmlCommentHelper.HasDocumentation(declaration))
+                var effective = EffectiveVisibilityHelper.ResolveVisibilityForChild(
+                    EffectiveVisibilityHelper.EffectiveVisibility(declaration.Modifiers, SyntaxKind.PrivateKeyword),
+                    declaration.Parent as BaseTypeDeclarationSyntax);
+
+                var diagnostic = DescriptorFromEffectiveVisibility(effective);
+
+                var locations = variableDeclaration.Variables.Select(v => v.Identifier.GetLocation()).ToArray();
+                foreach (var location in locations)
                 {
-                    var locations = variableDeclaration.Variables.Select(v => v.Identifier.GetLocation()).ToArray();
-                    foreach (var location in locations)
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
-                    }
+                    context.ReportDiagnostic(Diagnostic.Create(diagnostic, location));
                 }
             }
         }
@@ -189,12 +244,13 @@
 
             bool isNestedInClassOrStruct = this.IsNestedType(declaration);
 
-            if (declaration != null && this.NeedsComment(declaration.Modifiers, isNestedInClassOrStruct ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword))
+            if (declaration != null && !XmlCommentHelper.HasDocumentation(declaration))
             {
-                if (!XmlCommentHelper.HasDocumentation(declaration))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
-                }
+                var effective = EffectiveVisibilityHelper.ResolveVisibilityForChild(
+                    EffectiveVisibilityHelper.EffectiveVisibility(declaration.Modifiers, isNestedInClassOrStruct ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword),
+                    declaration.Parent as BaseTypeDeclarationSyntax);
+
+                context.ReportDiagnostic(Diagnostic.Create(DescriptorFromEffectiveVisibility(effective), declaration.Identifier.GetLocation()));
             }
         }
 
@@ -208,12 +264,13 @@
                 defaultVisibility = SyntaxKind.PublicKeyword;
             }
 
-            if (declaration != null && this.NeedsComment(declaration.Modifiers, defaultVisibility))
+            if (declaration != null && !XmlCommentHelper.HasDocumentation(declaration))
             {
-                if (!XmlCommentHelper.HasDocumentation(declaration))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
-                }
+                var effective = EffectiveVisibilityHelper.ResolveVisibilityForChild(
+                    EffectiveVisibilityHelper.EffectiveVisibility(declaration.Modifiers, defaultVisibility),
+                    declaration.Parent as BaseTypeDeclarationSyntax);
+
+                context.ReportDiagnostic(Diagnostic.Create(DescriptorFromEffectiveVisibility(effective), declaration.Identifier.GetLocation()));
             }
         }
 
@@ -229,33 +286,20 @@
 
             var variableDeclaration = declaration?.Declaration;
 
-            if (variableDeclaration != null && this.NeedsComment(declaration.Modifiers, defaultVisibility))
+            if (variableDeclaration != null && !XmlCommentHelper.HasDocumentation(declaration))
             {
-                if (!XmlCommentHelper.HasDocumentation(declaration))
+                var effective = EffectiveVisibilityHelper.ResolveVisibilityForChild(
+                    EffectiveVisibilityHelper.EffectiveVisibility(declaration.Modifiers, defaultVisibility),
+                    declaration.Parent as BaseTypeDeclarationSyntax);
+
+                var diagnostic = DescriptorFromEffectiveVisibility(effective);
+
+                var locations = variableDeclaration.Variables.Select(v => v.Identifier.GetLocation()).ToArray();
+                foreach (var location in locations)
                 {
-                    var locations = variableDeclaration.Variables.Select(v => v.Identifier.GetLocation()).ToArray();
-                    foreach (var location in locations)
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
-                    }
+                    context.ReportDiagnostic(Diagnostic.Create(diagnostic, location));
                 }
             }
-        }
-
-        private bool NeedsComment(SyntaxTokenList modifiers, SyntaxKind defaultModifier)
-        {
-            if (!(modifiers.Any(SyntaxKind.PublicKeyword)
-                || modifiers.Any(SyntaxKind.ProtectedKeyword)
-                || modifiers.Any(SyntaxKind.InternalKeyword)
-                || defaultModifier == SyntaxKind.PublicKeyword
-                || defaultModifier == SyntaxKind.ProtectedKeyword
-                || defaultModifier == SyntaxKind.InternalKeyword))
-            {
-                return false;
-            }
-
-            // Also ignore partial classes because they get reported as SA1601
-            return !modifiers.Any(SyntaxKind.PartialKeyword);
         }
 
         private bool IsNestedType(BaseTypeDeclarationSyntax typeDeclaration)

@@ -1,6 +1,7 @@
 ﻿namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -13,6 +14,11 @@
     /// </summary>
     public class SA1600UnitTests : CodeFixVerifier
     {
+        private const string DiagnosticId = SA1600ElementsMustBeDocumented.DiagnosticId;
+        private const string DiagnosticIdInternal = SA1600ElementsMustBeDocumented.DiagnosticIdInternal;
+        private const string DiagnosticIdPrivate = SA1600ElementsMustBeDocumented.DiagnosticIdPrivate;
+        private const string NoDiagnostic = null;
+
         [Fact]
         public async Task TestEmptySourceAsync()
         {
@@ -20,828 +26,270 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestTypeDeclarationDocumentationAsync(string type, string modifiers, bool requiresDiagnostic, bool hasDocumentation)
-        {
-            var testCodeWithoutDocumentation = @"
-{0} {1}
-TypeName
-{{
-}}";
-            var testCodeWithDocumentation = @"/// <summary> A summary. </summary>
-{0} {1}
-TypeName
-{{
-}}";
-
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(3, 1)
-                };
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers, type), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private async Task TestNestedTypeDeclarationDocumentationAsync(string type, string modifiers, bool requiresDiagnostic, bool hasDocumentation)
-        {
-            var testCodeWithoutDocumentation = @"    /// <summary>
-    /// A summary
-    /// </summary>
-public class OuterClass
-{{
-
-    {0} {1}
-    TypeName
-    {{
-    }}
-}}";
-            var testCodeWithDocumentation = @"    /// <summary>
-    /// A summary
-    /// </summary>
-public class OuterClass
-{{
-    /// <summary>A summary.</summary>
-    {0} {1}
-    TypeName
-    {{
-    }}
-}}";
-
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(8, 5)
-                };
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers, type), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private async Task TestDelegateDeclarationDocumentationAsync(string modifiers, bool requiresDiagnostic, bool hasDocumentation)
-        {
-            var testCodeWithoutDocumentation = @"
-{0} delegate void
-DelegateName();";
-            var testCodeWithDocumentation = @"/// <summary> A summary. </summary>
-{0} delegate void
-DelegateName();";
-
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(3, 1)
-                };
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private async Task TestNestedDelegateDeclarationDocumentationAsync(string modifiers, bool requiresDiagnostic, bool hasDocumentation)
-        {
-            var testCodeWithoutDocumentation = @"    /// <summary>
-    /// A summary
-    /// </summary>
-public class OuterClass
-{{
-
-    {0} delegate void
-    DelegateName();
-}}";
-            var testCodeWithDocumentation = @"    /// <summary>
-    /// A summary
-    /// </summary>
-public class OuterClass
-{{
-    /// <summary>A summary.</summary>
-    {0} delegate void
-    DelegateName();
-}}";
-
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(8, 5)
-                };
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private async Task TestMethodDeclarationDocumentationAsync(string modifiers, bool isExplicitInterfaceMethod, bool requiresDiagnostic, bool hasDocumentation)
-        {
-            var testCodeWithoutDocumentation = @"    /// <summary>
-    /// A summary
-    /// </summary>
-public class OuterClass : BaseClass, IInterface
-{{
-
-    {0} void{1}
-    MemberName()
-    {{
-    }}
-}}
-#pragma warning disable SA1600 // the following code is used for ensuring the above code compiles
-public class BaseClass : IInterface {{ public void MemberName() {{ }} }}
-public interface IInterface {{ void MemberName(); }}
-";
-            var testCodeWithDocumentation = @"    /// <summary>
-    /// A summary
-    /// </summary>
-public class OuterClass : BaseClass, IInterface
-{{
-    /// <summary>A summary.</summary>
-    {0} void{1}
-    MemberName()
-    {{
-    }}
-}}
-#pragma warning disable SA1600 // the following code is used for ensuring the above code compiles
-public class BaseClass : IInterface {{ public void MemberName() {{ }} }}
-public interface IInterface {{ void MemberName(); }}
-";
-
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(8, 5)
-                };
-
-            string explicitInterfaceText = isExplicitInterfaceMethod ? " IInterface." : string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers, explicitInterfaceText), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private async Task TestInterfaceMethodDeclarationDocumentationAsync(bool hasDocumentation)
-        {
-            var testCodeWithoutDocumentation = @"    /// <summary>
-    /// A summary
-    /// </summary>
-public interface InterfaceName
-{
-
-    void
-    MemberName();
-}";
-            var testCodeWithDocumentation = @"    /// <summary>
-    /// A summary
-    /// </summary>
-public interface InterfaceName
-{
-    /// <summary>A summary.</summary>
-    void
-    MemberName();
-}";
-
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(8, 5)
-                };
-
-            await this.VerifyCSharpDiagnosticAsync(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, !hasDocumentation ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private async Task TestInterfacePropertyDeclarationDocumentationAsync(bool hasDocumentation)
-        {
-            var testCodeWithoutDocumentation = @"    /// <summary>
-    /// A summary
-    /// </summary>
-public interface InterfaceName
-{
-
-    
-    string MemberName
-    {
-        get; set;
-    }
-}";
-            var testCodeWithDocumentation = @"    /// <summary>
-    /// A summary
-    /// </summary>
-public interface InterfaceName
-{
-    /// <summary>A summary.</summary>
-    
-    string MemberName
-    {
-        get; set;
-    }
-}";
-
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(8, 12)
-                };
-
-            await this.VerifyCSharpDiagnosticAsync(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, !hasDocumentation ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private async Task TestInterfaceEventDeclarationDocumentationAsync(bool hasDocumentation)
-        {
-            var testCodeWithoutDocumentation = @"    /// <summary>
-    /// A summary
-    /// </summary>
-public interface InterfaceName
-{
-
-    
-    event System.Action MemberName;
-}";
-            var testCodeWithDocumentation = @"    /// <summary>
-    /// A summary
-    /// </summary>
-public interface InterfaceName
-{
-    /// <summary>A summary.</summary>
-    
-    event System.Action MemberName;
-}";
-
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(8, 25)
-                };
-
-            await this.VerifyCSharpDiagnosticAsync(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, !hasDocumentation ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private async Task TestInterfaceIndexerDeclarationDocumentationAsync(bool hasDocumentation)
-        {
-            var testCodeWithoutDocumentation = @"    /// <summary>
-    /// A summary
-    /// </summary>
-public interface InterfaceName
-{
-
-    string
-    this[string key] { get; set; }
-}";
-            var testCodeWithDocumentation = @"    /// <summary>
-    /// A summary
-    /// </summary>
-public interface InterfaceName
-{
-    /// <summary>A summary.</summary>
-    string
-    this[string key] { get; set; }
-}";
-
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(8, 5)
-                };
-
-            await this.VerifyCSharpDiagnosticAsync(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, !hasDocumentation ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private async Task TestConstructorDeclarationDocumentationAsync(string modifiers, bool requiresDiagnostic, bool hasDocumentation)
-        {
-            var testCodeWithoutDocumentation = @"    /// <summary>
-    /// A summary
-    /// </summary>
-public class OuterClass
-{{
-
-    {0}
-    OuterClass()
-    {{
-    }}
-}}";
-            var testCodeWithDocumentation = @"    /// <summary>
-    /// A summary
-    /// </summary>
-public class OuterClass
-{{
-    /// <summary>A summary.</summary>
-    {0}
-    OuterClass()
-    {{
-    }}
-}}";
-
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(8, 5)
-                };
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private async Task TestDestructorDeclarationDocumentationAsync(bool requiresDiagnostic, bool hasDocumentation)
-        {
-            var testCodeWithoutDocumentation = @"    /// <summary>
-    /// A summary
-    /// </summary>
-public class OuterClass
-{{
-
-    ~OuterClass()
-    {{
-    }}
-}}";
-            var testCodeWithDocumentation = @"    /// <summary>
-    /// A summary
-    /// </summary>
-public class OuterClass
-{{
-    /// <summary>A summary.</summary>
-    ~OuterClass()
-    {{
-    }}
-}}";
-
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(7, 6)
-                };
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private async Task TestPropertyDeclarationDocumentationAsync(string modifiers, bool isExplicitInterfaceProperty, bool requiresDiagnostic, bool hasDocumentation)
-        {
-            var testCodeWithoutDocumentation = @"    /// <summary>
-    /// A summary
-    /// </summary>
-public class OuterClass : BaseClass, IInterface
-{{
-
-    {0}
-    string{1}
-    MemberName {{ get; set; }}
-}}
-#pragma warning disable SA1600 // the following code is used for ensuring the above code compiles
-public class BaseClass : IInterface {{ public string MemberName {{ get; set; }} }}
-public interface IInterface {{ string MemberName {{ get; set; }} }}
-";
-            var testCodeWithDocumentation = @"    /// <summary>
-    /// A summary
-    /// </summary>
-public class OuterClass : BaseClass, IInterface
-{{
-    /// <summary>A summary.</summary>
-    {0}
-    string{1}
-    MemberName {{ get; set; }}
-}}
-#pragma warning disable SA1600 // the following code is used for ensuring the above code compiles
-public class BaseClass : IInterface {{ public string MemberName {{ get; set; }} }}
-public interface IInterface {{ string MemberName {{ get; set; }} }}
-";
-
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(9, 5)
-                };
-
-            string explicitInterfaceText = isExplicitInterfaceProperty ? " IInterface." : string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers, explicitInterfaceText), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private async Task TestIndexerDeclarationDocumentationAsync(string modifiers, bool isExplicitInterfaceIndexer, bool requiresDiagnostic, bool hasDocumentation)
-        {
-            var testCodeWithoutDocumentation = @"    /// <summary>
-    /// A summary
-    /// </summary>
-public class OuterClass : BaseClass, IInterface
-{{
-
-    {0}
-    string{1}
-    this[string key] {{ get {{ return """"; }} set {{ }} }}
-}}
-#pragma warning disable SA1600 // the following code is used for ensuring the above code compiles
-public class BaseClass : IInterface {{ public string this[string key] {{ get {{ return """"; }} set {{ }} }} }}
-public interface IInterface {{ string this[string key] {{ get; set; }} }}
-";
-            var testCodeWithDocumentation = @"    /// <summary>
-    /// A summary
-    /// </summary>
-public class OuterClass : BaseClass, IInterface
-{{
-    /// <summary>A summary.</summary>
-    {0}
-    string{1}
-    this[string key] {{ get {{ return """"; }} set {{ }} }}
-}}
-#pragma warning disable SA1600 // the following code is used for ensuring the above code compiles
-public class BaseClass : IInterface {{ public string this[string key] {{ get {{ return """"; }} set {{ }} }} }}
-public interface IInterface {{ string this[string key] {{ get; set; }} }}
-";
-
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(9, 5)
-                };
-
-            string explicitInterfaceText = isExplicitInterfaceIndexer ? " IInterface." : string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers, explicitInterfaceText), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private async Task TestEventDeclarationDocumentationAsync(string modifiers, bool isExplicitInterfaceEvent, bool requiresDiagnostic, bool hasDocumentation)
-        {
-            var testCodeWithoutDocumentation = @"    /// <summary>
-    /// A summary
-    /// </summary>
-public class OuterClass : BaseClass, IInterface
-{{
-    System.Action _myEvent;
-
-    {0}
-    event System.Action{1}
-    MyEvent
-    {{
-        add
-        {{
-            _myEvent += value;
-        }}
-        remove
-        {{
-            _myEvent -= value;
-        }}
-    }}
-}}
-#pragma warning disable SA1600 // the following code is used for ensuring the above code compiles
-public class BaseClass : IInterface {{ public event System.Action MyEvent; }}
-public interface IInterface {{ event System.Action MyEvent; }}
-";
-            var testCodeWithDocumentation = @"    /// <summary>
-    /// A summary
-    /// </summary>
-public class OuterClass : BaseClass, IInterface
-{{
-    System.Action _myEvent;
-    /// <summary>A summary.</summary>
-    {0}
-    event System.Action{1}
-    MyEvent
-    {{
-        add
-        {{
-            _myEvent += value;
-        }}
-        remove
-        {{
-            _myEvent -= value;
-        }}
-    }}
-}}
-#pragma warning disable SA1600 // the following code is used for ensuring the above code compiles
-public class BaseClass : IInterface {{ public event System.Action MyEvent; }}
-public interface IInterface {{ event System.Action MyEvent; }}
-";
-
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(10, 5)
-                };
-
-            string explicitInterfaceText = isExplicitInterfaceEvent ? " IInterface." : string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers, explicitInterfaceText), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private async Task TestFieldDeclarationDocumentationAsync(string modifiers, bool requiresDiagnostic, bool hasDocumentation)
-        {
-            var testCodeWithoutDocumentation = @"    /// <summary>
-    /// A summary
-    /// </summary>
-public class OuterClass
-{{
-
-    {0}
-    System.Action Action;
-}}";
-            var testCodeWithDocumentation = @"    /// <summary>
-    /// A summary
-    /// </summary>
-public class OuterClass
-{{
-    /// <summary>A summary.</summary>
-    {0}
-    System.Action Action;
-}}";
-
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(8, 19)
-                };
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private async Task TestEventFieldDeclarationDocumentationAsync(string modifiers, bool requiresDiagnostic, bool hasDocumentation)
-        {
-            var testCodeWithoutDocumentation = @"    /// <summary>
-    /// A summary
-    /// </summary>
-public class OuterClass
-{{
-
-    {0} event
-    System.Action Action;
-}}";
-            var testCodeWithDocumentation = @"    /// <summary>
-    /// A summary
-    /// </summary>
-public class OuterClass
-{{
-    /// <summary>A summary.</summary>
-    {0} event
-    System.Action Action;
-}}";
-
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(8, 19)
-                };
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private async Task TestTypeWithoutDocumentationAsync(string type)
-        {
-            await this.TestTypeDeclarationDocumentationAsync(type, string.Empty, true, false).ConfigureAwait(false);
-            await this.TestTypeDeclarationDocumentationAsync(type, "internal", true, false).ConfigureAwait(false);
-            await this.TestTypeDeclarationDocumentationAsync(type, "public", true, false).ConfigureAwait(false);
-
-            await this.TestNestedTypeDeclarationDocumentationAsync(type, string.Empty, false, false).ConfigureAwait(false);
-            await this.TestNestedTypeDeclarationDocumentationAsync(type, "private", false, false).ConfigureAwait(false);
-            await this.TestNestedTypeDeclarationDocumentationAsync(type, "protected", true, false).ConfigureAwait(false);
-            await this.TestNestedTypeDeclarationDocumentationAsync(type, "internal", true, false).ConfigureAwait(false);
-            await this.TestNestedTypeDeclarationDocumentationAsync(type, "protected internal", true, false).ConfigureAwait(false);
-            await this.TestNestedTypeDeclarationDocumentationAsync(type, "public", true, false).ConfigureAwait(false);
-        }
-
-        private async Task TestTypeWithDocumentationAsync(string type)
-        {
-            await this.TestTypeDeclarationDocumentationAsync(type, string.Empty, false, true).ConfigureAwait(false);
-            await this.TestTypeDeclarationDocumentationAsync(type, "internal", false, true).ConfigureAwait(false);
-            await this.TestTypeDeclarationDocumentationAsync(type, "public", false, true).ConfigureAwait(false);
-
-            await this.TestNestedTypeDeclarationDocumentationAsync(type, string.Empty, false, true).ConfigureAwait(false);
-            await this.TestNestedTypeDeclarationDocumentationAsync(type, "private", false, true).ConfigureAwait(false);
-            await this.TestNestedTypeDeclarationDocumentationAsync(type, "protected", false, true).ConfigureAwait(false);
-            await this.TestNestedTypeDeclarationDocumentationAsync(type, "internal", false, true).ConfigureAwait(false);
-            await this.TestNestedTypeDeclarationDocumentationAsync(type, "protected internal", false, true).ConfigureAwait(false);
-            await this.TestNestedTypeDeclarationDocumentationAsync(type, "public", false, true).ConfigureAwait(false);
-        }
-
         [Fact]
-        public async Task TestClassWithoutDocumentationAsync()
+        public async Task TestClassWithEmptyDocumentationAsync()
         {
-            await this.TestTypeWithoutDocumentationAsync("class").ConfigureAwait(false);
+            var gen = new DocumentationRuleTestSampleCodeBuilder();
+            gen.WriteLine(@"/// <summary>");
+            gen.WriteLine(@"/// </summary>");
+            gen.WriteClassStart("TestClass", DocumentationOptions.OmitSampleDocumentation, ExpectedResult.Diagnostic, "public");
+            gen.WriteBlockEnd();
+
+            await this.VerifyCSharpDiagnosticAsync(gen, DiagnosticId, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestStructWithoutDocumentationAsync()
+        [Theory]
+        [InlineData(DocumentationOptions.WriteSampleDocumentation, new[] { "public" }, NoDiagnostic)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "public" }, DiagnosticId)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "internal" }, DiagnosticIdInternal)]
+        public async Task TestClassAsync(DocumentationOptions options, string[] modifiers, string expectedDiagnosticId)
         {
-            await this.TestTypeWithoutDocumentationAsync("struct").ConfigureAwait(false);
+            var gen = new DocumentationRuleTestSampleCodeBuilder();
+            gen.WriteClassStart("TestClass", options, ExpectedResult.Diagnostic, modifiers);
+            gen.WriteBlockEnd();
+
+            await this.VerifyCSharpDiagnosticAsync(gen, expectedDiagnosticId, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestEnumWithoutDocumentationAsync()
+        [Theory]
+        [InlineData(DocumentationOptions.WriteSampleDocumentation, new[] { "public" }, NoDiagnostic)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "public" }, DiagnosticId)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "internal" }, DiagnosticIdInternal)]
+        public async Task TestEnumAsync(DocumentationOptions options, string[] modifiers, string expectedDiagnosticId)
         {
-            await this.TestTypeWithoutDocumentationAsync("enum").ConfigureAwait(false);
+            var gen = new DocumentationRuleTestSampleCodeBuilder();
+            gen.WriteEnumStart("TestEnum", options, ExpectedResult.Diagnostic, modifiers);
+            gen.WriteBlockEnd();
+
+            await this.VerifyCSharpDiagnosticAsync(gen, expectedDiagnosticId, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestInterfaceWithoutDocumentationAsync()
+        [Theory]
+        [InlineData(DocumentationOptions.WriteSampleDocumentation, new[] { "public" }, new[] { "public" }, NoDiagnostic)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "public" }, new[] { "public" }, DiagnosticId)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "public" }, new[] { "internal" }, DiagnosticIdInternal)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "internal" }, new[] { "public" }, DiagnosticIdInternal)]
+        public async Task TestNestedClassAsync(DocumentationOptions options, string[] parentModifiers, string[] modifiers, string expectedDiagnosticId)
         {
-            await this.TestTypeWithoutDocumentationAsync("interface").ConfigureAwait(false);
+            var gen = new DocumentationRuleTestSampleCodeBuilder();
+            gen.WriteClassStart("ParentClass", DocumentationOptions.WriteSampleDocumentation, ExpectedResult.NoDiagnostic, parentModifiers);
+            gen.WriteClassStart("TestClass", options, ExpectedResult.Diagnostic, modifiers);
+            gen.WriteBlockEnd();
+            gen.WriteBlockEnd();
+
+            await this.VerifyCSharpDiagnosticAsync(gen, expectedDiagnosticId, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestClassWithDocumentationAsync()
+        [Theory]
+        [InlineData(DocumentationOptions.WriteSampleDocumentation, NoDiagnostic)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, DiagnosticId)]
+        public async Task TestExplicitInterfacePropertyImplementationAsync(DocumentationOptions options, string expectedDiagnosticId)
         {
-            await this.TestTypeWithDocumentationAsync("class").ConfigureAwait(false);
+            var gen = new DocumentationRuleTestSampleCodeBuilder(new[] { DiagnosticId, DiagnosticIdInternal, DiagnosticIdPrivate });
+            gen.WriteClassStart("SomeClass", DocumentationOptions.WriteSampleDocumentation, ExpectedResult.NoDiagnostic, new[] { "public" }, new[] { "SomeClass.IInterface" });
+            gen.WriteExplicitInterfaceProperty("SomeProperty", "IInterface", options, ExpectedResult.Diagnostic);
+            gen.WriteBlockEnd();
+
+            await this.VerifyCSharpDiagnosticAsync(gen, expectedDiagnosticId, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestStructWithDocumentationAsync()
+        [Theory]
+        [InlineData(DocumentationOptions.WriteSampleDocumentation, new[] { "public" }, NoDiagnostic)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "public" }, DiagnosticId)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "internal" }, DiagnosticIdInternal)]
+        public async Task TestStructAsync(DocumentationOptions options, string[] modifiers, string expectedDiagnosticId)
         {
-            await this.TestTypeWithDocumentationAsync("struct").ConfigureAwait(false);
+            var gen = new DocumentationRuleTestSampleCodeBuilder();
+            gen.WriteStructStart("TestStruct", options, ExpectedResult.Diagnostic, modifiers);
+            gen.WriteBlockEnd();
+
+            await this.VerifyCSharpDiagnosticAsync(gen, expectedDiagnosticId, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestEnumWithDocumentationAsync()
+        [Theory]
+        [InlineData(DocumentationOptions.WriteSampleDocumentation, new[] { "public" }, NoDiagnostic)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "public" }, DiagnosticId)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "internal" }, DiagnosticIdInternal)]
+        public async Task TestEnumWithoutDocumentationAsync(DocumentationOptions options, string[] modifiers, string expectedDiagnosticId)
         {
-            await this.TestTypeWithoutDocumentationAsync("enum").ConfigureAwait(false);
+            var gen = new DocumentationRuleTestSampleCodeBuilder();
+            gen.WriteEnumStart("TestEnum", options, ExpectedResult.Diagnostic, modifiers);
+            gen.WriteBlockEnd();
+
+            await this.VerifyCSharpDiagnosticAsync(gen, expectedDiagnosticId, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestInterfaceWithDocumentationAsync()
+        [Theory]
+        [InlineData(DocumentationOptions.WriteSampleDocumentation, new[] { "public" }, NoDiagnostic)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "public" }, DiagnosticId)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "internal" }, DiagnosticIdInternal)]
+        public async Task TestInterfaceAsync(DocumentationOptions options, string[] modifiers, string expectedDiagnosticId)
         {
-            await this.TestTypeWithoutDocumentationAsync("interface").ConfigureAwait(false);
+            var gen = new DocumentationRuleTestSampleCodeBuilder();
+            gen.WriteInterfaceStart("TestInterface", options, ExpectedResult.Diagnostic, modifiers);
+            gen.WriteBlockEnd();
+
+            await this.VerifyCSharpDiagnosticAsync(gen, expectedDiagnosticId, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestDelegateWithoutDocumentationAsync()
+        [Theory]
+        [InlineData(DocumentationOptions.WriteSampleDocumentation, new[] { "public" }, NoDiagnostic)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "private" }, DiagnosticIdPrivate)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "public" }, DiagnosticId)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "protected" }, DiagnosticId)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "protected", "internal" }, DiagnosticId)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "internal" }, DiagnosticIdInternal)]
+        public async Task TestConstructorAsync(DocumentationOptions options, string[] modifiers, string expectedDiagnosticId)
         {
-            await this.TestDelegateDeclarationDocumentationAsync(string.Empty, true, false).ConfigureAwait(false);
-            await this.TestDelegateDeclarationDocumentationAsync("internal", true, false).ConfigureAwait(false);
-            await this.TestDelegateDeclarationDocumentationAsync("public", true, false).ConfigureAwait(false);
+            var gen = new DocumentationRuleTestSampleCodeBuilder();
+            gen.WriteClassStart("TestClass", DocumentationOptions.WriteSampleDocumentation, ExpectedResult.NoDiagnostic, "public");
+            gen.WriteConstructor("TestClass", options, ExpectedResult.Diagnostic, modifiers);
+            gen.WriteBlockEnd();
 
-            await this.TestNestedDelegateDeclarationDocumentationAsync(string.Empty, false, false).ConfigureAwait(false);
-            await this.TestNestedDelegateDeclarationDocumentationAsync("private", false, false).ConfigureAwait(false);
-            await this.TestNestedDelegateDeclarationDocumentationAsync("protected", true, false).ConfigureAwait(false);
-            await this.TestNestedDelegateDeclarationDocumentationAsync("internal", true, false).ConfigureAwait(false);
-            await this.TestNestedDelegateDeclarationDocumentationAsync("protected internal", true, false).ConfigureAwait(false);
-            await this.TestNestedDelegateDeclarationDocumentationAsync("public", true, false).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(gen, expectedDiagnosticId, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestDelegateWithDocumentationAsync()
+        [Theory]
+        [InlineData(DocumentationOptions.WriteSampleDocumentation, new[] { "public" }, new[] { "public" }, NoDiagnostic)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "public" }, new[] { "private" }, DiagnosticIdPrivate)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "public" }, new[] { "public" }, DiagnosticId)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "public" }, new[] { "protected" }, DiagnosticId)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "public" }, new[] { "protected", "internal" }, DiagnosticId)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "public" }, new[] { "internal" }, DiagnosticIdInternal)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "internal" }, new[] { "public" }, DiagnosticIdInternal)]
+        public async Task TestDelegateAsync(DocumentationOptions options, string[] ownerModifiers, string[] modifiers, string expectedDiagnosticId)
         {
-            await this.TestDelegateDeclarationDocumentationAsync(string.Empty, false, true).ConfigureAwait(false);
-            await this.TestDelegateDeclarationDocumentationAsync("internal", false, true).ConfigureAwait(false);
-            await this.TestDelegateDeclarationDocumentationAsync("public", false, true).ConfigureAwait(false);
+            var gen = new DocumentationRuleTestSampleCodeBuilder();
+            gen.WriteClassStart("TestClass", DocumentationOptions.WriteSampleDocumentation, ExpectedResult.NoDiagnostic, ownerModifiers);
+            gen.WriteDelegate("SomeDelegate", options, ExpectedResult.Diagnostic, modifiers);
+            gen.WriteBlockEnd();
 
-            await this.TestNestedDelegateDeclarationDocumentationAsync(string.Empty, false, true).ConfigureAwait(false);
-            await this.TestNestedDelegateDeclarationDocumentationAsync("private", false, true).ConfigureAwait(false);
-            await this.TestNestedDelegateDeclarationDocumentationAsync("protected", false, true).ConfigureAwait(false);
-            await this.TestNestedDelegateDeclarationDocumentationAsync("internal", false, true).ConfigureAwait(false);
-            await this.TestNestedDelegateDeclarationDocumentationAsync("protected internal", false, true).ConfigureAwait(false);
-            await this.TestNestedDelegateDeclarationDocumentationAsync("public", false, true).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(gen, expectedDiagnosticId, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestMethodWithoutDocumentationAsync()
+        [Theory]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, "public", "public", new[] { "public" }, DiagnosticId)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, "internal", "public", new[] { "public" }, DiagnosticIdInternal)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, "public", "private", new[] { "public" }, DiagnosticIdPrivate)]
+        public async Task TestNestedClassDelegateAsync(DocumentationOptions options, string outerClassModifier, string innerClassModifier, string[] modifiers, string expectedDiagnosticId)
         {
-            await this.TestMethodDeclarationDocumentationAsync(string.Empty, false, false, false).ConfigureAwait(false);
-            await this.TestMethodDeclarationDocumentationAsync(string.Empty, true, true, false).ConfigureAwait(false);
-            await this.TestMethodDeclarationDocumentationAsync("private", false, false, false).ConfigureAwait(false);
-            await this.TestMethodDeclarationDocumentationAsync("protected", false, true, false).ConfigureAwait(false);
-            await this.TestMethodDeclarationDocumentationAsync("internal", false, true, false).ConfigureAwait(false);
-            await this.TestMethodDeclarationDocumentationAsync("protected internal", false, true, false).ConfigureAwait(false);
-            await this.TestMethodDeclarationDocumentationAsync("public", false, true, false).ConfigureAwait(false);
+            var gen = new DocumentationRuleTestSampleCodeBuilder();
+            gen.WriteClassStart("OuterClass", DocumentationOptions.WriteSampleDocumentation, ExpectedResult.NoDiagnostic, new[] { outerClassModifier });
+            gen.WriteClassStart("TestClass", DocumentationOptions.WriteSampleDocumentation, ExpectedResult.NoDiagnostic, new[] { innerClassModifier });
+            gen.WriteDelegate("SomeDelegate", options, ExpectedResult.Diagnostic, modifiers);
+            gen.WriteBlockEnd();
+            gen.WriteBlockEnd();
 
-            await this.TestInterfaceMethodDeclarationDocumentationAsync(false).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(gen, expectedDiagnosticId, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestMethodWithDocumentationAsync()
+        [Theory]
+        [InlineData(DocumentationOptions.WriteSampleDocumentation, new[] { "public" }, NoDiagnostic)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "private" }, DiagnosticIdPrivate)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "public" }, DiagnosticId)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "protected" }, DiagnosticId)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "protected", "internal" }, DiagnosticId)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "internal" }, DiagnosticIdInternal)]
+        public async Task TestEventAsync(DocumentationOptions options, string[] modifiers, string expectedDiagnosticId)
         {
-            await this.TestMethodDeclarationDocumentationAsync(string.Empty, false, false, true).ConfigureAwait(false);
-            await this.TestMethodDeclarationDocumentationAsync(string.Empty, true, false, true).ConfigureAwait(false);
-            await this.TestMethodDeclarationDocumentationAsync("private", false, false, true).ConfigureAwait(false);
-            await this.TestMethodDeclarationDocumentationAsync("protected", false, false, true).ConfigureAwait(false);
-            await this.TestMethodDeclarationDocumentationAsync("internal", false, false, true).ConfigureAwait(false);
-            await this.TestMethodDeclarationDocumentationAsync("protected internal", false, false, true).ConfigureAwait(false);
-            await this.TestMethodDeclarationDocumentationAsync("public", false, false, true).ConfigureAwait(false);
+            var gen = new DocumentationRuleTestSampleCodeBuilder();
+            gen.WriteClassStart("TestClass", DocumentationOptions.WriteSampleDocumentation, ExpectedResult.NoDiagnostic, "public");
+            gen.WriteEvent("SomeEvent", options, ExpectedResult.Diagnostic, modifiers);
+            gen.WriteBlockEnd();
 
-            await this.TestInterfaceMethodDeclarationDocumentationAsync(true).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(gen, expectedDiagnosticId, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestConstructorWithoutDocumentationAsync()
+        [Theory]
+        [InlineData(DocumentationOptions.WriteSampleDocumentation, new[] { "public" }, NoDiagnostic)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "private" }, DiagnosticIdPrivate)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "public" }, DiagnosticId)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "protected" }, DiagnosticId)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "protected", "internal" }, DiagnosticId)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "internal" }, DiagnosticIdInternal)]
+        public async Task TestFieldWithoutDocumentationAsync(DocumentationOptions options, string[] modifiers, string expectedDiagnosticId)
         {
-            await this.TestConstructorDeclarationDocumentationAsync(string.Empty, false, false).ConfigureAwait(false);
-            await this.TestConstructorDeclarationDocumentationAsync("private", false, false).ConfigureAwait(false);
-            await this.TestConstructorDeclarationDocumentationAsync("protected", true, false).ConfigureAwait(false);
-            await this.TestConstructorDeclarationDocumentationAsync("internal", true, false).ConfigureAwait(false);
-            await this.TestConstructorDeclarationDocumentationAsync("protected internal", true, false).ConfigureAwait(false);
-            await this.TestConstructorDeclarationDocumentationAsync("public", true, false).ConfigureAwait(false);
+            var gen = new DocumentationRuleTestSampleCodeBuilder();
+            gen.WriteClassStart("TestClass", DocumentationOptions.WriteSampleDocumentation, ExpectedResult.NoDiagnostic, "public");
+            gen.WriteField("someField", options, ExpectedResult.Diagnostic, modifiers);
+            gen.WriteBlockEnd();
+
+            await this.VerifyCSharpDiagnosticAsync(gen, expectedDiagnosticId, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestConstructorWithDocumentationAsync()
+        [Theory]
+        [InlineData(DocumentationOptions.WriteSampleDocumentation, NoDiagnostic)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, DiagnosticId)]
+        public async Task TestFinalizerWithoutDocumentationAsync(DocumentationOptions options, string expectedDiagnosticId)
         {
-            await this.TestConstructorDeclarationDocumentationAsync(string.Empty, false, true).ConfigureAwait(false);
-            await this.TestConstructorDeclarationDocumentationAsync("private", false, true).ConfigureAwait(false);
-            await this.TestConstructorDeclarationDocumentationAsync("protected", false, true).ConfigureAwait(false);
-            await this.TestConstructorDeclarationDocumentationAsync("internal", false, true).ConfigureAwait(false);
-            await this.TestConstructorDeclarationDocumentationAsync("protected internal", false, true).ConfigureAwait(false);
-            await this.TestConstructorDeclarationDocumentationAsync("public", false, true).ConfigureAwait(false);
+            var gen = new DocumentationRuleTestSampleCodeBuilder();
+            gen.WriteClassStart("TestClass", DocumentationOptions.WriteSampleDocumentation, ExpectedResult.NoDiagnostic, "public");
+            gen.WriteFinalizer("TestClass", options, ExpectedResult.Diagnostic);
+            gen.WriteBlockEnd();
+
+            await this.VerifyCSharpDiagnosticAsync(gen, expectedDiagnosticId, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestDestructorWithoutDocumentationAsync()
+        [Theory]
+        [InlineData(DocumentationOptions.WriteSampleDocumentation, new[] { "public" }, NoDiagnostic)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "private" }, DiagnosticIdPrivate)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "public" }, DiagnosticId)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "protected" }, DiagnosticId)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "protected", "internal" }, DiagnosticId)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "internal" }, DiagnosticIdInternal)]
+        public async Task TestPublicIndexerWithoutDocumentationAsync(DocumentationOptions options, string[] modifiers, string expectedDiagnosticId)
         {
-            await this.TestDestructorDeclarationDocumentationAsync(true, false).ConfigureAwait(false);
+            var gen = new DocumentationRuleTestSampleCodeBuilder();
+            gen.WriteClassStart("TestClass", DocumentationOptions.WriteSampleDocumentation, ExpectedResult.NoDiagnostic, "public");
+            gen.WriteIndexer(options, ExpectedResult.Diagnostic, modifiers);
+            gen.WriteBlockEnd();
+
+            await this.VerifyCSharpDiagnosticAsync(gen, expectedDiagnosticId, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestDestructorWithDocumentationAsync()
+        [Theory]
+        [InlineData(DocumentationOptions.WriteSampleDocumentation, new[] { "public" }, NoDiagnostic)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "private" }, DiagnosticIdPrivate)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "public" }, DiagnosticId)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "protected" }, DiagnosticId)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "protected", "internal" }, DiagnosticId)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "internal" }, DiagnosticIdInternal)]
+        public async Task TestPublicMethodWithoutDocumentationAsync(DocumentationOptions options, string[] modifiers, string expectedDiagnosticId)
         {
-            await this.TestDestructorDeclarationDocumentationAsync(false, true).ConfigureAwait(false);
+            var gen = new DocumentationRuleTestSampleCodeBuilder();
+            gen.WriteClassStart("TestClass", DocumentationOptions.WriteSampleDocumentation, ExpectedResult.NoDiagnostic, "public");
+            gen.WriteMethod("SomeMethod", options, ExpectedResult.Diagnostic, modifiers);
+            gen.WriteBlockEnd();
+
+            await this.VerifyCSharpDiagnosticAsync(gen, expectedDiagnosticId, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestFieldWithoutDocumentationAsync()
+        [Theory]
+        [InlineData(DocumentationOptions.WriteSampleDocumentation, new[] { "public" }, NoDiagnostic)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "private" }, DiagnosticIdPrivate)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "public" }, DiagnosticId)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "protected" }, DiagnosticId)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "protected", "internal" }, DiagnosticId)]
+        [InlineData(DocumentationOptions.OmitSampleDocumentation, new[] { "internal" }, DiagnosticIdInternal)]
+        public async Task TestPublicPropertyWithoutDocumentationAsync(DocumentationOptions options, string[] modifiers, string expectedDiagnosticId)
         {
-            await this.TestFieldDeclarationDocumentationAsync(string.Empty, false, false).ConfigureAwait(false);
-            await this.TestFieldDeclarationDocumentationAsync("private", false, false).ConfigureAwait(false);
-            await this.TestFieldDeclarationDocumentationAsync("protected", true, false).ConfigureAwait(false);
-            await this.TestFieldDeclarationDocumentationAsync("internal", true, false).ConfigureAwait(false);
-            await this.TestFieldDeclarationDocumentationAsync("protected internal", true, false).ConfigureAwait(false);
-            await this.TestFieldDeclarationDocumentationAsync("public", true, false).ConfigureAwait(false);
+            var gen = new DocumentationRuleTestSampleCodeBuilder();
+            gen.WriteClassStart("TestClass", DocumentationOptions.WriteSampleDocumentation, ExpectedResult.NoDiagnostic, "public");
+            gen.WriteProperty("SomeProperty", options, ExpectedResult.Diagnostic, modifiers);
+            gen.WriteBlockEnd();
+
+            await this.VerifyCSharpDiagnosticAsync(gen, expectedDiagnosticId, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestFieldWithDocumentationAsync()
+        protected Task VerifyCSharpDiagnosticAsync(DocumentationRuleTestSampleCodeBuilder gen, string diagnosticId, CancellationToken cancellationToken)
         {
-            await this.TestFieldDeclarationDocumentationAsync(string.Empty, false, true).ConfigureAwait(false);
-            await this.TestFieldDeclarationDocumentationAsync("private", false, true).ConfigureAwait(false);
-            await this.TestFieldDeclarationDocumentationAsync("protected", false, true).ConfigureAwait(false);
-            await this.TestFieldDeclarationDocumentationAsync("internal", false, true).ConfigureAwait(false);
-            await this.TestFieldDeclarationDocumentationAsync("protected internal", false, true).ConfigureAwait(false);
-            await this.TestFieldDeclarationDocumentationAsync("public", false, true).ConfigureAwait(false);
-        }
+            var code = gen.GeneratedText;
 
-        [Fact]
-        public async Task TestPropertyWithoutDocumentationAsync()
-        {
-            await this.TestPropertyDeclarationDocumentationAsync(string.Empty, false, false, false).ConfigureAwait(false);
-            await this.TestPropertyDeclarationDocumentationAsync(string.Empty, true, true, false).ConfigureAwait(false);
-            await this.TestPropertyDeclarationDocumentationAsync("private", false, false, false).ConfigureAwait(false);
-            await this.TestPropertyDeclarationDocumentationAsync("protected", false, true, false).ConfigureAwait(false);
-            await this.TestPropertyDeclarationDocumentationAsync("internal", false, true, false).ConfigureAwait(false);
-            await this.TestPropertyDeclarationDocumentationAsync("protected internal", false, true, false).ConfigureAwait(false);
-            await this.TestPropertyDeclarationDocumentationAsync("public", false, true, false).ConfigureAwait(false);
+            var diagnostics = string.IsNullOrEmpty(diagnosticId)
+                ? EmptyDiagnosticResults
+                : gen.DiagnosticLocations.Select(x => this.CSharpDiagnostic(diagnosticId).WithLocation(x.Line, x.Column)).ToArray();
 
-            await this.TestInterfacePropertyDeclarationDocumentationAsync(false).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestPropertyWithDocumentationAsync()
-        {
-            await this.TestPropertyDeclarationDocumentationAsync(string.Empty, false, false, true).ConfigureAwait(false);
-            await this.TestPropertyDeclarationDocumentationAsync(string.Empty, true, false, true).ConfigureAwait(false);
-            await this.TestPropertyDeclarationDocumentationAsync("private", false, false, true).ConfigureAwait(false);
-            await this.TestPropertyDeclarationDocumentationAsync("protected", false, false, true).ConfigureAwait(false);
-            await this.TestPropertyDeclarationDocumentationAsync("internal", false, false, true).ConfigureAwait(false);
-            await this.TestPropertyDeclarationDocumentationAsync("protected internal", false, false, true).ConfigureAwait(false);
-            await this.TestPropertyDeclarationDocumentationAsync("public", false, false, true).ConfigureAwait(false);
-
-            await this.TestInterfacePropertyDeclarationDocumentationAsync(true).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestIndexerWithoutDocumentationAsync()
-        {
-            await this.TestIndexerDeclarationDocumentationAsync(string.Empty, false, false, false).ConfigureAwait(false);
-            await this.TestIndexerDeclarationDocumentationAsync(string.Empty, true, true, false).ConfigureAwait(false);
-            await this.TestIndexerDeclarationDocumentationAsync("private", false, false, false).ConfigureAwait(false);
-            await this.TestIndexerDeclarationDocumentationAsync("protected", false, true, false).ConfigureAwait(false);
-            await this.TestIndexerDeclarationDocumentationAsync("internal", false, true, false).ConfigureAwait(false);
-            await this.TestIndexerDeclarationDocumentationAsync("protected internal", false, true, false).ConfigureAwait(false);
-            await this.TestIndexerDeclarationDocumentationAsync("public", false, true, false).ConfigureAwait(false);
-
-            await this.TestInterfaceIndexerDeclarationDocumentationAsync(false).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestIndexerWithDocumentationAsync()
-        {
-            await this.TestIndexerDeclarationDocumentationAsync(string.Empty, false, false, true).ConfigureAwait(false);
-            await this.TestIndexerDeclarationDocumentationAsync(string.Empty, true, false, true).ConfigureAwait(false);
-            await this.TestIndexerDeclarationDocumentationAsync("private", false, false, true).ConfigureAwait(false);
-            await this.TestIndexerDeclarationDocumentationAsync("protected", false, false, true).ConfigureAwait(false);
-            await this.TestIndexerDeclarationDocumentationAsync("internal", false, false, true).ConfigureAwait(false);
-            await this.TestIndexerDeclarationDocumentationAsync("protected internal", false, false, true).ConfigureAwait(false);
-            await this.TestIndexerDeclarationDocumentationAsync("public", false, false, true).ConfigureAwait(false);
-
-            await this.TestInterfaceIndexerDeclarationDocumentationAsync(true).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestEventWithoutDocumentationAsync()
-        {
-            await this.TestEventDeclarationDocumentationAsync(string.Empty, false, false, false).ConfigureAwait(false);
-            await this.TestEventDeclarationDocumentationAsync(string.Empty, true, true, false).ConfigureAwait(false);
-            await this.TestEventDeclarationDocumentationAsync("private", false, false, false).ConfigureAwait(false);
-            await this.TestEventDeclarationDocumentationAsync("protected", false, true, false).ConfigureAwait(false);
-            await this.TestEventDeclarationDocumentationAsync("internal", false, true, false).ConfigureAwait(false);
-            await this.TestEventDeclarationDocumentationAsync("protected internal", false, true, false).ConfigureAwait(false);
-            await this.TestEventDeclarationDocumentationAsync("public", false, true, false).ConfigureAwait(false);
-
-            await this.TestInterfaceEventDeclarationDocumentationAsync(false).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestEventWithDocumentationAsync()
-        {
-            await this.TestEventDeclarationDocumentationAsync(string.Empty, false, false, true).ConfigureAwait(false);
-            await this.TestEventDeclarationDocumentationAsync(string.Empty, true, false, true).ConfigureAwait(false);
-            await this.TestEventDeclarationDocumentationAsync("private", false, false, true).ConfigureAwait(false);
-            await this.TestEventDeclarationDocumentationAsync("protected", false, false, true).ConfigureAwait(false);
-            await this.TestEventDeclarationDocumentationAsync("internal", false, false, true).ConfigureAwait(false);
-            await this.TestEventDeclarationDocumentationAsync("protected internal", false, false, true).ConfigureAwait(false);
-            await this.TestEventDeclarationDocumentationAsync("public", false, false, true).ConfigureAwait(false);
-
-            await this.TestInterfaceEventDeclarationDocumentationAsync(true).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestEventFieldWithoutDocumentationAsync()
-        {
-            await this.TestEventFieldDeclarationDocumentationAsync(string.Empty, false, false).ConfigureAwait(false);
-            await this.TestEventFieldDeclarationDocumentationAsync("private", false, false).ConfigureAwait(false);
-            await this.TestEventFieldDeclarationDocumentationAsync("protected", true, false).ConfigureAwait(false);
-            await this.TestEventFieldDeclarationDocumentationAsync("internal", true, false).ConfigureAwait(false);
-            await this.TestEventFieldDeclarationDocumentationAsync("protected internal", true, false).ConfigureAwait(false);
-            await this.TestEventFieldDeclarationDocumentationAsync("public", true, false).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestEventFieldWithDocumentationAsync()
-        {
-            await this.TestEventFieldDeclarationDocumentationAsync(string.Empty, false, true).ConfigureAwait(false);
-            await this.TestEventFieldDeclarationDocumentationAsync("private", false, true).ConfigureAwait(false);
-            await this.TestEventFieldDeclarationDocumentationAsync("protected", false, true).ConfigureAwait(false);
-            await this.TestEventFieldDeclarationDocumentationAsync("internal", false, true).ConfigureAwait(false);
-            await this.TestEventFieldDeclarationDocumentationAsync("protected internal", false, true).ConfigureAwait(false);
-            await this.TestEventFieldDeclarationDocumentationAsync("public", false, true).ConfigureAwait(false);
+            return this.VerifyCSharpDiagnosticAsync(code, diagnostics, cancellationToken);
         }
 
         [Fact]
@@ -859,7 +307,7 @@ public class OuterClass
 {
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 14);
+            DiagnosticResult expected = this.CSharpDiagnostic(DiagnosticId).WithLocation(3, 14);
 
             await this.VerifyCSharpDiagnosticAsync(testCodeWithDocumentation, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(testCodeWithEmptyDocumentation, expected, CancellationToken.None).ConfigureAwait(false);
@@ -881,7 +329,7 @@ public class OuterClass
 {
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 14);
+            DiagnosticResult expected = this.CSharpDiagnostic(DiagnosticId).WithLocation(4, 14);
 
             await this.VerifyCSharpDiagnosticAsync(testCodeWithDocumentation, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(testCodeWithEmptyDocumentation, expected, CancellationToken.None).ConfigureAwait(false);
@@ -890,30 +338,29 @@ public class OuterClass
         [Fact]
         public async Task TestEmptyElementXmlCommentsAsync()
         {
-            var testCodeWithDocumentation = @"/// <inheritdoc/>
-public class OuterClass
-{
-}";
+            var gen = new DocumentationRuleTestSampleCodeBuilder();
+            gen.WriteLine(@"/// <inheritdoc />");
+            gen.WriteClassStart("TestClass", DocumentationOptions.OmitSampleDocumentation, ExpectedResult.NoDiagnostic, "public");
+            gen.WriteBlockEnd();
 
-            await this.VerifyCSharpDiagnosticAsync(testCodeWithDocumentation, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(gen, DiagnosticId, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestMultiLineDocumentationAsync()
         {
-            var testCodeWithDocumentation = @"
-/**
+            var gen = new DocumentationRuleTestSampleCodeBuilder();
+            gen.WriteLine(@"/**
  * <summary>This is a documentation comment summary.</summary>
- */
-public class OuterClass
-{
-    /**
-     * <summary>This is a documentation comment summary.</summary>
-     */
-    public void SomeMethod() { }
-}";
+ */");
+            gen.WriteClassStart("TestClass", DocumentationOptions.OmitSampleDocumentation, ExpectedResult.NoDiagnostic, "public");
+            gen.WriteLine(@"/**");
+            gen.WriteLine(@" * <summary>This is a documentation comment summary.</summary>");
+            gen.WriteLine(@" */");
+            gen.WriteMethod("SomeMethod", DocumentationOptions.OmitSampleDocumentation, ExpectedResult.NoDiagnostic, "public");
+            gen.WriteBlockEnd();
 
-            await this.VerifyCSharpDiagnosticAsync(testCodeWithDocumentation, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(gen, DiagnosticId, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -923,22 +370,12 @@ public class OuterClass
         [Fact]
         public async Task TestSkipAutoGeneratedCodeAsync()
         {
-            var testCode = @"//------------------------------------------------------------------------------
-// <auto-generated>
-//     This code was generated by a tool.
-//     Runtime Version:4.0.30319.0
-//
-//     Changes to this file may cause incorrect behavior and will be lost if
-//     the code is regenerated.
-// </auto-generated>
-//------------------------------------------------------------------------------
+            var gen = new DocumentationRuleTestSampleCodeBuilder();
+            gen.WriteAutoGeneratedHeader();
+            gen.WriteClassStart("TestClass", DocumentationOptions.OmitSampleDocumentation, ExpectedResult.NoDiagnostic, "public");
+            gen.WriteBlockEnd();
 
-public class OuterClass
-{
-    public void SomeMethod() { }
-}";
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(gen, DiagnosticId, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>

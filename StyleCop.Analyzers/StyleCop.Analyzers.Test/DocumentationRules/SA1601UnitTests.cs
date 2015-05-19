@@ -37,20 +37,22 @@ public partial {0} TypeName
         }
 
         [Theory]
-        [InlineData("class")]
-        [InlineData("struct")]
-        [InlineData("interface")]
-        public async Task TestPartialTypeWithoutDocumentationAsync(string typeKeyword)
+        [InlineData("class", "public", SA1601PartialElementsMustBeDocumented.DiagnosticId)]
+        [InlineData("class", "internal", SA1601PartialElementsMustBeDocumented.DiagnosticIdInternal)]
+        [InlineData("struct", "public", SA1601PartialElementsMustBeDocumented.DiagnosticId)]
+        [InlineData("struct", "public", SA1601PartialElementsMustBeDocumented.DiagnosticId)]
+        [InlineData("interface", "public", SA1601PartialElementsMustBeDocumented.DiagnosticId)]
+        public async Task TestPartialTypeWithoutDocumentationAsync(string typeKeyword, string typeModifier, string expectedDiagnosticId)
         {
             var testCode = @"
-public partial {0}
+{0} partial {1}
 TypeName
 {{
 }}";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 1);
+            DiagnosticResult expected = this.CSharpDiagnostic(expectedDiagnosticId).WithLocation(3, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKeyword), expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeModifier, typeKeyword), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -68,7 +70,7 @@ TypeName
 {{
 }}";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
+            DiagnosticResult expected = this.CSharpDiagnostic(SA1601PartialElementsMustBeDocumented.DiagnosticId).WithLocation(6, 1);
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKeyword), expected, CancellationToken.None).ConfigureAwait(false);
         }
@@ -102,7 +104,7 @@ public partial class TypeName
     partial void MemberName();
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 18);
+            DiagnosticResult expected = this.CSharpDiagnostic(SA1601PartialElementsMustBeDocumented.DiagnosticIdPrivate).WithLocation(7, 18);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
@@ -122,7 +124,7 @@ public partial class TypeName
     partial void MemberName();
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 18);
+            DiagnosticResult expected = this.CSharpDiagnostic(SA1601PartialElementsMustBeDocumented.DiagnosticIdPrivate).WithLocation(10, 18);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }

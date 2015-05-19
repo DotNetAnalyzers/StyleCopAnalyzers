@@ -114,6 +114,7 @@
     <Compile Include="DocumentationRules\StandardTextDiagnosticBase.cs" />
     <Compile Include="GeneratedCodeAnalysisExtensions.cs" />
     <Compile Include="Helpers\DocumentationCommentExtensions.cs" />
+    <Compile Include="Helpers\EffectiveVisibilityHelper.cs" />
     <Compile Include="Helpers\EnumerableHelpers.cs" />
     <Compile Include="Helpers\FileHeader.cs" />
     <Compile Include="Helpers\FileHeaderHelpers.cs" />
