@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.SpacingRules
 {
+    using System;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -50,14 +51,14 @@
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1005";
-        private const string Title = "Single line comments must begin with single space";
-        private const string MessageFormat = "Single line comment must begin with a space.";
-        private const string Category = "StyleCop.CSharp.SpacingRules";
-        private const string Description = "A single-line comment within a C# code file does not begin with a single space.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1005.html";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1005Title), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(SpacingResources.SA1005MessageFormat), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly string Category = "StyleCop.CSharp.SpacingRules";
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1005Description), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1005.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -74,35 +75,92 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
+            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
+
+            bool isFirstSingleLineTrivia = true;
+            int newLineCount = 0;
+
             foreach (var trivia in root.DescendantTrivia())
             {
                 switch (trivia.Kind())
                 {
                 case SyntaxKind.SingleLineCommentTrivia:
-                    this.HandleSingleLineCommentTrivia(context, trivia);
+                    this.HandleSingleLineCommentTrivia(context, trivia, isFirstSingleLineTrivia);
+                    isFirstSingleLineTrivia = false;
+                    newLineCount = 0;
+                    break;
+
+                case SyntaxKind.EndOfLineTrivia:
+                    newLineCount++;
+                    if (newLineCount == 2)
+                    {
+                        isFirstSingleLineTrivia = true;
+                        newLineCount = 0;
+                    }
+
+                    break;
+
+                case SyntaxKind.WhitespaceTrivia:
                     break;
 
                 default:
+                    isFirstSingleLineTrivia = true;
                     break;
                 }
             }
         }
 
-        private void HandleSingleLineCommentTrivia(SyntaxTreeAnalysisContext context, SyntaxTrivia trivia)
+        private void HandleSingleLineCommentTrivia(SyntaxTreeAnalysisContext context, SyntaxTrivia trivia, bool isFirstSingleLineTrivia)
         {
             string text = trivia.ToFullString();
-            if (text.Equals("//") || text.StartsWith("// "))
+            if (text.Equals(@"//"))
+            {
                 return;
+            }
 
             // special case: commented code
-            if (text.StartsWith("////"))
+            if (text.StartsWith(@"////", StringComparison.Ordinal))
+            {
                 return;
+            }
+
+            // Special case: multiple dashes at start of comment
+            if (text.StartsWith(@"//--", StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            // Special case: //\ negates spacing requirements
+            if (text.StartsWith(@"//\", StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            // No need to handle documentation comments ("///") because they're not
+            // reported as SingleLineCommentTrivia.
+
+            int spaceCount = 0;
+            for (int i = 2; (i < text.Length) && (text[i] == ' '); i++)
+            {
+                spaceCount++;
+            }
+
+            if (spaceCount == 1)
+            {
+                return;
+            }
+
+            // Special case: follow-on comment lines may be indented with more than
+            // one space.
+            if (spaceCount > 1 && !isFirstSingleLineTrivia)
+            {
+                return;
+            }
 
             // Single line comment must begin with a space.
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, trivia.GetLocation()));

@@ -1,14 +1,13 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Xunit;
-using StyleCop.Analyzers.MaintainabilityRules;
-using TestHelper;
-
-namespace StyleCop.Analyzers.Test.MaintainabilityRules
+﻿namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
+    using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.MaintainabilityRules;
+    using TestHelper;
+    using Xunit;
+
     public class SA1403UnitTests : FileMayOnlyContainTestBase
     {
         public override string Keyword
@@ -19,16 +18,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             }
         }
 
-        public override string DiagnosticId
-        {
-            get
-            {
-                return SA1403FileMayOnlyContainASingleNamespace.DiagnosticId;
-            }
-        }
-
         [Fact]
-        public async Task TestNestedNamespaces()
+        public async Task TestNestedNamespacesAsync()
         {
             var testCode = @"namespace Foo
 {
@@ -38,28 +29,15 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = this.DiagnosticId,
-                    Message = this.Message,
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 3, 15)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 15);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1403FileMayOnlyContainASingleNamespace();
+            yield return new SA1403FileMayOnlyContainASingleNamespace();
         }
     }
 }

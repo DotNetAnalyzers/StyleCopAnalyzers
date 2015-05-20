@@ -1,26 +1,24 @@
 ﻿namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.ReadabilityRules;
     using TestHelper;
+    using Xunit;
 
     public class SA1106UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1106CodeMustNotContainEmptyStatements.DiagnosticId;
-
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestEmptyStatementAsBlock()
+        public async Task TestEmptyStatementAsBlockAsync()
         {
             var testCode = @"
 class TestClass
@@ -32,26 +30,13 @@ class TestClass
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Code must not contain empty statements",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 13)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 13);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestEmptyStatementInForStatement()
+        public async Task TestEmptyStatementInForStatementAsync()
         {
             var testCode = @"
 class TestClass
@@ -64,11 +49,11 @@ class TestClass
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestEmptyStatement()
+        public async Task TestEmptyStatementAsync()
         {
             var testCode = @"
 class TestClass
@@ -79,26 +64,13 @@ class TestClass
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Code must not contain empty statements",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 9)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestLabeledEmptyStatement()
+        public async Task TestLabeledEmptyStatementAsync()
         {
             var testCode = @"
 class TestClass
@@ -110,11 +82,11 @@ class TestClass
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestLabeledEmptyStatementFollowedByEmptyStatement()
+        public async Task TestLabeledEmptyStatementFollowedByEmptyStatementAsync()
         {
             var testCode = @"
 class TestClass
@@ -127,26 +99,13 @@ class TestClass
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Code must not contain empty statements",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 9)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestLabeledEmptyStatementFollowedByNonEmptyStatement()
+        public async Task TestLabeledEmptyStatementFollowedByNonEmptyStatementAsync()
         {
             var testCode = @"
 class TestClass
@@ -159,27 +118,14 @@ class TestClass
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Code must not contain empty statements",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 9)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1106CodeMustNotContainEmptyStatements();
+            yield return new SA1106CodeMustNotContainEmptyStatements();
         }
     }
 }

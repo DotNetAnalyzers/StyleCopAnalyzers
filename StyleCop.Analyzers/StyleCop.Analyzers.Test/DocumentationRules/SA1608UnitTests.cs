@@ -1,37 +1,43 @@
 ﻿namespace StyleCop.Analyzers.Test.DocumentationRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Analyzers.DocumentationRules;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using TestHelper;
+    using Xunit;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1608ElementDocumentationMustNotHaveDefaultSummary"/>-
     /// </summary>
     public class SA1608UnitTests : CodeFixVerifier
     {
-        public string DiagnosticId { get; } = SA1608ElementDocumentationMustNotHaveDefaultSummary.DiagnosticId;
-
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestTypeNoDocumentation(string typeName)
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
+        public async Task TestTypeNoDocumentationAsync(string typeName)
         {
             var testCode = @"
 {0} TypeName
 {{
 }}";
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestTypeWithSummaryDocumentation(string typeName)
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
+        public async Task TestTypeWithSummaryDocumentationAsync(string typeName)
         {
             var testCode = @"
 /// <summary>
@@ -40,10 +46,14 @@
 {0} TypeName
 {{
 }}";
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestTypeWithContentDocumentation(string typeName)
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
+        public async Task TestTypeWithContentDocumentationAsync(string typeName)
         {
             var testCode = @"
 /// <content>
@@ -52,20 +62,28 @@
 {0} TypeName
 {{
 }}";
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestTypeWithInheritedDocumentation(string typeName)
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
+        public async Task TestTypeWithInheritedDocumentationAsync(string typeName)
         {
             var testCode = @"
 /// <inheritdoc/>
 {0} TypeName
 {{
 }}";
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestTypeWithoutSummaryDocumentation(string typeName)
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
+        public async Task TestTypeWithoutSummaryDocumentationAsync(string typeName)
         {
             var testCode = @"
 /// <summary>
@@ -75,10 +93,14 @@
 TypeName
 {{
 }}";
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestTypeWithoutContentDocumentation(string typeName)
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
+        public async Task TestTypeWithoutContentDocumentationAsync(string typeName)
         {
             var testCode = @"
 /// <content>
@@ -88,119 +110,11 @@ partial {0}
 TypeName
 {{
 }}";
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestClassWithDocumentation()
-        {
-            await this.TestTypeWithSummaryDocumentation("class");
-        }
-
-        [Fact]
-        public async Task TestStructWithDocumentation()
-        {
-            await this.TestTypeWithSummaryDocumentation("struct");
-        }
-
-        [Fact]
-        public async Task TestInterfaceWithDocumentation()
-        {
-            await this.TestTypeWithSummaryDocumentation("interface");
-        }
-
-        [Fact]
-        public async Task TestClassWithContentDocumentation()
-        {
-            await this.TestTypeWithContentDocumentation("class");
-        }
-
-        [Fact]
-        public async Task TestStructWithContentDocumentation()
-        {
-            await this.TestTypeWithContentDocumentation("struct");
-        }
-
-        [Fact]
-        public async Task TestInterfaceWithContentDocumentation()
-        {
-            await this.TestTypeWithContentDocumentation("interface");
-        }
-
-        [Fact]
-        public async Task TestClassWithInheritedDocumentation()
-        {
-            await this.TestTypeWithInheritedDocumentation("class");
-        }
-
-        [Fact]
-        public async Task TestStructWithInheritedDocumentation()
-        {
-            await this.TestTypeWithInheritedDocumentation("struct");
-        }
-
-        [Fact]
-        public async Task TestInterfaceWithInheritedDocumentation()
-        {
-            await this.TestTypeWithInheritedDocumentation("interface");
-        }
-
-        [Fact]
-        public async Task TestClassWithoutSummaryDocumentation()
-        {
-            await this.TestTypeWithoutSummaryDocumentation("class");
-        }
-
-        [Fact]
-        public async Task TestClassWithoutContentDocumentation()
-        {
-            await this.TestTypeWithoutContentDocumentation("class");
-        }
-
-        [Fact]
-        public async Task TestStructWithoutSummaryDocumentation()
-        {
-            await this.TestTypeWithoutSummaryDocumentation("struct");
-        }
-
-        [Fact]
-        public async Task TestStructWithoutContentDocumentation()
-        {
-            await this.TestTypeWithoutContentDocumentation("struct");
-        }
-
-        [Fact]
-        public async Task TestInterfaceWithoutSummaryDocumentation()
-        {
-            await this.TestTypeWithoutSummaryDocumentation("interface");
-        }
-
-        [Fact]
-        public async Task TestInterfaceWithoutContentDocumentation()
-        {
-            await this.TestTypeWithoutContentDocumentation("interface");
-        }
-
-        [Fact]
-        public async Task TestClassNoDocumentation()
-        {
-            await this.TestTypeNoDocumentation("class");
-        }
-
-        [Fact]
-        public async Task TestStructNoDocumentation()
-        {
-            await this.TestTypeNoDocumentation("struct");
-        }
-
-        [Fact]
-        public async Task TestInterfaceNoDocumentation()
-        {
-            await this.TestTypeNoDocumentation("interface");
-        }
-
-        [Fact]
-        public async Task TestClassWithDefaultDocumentation()
+        public async Task TestClassWithDefaultDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -210,28 +124,13 @@ public class ClassName
 {
 }";
 
-            DiagnosticResult[] expected;
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 5);
 
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Element documentation must not have default summary",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 2, 5)
-                            }
-                    }
-                };
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestClassWithDefaultDocumentationMultipleWhitespaces()
+        public async Task TestClassWithDefaultDocumentationMultipleWhitespacesAsync()
         {
             var testCode = @"
 /// <summary>
@@ -242,28 +141,14 @@ public class ClassName
 {
 }";
 
-            DiagnosticResult[] expected;
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 5);
 
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Element documentation must not have default summary",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 2, 5)
-                            }
-                    }
-                };
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1608ElementDocumentationMustNotHaveDefaultSummary();
+            yield return new SA1608ElementDocumentationMustNotHaveDefaultSummary();
         }
     }
 }

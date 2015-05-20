@@ -1,27 +1,25 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Xunit;
-using StyleCop.Analyzers.MaintainabilityRules;
-using TestHelper;
-
-namespace StyleCop.Analyzers.Test.MaintainabilityRules
+﻿namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
+    using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.MaintainabilityRules;
+    using TestHelper;
+    using Xunit;
+
     public class SA1408UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1408ConditionalExpressionsMustDeclarePrecedence.DiagnosticId;
-
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestOr()
+        public async Task TestOrAsync()
         {
             var testCode = @"public class Foo
 {
@@ -30,11 +28,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         bool x = true || false || true || false;
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAnd()
+        public async Task TestAndAsync()
         {
             var testCode = @"public class Foo
 {
@@ -43,11 +41,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         bool x = true && false && true && false;
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestOrAndAnd()
+        public async Task TestOrAndAndAsync()
         {
             var testCode = @"public class Foo
 {
@@ -56,22 +54,9 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         bool x = true || false && true;
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Conditional expressions must declare precedence",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 26)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 26);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"public class Foo
 {
@@ -81,11 +66,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAndAndOr()
+        public async Task TestAndAndOrAsync()
         {
             var testCode = @"public class Foo
 {
@@ -94,22 +79,9 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         bool x = true && false || true;
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Conditional expressions must declare precedence",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 18)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 18);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"public class Foo
 {
@@ -119,11 +91,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestOrAndAndParenthesized()
+        public async Task TestOrAndAndParenthesizedAsync()
         {
             var testCode = @"public class Foo
 {
@@ -132,11 +104,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         bool x = (true || false) && true;
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestOrAndEqualsParenthesized()
+        public async Task TestOrAndEqualsParenthesizedAsync()
         {
             var testCode = @"public class Foo
 {
@@ -145,11 +117,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         bool x = true || (false == true);
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAndAndEquals()
+        public async Task TestAndAndEqualsAsync()
         {
             var testCode = @"public class Foo
 {
@@ -159,11 +131,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAndAndOrParenthesized()
+        public async Task TestAndAndOrParenthesizedAsync()
         {
             var testCode = @"public class Foo
 {
@@ -172,11 +144,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         bool x = (true && false) || true;
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMultipleViolations()
+        public async Task TestMultipleViolationsAsync()
         {
             var testCode = @"public class Foo
 {
@@ -185,33 +157,13 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         bool x = true && false || true && false;
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Conditional expressions must declare precedence",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 18)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Conditional expressions must declare precedence",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 35)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic().WithLocation(5, 18),
+                    this.CSharpDiagnostic().WithLocation(5, 35)
+                };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"public class Foo
 {
@@ -221,39 +173,51 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestCodeFix()
+        public async Task TestCodeFixAsync()
         {
             var testCode = @"public class Foo
 {
     public void Bar()
     {
+        bool b = true, c = true;
         bool x = true && false || true && false;
-        bool y = true || y && b && c;
+        bool y = true || x && b && c;
         // the following test makes sure the code fix doesn't alter spacing
-        bool z = z ? true&&true||false :false;
+        bool z = b ? true&&true||false :false;
     }
 }";
             var fixedCode = @"public class Foo
 {
     public void Bar()
     {
+        bool b = true, c = true;
         bool x = (true && false) || (true && false);
-        bool y = true || (y && b && c);
+        bool y = true || (x && b && c);
         // the following test makes sure the code fix doesn't alter spacing
-        bool z = z ? (true&&true)||false :false;
+        bool z = b ? (true&&true)||false :false;
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            DiagnosticResult[] expected =
+                {
+                    this.CSharpDiagnostic().WithLocation(6, 18),
+                    this.CSharpDiagnostic().WithLocation(6, 35),
+                    this.CSharpDiagnostic().WithLocation(7, 26),
+                    this.CSharpDiagnostic().WithLocation(9, 22),
+                };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1408ConditionalExpressionsMustDeclarePrecedence();
+            yield return new SA1408ConditionalExpressionsMustDeclarePrecedence();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

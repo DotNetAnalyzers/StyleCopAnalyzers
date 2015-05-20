@@ -36,7 +36,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1306.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -53,14 +53,16 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleFieldDeclarationSyntax, SyntaxKind.FieldDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleFieldDeclarationSyntax, SyntaxKind.FieldDeclaration);
         }
 
         private void HandleFieldDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
             FieldDeclarationSyntax syntax = (FieldDeclarationSyntax)context.Node;
             if (NamedTypeHelpers.IsContainedInNativeMethodsClass(syntax))
+            {
                 return;
+            }
 
             if (syntax.Modifiers.Any(SyntaxKind.ConstKeyword))
             {
@@ -91,22 +93,29 @@
 
             var variables = syntax.Declaration?.Variables;
             if (variables == null)
+            {
                 return;
+            }
 
             foreach (VariableDeclaratorSyntax variableDeclarator in variables.Value)
             {
                 if (variableDeclarator == null)
+                {
                     continue;
+                }
 
                 var identifier = variableDeclarator.Identifier;
                 if (identifier.IsMissing)
+                {
                     continue;
+                }
 
                 string name = identifier.ValueText;
                 if (string.IsNullOrEmpty(name) || char.IsLower(name[0]))
                 {
                     continue;
                 }
+
                 if (name[0] == '_')
                 {
                     // `_foo` is handled by SA1309

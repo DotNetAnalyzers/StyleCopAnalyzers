@@ -25,11 +25,11 @@
         /// <see cref="SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1026";
-        private const string Title = "Code must not contain space after new keyword in implicitly typed array allocation";
-        private const string MessageFormat = "The keyword 'new' must not be followed by a space.";
-        private const string Category = "StyleCop.CSharp.SpacingRules";
-        private const string Description = "An implicitly typed new array allocation within a C# code file is not spaced correctly.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1026.html";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1026Title), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(SpacingResources.SA1026MessageFormat), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly string Category = "StyleCop.CSharp.SpacingRules";
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1026Description), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1026.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
@@ -49,7 +49,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
+            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -72,10 +72,14 @@
         private void HandleNewKeywordToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             if (!token.Parent.IsKind(SyntaxKind.ImplicitArrayCreationExpression))
+            {
                 return;
+            }
 
             this.HandleDisallowedSpaceToken(context, token);
         }
@@ -83,10 +87,14 @@
         private void HandleDisallowedSpaceToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing || !token.HasTrailingTrivia)
+            {
                 return;
+            }
 
             if (!token.TrailingTrivia.First().IsKind(SyntaxKind.WhitespaceTrivia))
+            {
                 return;
+            }
 
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));
         }

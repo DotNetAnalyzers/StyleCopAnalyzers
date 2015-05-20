@@ -33,14 +33,14 @@
         /// The ID for diagnostics produced by the <see cref="SA1101PrefixLocalCallsWithThis"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1101";
-        private const string Title = "Prefix local calls with this";
-        private const string MessageFormat = "Prefix local calls with this";
-        private const string Category = "StyleCop.CSharp.ReadabilityRules";
-        private const string Description = "A call to an instance member of the local class or a base class is not prefixed with 'this.', within a C# code file.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1101.html";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1101Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1101MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly string Category = "StyleCop.CSharp.ReadabilityRules";
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1101Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1101.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -57,14 +57,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleMemberAccessExpression, SyntaxKind.SimpleMemberAccessExpression);
-            context.RegisterSyntaxNodeAction(this.HandleIdentifierName, SyntaxKind.IdentifierName);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMemberAccessExpression, SyntaxKind.SimpleMemberAccessExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleIdentifierName, SyntaxKind.IdentifierName);
         }
 
         /// <summary>
         /// <see cref="SyntaxKind.SimpleMemberAccessExpression"/> is handled separately so only <c>X</c> is evaluated in
         /// the expression <c>X.Y.Z.A.B.C</c>.
         /// </summary>
+        /// <param name="context">The analysis context for a <see cref="SyntaxNode"/>.</param>
         private void HandleMemberAccessExpression(SyntaxNodeAnalysisContext context)
         {
             MemberAccessExpressionSyntax syntax = (MemberAccessExpressionSyntax)context.Node;
@@ -93,8 +94,9 @@
                 if (((AssignmentExpressionSyntax)context.Node.Parent).Left == context.Node
                     && (context.Node.Parent.Parent?.IsKind(SyntaxKind.ObjectInitializerExpression) ?? true))
                 {
-                    // Handle 'X' in:
-                    //   new TypeName() { X = 3 }
+                    /* Handle 'X' in:
+                     *   new TypeName() { X = 3 }
+                     */
                     return;
                 }
 
@@ -102,7 +104,9 @@
 
             case SyntaxKind.NameEquals:
                 if (((NameEqualsSyntax)context.Node.Parent).Name != context.Node)
+                {
                     break;
+                }
 
                 switch (context.Node?.Parent?.Parent?.Kind() ?? SyntaxKind.None)
                 {
@@ -130,10 +134,14 @@
         private void HandleIdentifierNameImpl(SyntaxNodeAnalysisContext context, IdentifierNameSyntax nameExpression)
         {
             if (nameExpression == null)
+            {
                 return;
+            }
 
             if (!this.HasThis(nameExpression))
+            {
                 return;
+            }
 
             SymbolInfo symbolInfo = context.SemanticModel.GetSymbolInfo(nameExpression, context.CancellationToken);
             ImmutableArray<ISymbol> symbolsToAnalyze;
@@ -154,10 +162,14 @@
             foreach (ISymbol symbol in symbolsToAnalyze)
             {
                 if (symbol is ITypeSymbol)
+                {
                     return;
+                }
 
                 if (symbol.IsStatic)
+                {
                     return;
+                }
 
                 if (!(symbol.ContainingSymbol is ITypeSymbol))
                 {
@@ -167,7 +179,9 @@
 
                 IMethodSymbol methodSymbol = symbol as IMethodSymbol;
                 if (methodSymbol != null && methodSymbol.MethodKind == MethodKind.Constructor)
+                {
                     return;
+                }
             }
 
             // Prefix local calls with this

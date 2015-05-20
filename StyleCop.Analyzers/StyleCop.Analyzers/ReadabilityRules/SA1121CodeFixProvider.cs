@@ -3,11 +3,13 @@
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.SpacingRules;
 
     /// <summary>
@@ -17,7 +19,7 @@
     /// <para>To fix a violation of this rule, ensure that the comma is followed by a single space, and is not preceded
     /// by any space.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1121CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1121CodeFixProvider))]
     [Shared]
     public class SA1121CodeFixProvider : CodeFixProvider
     {
@@ -39,6 +41,7 @@
             [SpecialType.System_UInt32] = SyntaxKind.UIntKeyword,
             [SpecialType.System_UInt64] = SyntaxKind.ULongKeyword
         };
+
         private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1121UseBuiltInTypeAlias.DiagnosticId);
 
@@ -52,32 +55,66 @@
         }
 
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1121UseBuiltInTypeAlias.DiagnosticId))
-                    continue;
-
-                var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-
-                var node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
-
-                var semanticModel = await context.Document.GetSemanticModelAsync();
-
-                var typeInfo = semanticModel?.GetTypeInfo(node);
-
-                if (typeInfo?.Type != null)
                 {
-                    SpecialType specialType = typeInfo.Value.Type.SpecialType;
-                    var newNode = SyntaxFactory.PredefinedType(SyntaxFactory.Token(PredefinedSpecialTypes[specialType]))
-                        .WithTriviaFrom(node)
-                        .WithoutFormatting();
-                    var newRoot = root.ReplaceNode(node, newNode);
+                    continue;
+                }
 
-                    context.RegisterCodeFix(CodeAction.Create("Replace with built-in type", token => Task.FromResult(context.Document.WithSyntaxRoot(newRoot))), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(ReadabilityResources.SA1121CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token)), diagnostic);
+            }
+
+            return Task.FromResult(true);
+        }
+
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+        {
+            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+            if (semanticModel == null)
+            {
+                return document;
+            }
+
+            var node = root.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
+
+            var memberAccess = node.Parent as MemberAccessExpressionSyntax;
+            if (memberAccess != null)
+            {
+                if (node == memberAccess.Name)
+                {
+                    node = memberAccess;
                 }
             }
+
+            var type = semanticModel.GetSymbolInfo(node, cancellationToken).Symbol as INamedTypeSymbol;
+
+            SyntaxKind specialKind;
+            if (!PredefinedSpecialTypes.TryGetValue(type.SpecialType, out specialKind))
+            {
+                return document;
+            }
+
+            SyntaxNode newNode;
+            PredefinedTypeSyntax typeSyntax = SyntaxFactory.PredefinedType(SyntaxFactory.Token(specialKind));
+            if (node is CrefSyntax)
+            {
+                newNode = SyntaxFactory.TypeCref(typeSyntax);
+            }
+            else
+            {
+                newNode = typeSyntax;
+            }
+
+            newNode = newNode
+                .WithTriviaFrom(node)
+                .WithoutFormatting();
+
+            var newRoot = root.ReplaceNode(node, newNode);
+            return document.WithSyntaxRoot(newRoot);
         }
     }
 }

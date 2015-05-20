@@ -50,20 +50,24 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleUsingDirectiveSyntax, SyntaxKind.UsingDirective);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleUsingDirectiveSyntax, SyntaxKind.UsingDirective);
         }
 
         private void HandleUsingDirectiveSyntax(SyntaxNodeAnalysisContext context)
         {
             UsingDirectiveSyntax syntax = context.Node as UsingDirectiveSyntax;
             if (syntax.Alias != null)
+            {
                 return;
+            }
 
             SemanticModel semanticModel = context.SemanticModel;
             INamespaceSymbol namespaceSymbol;
             string topLevelNamespace = GetTopLevelNamespace(semanticModel, syntax, out namespaceSymbol, context.CancellationToken);
             if (namespaceSymbol == null)
+            {
                 return;
+            }
 
             bool systemNamespace = "System".Equals(topLevelNamespace, StringComparison.Ordinal);
             string fullyQualifiedNamespace = namespaceSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
@@ -77,30 +81,42 @@
             }
 
             if (!usingDirectives.HasValue)
+            {
                 return;
+            }
 
             foreach (var usingDirective in usingDirectives)
             {
                 // we are only interested in nodes before the current node
                 if (usingDirective == syntax)
+                {
                     break;
+                }
 
                 // ignore using alias directives, since they are handled by SA1209
                 if (usingDirective.Alias != null)
+                {
                     continue;
+                }
 
                 INamespaceSymbol precedingNamespaceSymbol;
                 string precedingTopLevelNamespace = GetTopLevelNamespace(semanticModel, usingDirective, out precedingNamespaceSymbol, context.CancellationToken);
                 if (precedingTopLevelNamespace == null || precedingNamespaceSymbol == null)
+                {
                     continue;
+                }
 
                 // compare System namespaces to each other, and non-System namespaces to each other
                 if ("System".Equals(precedingTopLevelNamespace, StringComparison.Ordinal) != systemNamespace)
+                {
                     continue;
+                }
 
                 string precedingFullyQualifiedNamespace = precedingNamespaceSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
                 if (string.Compare(fullyQualifiedNamespace, precedingFullyQualifiedNamespace, StringComparison.OrdinalIgnoreCase) >= 0)
+                {
                     continue;
+                }
 
                 string @namespace = namespaceSymbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat);
                 string precedingNamespace = precedingNamespaceSymbol.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat);
@@ -116,18 +132,24 @@
             SymbolInfo symbolInfo = semanticModel.GetSymbolInfo(syntax.Name, cancellationToken);
             namespaceSymbol = symbolInfo.Symbol as INamespaceSymbol;
             if (namespaceSymbol == null)
+            {
                 return null;
+            }
 
             string fullyQualifiedName = namespaceSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
             string name = fullyQualifiedName;
 
             int doubleColon = name.IndexOf("::");
             if (doubleColon >= 0)
+            {
                 name = name.Substring(doubleColon + 2);
+            }
 
             int dot = name.IndexOf('.');
             if (dot >= 0)
+            {
                 name = name.Substring(0, dot);
+            }
 
             return name;
         }

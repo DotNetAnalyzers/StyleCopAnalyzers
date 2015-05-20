@@ -1,27 +1,25 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Xunit;
-using StyleCop.Analyzers.MaintainabilityRules;
-using TestHelper;
-
-namespace StyleCop.Analyzers.Test.MaintainabilityRules
+﻿namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
+    using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.MaintainabilityRules;
+    using TestHelper;
+    using Xunit;
+
     public class SA1407UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1407ArithmeticExpressionsMustDeclarePrecedence.DiagnosticId;
-
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAdditionAndSubtraction()
+        public async Task TestAdditionAndSubtractionAsync()
         {
             var testCode = @"public class Foo
 {
@@ -30,11 +28,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         int x = 1 - 1 + 1 - 1;
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMultiplicationAndDivision()
+        public async Task TestMultiplicationAndDivisionAsync()
         {
             var testCode = @"public class Foo
 {
@@ -43,11 +41,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         int x = 1 / 1 * 1 / 1;
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestLeftShiftRightShift()
+        public async Task TestLeftShiftRightShiftAsync()
         {
             var testCode = @"public class Foo
 {
@@ -56,11 +54,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         int x = 1 >> 1 << 1 >> 1;
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAdditionMultiplication()
+        public async Task TestAdditionMultiplicationAsync()
         {
             var testCode = @"public class Foo
 {
@@ -69,22 +67,9 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         int x = 1 + 1 * 1;
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Arithmetic expressions must declare precedence",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 21)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 21);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"public class Foo
 {
@@ -94,11 +79,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMultiplicationAddition()
+        public async Task TestMultiplicationAdditionAsync()
         {
             var testCode = @"public class Foo
 {
@@ -107,22 +92,9 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         int x = 1 * 1 + 1;
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Arithmetic expressions must declare precedence",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 17)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 17);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"public class Foo
 {
@@ -132,11 +104,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAdditionMultiplicationParenthesized()
+        public async Task TestAdditionMultiplicationParenthesizedAsync()
         {
             var testCode = @"public class Foo
 {
@@ -145,11 +117,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         int x = 1 + (1 * 1);
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMultiplicationAdditionParenthesized()
+        public async Task TestMultiplicationAdditionParenthesizedAsync()
         {
             var testCode = @"public class Foo
 {
@@ -158,11 +130,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         int x = (1 * 1) * 1;
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMultipleViolations()
+        public async Task TestMultipleViolationsAsync()
         {
             var testCode = @"public class Foo
 {
@@ -171,33 +143,13 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         int x = 1 * 1 + 1 * 1;
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Arithmetic expressions must declare precedence",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 17)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Arithmetic expressions must declare precedence",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 25)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic().WithLocation(5, 17),
+                    this.CSharpDiagnostic().WithLocation(5, 25)
+                };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"public class Foo
 {
@@ -207,11 +159,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestSubViolations()
+        public async Task TestSubViolationsAsync()
         {
             var testCode = @"public class Foo
 {
@@ -220,33 +172,13 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         int x = 1 << 1 + 1 * 1;
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Arithmetic expressions must declare precedence",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 22)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Arithmetic expressions must declare precedence",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 26)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic().WithLocation(5, 22),
+                    this.CSharpDiagnostic().WithLocation(5, 26)
+                };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"public class Foo
 {
@@ -256,39 +188,52 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestCodeFix()
+        public async Task TestCodeFixAsync()
         {
             var testCode = @"public class Foo
 {
     public void Bar()
     {
+        int b = 1;
         int x = 1 * 1 + 1 * 1;
-        int y = 5 + y * b / 6 % z - 2;
+        int y = 5 + x * b / 6 % x - 2;
         // the following test makes sure the code fix doesn't alter spacing
-        int z = z ? 4*3+-1 :false;
+        int z = y==1 ? 4*3+-1 :0;
     }
 }";
             var fixedCode = @"public class Foo
 {
     public void Bar()
     {
+        int b = 1;
         int x = (1 * 1) + (1 * 1);
-        int y = 5 + ((y * b / 6) % z) - 2;
+        int y = 5 + ((x * b / 6) % x) - 2;
         // the following test makes sure the code fix doesn't alter spacing
-        int z = z ? (4*3)+-1 :false;
+        int z = y==1 ? (4*3)+-1 :0;
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            DiagnosticResult[] expected =
+                {
+                    this.CSharpDiagnostic().WithLocation(6, 17),
+                    this.CSharpDiagnostic().WithLocation(6, 25),
+                    this.CSharpDiagnostic().WithLocation(7, 21),
+                    this.CSharpDiagnostic().WithLocation(7, 21),
+                    this.CSharpDiagnostic().WithLocation(9, 24),
+                };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1407ArithmeticExpressionsMustDeclarePrecedence();
+            yield return new SA1407ArithmeticExpressionsMustDeclarePrecedence();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

@@ -27,27 +27,19 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleTypeDeclaration, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
-        }
-
-        private static XmlNodeSyntax GetTopLevelElement(DocumentationCommentTriviaSyntax syntax, string tagName)
-        {
-            XmlElementSyntax elementSyntax = syntax.Content.OfType<XmlElementSyntax>().FirstOrDefault(element => string.Equals(element.StartTag.Name.ToString(), tagName));
-            if (elementSyntax != null)
-                return elementSyntax;
-
-            XmlEmptyElementSyntax emptyElementSyntax = syntax.Content.OfType<XmlEmptyElementSyntax>().FirstOrDefault(element => string.Equals(element.Name.ToString(), tagName));
-            return emptyElementSyntax;
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
         }
 
         private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
             var node = context.Node as BaseTypeDeclarationSyntax;
             if (node == null || node.Identifier.IsMissing)
+            {
                 return;
+            }
 
             if (!node.Modifiers.Any(SyntaxKind.PartialKeyword))
             {
@@ -62,7 +54,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var node = context.Node as MethodDeclarationSyntax;
             if (node == null || node.Identifier.IsMissing)
+            {
                 return;
+            }
 
             if (!node.Modifiers.Any(SyntaxKind.PartialKeyword))
             {
@@ -75,22 +69,24 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private void HandleDeclaration(SyntaxNodeAnalysisContext context, SyntaxNode node, params Location[] locations)
         {
-            var documentation = XmlCommentHelper.GetDocumentationStructure(node);
+            var documentation = node.GetDocumentationCommentTriviaSyntax();
             if (documentation == null)
             {
                 // missing documentation is reported by SA1600, SA1601, and SA1602
                 return;
             }
 
-            if (GetTopLevelElement(documentation, XmlCommentHelper.InheritdocXmlTag) != null)
+            if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag) != null)
             {
                 // Ignore nodes with an <inheritdoc/> tag.
                 return;
             }
 
-            var xmlElement = GetTopLevelElement(documentation, XmlCommentHelper.SummaryXmlTag);
+            var xmlElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.SummaryXmlTag);
             if (xmlElement == null)
-                xmlElement = GetTopLevelElement(documentation, XmlCommentHelper.ContentXmlTag);
+            {
+                xmlElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.ContentXmlTag);
+            }
 
             this.HandleXmlElement(context, xmlElement, locations);
         }

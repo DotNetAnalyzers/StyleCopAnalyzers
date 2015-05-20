@@ -17,12 +17,22 @@
     /// <para>To fix a violation of this rule, add or remove a space after the keyword, according to the description
     /// above.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1122CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1122CodeFixProvider))]
     [Shared]
     public class SA1122CodeFixProvider : CodeFixProvider
     {
+        private static readonly SyntaxNode StringEmptyExpression;
+
         private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1122UseStringEmptyForEmptyStrings.DiagnosticId);
+
+        static SA1122CodeFixProvider()
+        {
+            var identifierNameSyntax = SyntaxFactory.IdentifierName(nameof(string.Empty));
+            var stringKeyword = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.StringKeyword));
+            StringEmptyExpression = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, stringKeyword, identifierNameSyntax)
+                .WithoutFormatting();
+        }
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
@@ -36,24 +46,26 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1122UseStringEmptyForEmptyStrings.DiagnosticId))
+                {
                     continue;
-                var syntaxRoot = await context.Document.GetSyntaxRootAsync().ConfigureAwait(false);
-                var node = syntaxRoot?.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
+                }
+
+                var node = root?.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
                 if (node != null && node.IsKind(SyntaxKind.StringLiteralExpression))
                 {
-                    var identifierNameSyntax = SyntaxFactory.IdentifierName(nameof(String.Empty));
-                    var stringKeyword = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.StringKeyword));
-                    var newNode = SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, stringKeyword, identifierNameSyntax)
-                        .WithoutFormatting();
-
-                    var newSyntaxRoot = syntaxRoot.ReplaceNode(node, newNode);
-
-                    context.RegisterCodeFix(CodeAction.Create($"Replace with {newNode}", token => Task.FromResult(context.Document.WithSyntaxRoot(newSyntaxRoot))), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create(ReadabilityResources.SA1122CodeFix, token => GetTransformedDocumentAsync(context.Document, root, node)), diagnostic);
                 }
             }
+        }
+
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxNode node)
+        {
+            var newSyntaxRoot = root.ReplaceNode(node, StringEmptyExpression.WithTriviaFrom(node));
+            return Task.FromResult(document.WithSyntaxRoot(newSyntaxRoot));
         }
     }
 }

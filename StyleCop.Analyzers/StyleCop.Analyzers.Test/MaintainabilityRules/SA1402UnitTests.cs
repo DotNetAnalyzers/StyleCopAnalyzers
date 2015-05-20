@@ -1,17 +1,15 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Xunit;
-using StyleCop.Analyzers.MaintainabilityRules;
-using TestHelper;
-
-namespace StyleCop.Analyzers.Test.MaintainabilityRules
+﻿namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
+    using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.MaintainabilityRules;
+    using TestHelper;
+    using Xunit;
+
     public class SA1402UnitTests : FileMayOnlyContainTestBase
     {
-
         public override string Keyword
         {
             get
@@ -20,21 +18,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             }
         }
 
-        public override string DiagnosticId
-        {
-            get
-            {
-                return SA1402FileMayOnlyContainASingleClass.DiagnosticId;
-            }
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new SA1402FileMayOnlyContainASingleClass();
-        }
-
         [Fact]
-        public async Task TestPartialClasses()
+        public async Task TestPartialClassesAsync()
         {
             var testCode = @"public partial class Foo
 {
@@ -44,12 +29,12 @@ public partial class Foo
 
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
 
         }
 
         [Fact]
-        public async Task TestDifferentPartialClasses()
+        public async Task TestDifferentPartialClassesAsync()
         {
             var testCode = @"public partial class Foo
 {
@@ -59,27 +44,14 @@ public partial class Bar
 
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = this.DiagnosticId,
-                    Message = this.Message,
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 22)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 22);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
         }
 
         [Fact]
-        public async Task TestNestedClasses()
+        public async Task TestNestedClassesAsync()
         {
             var testCode = @"public class Foo
 {
@@ -89,8 +61,13 @@ public partial class Bar
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
 
+        }
+
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        {
+            yield return new SA1402FileMayOnlyContainASingleClass();
         }
     }
 }

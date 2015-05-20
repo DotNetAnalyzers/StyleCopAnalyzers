@@ -2,13 +2,9 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using System;
-
-
-
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A C# code file contains more than one namespace.
@@ -31,7 +27,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1403.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -48,12 +44,12 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
+            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
         }
 
-        private async void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
-            var syntaxRoot = await context.Tree.GetRootAsync(context.CancellationToken);
+            var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
 
             var descentNodes = syntaxRoot.DescendantNodes(descendIntoChildren: node => node != null && !node.IsKind(SyntaxKind.ClassDeclaration));
 
@@ -65,7 +61,7 @@
                 {
                     if (foundNode)
                     {
-                        var location = this.GetNamespaceLocation(node);
+                        var location = NamedTypeHelpers.GetNameOrIdentifierLocation(node);
                         if (location != null)
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
@@ -77,12 +73,6 @@
                     }
                 }
             }
-        }
-
-        private Location GetNamespaceLocation(SyntaxNode node)
-        {
-            var namespaceDeclaration = node as NamespaceDeclarationSyntax;
-            return namespaceDeclaration?.Name?.GetLocation();
         }
     }
 }

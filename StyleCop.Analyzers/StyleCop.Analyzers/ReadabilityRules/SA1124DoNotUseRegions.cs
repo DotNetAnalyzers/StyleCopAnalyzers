@@ -2,6 +2,8 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -20,14 +22,14 @@
         /// The ID for diagnostics produced by the <see cref="SA1124DoNotUseRegions"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1124";
-        private const string Title = "Do not use regions";
-        private const string MessageFormat = "TODO: Message format";
-        private const string Category = "StyleCop.CSharp.ReadabilityRules";
-        private const string Description = "The C# code contains a region.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1124.html";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1124Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1124MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly string Category = "StyleCop.CSharp.ReadabilityRules";
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1124Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1124.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -44,7 +46,19 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleRegionDirectiveTrivia, SyntaxKind.RegionDirectiveTrivia);
+        }
+
+        private void HandleRegionDirectiveTrivia(SyntaxNodeAnalysisContext context)
+        {
+            RegionDirectiveTriviaSyntax regionSyntax = context.Node as RegionDirectiveTriviaSyntax;
+
+            // regions that are completely inside a body are handled by SA1123.
+            if (regionSyntax != null && !SA1123DoNotPlaceRegionsWithinElements.IsCompletelyContainedInBody(regionSyntax))
+            {
+                // Regions must not be used.
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, regionSyntax.GetLocation()));
+            }
         }
     }
 }

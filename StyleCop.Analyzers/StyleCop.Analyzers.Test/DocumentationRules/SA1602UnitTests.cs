@@ -1,112 +1,79 @@
 ﻿namespace StyleCop.Analyzers.Test.DocumentationRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.DocumentationRules;
     using TestHelper;
+    using Xunit;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1602EnumerationItemsMustBeDocumented"/>-
     /// </summary>
     public class SA1602UnitTests : CodeFixVerifier
     {
-        public string DiagnosticId { get; } = SA1602EnumerationItemsMustBeDocumented.DiagnosticId;
-
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestEnumWithDocumentation()
+        public async Task TestEnumWithDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
 /// Some Documentation
 /// </summary>
 enum TypeName
-{{
+{
     /// <summary>
     /// Some Documentation
     /// </summary>
     Bar
-}}";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestEnumWithoutDocumentation()
+        public async Task TestEnumWithoutDocumentationAsync()
         {
             var testCode = @"
 enum TypeName
-{{
+{
     Bar
-}}";
+}";
 
-            DiagnosticResult[] expected;
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 5);
 
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Enumeration items must be documented",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 4, 5)
-                            }
-                    }
-                };
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestEnumWithEmptyDocumentation()
+        public async Task TestEnumWithEmptyDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
 /// Some Documentation
 /// </summary>
 enum TypeName
-{{
+{
     /// <summary>
     /// 
     /// </summary>
     Bar
-}}";
+}";
 
-            DiagnosticResult[] expected;
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 5);
 
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Enumeration items must be documented",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 10, 5)
-                            }
-                    }
-                };
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1602EnumerationItemsMustBeDocumented();
+            yield return new SA1602EnumerationItemsMustBeDocumented();
         }
     }
 }

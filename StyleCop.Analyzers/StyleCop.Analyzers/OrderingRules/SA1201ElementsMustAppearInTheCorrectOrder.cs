@@ -1,7 +1,11 @@
 ﻿namespace StyleCop.Analyzers.OrderingRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
+    using Helpers;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -103,16 +107,63 @@
         /// </summary>
         public const string DiagnosticId = "SA1201";
         private const string Title = "Elements must appear in the correct order";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "A {0} should not follow a {1}.";
         private const string Category = "StyleCop.CSharp.OrderingRules";
         private const string Description = "An element within a C# code file is out of order in relation to the other elements in the code.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1201.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
+
+        // extern alias and usings are missing here because the compiler itself is enforcing the right order.
+        private static readonly ImmutableArray<SyntaxKind> OuterOrder = ImmutableArray.Create(
+            SyntaxKind.NamespaceDeclaration,
+            SyntaxKind.DelegateDeclaration,
+            SyntaxKind.EnumDeclaration,
+            SyntaxKind.InterfaceDeclaration,
+            SyntaxKind.StructDeclaration,
+            SyntaxKind.ClassDeclaration);
+
+        private static readonly ImmutableArray<SyntaxKind> TypeMemberOrder = ImmutableArray.Create(
+            SyntaxKind.FieldDeclaration,
+            SyntaxKind.ConstructorDeclaration,
+            SyntaxKind.DestructorDeclaration,
+            SyntaxKind.DelegateDeclaration,
+            SyntaxKind.EventDeclaration,
+            SyntaxKind.EnumDeclaration,
+            SyntaxKind.InterfaceDeclaration,
+            SyntaxKind.PropertyDeclaration,
+            SyntaxKind.IndexerDeclaration,
+            SyntaxKind.ConversionOperatorDeclaration,
+            SyntaxKind.OperatorDeclaration,
+            SyntaxKind.MethodDeclaration,
+            SyntaxKind.StructDeclaration,
+            SyntaxKind.ClassDeclaration);
+
+        private static readonly Dictionary<SyntaxKind, string> MemberNames = new Dictionary<SyntaxKind, string>
+        {
+            [SyntaxKind.NamespaceDeclaration] = "namespace",
+            [SyntaxKind.DelegateDeclaration] = "delegate",
+            [SyntaxKind.EnumDeclaration] = "enum",
+            [SyntaxKind.InterfaceDeclaration] = "interface",
+            [SyntaxKind.StructDeclaration] = "struct",
+            [SyntaxKind.ClassDeclaration] = "class",
+            [SyntaxKind.FieldDeclaration] = "field",
+            [SyntaxKind.ConstructorDeclaration] = "constructor",
+            [SyntaxKind.DestructorDeclaration] = "destructor",
+            [SyntaxKind.DelegateDeclaration] = "delegate",
+            [SyntaxKind.EventDeclaration] = "event",
+            [SyntaxKind.EnumDeclaration] = "enum",
+            [SyntaxKind.InterfaceDeclaration] = "interface",
+            [SyntaxKind.PropertyDeclaration] = "property",
+            [SyntaxKind.IndexerDeclaration] = "indexer",
+            [SyntaxKind.MethodDeclaration] = "method",
+            [SyntaxKind.ConversionOperatorDeclaration] = "conversion",
+            [SyntaxKind.OperatorDeclaration] = "operator"
+        };
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
@@ -126,7 +177,62 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleCompilationUnit, SyntaxKind.CompilationUnit);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleNamespaceDeclaration, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
+        }
+
+        private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var typeDeclaration = context.Node as TypeDeclarationSyntax;
+
+            HandleMemberList(context, typeDeclaration.Members, TypeMemberOrder);
+        }
+
+        private void HandleCompilationUnit(SyntaxNodeAnalysisContext context)
+        {
+            var compilationUnit = context.Node as CompilationUnitSyntax;
+
+            HandleMemberList(context, compilationUnit.Members, OuterOrder);
+        }
+
+        private void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var compilationUnit = context.Node as NamespaceDeclarationSyntax;
+
+            HandleMemberList(context, compilationUnit.Members, OuterOrder);
+        }
+
+        private static void HandleMemberList(SyntaxNodeAnalysisContext context, SyntaxList<MemberDeclarationSyntax> members, ImmutableArray<SyntaxKind> order)
+        {
+            for (int i = 0; i < members.Count - 1; i++)
+            {
+                if (members[i + 1].IsKind(SyntaxKind.IncompleteMember))
+                {
+                    i++;
+                    continue;
+                }
+
+                if (members[i].IsKind(SyntaxKind.IncompleteMember))
+                {
+                    continue;
+                }
+
+                var elementSyntaxKind = members[i].Kind();
+                elementSyntaxKind = elementSyntaxKind == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : elementSyntaxKind;
+                int index = order.IndexOf(elementSyntaxKind);
+
+                var nextElementSyntaxKind = members[i + 1].Kind();
+                nextElementSyntaxKind = nextElementSyntaxKind == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : nextElementSyntaxKind;
+                int nextIndex = order.IndexOf(nextElementSyntaxKind);
+
+                if (index > nextIndex)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(members[i + 1]), MemberNames[nextElementSyntaxKind], MemberNames[elementSyntaxKind]));
+                }
+            }
         }
     }
 }

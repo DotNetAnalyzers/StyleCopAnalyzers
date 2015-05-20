@@ -1,7 +1,9 @@
 ﻿namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Immutable;
+    using Helpers;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -20,21 +22,20 @@
     /// <para>A violation of this rule occurs when the <c>&lt;value&gt;</c> tag for a property is empty.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    [NoCodeFix("Cannot generate documentation")]
-    public class SA1610PropertyDocumentationMustHaveValueText : DiagnosticAnalyzer
+    public class SA1610PropertyDocumentationMustHaveValueText : PropertyDocumentationSummaryBase
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1610PropertyDocumentationMustHaveValueText"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1610";
         private const string Title = "Property documentation must have value text";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "Property documentation must have value text";
         private const string Category = "StyleCop.CSharp.DocumentationRules";
         private const string Description = "The XML header documentation for a C# property contains an empty <value> tag.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1610.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -49,9 +50,15 @@
         }
 
         /// <inheritdoc/>
-        public override void Initialize(AnalysisContext context)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, params Location[] diagnosticLocations)
         {
-            // TODO: Implement analysis
+            if (syntax != null && XmlCommentHelper.IsConsideredEmpty(syntax))
+            {
+                foreach (var location in diagnosticLocations)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                }
+            }
         }
     }
 }

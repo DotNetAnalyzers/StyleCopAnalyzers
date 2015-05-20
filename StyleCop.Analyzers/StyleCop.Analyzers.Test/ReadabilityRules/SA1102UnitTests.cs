@@ -1,28 +1,27 @@
 ﻿namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.ReadabilityRules;
     using TestHelper;
+    using Xunit;
 
     public class SA1102UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1102QueryClauseMustFollowPreviousClause.DiagnosticId;
-
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestSelectOnSeparateLineWithAdditionalEmptyLine()
+        public async Task TestSelectOnSeparateLineWithAdditionalEmptyLineAsync()
         {
             var testCode = @"
+using System.Linq;
 public class Foo4
 {
     public void Bar()
@@ -33,29 +32,18 @@ public class Foo4
                     where m > 0
 
                     select m;
+    }
 }";
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Query clause must follow previous clause.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 11, 21)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(12, 21);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestWhereSelectOnSameLine()
+        public async Task TestWhereSelectOnSameLineAsync()
         {
             var testCode = @"
+using System.Linq;
 public class Foo4
 {
     public void Bar()
@@ -66,28 +54,16 @@ public class Foo4
                     where m > 0 select m;
     }
 }";
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Query clause must follow previous clause.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 9, 33)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 33);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestWhereOnTheSameLineAsFrom()
+        public async Task TestWhereOnTheSameLineAsFromAsync()
         {
             var testCode = @"
+using System.Linq;
 public class Foo4
 {
     public void Bar()
@@ -95,30 +71,18 @@ public class Foo4
         var source = new int[0];
         var query = from m in source where m > 0
                     select m;
+    }
 }";
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Query clause must follow previous clause.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 38)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 38);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-
         [Fact]
-        public async Task TestComplexQueryWithAdditionalEmptyLine()
+        public async Task TestComplexQueryWithAdditionalEmptyLineAsync()
         {
             var testCode = @"
+using System.Linq;
 public class Foo4
 {
     public void Bar()
@@ -141,72 +105,23 @@ public class Foo4
                     select new {g.Key, Sum = g.Sum()};
     }
 }";
-            var expected = new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Query clause must follow previous clause.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 11, 21)
-                            }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Query clause must follow previous clause.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 13, 21)
-                            }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Query clause must follow previous clause.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 16, 21)
-                            }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Query clause must follow previous clause.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 19, 21)
-                            }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Query clause must follow previous clause.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 21, 21)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(12, 21),
+                    this.CSharpDiagnostic().WithLocation(14, 21),
+                    this.CSharpDiagnostic().WithLocation(17, 21),
+                    this.CSharpDiagnostic().WithLocation(20, 21),
+                    this.CSharpDiagnostic().WithLocation(22, 21),
                 };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestComplexQueryInOneLine()
+        public async Task TestComplexQueryInOneLineAsync()
         {
             var testCode = @"
+using System.Linq;
 public class Foo4
 {
     public void Bar()
@@ -218,64 +133,48 @@ public class Foo4
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestQueryInsideQuery()
+        public async Task TestQueryInsideQueryAsync()
         {
-            var testCode = @"        var query = from m in (from s in Enumerable.Empty<int>()
+            var testCode = @"
+using System.Linq;
+public class Foo4
+{
+    public void Bar()
+    {
+                var query = from m in (from s in Enumerable.Empty<int>()
                 where s > 0 select s)
 
                 where m > 0
 
                 orderby m descending 
-                select m;";
+                select m;
+    }
+}";
 
-            var expected = new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Query clause must follow previous clause.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 2, 29)
-                            }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Query clause must follow previous clause.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 4, 17)
-                            }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Query clause must follow previous clause.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 17)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(8, 29),
+                    this.CSharpDiagnostic().WithLocation(10, 17),
+                    this.CSharpDiagnostic().WithLocation(12, 17),
                 };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task QueryInsideQueryComplex()
+        public async Task QueryInsideQueryComplexAsync()
         {
-            var testCode = @"            var query = from m in (from s in Enumerable.Empty<int>()
+            var testCode = @"
+using System.Linq;
+public class Foo4
+{
+    public void Bar()
+    {
+                var query = from m in (from s in Enumerable.Empty<int>()
                 where s > 0 select s)
 
                 where m > 0 && (from zz in Enumerable.Empty<int>()
@@ -286,73 +185,25 @@ public class Foo4
                 orderby m descending
                 select (from pp in new[] {m}
 
-                    select pp);";
+                    select pp);
+    }
+}";
 
-            var expected = new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Query clause must follow previous clause.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 2, 29)
-                            }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Query clause must follow previous clause.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 4, 17)
-                            }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Query clause must follow previous clause.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 21)
-                            }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Query clause must follow previous clause.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 9, 17)
-                            }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                        Message = "Query clause must follow previous clause.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 12, 21)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(8, 29),
+                    this.CSharpDiagnostic().WithLocation(10, 17),
+                    this.CSharpDiagnostic().WithLocation(13, 21),
+                    this.CSharpDiagnostic().WithLocation(15, 17),
+                    this.CSharpDiagnostic().WithLocation(18, 21),
                 };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1102QueryClauseMustFollowPreviousClause();
+            yield return new SA1102QueryClauseMustFollowPreviousClause();
         }
     }
 }

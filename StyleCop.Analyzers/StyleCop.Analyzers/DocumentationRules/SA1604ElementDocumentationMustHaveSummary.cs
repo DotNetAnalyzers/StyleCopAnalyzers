@@ -5,7 +5,6 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
-
     /// <summary>
     /// The XML header documentation for a C# element is missing a <c>&lt;summary&gt;</c> tag.
     /// </summary>
@@ -32,7 +31,7 @@
         private const string Description = "The XML header documentation for a C# element is missing a <summary> tag.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1604.html";
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

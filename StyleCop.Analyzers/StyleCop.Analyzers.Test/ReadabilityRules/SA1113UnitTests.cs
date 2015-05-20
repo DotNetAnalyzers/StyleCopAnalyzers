@@ -1,26 +1,24 @@
 ﻿namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.ReadabilityRules;
     using TestHelper;
+    using Xunit;
 
     public class SA1113UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1113CommaMustBeOnSameLineAsPreviousParameter.DiagnosticId;
-
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameter()
+        public async Task TestMethodDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -30,26 +28,13 @@
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 21)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 21);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodDeclarationWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameter()
+        public async Task TestMethodDeclarationWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -60,37 +45,17 @@
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 21)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 21)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic().WithLocation(4, 21),
+                    this.CSharpDiagnostic().WithLocation(5, 21)
+                };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameter()
+        public async Task TestMethodDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -100,11 +65,11 @@
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodCallWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameter()
+        public async Task TestMethodCallWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -115,26 +80,13 @@
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 37)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 37);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodCallWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameter()
+        public async Task TestMethodCallWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -142,41 +94,21 @@
     {
         var result = string.Compare(string.Empty
                                     , string.Empty
-                                    , StringComparison.Ordinal);
+                                    , System.StringComparison.Ordinal);
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 37)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 7, 37)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic().WithLocation(6, 37),
+                    this.CSharpDiagnostic().WithLocation(7, 37)
+                };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodCallWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameter()
+        public async Task TestMethodCallWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -187,11 +119,11 @@
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestConstructorCallWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameter()
+        public async Task TestConstructorCallWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -205,26 +137,13 @@
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 9, 30)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(9, 30);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestConstructorCallWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameter()
+        public async Task TestConstructorCallWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -239,37 +158,17 @@
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 9, 30)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 10, 30)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic().WithLocation(9, 30),
+                    this.CSharpDiagnostic().WithLocation(10, 30)
+                };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestConstructorCallWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameter()
+        public async Task TestConstructorCallWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -283,11 +182,11 @@
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestConstructorDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameter()
+        public async Task TestConstructorDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -297,26 +196,13 @@
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 16)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 16);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestConstructorDeclarationWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameter()
+        public async Task TestConstructorDeclarationWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -327,37 +213,17 @@
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 16)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 16)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic().WithLocation(4, 16),
+                    this.CSharpDiagnostic().WithLocation(5, 16)
+                };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestConstructorDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameter()
+        public async Task TestConstructorDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -367,11 +233,11 @@
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameter()
+        public async Task TestIndexerDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -385,26 +251,13 @@
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 21)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 21);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerDeclarationWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameter()
+        public async Task TestIndexerDeclarationWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -419,37 +272,17 @@
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 21)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 21)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic().WithLocation(4, 21),
+                    this.CSharpDiagnostic().WithLocation(5, 21)
+                };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameter()
+        public async Task TestIndexerDeclarationWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -463,11 +296,11 @@
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerCallUsingThisWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameter()
+        public async Task TestIndexerCallUsingThisWithTwoParametersCommaPlacedAtTheSameLineAsTheSecondParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -481,30 +314,17 @@
     public void Bar()
     {
         var i = this[string.Empty
-, 5);
+, 5];
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 13, 1)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(13, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerCallUsingThisWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameter()
+        public async Task TestIndexerCallUsingThisWithThreeParametersCommasPlacedAtTheSameLineAsTheNextParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -519,41 +339,21 @@
     {
         var i = this[string.Empty
 , 5
-    ,4);
+    ,4];
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 13, 1)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 14, 5)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic().WithLocation(13, 1),
+                    this.CSharpDiagnostic().WithLocation(14, 5)
+                };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerCallUsingThisWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameter()
+        public async Task TestIndexerCallUsingThisWithTwoParametersCommaPlacedAtTheSameLineAsTheFirstParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -571,17 +371,17 @@
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAnonymousMethodCommaPlacedAtTheNextLineAsThePreviousParameter()
+        public async Task TestAnonymousMethodCommaPlacedAtTheNextLineAsThePreviousParameterAsync()
         {
             var testCode = @"public class Foo
 {
     public void Bar()
     {
-         Action<string,int> i = 
+         System.Action<string,int> i = 
             delegate(string s
             , int j)
             {
@@ -590,32 +390,19 @@
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 7, 13)
-                        }
-                },
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 13);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAnonymousMethodCommaPlacedAtTheSameLineAsThePreviousParameter()
+        public async Task TestAnonymousMethodCommaPlacedAtTheSameLineAsThePreviousParameterAsync()
         {
             var testCode = @"public class Foo
 {
     public void Bar()
     {
-         Action<string,int> i = 
+         System.Action<string,int> i = 
             delegate(string s, int j)
             {
 
@@ -623,11 +410,11 @@
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestDelegateDeclarationCommaPlacedAtTheNextLineAsThePreviousParameter()
+        public async Task TestDelegateDeclarationCommaPlacedAtTheNextLineAsThePreviousParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -635,26 +422,13 @@
 , int i);
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 1)
-                        }
-                },
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestDelegateDeclarationWith3ParametersCommaPlacedAtTheNextLineAsThePreviousParameter()
+        public async Task TestDelegateDeclarationWith3ParametersCommaPlacedAtTheNextLineAsThePreviousParameterAsync()
         {
             var testCode = @"public class Foo
 {
@@ -663,160 +437,112 @@
 , long l);
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 1)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 1)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic().WithLocation(4, 1),
+                    this.CSharpDiagnostic().WithLocation(5, 1)
+                };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestDelegateDeclarationCommaPlacedAtTheSameLineAsThePreviousParameter()
+        public async Task TestDelegateDeclarationCommaPlacedAtTheSameLineAsThePreviousParameterAsync()
         {
             var testCode = @"public class Foo
 {
     delegate void Del(string str, int i);
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestLambdaExpressionWith3ParametersCommaPlacedAtTheNextLineAsThePreviousParameter()
+        public async Task TestLambdaExpressionWith3ParametersCommaPlacedAtTheNextLineAsThePreviousParameterAsync()
         {
             var testCode = @"public class Foo
 {
         public void Bar()
         {
-            Action<string, int, long> a = (s
+            System.Action<string, int, long> a = (s
                 , i
                 , l) => { };
         }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 17)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 7, 17)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic().WithLocation(6, 17),
+                    this.CSharpDiagnostic().WithLocation(7, 17)
+                };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestLambdaExpressionCommaPlacedAtTheSameLineAsThePreviousParameter()
+        public async Task TestLambdaExpressionCommaPlacedAtTheSameLineAsThePreviousParameterAsync()
         {
             var testCode = @"public class Foo
 {
             public void Bar()
         {
-            Action<string, int, long> a = (s, i, l) => { };
+            System.Action<string, int, long> a = (s, i, l) => { };
         }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestLambdaExpressionNoParameters()
+        public async Task TestLambdaExpressionNoParametersAsync()
         {
             var testCode = @"public class Foo
 {
             public void Bar()
         {
-            Action a = () => { };
+            System.Action a = () => { };
         }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAttributeCommaPlacedAtTheNextLineAsThePreviousParameter()
+        public async Task TestAttributeCommaPlacedAtTheNextLineAsThePreviousParameterAsync()
         {
-            var testCode = @"public class SimpleApiOriginal
+            var testCode = @"using System;
+using System.Runtime.InteropServices;
+public class SimpleApiOriginal
 {
     [DllImport(""user32.dll""
 , CharSet=CharSet.Auto)]
     public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
  }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 1)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAttributeListCommaPlacedAtTheSameLineAsThePreviousParameter()
+        public async Task TestAttributeListCommaPlacedAtTheSameLineAsThePreviousParameterAsync()
         {
-            var testCode = @"public class SimpleApiOriginal
+            var testCode = @"using System;
+using System.Runtime.InteropServices;
+public class SimpleApiOriginal
 {
     [DllImport(""user32.dll"", CharSet=CharSet.Auto)]
     public static extern int MessageBox(IntPtr hWnd, String text, String caption, uint type);
  }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAttributeListCommaPlacedAtTheNextLineAsThePreviousParameter()
+        public async Task TestAttributeListCommaPlacedAtTheNextLineAsThePreviousParameterAsync()
         {
-            var testCode = @"public class Foo
+            var testCode = @"using System.Diagnostics;
+public class Foo
 {
     [Conditional(""A"")
 , Conditional(""B"")
@@ -826,39 +552,20 @@
         }
     }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 4, 1)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Comma must be on the same line as previous parameter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 1)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic().WithLocation(5, 1),
+                    this.CSharpDiagnostic().WithLocation(6, 1)
+                };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAttributeCommaPlacedAtTheSameLineAsThePreviousParameter()
+        public async Task TestAttributeCommaPlacedAtTheSameLineAsThePreviousParameterAsync()
         {
-            var testCode = @"public class Foo
+            var testCode = @"using System.Diagnostics;
+public class Foo
 {
     [Conditional(""A""), Conditional(""B""), Conditional(""C"")]
         public void Bar()
@@ -866,11 +573,11 @@
         }
     }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestOperatorDeclarationCommaPlacedAtTheNextLineAsThePreviousParameter()
+        public async Task TestOperatorDeclarationCommaPlacedAtTheNextLineAsThePreviousParameterAsync()
         {
             var testCode = @"
 public class Foo
@@ -882,26 +589,13 @@ public class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                         Message = "Comma must be on the same line as previous parameter.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 5, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestOperatorDeclarationCommaPlacedAtTheSameLineAsThePreviousParameter()
+        public async Task TestOperatorDeclarationCommaPlacedAtTheSameLineAsThePreviousParameterAsync()
         {
             var testCode = @"
 public class Foo
@@ -912,11 +606,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestUnaryOperator()
+        public async Task TestUnaryOperatorAsync()
         {
             var testCode = @"
 public class Foo
@@ -928,11 +622,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestArrayDeclarationCommaPlacedAtTheNextLineAsThePreviousParameter()
+        public async Task TestArrayDeclarationCommaPlacedAtTheNextLineAsThePreviousParameterAsync()
         {
             var testCode = @"
 public class Foo
@@ -944,26 +638,13 @@ public class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                         Message = "Comma must be on the same line as previous parameter.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestArrayDeclarationCommaPlacedAtTheSameLineAsThePreviousParameter()
+        public async Task TestArrayDeclarationCommaPlacedAtTheSameLineAsThePreviousParameterAsync()
         {
             var testCode = @"
 public class Foo
@@ -974,11 +655,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestOneDimensionalArrayDeclarationCommaPlacedAtTheSameLineAsThePreviousParameter()
+        public async Task TestOneDimensionalArrayDeclarationCommaPlacedAtTheSameLineAsThePreviousParameterAsync()
         {
             var testCode = @"
 public class Foo
@@ -989,11 +670,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestArrayOfArraysDeclarationCommaPlacedAtTheSameLineAsThePreviousParameter()
+        public async Task TestArrayOfArraysDeclarationCommaPlacedAtTheSameLineAsThePreviousParameterAsync()
         {
             var testCode = @"
 public class Foo
@@ -1009,11 +690,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestArrayCallCommaPlacedAtTheNextLineAsThePreviousParameter()
+        public async Task TestArrayCallCommaPlacedAtTheNextLineAsThePreviousParameterAsync()
         {
             var testCode = @"
 public class Foo
@@ -1026,26 +707,13 @@ public class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                         Message = "Comma must be on the same line as previous parameter.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestArrayCallCommaPlacedAtTheSameLineAsThePreviousParameter()
+        public async Task TestArrayCallCommaPlacedAtTheSameLineAsThePreviousParameterAsync()
         {
             var testCode = @"
 public class Foo
@@ -1057,11 +725,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestOneDimensionalArrayCallCommaPlacedAtTheSameLineAsThePreviousParameter()
+        public async Task TestOneDimensionalArrayCallCommaPlacedAtTheSameLineAsThePreviousParameterAsync()
         {
             var testCode = @"
 public class Foo
@@ -1073,11 +741,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerCallCommaPlacedAtTheNextLineAsThePreviousParameter()
+        public async Task TestIndexerCallCommaPlacedAtTheNextLineAsThePreviousParameterAsync()
         {
             var testCode = @"
 public class Foo3
@@ -1095,26 +763,13 @@ public class Foo4
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = DiagnosticId,
-                         Message = "Comma must be on the same line as previous parameter.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 13, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(13, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerCallCommaPlacedAtTheSameLineAsThePreviousParameter()
+        public async Task TestIndexerCallCommaPlacedAtTheSameLineAsThePreviousParameterAsync()
         {
             var testCode = @"
 public class Foo3
@@ -1131,11 +786,11 @@ public class Foo4
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerWithOneArgumentCallCommaPlacedAtTheSameLineAsThePreviousParameter()
+        public async Task TestIndexerWithOneArgumentCallCommaPlacedAtTheSameLineAsThePreviousParameterAsync()
         {
             var testCode = @"
 public class Foo3
@@ -1152,11 +807,12 @@ public class Foo4
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1113CommaMustBeOnSameLineAsPreviousParameter();
+            yield return new SA1113CommaMustBeOnSameLineAsPreviousParameter();
         }
     }
 }

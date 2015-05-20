@@ -1,19 +1,18 @@
 ﻿namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.ReadabilityRules;
     using TestHelper;
+    using Xunit;
 
     public class SA1101UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1101PrefixLocalCallsWithThis.DiagnosticId;
-
         private const string ReferenceCode = @"
+        using System;
         public class BaseTypeName
         {
             public static int BaseStaticFieldName;
@@ -119,7 +118,7 @@
                 {
                     BaseInstanceFieldName = BaseInstanceFieldName,
                     BaseInstancePropertyName = BaseInstancePropertyName,
-                }
+                };
 
                 // the following line is a regression test for #464
                 // https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/464
@@ -128,7 +127,8 @@
         }
         ";
 
-        private static string FixedCode = @"
+        private static string fixedCode = @"
+        using System;
         public class BaseTypeName
         {
             public static int BaseStaticFieldName;
@@ -234,7 +234,7 @@
                 {
                     BaseInstanceFieldName = this.BaseInstanceFieldName,
                     BaseInstancePropertyName = this.BaseInstancePropertyName,
-                }
+                };
 
                 // the following line is a regression test for #464
                 // https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/464
@@ -243,47 +243,32 @@
         }
         ";
 
-        private DiagnosticResult CreateDiagnosticResult(int line, int column)
-        {
-            return new DiagnosticResult
-            {
-                Id = DiagnosticId,
-                Message = "Prefix local calls with this",
-                Severity = DiagnosticSeverity.Warning,
-                Locations =
-                    new[]
-                    {
-                        new DiagnosticResultLocation("Test0.cs", line, column)
-                    }
-            };
-        }
-
         [Fact]
-        public async Task TestPrefixLocalCallsWithThisDiagnostics()
+        public async Task TestPrefixLocalCallsWithThisDiagnosticsAsync()
         {
             var expected = new[]
             {
-                this.CreateDiagnosticResult(90, 36),
-                this.CreateDiagnosticResult(94, 36),
-                this.CreateDiagnosticResult(96, 36),
-                this.CreateDiagnosticResult(98, 36),
-                this.CreateDiagnosticResult(100, 36),
-                this.CreateDiagnosticResult(105, 45),
-                this.CreateDiagnosticResult(106, 48),
+                this.CSharpDiagnostic().WithLocation(91, 36),
+                this.CSharpDiagnostic().WithLocation(95, 36),
+                this.CSharpDiagnostic().WithLocation(97, 36),
+                this.CSharpDiagnostic().WithLocation(99, 36),
+                this.CSharpDiagnostic().WithLocation(101, 36),
+                this.CSharpDiagnostic().WithLocation(106, 45),
+                this.CSharpDiagnostic().WithLocation(107, 48),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(ReferenceCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(ReferenceCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPrefixLocalCallsWithThisCodeFix()
+        public async Task TestPrefixLocalCallsWithThisCodeFixAsync()
         {
-            await this.VerifyCSharpFixAsync(ReferenceCode, FixedCode, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(ReferenceCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1101PrefixLocalCallsWithThis();
+            yield return new SA1101PrefixLocalCallsWithThis();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

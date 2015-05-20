@@ -15,7 +15,7 @@
     /// <para>To fix a violation of this rule, add the capital letter I to the front of the interface name, or place the
     /// item within a <c>NativeMethods</c> class if appropriate.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1302CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1302CodeFixProvider))]
     [Shared]
     public class SA1302CodeFixProvider : CodeFixProvider
     {
@@ -28,19 +28,24 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var document = context.Document;
+            var root = await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1302InterfaceNamesMustBeginWithI.DiagnosticId))
+                {
                     continue;
+                }
 
-                var document = context.Document;
-                var root = await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
                 var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (token.IsMissing)
+                {
                     continue;
+                }
 
                 var newName = "I" + token.ValueText;
-                context.RegisterCodeFix(CodeAction.Create($"Rename interface to '{newName}'", cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.SA1302CodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken)), diagnostic);
             }
         }
     }

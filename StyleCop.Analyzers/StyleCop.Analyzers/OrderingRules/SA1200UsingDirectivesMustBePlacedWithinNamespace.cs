@@ -176,14 +176,16 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleCompilationUnitSyntax, SyntaxKind.CompilationUnit);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleCompilationUnitSyntax, SyntaxKind.CompilationUnit);
         }
 
         private void HandleCompilationUnitSyntax(SyntaxNodeAnalysisContext context)
         {
             CompilationUnitSyntax syntax = context.Node as CompilationUnitSyntax;
             if (syntax == null)
+            {
                 return;
+            }
 
             List<SyntaxNode> usingDirectives = new List<SyntaxNode>();
             foreach (SyntaxNode child in syntax.ChildNodes())

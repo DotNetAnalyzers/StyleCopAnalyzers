@@ -31,7 +31,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1400.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -48,20 +48,20 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleBaseTypeDeclarationSyntax, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleBaseTypeDeclarationSyntax, SyntaxKind.InterfaceDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleBaseTypeDeclarationSyntax, SyntaxKind.EnumDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleBaseTypeDeclarationSyntax, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleDelegateDeclarationSyntax, SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleEventDeclarationSyntax, SyntaxKind.EventDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleMethodDeclarationSyntax, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandlePropertyDeclarationSyntax, SyntaxKind.PropertyDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleBaseFieldDeclarationSyntax, SyntaxKind.EventFieldDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleBaseFieldDeclarationSyntax, SyntaxKind.FieldDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleOperatorDeclarationSyntax, SyntaxKind.OperatorDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleConversionOperatorDeclarationSyntax, SyntaxKind.ConversionOperatorDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleIndexerDeclarationSyntax, SyntaxKind.IndexerDeclaration);
-            context.RegisterSyntaxNodeAction(this.HandleConstructorDeclarationSyntax, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleBaseTypeDeclarationSyntax, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleBaseTypeDeclarationSyntax, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleBaseTypeDeclarationSyntax, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleBaseTypeDeclarationSyntax, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDelegateDeclarationSyntax, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleEventDeclarationSyntax, SyntaxKind.EventDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMethodDeclarationSyntax, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandlePropertyDeclarationSyntax, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleBaseFieldDeclarationSyntax, SyntaxKind.EventFieldDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleBaseFieldDeclarationSyntax, SyntaxKind.FieldDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleOperatorDeclarationSyntax, SyntaxKind.OperatorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleConversionOperatorDeclarationSyntax, SyntaxKind.ConversionOperatorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleIndexerDeclarationSyntax, SyntaxKind.IndexerDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleConstructorDeclarationSyntax, SyntaxKind.ConstructorDeclaration);
         }
 
         private void HandleBaseTypeDeclarationSyntax(SyntaxNodeAnalysisContext context)
@@ -80,10 +80,14 @@
         {
             var syntax = (EventDeclarationSyntax)context.Node;
             if (syntax.ExplicitInterfaceSpecifier != null)
+            {
                 return;
+            }
 
             if (syntax.Parent.IsKind(SyntaxKind.InterfaceDeclaration))
+            {
                 return;
+            }
 
             this.CheckAccessModifiers(context, syntax.Identifier, syntax.Modifiers);
         }
@@ -92,10 +96,14 @@
         {
             var syntax = (MethodDeclarationSyntax)context.Node;
             if (syntax.ExplicitInterfaceSpecifier != null)
+            {
                 return;
+            }
 
             if (syntax.Parent.IsKind(SyntaxKind.InterfaceDeclaration))
+            {
                 return;
+            }
 
             this.CheckAccessModifiers(context, syntax.Identifier, syntax.Modifiers);
         }
@@ -104,10 +112,14 @@
         {
             var syntax = (PropertyDeclarationSyntax)context.Node;
             if (syntax.ExplicitInterfaceSpecifier != null)
+            {
                 return;
+            }
 
             if (syntax.Parent.IsKind(SyntaxKind.InterfaceDeclaration))
+            {
                 return;
+            }
 
             this.CheckAccessModifiers(context, syntax.Identifier, syntax.Modifiers);
         }
@@ -123,11 +135,15 @@
 
             VariableDeclarationSyntax declarationSyntax = syntax.Declaration;
             if (declarationSyntax == null)
+            {
                 return;
+            }
 
             VariableDeclaratorSyntax declarator = declarationSyntax.Variables.FirstOrDefault(i => !i.Identifier.IsMissing);
             if (declarator == null)
+            {
                 return;
+            }
 
             this.CheckAccessModifiers(context, declarator.Identifier, syntax.Modifiers, declarator);
         }
@@ -148,10 +164,14 @@
         {
             var syntax = (IndexerDeclarationSyntax)context.Node;
             if (syntax.ExplicitInterfaceSpecifier != null)
+            {
                 return;
+            }
 
             if (syntax.Parent.IsKind(SyntaxKind.InterfaceDeclaration))
+            {
                 return;
+            }
 
             this.CheckAccessModifiers(context, syntax.ThisKeyword, syntax.Modifiers);
         }
@@ -165,7 +185,9 @@
         private void CheckAccessModifiers(SyntaxNodeAnalysisContext context, SyntaxToken identifier, SyntaxTokenList modifiers, SyntaxNode declarationNode = null)
         {
             if (identifier.IsMissing)
+            {
                 return;
+            }
 
             foreach (SyntaxToken token in modifiers)
             {
@@ -179,7 +201,9 @@
 
                 case SyntaxKind.StaticKeyword:
                     if (context.Node is ConstructorDeclarationSyntax)
+                    {
                         return;
+                    }
 
                     break;
 
@@ -196,7 +220,9 @@
             ISymbol symbol = context.SemanticModel.GetDeclaredSymbol(declarationNode ?? context.Node, context.CancellationToken);
             string name = symbol?.Name;
             if (string.IsNullOrEmpty(name))
+            {
                 return;
+            }
 
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), name));
         }

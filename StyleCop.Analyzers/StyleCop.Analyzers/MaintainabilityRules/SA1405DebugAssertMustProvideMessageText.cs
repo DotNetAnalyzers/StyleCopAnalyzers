@@ -7,9 +7,6 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using System.Diagnostics;
 
-
-
-
     /// <summary>
     /// A call to <see cref="O:System.Diagnostics.Debug.Assert"/> in C# code does not include a descriptive message.
     /// </summary>
@@ -36,7 +33,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1405.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -53,7 +50,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleMethodCall, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMethodCall, SyntaxKind.InvocationExpression);
         }
 
         private void HandleMethodCall(SyntaxNodeAnalysisContext context)

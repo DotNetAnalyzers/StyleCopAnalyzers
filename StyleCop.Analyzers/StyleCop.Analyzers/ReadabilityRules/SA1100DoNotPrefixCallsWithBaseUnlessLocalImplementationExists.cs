@@ -55,14 +55,14 @@
         /// <see cref="SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1100";
-        private const string Title = "Do not prefix calls with base unless local implementation exists";
-        private const string MessageFormat = "Do not prefix calls with base unless local implementation exists";
-        private const string Category = "StyleCop.CSharp.ReadabilityRules";
-        private const string Description = "A call to a member from an inherited class begins with 'base.', and the local class does not contain an override or implementation of the member.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1100.html";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1100Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1100MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly string Category = "StyleCop.CSharp.ReadabilityRules";
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1100Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1100.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -79,7 +79,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.AnalyzeBaseExpression, SyntaxKind.BaseExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.AnalyzeBaseExpression, SyntaxKind.BaseExpression);
         }
 
         private void AnalyzeBaseExpression(SyntaxNodeAnalysisContext context)
@@ -87,21 +87,29 @@
             var baseExpressionSyntax = (BaseExpressionSyntax)context.Node;
             var targetSymbol = context.SemanticModel.GetSymbolInfo(baseExpressionSyntax.Parent, context.CancellationToken);
             if (targetSymbol.Symbol == null)
+            {
                 return;
+            }
 
             var memberAccessExpression = baseExpressionSyntax.Parent as MemberAccessExpressionSyntax;
             if (memberAccessExpression == null)
+            {
                 return;
+            }
 
             // make sure to evaluate the complete invocation expression if this is a call, or overload resolution will fail
             ExpressionSyntax speculativeExpression = memberAccessExpression.WithExpression(SyntaxFactory.ThisExpression());
             InvocationExpressionSyntax invocationExpression = memberAccessExpression.Parent as InvocationExpressionSyntax;
             if (invocationExpression != null)
+            {
                 speculativeExpression = invocationExpression.WithExpression(speculativeExpression);
+            }
 
             var speculativeSymbol = context.SemanticModel.GetSpeculativeSymbolInfo(memberAccessExpression.SpanStart, speculativeExpression, SpeculativeBindingOption.BindAsExpression);
             if (speculativeSymbol.Symbol != targetSymbol.Symbol)
+            {
                 return;
+            }
 
             // Do not prefix calls with base unless local implementation exists
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, baseExpressionSyntax.GetLocation()));

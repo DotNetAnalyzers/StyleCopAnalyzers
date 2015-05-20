@@ -1,27 +1,25 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Xunit;
-using StyleCop.Analyzers.MaintainabilityRules;
-using TestHelper;
-
-namespace StyleCop.Analyzers.Test.MaintainabilityRules
+﻿namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
+    using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.MaintainabilityRules;
+    using TestHelper;
+    using Xunit;
+
     public class SA1410UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1410RemoveDelegateParenthesisWhenPossible.DiagnosticId;
-
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMissingParenthesis()
+        public async Task TestMissingParenthesisAsync()
         {
             var testCode = @"public class Foo
 {
@@ -30,11 +28,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         System.Func<int> getRandomNumber = delegate { return 3; };
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestNonEmptyParameterList()
+        public async Task TestNonEmptyParameterListAsync()
         {
             var testCode = @"public class Foo
 {
@@ -43,11 +41,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         System.Func<int, int> getNumber = delegate (int i) { return i; };
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestEmptyParameterList()
+        public async Task TestEmptyParameterListAsync()
         {
             var testCode = @"public class Foo
 {
@@ -56,26 +54,13 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         System.Func<int> getRandomNumber = delegate() { return 3; };
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Remove delegate parenthesis when possible",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 5, 52)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 52);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestCodeFix()
+        public async Task TestCodeFixAsync()
         {
             var oldSource = @"public class Foo
 {
@@ -93,12 +78,34 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(oldSource, newSource, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(oldSource, newSource, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        [Fact]
+        public async Task TestCodeFixDoesNotRemoveExteriorTriviaAsync()
         {
-            return new SA1410RemoveDelegateParenthesisWhenPossible();
+            var oldSource = @"public class Foo
+{
+    public void Bar()
+    {
+        System.Func<int> getRandomNumber = delegate/*Foo*/(/*Bar*/)/*Foo*/ { return 3; };
+    }
+}";
+
+            var newSource = @"public class Foo
+{
+    public void Bar()
+    {
+        System.Func<int> getRandomNumber = delegate/*Foo*//*Bar*//*Foo*/ { return 3; };
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(oldSource, newSource, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        {
+            yield return new SA1410RemoveDelegateParenthesisWhenPossible();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

@@ -3,6 +3,7 @@
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -49,7 +50,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
+            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -72,7 +73,9 @@
         private void HandleCloseBraceToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             bool precededBySpace;
             bool firstInLine;
@@ -105,6 +108,12 @@
             else
             {
                 precedesSpecialCharacter = false;
+            }
+
+            if (token.Parent is InterpolationSyntax)
+            {
+                // Don't report for interpolation string inlets
+                return;
             }
 
             if (!firstInLine && !precededBySpace)

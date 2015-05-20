@@ -47,7 +47,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
+            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -71,7 +71,9 @@
         private void HandleIncrementDecrementToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             switch (token.Parent.Kind())
             {
@@ -81,9 +83,13 @@
                 {
                     string symbolName;
                     if (token.IsKind(SyntaxKind.MinusMinusToken))
+                    {
                         symbolName = "Decrement";
+                    }
                     else
+                    {
                         symbolName = "Increment";
+                    }
 
                     // {Increment|Decrement} symbol '{++|--}' must not be {followed} by a space.
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), symbolName, token.Text, "followed"));
@@ -98,13 +104,18 @@
                 {
                     string symbolName;
                     if (token.IsKind(SyntaxKind.MinusMinusToken))
+                    {
                         symbolName = "Decrement";
+                    }
                     else
+                    {
                         symbolName = "Increment";
+                    }
 
                     // {Increment|Decrement} symbol '{++|--}' must not be {preceded} by a space.
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), symbolName, token.Text, "preceded"));
                 }
+
                 break;
 
             default:

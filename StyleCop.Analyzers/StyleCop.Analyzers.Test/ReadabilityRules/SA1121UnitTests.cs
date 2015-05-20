@@ -1,28 +1,28 @@
 ﻿namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
+    using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.ReadabilityRules;
     using TestHelper;
-    using System;
-
+    using Xunit;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1121UseBuiltInTypeAlias"/>
     /// </summary>
     public class SA1121UnitTests : CodeFixVerifier
     {
-        private static readonly Tuple<string, string>[] ReferenceTypes = new Tuple<string, string>[]
+        private static readonly Tuple<string, string>[] ReferenceTypesData = new Tuple<string, string>[]
         {
             new Tuple<string, string>("object", nameof(Object)),
             new Tuple<string, string>("string", nameof(String))
         };
-        private static readonly Tuple<string, string>[] ValueTypes = new Tuple<string, string>[]
+
+        private static readonly Tuple<string, string>[] ValueTypesData = new Tuple<string, string>[]
         {
             new Tuple<string, string>("bool", nameof(Boolean)),
             new Tuple<string, string>("byte", nameof(Byte)),
@@ -38,7 +38,8 @@
             new Tuple<string, string>("uint", nameof(UInt32)),
             new Tuple<string, string>("ulong", nameof(UInt64))
         };
-        private static readonly Tuple<string, string>[] EnumBaseTypes = new Tuple<string, string>[]
+
+        private static readonly Tuple<string, string>[] EnumBaseTypesData = new Tuple<string, string>[]
         {
             new Tuple<string, string>("byte", nameof(Byte)),
             new Tuple<string, string>("short", nameof(Int16)),
@@ -49,140 +50,103 @@
             new Tuple<string, string>("uint", nameof(UInt32)),
             new Tuple<string, string>("ulong", nameof(UInt64))
         };
-        private static readonly Tuple<string, string>[] AllTypes = ReferenceTypes.Concat(ValueTypes).ToArray();
 
+        private static readonly Tuple<string, string>[] AllTypesData = ReferenceTypesData.Concat(ValueTypesData).ToArray();
 
-        public string DiagnosticId { get; } = SA1121UseBuiltInTypeAlias.DiagnosticId;
-
-        private async Task TestCases(Func<string, string, Task> func, Tuple<string, string>[] types)
+        public static IEnumerable<object[]> ReferenceTypes
         {
-            foreach (var item in types)
+            get
             {
-                try
+                foreach (var pair in ReferenceTypesData)
                 {
-                    await func(item.Item1, item.Item2);
-                    await func(item.Item1, "System." + item.Item2);
-                    await func(item.Item1, "global::System." + item.Item2);
-                }
-                catch (Exception ex)
-                {
-                    Assert.True(false, "Type failed: " + item.Item1 + Environment.NewLine + ex.Message);
+                    yield return new[] { pair.Item1, pair.Item2 };
+                    yield return new[] { pair.Item1, "System." + pair.Item2 };
+                    yield return new[] { pair.Item1, "global::System." + pair.Item2 };
                 }
             }
         }
-        private async Task VerifyFixes(string testSource, Tuple<string, string>[] types)
+
+        public static IEnumerable<object[]> ValueTypes
         {
-            foreach (var item in types)
+            get
             {
-                // Allow CS8019 here because the code fix makes the using directive unnecessary
-                await this.VerifyCSharpFixAsync(string.Format(testSource, item.Item2), string.Format(testSource, item.Item1), allowNewCompilerDiagnostics: true);
-                await this.VerifyCSharpFixAsync(string.Format(testSource, "System." + item.Item2), string.Format(testSource, item.Item1));
-                await this.VerifyCSharpFixAsync(string.Format(testSource, "global::System." + item.Item2), string.Format(testSource, item.Item1));
+                foreach (var pair in ValueTypesData)
+                {
+                    yield return new[] { pair.Item1, pair.Item2 };
+                    yield return new[] { pair.Item1, "System." + pair.Item2 };
+                    yield return new[] { pair.Item1, "global::System." + pair.Item2 };
+                }
             }
         }
 
-        private async Task TestAllCases(Func<string, string, Task> func)
+        public static IEnumerable<object[]> EnumBaseTypes
         {
-            await this.TestCases(func, AllTypes);
+            get
+            {
+                foreach (var pair in EnumBaseTypesData)
+                {
+                    yield return new[] { pair.Item1, pair.Item2 };
+                    yield return new[] { pair.Item1, "System." + pair.Item2 };
+                    yield return new[] { pair.Item1, "global::System." + pair.Item2 };
+                }
+            }
         }
 
-        private async Task VerifyAllFixes(string testSource)
+        public static IEnumerable<object[]> AllTypes
         {
-            await this.VerifyFixes(testSource, AllTypes);
+            get
+            {
+                return ReferenceTypes.Concat(ValueTypes);
+            }
         }
-
-        private async Task TestEnumTypeCases(Func<string, string, Task> func)
-        {
-            await this.TestCases(func, EnumBaseTypes);
-        }
-
-        private async Task VerifyEnumTypeFixes(string testSource)
-        {
-            await this.VerifyFixes(testSource, AllTypes);
-        }
-
-        private async Task TestValueTypeCases(Func<string, string, Task> func)
-        {
-            await this.TestCases(func, ValueTypes);
-        }
-
-        private async Task VerifyValueTypeFixes(string testSource)
-        {
-            await this.VerifyFixes(testSource, AllTypes);
-        }
-
-        private async Task TestReferenceTypeCases(Func<string, string, Task> func)
-        {
-            await this.TestCases(func, ReferenceTypes);
-        }
-
-        private async Task VerifyReferenceTypeFixes(string testSource)
-        {
-            await this.VerifyFixes(testSource, ReferenceTypes);
-        }
-
 
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestVariableDeclarationImpl(string predefined, string fullName)
+        [Theory]
+        [MemberData(nameof(AllTypes))]
+        public async Task TestVariableDeclarationAsync(string predefined, string fullName)
         {
-            string testCode = @"using System;
+            string testSource = @"namespace System {{
 public class Foo
 {{
     public void Bar()
     {{
         {0} test;
     }}
+}}
 }}";
-            DiagnosticResult[] expected;
 
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Use built-in type alias",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 9)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, predefined), EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testSource, predefined), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testSource, fullName), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestVariableDeclarationCodeFix()
+        [Theory]
+        [MemberData(nameof(AllTypes))]
+        public async Task TestVariableDeclarationCodeFixAsync(string predefined, string fullName)
         {
-            string testSource = @"using System;
+            string testSource = @"namespace System {{
 public class Foo
 {{
     public void Bar()
     {{
         {0} test;
     }}
+}}
 }}";
 
-            await this.VerifyAllFixes(testSource);
+            await this.VerifyCSharpFixAsync(string.Format(testSource, fullName), string.Format(testSource, predefined), cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestVariableDeclaration()
-        {
-            await this.TestAllCases(this.TestVariableDeclarationImpl);
-        }
-
-        private async Task TestDefaultDeclarationImpl(string predefined, string fullName)
+        [Theory]
+        [MemberData(nameof(AllTypes))]
+        public async Task TestDefaultDeclarationAsync(string predefined, string fullName)
         {
             string testCode = @"using System;
 public class Foo
@@ -192,201 +156,140 @@ public class Foo
         var test = default({0});
     }}
 }}";
-            DiagnosticResult[] expected;
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 28);
 
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Use built-in type alias",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 28)
-                            }
-                    }
-                };
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestDefaultDeclaration()
+        [Theory]
+        [MemberData(nameof(AllTypes))]
+        public async Task TestDefaultDeclarationCodeFixAsync(string predefined, string fullName)
         {
-            await this.TestAllCases(this.TestDefaultDeclarationImpl);
-        }
-
-        [Fact]
-        public async Task TestDefaultDeclarationCodeFix()
-        {
-            string testSource = @"using System;
+            string testSource = @"namespace System {{
 public class Foo
 {{
     public void Bar()
     {{
         var test = default({0});
     }}
+}}
 }}";
 
-            await this.VerifyAllFixes(testSource);
+            await this.VerifyCSharpFixAsync(string.Format(testSource, fullName), string.Format(testSource, predefined), cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestTypeOfImpl(string predefined, string fullName)
+        [Theory]
+        [MemberData(nameof(AllTypes))]
+        public async Task TestTypeOfAsync(string predefined, string fullName)
         {
-            string testCode = @"using System;
+            string testSource = @"namespace System {{
 public class Foo
 {{
     public void Bar()
     {{
         var test = typeof({0});
     }}
+}}
 }}";
-            DiagnosticResult[] expected;
 
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Use built-in type alias",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 27)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 27);
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testSource, fullName), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestTypeOf()
+        [Theory]
+        [MemberData(nameof(AllTypes))]
+        public async Task TestTypeOfCodeFixAsync(string predefined, string fullName)
         {
-            await this.TestAllCases(this.TestTypeOfImpl);
-        }
-
-        [Fact]
-        public async Task TestTypeOfCodeFix()
-        {
-            string testSource = @"using System;
+            string testSource = @"namespace System {{
 public class Foo
 {{
     public void Bar()
     {{
         var test = typeof({0});
     }}
+}}
 }}";
 
-            await this.VerifyAllFixes(testSource);
+            await this.VerifyCSharpFixAsync(string.Format(testSource, fullName), string.Format(testSource, predefined), cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestReturnTypeImpl(string predefined, string fullName)
+        [Theory]
+        [MemberData(nameof(AllTypes))]
+        public async Task TestReturnTypeAsync(string predefined, string fullName)
         {
-            string testCode = @"using System;
+            string testSource = @"namespace System {{
 public class Foo
 {{
     public {0} Bar()
     {{
+        return default({0});
     }}
+}}
 }}";
-            DiagnosticResult[] expected;
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(4, 12),
+                this.CSharpDiagnostic().WithLocation(6, 24),
+            };
 
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Use built-in type alias",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 4, 12)
-                            }
-                    }
-                };
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testSource, fullName), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestReturnType()
+        [Theory]
+        [MemberData(nameof(AllTypes))]
+        public async Task TestReturnTypeCodeFixAsync(string predefined, string fullName)
         {
-            await this.TestAllCases(this.TestReturnTypeImpl);
-        }
-
-        [Fact]
-        public async Task TestReturnTypeCodeFix()
-        {
-            string testSource = @"using System;
+            string testSource = @"namespace System {{
 public class Foo
 {{
     public {0} Bar()
     {{
+        return default({0});
     }}
+}}
 }}";
 
-            await this.VerifyAllFixes(testSource);
+            await this.VerifyCSharpFixAsync(string.Format(testSource, fullName), string.Format(testSource, predefined), cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestEnumBaseTypeImpl(string predefined, string fullName)
+        [Theory]
+        [MemberData(nameof(EnumBaseTypes))]
+        public async Task TestEnumBaseTypeAsync(string predefined, string fullName)
         {
-            string testCode = @"using System;
+            string testCode = @"namespace System {{
 public class Foo
 {{
     public enum Bar : {0}
     {{
     }}
+}}
 }}";
-            DiagnosticResult[] expected;
 
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Use built-in type alias",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 4, 23)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 23);
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestEnumBaseType()
+        [Theory]
+        [MemberData(nameof(EnumBaseTypes))]
+        public async Task TestEnumBaseTypeCodeFixAsync(string predefined, string fullName)
         {
-            await this.TestEnumTypeCases(this.TestEnumBaseTypeImpl);
-        }
-
-        [Fact]
-        public async Task TestEnumBaseTypeCodeFix()
-        {
-            string testSource = @"using System;
+            string testCode = @"namespace System {{
 public class Foo
 {{
     public enum Bar : {0}
     {{
     }}
+}}
 }}";
 
-            await this.VerifyEnumTypeFixes(testSource);
+            await this.VerifyCSharpFixAsync(string.Format(testCode, fullName), string.Format(testCode, predefined), cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestPointerDeclarationImpl(string predefined, string fullName)
+        [Theory]
+        [MemberData(nameof(ValueTypes))]
+        public async Task TestPointerDeclarationAsync(string predefined, string fullName)
         {
             string testCode = @"using System;
 public class Foo
@@ -396,49 +299,31 @@ public class Foo
         {0}* test;
     }}
 }}";
-            DiagnosticResult[] expected;
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 9);
 
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Use built-in type alias",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 9)
-                            }
-                    }
-                };
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestPointerDeclaration()
+        [Theory]
+        [MemberData(nameof(ValueTypes))]
+        public async Task TestPointerDeclarationCodeFixAsync(string predefined, string fullName)
         {
-            await this.TestValueTypeCases(this.TestPointerDeclarationImpl);
-        }
-
-        [Fact]
-        public async Task TestPointerDeclarationCodeFix()
-        {
-            string testSource = @"using System;
+            string testSource = @"namespace System {{
 public class Foo
 {{
     public unsafe void Bar()
     {{
         {0}* test;
     }}
+}}
 }}";
 
-            await this.VerifyValueTypeFixes(testSource);
+            await this.VerifyCSharpFixAsync(string.Format(testSource, fullName), string.Format(testSource, predefined), cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestArgumentImpl(string predefined, string fullName)
+        [Theory]
+        [MemberData(nameof(AllTypes))]
+        public async Task TestArgumentAsync(string predefined, string fullName)
         {
             string testCode = @"using System;
 public class Foo
@@ -447,48 +332,30 @@ public class Foo
     {{
     }}
 }}";
-            DiagnosticResult[] expected;
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 21);
 
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Use built-in type alias",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 4, 21)
-                            }
-                    }
-                };
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestArgument()
+        [Theory]
+        [MemberData(nameof(AllTypes))]
+        public async Task TestArgumentCodeFixAsync(string predefined, string fullName)
         {
-            await this.TestAllCases(this.TestArgumentImpl);
-        }
-
-        [Fact]
-        public async Task TestArgumentCodeFix()
-        {
-            string testSource = @"using System;
+            string testSource = @"namespace System {{
 public class Foo
 {{
     public void Bar({0} test)
     {{
     }}
+}}
 }}";
 
-            await this.VerifyAllFixes(testSource);
+            await this.VerifyCSharpFixAsync(string.Format(testSource, fullName), string.Format(testSource, predefined), cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestIndexerImpl(string predefined, string fullName)
+        [Theory]
+        [MemberData(nameof(AllTypes))]
+        public async Task TestIndexerAsync(string predefined, string fullName)
         {
             string testCode = @"using System;
 public class Foo
@@ -499,59 +366,21 @@ public class Foo
         get {{ return default({0}); }}
     }}
 }}";
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Use built-in type alias",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 4, 12)
-                            }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Use built-in type alias",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 5, 14)
-                            }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Use built-in type alias",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 30)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(4, 12),
+                    this.CSharpDiagnostic().WithLocation(5, 14),
+                    this.CSharpDiagnostic().WithLocation(7, 30),
                 };
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestIndexer()
+        [Theory]
+        [MemberData(nameof(AllTypes))]
+        public async Task TestIndexerCodeFixAsync(string predefined, string fullName)
         {
-            await this.TestAllCases(this.TestIndexerImpl);
-        }
-
-        [Fact]
-        public async Task TestIndexerCodeFix()
-        {
-            string testSource = @"using System;
+            string testSource = @"namespace System {{
 public class Foo
 {{
     public {0} this
@@ -559,12 +388,15 @@ public class Foo
     {{
         get {{ return default({0}); }}
     }}
+}}
 }}";
 
-            await this.VerifyAllFixes(testSource);
+            await this.VerifyCSharpFixAsync(string.Format(testSource, fullName), string.Format(testSource, predefined), cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestGenericAndLambdaImpl(string predefined, string fullName)
+        [Theory]
+        [MemberData(nameof(AllTypes))]
+        public async Task TestGenericAndLambdaAsync(string predefined, string fullName)
         {
             string testCode = @"using System;
 public class Foo
@@ -576,57 +408,19 @@ public class Foo
                     ({0} param) => param;
     }}
 }}";
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Use built-in type alias",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 14)
-                            }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Use built-in type alias",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 17)
-                            }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Use built-in type alias",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 22)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(6, 14),
+                    this.CSharpDiagnostic().WithLocation(7, 17),
+                    this.CSharpDiagnostic().WithLocation(8, 22),
                 };
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestGenericAndLambda()
-        {
-            await this.TestAllCases(this.TestGenericAndLambdaImpl);
-        }
-
-        [Fact]
-        public async Task TestGenericAndLambdaCodeFix()
+        [Theory]
+        [MemberData(nameof(AllTypes))]
+        public async Task TestGenericAndLambdaCodeFixAsync(string predefined, string fullName)
         {
             string testSource = @"using System;
 public class Foo
@@ -639,10 +433,12 @@ public class Foo
     }}
 }}";
 
-            await this.VerifyAllFixes(testSource);
+            await this.VerifyCSharpFixAsync(string.Format(testSource, fullName), string.Format(testSource, predefined), cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestArrayImpl(string predefined, string fullName)
+        [Theory]
+        [MemberData(nameof(AllTypes))]
+        public async Task TestArrayAsync(string predefined, string fullName)
         {
             string testCode = @"using System;
 public class Foo
@@ -652,49 +448,31 @@ public class Foo
         var array = new {0}[0];
     }}
 }}";
-            DiagnosticResult[] expected;
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 25);
 
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Use built-in type alias",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 25)
-                            }
-                    }
-                };
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestArray()
+        [Theory]
+        [MemberData(nameof(AllTypes))]
+        public async Task TestArrayCodeFixAsync(string predefined, string fullName)
         {
-            await this.TestAllCases(this.TestArrayImpl);
-        }
-
-        [Fact]
-        public async Task TestArrayCodeFix()
-        {
-            string testSource = @"using System;
+            string testSource = @"namespace System {{
 public class Foo
 {{
     public void Bar()
     {{
         var array = new {0}[0];
     }}
+}}
 }}";
 
-            await this.VerifyAllFixes(testSource);
+            await this.VerifyCSharpFixAsync(string.Format(testSource, fullName), string.Format(testSource, predefined), cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestStackAllocArrayImpl(string predefined, string fullName)
+        [Theory]
+        [MemberData(nameof(ValueTypes))]
+        public async Task TestStackAllocArrayAsync(string predefined, string fullName)
         {
             string testCode = @"using System;
 public class Foo
@@ -704,49 +482,31 @@ public class Foo
         var array = stackalloc {0}[0];
     }}
 }}";
-            DiagnosticResult[] expected;
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 32);
 
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Use built-in type alias",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 32)
-                            }
-                    }
-                };
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestStackAllocArray()
+        [Theory]
+        [MemberData(nameof(ValueTypes))]
+        public async Task TestStackAllocArrayCodeFixAsync(string predefined, string fullName)
         {
-            await this.TestAllCases(this.TestStackAllocArrayImpl);
-        }
-
-        [Fact]
-        public async Task TestStackAllocArrayCodeFix()
-        {
-            string testSource = @"using System;
+            string testSource = @"namespace System {{
 public class Foo
 {{
     public unsafe void Bar()
     {{
         var array = stackalloc {0}[0];
     }}
+}}
 }}";
 
-            await this.VerifyValueTypeFixes(testSource);
+            await this.VerifyCSharpFixAsync(string.Format(testSource, fullName), string.Format(testSource, predefined), cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestImplicitCastImpl(string predefined, string fullName)
+        [Theory]
+        [MemberData(nameof(AllTypes))]
+        public async Task TestImplicitCastAsync(string predefined, string fullName)
         {
             string testCode = @"using System;
 public class Foo
@@ -757,48 +517,20 @@ public class Foo
                     default({0});
     }}
 }}";
-            DiagnosticResult[] expected;
-
-            expected =
-                new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Use built-in type alias",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 18)
-                            }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Use built-in type alias",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 29)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(6, 18),
+                    this.CSharpDiagnostic().WithLocation(7, 29),
                 };
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestImplicitCast()
+        [Theory]
+        [MemberData(nameof(AllTypes))]
+        public async Task TestImplicitCastCodeFixAsync(string predefined, string fullName)
         {
-            await this.TestAllCases(this.TestImplicitCastImpl);
-        }
-
-        [Fact]
-        public async Task TestImplicitCastCodeFix()
-        {
-            string testSource = @"using System;
+            string testSource = @"namespace System {{
 public class Foo
 {{
     public void Bar()
@@ -806,12 +538,69 @@ public class Foo
         var t = ({0})
                     default({0});
     }}
+}}
 }}";
 
-            await this.VerifyValueTypeFixes(testSource);
+            await this.VerifyCSharpFixAsync(string.Format(testSource, fullName), string.Format(testSource, predefined), cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestExplicitCastImpl(string predefined, string fullName)
+        [Theory]
+        [MemberData(nameof(AllTypes))]
+        public async Task TestDocumentationCommentDirectReferenceAsync(string predefined, string fullName)
+        {
+            string testCode = @"using System;
+/// <seealso cref=""{0}""/>
+public class Foo
+{{
+}}";
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 20);
+
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(AllTypes))]
+        public async Task TestDocumentationCommentDirectReferenceCodeFixAsync(string predefined, string fullName)
+        {
+            string testCode = @"using System;
+/// <seealso cref=""{0}""/>
+public class Foo
+{{
+}}";
+
+            await this.VerifyCSharpFixAsync(string.Format(testCode, fullName), string.Format(testCode, predefined), cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(AllTypes))]
+        public async Task TestDocumentationCommentIndirectReferenceAsync(string predefined, string fullName)
+        {
+            string testCode = @"using System;
+/// <seealso cref=""Convert.ToBoolean({0})""/>
+public class Foo
+{{
+}}";
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 38);
+
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(AllTypes))]
+        public async Task TestDocumentationCommentIndirectReferenceCodeFixAsync(string predefined, string fullName)
+        {
+            string testCode = @"using System;
+/// <seealso cref=""Convert.ToBoolean({0})""/>
+public class Foo
+{{
+}}";
+
+            await this.VerifyCSharpFixAsync(string.Format(testCode, fullName), string.Format(testCode, predefined), cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(ReferenceTypes))]
+        public async Task TestExplicitCastAsync(string predefined, string fullName)
         {
             string testCode = @"using System;
 public class Foo
@@ -821,49 +610,31 @@ public class Foo
         var t = null as {0};
     }}
 }}";
-            DiagnosticResult[] expected;
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 25);
 
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Use built-in type alias",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 25)
-                            }
-                    }
-                };
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestExplicitCast()
+        [Theory]
+        [MemberData(nameof(ReferenceTypes))]
+        public async Task TestExplicitCastCodeFixAsync(string predefined, string fullName)
         {
-            await this.TestReferenceTypeCases(this.TestExplicitCastImpl);
-        }
-
-        [Fact]
-        public async Task TestExplicitCastCodeFix()
-        {
-            string testSource = @"using System;
+            string testSource = @"namespace System {{
 public class Foo
 {{
     public void Bar()
     {{
         var t = null as {0};
     }}
+}}
 }}";
 
-            await this.VerifyValueTypeFixes(testSource);
+            await this.VerifyCSharpFixAsync(string.Format(testSource, fullName), string.Format(testSource, predefined), cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestNullableImpl(string predefined, string fullName)
+        [Theory]
+        [MemberData(nameof(ValueTypes))]
+        public async Task TestNullableAsync(string predefined, string fullName)
         {
             string testCode = @"using System;
 public class Foo
@@ -873,50 +644,30 @@ public class Foo
         {0}? t = null;
     }}
 }}";
-            DiagnosticResult[] expected;
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 9);
 
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Use built-in type alias",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 9)
-                            }
-                    }
-                };
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestNullable()
+        [Theory]
+        [MemberData(nameof(ValueTypes))]
+        public async Task TestNullableCodeFixAsync(string predefined, string fullName)
         {
-            await this.TestValueTypeCases(this.TestNullableImpl);
-        }
-
-        [Fact]
-        public async Task TestNullableCodeFix()
-        {
-            string testSource = @"using System;
+            string testSource = @"namespace System {{
 public class Foo
 {{
     public void Bar()
     {{
         {0}? t = null;
     }}
+}}
 }}";
 
-            await this.VerifyValueTypeFixes(testSource);
+            await this.VerifyCSharpFixAsync(string.Format(testSource, fullName), string.Format(testSource, predefined), cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMissleadingUsing()
+        public async Task TestMissleadingUsingAsync()
         {
             string testCode = @"namespace Foo
 {
@@ -927,29 +678,13 @@ public class Foo
   }
 }
 ";
-            DiagnosticResult[] expected;
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 5);
 
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Use built-in type alias",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 5)
-                            }
-                    }
-                };
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMissleadingUsingCodeFix()
+        public async Task TestMissleadingUsingCodeFixAsync()
         {
             string oldSource = @"namespace Foo
 {
@@ -970,11 +705,11 @@ public class Foo
 }
 ";
 
-            await this.VerifyCSharpFixAsync(oldSource, newSource, allowNewCompilerDiagnostics: true);
+            await this.VerifyCSharpFixAsync(oldSource, newSource, allowNewCompilerDiagnostics: true).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestUsingNameChange()
+        public async Task TestUsingNameChangeAsync()
         {
             string testCode = @"namespace Foo
 {
@@ -985,29 +720,13 @@ public class Foo
   }
 }
 ";
-            DiagnosticResult[] expected;
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 5);
 
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Use built-in type alias",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 5)
-                            }
-                    }
-                };
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestUsingNameChangeCodeFix()
+        public async Task TestUsingNameChangeCodeFixAsync()
         {
             string oldSource = @"namespace Foo
 {
@@ -1028,11 +747,11 @@ public class Foo
 }
 ";
 
-            await this.VerifyCSharpFixAsync(oldSource, newSource, allowNewCompilerDiagnostics: true);
+            await this.VerifyCSharpFixAsync(oldSource, newSource, allowNewCompilerDiagnostics: true).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestWrongType()
+        public async Task TestWrongTypeAsync()
         {
             string testCode = @"
 public class Foo
@@ -1044,15 +763,15 @@ public class Foo
 }}
 public class {0} {{}}
 ";
-            foreach (var item in AllTypes)
+            foreach (var item in AllTypesData)
             {
-                await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "@" + item.Item1), EmptyDiagnosticResults, CancellationToken.None);
-                await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, item.Item2), EmptyDiagnosticResults, CancellationToken.None);
+                await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "@" + item.Item1), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, item.Item2), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             }
         }
 
         [Fact]
-        public async Task TestUsing()
+        public async Task TestUsingAsync()
         {
             string testCode = @"
 namespace Foo
@@ -1062,23 +781,24 @@ namespace Foo
     {{
     }}
 }}
-public namespace {0} 
+namespace {0} 
 {{
         public class Bar {{ }}
 }}
 ";
-            foreach (var item in AllTypes)
+            foreach (var item in AllTypesData)
             {
-                await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "@" + item.Item1), EmptyDiagnosticResults, CancellationToken.None);
-                await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, item.Item2), EmptyDiagnosticResults, CancellationToken.None);
+                await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "@" + item.Item1), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, item.Item2), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             }
         }
 
-        [Fact]
-        public async Task TestNameOf()
+        [Theory]
+        [MemberData(nameof(AllTypes))]
+        public async Task TestNameOfAsync(string predefined, string fullName)
         {
             string testCode = @"
-namespace Foo
+namespace System
 {{
     public class Foo
     {{
@@ -1089,17 +809,16 @@ namespace Foo
     }}
 }}
 ";
-            foreach (var item in AllTypes)
-            {
-                await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "System." + item.Item2), EmptyDiagnosticResults, CancellationToken.None);
-            }
+
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestNameOfInnerMethod()
+        [Theory]
+        [MemberData(nameof(AllTypes))]
+        public async Task TestNameOfInnerMethodAsync(string predefined, string fullName)
         {
             string testCode = @"
-namespace Foo
+namespace System
 {{
     public class Foo
     {{
@@ -1110,33 +829,34 @@ namespace Foo
     }}
 }}
 ";
-            DiagnosticResult[] expected;
 
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Use built-in type alias",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 41)
-                            }
-                    }
-                };
-            foreach (var item in AllTypes)
-            {
-                await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, "System." + item.Item2), expected, CancellationToken.None);
-                await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, item.Item1), EmptyDiagnosticResults, CancellationToken.None);
-            }
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 34);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        [Theory]
+        [MemberData(nameof(AllTypes))]
+        public async Task TestNameOfInnerMethodCodeFixAsync(string predefined, string fullName)
         {
-            return new SA1121UseBuiltInTypeAlias();
+            string testCode = @"
+namespace System
+{{
+    public class Foo
+    {{
+        public void Bar()
+        {{
+            string test = nameof({0}.ToString);
+        }}
+    }}
+}}
+";
+
+            await this.VerifyCSharpFixAsync(string.Format(testCode, fullName), string.Format(testCode, predefined), cancellationToken:  CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        {
+            yield return new SA1121UseBuiltInTypeAlias();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

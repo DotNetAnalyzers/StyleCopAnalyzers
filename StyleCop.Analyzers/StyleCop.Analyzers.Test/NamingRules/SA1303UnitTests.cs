@@ -1,74 +1,59 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Xunit;
-using StyleCop.Analyzers.NamingRules;
-using TestHelper;
-
-namespace StyleCop.Analyzers.Test.NamingRules
+﻿namespace StyleCop.Analyzers.Test.NamingRules
 {
+    using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.NamingRules;
+    using TestHelper;
+    using Xunit;
+
     public class SA1303UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1303ConstFieldNamesMustBeginWithUpperCaseLetter.DiagnosticId;
-
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestConstFieldStartingWithLowerCase()
+        public async Task TestConstFieldStartingWithLowerCaseAsync()
         {
             var testCode = @"public class Foo
 {
     public const string bar = ""baz"";
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Const field names must begin with upper-case letter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 3, 25)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 25);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestConstFieldStartingWithLowerCaseNativeMethodsExampleOne()
+        public async Task TestConstFieldStartingWithLowerCaseNativeMethodsExampleOneAsync()
         {
             var testCode = @"public class NativeMethods    
 {        
     public const string bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestConstFieldStartingWithLowerCaseNativeMethodsExampleTwo()
+        public async Task TestConstFieldStartingWithLowerCaseNativeMethodsExampleTwoAsync()
         {
             var testCode = @"public class MyNativeMethods    
 {        
     public const string bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestConstFieldStartingWithLowerCaseInnerClassInNativeMethods()
+        public async Task TestConstFieldStartingWithLowerCaseInnerClassInNativeMethodsAsync()
         {
             var testCode = @"public class NativeMethods    
 {        
@@ -78,11 +63,11 @@ namespace StyleCop.Analyzers.Test.NamingRules
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestConstFieldStartingWithLowerCaseInnerInnerClassInNativeMethods()
+        public async Task TestConstFieldStartingWithLowerCaseInnerInnerClassInNativeMethodsAsync()
         {
             var testCode = @"public class NativeMethods    
 {        
@@ -95,37 +80,24 @@ namespace StyleCop.Analyzers.Test.NamingRules
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestConstFieldStartingWithLowerCaseNativeMethodsIncorrectName()
+        public async Task TestConstFieldStartingWithLowerCaseNativeMethodsIncorrectNameAsync()
         {
             var testCode = @"public class MyNativeMethodsClass    
 {        
     public const string bar = ""baz"";
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Const field names must begin with upper-case letter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 3, 25)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 25);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestConstFieldStartingWithLowerCaseInnerInnerClassInNativeMethodsIncorrectName()
+        public async Task TestConstFieldStartingWithLowerCaseInnerInnerClassInNativeMethodsIncorrectNameAsync()
         {
             var testCode = @"
 namespace Test
@@ -142,37 +114,24 @@ namespace Test
    }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Const field names must begin with upper-case letter.",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 10, 36)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 36);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestConstFieldStartingWithUpperCase()
+        public async Task TestConstFieldStartingWithUpperCaseAsync()
         {
             var testCode = @"public class Foo
 {
     public const string Bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestConstFieldStartingWithUnderscore()
+        public async Task TestConstFieldStartingWithUnderscoreAsync()
         {
             var testCode = @"public class Foo
 {
@@ -180,23 +139,23 @@ namespace Test
 }";
 
             // Fields starting with an underscore are reported as SA1309
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestFieldWhichIsNotConstStartingWithLowerCase()
+        public async Task TestFieldWhichIsNotConstStartingWithLowerCaseAsync()
         {
             var testCode = @"public class Foo
 {
     public string bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1303ConstFieldNamesMustBeginWithUpperCaseLetter();
+            yield return new SA1303ConstFieldNamesMustBeginWithUpperCaseLetter();
         }
     }
 }

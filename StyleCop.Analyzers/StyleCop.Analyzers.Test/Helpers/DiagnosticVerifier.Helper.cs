@@ -17,8 +17,8 @@ namespace TestHelper
     /// </summary>
     public abstract partial class DiagnosticVerifier
     {
-        private static readonly MetadataReference CorlibReference = MetadataReference.CreateFromAssembly(typeof(object).Assembly);
-        private static readonly MetadataReference SystemReference = MetadataReference.CreateFromAssembly(typeof(System.Diagnostics.Debug).Assembly);
+        private static readonly MetadataReference CorlibReference = MetadataReference.CreateFromAssembly(typeof(object).Assembly).WithAliases(ImmutableArray.Create("global", "corlib"));
+        private static readonly MetadataReference SystemReference = MetadataReference.CreateFromAssembly(typeof(System.Diagnostics.Debug).Assembly).WithAliases(ImmutableArray.Create("global", "system"));
         private static readonly MetadataReference SystemCoreReference = MetadataReference.CreateFromAssembly(typeof(Enumerable).Assembly);
         private static readonly MetadataReference CSharpSymbolsReference = MetadataReference.CreateFromAssembly(typeof(CSharpCompilation).Assembly);
         private static readonly MetadataReference CodeAnalysisReference = MetadataReference.CreateFromAssembly(typeof(Compilation).Assembly);
@@ -30,8 +30,6 @@ namespace TestHelper
         private static readonly string VisualBasicDefaultFilePath = DefaultFilePathPrefix + 0 + "." + VisualBasicDefaultExt;
         private static readonly string TestProjectName = "TestProject";
 
-        #region  Get Diagnostics
-
         /// <summary>
         /// Given classes in the form of strings, their language, and an <see cref="DiagnosticAnalyzer"/> to apply to
         /// it, return the <see cref="Diagnostic"/>s found in the string after converting it to a
@@ -40,25 +38,25 @@ namespace TestHelper
         /// <param name="sources">Classes in the form of strings.</param>
         /// <param name="language">The language the source classes are in. Values may be taken from the
         /// <see cref="LanguageNames"/> class.</param>
-        /// <param name="analyzer">The analyzer to be run on the sources.</param>
+        /// <param name="analyzers">The analyzers to be run on the sources.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>A collection of <see cref="Diagnostic"/>s that surfaced in the source code, sorted by
         /// <see cref="Diagnostic.Location"/>.</returns>
-        private Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsAsync(string[] sources, string language, DiagnosticAnalyzer analyzer, CancellationToken cancellationToken)
+        private Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsAsync(string[] sources, string language, ImmutableArray<DiagnosticAnalyzer> analyzers, CancellationToken cancellationToken)
         {
-            return GetSortedDiagnosticsFromDocumentsAsync(analyzer, this.GetDocuments(sources, language), cancellationToken);
+            return GetSortedDiagnosticsFromDocumentsAsync(analyzers, this.GetDocuments(sources, language), cancellationToken);
         }
 
         /// <summary>
         /// Given an analyzer and a collection of documents to apply it to, run the analyzer and gather an array of
         /// diagnostics found. The returned diagnostics are then ordered by location in the source documents.
         /// </summary>
-        /// <param name="analyzer">The analyzer to run on the documents.</param>
+        /// <param name="analyzers">The analyzer to run on the documents.</param>
         /// <param name="documents">The <see cref="Document"/>s that the analyzer will be run on.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>A collection of <see cref="Diagnostic"/>s that surfaced in the source code, sorted by
         /// <see cref="Diagnostic.Location"/>.</returns>
-        protected static async Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsFromDocumentsAsync(DiagnosticAnalyzer analyzer, Document[] documents, CancellationToken cancellationToken)
+        protected static async Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsFromDocumentsAsync(ImmutableArray<DiagnosticAnalyzer> analyzers, Document[] documents, CancellationToken cancellationToken)
         {
             var projects = new HashSet<Project>();
             foreach (var document in documents)
@@ -66,13 +64,30 @@ namespace TestHelper
                 projects.Add(document.Project);
             }
 
+            var supportedDiagnosticsSpecificOptions = new Dictionary<string, ReportDiagnostic>();
+            foreach (var analyzer in analyzers)
+            {
+                foreach (var diagnostic in analyzer.SupportedDiagnostics)
+                {
+                    // make sure the analyzers we are testing are enabled
+                    supportedDiagnosticsSpecificOptions[diagnostic.Id] = ReportDiagnostic.Default;
+                }
+            }
+
             var diagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
             foreach (var project in projects)
             {
-                var compilation = await project.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
-                var compilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create(analyzer), null, cancellationToken);
+                // update the project compilation options
+                var modifiedSpecificDiagnosticOptions = project.CompilationOptions.SpecificDiagnosticOptions.SetItems(supportedDiagnosticsSpecificOptions);
+                var modifiedCompilationOptions = project.CompilationOptions.WithSpecificDiagnosticOptions(modifiedSpecificDiagnosticOptions);
+                var processedProject = project.WithCompilationOptions(modifiedCompilationOptions);
+
+                var compilation = await processedProject.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
+                var compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, null, cancellationToken);
+                var compilerDiagnostics = compilation.GetDiagnostics(cancellationToken);
+                var compilerErrors = compilerDiagnostics.Where(i => i.Severity == DiagnosticSeverity.Error);
                 var diags = await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
-                foreach (var diag in diags)
+                foreach (var diag in diags.Concat(compilerErrors))
                 {
                     if (diag.Location == Location.None || diag.Location.IsInMetadata)
                     {
@@ -108,9 +123,6 @@ namespace TestHelper
             return diagnostics.OrderBy(d => d.Location.SourceSpan.Start).ToArray();
         }
 
-        #endregion
-
-        #region Set up compilation and documents
         /// <summary>
         /// Given an array of strings as sources and a language, turn them into a <see cref="Project"/> and return the
         /// documents and spans of it.
@@ -168,7 +180,6 @@ namespace TestHelper
             string fileExt = language == LanguageNames.CSharp ? CSharpDefaultFileExt : VisualBasicDefaultExt;
 
             var projectId = ProjectId.CreateNewId(debugName: TestProjectName);
-
             var solution = this.CreateSolution(projectId, language);
 
             int count = 0;
@@ -179,6 +190,7 @@ namespace TestHelper
                 solution = solution.AddDocument(documentId, newFileName, SourceText.From(source));
                 count++;
             }
+
             return solution.GetProject(projectId);
         }
 
@@ -193,13 +205,26 @@ namespace TestHelper
             return new AdhocWorkspace()
             .CurrentSolution
             .AddProject(projectId, TestProjectName, TestProjectName, language)
+            .WithProjectCompilationOptions(projectId, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true))
             .AddMetadataReference(projectId, CorlibReference)
             .AddMetadataReference(projectId, SystemReference)
             .AddMetadataReference(projectId, SystemCoreReference)
             .AddMetadataReference(projectId, CSharpSymbolsReference)
             .AddMetadataReference(projectId, CodeAnalysisReference);
         }
-    #endregion
+
+        protected DiagnosticResult CSharpDiagnostic(string diagnosticId = null)
+        {
+            var analyzers = this.GetCSharpDiagnosticAnalyzers();
+            var supportedDiagnostics = analyzers.SelectMany(analyzer => analyzer.SupportedDiagnostics);
+            if (diagnosticId == null)
+            {
+                return new DiagnosticResult(supportedDiagnostics.Single());
+            }
+            else
+            {
+                return new DiagnosticResult(supportedDiagnostics.Single(i => i.Id == diagnosticId));
+            }
+        }
     }
 }
-

@@ -7,8 +7,6 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-
-
     /// <summary>
     /// A Code Analysis SuppressMessage attribute does not include a justification.
     /// </summary>
@@ -40,7 +38,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1404.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -57,7 +55,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleAttributeNode, SyntaxKind.Attribute);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleAttributeNode, SyntaxKind.Attribute);
         }
 
         private void HandleAttributeNode(SyntaxNodeAnalysisContext context)
@@ -76,7 +74,7 @@
                         foreach (var argument in attribute.ArgumentList.ChildNodes())
                         {
                             var attributeArgument = argument as AttributeArgumentSyntax;
-                            if (attributeArgument?.NameEquals?.Name?.ToString() == nameof(SuppressMessageAttribute.Justification))
+                            if (attributeArgument?.NameEquals?.Name?.Identifier.ValueText == nameof(SuppressMessageAttribute.Justification))
                             {
                                 // Check if the justification is not empty
 
@@ -84,13 +82,16 @@
 
                                 // If value does not have a value the expression is not constant -> Compilation error
                                 if (!value.HasValue || !string.IsNullOrWhiteSpace(value.Value as string))
+                                {
                                     return;
+                                }
 
                                 // Empty, Whitespace or null justification provided
                                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, attributeArgument.GetLocation()));
                                 return;
                             }
                         }
+
                         // No justification set
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, attribute.GetLocation()));
                     }

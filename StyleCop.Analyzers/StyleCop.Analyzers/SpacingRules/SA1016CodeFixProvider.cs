@@ -15,7 +15,7 @@
     /// <para>To fix a violation of this rule, ensure that there is no whitespace after the opening attribute
     /// bracket.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1016CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1016CodeFixProvider))]
     [Shared]
     public class SA1016CodeFixProvider : CodeFixProvider
     {
@@ -34,27 +34,42 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1016OpeningAttributeBracketsMustBeSpacedCorrectly.DiagnosticId))
+                {
                     continue;
+                }
 
-                var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
                 SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (!token.IsKind(SyntaxKind.OpenBracketToken))
+                {
                     continue;
+                }
 
                 if (token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia))
+                {
                     continue;
+                }
 
                 if (!token.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
+                {
                     continue;
+                }
 
-                SyntaxToken corrected = token.WithoutTrailingWhitespace().WithoutFormatting();
-                SyntaxNode transformed = root.ReplaceToken(token, corrected);
-                Document updatedDocument = context.Document.WithSyntaxRoot(transformed);
-                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => Task.FromResult(updatedDocument)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1016CodeFix, t => GetTransformedDocumentAsync(context.Document, root, token)), diagnostic);
             }
+        }
+
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxToken token)
+        {
+            SyntaxToken corrected = token.WithoutTrailingWhitespace().WithoutFormatting();
+            SyntaxNode transformed = root.ReplaceToken(token, corrected);
+            Document updatedDocument = document.WithSyntaxRoot(transformed);
+
+            return Task.FromResult(updatedDocument);
         }
     }
 }

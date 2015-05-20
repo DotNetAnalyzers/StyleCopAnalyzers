@@ -15,7 +15,7 @@
     /// <para>To fix a violation of this rule, add or remove a space after the keyword, according to the description
     /// above.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1000CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1000CodeFixProvider))]
     [Shared]
     public class SA1000CodeFixProvider : CodeFixProvider
     {
@@ -34,79 +34,95 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1000KeywordsMustBeSpacedCorrectly.DiagnosticId))
+                {
                     continue;
+                }
 
-                var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
                 SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (token.IsMissing)
+                {
                     continue;
-
-                bool isAddingSpace = true;
-                switch (token.Kind())
-                {
-                case SyntaxKind.NewKeyword:
-                    {
-                        SyntaxToken nextToken = token.GetNextToken();
-                        if (nextToken.IsKind(SyntaxKind.OpenBracketToken) || nextToken.IsKind(SyntaxKind.OpenParenToken))
-                            isAddingSpace = false;
-                    }
-
-                    break;
-
-                case SyntaxKind.ReturnKeyword:
-                case SyntaxKind.ThrowKeyword:
-                    {
-                        SyntaxToken nextToken = token.GetNextToken();
-                        if (nextToken.IsKind(SyntaxKind.SemicolonToken))
-                            isAddingSpace = false;
-                    }
-
-                    break;
-
-                case SyntaxKind.CheckedKeyword:
-                case SyntaxKind.DefaultKeyword:
-                case SyntaxKind.NameOfKeyword:
-                case SyntaxKind.SizeOfKeyword:
-                case SyntaxKind.TypeOfKeyword:
-                case SyntaxKind.UncheckedKeyword:
-                    isAddingSpace = false;
-                    break;
-
-                case SyntaxKind.IdentifierToken:
-                    if (token.Text == "nameof")
-                    {
-                        // SA1000 would only have been reported for a nameof expression. No need to verify.
-                        goto case SyntaxKind.NameOfKeyword;
-                    }
-
-                    continue;
-
-                default:
-                    break;
                 }
 
-                if (isAddingSpace)
-                {
-                    if (token.HasTrailingTrivia)
-                        continue;
+                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1000CodeFix, t => GetTransformedDocumentAsync(context.Document, root, token)), diagnostic);
+            }
+        }
 
-                    SyntaxTrivia whitespace = SyntaxFactory.Whitespace(" ").WithoutFormatting();
-                    SyntaxToken corrected = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, whitespace));
-                    Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
-                    context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => Task.FromResult(updatedDocument)), diagnostic);
-                }
-                else
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxToken token)
+        {
+            bool isAddingSpace = true;
+            switch (token.Kind())
+            {
+            case SyntaxKind.NewKeyword:
                 {
-                    if (!token.HasTrailingTrivia)
-                        continue;
-
-                    SyntaxToken corrected = token.WithoutTrailingWhitespace().WithoutFormatting();
-                    Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
-                    context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => Task.FromResult(updatedDocument)), diagnostic);
+                    SyntaxToken nextToken = token.GetNextToken();
+                    if (nextToken.IsKind(SyntaxKind.OpenBracketToken) || nextToken.IsKind(SyntaxKind.OpenParenToken))
+                    {
+                        isAddingSpace = false;
+                    }
                 }
+
+                break;
+
+            case SyntaxKind.ReturnKeyword:
+            case SyntaxKind.ThrowKeyword:
+                {
+                    SyntaxToken nextToken = token.GetNextToken();
+                    if (nextToken.IsKind(SyntaxKind.SemicolonToken))
+                    {
+                        isAddingSpace = false;
+                    }
+                }
+
+                break;
+
+            case SyntaxKind.CheckedKeyword:
+            case SyntaxKind.UncheckedKeyword:
+                isAddingSpace = token.GetNextToken().IsKind(SyntaxKind.OpenBraceToken);
+                break;
+
+            case SyntaxKind.DefaultKeyword:
+            case SyntaxKind.NameOfKeyword:
+            case SyntaxKind.SizeOfKeyword:
+            case SyntaxKind.TypeOfKeyword:
+                isAddingSpace = false;
+                break;
+
+            case SyntaxKind.IdentifierToken:
+                if (token.Text == "nameof")
+                {
+                    // SA1000 would only have been reported for a nameof expression. No need to verify.
+                    goto case SyntaxKind.NameOfKeyword;
+                }
+
+                return Task.FromResult(document);
+
+            default:
+                break;
+            }
+
+            if (isAddingSpace == token.HasTrailingTrivia)
+            {
+                return Task.FromResult(document);
+            }
+
+            if (isAddingSpace)
+            {
+                SyntaxTrivia whitespace = SyntaxFactory.Space;
+                SyntaxToken corrected = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, whitespace));
+                Document updatedDocument = document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
+                return Task.FromResult(updatedDocument);
+            }
+            else
+            {
+                SyntaxToken corrected = token.WithoutTrailingWhitespace().WithoutFormatting();
+                Document updatedDocument = document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
+                return Task.FromResult(updatedDocument);
             }
         }
     }

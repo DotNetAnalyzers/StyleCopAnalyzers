@@ -4,13 +4,6 @@
 
     internal static class AnalyzerConstants
     {
-        /// <summary>
-        /// Provides a reference value which can be passed to
-        /// <see cref="DiagnosticDescriptor(string, string, string, string, DiagnosticSeverity, bool, string, string, string[])"/>
-        /// to disable a diagnostic which is currently untested.
-        /// </summary>
-        internal static bool DisabledNoTests { get; }
-
         static AnalyzerConstants()
         {
 #if DEBUG
@@ -20,5 +13,43 @@
             DisabledNoTests = false;
 #endif
         }
+
+        /// <summary>
+        /// Gets a reference value which can be passed to
+        /// <see cref="DiagnosticDescriptor(string, string, string, string, DiagnosticSeverity, bool, string, string, string[])"/>
+        /// to disable a diagnostic which is currently untested.
+        /// </summary>
+        /// <value>
+        /// A reference value which can be passed to
+        /// <see cref="DiagnosticDescriptor(string, string, string, string, DiagnosticSeverity, bool, string, string, string[])"/>
+        /// to disable a diagnostic which is currently untested.
+        /// </value>
+        internal static bool DisabledNoTests { get; }
+
+        /// <summary>
+        /// Gets a reference value which can be passed to
+        /// <see cref="DiagnosticDescriptor(string, string, string, string, DiagnosticSeverity, bool, string, string, string[])"/>
+        /// to indicate that the diagnostic is disabled by default because it is an alternative to a reference StyleCop
+        /// rule.
+        /// </summary>
+        /// <value>
+        /// A reference value which can be passed to
+        /// <see cref="DiagnosticDescriptor(string, string, string, string, DiagnosticSeverity, bool, string, string, string[])"/>
+        /// to indicate that the diagnostic is disabled by default because it is an alternative to a reference StyleCop
+        /// rule.
+        /// </value>
+        internal static bool DisabledAlternative => true;
+
+        /// <summary>
+        /// Gets a reference value which can be passed to
+        /// <see cref="DiagnosticDescriptor(string, string, string, string, DiagnosticSeverity, bool, string, string, string[])"/>
+        /// to indicate that the diagnostic should be enabled by default.
+        /// </summary>
+        /// <value>
+        /// A reference value which can be passed to
+        /// <see cref="DiagnosticDescriptor(string, string, string, string, DiagnosticSeverity, bool, string, string, string[])"/>
+        /// to indicate that the diagnostic should be enabled by default.
+        /// </value>
+        internal static bool EnabledByDefault => true;
     }
 }

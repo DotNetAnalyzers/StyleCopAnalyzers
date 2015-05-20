@@ -2,11 +2,9 @@
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using TestHelper;
+    using Xunit;
 
     public abstract class NumberSignSpacingTestBase : CodeFixVerifier
     {
@@ -15,25 +13,15 @@
             get;
         }
 
-        protected abstract string SignName
-        {
-            get;
-        }
-
-        protected abstract string DiagnosticId
-        {
-            get;
-        }
-
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPrefixUnaryOperatorAtEndOfLine()
+        public async Task TestPrefixUnaryOperatorAtEndOfLineAsync()
         {
             string testCode = @"namespace Namespace
 {
@@ -60,29 +48,14 @@
 }
 ";
 
-            DiagnosticResult[] expected;
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 21);
 
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = this.SignName + " sign must not be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 21)
-                            }
-                    }
-                };
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPrefixUnaryOperatorAtBeginningOfLine_LeadingTrivia()
+        public async Task TestPrefixUnaryOperatorAtBeginningOfLine_LeadingTriviaAsync()
         {
             string testFormat = @"namespace Namespace
 {{
@@ -112,35 +85,20 @@
 ";
 
             string test;
-            DiagnosticResult[] expected;
 
             test = string.Format(testFormat, this.Sign + "3");
-            expected = EmptyDiagnosticResults;
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
             test = string.Format(testFormat, this.Sign + " 3");
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = this.SignName + " sign must not be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 17)
-                            }
-                    }
-                };
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(8, 17);
+
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPrefixUnaryOperatorAtBeginningOfLine_NoLeadingTrivia()
+        public async Task TestPrefixUnaryOperatorAtBeginningOfLine_NoLeadingTriviaAsync()
         {
             string testFormat = @"namespace Namespace
 {{
@@ -170,35 +128,20 @@
 ";
 
             string test;
-            DiagnosticResult[] expected;
 
             test = string.Format(testFormat, this.Sign + "3");
-            expected = EmptyDiagnosticResults;
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
             test = string.Format(testFormat, this.Sign + " 3");
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = this.SignName + " sign must not be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 17)
-                            }
-                    }
-                };
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(8, 1);
+
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPrefixUnaryOperatorAfterEquals()
+        public async Task TestPrefixUnaryOperatorAfterEqualsAsync()
         {
             string testFormat = @"namespace Namespace
 {{
@@ -226,84 +169,44 @@
 ";
 
             string test;
-            DiagnosticResult[] expected;
 
             test = string.Format(testFormat, " " + this.Sign + "3");
-            expected = EmptyDiagnosticResults;
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
             test = string.Format(testFormat, this.Sign + "3");
-            expected =
-                new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = this.SignName + " sign must be preceded by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 20)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithArguments(string.Empty, "preceded").WithLocation(7, 20)
                 };
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
             test = string.Format(testFormat, " " + this.Sign + " 3");
             expected =
                 new[]
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = this.SignName + " sign must not be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 21)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 21)
                 };
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
             test = string.Format(testFormat, this.Sign + " 3");
             expected =
                 new[]
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = this.SignName + " sign must be preceded by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 20)
-                            }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = this.SignName + " sign must not be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 20)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithArguments(string.Empty, "preceded").WithLocation(7, 20),
+                    this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 20)
                 };
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPrefixUnaryOperatorAfterBinaryOperator()
+        public async Task TestPrefixUnaryOperatorAfterBinaryOperatorAsync()
         {
             string testFormat = @"namespace Namespace
 {{
@@ -331,35 +234,20 @@
 ";
 
             string test;
-            DiagnosticResult[] expected;
 
             test = string.Format(testFormat, this.Sign + "3");
-            expected = EmptyDiagnosticResults;
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
             test = string.Format(testFormat, this.Sign + " 3");
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = this.SignName + " sign must not be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 25)
-                            }
-                    }
-                };
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 25);
+
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPrefixUnaryOperatorAfterCast()
+        public async Task TestPrefixUnaryOperatorAfterCastAsync()
         {
             string testFormat = @"namespace Namespace
 {{
@@ -387,84 +275,41 @@
 ";
 
             string test;
-            DiagnosticResult[] expected;
 
             test = string.Format(testFormat, this.Sign + "3");
-            expected = EmptyDiagnosticResults;
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
             test = string.Format(testFormat, " " + this.Sign + "3");
-            expected =
-                new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = this.SignName + " sign must not be preceded by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 27)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 27)
                 };
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
             test = string.Format(testFormat, this.Sign + " 3");
             expected =
                 new[]
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = this.SignName + " sign must not be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 26)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 26)
                 };
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
             test = string.Format(testFormat, " " + this.Sign + " 3");
             expected =
                 new[]
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = this.SignName + " sign must not be preceded by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 27)
-                            }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = this.SignName + " sign must not be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 27)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 27),
+                    this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 27)
                 };
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPrefixUnaryOperatorInParentheses()
+        public async Task TestPrefixUnaryOperatorInParenthesesAsync()
         {
             string testFormat = @"namespace Namespace
 {{
@@ -492,84 +337,41 @@
 ";
 
             string test;
-            DiagnosticResult[] expected;
 
             test = string.Format(testFormat, this.Sign + "3");
-            expected = EmptyDiagnosticResults;
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
             test = string.Format(testFormat, " " + this.Sign + "3");
-            expected =
-                new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = this.SignName + " sign must not be preceded by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 23)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 23)
                 };
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
             test = string.Format(testFormat, this.Sign + " 3");
             expected =
                 new[]
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = this.SignName + " sign must not be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 22)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 22)
                 };
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
             test = string.Format(testFormat, " " + this.Sign + " 3");
             expected =
                 new[]
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = this.SignName + " sign must not be preceded by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 23)
-                            }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = this.SignName + " sign must not be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 23)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 23),
+                    this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 23)
                 };
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPrefixUnaryOperatorInBrackets()
+        public async Task TestPrefixUnaryOperatorInBracketsAsync()
         {
             string testFormat = @"namespace Namespace
 {{
@@ -590,91 +392,46 @@
     {
         void Foo()
         {
-            int[] x = new int[" + this.Sign + @"3];
+            int[] x = new int[" + this.Sign + @"0];
         }
     }
 }
 ";
 
             string test;
-            DiagnosticResult[] expected;
 
-            test = string.Format(testFormat, this.Sign + "3");
-            expected = EmptyDiagnosticResults;
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            test = string.Format(testFormat, this.Sign + "0");
+            await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
-            test = string.Format(testFormat, " " + this.Sign + "3");
+            test = string.Format(testFormat, " " + this.Sign + "0");
+            DiagnosticResult[] expected =
+                {
+                    this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 32)
+                };
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+
+            test = string.Format(testFormat, this.Sign + " 0");
             expected =
                 new[]
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = this.SignName + " sign must not be preceded by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 32)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 31)
                 };
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
-            test = string.Format(testFormat, this.Sign + " 3");
+            test = string.Format(testFormat, " " + this.Sign + " 0");
             expected =
                 new[]
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = this.SignName + " sign must not be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 31)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 32),
+                    this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 32)
                 };
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
-
-            test = string.Format(testFormat, " " + this.Sign + " 3");
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = this.SignName + " sign must not be preceded by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 32)
-                            }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = this.SignName + " sign must not be followed by a space.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 32)
-                            }
-                    }
-                };
-            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override abstract CodeFixProvider GetCSharpCodeFixProvider();
-
-        protected override abstract DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer();
     }
 }

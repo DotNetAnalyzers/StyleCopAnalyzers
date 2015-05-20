@@ -42,7 +42,7 @@
         private const string DefaultText = "Summary description for";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -59,7 +59,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleDocumentation, SyntaxKind.SingleLineDocumentationCommentTrivia, SyntaxKind.MultiLineDocumentationCommentTrivia);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDocumentation, SyntaxKind.SingleLineDocumentationCommentTrivia, SyntaxKind.MultiLineDocumentationCommentTrivia);
         }
 
         private void HandleDocumentation(SyntaxNodeAnalysisContext context)
@@ -68,7 +68,7 @@
 
             if (documentationTrivia != null)
             {
-                var summaryElement = XmlCommentHelper.GetTopLevelElement(documentationTrivia, XmlCommentHelper.SummaryXmlTag) as XmlElementSyntax;
+                var summaryElement = documentationTrivia.Content.GetFirstXmlElement(XmlCommentHelper.SummaryXmlTag) as XmlElementSyntax;
 
                 if (summaryElement != null)
                 {

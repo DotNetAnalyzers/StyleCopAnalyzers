@@ -1,26 +1,24 @@
 ﻿namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.ReadabilityRules;
     using TestHelper;
+    using Xunit;
 
     public class SA1110UnitTests : CodeFixVerifier
     {
-        public string DiagnosticId { get; } = SA1110OpeningParenthesisMustBeOnDeclarationLine.DiagnosticId;
-
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodDeclarationOpeningBracketInTheNextLine()
+        public async Task TestMethodDeclarationOpeningBracketInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -32,26 +30,13 @@ class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening parenthesis or bracket must be on declaration line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 5, 21)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 21);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestConstructorDeclarationOpeningBracketInTheNextLine()
+        public async Task TestConstructorDeclarationOpeningBracketInTheNextLineAsync()
         {
             var testCode = @"
 public class Foo
@@ -62,26 +47,14 @@ public class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening parenthesis or bracket must be on declaration line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 5, 9)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
         }
 
         [Fact]
-        public async Task TestMethodDeclarationOpeningBracketInTheSameLine()
+        public async Task TestMethodDeclarationOpeningBracketInTheSameLineAsync()
         {
             var testCode = @"
 class Foo
@@ -93,11 +66,11 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestConstructorDeclarationOpeningBracketInTheSameLine()
+        public async Task TestConstructorDeclarationOpeningBracketInTheSameLineAsync()
         {
             var testCode = @"
 public class Foo
@@ -107,11 +80,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodCallOpeningBracketInTheNextLine()
+        public async Task TestMethodCallOpeningBracketInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -123,26 +96,13 @@ class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening parenthesis or bracket must be on declaration line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 13)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 13);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodCallUsingThisOpeningBracketInTheNextLine()
+        public async Task TestMethodCallUsingThisOpeningBracketInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -154,26 +114,13 @@ class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening parenthesis or bracket must be on declaration line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 13)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 13);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodCallUsingBaseOpeningBracketInTheNextLine()
+        public async Task TestMethodCallUsingBaseOpeningBracketInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -185,26 +132,13 @@ class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening parenthesis or bracket must be on declaration line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 13)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 13);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodCallUsingVariableOpeningBracketInTheNextLine()
+        public async Task TestMethodCallUsingVariableOpeningBracketInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -217,26 +151,33 @@ class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening parenthesis or bracket must be on declaration line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 13)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 13);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestStaticMethodCallOpeningBracketInTheNextLine()
+        public async Task TestGenericMethodCallAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Fun<T>(T param)
+    {
+    }
+
+    public void Bar()
+    {
+        var f = new Foo();
+        f.Fun<string>(null);
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestStaticMethodCallOpeningBracketInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -252,26 +193,13 @@ class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening parenthesis or bracket must be on declaration line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 11, 13)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(11, 13);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestStaticMethodCallOpeningBracketInTheNextLineAsClassName()
+        public async Task TestStaticMethodCallOpeningBracketInTheNextLineAsClassNameAsync()
         {
             var testCode = @"
 class Foo
@@ -287,11 +215,34 @@ Baz();
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestConstructorCallOpeningBracketInTheNextLine()
+        public async Task TestStaticMethodCallWithAnotherStaticCallOpeningBracketInTheNextLineAsync()
+        {
+            var testCode = @"
+using System;
+public class Foo
+{
+    public static Foo Baz(int i)
+    {
+        return new Foo();
+    }
+
+    public Foo Bar()
+    {
+        return Foo.Baz(
+            Int32.Parse(""5"")
+);
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestConstructorCallOpeningBracketInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -303,26 +254,13 @@ class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening parenthesis or bracket must be on declaration line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 9)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestCreationOfObjectNoOpeningClosingParenthesis()
+        public async Task TestCreationOfObjectNoOpeningClosingParenthesisAsync()
         {
             var testCode = @"
 public class Foo
@@ -333,10 +271,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
         [Fact]
-        public async Task TestConstructorWithQualifiedNameCallOpeningBracketInTheNextLine()
+        public async Task TestConstructorWithQualifiedNameCallOpeningBracketInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -351,26 +290,38 @@ class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening parenthesis or bracket must be on declaration line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 10, 9)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerDeclarationOpeningBracketInTheNextLine()
+        public async Task TestGenericTypeConstructorCallAsync()
+        {
+            var testCode = @"
+class Foo<T>
+{
+    Foo(System.Func<int> i) 
+    {    
+    }
+
+    int GetInt(string s)
+    {
+        return 1;
+    }
+
+    public void Bar()
+    {
+        var f = new Foo<string>(
+                () => GetInt(null));
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestIndexerDeclarationOpeningBracketInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -385,26 +336,13 @@ class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening parenthesis or bracket must be on declaration line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 5, 5)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 5);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerDeclarationOpeningBracketInTheSameLine()
+        public async Task TestIndexerDeclarationOpeningBracketInTheSameLineAsync()
         {
             var testCode = @"
 class Foo
@@ -418,16 +356,16 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerCallUsingThisOpeningBracketInTheNextLine()
+        public async Task TestIndexerCallUsingThisOpeningBracketInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
 {
-    public int this[index]
+    public int this[int index]
     {
         get
         {
@@ -442,26 +380,13 @@ class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening parenthesis or bracket must be on declaration line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 15, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(15, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerCalOpeningBracketInTheNextLine()
+        public async Task TestIndexerCalOpeningBracketInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -474,31 +399,18 @@ class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening parenthesis or bracket must be on declaration line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerCallUsingThisOpeningBracketInTheSameLine()
+        public async Task TestIndexerCallUsingThisOpeningBracketInTheSameLineAsync()
         {
             var testCode = @"
 class Foo
 {
-    public int this[index]
+    public int this[int index]
     {
         get
         {
@@ -512,11 +424,11 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerCallOpeningBracketInTheSameLine()
+        public async Task TestIndexerCallOpeningBracketInTheSameLineAsync()
         {
             var testCode = @"
 class Foo
@@ -528,11 +440,11 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestArrayCallOpeningBracketInTheNextLine()
+        public async Task TestArrayCallOpeningBracketInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -544,25 +456,12 @@ class Foo
 [1];
     }
 }";
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening parenthesis or bracket must be on declaration line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 1)
-                            }
-                    }
-                };
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 1);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestArrayCallOpeningBracketInTheSameLine()
+        public async Task TestArrayCallOpeningBracketInTheSameLineAsync()
         {
             var testCode = @"
 class Foo
@@ -575,13 +474,14 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAttributeOpeningParenthesisOnTheNextLine()
+        public async Task TestAttributeOpeningParenthesisOnTheNextLineAsync()
         {
             var testCode = @"
+using System.Diagnostics;
 public class Foo
 {
 [Conditional
@@ -592,39 +492,20 @@ public class Foo
     }
 }";
 
-            var expected = new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening parenthesis or bracket must be on declaration line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 5, 1)
-                            }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening parenthesis or bracket must be on declaration line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 1)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(6, 1),
+                    this.CSharpDiagnostic().WithLocation(7, 1)
                 };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAttributeOpeningParenthesisOnTheSameLine()
+        public async Task TestAttributeOpeningParenthesisOnTheSameLineAsync()
         {
             var testCode = @"
+using System.Diagnostics;
 public class Foo
 {
     [Conditional(""DEBUG""), Conditional(""TEST1"")]
@@ -634,11 +515,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestDelegateDeclarationOpeningParenthesisOnTheNextLine()
+        public async Task TestDelegateDeclarationOpeningParenthesisOnTheNextLineAsync()
         {
             var testCode = @"
 public class Foo
@@ -647,26 +528,13 @@ public class Foo
 (int i);
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening parenthesis or bracket must be on declaration line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 5, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestDelegateDeclarationOpeningParenthesisOnTheSameLine()
+        public async Task TestDelegateDeclarationOpeningParenthesisOnTheSameLineAsync()
         {
             var testCode = @"
 public class Foo
@@ -674,18 +542,18 @@ public class Foo
     public delegate void MyDel(int i);
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAnonymousMethodDelegateKeywordOnPreviousLineAsOpeningParenthesis()
+        public async Task TestAnonymousMethodDelegateKeywordOnPreviousLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
 public class Foo
 {
     public void Bar()
     {
-        Action<string,string> del = 
+        System.Action<string,string> del = 
         delegate
 (string s, string s2
         )
@@ -694,62 +562,67 @@ public class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Opening parenthesis or bracket must be on declaration line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAnonymousMethodDelegateKeywordOnTheSameLineAsOpeningParenthesis()
+        public async Task TestAnonymousMethodDelegateKeywordOnTheSameLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
 public class Foo
 {
     public void Bar()
     {
-        Action<string,string> del = 
+        System.Action<string,string> del = 
         delegate(string s, string s2)
         {
         };
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAnonymousMethodNoParameters()
+        public async Task TestAnonymousMethodNoParametersAsync()
         {
             var testCode = @"
 public class Foo
 {
     public void Bar()
     {
-            Action del = 
+            System.Action del = 
                 delegate()
                 {
                 };
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestArrayCreationOpeningBracketOnTheNextLineAsTypeName()
+        public async Task TestAnonymousMethodNoOpeningParenthesisAsync()
+        {
+            var testCode = @"
+public class Foo
+{
+    public void Bar()
+    {
+            System.Action del = 
+                delegate
+                {
+                };
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestArrayCreationOpeningBracketOnTheNextLineAsTypeNameAsync()
         {
             var testCode = @"
 public class Foo
@@ -762,26 +635,13 @@ public class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                         Message = "Opening parenthesis or bracket must be on declaration line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 7, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestArrayOfArraysCreationOpneningBracketOnTheSameLineAsTypeName()
+        public async Task TestArrayOfArraysCreationOpneningBracketOnTheSameLineAsTypeNameAsync()
         {
             var testCode = @"
 public class Foo
@@ -793,11 +653,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestArrayCreationTypeOmitted()
+        public async Task TestArrayCreationTypeOmittedAsync()
         {
             var testCode = @"
 public class Foo
@@ -811,11 +671,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestOperatorDeclarationOpeningParenthesisOnTheNextLineAsOperator()
+        public async Task TestOperatorDeclarationOpeningParenthesisOnTheNextLineAsOperatorAsync()
         {
             var testCode = @"
 public class Foo
@@ -827,26 +687,13 @@ public class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                         Message = "Opening parenthesis or bracket must be on declaration line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 5, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestUnaryOperatorDeclarationOpeningParenthesisOnTheNextLineAsOperator()
+        public async Task TestUnaryOperatorDeclarationOpeningParenthesisOnTheNextLineAsOperatorAsync()
         {
             var testCode = @"
 public class Foo
@@ -858,26 +705,13 @@ public class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                         Message = "Opening parenthesis or bracket must be on declaration line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 5, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestOperatorDeclarationOpeningParenthesisOnTheSameLineAsOperator()
+        public async Task TestOperatorDeclarationOpeningParenthesisOnTheSameLineAsOperatorAsync()
         {
             var testCode = @"
 public class Foo
@@ -888,11 +722,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestConversionOperatorDeclarationOpeningParenthesisOnTheNextLineAsOperator()
+        public async Task TestConversionOperatorDeclarationOpeningParenthesisOnTheNextLineAsOperatorAsync()
         {
             var testCode = @"
 public class Foo
@@ -904,26 +738,13 @@ public class Foo
         }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                         Message = "Opening parenthesis or bracket must be on declaration line.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 5, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestConversionOperatorDeclarationOpeningParenthesisOnTheSameLineAsOperator()
+        public async Task TestConversionOperatorDeclarationOpeningParenthesisOnTheSameLineAsOperatorAsync()
         {
             var testCode = @"
 public class Foo
@@ -934,12 +755,12 @@ public class Foo
         }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1110OpeningParenthesisMustBeOnDeclarationLine();
+            yield return new SA1110OpeningParenthesisMustBeOnDeclarationLine();
         }
     }
 }

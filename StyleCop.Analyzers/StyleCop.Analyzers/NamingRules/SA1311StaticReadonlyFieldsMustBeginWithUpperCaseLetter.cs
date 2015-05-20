@@ -28,7 +28,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1311.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -45,7 +45,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleFieldDeclarationm, SyntaxKind.FieldDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleFieldDeclarationm, SyntaxKind.FieldDeclaration);
         }
 
         private void HandleFieldDeclarationm(SyntaxNodeAnalysisContext context)
@@ -64,20 +64,28 @@
 
             var variables = fieldDeclaration.Declaration?.Variables;
             if (variables == null)
+            {
                 return;
+            }
 
             foreach (VariableDeclaratorSyntax variableDeclarator in variables.Value)
             {
                 if (variableDeclarator == null)
+                {
                     continue;
+                }
 
                 var identifier = variableDeclarator.Identifier;
                 if (identifier.IsMissing)
+                {
                     continue;
+                }
 
                 string name = identifier.ValueText;
                 if (string.IsNullOrEmpty(name) || !char.IsLower(name[0]))
+                {
                     continue;
+                }
 
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation()));
             }

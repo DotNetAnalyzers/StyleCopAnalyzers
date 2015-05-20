@@ -50,7 +50,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
+            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -73,11 +73,15 @@
         private void HandleCloseBracketToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             // attribute brackets are handled separately
             if (token.Parent.IsKind(SyntaxKind.AttributeList))
+            {
                 return;
+            }
 
             bool precededBySpace;
             bool firstInLine;

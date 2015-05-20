@@ -1,105 +1,76 @@
 ﻿namespace StyleCop.Analyzers.Test.NamingRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.NamingRules;
     using TestHelper;
+    using Xunit;
 
     public class SA1300UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1300ElementMustBeginWithUpperCaseLetter.DiagnosticId;
-        private const string Message = "Element '{0}' must begin with an uppercase letter";
-
         [Fact]
-        public async Task TestUpperCaseNamespace()
+        public async Task TestUpperCaseNamespaceAsync()
         {
-            var testCode = @"public namespace Test 
+            var testCode = @"namespace Test 
 { 
 
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestLowerCaseNamespace()
+        public async Task TestLowerCaseNamespaceAsync()
         {
-            var testCode = @"public namespace test 
+            var testCode = @"namespace test 
 { 
 
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = string.Format(Message, "test"),
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                    new []
-                    {
-                        new DiagnosticResultLocation("Test0.cs", 1, 18)
-                    }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("test").WithLocation(1, 11);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestUpperCaseClass()
+        public async Task TestUpperCaseClassAsync()
         {
             var testCode = @"public class Test 
 { 
 
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestLowerCaseClass()
+        public async Task TestLowerCaseClassAsync()
         {
             var testCode = @"public class test 
 { 
 
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = string.Format(Message, "test"),
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                    new []
-                    {
-                        new DiagnosticResultLocation("Test0.cs", 1, 14)
-                    }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("test").WithLocation(1, 14);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestUpperCaseInterface()
+        public async Task TestUpperCaseInterfaceAsync()
         {
             var testCode = @"public interface Test
 {
 
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestLowerCaseInterface()
+        public async Task TestLowerCaseInterfaceAsync()
         {
             var testCode = @"public interface test
 {
@@ -107,122 +78,83 @@
 }";
 
             // Reported as SA1302
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestUpperCaseStruct()
+        public async Task TestUpperCaseStructAsync()
         {
             var testCode = @"public struct Test 
 { 
 
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestLowerCaseStruct()
+        public async Task TestLowerCaseStructAsync()
         {
             var testCode = @"public struct test 
 { 
 
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = string.Format(Message, "test"),
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                    new []
-                    {
-                        new DiagnosticResultLocation("Test0.cs", 1, 15)
-                    }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("test").WithLocation(1, 15);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestUpperCaseEnum()
+        public async Task TestUpperCaseEnumAsync()
         {
             var testCode = @"public enum Test 
 { 
 
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestLowerCaseEnum()
+        public async Task TestLowerCaseEnumAsync()
         {
             var testCode = @"public enum test 
 { 
 
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = string.Format(Message, "test"),
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                    new []
-                    {
-                        new DiagnosticResultLocation("Test0.cs", 1, 13)
-                    }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("test").WithLocation(1, 13);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestUpperCaseDelegate()
+        public async Task TestUpperCaseDelegateAsync()
         {
             var testCode = @"public class TestClass
 { 
 public delegate void Test();
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestLowerCaseDelegate()
+        public async Task TestLowerCaseDelegateAsync()
         {
             var testCode = @"public class TestClass
 { 
 public delegate void test();
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = string.Format(Message, "test"),
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                    new []
-                    {
-                        new DiagnosticResultLocation("Test0.cs", 3, 22)
-                    }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("test").WithLocation(3, 22);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestUpperCaseEvent()
+        public async Task TestUpperCaseEventAsync()
         {
             var testCode = @"public class TestClass
 {
@@ -241,11 +173,11 @@ public delegate void test();
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestLowerCaseEvent()
+        public async Task TestLowerCaseEventAsync()
         {
             var testCode = @"public class TestClass
 {
@@ -264,26 +196,13 @@ public delegate void test();
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = string.Format(Message, "testEvent"),
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                    new []
-                    {
-                        new DiagnosticResultLocation("Test0.cs", 5, 23)
-                    }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("testEvent").WithLocation(5, 23);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestUpperCaseEventField()
+        public async Task TestUpperCaseEventFieldAsync()
         {
             var testCode = @"public class TestClass
 {
@@ -291,11 +210,11 @@ public delegate void test();
     public event Test TestEvent;
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestLowerCaseEventField()
+        public async Task TestLowerCaseEventFieldAsync()
         {
             var testCode = @"public class TestClass
 {
@@ -303,170 +222,131 @@ public delegate void test();
     public event Test testEvent;
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = string.Format(Message, "testEvent"),
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                    new []
-                    {
-                        new DiagnosticResultLocation("Test0.cs", 4, 23)
-                    }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("testEvent").WithLocation(4, 23);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestUpperCaseMethod()
+        public async Task TestUpperCaseMethodAsync()
         {
             var testCode = @"public class TestClass
 {
 public void Test()
 {
-
+}
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestLowerCaseMethod()
+        public async Task TestLowerCaseMethodAsync()
         {
             var testCode = @"public class TestClass
 {
 public void test()
 {
-
+}
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = string.Format(Message, "test"),
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                    new []
-                    {
-                        new DiagnosticResultLocation("Test0.cs", 3, 13)
-                    }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("test").WithLocation(3, 13);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestUpperCaseProperty()
+        public async Task TestUpperCasePropertyAsync()
         {
             var testCode = @"public class TestClass
 {
 public string Test { get; set; }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestLowerCaseProperty()
+        public async Task TestLowerCasePropertyAsync()
         {
             var testCode = @"public class TestClass
 {
 public string test { get; set; }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = string.Format(Message, "test"),
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                    new []
-                    {
-                        new DiagnosticResultLocation("Test0.cs", 3, 15)
-                    }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("test").WithLocation(3, 15);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestUpperCasePublicField()
+        public async Task TestUpperCasePublicFieldAsync()
         {
             var testCode = @"public class TestClass
 {
 public string Test;
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestUpperCaseInternalField()
+        public async Task TestUpperCaseInternalFieldAsync()
         {
             var testCode = @"public class TestClass
 {
 internal string Test;
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestUpperCaseConstField()
+        public async Task TestUpperCaseConstFieldAsync()
         {
             var testCode = @"public class TestClass
 {
-const string Test;
+const string Test = ""value"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestUpperCaseProtectedReadOnlyField()
+        public async Task TestUpperCaseProtectedReadOnlyFieldAsync()
         {
             var testCode = @"public class TestClass
 {
 protected readonly string Test;
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestLowerCaseProtectedField()
+        public async Task TestLowerCaseProtectedFieldAsync()
         {
             var testCode = @"public class TestClass
 {
 protected string Test;
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestLowerCaseReadOnlyField()
+        public async Task TestLowerCaseReadOnlyFieldAsync()
         {
             var testCode = @"public class TestClass
 {
 readonly string test;
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestLowerCasePublicField()
+        public async Task TestLowerCasePublicFieldAsync()
         {
             var testCode = @"public class TestClass
 {
@@ -474,11 +354,11 @@ public string test;
 }";
 
             // Handled by SA1307
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestLowerCaseInternalField()
+        public async Task TestLowerCaseInternalFieldAsync()
         {
             var testCode = @"public class TestClass
 {
@@ -486,34 +366,34 @@ internal string test;
 }";
 
             // Handled by SA1307
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestLowerCaseConstField()
+        public async Task TestLowerCaseConstFieldAsync()
         {
             var testCode = @"public class TestClass
 {
-const string test;
+const string test = ""value"";
 }";
 
             // Reported as SA1303
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestNativeMethodsException()
+        public async Task TestNativeMethodsExceptionAsync()
         {
             var testCode = @"public class TestNativeMethods
 {
 public string test;
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestLowerCaseProtectedReadOnlyField()
+        public async Task TestLowerCaseProtectedReadOnlyFieldAsync()
         {
             var testCode = @"public class TestClass
 {
@@ -521,12 +401,96 @@ protected readonly string test;
 }";
 
             // Handled by SA1304
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        [Fact]
+        public async Task TestLowerCaseOverriddenMembersAsync()
         {
-            return new SA1300ElementMustBeginWithUpperCaseLetter();
+            var testCode = @"public class TestClass : BaseClass
+{
+    public override int bar
+    {
+        get
+        {
+            return 0;
+        }
+    }
+
+    public override event System.EventHandler fooBar
+    {
+        add { }
+        remove { }
+    }
+
+    public override void foo()
+    {
+
+    }
+}
+
+public abstract class BaseClass
+{
+    public abstract void foo();
+    public abstract int bar { get; }
+    public abstract event System.EventHandler fooBar;
+}";
+
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(25, 26).WithArguments("foo"),
+                this.CSharpDiagnostic().WithLocation(26, 25).WithArguments("bar"),
+                this.CSharpDiagnostic().WithLocation(27, 47).WithArguments("fooBar"),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestLowerCaseInterfaceMembersAsync()
+        {
+            var testCode = @"public class TestClass : IInterface
+{
+    public int bar
+    {
+        get
+        {
+            return 0;
+        }
+    }
+
+    public event System.EventHandler fooBar
+    {
+        add { }
+        remove { }
+    }
+
+    public void foo()
+    {
+
+    }
+}
+
+public interface IInterface
+{
+    void foo();
+    int bar { get; }
+    event System.EventHandler fooBar;
+}";
+
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(25, 10).WithArguments("foo"),
+                this.CSharpDiagnostic().WithLocation(26, 9).WithArguments("bar"),
+                this.CSharpDiagnostic().WithLocation(27, 31).WithArguments("fooBar"),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        {
+            yield return new SA1300ElementMustBeginWithUpperCaseLetter();
         }
     }
 }

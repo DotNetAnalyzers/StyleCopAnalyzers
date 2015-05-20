@@ -44,7 +44,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
+            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -72,7 +72,9 @@
         private void HandleDotToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             this.HandleMemberAccessSymbol(context, token);
         }
@@ -80,10 +82,14 @@
         private void HandleQuestionToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             if (!token.Parent.IsKind(SyntaxKind.ConditionalAccessExpression))
+            {
                 return;
+            }
 
             this.HandleMemberAccessSymbol(context, token);
         }

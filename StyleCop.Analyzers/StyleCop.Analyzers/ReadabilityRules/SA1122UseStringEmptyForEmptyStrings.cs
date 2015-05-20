@@ -7,10 +7,6 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using System;
 
-
-
-
-
     /// <summary>
     /// The C# code includes an empty string, written as <c>""</c>.
     /// </summary>
@@ -35,14 +31,14 @@
         /// The ID for diagnostics produced by the <see cref="SA1122UseStringEmptyForEmptyStrings"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1122";
-        private const string Title = "Use string.Empty for empty strings";
-        private const string MessageFormat = "Use string.Empty for empty strings";
-        private const string Category = "StyleCop.CSharp.ReadabilityRules";
-        private const string Description = "The C# code includes an empty string, written as \"\".";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1122.html";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1122Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1122MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly string Category = "StyleCop.CSharp.ReadabilityRules";
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1122Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1122.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -59,7 +55,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleStringLiteral, SyntaxKind.StringLiteralExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleStringLiteral, SyntaxKind.StringLiteralExpression);
         }
 
         private void HandleStringLiteral(SyntaxNodeAnalysisContext context)
@@ -72,7 +68,9 @@
                 if (token.IsKind(SyntaxKind.StringLiteralToken))
                 {
                     if (this.HasToBeConstant(literalExpression))
+                    {
                         return;
+                    }
 
                     if (token.ValueText == string.Empty)
                     {
@@ -87,27 +85,37 @@
             ExpressionSyntax outermostExpression = this.FindOutermostExpression(literalExpression);
 
             if (outermostExpression.Parent.IsKind(SyntaxKind.AttributeArgument))
+            {
                 return true;
+            }
 
             EqualsValueClauseSyntax equalsValueClause = outermostExpression.Parent as EqualsValueClauseSyntax;
             if (equalsValueClause != null)
             {
                 ParameterSyntax parameterSyntax = equalsValueClause.Parent as ParameterSyntax;
                 if (parameterSyntax != null)
+                {
                     return true;
+                }
 
                 VariableDeclaratorSyntax variableDeclaratorSyntax = equalsValueClause.Parent as VariableDeclaratorSyntax;
-                VariableDeclarationSyntax variableDeclarationSyntax = variableDeclaratorSyntax.Parent as VariableDeclarationSyntax;
+                VariableDeclarationSyntax variableDeclarationSyntax = variableDeclaratorSyntax?.Parent as VariableDeclarationSyntax;
                 if (variableDeclaratorSyntax == null || variableDeclarationSyntax == null)
+                {
                     return false;
+                }
 
                 FieldDeclarationSyntax fieldDeclarationSyntax = variableDeclarationSyntax.Parent as FieldDeclarationSyntax;
                 if (fieldDeclarationSyntax != null && fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.ConstKeyword))
+                {
                     return true;
+                }
 
                 LocalDeclarationStatementSyntax localDeclarationStatementSyntax = variableDeclarationSyntax.Parent as LocalDeclarationStatementSyntax;
                 if (localDeclarationStatementSyntax != null && localDeclarationStatementSyntax.Modifiers.Any(SyntaxKind.ConstKeyword))
+                {
                     return true;
+                }
             }
 
             return false;
@@ -119,7 +127,9 @@
             {
                 ExpressionSyntax parent = node.Parent as ExpressionSyntax;
                 if (parent == null)
+                {
                     break;
+                }
 
                 node = parent;
             }

@@ -15,7 +15,7 @@
     /// <para>To fix a violation of this rule, ensure that there is no whitespace before the nullable type
     /// symbol.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1018CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1018CodeFixProvider))]
     [Shared]
     public class SA1018CodeFixProvider : CodeFixProvider
     {
@@ -34,28 +34,43 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1018NullableTypeSymbolsMustNotBePrecededBySpace.DiagnosticId))
+                {
                     continue;
+                }
 
-                var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
                 SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (!token.IsKind(SyntaxKind.QuestionToken))
+                {
                     continue;
+                }
 
                 bool firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
                 if (firstInLine)
+                {
                     continue;
+                }
 
                 SyntaxToken previousToken = token.GetPreviousToken();
                 if (!previousToken.HasTrailingTrivia)
+                {
                     continue;
+                }
 
-                SyntaxToken corrected = previousToken.WithoutTrailingWhitespace().WithoutFormatting();
-                Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(previousToken, corrected));
-                context.RegisterCodeFix(CodeAction.Create("Remove space", t => Task.FromResult(updatedDocument)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1018CodeFix, t => GetTransformedDocumentAsync(context.Document, root, previousToken)), diagnostic);
             }
+        }
+
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxToken previousToken)
+        {
+            SyntaxToken corrected = previousToken.WithoutTrailingWhitespace().WithoutFormatting();
+            Document updatedDocument = document.WithSyntaxRoot(root.ReplaceToken(previousToken, corrected));
+
+            return Task.FromResult(updatedDocument);
         }
     }
 }

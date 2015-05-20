@@ -1,20 +1,12 @@
 ﻿namespace StyleCop.Analyzers.Test.SpacingRules
 {
+    using System.Collections.Generic;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.SpacingRules;
 
     public class SA1021UnitTests : NumberSignSpacingTestBase
     {
-        protected override string DiagnosticId
-        {
-            get
-            {
-                return SA1021NegativeSignsMustBeSpacedCorrectly.DiagnosticId;
-            }
-        }
-
         protected override string Sign
         {
             get
@@ -23,22 +15,14 @@
             }
         }
 
-        protected override string SignName
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            get
-            {
-                return "Negative";
-            }
+            yield return new SA1021NegativeSignsMustBeSpacedCorrectly();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new SA1021CodeFixProvider();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new SA1021NegativeSignsMustBeSpacedCorrectly();
         }
     }
 }

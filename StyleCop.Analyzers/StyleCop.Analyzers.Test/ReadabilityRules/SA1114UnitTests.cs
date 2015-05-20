@@ -1,26 +1,24 @@
 ﻿namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.ReadabilityRules;
     using TestHelper;
+    using Xunit;
 
     public class SA1114UnitTests : CodeFixVerifier
     {
-        public string DiagnosticId { get; } = SA1114ParameterListMustFollowDeclaration.DiagnosticId;
-
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodDeclarationParametersList2LinesAfterOpeningParenthesis()
+        public async Task TestMethodDeclarationParametersList2LinesAfterOpeningParenthesisAsync()
         {
             var testCode = @"
 class Foo
@@ -33,26 +31,13 @@ string s)
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodDeclarationParametersListOnNextLineAsOpeningParenthesis()
+        public async Task TestMethodDeclarationParametersListOnNextLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
 class Foo
@@ -64,11 +49,11 @@ string s)
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodDeclarationParametersListOnSameLineAsOpeningParenthesis()
+        public async Task TestMethodDeclarationParametersListOnSameLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
 class Foo
@@ -79,11 +64,11 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodDeclarationNoParameters()
+        public async Task TestMethodDeclarationNoParametersAsync()
         {
             var testCode = @"
 class Foo
@@ -96,11 +81,11 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodCallParametersList2LinesAfterOpeningParenthesis()
+        public async Task TestMethodCallParametersList2LinesAfterOpeningParenthesisAsync()
         {
             var testCode = @"
 class Foo
@@ -113,26 +98,13 @@ class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodCallParametersListOnNextLineAsOpeningParenthesis()
+        public async Task TestMethodCallParametersListOnNextLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
 class Foo
@@ -144,11 +116,11 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodCallParametersListOnSameLineAsOpeningParenthesis()
+        public async Task TestMethodCallParametersListOnSameLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
 class Foo
@@ -159,11 +131,11 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodCallNoParameters()
+        public async Task TestMethodCallNoParametersAsync()
         {
             var testCode = @"
 class Foo
@@ -176,11 +148,11 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestConstructorDeclarationParametersList2LinesAfterOpeningParenthesis()
+        public async Task TestConstructorDeclarationParametersList2LinesAfterOpeningParenthesisAsync()
         {
             var testCode = @"
 class Foo
@@ -193,26 +165,13 @@ string s)
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestConstructorDeclarationParametersListOnNextLineAsOpeningParenthesis()
+        public async Task TestConstructorDeclarationParametersListOnNextLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
 class Foo
@@ -224,11 +183,11 @@ string s)
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestConstructorDeclarationParametersListOnSameLineAsOpeningParenthesis()
+        public async Task TestConstructorDeclarationParametersListOnSameLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
 class Foo
@@ -239,11 +198,11 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestConstructorDeclarationNoParameters()
+        public async Task TestConstructorDeclarationNoParametersAsync()
         {
             var testCode = @"
 class Foo
@@ -253,11 +212,11 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestConstructorCallParametersList2LinesAfterOpeningParenthesis()
+        public async Task TestConstructorCallParametersList2LinesAfterOpeningParenthesisAsync()
         {
             var testCode = @"
 public class Foo
@@ -274,26 +233,13 @@ public class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 12, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(12, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestConstructorallParametersListOnNextLineAsOpeningParenthesis()
+        public async Task TestConstructorallParametersListOnNextLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
 public class Foo
@@ -309,11 +255,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestConstructorCallParametersListOnSameLineAsOpeningParenthesis()
+        public async Task TestConstructorCallParametersListOnSameLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
 public class Foo
@@ -328,11 +274,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestConstructorCallNoParameters()
+        public async Task TestConstructorCallNoParametersAsync()
         {
             var testCode = @"
 public class Foo
@@ -345,11 +291,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerDeclarationParametersList2LinesAfterOpeningParenthesis()
+        public async Task TestIndexerDeclarationParametersList2LinesAfterOpeningParenthesisAsync()
         {
             var testCode = @"
 class Foo
@@ -365,26 +311,13 @@ int i]
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerDeclarationParametersListOnNextLineAsOpeningParenthesis()
+        public async Task TestIndexerDeclarationParametersListOnNextLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
 class Foo
@@ -399,11 +332,11 @@ int i]
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerDeclarationParametersListOnSameLineAsOpeningParenthesis()
+        public async Task TestIndexerDeclarationParametersListOnSameLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
 class Foo
@@ -417,11 +350,11 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestArrayDeclarationSizes2LinesAfterOpeningParenthesis()
+        public async Task TestArrayDeclarationSizes2LinesAfterOpeningParenthesisAsync()
         {
             var testCode = @"
 class Foo
@@ -434,26 +367,13 @@ class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMultidimensionalArrayDeclarationSizes2LinesAfterOpeningParenthesis()
+        public async Task TestMultidimensionalArrayDeclarationSizes2LinesAfterOpeningParenthesisAsync()
         {
             var testCode = @"
 class Foo
@@ -476,37 +396,17 @@ var a = new int[
     }
 }";
 
-            var expected = new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 1)
-                            }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 14, 1)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(8, 1),
+                    this.CSharpDiagnostic().WithLocation(14, 1)
                 };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestArrayDeclarationSizesOnNextLineAsOpeningParenthesis()
+        public async Task TestArrayDeclarationSizesOnNextLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
 class Foo
@@ -518,11 +418,11 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestArrayDeclarationSizesOnSameLineAsOpeningParenthesis()
+        public async Task TestArrayDeclarationSizesOnSameLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
 class Foo
@@ -533,77 +433,64 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerCallParameters2LinesAfterOpeningBracket()
+        public async Task TestIndexerCallParameters2LinesAfterOpeningBracketAsync()
         {
             var testCode = @"
 class Foo
 {
     public void Bar()
     {
-        System.Collection.Generics.List<int> list = new System.Collection.Generics.List<int>();
+        System.Collections.Generic.List<int> list = new System.Collections.Generic.List<int>();
         var i = list[
 
 1];
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 9, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(9, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerCallParametersOnNextLineAsOpeningBracket()
+        public async Task TestIndexerCallParametersOnNextLineAsOpeningBracketAsync()
         {
             var testCode = @"
 class Foo
 {
     public void Bar()
     {
-        System.Collection.Generics.List<int> list = new System.Collection.Generics.List<int>();
+        System.Collections.Generic.List<int> list = new System.Collections.Generic.List<int>();
         var i = list[
 1];
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerCallParametersOnSameLineAsOpeningBracket()
+        public async Task TestIndexerCallParametersOnSameLineAsOpeningBracketAsync()
         {
             var testCode = @"
 class Foo
 {
     public void Bar()
     {
-        System.Collection.Generics.List<int> list = new System.Collection.Generics.List<int>();
+        System.Collections.Generic.List<int> list = new System.Collections.Generic.List<int>();
         var i = list[1];
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestArrayCallParameters2LinesAfterOpeningBracket()
+        public async Task TestArrayCallParameters2LinesAfterOpeningBracketAsync()
         {
             var testCode = @"
 class Foo
@@ -624,37 +511,17 @@ class Foo
     }
 }";
 
-            var expected = new[]
+            DiagnosticResult[] expected =
                 {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 14, 1)
-                            }
-                    },
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 16, 1)
-                            }
-                    }
+                    this.CSharpDiagnostic().WithLocation(14, 1),
+                    this.CSharpDiagnostic().WithLocation(16, 1)
                 };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestArrayCallParametersOnNextLineAsOpeningBracket()
+        public async Task TestArrayCallParametersOnNextLineAsOpeningBracketAsync()
         {
             var testCode = @"
 class Foo
@@ -673,17 +540,15 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestArrayCallParametersOnSameLineAsOpeningBracket()
+        public async Task TestArrayCallParametersOnSameLineAsOpeningBracketAsync()
         {
             var testCode = @"
 class Foo
 {
-    public void Bar()
-    {
     public void Bar()
     {
         int[][,] jaggedArray4 = new int[3][,] 
@@ -696,13 +561,14 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAttributeParametersList2LinesAfterOpeningParenthesis()
+        public async Task TestAttributeParametersList2LinesAfterOpeningParenthesisAsync()
         {
             var testCode = @"
+using System.Diagnostics;
 class Foo
 {
     [Conditional(
@@ -713,28 +579,16 @@ class Foo
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAttributeParametersListOnNextLineAsOpeningParenthesis()
+        public async Task TestAttributeParametersListOnNextLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
+using System.Diagnostics;
 class Foo
 {
     [Conditional(
@@ -744,13 +598,14 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAtributeParametersListOnSameLineAsOpeningParenthesis()
+        public async Task TestAtributeParametersListOnSameLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
+using System.Diagnostics;
 class Foo
 {
     [Conditional(""DEBUG"")]
@@ -759,26 +614,27 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAttributeNoParameters()
+        public async Task TestAttributeNoParametersAsync()
         {
             var testCode = @"
-[Serializable]
+[System.Serializable]
 class Foo
 {
 
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAttributesListParametersList2LinesAfterOpeningParenthesis()
+        public async Task TestAttributesListParametersList2LinesAfterOpeningParenthesisAsync()
         {
             var testCode = @"
+using System.Diagnostics;
 class Foo
 {
     [
@@ -789,28 +645,16 @@ Conditional(""DEBUG""),Conditional(""DEBUG2"")]
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAttributesListParametersListOnNextLineAsOpeningParenthesis()
+        public async Task TestAttributesListParametersListOnNextLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
+using System.Diagnostics;
 class Foo
 {
     [
@@ -820,13 +664,14 @@ Conditional(""DEBUG""),Conditional(""DEBUG2"")]
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAtributesListParametersListOnSameLineAsOpeningParenthesis()
+        public async Task TestAtributesListParametersListOnSameLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
+using System.Diagnostics;
 class Foo
 {
     [Conditional(""DEBUG""),Conditional(""DEBUG2"")]
@@ -835,11 +680,11 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestDelegateDeclarationParametersList2LinesAfterOpeningParenthesis()
+        public async Task TestDelegateDeclarationParametersList2LinesAfterOpeningParenthesisAsync()
         {
             var testCode = @"
 class Foo
@@ -849,26 +694,13 @@ class Foo
 string s);
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestDelegateDeclarationParametersListOnNextLineAsOpeningParenthesis()
+        public async Task TestDelegateDeclarationParametersListOnNextLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
 class Foo
@@ -877,11 +709,11 @@ class Foo
 string s);
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestDelegateDeclarationParametersListOnSameLineAsOpeningParenthesis()
+        public async Task TestDelegateDeclarationParametersListOnSameLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
 class Foo
@@ -889,11 +721,11 @@ class Foo
     public delegate void Bar(string s);
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestDelegateDeclarationNoParameters()
+        public async Task TestDelegateDeclarationNoParametersAsync()
         {
             var testCode = @"
 class Foo
@@ -901,18 +733,18 @@ class Foo
     public delegate void Bar();
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAnonymousMethodDeclarationParametersList2LinesAfterOpeningParenthesis()
+        public async Task TestAnonymousMethodDeclarationParametersList2LinesAfterOpeningParenthesisAsync()
         {
             var testCode = @"
 class Foo
 {
     public void Bar()
     {
-        Action<int,int> c = delegate(
+        System.Action<int,int> c = delegate(
 
 int z, int j)
         {
@@ -921,33 +753,20 @@ int z, int j)
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAnonymousMethodDeclarationParametersListOnNextLineAsOpeningParenthesis()
+        public async Task TestAnonymousMethodDeclarationParametersListOnNextLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
 class Foo
 {
     public void Bar()
     {
-        Action<int,int> c = delegate(
+        System.Action<int,int> c = delegate(
 int z, int j)
         {
 
@@ -955,54 +774,72 @@ int z, int j)
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAnonymousMethodDeclarationParametersListOnSameLineAsOpeningParenthesis()
+        public async Task TestAnonymousMethodDeclarationParametersListOnSameLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
 class Foo
 {
     public void Bar()
     {
-        Action<int,int> c = delegate(int z, int j)
+        System.Action<int,int> c = delegate(int z, int j)
         {
 
         };
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAnonymousMethodDeclarationNoParameters()
+        public async Task TestAnonymousMethodDeclarationNoParametersAsync()
         {
             var testCode = @"
 class Foo
 {
     public void Bar()
     {
-        Action c = delegate()
+        System.Action c = delegate()
         {
 
         };
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestLambdaExpressionDeclarationParametersList2LinesAfterOpeningParenthesis()
+        public async Task TestAnonymousMethodDeclarationNoOpeningParenthesisAsync()
         {
             var testCode = @"
 class Foo
 {
     public void Bar()
     {
-        Action<int,int> c = (
+        System.Action c = delegate
+        {
+
+        };
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestLambdaExpressionDeclarationParametersList2LinesAfterOpeningParenthesisAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar()
+    {
+        System.Action<int,int> c = (
 
 z,j) =>
         {
@@ -1011,33 +848,20 @@ z,j) =>
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 8, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestLambdaExpressionDeclarationParametersListOnNextLineAsOpeningParenthesis()
+        public async Task TestLambdaExpressionDeclarationParametersListOnNextLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
 class Foo
 {
     public void Bar()
     {
-        Action<int,int> c = (
+        System.Action<int,int> c = (
 z,j) =>
         {
 
@@ -1045,47 +869,47 @@ z,j) =>
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestLambdaExpressionDeclarationParametersListOnSameLineAsOpeningParenthesis()
+        public async Task TestLambdaExpressionDeclarationParametersListOnSameLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
 class Foo
 {
     public void Bar()
     {
-        Action<int,int> c = (z,j) =>
+        System.Action<int,int> c = (z,j) =>
         {
 
         };
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestLambdaExpressionDeclarationNoParameters()
+        public async Task TestLambdaExpressionDeclarationNoParametersAsync()
         {
             var testCode = @"
 class Foo
 {
     public void Bar()
     {
-        Action c = () => 
+        System.Action c = () => 
         {
 
         };
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestCastOperatorDeclarationParametersList2LinesAfterOpeningParenthesis()
+        public async Task TestCastOperatorDeclarationParametersList2LinesAfterOpeningParenthesisAsync()
         {
             var testCode = @"
 public class Foo
@@ -1098,26 +922,13 @@ int i)
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestCastOperatorDeclarationDeclarationParametersListOnNextLineAsOpeningParenthesis()
+        public async Task TestCastOperatorDeclarationDeclarationParametersListOnNextLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
 public class Foo
@@ -1129,11 +940,11 @@ int i)
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestCastOperatorDeclarationParametersListOnSameLineAsOpeningParenthesis()
+        public async Task TestCastOperatorDeclarationParametersListOnSameLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
 public class Foo
@@ -1144,11 +955,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestOperatorOverloadDeclarationParametersList2LinesAfterOpeningParenthesis()
+        public async Task TestOperatorOverloadDeclarationParametersList2LinesAfterOpeningParenthesisAsync()
         {
             var testCode = @"
 public class Foo
@@ -1161,26 +972,13 @@ Foo a, Foo b)
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestUnaryOperatorOverloadDeclarationParametersList2LinesAfterOpeningParenthesis()
+        public async Task TestUnaryOperatorOverloadDeclarationParametersList2LinesAfterOpeningParenthesisAsync()
         {
             var testCode = @"
 public class Foo
@@ -1193,26 +991,13 @@ Foo a)
     }
 }";
 
-            var expected = new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "Parameter list must follow declaration.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 6, 1)
-                            }
-                    }
-                };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestOperatorOverloadDeclarationParametersListOnNextLineAsOpeningParenthesis()
+        public async Task TestOperatorOverloadDeclarationParametersListOnNextLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
 public class Foo
@@ -1224,11 +1009,11 @@ Foo a, Foo b)
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestOperatorOverloadDeclarationParametersListOnSameLineAsOpeningParenthesis()
+        public async Task TestOperatorOverloadDeclarationParametersListOnSameLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
 public class Foo
@@ -1239,12 +1024,27 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        [Fact]
+        public async Task TestObjectCreationNoArgumentListAsync()
         {
-            return new SA1114ParameterListMustFollowDeclaration();
+            var testCode = @"
+public class Foo
+{
+    public static void Bar()
+    {
+        var list = new System.Collections.Generic.List<int> { 42 };
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        {
+            yield return new SA1114ParameterListMustFollowDeclaration();
         }
     }
 }

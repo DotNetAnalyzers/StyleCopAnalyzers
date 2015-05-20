@@ -28,7 +28,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1001.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -45,7 +45,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
+            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -68,16 +68,22 @@
         private void HandleCommaToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             // check for a following space
             bool missingFollowingSpace = true;
             if (token.HasTrailingTrivia)
             {
                 if (token.TrailingTrivia.First().IsKind(SyntaxKind.WhitespaceTrivia))
+                {
                     missingFollowingSpace = false;
+                }
                 else if (token.TrailingTrivia.First().IsKind(SyntaxKind.EndOfLineTrivia))
+                {
                     missingFollowingSpace = false;
+                }
             }
             else
             {
@@ -94,7 +100,9 @@
             {
                 SyntaxToken precedingToken = token.GetPreviousToken();
                 if (precedingToken.HasTrailingTrivia)
+                {
                     hasPrecedingSpace = true;
+                }
             }
 
             if (missingFollowingSpace)

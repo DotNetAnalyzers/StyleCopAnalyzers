@@ -7,9 +7,6 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
-
-
-
     /// <summary>
     /// The code uses one of the basic C# types, but does not use the built-in alias for the type.
     /// </summary>
@@ -123,14 +120,14 @@
         /// The ID for diagnostics produced by the <see cref="SA1121UseBuiltInTypeAlias"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1121";
-        private const string Title = "Use built-in type alias";
-        private const string MessageFormat = "Use built-in type alias";
-        private const string Category = "StyleCop.CSharp.ReadabilityRules";
-        private const string Description = "The code uses one of the basic C# types, but does not use the built-in alias for the type.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1121.html";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1121Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1121MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly string Category = "StyleCop.CSharp.ReadabilityRules";
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1121Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1121.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -147,17 +144,21 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleIdentifierNameSyntax, SyntaxKind.IdentifierName);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleIdentifierNameSyntax, SyntaxKind.IdentifierName);
         }
 
         private void HandleIdentifierNameSyntax(SyntaxNodeAnalysisContext context)
         {
             IdentifierNameSyntax identifierNameSyntax = context.Node as IdentifierNameSyntax;
             if (identifierNameSyntax == null || identifierNameSyntax.IsVar)
+            {
                 return;
+            }
 
             if (identifierNameSyntax.Identifier.IsMissing)
+            {
                 return;
+            }
 
             switch (identifierNameSyntax.Identifier.Text)
             {
@@ -183,7 +184,9 @@
             }
 
             if (identifierNameSyntax.FirstAncestorOrSelf<UsingDirectiveSyntax>() != null)
+            {
                 return;
+            }
 
             SemanticModel semanticModel = context.SemanticModel;
             INamedTypeSymbol symbol = semanticModel.GetSymbolInfo(identifierNameSyntax, context.CancellationToken).Symbol as INamedTypeSymbol;
@@ -213,7 +216,18 @@
 
             SyntaxNode locationNode = identifierNameSyntax;
             if (identifierNameSyntax.Parent is QualifiedNameSyntax)
+            {
                 locationNode = identifierNameSyntax.Parent;
+            }
+            else if ((identifierNameSyntax.Parent as MemberAccessExpressionSyntax)?.Name == identifierNameSyntax)
+            {
+                // this "weird" syntax appears for qualified references within a nameof expression
+                locationNode = identifierNameSyntax.Parent;
+            }
+            else if (identifierNameSyntax.Parent is NameMemberCrefSyntax && identifierNameSyntax.Parent.Parent is QualifiedCrefSyntax)
+            {
+                locationNode = identifierNameSyntax.Parent.Parent;
+            }
 
             // Allow nameof
             if (this.IsNameInNameOfExpression(identifierNameSyntax))
@@ -231,19 +245,25 @@
             // nameof keyword. This assumption is the foundation of the following simple analysis algorithm.
 
             if (identifierNameSyntax.Parent == null)
+            {
                 return false;
+            }
 
             // This covers the case nameof(Int32)
             if (identifierNameSyntax.Parent is ArgumentSyntax)
+            {
                 return true;
+            }
+
+            MemberAccessExpressionSyntax simpleMemberAccess = identifierNameSyntax.Parent as MemberAccessExpressionSyntax;
 
             // This covers the case nameof(System.Int32)
-            if (identifierNameSyntax.Parent.IsKind(SyntaxKind.SimpleMemberAccessExpression))
+            if (simpleMemberAccess != null)
             {
                 // This final check ensures that we don't consider nameof(System.Int32.ToString) the same as
                 // nameof(System.Int32)
-                if (identifierNameSyntax.Parent.Parent is ArgumentSyntax)
-                    return true;
+                return identifierNameSyntax.Parent.Parent.IsKind(SyntaxKind.Argument)
+                    && simpleMemberAccess.Name == identifierNameSyntax;
             }
 
             return false;

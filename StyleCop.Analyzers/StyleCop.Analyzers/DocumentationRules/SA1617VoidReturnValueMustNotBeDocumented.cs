@@ -2,7 +2,10 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A C# code element does not contain a return value, or returns <c>void</c>, but the documentation header for the
@@ -26,13 +29,13 @@
         /// </summary>
         public const string DiagnosticId = "SA1617";
         private const string Title = "Void return value must not be documented";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "Void return value must not be documented";
         private const string Category = "StyleCop.CSharp.DocumentationRules";
         private const string Description = "A C# code element does not contain a return value, or returns void, but the documentation header for the element contains a <returns> tag.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1617.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -49,7 +52,42 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
+        }
+
+        private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var methodDeclaration = context.Node as MethodDeclarationSyntax;
+            HandleMember(context, methodDeclaration?.ReturnType);
+        }
+
+        private void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var delegateDeclaration = context.Node as DelegateDeclarationSyntax;
+            HandleMember(context, delegateDeclaration?.ReturnType);
+        }
+
+        private static void HandleMember(SyntaxNodeAnalysisContext context, TypeSyntax returnValue)
+        {
+            var documentation = context.Node.GetDocumentationCommentTriviaSyntax();
+
+            if (context.Node != null && documentation != null)
+            {
+                var returnType = returnValue as PredefinedTypeSyntax;
+
+                // Check if the return type is void.
+                if (returnType != null && returnType.Keyword.IsKind(SyntaxKind.VoidKeyword))
+                {
+                    // Check if the return value is documented
+                    var returnsElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.ReturnsXmlTag);
+
+                    if (returnsElement != null)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, returnsElement.GetLocation()));
+                    }
+                }
+            }
         }
     }
 }

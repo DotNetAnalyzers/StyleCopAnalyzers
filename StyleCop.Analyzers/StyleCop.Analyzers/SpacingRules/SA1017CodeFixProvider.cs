@@ -15,7 +15,7 @@
     /// <para>To fix a violation of this rule, ensure that there is no whitespace before the closing attribute
     /// bracket.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1017CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1017CodeFixProvider))]
     [Shared]
     public class SA1017CodeFixProvider : CodeFixProvider
     {
@@ -34,29 +34,44 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1017ClosingAttributeBracketsMustBeSpacedCorrectly.DiagnosticId))
+                {
                     continue;
+                }
 
-                var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
                 SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (!token.IsKind(SyntaxKind.CloseBracketToken))
+                {
                     continue;
+                }
 
-                bool firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
-                if (firstInLine)
-                    continue;
-
-                SyntaxToken precedingToken = token.GetPreviousToken();
-                if (!precedingToken.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
-                    continue;
-
-                SyntaxToken corrected = precedingToken.WithoutTrailingWhitespace().WithoutFormatting();
-                SyntaxNode transformed = root.ReplaceToken(precedingToken, corrected);
-                Document updatedDocument = context.Document.WithSyntaxRoot(transformed);
-                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => Task.FromResult(updatedDocument)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1017CodeFix, t => GetTransformedDocumentAsync(context.Document, root, token)), diagnostic);
             }
+        }
+
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxToken token)
+        {
+            bool firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
+            if (firstInLine)
+            {
+                return Task.FromResult(document);
+            }
+
+            SyntaxToken precedingToken = token.GetPreviousToken();
+            if (!precedingToken.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
+            {
+                return Task.FromResult(document);
+            }
+
+            SyntaxToken corrected = precedingToken.WithoutTrailingWhitespace().WithoutFormatting();
+            SyntaxNode transformed = root.ReplaceToken(precedingToken, corrected);
+            Document updatedDocument = document.WithSyntaxRoot(transformed);
+
+            return Task.FromResult(updatedDocument);
         }
     }
 }

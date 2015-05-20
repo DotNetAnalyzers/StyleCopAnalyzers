@@ -16,7 +16,7 @@
     /// <remarks>
     /// <para>To fix a violation of this rule, insert parenthesis within the arithmetic expression to declare the precedence of the operations.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1407SA1408CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1407SA1408CodeFixProvider))]
     [Shared]
     public class SA1407SA1408CodeFixProvider : CodeFixProvider
     {
@@ -35,31 +35,38 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!this.FixableDiagnosticIds.Contains(diagnostic.Id))
+                {
                     continue;
+                }
 
-                var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
                 SyntaxNode node = root.FindNode(diagnostic.Location.SourceSpan);
                 if (node.IsMissing)
+                {
                     continue;
+                }
+
                 BinaryExpressionSyntax syntax = node as BinaryExpressionSyntax;
                 if (syntax != null)
                 {
-                    var newNode = SyntaxFactory.ParenthesizedExpression(syntax.WithoutTrivia())
-                        .WithTriviaFrom(syntax)
-                        .WithoutFormatting();
-
-                    var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken);
-
-                    var newSyntaxRoot = syntaxRoot.ReplaceNode(node, newNode);
-
-                    var changedDocument = context.Document.WithSyntaxRoot(newSyntaxRoot);
-
-                    context.RegisterCodeFix(CodeAction.Create("Add parenthesis", token => Task.FromResult(changedDocument)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create(MaintainabilityResources.SA1407SA1408CodeFix, token => GetTransformedDocumentAsync(context.Document, root, syntax)), diagnostic);
                 }
             }
+        }
+
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, BinaryExpressionSyntax syntax)
+        {
+            var newNode = SyntaxFactory.ParenthesizedExpression(syntax.WithoutTrivia())
+                .WithTriviaFrom(syntax)
+                .WithoutFormatting();
+
+            var newSyntaxRoot = root.ReplaceNode(syntax, newNode);
+
+            return Task.FromResult(document.WithSyntaxRoot(newSyntaxRoot));
         }
     }
 }

@@ -1,202 +1,129 @@
 ﻿namespace StyleCop.Analyzers.Test.DocumentationRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.DocumentationRules;
     using TestHelper;
+    using Xunit;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1603DocumentationMustContainValidXml"/>-
     /// </summary>
     public class SA1603UnitTests : CodeFixVerifier
     {
-        public string DiagnosticId { get; } = SA1603DocumentationMustContainValidXml.DiagnosticId;
-
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestTextDocumentation()
+        public async Task TestTextDocumentationAsync()
         {
             var testCode = @"
 /// Foo
 public class Foo { }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestEmptyElementDocumentation()
+        public async Task TestEmptyElementDocumentationAsync()
         {
             var testCode = @"
 /// <summary/>
 public class Foo { }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestElementDocumentation()
+        public async Task TestElementDocumentationAsync()
         {
             var testCode = @"
 /// <summary></summary>
 public class Foo { }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestCDataDocumentation()
+        public async Task TestCDataDocumentationAsync()
         {
             var testCode = @"
 /// <![CDATA[Foo]]>
 public class Foo { }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestElementStartTagSkippedToken()
+        public async Task TestElementStartTagSkippedTokenAsync()
         {
             var testCode = @"
 /// <summary=></summary>
 public class Foo { }";
 
-            DiagnosticResult[] expected;
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("Invalid token.").WithLocation(2, 13);
 
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The documentation header is composed of invalid XML: Invalid token.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 2, 13)
-                            }
-                    }
-                };
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestElementEndTagSkippedToken()
+        public async Task TestElementEndTagSkippedTokenAsync()
         {
             var testCode = @"
 /// <summary></summary=>
 public class Foo { }";
 
-            DiagnosticResult[] expected;
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("Invalid token.").WithLocation(2, 23);
 
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The documentation header is composed of invalid XML: Invalid token.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 2, 23)
-                            }
-                    }
-                };
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestEmptyElementSkippedToken()
+        public async Task TestEmptyElementSkippedTokenAsync()
         {
             var testCode = @"
 /// <summary=/>
 public class Foo { }";
 
-            DiagnosticResult[] expected;
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("Invalid token.").WithLocation(2, 13);
 
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The documentation header is composed of invalid XML: Invalid token.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 2, 13)
-                            }
-                    }
-                };
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestElementTagsNotMatching()
+        public async Task TestElementTagsNotMatchingAsync()
         {
             var testCode = @"
 /// <summary>a</sumary>
 public class Foo { }";
 
-            DiagnosticResult[] expected;
+            DiagnosticResult expected =
+                this.CSharpDiagnostic().WithArguments("The 'summary' start tag does not match the end tag of 'sumary'.")
+                    .WithLocation(2, 5)
+                    .WithLocation(2, 15);
 
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The documentation header is composed of invalid XML: The 'summary' start tag does not match the end tag of 'sumary'.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 2, 5),
-                                new DiagnosticResultLocation("Test0.cs", 2, 15)
-                            }
-                    }
-                };
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestElementMissingEndTag()
+        public async Task TestElementMissingEndTagAsync()
         {
             var testCode = @"
 /// <summary>a
 public class Foo { }";
 
-            DiagnosticResult[] expected;
+            DiagnosticResult expected =
+                this.CSharpDiagnostic().WithArguments("The XML tag 'summary' is not closed.")
+                    .WithLocation(2, 5);
 
-            expected =
-                new[]
-                {
-                    new DiagnosticResult
-                    {
-                        Id = this.DiagnosticId,
-                        Message = "The documentation header is composed of invalid XML: The XML tag 'summary' is not closed.",
-                        Severity = DiagnosticSeverity.Warning,
-                        Locations =
-                            new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", 2, 5)
-                            }
-                    }
-                };
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1603DocumentationMustContainValidXml();
+            yield return new SA1603DocumentationMustContainValidXml();
         }
     }
 }

@@ -1,21 +1,18 @@
-﻿using Microsoft.CodeAnalysis.CodeFixes;
-
-namespace StyleCop.Analyzers.Test.ReadabilityRules
+﻿namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.ReadabilityRules;
     using TestHelper;
+    using Xunit;
 
     public class SA1100UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists.DiagnosticId;
-
         [Fact]
-        public async Task TestChildClassUsesBaseButNoOverride()
+        public async Task TestChildClassUsesBaseButNoOverrideAsync()
         {
             var testCode = @"
 public class Foo
@@ -34,22 +31,9 @@ public class FooChild : Foo
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 14, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(14, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedTest = @"
 public class Foo
@@ -67,11 +51,11 @@ public class FooChild : Foo
         this.Bar();
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseButMethodIsNotVirtual()
+        public async Task TestChildClassUsesBaseButMethodIsNotVirtualAsync()
         {
             var testCode = @"
 public class Foo
@@ -90,22 +74,9 @@ public class FooChild : Foo
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 14, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(14, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedTest = @"
 public class Foo
@@ -123,11 +94,11 @@ public class FooChild : Foo
         this.Bar();
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseBaseAndChildHaveMethodWithSameName()
+        public async Task TestChildClassUsesBaseBaseAndChildHaveMethodWithSameNameAsync()
         {
             var testCode = @"
 public class Foo
@@ -150,11 +121,11 @@ public class FooChild : Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseMethodWithSameNameButDifferentParametersExist()
+        public async Task TestChildClassUsesBaseMethodWithSameNameButDifferentParametersExistAsync()
         {
             var testCode = @"
 public class Foo
@@ -177,22 +148,9 @@ public class FooChild : Foo
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 14, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(14, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedTest = @"
 public class Foo
@@ -214,11 +172,11 @@ public class FooChild : Foo
 
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseBaseIsVirtualChildHidesBase()
+        public async Task TestChildClassUsesBaseBaseIsVirtualChildHidesBaseAsync()
         {
             var testCode = @"
 public class Foo
@@ -241,11 +199,11 @@ public class FooChild : Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestChildClassUsesBasePropertyButNoOverride()
+        public async Task TestChildClassUsesBasePropertyButNoOverrideAsync()
         {
             var testCode = @"
 public class Foo
@@ -264,22 +222,9 @@ public class FooChild : Foo
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 14, 17)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(14, 17);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedTest = @"
 public class Foo
@@ -297,11 +242,11 @@ public class FooChild : Foo
         var s = this.Bar;
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseMethodMethodWithSameNameButDifferentParametersExist()
+        public async Task TestChildClassUsesBaseMethodMethodWithSameNameButDifferentParametersExistAsync()
         {
             var testCode = @"
 public class Foo
@@ -323,22 +268,9 @@ public class FooChild : Foo
 
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 14, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(14, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedTest = @"
 public class Foo
@@ -360,11 +292,11 @@ public class FooChild : Foo
 
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseMethodMethodWithSameNameButDifferentParameterType()
+        public async Task TestChildClassUsesBaseMethodMethodWithSameNameButDifferentParameterTypeAsync()
         {
             var testCode = @"
 public class Foo
@@ -386,22 +318,9 @@ public class FooChild : Foo
 
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 14, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(14, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedTest = @"
 public class Foo
@@ -423,11 +342,11 @@ public class FooChild : Foo
 
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseMethodMethodWithSameNameRefUsed()
+        public async Task TestChildClassUsesBaseMethodMethodWithSameNameRefUsedAsync()
         {
             var testCode = @"
 public class Foo
@@ -449,22 +368,9 @@ public class FooChild : Foo
 
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 14, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(14, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedTest = @"
 public class Foo
@@ -486,11 +392,11 @@ public class FooChild : Foo
 
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseMethodMethodWithSameNameOutUsed()
+        public async Task TestChildClassUsesBaseMethodMethodWithSameNameOutUsedAsync()
         {
             var testCode = @"
 public class Foo
@@ -512,22 +418,9 @@ public class FooChild : Foo
         s = string.Empty;
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 14, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(14, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedTest = @"
 public class Foo
@@ -549,11 +442,11 @@ public class FooChild : Foo
         s = string.Empty;
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseMethodOverrideWithDifferentParametersExists()
+        public async Task TestChildClassUsesBaseMethodOverrideWithDifferentParametersExistsAsync()
         {
             var testCode = @"
 public class Foo
@@ -575,22 +468,9 @@ public class FooChild : Foo
 
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 14, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(14, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedTest = @"
 public class Foo
@@ -612,11 +492,11 @@ public class FooChild : Foo
 
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseMethodOverrideWithRefExists()
+        public async Task TestChildClassUsesBaseMethodOverrideWithRefExistsAsync()
         {
             var testCode = @"
 public class Foo
@@ -638,22 +518,9 @@ public class FooChild : Foo
 
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 14, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(14, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedTest = @"
 public class Foo
@@ -675,11 +542,11 @@ public class FooChild : Foo
 
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseMethodOverrideWithOutExists()
+        public async Task TestChildClassUsesBaseMethodOverrideWithOutExistsAsync()
         {
             var testCode = @"
 public class Foo
@@ -701,22 +568,9 @@ public class FooChild : Foo
         s = string.Empty;
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 14, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(14, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedTest = @"
 public class Foo
@@ -738,11 +592,11 @@ public class FooChild : Foo
         s = string.Empty;
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseMethodOverrideWithDifferentParameterTypeExists()
+        public async Task TestChildClassUsesBaseMethodOverrideWithDifferentParameterTypeExistsAsync()
         {
             var testCode = @"
 public class Foo
@@ -764,22 +618,9 @@ public class FooChild : Foo
 
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 14, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(14, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedTest = @"
 public class Foo
@@ -801,11 +642,11 @@ public class FooChild : Foo
 
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseOverrideExists()
+        public async Task TestChildClassUsesBaseOverrideExistsAsync()
         {
             var testCode = @"
 public class Foo
@@ -818,7 +659,7 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected override void Baz()
+    protected void Baz()
     {
         base.Bar();
     }
@@ -828,12 +669,12 @@ public class FooChild : Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
 
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseWithFewParametersOverrideExists()
+        public async Task TestChildClassUsesBaseWithFewParametersOverrideExistsAsync()
         {
             var testCode = @"
 public class Foo
@@ -846,7 +687,7 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected override void Baz()
+    protected void Baz()
     {
         base.Bar(string.Empty,5);
     }
@@ -856,12 +697,12 @@ public class FooChild : Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
 
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseWithFewParametersHidingMethodExists()
+        public async Task TestChildClassUsesBaseWithFewParametersHidingMethodExistsAsync()
         {
             var testCode = @"
 public class Foo
@@ -874,9 +715,10 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected override void Baz()
+    protected void Baz()
     {
-        base.Bar(string.Empty,5);
+        int five = 5;
+        base.Bar(string.Empty, ref five);
     }
     protected void Bar(string s, ref int i)
     {
@@ -884,12 +726,12 @@ public class FooChild : Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
 
         }
 
         [Fact]
-        public async Task TestChildClassUsesBasePropertyOverrideExists()
+        public async Task TestChildClassUsesBasePropertyOverrideExistsAsync()
         {
             var testCode = @"
 public class Foo
@@ -902,7 +744,7 @@ public class Foo
 
 public class FooChild : Foo
 {
-    protected override void Baz()
+    protected void Baz()
     {
         var s = base.Bar;
     }
@@ -913,13 +755,15 @@ public class FooChild : Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestChildEventNoOverride()
+        public async Task TestChildEventNoOverrideAsync()
         {
             var testCode = @"
+using System;
+
 public class Foo
 {
     protected event Action MyEvent;
@@ -929,31 +773,17 @@ public class FooChild : Foo
 {
     protected void Baz()
     {
-        if(base.MyEvent != null)
-        {
-
-        }
+        base.MyEvent += () => { };
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 11, 12)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(13, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedTest = @"
+using System;
+
 public class Foo
 {
     protected event Action MyEvent;
@@ -963,19 +793,18 @@ public class FooChild : Foo
 {
     protected void Baz()
     {
-        if(this.MyEvent != null)
-        {
-
-        }
+        this.MyEvent += () => { };
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestChildEventOverrideExists()
+        public async Task TestChildEventOverrideExistsAsync()
         {
             var testCode = @"
+using System;
+
 public class Foo
 {
     protected virtual event Action MyEvent;
@@ -987,21 +816,19 @@ public class FooChild : Foo
 
     protected void Baz()
     {
-        if(base.MyEvent != null)
-        {
-
-        }
+        base.MyEvent += () => { };
     }
 }";
 
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestChildEventHidingEventExists()
+        public async Task TestChildEventHidingEventExistsAsync()
         {
             var testCode = @"
+using System;
+
 public class Foo
 {
     protected virtual event Action MyEvent;
@@ -1013,19 +840,15 @@ public class FooChild : Foo
 
     protected void Baz()
     {
-        if(base.MyEvent != null)
-        {
-
-        }
+        base.MyEvent += () => { };
     }
 }";
 
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestStruct()
+        public async Task TestStructAsync()
         {
             var testCode = @"
 public struct S
@@ -1036,22 +859,9 @@ public struct S
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 16)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 16);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedTest = @"
 public struct S
@@ -1061,11 +871,11 @@ public struct S
         return this.ToString();
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseButNoOverrideTwoIssues()
+        public async Task TestChildClassUsesBaseButNoOverrideTwoIssuesAsync()
         {
             var testCode = @"
 public class Foo
@@ -1094,33 +904,13 @@ public class FooChild : Foo
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 19, 9)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 24, 9)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic().WithLocation(19, 9),
+                    this.CSharpDiagnostic().WithLocation(24, 9)
+                };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedTest = @"
 public class Foo
@@ -1148,11 +938,11 @@ public class FooChild : Foo
         this.Bar2();
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseWithExtraLinesButNoOverrideTwoIssues()
+        public async Task TestChildClassUsesBaseWithExtraLinesButNoOverrideTwoIssuesAsync()
         {
             var testCode = @"
 public class Foo
@@ -1173,22 +963,9 @@ public class FooChild : Foo
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 14, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(14, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedTest = @"
 public class Foo
@@ -1208,11 +985,11 @@ public class FooChild : Foo
         .Bar();
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseWithPreprocessorDirectivesButNoOverrideTwoIssues()
+        public async Task TestChildClassUsesBaseWithPreprocessorDirectivesButNoOverrideTwoIssuesAsync()
         {
             var testCode = @"
 public class Foo
@@ -1228,22 +1005,9 @@ public class Foo
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Do not prefix calls with base unless local implementation exists",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 7, 17)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 17);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedTest = @"
 public class Foo
@@ -1258,12 +1022,12 @@ public class Foo
         .ToString();
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists();
+            yield return new SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

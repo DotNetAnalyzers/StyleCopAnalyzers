@@ -3,7 +3,6 @@
     using System;
     using Microsoft.CodeAnalysis.Diagnostics;
 
-
     /// <summary>
     /// This attribute is applied to <see cref="DiagnosticAnalyzer"/>'s if will not get a code fix.
     /// Reasons for this would be:
@@ -28,8 +27,11 @@
         }
 
         /// <summary>
-        /// The reason why the <see cref="DiagnosticAnalyzer"/> does not have a code fix.
+        /// Gets the reason why the <see cref="DiagnosticAnalyzer"/> does not have a code fix.
         /// </summary>
+        /// <value>
+        /// The reason why the <see cref="DiagnosticAnalyzer"/> does not have a code fix.
+        /// </value>
         public string Reason
         {
             get { return this.reason; }

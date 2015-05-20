@@ -36,7 +36,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1310.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -53,27 +53,35 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleFieldDeclarationSyntax, SyntaxKind.FieldDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleFieldDeclarationSyntax, SyntaxKind.FieldDeclaration);
         }
 
         private void HandleFieldDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
             FieldDeclarationSyntax syntax = (FieldDeclarationSyntax)context.Node;
             if (NamedTypeHelpers.IsContainedInNativeMethodsClass(syntax))
+            {
                 return;
+            }
 
             var variables = syntax.Declaration?.Variables;
             if (variables == null)
+            {
                 return;
+            }
 
             foreach (VariableDeclaratorSyntax variableDeclarator in variables.Value)
             {
                 if (variableDeclarator == null)
+                {
                     continue;
+                }
 
                 var identifier = variableDeclarator.Identifier;
                 if (identifier.IsMissing)
+                {
                     continue;
+                }
 
                 switch (identifier.ValueText.IndexOf('_'))
                 {
@@ -90,7 +98,8 @@
                     {
                     case 'm':
                     case 's':
-                        // m_ or s_ prefixes are reported as SA1308
+                    case 't':
+                        // m_, s_, and t_ prefixes are reported as SA1308
                         continue;
 
                     default:

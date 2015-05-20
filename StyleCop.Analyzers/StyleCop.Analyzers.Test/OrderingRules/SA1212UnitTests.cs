@@ -1,26 +1,24 @@
 ﻿namespace StyleCop.Analyzers.Test.OrderingRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Xunit;
     using StyleCop.Analyzers.OrderingRules;
     using TestHelper;
+    using Xunit;
 
     public class SA1212UnitTests : CodeFixVerifier
     {
-        public string DiagnosticId { get; } = SA1212PropertyAccessorsMustFollowOrder.DiagnosticId;
-
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPropertyWithBackingFieldDeclarationSetterBeforeGetter()
+        public async Task TestPropertyWithBackingFieldDeclarationSetterBeforeGetterAsync()
         {
             var testCode = @"
 public class Foo
@@ -41,26 +39,13 @@ public class Foo
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = this.DiagnosticId,
-                    Message = "A get accessor appears after a set accessor within a property or indexer.",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 8, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPropertyWithBackingFieldDeclarationGetterBeforeSetter()
+        public async Task TestPropertyWithBackingFieldDeclarationGetterBeforeSetterAsync()
         {
             var testCode = @"
 public class Foo
@@ -81,11 +66,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPropertyWithBackingFieldDeclarationOnlyGetter()
+        public async Task TestPropertyWithBackingFieldDeclarationOnlyGetterAsync()
         {
             var testCode = @"
 public class Foo
@@ -101,11 +86,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPropertyWithBackingFieldDeclarationOnlySetter()
+        public async Task TestPropertyWithBackingFieldDeclarationOnlySetterAsync()
         {
             var testCode = @"
 public class Foo
@@ -121,11 +106,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAutoPropertydDeclarationSetterBeforeGetter()
+        public async Task TestAutoPropertydDeclarationSetterBeforeGetterAsync()
         {
             var testCode = @"
 public class Foo
@@ -136,26 +121,13 @@ public class Foo
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = this.DiagnosticId,
-                    Message = "A get accessor appears after a set accessor within a property or indexer.",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 6, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerDeclarationSetterBeforeGetter()
+        public async Task TestIndexerDeclarationSetterBeforeGetterAsync()
         {
             var testCode = @"
 public class Foo
@@ -176,26 +148,13 @@ public class Foo
     }
 }";
 
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = this.DiagnosticId,
-                    Message = "A get accessor appears after a set accessor within a property or indexer.",
-                    Severity =  DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 8, 9)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerDeclarationGetterBeforeSetter()
+        public async Task TestIndexerDeclarationGetterBeforeSetterAsync()
         {
             var testCode = @"
 public class Foo
@@ -216,11 +175,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerDeclarationOnlySetter()
+        public async Task TestIndexerDeclarationOnlySetterAsync()
         {
             var testCode = @"
 public class Foo
@@ -236,11 +195,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIndexerDeclarationOnlyGetter()
+        public async Task TestIndexerDeclarationOnlyGetterAsync()
         {
             var testCode = @"
 public class Foo
@@ -256,12 +215,28 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        [Fact]
+        public async Task TestExpressionPropertyAsync()
         {
-            return new SA1212PropertyAccessorsMustFollowOrder();
+            var testCode = @"
+public class Foo
+{
+    private int field;
+
+    public int this[int index] => field;
+
+    public int Property => field;
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        {
+            yield return new SA1212PropertyAccessorsMustFollowOrder();
         }
     }
 }

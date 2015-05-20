@@ -14,7 +14,7 @@
     /// <para>To fix a violation of this rule, remove any whitespace between the new keyword and the opening array
     /// bracket.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1026CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1026CodeFixProvider))]
     [Shared]
     public class SA1026CodeFixProvider : CodeFixProvider
     {
@@ -33,20 +33,31 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation.DiagnosticId))
+                {
                     continue;
+                }
 
-                var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
                 SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (token.IsMissing)
+                {
                     continue;
+                }
 
-                SyntaxToken corrected = token.WithoutTrailingWhitespace().WithoutFormatting();
-                Document updatedDocument = context.Document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
-                context.RegisterCodeFix(CodeAction.Create("Remove space", t => Task.FromResult(updatedDocument)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1026CodeFix, t => GetTransformedDocumentAsync(context.Document, root, token)), diagnostic);
             }
+        }
+
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxToken token)
+        {
+            SyntaxToken corrected = token.WithoutTrailingWhitespace().WithoutFormatting();
+            Document updatedDocument = document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
+
+            return Task.FromResult(updatedDocument);
         }
     }
 }

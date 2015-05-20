@@ -16,20 +16,21 @@
     /// the shorthand C# style.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    [NoCodeFix("Provided by Visual Studio")]
     public class SA1125UseShorthandForNullableTypes : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1125UseShorthandForNullableTypes"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1125";
-        private const string Title = "Use shorthand for nullable types";
-        private const string MessageFormat = "Use shorthand for nullable types";
-        private const string Category = "StyleCop.CSharp.ReadabilityRules";
-        private const string Description = "The Nullable<T> type has been defined not using the C# shorthand. For example, Nullable<DateTime> has been used instead of the preferred DateTime?";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1125.html";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1125Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1125MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly string Category = "StyleCop.CSharp.ReadabilityRules";
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1125Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1125.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -46,38 +47,76 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleGenericNameSyntax, SyntaxKind.GenericName);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleGenericNameSyntax, SyntaxKind.GenericName);
         }
 
         private void HandleGenericNameSyntax(SyntaxNodeAnalysisContext context)
         {
             GenericNameSyntax genericNameSyntax = context.Node as GenericNameSyntax;
             if (genericNameSyntax == null)
+            {
                 return;
+            }
 
             if (genericNameSyntax.Identifier.IsMissing || genericNameSyntax.Identifier.Text != "Nullable")
+            {
                 return;
+            }
 
-            // The shorthand syntax is not available for the unbound generic form, e.g. typeof(Nullable<>)
-            if (genericNameSyntax?.TypeArgumentList?.Arguments.Count == 0)
-                return;
-
-            // This covers the specific form in an XML comment which cannot be simplified
+            // This covers the specific forms in an XML comment which cannot be simplified
             if (genericNameSyntax.Parent is NameMemberCrefSyntax)
+            {
+                // cref="Nullable{T}"
                 return;
+            }
+            else if (genericNameSyntax.Parent is QualifiedCrefSyntax)
+            {
+                // cref="Nullable{T}.Value"
+                return;
+            }
+            else if (genericNameSyntax.Parent is QualifiedNameSyntax && genericNameSyntax.Parent.Parent is QualifiedCrefSyntax)
+            {
+                // cref="System.Nullable{T}.Value"
+                return;
+            }
 
             // The shorthand syntax is not available in using directives (covers standard, alias, and static)
             if (genericNameSyntax.FirstAncestorOrSelf<UsingDirectiveSyntax>() != null)
+            {
                 return;
+            }
+
+            // This covers special cases of static and instance member access through the type name. It also covers most
+            // special cases for the `nameof` expression.
+            if (genericNameSyntax.Parent is MemberAccessExpressionSyntax)
+            {
+                return;
+            }
+
+            // This covers the special case of `nameof(Nullable<int>)`
+            if (genericNameSyntax.Parent is ArgumentSyntax)
+            {
+                return;
+            }
 
             SemanticModel semanticModel = context.SemanticModel;
             INamedTypeSymbol symbol = semanticModel.GetSymbolInfo(genericNameSyntax, context.CancellationToken).Symbol as INamedTypeSymbol;
             if (symbol?.OriginalDefinition?.SpecialType != SpecialType.System_Nullable_T)
+            {
                 return;
+            }
+
+            if (symbol.IsUnboundGenericType)
+            {
+                // There is never a shorthand syntax for the open generic Nullable<>
+                return;
+            }
 
             SyntaxNode locationNode = genericNameSyntax;
             if (genericNameSyntax.Parent is QualifiedNameSyntax)
+            {
                 locationNode = genericNameSyntax.Parent;
+            }
 
             // Use shorthand for nullable types
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, locationNode.GetLocation()));

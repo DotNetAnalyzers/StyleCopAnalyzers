@@ -53,14 +53,16 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(this.HandleFieldDeclarationSyntax, SyntaxKind.FieldDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleFieldDeclarationSyntax, SyntaxKind.FieldDeclaration);
         }
 
         private void HandleFieldDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
             FieldDeclarationSyntax syntax = (FieldDeclarationSyntax)context.Node;
             if (NamedTypeHelpers.IsContainedInNativeMethodsClass(syntax))
+            {
                 return;
+            }
 
             if (!syntax.Modifiers.Any(SyntaxKind.ReadOnlyKeyword))
             {
@@ -78,20 +80,28 @@
 
             var variables = syntax.Declaration?.Variables;
             if (variables == null)
+            {
                 return;
+            }
 
             foreach (VariableDeclaratorSyntax variableDeclarator in variables.Value)
             {
                 if (variableDeclarator == null)
+                {
                     continue;
+                }
 
                 var identifier = variableDeclarator.Identifier;
                 if (identifier.IsMissing)
+                {
                     continue;
+                }
 
                 string name = identifier.ValueText;
                 if (string.IsNullOrEmpty(name) || !char.IsLower(name[0]))
+                {
                     continue;
+                }
 
                 // Non-private readonly fields must begin with upper-case letter.
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation()));

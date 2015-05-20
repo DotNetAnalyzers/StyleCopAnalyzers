@@ -1,27 +1,25 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Xunit;
-using StyleCop.Analyzers.MaintainabilityRules;
-using TestHelper;
-
-namespace StyleCop.Analyzers.Test.MaintainabilityRules
+﻿namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
+    using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.MaintainabilityRules;
+    using TestHelper;
+    using Xunit;
+
     public class SA1411UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1411AttributeConstructorMustNotUseUnnecessaryParenthesis.DiagnosticId;
-
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMissingParenthesis()
+        public async Task TestMissingParenthesisAsync()
         {
             var testCode = @"public class Foo
 {
@@ -30,11 +28,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     {
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestNonEmptyParameterList()
+        public async Task TestNonEmptyParameterListAsync()
         {
             var testCode = @"public class Foo
 {
@@ -43,24 +41,26 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     {
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestNonEmptyParameterListNamedArgument()
+        public async Task TestNonEmptyParameterListNamedArgumentAsync()
         {
-            var testCode = @"public class Foo
+            var testCode = @"
+using System.Runtime.CompilerServices;
+public class Foo
 {
-    [System.Runtime.CompilerServices.MethodImpl(MethodCodeType = MethodCodeType.IL)]
+    [MethodImpl(MethodCodeType = MethodCodeType.IL)]
     public void Bar()
     {
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestEmptyParameterList()
+        public async Task TestEmptyParameterListAsync()
         {
             var testCode = @"public class Foo
 {
@@ -69,26 +69,13 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     {
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Attribute constructor must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 3, 21)
-                        }
-                }
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 21);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestEmptyParameterListMultipleAttributes()
+        public async Task TestEmptyParameterListMultipleAttributesAsync()
         {
             var testCode = @"public class Foo
 {
@@ -97,37 +84,17 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     {
     }
 }";
-            var expected = new[]
-            {
-                new DiagnosticResult
+            DiagnosticResult[] expected =
                 {
-                    Id = DiagnosticId,
-                    Message = "Attribute constructor must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 3, 21)
-                        }
-                },
-                new DiagnosticResult
-                {
-                    Id = DiagnosticId,
-                    Message = "Attribute constructor must not use unnecessary parenthesis",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[]
-                        {
-                            new DiagnosticResultLocation("Test0.cs", 3, 67)
-                        }
-                }
-            };
+                    this.CSharpDiagnostic().WithLocation(3, 21),
+                    this.CSharpDiagnostic().WithLocation(3, 67)
+                };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestCodeFix()
+        public async Task TestCodeFixAsync()
         {
             var oldSource = @"public class Foo
 {
@@ -145,11 +112,33 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(oldSource, newSource, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(oldSource, newSource, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestCodeFixMultipleAttributes()
+        public async Task TestCodeFixDoesNotRemoveExteriorTriviaAsync()
+        {
+            var oldSource = @"public class Foo
+{
+    [System.Obsolete/*Foo*/(/*Bar*/)/*Foo*/]
+    public void Bar()
+    {
+    }
+}";
+
+            var newSource = @"public class Foo
+{
+    [System.Obsolete/*Foo*//*Bar*//*Foo*/]
+    public void Bar()
+    {
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(oldSource, newSource, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestCodeFixMultipleAttributesAsync()
         {
             var oldSource = @"public class Foo
 {
@@ -167,12 +156,12 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(oldSource, newSource, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(oldSource, newSource, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1411AttributeConstructorMustNotUseUnnecessaryParenthesis();
+            yield return new SA1411AttributeConstructorMustNotUseUnnecessaryParenthesis();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

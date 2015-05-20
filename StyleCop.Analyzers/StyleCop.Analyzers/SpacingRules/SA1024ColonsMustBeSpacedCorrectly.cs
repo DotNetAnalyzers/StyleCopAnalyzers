@@ -74,7 +74,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeAction(this.HandleSyntaxTree);
+            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
         }
 
         private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -97,7 +97,9 @@
         private void HandleColonToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
+            {
                 return;
+            }
 
             bool requireBefore;
             switch (token.Parent.Kind())
@@ -127,9 +129,13 @@
             if (token.HasTrailingTrivia)
             {
                 if (token.TrailingTrivia.First().IsKind(SyntaxKind.WhitespaceTrivia))
+                {
                     missingFollowingSpace = false;
+                }
                 else if (token.TrailingTrivia.First().IsKind(SyntaxKind.EndOfLineTrivia))
+                {
                     missingFollowingSpace = false;
+                }
             }
 
             bool? hasPrecedingSpace = null;
@@ -138,7 +144,9 @@
                 // only the first token on the line has leading trivia, and those are ignored
                 SyntaxToken precedingToken = token.GetPreviousToken();
                 if (precedingToken.HasTrailingTrivia)
+                {
                     hasPrecedingSpace = true;
+                }
             }
 
             if (missingFollowingSpace)

@@ -1,36 +1,49 @@
 ﻿namespace StyleCop.Analyzers.Helpers
 {
+    using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Provides helper methods to work with Xml comments
+    /// Provides helper methods to work with XML comments
     /// </summary>
     internal static class XmlCommentHelper
     {
         internal const string SummaryXmlTag = "summary";
         internal const string ContentXmlTag = "content";
         internal const string InheritdocXmlTag = "inheritdoc";
+        internal const string ReturnsXmlTag = "returns";
+        internal const string ValueXmlTag = "value";
         internal const string SeeXmlTag = "see";
+        internal const string ParamTag = "param";
         internal const string CrefArgumentName = "cref";
-
+        internal const string NameArgumentName = "name";
 
         /// <summary>
-        /// This helper is used by documentation diagnostics to check if a xml comment should be considered empty.
+        /// The &lt;placeholder&gt; tag is a Sandcastle Help File Builder extension to the standard XML documentation
+        /// comment tags, and is used to mark sections of documentation which need to be reviewed.
+        /// </summary>
+        internal const string PlaceholderTag = "placeholder";
+
+        /// <summary>
+        /// This helper is used by documentation diagnostics to check if a XML comment should be considered empty.
         /// A comment is empty if 
         /// - it is null
-        /// - it does not have any text in any xml element and it does not have an empty xml element in it.
+        /// - it does not have any text in any XML element and it does not have an empty XML element in it.
         /// </summary>
         /// <param name="xmlComment">The xmlComment that should be checked</param>
         /// <returns>true, if the comment should be considered empty, false otherwise.</returns>
         internal static bool IsConsideredEmpty(DocumentationCommentTriviaSyntax xmlComment)
         {
             if (xmlComment == null)
+            {
                 return true;
+            }
+
             foreach (XmlNodeSyntax syntax in xmlComment.Content)
             {
                 if (!IsConsideredEmpty(syntax))
@@ -43,8 +56,8 @@
         }
 
         /// <summary>
-        /// This helper is used by documentation diagnostics to check if a xml comment should be considered empty.
-        /// A comment is empty if it does not have any text in any xml element and it does not have an empty xml element in it.
+        /// This helper is used by documentation diagnostics to check if a XML comment should be considered empty.
+        /// A comment is empty if it does not have any text in any XML element and it does not have an empty XML element in it.
         /// </summary>
         /// <param name="xmlSyntax">The xmlSyntax that should be checked</param>
         /// <returns>true, if the comment should be considered empty, false otherwise.</returns>
@@ -60,6 +73,7 @@
                         return false;
                     }
                 }
+
                 return true;
             }
 
@@ -87,6 +101,7 @@
                         return false;
                     }
                 }
+
                 return true;
             }
 
@@ -96,7 +111,6 @@
                 // This includes <inheritdoc/>
                 return false;
             }
-
 
             var processingElement = xmlSyntax as XmlProcessingInstructionSyntax;
             if (processingElement != null)
@@ -111,11 +125,14 @@
         /// Checks if a SyntaxTrivia contains a DocumentationCommentTriviaSyntax and returns true if it is considered empty
         /// </summary>
         /// <param name="commentTrivia">A SyntaxTrivia containing possible documentation</param>
-        /// <returns>true if commentTrivia does not have documentation in it orthe documentation in SyntaxTriviais considered empty. False otherwise.</returns>
+        /// <returns>true if commentTrivia does not have documentation in it or the documentation in SyntaxTriviais considered empty. False otherwise.</returns>
         internal static bool IsMissingOrEmpty(SyntaxTrivia commentTrivia)
         {
             if (!commentTrivia.HasStructure)
+            {
                 return true;
+            }
+
             var structuredTrivia = commentTrivia.GetStructure() as DocumentationCommentTriviaSyntax;
             if (structuredTrivia != null)
             {
@@ -132,34 +149,9 @@
         /// <returns>true if the node has documentation, false otherwise.</returns>
         internal static bool HasDocumentation(SyntaxNode node)
         {
-            var commentTrivia = GetCommentTrivia(node);
+            var commentTrivia = node.GetDocumentationCommentTriviaSyntax();
 
-            return !IsMissingOrEmpty(commentTrivia);
-        }
-
-        internal static DocumentationCommentTriviaSyntax GetDocumentationStructure(SyntaxNode node)
-        {
-            if (node == null)
-            {
-                return null;
-            }
-
-            var commentTrivia = GetCommentTrivia(node);
-
-            if (!commentTrivia.HasStructure)
-                return null;
-
-            return commentTrivia.GetStructure() as DocumentationCommentTriviaSyntax;
-        }
-
-        internal static XmlNodeSyntax GetTopLevelElement(DocumentationCommentTriviaSyntax syntax, string tagName)
-        {
-            XmlElementSyntax elementSyntax = syntax.Content.OfType<XmlElementSyntax>().FirstOrDefault(element => string.Equals(element.StartTag.Name.ToString(), tagName));
-            if (elementSyntax != null)
-                return elementSyntax;
-
-            XmlEmptyElementSyntax emptyElementSyntax = syntax.Content.OfType<XmlEmptyElementSyntax>().FirstOrDefault(element => string.Equals(element.Name.ToString(), tagName));
-            return emptyElementSyntax;
+            return commentTrivia != null && !IsMissingOrEmpty(commentTrivia.ParentTrivia);
         }
 
         internal static string GetText(XmlTextSyntax textElement)
@@ -183,20 +175,30 @@
 
             string result = stringBuilder.ToString();
             if (normalizeWhitespace)
+            {
                 result = Regex.Replace(result, @"\s+", " ");
+            }
 
             return result;
         }
 
-        private static SyntaxTrivia GetCommentTrivia(SyntaxNode node)
+        internal static T GetFirstAttributeOrDefault<T>(XmlNodeSyntax nodeSyntax) where T : XmlAttributeSyntax
         {
-            var leadingTrivia = node.GetLeadingTrivia();
-            var commentTrivia = leadingTrivia.FirstOrDefault(x => x.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia));
-            if (commentTrivia != default(SyntaxTrivia))
+            var emptyElementSyntax = nodeSyntax as XmlEmptyElementSyntax;
+
+            if (emptyElementSyntax != null)
             {
-                return commentTrivia;
+                return emptyElementSyntax.Attributes.OfType<T>().FirstOrDefault();
             }
-            return leadingTrivia.FirstOrDefault(x => x.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia));
+
+            var elementSyntax = nodeSyntax as XmlElementSyntax;
+
+            if (elementSyntax != null)
+            {
+                return elementSyntax.StartTag?.Attributes.OfType<T>().FirstOrDefault();
+            }
+
+            return null;
         }
     }
 }

@@ -29,7 +29,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1401.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -56,6 +56,20 @@
                 this.IsParentAClass(fieldDeclarationSyntax) &&
                 !fieldDeclarationSyntax.IsConst)
             {
+                foreach (var location in symbolAnalysisContext.Symbol.Locations)
+                {
+                    if (!location.IsInSource)
+                    {
+                        // assume symbols not defined in a source document are "out of reach"
+                        return;
+                    }
+
+                    if (location.SourceTree.IsGeneratedDocument(symbolAnalysisContext.CancellationToken))
+                    {
+                        return;
+                    }
+                }
+
                 symbolAnalysisContext.ReportDiagnostic(Diagnostic.Create(Descriptor, fieldDeclarationSyntax.Locations[0]));
             }
         }

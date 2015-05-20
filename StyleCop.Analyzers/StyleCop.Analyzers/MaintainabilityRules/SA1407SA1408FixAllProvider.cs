@@ -19,21 +19,22 @@
             switch (fixAllContext.Scope)
             {
             case FixAllScope.Document:
-                var newRoot = await this.FixAllInDocumentAsync(fixAllContext, fixAllContext.Document);
-                return CodeAction.Create("Add parentheses", token => Task.FromResult(fixAllContext.Document.WithSyntaxRoot(newRoot)));
+                var newRoot = await this.FixAllInDocumentAsync(fixAllContext, fixAllContext.Document).ConfigureAwait(false);
+                return CodeAction.Create(MaintainabilityResources.SA1407SA1408CodeFix, token => Task.FromResult(fixAllContext.Document.WithSyntaxRoot(newRoot)));
 
             case FixAllScope.Project:
-                Solution solution = await this.GetProjectFixesAsync(fixAllContext, fixAllContext.Project);
-                return CodeAction.Create("Add parentheses", token => Task.FromResult(solution));
+                Solution solution = await this.GetProjectFixesAsync(fixAllContext, fixAllContext.Project).ConfigureAwait(false);
+                return CodeAction.Create(MaintainabilityResources.SA1407SA1408CodeFix, token => Task.FromResult(solution));
 
             case FixAllScope.Solution:
                 var newSolution = fixAllContext.Solution;
                 var projectIds = newSolution.ProjectIds;
                 for (int i = 0; i < projectIds.Count; i++)
                 {
-                    newSolution = await this.GetProjectFixesAsync(fixAllContext, newSolution.GetProject(projectIds[i]));
+                    newSolution = await this.GetProjectFixesAsync(fixAllContext, newSolution.GetProject(projectIds[i])).ConfigureAwait(false);
                 }
-                return CodeAction.Create("Add parentheses", token => Task.FromResult(newSolution));
+
+                return CodeAction.Create(MaintainabilityResources.SA1407SA1408CodeFix, token => Task.FromResult(newSolution));
 
             case FixAllScope.Custom:
             default:
@@ -50,9 +51,10 @@
             {
                 newDocuments.Add(this.FixAllInDocumentAsync(fixAllContext, document));
             }
+
             for (int i = 0; i < oldDocuments.Length; i++)
             {
-                var newDocumentRoot = await newDocuments[i];
+                var newDocumentRoot = await newDocuments[i].ConfigureAwait(false);
                 solution = solution.WithDocumentSyntaxRoot(oldDocuments[i].Id, newDocumentRoot);
             }
 
@@ -61,7 +63,7 @@
 
         private async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
         {
-            var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document);
+            var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
 
             var newDocument = document;
 
@@ -74,7 +76,9 @@
             {
                 SyntaxNode node = root.FindNode(diagnostic.Location.SourceSpan);
                 if (node.IsMissing)
+                {
                     continue;
+                }
 
                 root = root.ReplaceNode(node, node.WithAdditionalAnnotations(NeedsParenthesisAnnotation));
             }
@@ -86,7 +90,9 @@
         {
             BinaryExpressionSyntax syntax = rewrittenNode as BinaryExpressionSyntax;
             if (syntax == null)
+            {
                 return rewrittenNode;
+            }
 
             BinaryExpressionSyntax trimmedSyntax = syntax
                 .WithoutTrivia()
