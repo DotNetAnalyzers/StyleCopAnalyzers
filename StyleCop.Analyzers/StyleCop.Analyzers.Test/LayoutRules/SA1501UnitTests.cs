@@ -327,7 +327,7 @@ public class Foo
     public void Bar(int i)
     {
         lock (this)
-#if MYTEST 
+#if MYTEST
         { Debug.Assert(true); }
 #else
         { Debug.Assert(false); }
@@ -351,6 +351,79 @@ public class Foo
     }
 }";
 
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a single line expression with a lambda expression or anonymous method will not trigger this diagnostic.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestSingleLineExpressionWithLambdaOrAnonymousMethodAsync()
+        {
+            var testCode = @"using System;
+
+public class Foo
+{
+    public void Bar()
+    {
+        Func<int> test = () => { return 5; }; 
+        EventHandler d = delegate(object s, EventArgs e) { };
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a multiple line expression with a single line lambda expression or a single line anonymous method will trigger the expected diagnostic.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestMultipleLineExpressionWithSingleLineLambdaOrAnonymousMethodAsync()
+        {
+            var testCode = @"using System;
+
+public class Foo
+{
+    public void Bar()
+    {
+        Func<int> test = () =>
+            { return 5; };
+
+        EventHandler d = delegate (object s, EventArgs e)
+            { };
+    }
+}
+";
+
+            var fixedTestCode = @"using System;
+
+public class Foo
+{
+    public void Bar()
+    {
+        Func<int> test = () =>
+            {
+                return 5;
+            };
+
+        EventHandler d = delegate (object s, EventArgs e)
+            {
+            };
+    }
+}
+";
+
+            DiagnosticResult[] expectedDiagnostics =
+            {
+                this.CSharpDiagnostic().WithLocation(8, 13),
+                this.CSharpDiagnostic().WithLocation(11, 13)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
