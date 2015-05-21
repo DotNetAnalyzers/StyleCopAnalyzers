@@ -28,7 +28,7 @@
         /// </summary>
         public const string DiagnosticId = "SA1209";
         private const string Title = "Using alias directives must be placed after other using directives";
-        private const string MessageFormat = "Using alias directive for '{0}' must appear after directive for '{1}'";
+        private const string MessageFormat = "Using alias directives must be placed after all using namespace directives.";
         private const string Category = "StyleCop.CSharp.OrderingRules";
         private const string Description = "A using-alias directive is positioned before a regular using directive.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1209.html";
@@ -71,9 +71,6 @@
 
         private static void ProcessUsingsAndReportDiagnostic(SyntaxList<UsingDirectiveSyntax> usings, SyntaxNodeAnalysisContext context)
         {
-            UsingDirectiveSyntax usingAliasDirectivesShouldBePlacedAfterThis = null;
-            var usingAliasDirectivesToReport = new Lazy<List<UsingDirectiveSyntax>>();
-
             for (int i = 0; i < usings.Count; i++)
             {
                 var usingDirective = usings[i];
@@ -83,35 +80,10 @@
                     var nextUsingDirective = usings[i + 1];
                     if (nextUsingDirective.Alias == null && nextUsingDirective.StaticKeyword.IsKind(SyntaxKind.None))
                     {
-                        usingAliasDirectivesToReport.Value.Add(usingDirective);
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, usingDirective.GetLocation()));
                     }
                 }
-                else
-                {
-                    usingAliasDirectivesShouldBePlacedAfterThis = usingDirective;
-                }
             }
-
-            if (usingAliasDirectivesToReport.IsValueCreated && usingAliasDirectivesToReport.Value.Count > 0)
-            {
-                var unaliasedNamespaceName = GetNamespaceNameWithoutAlias(usingAliasDirectivesShouldBePlacedAfterThis.Name.ToString());
-                foreach (var usingAliasDirectiveToReport in usingAliasDirectivesToReport.Value)
-                {                    
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, usingAliasDirectiveToReport.GetLocation(), usingAliasDirectiveToReport.Alias.Name.ToString(), unaliasedNamespaceName));
-                }
-            }
-        }
-
-        private static string GetNamespaceNameWithoutAlias(string name)
-        {
-            var result = name;
-            int doubleColon = name.IndexOf("::");
-            if (doubleColon >= 0)
-            {
-                result = name.Substring(doubleColon + 2);
-            }
-
-            return result;
         }
     }
 }
