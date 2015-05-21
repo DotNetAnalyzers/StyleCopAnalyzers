@@ -1,10 +1,11 @@
 ﻿namespace StyleCop.Analyzers.Test
 {
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using StyleCop.Analyzers.OrderingRules;
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
 
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.OrderingRules;
     using TestHelper;
     using Xunit;
 
@@ -173,9 +174,9 @@ namespace Test
             await this.VerifyCSharpDiagnosticAsync(namespaceDeclaration, expected, CancellationToken.None);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1209UsingAliasDirectivesMustBePlacedAfterOtherUsingDirectives();
+            yield return new SA1209UsingAliasDirectivesMustBePlacedAfterOtherUsingDirectives();
         }
     }
 }
