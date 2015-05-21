@@ -58,13 +58,13 @@
                 return MatchResult.Unknown;
             }
 
-            var documentationStructure = XmlCommentHelper.GetDocumentationStructure(declarationSyntax);
+            var documentationStructure = declarationSyntax.GetDocumentationCommentTriviaSyntax();
             if (documentationStructure == null)
             {
                 return MatchResult.Unknown;
             }
 
-            var summaryElement = XmlCommentHelper.GetTopLevelElement(documentationStructure, XmlCommentHelper.SummaryXmlTag) as XmlElementSyntax;
+            var summaryElement = documentationStructure.Content.GetFirstXmlElement(XmlCommentHelper.SummaryXmlTag) as XmlElementSyntax;
             if (summaryElement == null)
             {
                 return MatchResult.Unknown;

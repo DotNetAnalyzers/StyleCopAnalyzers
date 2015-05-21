@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.OrderingRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -10,14 +11,14 @@
     public class SA1213UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAddAccessorAfterRemoveAccessor()
+        public async Task TestAddAccessorAfterRemoveAccessorAsync()
         {
             var testCode = @"
 using System;
@@ -40,11 +41,11 @@ public class Foo
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(9, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAddAccessorAfterRemoveAccessorSameLine()
+        public async Task TestAddAccessorAfterRemoveAccessorSameLineAsync()
         {
             var testCode = @"
 using System;
@@ -60,11 +61,11 @@ public class Foo
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(9, 9);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAddAccessorBeforeRemoveAccessor()
+        public async Task TestAddAccessorBeforeRemoveAccessorAsync()
         {
             var testCode = @"
 using System;
@@ -85,11 +86,11 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestAddAccessorBeforeRemoveAccessorSameLine()
+        public async Task TestAddAccessorBeforeRemoveAccessorSameLineAsync()
         {
             var testCode = @"
 using System;
@@ -103,12 +104,12 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1213EventAccessorsMustFollowOrder();
+            yield return new SA1213EventAccessorsMustFollowOrder();
         }
     }
 }

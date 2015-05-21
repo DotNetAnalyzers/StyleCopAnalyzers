@@ -1,6 +1,7 @@
 ﻿namespace StyleCop.Analyzers.NamingRules
 {
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -122,7 +123,14 @@
 
         private void HandleEventDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            this.CheckElementNameToken(context, ((EventDeclarationSyntax)context.Node).Identifier);
+            var eventDeclaration = (EventDeclarationSyntax)context.Node;
+            if (eventDeclaration.Modifiers.Any(SyntaxKind.OverrideKeyword))
+            {
+                // Don't analyze an overridden event.
+                return;
+            }
+
+            this.CheckElementNameToken(context, eventDeclaration.Identifier);
         }
 
         private void HandleEventFieldDeclarationSyntax(SyntaxNodeAnalysisContext context)
@@ -147,12 +155,26 @@
 
         private void HandleMethodDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            this.CheckElementNameToken(context, ((MethodDeclarationSyntax)context.Node).Identifier);
+            var methodDeclaration = (MethodDeclarationSyntax)context.Node;
+            if (methodDeclaration.Modifiers.Any(SyntaxKind.OverrideKeyword))
+            {
+                // Don't analyze an overridden method.
+                return;
+            }
+
+            this.CheckElementNameToken(context, methodDeclaration.Identifier);
         }
 
         private void HandlePropertyDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            this.CheckElementNameToken(context, ((PropertyDeclarationSyntax)context.Node).Identifier);
+            var propertyDeclaration = (PropertyDeclarationSyntax)context.Node;
+            if (propertyDeclaration.Modifiers.Any(SyntaxKind.OverrideKeyword))
+            {
+                // Don't analyze an overridden property.
+                return;
+            }
+
+            this.CheckElementNameToken(context, propertyDeclaration.Identifier);
         }
 
         private void CheckElementNameToken(SyntaxNodeAnalysisContext context, SyntaxToken identifier)
@@ -180,6 +202,12 @@
             }
 
             if (NamedTypeHelpers.IsContainedInNativeMethodsClass(context.Node))
+            {
+                return;
+            }
+
+            var symbolInfo = context.SemanticModel.GetDeclaredSymbol(identifier.Parent);
+            if (symbolInfo != null && NamedTypeHelpers.IsImplementingAnInterfaceMember(symbolInfo))
             {
                 return;
             }

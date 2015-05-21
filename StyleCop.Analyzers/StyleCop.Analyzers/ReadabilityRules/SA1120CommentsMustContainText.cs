@@ -18,11 +18,11 @@
         /// The ID for diagnostics produced by the <see cref="SA1120CommentsMustContainText"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1120";
-        private const string Title = "Comments must contain text";
-        private const string MessageFormat = "TODO: Message format";
-        private const string Category = "StyleCop.CSharp.ReadabilityRules";
-        private const string Description = "The C# comment does not contain any comment text.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1120.html";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1120Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1120MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly string Category = "StyleCop.CSharp.ReadabilityRules";
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1120Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1120.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);

@@ -16,7 +16,7 @@
     /// <para>To fix a violation of this rule, ensure that there is no whitespace on either side of the opening square
     /// bracket.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1010CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1010CodeFixProvider))]
     [Shared]
     public class SA1010CodeFixProvider : CodeFixProvider
     {
@@ -50,7 +50,7 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocumentAsync(context.Document, root, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1010CodeFix, t => GetTransformedDocumentAsync(context.Document, root, token)), diagnostic);
             }
         }
 

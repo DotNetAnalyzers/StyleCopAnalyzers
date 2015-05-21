@@ -15,7 +15,7 @@
     /// <para>To fix a violation of this rule, change the name of the field or variable so that it begins with a
     /// lower-case letter, or place the item within a <c>NativeMethods</c> class if appropriate.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1306CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1306CodeFixProvider))]
     [Shared]
     public class SA1306CodeFixProvider : CodeFixProvider
     {
@@ -53,7 +53,7 @@
                 if (!string.IsNullOrEmpty(token.ValueText))
                 {
                     var newName = char.ToLower(token.ValueText[0]) + token.ValueText.Substring(1);
-                    context.RegisterCodeFix(CodeAction.Create($"Rename field to '{newName}'", cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.SA1306CodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken)), diagnostic);
                 }
             }
         }

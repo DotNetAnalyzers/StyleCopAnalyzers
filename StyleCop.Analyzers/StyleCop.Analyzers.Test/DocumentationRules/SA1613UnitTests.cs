@@ -23,14 +23,14 @@
         }
 
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMemberWithoutDocumentation()
+        public async Task TestMemberWithoutDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -40,12 +40,12 @@ public class ClassName
 {
     public ClassName Method() { return null; }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
         [MemberData(nameof(Declarations))]
-        public async Task TestMemberWithoutParams(string declaration)
+        public async Task TestMemberWithoutParamsAsync(string declaration)
         {
             var testCode = @"
 /// <summary>
@@ -58,12 +58,12 @@ public class ClassName
     /// </summary>
 $$
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
         [MemberData(nameof(Declarations))]
-        public async Task TestMemberWithValidParams(string declaration)
+        public async Task TestMemberWithValidParamsAsync(string declaration)
         {
             var testCode = @"
 /// <summary>
@@ -78,12 +78,12 @@ public class ClassName
     ///<param name=""bar"">Test</param>
 $$
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
         [MemberData(nameof(Declarations))]
-        public async Task TestMemberWithInvalidParams(string declaration)
+        public async Task TestMemberWithInvalidParamsAsync(string declaration)
         {
             var testCode = @"
 /// <summary>
@@ -109,12 +109,12 @@ $$
                 this.CSharpDiagnostic().WithLocation(13, 15)
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1613ElementParameterDocumentationMustDeclareParameterName();
+            yield return new SA1613ElementParameterDocumentationMustDeclareParameterName();
         }
     }
 }

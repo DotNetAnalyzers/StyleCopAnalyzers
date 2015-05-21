@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.DocumentationRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -13,14 +14,14 @@
     public class SA1603UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestTextDocumentation()
+        public async Task TestTextDocumentationAsync()
         {
             var testCode = @"
 /// Foo
@@ -29,7 +30,7 @@ public class Foo { }";
         }
 
         [Fact]
-        public async Task TestEmptyElementDocumentation()
+        public async Task TestEmptyElementDocumentationAsync()
         {
             var testCode = @"
 /// <summary/>
@@ -38,7 +39,7 @@ public class Foo { }";
         }
 
         [Fact]
-        public async Task TestElementDocumentation()
+        public async Task TestElementDocumentationAsync()
         {
             var testCode = @"
 /// <summary></summary>
@@ -47,7 +48,7 @@ public class Foo { }";
         }
 
         [Fact]
-        public async Task TestCDataDocumentation()
+        public async Task TestCDataDocumentationAsync()
         {
             var testCode = @"
 /// <![CDATA[Foo]]>
@@ -56,7 +57,7 @@ public class Foo { }";
         }
 
         [Fact]
-        public async Task TestElementStartTagSkippedToken()
+        public async Task TestElementStartTagSkippedTokenAsync()
         {
             var testCode = @"
 /// <summary=></summary>
@@ -68,7 +69,7 @@ public class Foo { }";
         }
 
         [Fact]
-        public async Task TestElementEndTagSkippedToken()
+        public async Task TestElementEndTagSkippedTokenAsync()
         {
             var testCode = @"
 /// <summary></summary=>
@@ -80,7 +81,7 @@ public class Foo { }";
         }
 
         [Fact]
-        public async Task TestEmptyElementSkippedToken()
+        public async Task TestEmptyElementSkippedTokenAsync()
         {
             var testCode = @"
 /// <summary=/>
@@ -92,7 +93,7 @@ public class Foo { }";
         }
 
         [Fact]
-        public async Task TestElementTagsNotMatching()
+        public async Task TestElementTagsNotMatchingAsync()
         {
             var testCode = @"
 /// <summary>a</sumary>
@@ -107,7 +108,7 @@ public class Foo { }";
         }
 
         [Fact]
-        public async Task TestElementMissingEndTag()
+        public async Task TestElementMissingEndTagAsync()
         {
             var testCode = @"
 /// <summary>a
@@ -120,9 +121,9 @@ public class Foo { }";
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1603DocumentationMustContainValidXml();
+            yield return new SA1603DocumentationMustContainValidXml();
         }
     }
 }

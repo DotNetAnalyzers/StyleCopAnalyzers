@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.DocumentationRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -12,14 +13,14 @@
         private const string DiagnosticId = SA1626SingleLineCommentsMustNotUseDocumentationStyleSlashes.DiagnosticId;
 
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestClassWithXmlComment()
+        public async Task TestClassWithXmlCommentAsync()
         {
             var testCode = @"/// <summary>
 /// Xml Documentation
@@ -31,11 +32,11 @@ public class Foo
     }
 }
 ";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodWithComment()
+        public async Task TestMethodWithCommentAsync()
         {
             var testCode = @"public class Foo
 {
@@ -45,11 +46,11 @@ public class Foo
     }
 }
 ";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodWithOneLineThreeSlashComment()
+        public async Task TestMethodWithOneLineThreeSlashCommentAsync()
         {
             var testCode = @"public class Foo
 {
@@ -64,11 +65,11 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(5, 9)
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodWithMultiLineThreeSlashComment()
+        public async Task TestMethodWithMultiLineThreeSlashCommentAsync()
         {
             var testCode = @"public class Foo
 {
@@ -84,11 +85,11 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(5, 9)
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodWithCodeComments()
+        public async Task TestMethodWithCodeCommentsAsync()
         {
             var testCode = @"public class Foo
 {
@@ -98,11 +99,11 @@ public class Foo
     }
 }
 ";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodWithSingeLineDocumentation()
+        public async Task TestMethodWithSingeLineDocumentationAsync()
         {
             var testCode = @"public class Foo
 {
@@ -112,12 +113,12 @@ public class Foo
     }
 }
 ";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1626SingleLineCommentsMustNotUseDocumentationStyleSlashes();
+            yield return new SA1626SingleLineCommentsMustNotUseDocumentationStyleSlashes();
         }
     }
 }

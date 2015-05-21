@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -10,14 +11,14 @@
     public class SA1110UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodDeclarationOpeningBracketInTheNextLine()
+        public async Task TestMethodDeclarationOpeningBracketInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -35,7 +36,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestConstructorDeclarationOpeningBracketInTheNextLine()
+        public async Task TestConstructorDeclarationOpeningBracketInTheNextLineAsync()
         {
             var testCode = @"
 public class Foo
@@ -53,7 +54,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestMethodDeclarationOpeningBracketInTheSameLine()
+        public async Task TestMethodDeclarationOpeningBracketInTheSameLineAsync()
         {
             var testCode = @"
 class Foo
@@ -69,7 +70,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestConstructorDeclarationOpeningBracketInTheSameLine()
+        public async Task TestConstructorDeclarationOpeningBracketInTheSameLineAsync()
         {
             var testCode = @"
 public class Foo
@@ -83,7 +84,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestMethodCallOpeningBracketInTheNextLine()
+        public async Task TestMethodCallOpeningBracketInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -101,7 +102,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestMethodCallUsingThisOpeningBracketInTheNextLine()
+        public async Task TestMethodCallUsingThisOpeningBracketInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -119,7 +120,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestMethodCallUsingBaseOpeningBracketInTheNextLine()
+        public async Task TestMethodCallUsingBaseOpeningBracketInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -137,7 +138,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestMethodCallUsingVariableOpeningBracketInTheNextLine()
+        public async Task TestMethodCallUsingVariableOpeningBracketInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -156,7 +157,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestGenericMethodCall()
+        public async Task TestGenericMethodCallAsync()
         {
             var testCode = @"
 class Foo
@@ -176,7 +177,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestStaticMethodCallOpeningBracketInTheNextLine()
+        public async Task TestStaticMethodCallOpeningBracketInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -198,7 +199,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestStaticMethodCallOpeningBracketInTheNextLineAsClassName()
+        public async Task TestStaticMethodCallOpeningBracketInTheNextLineAsClassNameAsync()
         {
             var testCode = @"
 class Foo
@@ -218,7 +219,7 @@ Baz();
         }
 
         [Fact]
-        public async Task TestStaticMethodCallWithAnotherStaticCallOpeningBracketInTheNextLine()
+        public async Task TestStaticMethodCallWithAnotherStaticCallOpeningBracketInTheNextLineAsync()
         {
             var testCode = @"
 using System;
@@ -241,7 +242,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestConstructorCallOpeningBracketInTheNextLine()
+        public async Task TestConstructorCallOpeningBracketInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -259,7 +260,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestCreationOfObjectNoOpeningClosingParenthesis()
+        public async Task TestCreationOfObjectNoOpeningClosingParenthesisAsync()
         {
             var testCode = @"
 public class Foo
@@ -274,7 +275,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestConstructorWithQualifiedNameCallOpeningBracketInTheNextLine()
+        public async Task TestConstructorWithQualifiedNameCallOpeningBracketInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -295,7 +296,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestGenericTypeConstructorCall()
+        public async Task TestGenericTypeConstructorCallAsync()
         {
             var testCode = @"
 class Foo<T>
@@ -320,7 +321,7 @@ class Foo<T>
         }
 
         [Fact]
-        public async Task TestIndexerDeclarationOpeningBracketInTheNextLine()
+        public async Task TestIndexerDeclarationOpeningBracketInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -341,7 +342,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestIndexerDeclarationOpeningBracketInTheSameLine()
+        public async Task TestIndexerDeclarationOpeningBracketInTheSameLineAsync()
         {
             var testCode = @"
 class Foo
@@ -359,7 +360,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestIndexerCallUsingThisOpeningBracketInTheNextLine()
+        public async Task TestIndexerCallUsingThisOpeningBracketInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -385,7 +386,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestIndexerCalOpeningBracketInTheNextLine()
+        public async Task TestIndexerCalOpeningBracketInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -404,7 +405,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestIndexerCallUsingThisOpeningBracketInTheSameLine()
+        public async Task TestIndexerCallUsingThisOpeningBracketInTheSameLineAsync()
         {
             var testCode = @"
 class Foo
@@ -427,7 +428,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestIndexerCallOpeningBracketInTheSameLine()
+        public async Task TestIndexerCallOpeningBracketInTheSameLineAsync()
         {
             var testCode = @"
 class Foo
@@ -443,7 +444,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestArrayCallOpeningBracketInTheNextLine()
+        public async Task TestArrayCallOpeningBracketInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -460,7 +461,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestArrayCallOpeningBracketInTheSameLine()
+        public async Task TestArrayCallOpeningBracketInTheSameLineAsync()
         {
             var testCode = @"
 class Foo
@@ -477,7 +478,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestAttributeOpeningParenthesisOnTheNextLine()
+        public async Task TestAttributeOpeningParenthesisOnTheNextLineAsync()
         {
             var testCode = @"
 using System.Diagnostics;
@@ -501,7 +502,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestAttributeOpeningParenthesisOnTheSameLine()
+        public async Task TestAttributeOpeningParenthesisOnTheSameLineAsync()
         {
             var testCode = @"
 using System.Diagnostics;
@@ -518,7 +519,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestDelegateDeclarationOpeningParenthesisOnTheNextLine()
+        public async Task TestDelegateDeclarationOpeningParenthesisOnTheNextLineAsync()
         {
             var testCode = @"
 public class Foo
@@ -533,7 +534,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestDelegateDeclarationOpeningParenthesisOnTheSameLine()
+        public async Task TestDelegateDeclarationOpeningParenthesisOnTheSameLineAsync()
         {
             var testCode = @"
 public class Foo
@@ -545,7 +546,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestAnonymousMethodDelegateKeywordOnPreviousLineAsOpeningParenthesis()
+        public async Task TestAnonymousMethodDelegateKeywordOnPreviousLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
 public class Foo
@@ -567,7 +568,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestAnonymousMethodDelegateKeywordOnTheSameLineAsOpeningParenthesis()
+        public async Task TestAnonymousMethodDelegateKeywordOnTheSameLineAsOpeningParenthesisAsync()
         {
             var testCode = @"
 public class Foo
@@ -585,7 +586,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestAnonymousMethodNoParameters()
+        public async Task TestAnonymousMethodNoParametersAsync()
         {
             var testCode = @"
 public class Foo
@@ -603,7 +604,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestAnonymousMethodNoOpeningParenthesis()
+        public async Task TestAnonymousMethodNoOpeningParenthesisAsync()
         {
             var testCode = @"
 public class Foo
@@ -621,7 +622,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestArrayCreationOpeningBracketOnTheNextLineAsTypeName()
+        public async Task TestArrayCreationOpeningBracketOnTheNextLineAsTypeNameAsync()
         {
             var testCode = @"
 public class Foo
@@ -640,7 +641,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestArrayOfArraysCreationOpneningBracketOnTheSameLineAsTypeName()
+        public async Task TestArrayOfArraysCreationOpneningBracketOnTheSameLineAsTypeNameAsync()
         {
             var testCode = @"
 public class Foo
@@ -656,7 +657,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestArrayCreationTypeOmitted()
+        public async Task TestArrayCreationTypeOmittedAsync()
         {
             var testCode = @"
 public class Foo
@@ -674,7 +675,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestOperatorDeclarationOpeningParenthesisOnTheNextLineAsOperator()
+        public async Task TestOperatorDeclarationOpeningParenthesisOnTheNextLineAsOperatorAsync()
         {
             var testCode = @"
 public class Foo
@@ -692,7 +693,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestUnaryOperatorDeclarationOpeningParenthesisOnTheNextLineAsOperator()
+        public async Task TestUnaryOperatorDeclarationOpeningParenthesisOnTheNextLineAsOperatorAsync()
         {
             var testCode = @"
 public class Foo
@@ -710,7 +711,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestOperatorDeclarationOpeningParenthesisOnTheSameLineAsOperator()
+        public async Task TestOperatorDeclarationOpeningParenthesisOnTheSameLineAsOperatorAsync()
         {
             var testCode = @"
 public class Foo
@@ -725,7 +726,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestConversionOperatorDeclarationOpeningParenthesisOnTheNextLineAsOperator()
+        public async Task TestConversionOperatorDeclarationOpeningParenthesisOnTheNextLineAsOperatorAsync()
         {
             var testCode = @"
 public class Foo
@@ -743,7 +744,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestConversionOperatorDeclarationOpeningParenthesisOnTheSameLineAsOperator()
+        public async Task TestConversionOperatorDeclarationOpeningParenthesisOnTheSameLineAsOperatorAsync()
         {
             var testCode = @"
 public class Foo
@@ -757,9 +758,9 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1110OpeningParenthesisMustBeOnDeclarationLine();
+            yield return new SA1110OpeningParenthesisMustBeOnDeclarationLine();
         }
     }
 }

@@ -17,7 +17,7 @@
     /// <para>To fix a violation of this rule, add or remove a space after the keyword, according to the description
     /// above.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1122CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1122CodeFixProvider))]
     [Shared]
     public class SA1122CodeFixProvider : CodeFixProvider
     {
@@ -57,7 +57,7 @@
                 var node = root?.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
                 if (node != null && node.IsKind(SyntaxKind.StringLiteralExpression))
                 {
-                    context.RegisterCodeFix(CodeAction.Create($"Replace with string.Empty", token => GetTransformedDocumentAsync(context.Document, root, node)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create(ReadabilityResources.SA1122CodeFix, token => GetTransformedDocumentAsync(context.Document, root, node)), diagnostic);
                 }
             }
         }

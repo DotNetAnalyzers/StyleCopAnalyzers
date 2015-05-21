@@ -16,7 +16,7 @@
     /// <para>To fix a violation of this rule, remove the underscore from the name of the field, or place the item
     /// within a <c>NativeMethods</c> class if appropriate.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1310CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1310CodeFixProvider))]
     [Shared]
     public class SA1310CodeFixProvider : CodeFixProvider
     {
@@ -55,7 +55,7 @@
                 string proposedName = BuildProposedName(currentName);
                 if (proposedName != currentName)
                 {
-                    context.RegisterCodeFix(CodeAction.Create($"Rename field to '{proposedName}'", cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, proposedName, cancellationToken)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.SA1310CodeFix, proposedName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, proposedName, cancellationToken)), diagnostic);
                 }
             }
         }

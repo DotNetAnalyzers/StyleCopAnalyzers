@@ -1,12 +1,13 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Diagnostics;
-using StyleCop.Analyzers.MaintainabilityRules;
-using TestHelper;
-using Xunit;
-
-namespace StyleCop.Analyzers.Test.MaintainabilityRules
+﻿namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
+    using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.MaintainabilityRules;
+    using TestHelper;
+    using Xunit;
+
     public class SA1402UnitTests : FileMayOnlyContainTestBase
     {
         public override string Keyword
@@ -17,13 +18,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             }
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new SA1402FileMayOnlyContainASingleClass();
-        }
-
         [Fact]
-        public async Task TestPartialClasses()
+        public async Task TestPartialClassesAsync()
         {
             var testCode = @"public partial class Foo
 {
@@ -38,7 +34,7 @@ public partial class Foo
         }
 
         [Fact]
-        public async Task TestDifferentPartialClasses()
+        public async Task TestDifferentPartialClassesAsync()
         {
             var testCode = @"public partial class Foo
 {
@@ -55,7 +51,7 @@ public partial class Bar
         }
 
         [Fact]
-        public async Task TestNestedClasses()
+        public async Task TestNestedClassesAsync()
         {
             var testCode = @"public class Foo
 {
@@ -67,6 +63,11 @@ public partial class Bar
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
 
+        }
+
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        {
+            yield return new SA1402FileMayOnlyContainASingleClass();
         }
     }
 }

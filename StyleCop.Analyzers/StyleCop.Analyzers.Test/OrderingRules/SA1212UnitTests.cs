@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.OrderingRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -10,14 +11,14 @@
     public class SA1212UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPropertyWithBackingFieldDeclarationSetterBeforeGetter()
+        public async Task TestPropertyWithBackingFieldDeclarationSetterBeforeGetterAsync()
         {
             var testCode = @"
 public class Foo
@@ -44,7 +45,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestPropertyWithBackingFieldDeclarationGetterBeforeSetter()
+        public async Task TestPropertyWithBackingFieldDeclarationGetterBeforeSetterAsync()
         {
             var testCode = @"
 public class Foo
@@ -69,7 +70,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestPropertyWithBackingFieldDeclarationOnlyGetter()
+        public async Task TestPropertyWithBackingFieldDeclarationOnlyGetterAsync()
         {
             var testCode = @"
 public class Foo
@@ -89,7 +90,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestPropertyWithBackingFieldDeclarationOnlySetter()
+        public async Task TestPropertyWithBackingFieldDeclarationOnlySetterAsync()
         {
             var testCode = @"
 public class Foo
@@ -109,7 +110,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestAutoPropertydDeclarationSetterBeforeGetter()
+        public async Task TestAutoPropertydDeclarationSetterBeforeGetterAsync()
         {
             var testCode = @"
 public class Foo
@@ -126,7 +127,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestIndexerDeclarationSetterBeforeGetter()
+        public async Task TestIndexerDeclarationSetterBeforeGetterAsync()
         {
             var testCode = @"
 public class Foo
@@ -153,7 +154,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestIndexerDeclarationGetterBeforeSetter()
+        public async Task TestIndexerDeclarationGetterBeforeSetterAsync()
         {
             var testCode = @"
 public class Foo
@@ -178,7 +179,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestIndexerDeclarationOnlySetter()
+        public async Task TestIndexerDeclarationOnlySetterAsync()
         {
             var testCode = @"
 public class Foo
@@ -198,7 +199,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestIndexerDeclarationOnlyGetter()
+        public async Task TestIndexerDeclarationOnlyGetterAsync()
         {
             var testCode = @"
 public class Foo
@@ -218,7 +219,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestExpressionProperty()
+        public async Task TestExpressionPropertyAsync()
         {
             var testCode = @"
 public class Foo
@@ -233,9 +234,9 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1212PropertyAccessorsMustFollowOrder();
+            yield return new SA1212PropertyAccessorsMustFollowOrder();
         }
     }
 }

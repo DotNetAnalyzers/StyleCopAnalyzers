@@ -14,7 +14,7 @@
     /// <summary>
     /// Implements a code fix for <see cref="SA1518CodeMustNotContainBlankLinesAtEndOfFile"/>.
     /// </summary>
-    [ExportCodeFixProvider(nameof(SA1518CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1518CodeFixProvider))]
     [Shared]
     public class SA1518CodeFixProvider : CodeFixProvider
     {
@@ -35,7 +35,7 @@
         {
             foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                context.RegisterCodeFix(CodeAction.Create("Remove blank lines at the end of the file", token => GetTransformedDocumentAsync(context.Document, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1518CodeFix, token => GetTransformedDocumentAsync(context.Document, token)), diagnostic);
             }
 
             return Task.FromResult(true);

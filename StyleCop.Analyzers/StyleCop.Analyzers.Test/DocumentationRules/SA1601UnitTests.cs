@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.DocumentationRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -13,7 +14,7 @@
     public class SA1601UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -23,7 +24,7 @@
         [InlineData("class")]
         [InlineData("struct")]
         [InlineData("interface")]
-        public async Task TestPartialTypeWithDocumentation(string typeKeyword)
+        public async Task TestPartialTypeWithDocumentationAsync(string typeKeyword)
         {
             var testCode = @"
 /// <summary>
@@ -39,7 +40,7 @@ public partial {0} TypeName
         [InlineData("class")]
         [InlineData("struct")]
         [InlineData("interface")]
-        public async Task TestPartialTypeWithoutDocumentation(string typeKeyword)
+        public async Task TestPartialTypeWithoutDocumentationAsync(string typeKeyword)
         {
             var testCode = @"
 public partial {0}
@@ -56,7 +57,7 @@ TypeName
         [InlineData("class")]
         [InlineData("struct")]
         [InlineData("interface")]
-        public async Task TestPartialClassWithEmptyDocumentation(string typeKeyword)
+        public async Task TestPartialClassWithEmptyDocumentationAsync(string typeKeyword)
         {
             var testCode = @"
 /// <summary>
@@ -73,7 +74,7 @@ TypeName
         }
 
         [Fact]
-        public async Task TestPartialMethodWithDocumentation()
+        public async Task TestPartialMethodWithDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -90,7 +91,7 @@ public partial class TypeName
         }
 
         [Fact]
-        public async Task TestPartialMethodWithoutDocumentation()
+        public async Task TestPartialMethodWithoutDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -107,7 +108,7 @@ public partial class TypeName
         }
 
         [Fact]
-        public async Task TestPartialMethodWithEmptyDocumentation()
+        public async Task TestPartialMethodWithEmptyDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -126,9 +127,9 @@ public partial class TypeName
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1601PartialElementsMustBeDocumented();
+            yield return new SA1601PartialElementsMustBeDocumented();
         }
     }
 }

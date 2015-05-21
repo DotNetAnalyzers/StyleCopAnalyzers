@@ -17,7 +17,7 @@
     /// <para>To fix a violation of this rule, ensure that the semicolon is followed by a single space, and is not
     /// preceded by any space.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1002CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1002CodeFixProvider))]
     [Shared]
     public class SA1002CodeFixProvider : CodeFixProvider
     {
@@ -43,7 +43,7 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocumentAsync(context.Document, diagnostic, t)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1002CodeFix, t => GetTransformedDocumentAsync(context.Document, diagnostic, t)), diagnostic);
             }
 
             return Task.FromResult(true);

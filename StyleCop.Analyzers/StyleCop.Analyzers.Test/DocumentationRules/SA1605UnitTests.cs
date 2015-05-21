@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.DocumentationRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -13,7 +14,7 @@
     public class SA1605UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -23,7 +24,7 @@
         [InlineData("class")]
         [InlineData("struct")]
         [InlineData("interface")]
-        public async Task TestTypeNoDocumentation(string typeName)
+        public async Task TestTypeNoDocumentationAsync(string typeName)
         {
             var testCode = @"
 partial {0} TypeName
@@ -36,7 +37,7 @@ partial {0} TypeName
         [InlineData("class")]
         [InlineData("struct")]
         [InlineData("interface")]
-        public async Task TestTypeWithSummaryDocumentation(string typeName)
+        public async Task TestTypeWithSummaryDocumentationAsync(string typeName)
         {
             var testCode = @"
 /// <summary>
@@ -52,7 +53,7 @@ partial {0} TypeName
         [InlineData("class")]
         [InlineData("struct")]
         [InlineData("interface")]
-        public async Task TestTypeWithContentDocumentation(string typeName)
+        public async Task TestTypeWithContentDocumentationAsync(string typeName)
         {
             var testCode = @"
 /// <content>
@@ -68,7 +69,7 @@ partial {0} TypeName
         [InlineData("class")]
         [InlineData("struct")]
         [InlineData("interface")]
-        public async Task TestTypeWithInheritedDocumentation(string typeName)
+        public async Task TestTypeWithInheritedDocumentationAsync(string typeName)
         {
             var testCode = @"
 /// <inheritdoc/>
@@ -82,7 +83,7 @@ partial {0} TypeName
         [InlineData("class")]
         [InlineData("struct")]
         [InlineData("interface")]
-        public async Task TestTypeWithoutDocumentation(string typeName)
+        public async Task TestTypeWithoutDocumentationAsync(string typeName)
         {
             var testCode = @"
 ///
@@ -97,7 +98,7 @@ TypeName
         }
 
         [Fact]
-        public async Task TestMethodNoDocumentation()
+        public async Task TestMethodNoDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -111,7 +112,7 @@ public partial class ClassName
         }
 
         [Fact]
-        public async Task TestMethodWithSummaryDocumentation()
+        public async Task TestMethodWithSummaryDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -128,7 +129,7 @@ public partial class ClassName
         }
 
         [Fact]
-        public async Task TestMethodWithContentDocumentation()
+        public async Task TestMethodWithContentDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -145,7 +146,7 @@ public partial class ClassName
         }
 
         [Fact]
-        public async Task TestMethodWithInheritedDocumentation()
+        public async Task TestMethodWithInheritedDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -160,7 +161,7 @@ public partial class ClassName
         }
 
         [Fact]
-        public async Task TestMethodWithoutDocumentation()
+        public async Task TestMethodWithoutDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -177,9 +178,9 @@ public partial class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1605PartialElementDocumentationMustHaveSummary();
+            yield return new SA1605PartialElementDocumentationMustHaveSummary();
         }
     }
 }

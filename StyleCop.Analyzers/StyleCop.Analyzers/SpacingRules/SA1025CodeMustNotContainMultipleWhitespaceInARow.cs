@@ -22,11 +22,11 @@
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1025";
-        private const string Title = "Code must not contain multiple whitespace in a row";
-        private const string MessageFormat = "Code must not contain multiple whitespace characters in a row.";
-        private const string Category = "StyleCop.CSharp.SpacingRules";
-        private const string Description = "The code contains multiple whitespace characters in a row.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1025.html";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1025Title), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(SpacingResources.SA1025MessageFormat), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly string Category = "StyleCop.CSharp.SpacingRules";
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1025Description), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1025.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);

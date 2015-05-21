@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Analyzers.MaintainabilityRules;
@@ -14,14 +15,14 @@
         private const string ParenthesesDiagnosticId = SA1119StatementMustNotUseUnnecessaryParenthesis.ParenthesesDiagnosticId;
 
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestLiteral()
+        public async Task TestLiteralAsync()
         {
             var testCode = @"public class Foo
 {
@@ -34,7 +35,7 @@
         }
 
         [Fact]
-        public async Task TestLiteralParenthesis()
+        public async Task TestLiteralParenthesisAsync()
         {
             var testCode = @"public class Foo
 {
@@ -64,7 +65,7 @@
         }
 
         [Fact]
-        public async Task TestLiteralDoubleParenthesis()
+        public async Task TestLiteralDoubleParenthesisAsync()
         {
             var testCode = @"public class Foo
 {
@@ -97,7 +98,7 @@
         }
 
         [Fact]
-        public async Task TestMethodCall()
+        public async Task TestMethodCallAsync()
         {
             var testCode = @"public class Foo
 {
@@ -110,7 +111,7 @@
         }
 
         [Fact]
-        public async Task TestMethodCallParenthesis()
+        public async Task TestMethodCallParenthesisAsync()
         {
             var testCode = @"public class Foo
 {
@@ -140,7 +141,7 @@
         }
 
         [Fact]
-        public async Task TestLocalMember()
+        public async Task TestLocalMemberAsync()
         {
             var testCode = @"public class Foo
 {
@@ -154,7 +155,7 @@
         }
 
         [Fact]
-        public async Task TestLocalMemberMemberAccess()
+        public async Task TestLocalMemberMemberAccessAsync()
         {
             var testCode = @"public class Foo
 {
@@ -188,7 +189,7 @@
         }
 
         [Fact]
-        public async Task TestLocalMemberAssignment()
+        public async Task TestLocalMemberAssignmentAsync()
         {
             var testCode = @"public class Foo
 {
@@ -202,7 +203,7 @@
         }
 
         [Fact]
-        public async Task TestLocalMemberAssignmentParenthesis()
+        public async Task TestLocalMemberAssignmentParenthesisAsync()
         {
             var testCode = @"public class Foo
 {
@@ -234,7 +235,7 @@
         }
 
         [Fact]
-        public async Task TestLocalMemberParenthesis()
+        public async Task TestLocalMemberParenthesisAsync()
         {
             var testCode = @"public class Foo
 {
@@ -265,7 +266,7 @@
         }
 
         [Fact]
-        public async Task TestCast()
+        public async Task TestCastAsync()
         {
             var testCode = @"public class Foo
 {
@@ -278,7 +279,7 @@
         }
 
         [Fact]
-        public async Task TestCastParenthesis()
+        public async Task TestCastParenthesisAsync()
         {
             var testCode = @"public class Foo
 {
@@ -308,7 +309,7 @@
         }
 
         [Fact]
-        public async Task TestCastAssignment()
+        public async Task TestCastAssignmentAsync()
         {
             var testCode = @"public class Foo
 {
@@ -322,7 +323,7 @@
         }
 
         [Fact]
-        public async Task TestCastAssignmentParenthesis()
+        public async Task TestCastAssignmentParenthesisAsync()
         {
             var testCode = @"public class Foo
 {
@@ -353,7 +354,7 @@
         }
 
         [Fact]
-        public async Task TestCastMemberAccess()
+        public async Task TestCastMemberAccessAsync()
         {
             var testCode = @"public class Foo
 {
@@ -366,7 +367,7 @@
         }
 
         [Fact]
-        public async Task TestCastMemberAccessAssignment()
+        public async Task TestCastMemberAccessAssignmentAsync()
         {
             var testCode = @"public class Foo
 {
@@ -380,7 +381,7 @@
         }
 
         [Fact]
-        public async Task TestUnaryOperators()
+        public async Task TestUnaryOperatorsAsync()
         {
             var testCode = @"public class Foo
 {
@@ -399,7 +400,7 @@
         }
 
         [Fact]
-        public async Task TestUnaryOperatorsParenthesis()
+        public async Task TestUnaryOperatorsParenthesisAsync()
         {
             var testCode = @"public class Foo
 {
@@ -455,7 +456,7 @@
         }
 
         [Fact]
-        public async Task TestCheckedUnchecked()
+        public async Task TestCheckedUncheckedAsync()
         {
             var testCode = @"public class Foo
 {
@@ -469,7 +470,7 @@
         }
 
         [Fact]
-        public async Task TestCheckedUncheckedParenthesis()
+        public async Task TestCheckedUncheckedParenthesisAsync()
         {
             var testCode = @"public class Foo
 {
@@ -504,7 +505,7 @@
         }
 
         [Fact]
-        public async Task TestNameOf()
+        public async Task TestNameOfAsync()
         {
             var testCode = @"public class Foo
 {
@@ -517,7 +518,7 @@
         }
 
         [Fact]
-        public async Task TestNameOfParenthesis()
+        public async Task TestNameOfParenthesisAsync()
         {
             var testCode = @"public class Foo
 {
@@ -546,7 +547,7 @@
         }
 
         [Fact]
-        public async Task TestIsExpression()
+        public async Task TestIsExpressionAsync()
         {
             var testCode = @"public class Foo
 {
@@ -559,7 +560,7 @@
         }
 
         [Fact]
-        public async Task TestIsExpressionMemberAccess()
+        public async Task TestIsExpressionMemberAccessAsync()
         {
             var testCode = @"public class Foo
 {
@@ -572,7 +573,7 @@
         }
 
         [Fact]
-        public async Task TestIsExpressionParenthesis()
+        public async Task TestIsExpressionParenthesisAsync()
         {
             var testCode = @"public class Foo
 {
@@ -606,7 +607,7 @@
         }
 
         [Fact]
-        public async Task TestAssignment()
+        public async Task TestAssignmentAsync()
         {
             var testCode = @"public class Foo
 {
@@ -620,7 +621,7 @@
         }
 
         [Fact]
-        public async Task TestAssignmentParenthesis()
+        public async Task TestAssignmentParenthesisAsync()
         {
             var testCode = @"public class Foo
 {
@@ -651,7 +652,7 @@
         }
 
         [Fact]
-        public async Task TestInnerAssignment()
+        public async Task TestInnerAssignmentAsync()
         {
             var testCode = @"public class Foo
 {
@@ -666,7 +667,7 @@
         }
 
         [Fact]
-        public async Task TestConditional()
+        public async Task TestConditionalAsync()
         {
             var testCode = @"public class Foo
 {
@@ -679,7 +680,7 @@
         }
 
         [Fact]
-        public async Task TestConditionalParenthesis()
+        public async Task TestConditionalParenthesisAsync()
         {
             var testCode = @"public class Foo
 {
@@ -708,7 +709,7 @@
         }
 
         [Fact]
-        public async Task TestConditionalInner()
+        public async Task TestConditionalInnerAsync()
         {
             var testCode = @"public class Foo
 {
@@ -722,7 +723,7 @@
         }
 
         [Fact]
-        public async Task TestCoalesce()
+        public async Task TestCoalesceAsync()
         {
             var testCode = @"public class Foo
 {
@@ -735,7 +736,7 @@
         }
 
         [Fact]
-        public async Task TestCoalesceParenthesis()
+        public async Task TestCoalesceParenthesisAsync()
         {
             var testCode = @"public class Foo
 {
@@ -764,7 +765,7 @@
         }
 
         [Fact]
-        public async Task TestCoalesceInner()
+        public async Task TestCoalesceInnerAsync()
         {
             var testCode = @"public class Foo
 {
@@ -778,7 +779,7 @@
         }
 
         [Fact]
-        public async Task TestLambda()
+        public async Task TestLambdaAsync()
         {
             var testCode = @"public class Foo
 {
@@ -792,7 +793,7 @@
         }
 
         [Fact]
-        public async Task TestLambdaParenthesis()
+        public async Task TestLambdaParenthesisAsync()
         {
             var testCode = @"public class Foo
 {
@@ -826,7 +827,7 @@
         }
 
         [Fact]
-        public async Task TestLambdaInner()
+        public async Task TestLambdaInnerAsync()
         {
             var testCode = @"public class Foo
 {
@@ -840,7 +841,7 @@
         }
 
         [Fact]
-        public async Task TestArray()
+        public async Task TestArrayAsync()
         {
             var testCode = @"public class Foo
 {
@@ -853,7 +854,7 @@
         }
 
         [Fact]
-        public async Task TestArrayParenthesis()
+        public async Task TestArrayParenthesisAsync()
         {
             var testCode = @"public class Foo
 {
@@ -882,7 +883,7 @@
         }
 
         [Fact]
-        public async Task TestArrayInner()
+        public async Task TestArrayInnerAsync()
         {
             var testCode = @"public class Foo
 {
@@ -895,7 +896,7 @@
         }
 
         [Fact]
-        public async Task TestQuery()
+        public async Task TestQueryAsync()
         {
             var testCode = @"using System.Linq;
 public class Foo
@@ -909,7 +910,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestQueryParenthesis()
+        public async Task TestQueryParenthesisAsync()
         {
             var testCode = @"using System.Linq;
 public class Foo
@@ -940,7 +941,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestQueryInner()
+        public async Task TestQueryInnerAsync()
         {
             var testCode = @"using System.Linq;
 public class Foo
@@ -954,7 +955,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestAwaitInner()
+        public async Task TestAwaitInnerAsync()
         {
             var testCode = @"public class Foo
 {
@@ -967,7 +968,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestBinary()
+        public async Task TestBinaryAsync()
         {
             var testCode = @"public class Foo
 {
@@ -982,7 +983,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestInnerTriviaCodeFix()
+        public async Task TestInnerTriviaCodeFixAsync()
         {
             var testCode = @"public class Foo
 {
@@ -1012,7 +1013,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestCodeFixWorksInTrivia()
+        public async Task TestCodeFixWorksInTriviaAsync()
         {
             var testCode = @"#if (NET20 || NET35)
 // Foo
@@ -1024,7 +1025,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestNoLeadingTrivia()
+        public async Task TestNoLeadingTriviaAsync()
         {
             var testCode = @"public class Foo
 {
@@ -1041,7 +1042,7 @@ public class Foo
                 this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 19)
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"public class Foo
 {
@@ -1051,11 +1052,11 @@ public class Foo
         return foo;
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestCodeFixDoesNotRemoveSpaces()
+        public async Task TestCodeFixDoesNotRemoveSpacesAsync()
         {
             var testCode = @"public class Foo
 {
@@ -1073,12 +1074,12 @@ public class Foo
         return          foo          ;
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1119StatementMustNotUseUnnecessaryParenthesis();
+            yield return new SA1119StatementMustNotUseUnnecessaryParenthesis();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

@@ -33,15 +33,15 @@
         }
 
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
         [MemberData(nameof(Data))]
-        public async Task TestWithAllDocumentation(string p)
+        public async Task TestWithAllDocumentationAsync(string p)
         {
             var testCode = @"
 /// <summary>
@@ -57,12 +57,12 @@ public class ClassName
     /// <param name=""param3"">Param 3</param>
     public ##
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
         [MemberData(nameof(Data))]
-        public async Task TestWithAllDocumentationAlternativeSyntax(string p)
+        public async Task TestWithAllDocumentationAlternativeSyntaxAsync(string p)
         {
             var testCode = @"
 /// <summary>
@@ -78,12 +78,12 @@ public class ClassName
     /// <param name=""p&#x61;ram3"">Param 3</param>
     public ##
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
         [MemberData(nameof(Data))]
-        public async Task TestWithAllDocumentationWrongOrder(string p)
+        public async Task TestWithAllDocumentationWrongOrderAsync(string p)
         {
             var testCode = @"
 /// <summary>
@@ -99,12 +99,12 @@ public class ClassName
     /// <param name=""param2""></param>
     public ##
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
         [MemberData(nameof(Data))]
-        public async Task TestWithNoDocumentation(string p)
+        public async Task TestWithNoDocumentationAsync(string p)
         {
             var testCode = @"
 /// <summary>
@@ -114,12 +114,12 @@ public class ClassName
 {
     public ##
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
         [MemberData(nameof(Data))]
-        public async Task TestInheritDoc(string p)
+        public async Task TestInheritDocAsync(string p)
         {
             var testCode = @"
 /// <summary>
@@ -130,12 +130,12 @@ public class ClassName
     /// <inheritdoc/>
     public ##
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
         [MemberData(nameof(Data))]
-        public async Task TestMissingParameters(string p)
+        public async Task TestMissingParametersAsync(string p)
         {
             var testCode = @"
 /// <summary>
@@ -155,12 +155,12 @@ public class ClassName
                 this.CSharpDiagnostic().WithLocation(10, 68).WithArguments("param3"),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1611ElementParametersMustBeDocumented();
+            yield return new SA1611ElementParametersMustBeDocumented();
         }
     }
 }

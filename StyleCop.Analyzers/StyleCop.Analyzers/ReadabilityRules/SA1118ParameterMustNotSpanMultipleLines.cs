@@ -1,7 +1,10 @@
 ﻿namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -53,17 +56,24 @@
         /// The ID for diagnostics produced by the <see cref="SA1118ParameterMustNotSpanMultipleLines"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1118";
-        private const string Title = "Parameter must not span multiple lines";
-        private const string MessageFormat = "TODO: Message format";
-        private const string Category = "StyleCop.CSharp.ReadabilityRules";
-        private const string Description = "A parameter to a C# method or indexer, other than the first parameter, spans across multiple lines.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1118.html";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1118Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1118MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly string Category = "StyleCop.CSharp.ReadabilityRules";
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1118Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1118.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
+
+        private static readonly SyntaxKind[] ArgumentExceptionSyntaxKinds =
+        {
+            SyntaxKind.AnonymousMethodExpression,
+            SyntaxKind.ParenthesizedLambdaExpression,
+            SyntaxKind.SimpleLambdaExpression
+        };
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
@@ -77,7 +87,49 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleArgumentList, SyntaxKind.ArgumentList, SyntaxKind.BracketedArgumentList);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleAttributeArgumentList, SyntaxKind.AttributeArgumentList);
+        }
+
+        private void HandleAttributeArgumentList(SyntaxNodeAnalysisContext context)
+        {
+            var attributeArgumentList = (AttributeArgumentListSyntax)context.Node;
+
+            for (int i = 1; i < attributeArgumentList.Arguments.Count; i++)
+            {
+                var argument = attributeArgumentList.Arguments[i];
+                if (this.CheckIfArgumentIsMultiline(argument))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation()));
+                }
+            }
+        }
+
+        private void HandleArgumentList(SyntaxNodeAnalysisContext context)
+        {
+            var argumentListSyntax = (BaseArgumentListSyntax)context.Node;
+
+            for (int i = 1; i < argumentListSyntax.Arguments.Count; i++)
+            {
+                var argument = argumentListSyntax.Arguments[i];
+                if (this.CheckIfArgumentIsMultiline(argument)
+                    && !this.IsArgumentOnExceptionList(argument.Expression))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation()));
+                }
+            }
+        }
+
+        private bool CheckIfArgumentIsMultiline(CSharpSyntaxNode argument)
+        {
+            var lineSpan = argument.GetLocation().GetLineSpan();
+            return lineSpan.EndLinePosition.Line > lineSpan.StartLinePosition.Line;
+        }
+
+        private bool IsArgumentOnExceptionList(ExpressionSyntax argumentExpresson)
+        {
+            return argumentExpresson != null
+                && ArgumentExceptionSyntaxKinds.Any(argumentExpresson.IsKind);
         }
     }
 }

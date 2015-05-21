@@ -15,7 +15,7 @@
     /// <para>To fix a violation of this rule, add the capital letter I to the front of the interface name, or place the
     /// item within a <c>NativeMethods</c> class if appropriate.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1302CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1302CodeFixProvider))]
     [Shared]
     public class SA1302CodeFixProvider : CodeFixProvider
     {
@@ -45,7 +45,7 @@
                 }
 
                 var newName = "I" + token.ValueText;
-                context.RegisterCodeFix(CodeAction.Create($"Rename interface to '{newName}'", cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.SA1302CodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken)), diagnostic);
             }
         }
     }
