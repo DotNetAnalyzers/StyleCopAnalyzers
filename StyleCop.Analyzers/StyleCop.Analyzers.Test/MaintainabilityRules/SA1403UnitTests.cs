@@ -1,12 +1,13 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Diagnostics;
-using StyleCop.Analyzers.MaintainabilityRules;
-using TestHelper;
-using Xunit;
-
-namespace StyleCop.Analyzers.Test.MaintainabilityRules
+﻿namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
+    using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.MaintainabilityRules;
+    using TestHelper;
+    using Xunit;
+
     public class SA1403UnitTests : FileMayOnlyContainTestBase
     {
         public override string Keyword
@@ -34,9 +35,9 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1403FileMayOnlyContainASingleNamespace();
+            yield return new SA1403FileMayOnlyContainASingleNamespace();
         }
     }
 }

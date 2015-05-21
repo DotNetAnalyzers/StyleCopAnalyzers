@@ -854,9 +854,9 @@ namespace System
             await this.VerifyCSharpFixAsync(string.Format(testCode, fullName), string.Format(testCode, predefined), cancellationToken:  CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1121UseBuiltInTypeAlias();
+            yield return new SA1121UseBuiltInTypeAlias();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

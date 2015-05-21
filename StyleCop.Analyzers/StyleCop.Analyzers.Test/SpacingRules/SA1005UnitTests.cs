@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.SpacingRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -267,9 +268,9 @@
         }
 
         /// <inheritdoc/>
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1005SingleLineCommentsMustBeginWithSingleSpace();
+            yield return new SA1005SingleLineCommentsMustBeginWithSingleSpace();
         }
 
         /// <inheritdoc/>

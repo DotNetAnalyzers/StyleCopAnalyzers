@@ -333,9 +333,9 @@ namespace System
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1125UseShorthandForNullableTypes();
+            yield return new SA1125UseShorthandForNullableTypes();
         }
     }
 }

@@ -3,7 +3,6 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using TestHelper;
     using Xunit;
 
@@ -434,7 +433,5 @@
         }
 
         protected override abstract CodeFixProvider GetCSharpCodeFixProvider();
-
-        protected override abstract DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer();
     }
 }

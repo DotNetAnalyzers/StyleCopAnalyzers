@@ -1,6 +1,7 @@
 ﻿namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -15,16 +16,6 @@
     /// </summary>
     public class SA1001UnitTests : CodeFixVerifier
     {
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1001CodeFixProvider();
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new SA1001CommasMustBeSpacedCorrectly();
-        }
-
         [Fact]
         public async Task TestSpaceAfterCommaAsync()
         {
@@ -168,6 +159,16 @@
 
             await this.VerifyCSharpDiagnosticAsync(originalCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(originalCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        {
+            yield return new SA1001CommasMustBeSpacedCorrectly();
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1001CodeFixProvider();
         }
     }
 }

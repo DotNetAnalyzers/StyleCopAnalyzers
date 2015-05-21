@@ -45,7 +45,7 @@
                 }
 
                 var newName = "I" + token.ValueText;
-                context.RegisterCodeFix(CodeAction.Create($"Rename interface to '{newName}'", cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.SA1302CodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken)), diagnostic);
             }
         }
     }

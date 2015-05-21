@@ -19,11 +19,11 @@
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1107";
-        private const string Title = "Code must not contain multiple statements on one line";
-        private const string MessageFormat = "TODO: Message format";
-        private const string Category = "StyleCop.CSharp.ReadabilityRules";
-        private const string Description = "The C# code contains more than one statement on a single line.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1107.html";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1107Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1107MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly string Category = "StyleCop.CSharp.ReadabilityRules";
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1107Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1107.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);

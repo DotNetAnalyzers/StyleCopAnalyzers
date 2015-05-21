@@ -1,13 +1,14 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using StyleCop.Analyzers.NamingRules;
-using TestHelper;
-using Xunit;
-
-namespace StyleCop.Analyzers.Test.NamingRules
+﻿namespace StyleCop.Analyzers.Test.NamingRules
 {
+    using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.NamingRules;
+    using TestHelper;
+    using Xunit;
+
     public class SA1304UnitTests : CodeFixVerifier
     {
         [Fact]
@@ -141,9 +142,9 @@ namespace StyleCop.Analyzers.Test.NamingRules
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1304NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter();
+            yield return new SA1304NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
