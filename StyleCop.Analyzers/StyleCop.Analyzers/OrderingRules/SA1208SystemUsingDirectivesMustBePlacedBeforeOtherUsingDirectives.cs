@@ -8,6 +8,8 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
+
 
     /// <summary>
     /// A using directive which declares a member of the <see cref="System"/> namespace appears after a using directive
@@ -92,7 +94,7 @@
                 {
                     if (systemUsingDirectivesShouldBeBeforeThisName != null)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, usingDirective.GetLocation(), GetNamespaceNameWithoutAlias(usingDirective.Name.ToString()), systemUsingDirectivesShouldBeBeforeThisName));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, usingDirective.GetLocation(), usingDirective.Name.ToUnaliasedString(), systemUsingDirectivesShouldBeBeforeThisName));
                         continue;
                     }
 
@@ -101,8 +103,8 @@
 
                     if (!string.Equals(SystemUsingDirectiveName, firstIdentifierInPreviousUsingDirective?.Text, StringComparison.Ordinal) || previousUsing.StaticKeyword.Kind() != SyntaxKind.None)
                     {
-                        systemUsingDirectivesShouldBeBeforeThisName = GetNamespaceNameWithoutAlias(previousUsing.Name.ToString());
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, usingDirective.GetLocation(), GetNamespaceNameWithoutAlias(usingDirective.Name.ToString()), systemUsingDirectivesShouldBeBeforeThisName));
+                        systemUsingDirectivesShouldBeBeforeThisName = previousUsing.Name.ToUnaliasedString();
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, usingDirective.GetLocation(), usingDirective.Name.ToUnaliasedString(), systemUsingDirectivesShouldBeBeforeThisName));
                     }
                 }
             }
@@ -113,18 +115,6 @@
         private static SyntaxToken? GetFirstIdentifierInUsingDirective(UsingDirectiveSyntax usingDirective)
         {
             return usingDirective.DescendantNodes().OfType<IdentifierNameSyntax>().FirstOrDefault(ExcludeGlobalKeyword)?.Identifier;
-        }
-
-        private static string GetNamespaceNameWithoutAlias(string name)
-        {
-            var result = name;
-            int doubleColon = name.IndexOf("::");
-            if (doubleColon >= 0)
-            {
-                result = name.Substring(doubleColon + 2);
-            }
-
-            return result;
         }
     }
 }

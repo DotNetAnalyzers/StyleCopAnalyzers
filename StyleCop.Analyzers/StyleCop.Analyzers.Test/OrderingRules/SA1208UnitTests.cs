@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.OrderingRules
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using System.Threading;
 
@@ -280,9 +281,9 @@ namespace Test
             await this.VerifyCSharpDiagnosticAsync(sources, expected, CancellationToken.None);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives();
+            yield return new SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives();
         }
     }
 }
