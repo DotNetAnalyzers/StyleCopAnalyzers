@@ -65,7 +65,7 @@
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         private async Task VerifyFixAsync(string language, ImmutableArray<DiagnosticAnalyzer> analyzers, CodeFixProvider codeFixProvider, string oldSource, string newSource, int? codeFixIndex, bool allowNewCompilerDiagnostics, CancellationToken cancellationToken)
         {
-            var document = CreateDocument(oldSource, language);
+            var document = this.CreateDocument(oldSource, language);
             var analyzerDiagnostics = await GetSortedDiagnosticsFromDocumentsAsync(analyzers, new[] { document }, cancellationToken).ConfigureAwait(false);
             var compilerDiagnostics = await GetCompilerDiagnosticsAsync(document, cancellationToken).ConfigureAwait(false);
             var attempts = analyzerDiagnostics.Length;
