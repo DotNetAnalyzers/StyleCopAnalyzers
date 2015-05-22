@@ -1,66 +1,41 @@
 ﻿namespace StyleCop.Analyzers.LayoutRules
 {
-    using System.Collections.Generic;
     using System.Collections.Immutable;
-    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
-    /// The opening and closing curly brackets for a C# statement have been omitted.
+    /// The opening and closing curly brackets for a multi-line C# statement have been omitted.
     /// </summary>
     /// <remarks>
-    /// <para>A violation of this rule occurs when the opening and closing curly brackets for a statement have been
-    /// omitted. In C#, some types of statements may optionally include curly brackets. Examples include <c>if</c>,
-    /// <c>while</c>, and <c>for</c> statements. For example, an if-statement may be written without curly
+    /// <para>A violation of this rule occurs when the opening and closing curly brackets for a multi-line statement
+    /// have been omitted. In C#, some types of statements may optionally include curly brackets. Examples include
+    /// <c>if</c>, <c>while</c>, and <c>for</c> statements. For example, an if-statement may be written without curly
     /// brackets:</para>
     ///
     /// <code language="csharp">
     /// if (true)
-    ///     return this.value;
+    ///     return
+    ///         this.value;
     /// </code>
     ///
-    /// <para>Although this is legal in C#, StyleCop always requires the curly brackets to be present, to increase the
-    /// readability and maintainability of the code.</para>
-    ///
-    /// <para>When the curly brackets are omitted, it is possible to introduce an error in the code by inserting an
-    /// additional statement beneath the if-statement. For example:</para>
-    ///
-    /// <code language="csharp">
-    /// if (true)
-    ///     this.value = 2;
-    ///     return this.value;
-    /// </code>
-    ///
-    /// <para>Glancing at this code, it appears as if both the assignment statement and the return statement are
-    /// children of the if-statement. In fact, this is not true. Only the assignment statement is a child of the
-    /// if-statement, and the return statement will always execute regardless of the outcome of the if-statement.</para>
-    ///
-    /// <para>StyleCop always requires the opening and closing curly brackets to be present, to prevent these kinds of
-    /// errors:</para>
-    ///
-    /// <code language="csharp">
-    /// if (true)
-    /// {
-    ///     this.value = 2;
-    ///     return this.value;
-    /// }
-    /// </code>
+    /// <para>Although this is legal in C#, StyleCop requires the curly brackets to be present when the statement spans
+    /// multiple lines, to increase the readability and maintainability of the code.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1503CurlyBracketsMustNotBeOmitted : DiagnosticAnalyzer
+    public class SA1519CurlyBrackets : DiagnosticAnalyzer
     {
         /// <summary>
-        /// The ID for diagnostics produced by the <see cref="SA1503CurlyBracketsMustNotBeOmitted"/> analyzer.
+        /// The ID for diagnostics produced by the <see cref="SA1519CurlyBrackets"/> analyzer.
         /// </summary>
-        public const string DiagnosticId = "SA1503";
+        public const string DiagnosticId = "SA1519";
         private const string Title = "Curly brackets must not be omitted";
         private const string MessageFormat = "Curly brackets must not be omitted";
         private const string Category = "StyleCop.CSharp.LayoutRules";
         private const string Description = "The opening and closing curly brackets for a C# statement have been omitted.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1503.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1519.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -89,35 +64,19 @@
 
         private void HandleIfStatement(SyntaxNodeAnalysisContext context)
         {
-            var ifStatement = (IfStatementSyntax)context.Node;
-            if (ifStatement.Parent.IsKind(SyntaxKind.ElseClause))
+            var ifStatement = context.Node as IfStatementSyntax;
+            if (ifStatement != null)
             {
-                // this will be analyzed as a clause of the outer if statement
-                return;
-            }
+                this.CheckChildStatement(context, ifStatement.Statement);
 
-            List<StatementSyntax> clauses = new List<StatementSyntax>();
-            for (IfStatementSyntax current = ifStatement; current != null; current = current.Else?.Statement as IfStatementSyntax)
-            {
-                clauses.Add(current.Statement);
-                if (current.Else != null && !(current.Else.Statement is IfStatementSyntax))
+                if (ifStatement.Else != null)
                 {
-                    clauses.Add(current.Else.Statement);
+                    // an 'else' directly followed by an 'if' should not trigger this diagnostic.
+                    if (!ifStatement.Else.Statement.IsKind(SyntaxKind.IfStatement))
+                    {
+                        this.CheckChildStatement(context, ifStatement.Else.Statement);
+                    }
                 }
-            }
-
-            if (context.SemanticModel.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(SA1520UseCurlyBracketsConsistently.DiagnosticId, ReportDiagnostic.Default) != ReportDiagnostic.Suppress)
-            {
-                // inconsistencies will be reported as SA1520, as long as it's not suppressed
-                if (clauses.OfType<BlockSyntax>().Any())
-                {
-                    return;
-                }
-            }
-
-            foreach (StatementSyntax clause in clauses)
-            {
-                this.CheckChildStatement(context, clause);
             }
         }
 
@@ -164,15 +123,11 @@
                 return;
             }
 
-            if (context.SemanticModel.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(SA1519CurlyBrackets.DiagnosticId, ReportDiagnostic.Default) != ReportDiagnostic.Suppress)
+            Location location = childStatement.GetLocation();
+            FileLinePositionSpan lineSpan = location.GetLineSpan();
+            if (lineSpan.StartLinePosition.Line == lineSpan.EndLinePosition.Line)
             {
-                // diagnostics for multi-line statements is handled by SA1519, as long as it's not suppressed
-                Location location = childStatement.GetLocation();
-                FileLinePositionSpan lineSpan = location.GetLineSpan();
-                if (lineSpan.StartLinePosition.Line != lineSpan.EndLinePosition.Line)
-                {
-                    return;
-                }
+                return;
             }
 
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, childStatement.GetLocation()));
