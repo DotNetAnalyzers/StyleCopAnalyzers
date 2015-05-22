@@ -78,6 +78,17 @@
                 return;
             }
 
+            if (!syntax.Modifiers.Any(SyntaxKind.InternalKeyword))
+            {
+                // SA1307 is taken precedence here. SA1307 should be reported if the field is accessible.
+                // So if SA1307 is enabled this diagnostic will only be reported for internal fields.
+                if (context.SemanticModel.Compilation.Options.SpecificDiagnosticOptions
+                    .GetValueOrDefault(SA1307AccessibleFieldsMustBeginWithUpperCaseLetter.DiagnosticId, ReportDiagnostic.Default) != ReportDiagnostic.Suppress)
+                {
+                    return;
+                }
+            }
+
             var variables = syntax.Declaration?.Variables;
             if (variables == null)
             {

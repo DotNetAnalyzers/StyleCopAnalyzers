@@ -21,21 +21,13 @@
         [Fact]
         public async Task TestPublicReadonlyFieldStartingWithLowerCaseAsync()
         {
+            // Should be reported by SA1307 instead
             var testCode = @"public class Foo
 {
     public readonly string bar = ""baz"";
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 28);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-
-            var fixedCode = @"public class Foo
-{
-    public readonly string Bar = ""baz"";
-}";
-
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -57,20 +49,13 @@
     protected readonly string bar = ""baz"";
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 31);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-
-            var fixedCode = @"public class Foo
-{
-    protected readonly string Bar = ""baz"";
-}";
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestProtectedReadonlyFieldStartingWithUpperCaseAsync()
         {
+            // Should be reported by SA1307 instead
             var testCode = @"public class Foo
 {
     protected readonly string Bar = ""baz"";
