@@ -149,6 +149,7 @@
     <Compile Include="LayoutRules\SA1513ClosingCurlyBracketMustBeFollowedByBlankLine.cs" />
     <Compile Include="LayoutRules\SA1513CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1514ElementDocumentationHeaderMustBePrecededByBlankLine.cs" />
+    <Compile Include="LayoutRules\SA1515CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1515SingleLineCommentMustBePrecededByBlankLine.cs" />
     <Compile Include="LayoutRules\SA1516CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1516ElementsMustBeSeparatedByBlankLine.cs" />

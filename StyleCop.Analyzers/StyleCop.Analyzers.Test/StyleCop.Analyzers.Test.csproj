@@ -184,6 +184,7 @@
     <Compile Include="LayoutRules\SA1507UnitTests.cs" />
     <Compile Include="LayoutRules\SA1509UnitTests.cs" />
     <Compile Include="LayoutRules\SA1513UnitTests.cs" />
+    <Compile Include="LayoutRules\SA1515UnitTests.cs" />
     <Compile Include="LayoutRules\SA1516UnitTests.cs" />
     <Compile Include="LayoutRules\SA1517UnitTests.cs" />
     <Compile Include="LayoutRules\SA1518UnitTests.cs" />

@@ -138,6 +138,9 @@
   <data name="SA1513CodeFix" xml:space="preserve">
     <value>Insert blank line after curly brace</value>
   </data>
+  <data name="SA1515CodeFix" xml:space="preserve">
+    <value>Insert blank line before comment</value>
+  </data>
   <data name="SA1516CodeFix" xml:space="preserve">
     <value>Insert new line</value>
   </data>

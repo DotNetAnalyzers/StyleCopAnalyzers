@@ -125,6 +125,15 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert blank line before comment.
+        /// </summary>
+        internal static string SA1515CodeFix {
+            get {
+                return ResourceManager.GetString("SA1515CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Insert new line.
         /// </summary>
         internal static string SA1516CodeFix {
