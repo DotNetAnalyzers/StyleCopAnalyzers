@@ -108,10 +108,41 @@
             return (trailingWhitespaceIndex >= 0) ? SyntaxFactory.TriviaList(triviaList.Take(trailingWhitespaceIndex)) : triviaList;
         }
 
+        /// <summary>
+        /// Strips all leading whitespace trivia from the trivia list until a non-whitespace trivia is encountered.
+        /// </summary>
+        /// <param name="triviaList">The trivia list to strip of its leading whitespace.</param>
+        /// <returns>The modified triviaList.</returns>
         internal static SyntaxTriviaList WithoutLeadingWhitespace(this SyntaxTriviaList triviaList)
         {
             var nonWhitespaceIndex = IndexOfFirstNonWhitespaceTrivia(triviaList);
             return (nonWhitespaceIndex >= 0) ? SyntaxFactory.TriviaList(triviaList.Take(nonWhitespaceIndex)) : SyntaxFactory.TriviaList();
+        }
+
+        /// <summary>
+        /// <para>
+        /// Builds a trivia list that contains the given trivia.
+        /// </para>
+        /// <para>
+        /// This method combines the trailing and leading trivia of the tokens between which the given trivia is defined.
+        /// </para>
+        /// </summary>
+        /// <param name="trivia">The trivia to create the list from.</param>
+        /// <param name="triviaIndex">The index of the trivia in the created trivia list.</param>
+        /// <returns>The created trivia list.</returns>
+        internal static SyntaxTriviaList GetContainingTriviaList(SyntaxTrivia trivia, out int triviaIndex)
+        {
+            var token = trivia.Token;
+            triviaIndex = token.TrailingTrivia.IndexOf(trivia);
+            if (triviaIndex != -1)
+            {
+                var nextToken = token.GetNextToken(includeZeroWidth: true);
+                return token.TrailingTrivia.AddRange(nextToken.LeadingTrivia);
+            }
+
+            var prevToken = token.GetPreviousToken();
+            triviaIndex = prevToken.TrailingTrivia.Count + token.LeadingTrivia.IndexOf(trivia);
+            return prevToken.TrailingTrivia.AddRange(token.LeadingTrivia);
         }
     }
 }

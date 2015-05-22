@@ -1,8 +1,13 @@
 ﻿namespace StyleCop.Analyzers.LayoutRules
 {
+    using System;
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Text;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A single-line comment within C# code is followed by a blank line.
@@ -70,30 +75,120 @@
         /// </summary>
         public const string DiagnosticId = "SA1512";
         private const string Title = "Single-line comments must not be followed by blank line";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "Single-line comments must not be followed by blank line";
         private const string Category = "StyleCop.CSharp.LayoutRules";
         private const string Description = "A single-line comment within C# code is followed by a blank line.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1512.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        {
-            get
-            {
-                return SupportedDiagnosticsValue;
-            }
-        }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => SupportedDiagnosticsValue;
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterCompilationStartAction(this.HandleCompilationStart);
+        }
+
+        private void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            var diagnosticOptions = context.Compilation.Options.SpecificDiagnosticOptions;
+            context.RegisterSyntaxTreeActionHonorExclusions(c => { this.HandleSyntaxTreeAnalysis(c, diagnosticOptions); });
+        }
+
+        private void HandleSyntaxTreeAnalysis(SyntaxTreeAnalysisContext context, ImmutableDictionary<string, ReportDiagnostic> specificDiagnosticOptions)
+        {
+            var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
+
+            foreach (var trivia in syntaxRoot.DescendantTrivia().Where(trivia => trivia.IsKind(SyntaxKind.SingleLineCommentTrivia)))
+            {
+                if (trivia.ToString().StartsWith("////"))
+                {
+                    // ignore commented out code
+                    continue;
+                }
+
+                int triviaIndex;
+                var triviaList = TriviaHelper.GetContainingTriviaList(trivia, out triviaIndex);
+
+                if (!IsOnOwnLine(triviaList, triviaIndex))
+                {
+                    // ignore comments after other code elements.
+                    continue;
+                }
+
+                var trailingBlankLineCount = GetTrailingBlankLineCount(triviaList, ref triviaIndex);
+                if (trailingBlankLineCount == 0)
+                {
+                    // ignore comments that are not followed by a blank line
+                    continue;
+                }
+                else if (trailingBlankLineCount > 1)
+                {
+                    if (specificDiagnosticOptions.GetValueOrDefault(SA1507CodeMustNotContainMultipleBlankLinesInARow.DiagnosticId, ReportDiagnostic.Default) != ReportDiagnostic.Suppress)
+                    {
+                        // ignore comments that are followed by multiple blank lines -> the multiple blank lines will be reported by SA1507
+                        continue;
+                    }
+                }
+                else
+                {
+                    if ((triviaIndex < triviaList.Count) && triviaList[triviaIndex].IsKind(SyntaxKind.SingleLineCommentTrivia))
+                    {
+                        // ignore a single blank line in between two single line comments.
+                        continue;
+                    }
+                }
+
+                var diagnosticSpan = TextSpan.FromBounds(trivia.SpanStart, trivia.SpanStart + 2);
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, diagnosticSpan)));
+            }
+        }
+
+        private static bool IsOnOwnLine(SyntaxTriviaList triviaList, int triviaIndex)
+        {
+            while (triviaIndex >= 0)
+            {
+                if (triviaList[triviaIndex].IsKind(SyntaxKind.EndOfLineTrivia))
+                {
+                    return true;
+                }
+
+                triviaIndex--;
+            }
+
+            return false;
+        }
+
+        private static int GetTrailingBlankLineCount(SyntaxTriviaList triviaList, ref int triviaIndex)
+        {
+            int eolCount = 0;
+
+            for (var i = triviaIndex + 1; i < triviaList.Count; i++)
+            {
+                switch (triviaList[i].Kind())
+                {
+                    case SyntaxKind.WhitespaceTrivia:
+                        // ignore whitespace
+                        break;
+
+                    case SyntaxKind.EndOfLineTrivia:
+                        eolCount++;
+                        break;
+
+                    default:
+                        triviaIndex = i;
+                        return Math.Max(0, eolCount - 1);
+                }
+            }
+
+            triviaIndex = triviaList.Count;
+            return Math.Max(0, eolCount - 1);
         }
     }
 }
