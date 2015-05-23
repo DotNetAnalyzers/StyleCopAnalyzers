@@ -66,6 +66,12 @@
         {
             TypeDeclarationSyntax typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
+            if (typeDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+            {
+                // This is handled by SA1619
+                return;
+            }
+
             this.HandleMemberDeclaration(context, typeDeclaration, typeDeclaration.TypeParameterList);
         }
 
