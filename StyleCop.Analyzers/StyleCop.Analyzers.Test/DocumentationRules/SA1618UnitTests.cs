@@ -13,7 +13,7 @@
     /// </summary>
     public class SA1618UnitTests : CodeFixVerifier
     {
-        public string DiagnosticId { get; } = SA1611ElementParametersMustBeDocumented.DiagnosticId;
+        public string DiagnosticId { get; } = SA1618GenericTypeParametersMustBeDocumented.DiagnosticId;
 
         public static IEnumerable<object[]> Members
         {
@@ -44,6 +44,34 @@
         public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMembersWithoutTypeParametersAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    public void Foo() { }
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestTypesWithoutTypeParametersAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class Foo { }";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 

@@ -9,7 +9,6 @@
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
 
-
     /// <summary>
     /// A generic C# element is missing documentation for one or more of its generic type parameters.
     /// </summary>
@@ -91,6 +90,12 @@
 
         private void HandleMemberDeclaration(SyntaxNodeAnalysisContext context, SyntaxNode node, TypeParameterListSyntax typeParameterList)
         {
+            if (typeParameterList == null)
+            {
+                // The member does not have a type parameter list
+                return;
+            }
+
             var documentation = node.GetDocumentationCommentTriviaSyntax();
 
             if (documentation == null)
