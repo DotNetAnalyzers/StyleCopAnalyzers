@@ -2,7 +2,11 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
+
 
     /// <summary>
     /// A <c>&lt;typeparam&gt;</c> tag within the XML header documentation for a generic C# element is missing a
@@ -27,13 +31,13 @@
         /// </summary>
         public const string DiagnosticId = "SA1621";
         private const string Title = "Generic type parameter documentation must declare parameter name";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "Generic type parameter documentation must declare parameter name";
         private const string Category = "StyleCop.CSharp.DocumentationRules";
         private const string Description = "A <typeparam> tag within the XML header documentation for a generic C# element is missing a name attribute, or contains an empty name attribute.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1621.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -50,7 +54,39 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleXmlElement, SyntaxKind.XmlElement);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleXmlEmptyElement, SyntaxKind.XmlEmptyElement);
+        }
+
+        private void HandleXmlElement(SyntaxNodeAnalysisContext context)
+        {
+            XmlElementSyntax emptyElement = context.Node as XmlElementSyntax;
+
+            var name = emptyElement?.StartTag?.Name;
+
+            HandleElement(context, emptyElement, name, emptyElement?.StartTag?.GetLocation());
+        }
+
+        private void HandleXmlEmptyElement(SyntaxNodeAnalysisContext context)
+        {
+            XmlEmptyElementSyntax emptyElement = context.Node as XmlEmptyElementSyntax;
+
+            var name = emptyElement?.Name;
+
+            HandleElement(context, emptyElement, name, emptyElement?.GetLocation());
+        }
+
+        private static void HandleElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax element, XmlNameSyntax name, Location alternativeDiagnosticLocation)
+        {
+            if (string.Equals(name.ToString(), XmlCommentHelper.TypeParamTag))
+            {
+                var nameAttribute = XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>(element);
+
+                if (string.IsNullOrWhiteSpace(nameAttribute?.Identifier?.Identifier.ValueText))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, nameAttribute?.GetLocation() ?? alternativeDiagnosticLocation));
+                }
+            }
         }
     }
 }
