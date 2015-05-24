@@ -6,6 +6,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A single-line comment within C# code is not preceded by a blank line.
@@ -119,7 +120,7 @@
                 }
 
                 int triviaIndex;
-                var triviaList = GetContainingTriviaList(trivia, out triviaIndex);
+                var triviaList = TriviaHelper.GetContainingTriviaList(trivia, out triviaIndex);
 
                 if (!IsOnOwnLine(triviaList, triviaIndex))
                 {
@@ -268,20 +269,6 @@
             }
 
             return false;
-        }
-
-        private static SyntaxTriviaList GetContainingTriviaList(SyntaxTrivia trivia, out int triviaIndex)
-        {
-            var token = trivia.Token;
-            triviaIndex = token.TrailingTrivia.IndexOf(trivia);
-            if (triviaIndex != -1)
-            {
-                return token.TrailingTrivia;
-            }
-
-            var prevToken = token.GetPreviousToken();
-            triviaIndex = prevToken.TrailingTrivia.Count + token.LeadingTrivia.IndexOf(trivia);
-            return prevToken.TrailingTrivia.AddRange(token.LeadingTrivia);
         }
     }
 }
