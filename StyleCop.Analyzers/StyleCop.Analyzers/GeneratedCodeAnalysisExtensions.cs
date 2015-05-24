@@ -184,7 +184,7 @@ namespace StyleCop.Analyzers
         {
             return Regex.IsMatch(
                 Path.GetFileName(filePath),
-                @"(^service|^TemporaryGeneratedFile_.*|^assemblyinfo|^assemblyattributes|\.(g\.i|g|designer|generated|assemblyattributes))\.(cs|vb)$",
+                @"\.designer\.cs$",
                 RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
         }
     }
