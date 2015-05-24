@@ -38,7 +38,7 @@
         /// to indicate that the diagnostic is disabled by default because it is an alternative to a reference StyleCop
         /// rule.
         /// </value>
-        internal static bool DisabledAlternative => true;
+        internal static bool DisabledAlternative => false;
 
         /// <summary>
         /// Gets a reference value which can be passed to
