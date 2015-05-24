@@ -7,7 +7,6 @@
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
 
-
     /// <summary>
     /// A <c>&lt;typeparam&gt;</c> tag within the XML header documentation for a generic C# element is missing a
     /// <c>name</c> attribute, or contains an empty <c>name</c> attribute.
@@ -60,20 +59,20 @@
 
         private void HandleXmlElement(SyntaxNodeAnalysisContext context)
         {
-            XmlElementSyntax emptyElement = context.Node as XmlElementSyntax;
+            XmlElementSyntax element = (XmlElementSyntax)context.Node;
 
-            var name = emptyElement?.StartTag?.Name;
+            var name = element.StartTag?.Name;
 
-            HandleElement(context, emptyElement, name, emptyElement?.StartTag?.GetLocation());
+            HandleElement(context, element, name, element.StartTag?.GetLocation());
         }
 
         private void HandleXmlEmptyElement(SyntaxNodeAnalysisContext context)
         {
-            XmlEmptyElementSyntax emptyElement = context.Node as XmlEmptyElementSyntax;
+            XmlEmptyElementSyntax element = (XmlEmptyElementSyntax)context.Node;
 
-            var name = emptyElement?.Name;
+            var name = element.Name;
 
-            HandleElement(context, emptyElement, name, emptyElement?.GetLocation());
+            HandleElement(context, element, name, element.GetLocation());
         }
 
         private static void HandleElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax element, XmlNameSyntax name, Location alternativeDiagnosticLocation)

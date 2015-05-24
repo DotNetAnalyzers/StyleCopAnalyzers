@@ -9,7 +9,7 @@
     using Xunit;
 
     /// <summary>
-    /// This class contains unit tests for <see cref="SA1616ElementReturnValueDocumentationMustHaveText"/>-
+    /// This class contains unit tests for <see cref="SA1616ElementReturnValueDocumentationMustHaveText"/>.
     /// </summary>
     public class SA1616UnitTests : DiagnosticVerifier
     {

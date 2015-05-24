@@ -142,6 +142,13 @@ namespace TestHelper
             return result;
         }
 
+        public DiagnosticResult WithMessageFormat(LocalizableString messageFormat)
+        {
+            DiagnosticResult result = this;
+            result.MessageFormat = messageFormat;
+            return result;
+        }
+
         public DiagnosticResult WithLocation(int line, int column)
         {
             return this.WithLocation("Test0.cs", line, column);

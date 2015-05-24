@@ -18,7 +18,7 @@
         internal const string InheritdocXmlTag = "inheritdoc";
         internal const string ReturnsXmlTag = "returns";
         internal const string ValueXmlTag = "value";
-        internal const string SeeTag = "see";
+        internal const string SeeXmlTag = "see";
         internal const string ParamXmlTag = "param";
         internal const string TypeParamXmlTag = "typeparam";
         internal const string CrefArgumentName = "cref";

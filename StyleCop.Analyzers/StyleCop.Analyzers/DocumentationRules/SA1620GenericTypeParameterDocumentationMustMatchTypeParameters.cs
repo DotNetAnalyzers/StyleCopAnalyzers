@@ -34,19 +34,21 @@
         /// </summary>
         public const string DiagnosticId = "SA1620";
         private const string Title = "Generic type parameter documentation must match type parameters";
-        private const string MessageFormat = "{0}";
         private const string Category = "StyleCop.CSharp.DocumentationRules";
         private const string Description = "The &lt;typeparam&gt; tags within the Xml header documentation for a generic C# element do not match the generic type parameters on the element.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1620.html";
 
-        private const string MissingTypeParamForDocumentation = "The type parameter '{0}' does not exist.";
-        private const string TypeParamWrongOrder = "The type parameter documentation for '{0}' should be at position {1}.";
+        private const string MissingTypeParamForDocumentationMessageFormat = "The type parameter '{0}' does not exist.";
+        private const string TypeParamWrongOrderMessageFormat = "The type parameter documentation for '{0}' should be at position {1}.";
 
-        private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+        private static readonly DiagnosticDescriptor MissingTypeParameterDescriptor =
+            new DiagnosticDescriptor(DiagnosticId, Title, MissingTypeParamForDocumentationMessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+
+        private static readonly DiagnosticDescriptor OrderDescriptor =
+                   new DiagnosticDescriptor(DiagnosticId, Title, TypeParamWrongOrderMessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
-            ImmutableArray.Create(Descriptor);
+            ImmutableArray.Create(MissingTypeParameterDescriptor);
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
@@ -105,12 +107,12 @@
 
             if (!parentTypeParameters.Contains(nameAttribute.Identifier.Identifier.ValueText))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, nameAttribute?.Identifier?.GetLocation() ?? alternativeDiagnosticLocation, string.Format(MissingTypeParamForDocumentation, nameAttribute.Identifier.Identifier.ValueText)));
+                context.ReportDiagnostic(Diagnostic.Create(MissingTypeParameterDescriptor, nameAttribute?.Identifier?.GetLocation() ?? alternativeDiagnosticLocation, nameAttribute.Identifier.Identifier.ValueText));
             }
-            else if (parentTypeParameters[index] != nameAttribute.Identifier.Identifier.ValueText)
+            else if (parentTypeParameters.Length <= index || parentTypeParameters[index] != nameAttribute.Identifier.Identifier.ValueText)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, nameAttribute?.Identifier?.GetLocation() ?? alternativeDiagnosticLocation, 
-                    string.Format(TypeParamWrongOrder, nameAttribute.Identifier.Identifier.ValueText, parentTypeParameters.IndexOf(nameAttribute.Identifier.Identifier.ValueText) + 1)));
+                context.ReportDiagnostic(Diagnostic.Create(OrderDescriptor, nameAttribute?.Identifier?.GetLocation() ?? alternativeDiagnosticLocation, 
+                    nameAttribute.Identifier.Identifier.ValueText, parentTypeParameters.IndexOf(nameAttribute.Identifier.Identifier.ValueText) + 1));
             }
         }
 

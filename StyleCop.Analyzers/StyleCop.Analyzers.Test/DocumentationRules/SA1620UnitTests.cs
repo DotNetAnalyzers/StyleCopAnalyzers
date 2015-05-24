@@ -38,17 +38,6 @@
             }
         }
 
-        public static IEnumerable<object[]> Declarations
-        {
-            get
-            {
-                yield return new[] { "    public ClassName Method(string foo, string bar) { return null; }" };
-                yield return new[] { "    public delegate ClassName Method(string foo, string bar);" };
-                yield return new[] { "    public ClassName(string foo, string bar) { }" };
-                yield return new[] { "    public ClassName this[string foo, string bar] { get { return null; } set { } }" };
-            }
-        }
-
         [Fact]
         public async Task TestEmptySourceAsync()
         {
@@ -169,10 +158,14 @@ public class ClassName
     /// <typeparam name=""Ta"">Param 1</param>
     public ##
 }";
+
+            var diagnostic = this.CSharpDiagnostic()
+                .WithMessageFormat("The type parameter documentation for '{0}' should be at position {1}.");
+
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(10, 26).WithArguments("The type parameter documentation for 'Tb' should be at position 2."),
-                this.CSharpDiagnostic().WithLocation(11, 26).WithArguments("The type parameter documentation for 'Ta' should be at position 1.")
+                diagnostic .WithLocation(10, 26).WithArguments("Tb", 2),
+                diagnostic .WithLocation(11, 26).WithArguments("Ta", 1)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);
@@ -190,10 +183,13 @@ public class ClassName
 /// <typeparam name=""Ta"">Param 1</param>
 public ##";
 
+            var diagnostic = this.CSharpDiagnostic()
+                .WithMessageFormat("The type parameter documentation for '{0}' should be at position {1}.");
+
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(5, 22).WithArguments("The type parameter documentation for 'Tb' should be at position 2."),
-                this.CSharpDiagnostic().WithLocation(6, 22).WithArguments("The type parameter documentation for 'Ta' should be at position 1.")
+                diagnostic.WithLocation(5, 22).WithArguments("Tb", 2),
+                diagnostic.WithLocation(6, 22).WithArguments("Ta", 1)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);
@@ -300,10 +296,10 @@ public class ClassName
     public ##
 }";
 
-            var expected = new[]
-            {
-                this.CSharpDiagnostic().WithLocation(12, 26).WithArguments("The type parameter 'Tc' does not exist.")
-            };
+            var diagnostic = this.CSharpDiagnostic()
+                .WithMessageFormat("The type parameter '{0}' does not exist.");
+
+            var expected = diagnostic.WithLocation(12, 26).WithArguments("Tc");
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);
         }
@@ -321,10 +317,58 @@ public class ClassName
 /// <typeparam name=""Tc"">Param 3</param>
 public ##";
 
-            var expected = new[]
-            {
-                this.CSharpDiagnostic().WithLocation(7, 22).WithArguments("The type parameter 'Tc' does not exist.")
-            };
+            var diagnostic = this.CSharpDiagnostic()
+                .WithMessageFormat("The type parameter '{0}' does not exist.");
+
+            var expected = diagnostic.WithLocation(7, 22).WithArguments("Tc");
+
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(Members))]
+        public async Task TestMembersWithTooManyDocumentationAsync(string p)
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <typeparam name=""Ta"">Param 1</param>
+    /// <typeparam name=""Tb"">Param 2</param>
+    /// <typeparam name=""Tb"">Param 3</param>
+    public ##
+}";
+
+            var diagnostic = this.CSharpDiagnostic()
+                .WithMessageFormat("The type parameter documentation for '{0}' should be at position {1}.");
+
+            var expected = diagnostic.WithLocation(12, 26).WithArguments("Tb", 2);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(Types))]
+        public async Task TestTypesWithTooMabyDocumentationAsync(string p)
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+/// <typeparam name=""Ta"">Param 1</param>
+/// <typeparam name=""Tb"">Param 2</param>
+/// <typeparam name=""Tb"">Param 3</param>
+public ##";
+
+            var diagnostic = this.CSharpDiagnostic()
+                .WithMessageFormat("The type parameter documentation for '{0}' should be at position {1}.");
+
+            var expected = diagnostic.WithLocation(7, 22).WithArguments("Tb", 2);
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);
         }

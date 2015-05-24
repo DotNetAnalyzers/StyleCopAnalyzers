@@ -9,7 +9,7 @@
     using Xunit;
 
     /// <summary>
-    /// This class contains unit tests for <see cref="SA1601PartialElementsMustBeDocumented"/>-
+    /// This class contains unit tests for <see cref="SA1601PartialElementsMustBeDocumented"/>.
     /// </summary>
     public class SA1601UnitTests : CodeFixVerifier
     {

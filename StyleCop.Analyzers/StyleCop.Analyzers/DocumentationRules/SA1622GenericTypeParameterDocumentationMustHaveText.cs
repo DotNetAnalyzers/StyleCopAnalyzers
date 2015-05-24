@@ -7,7 +7,6 @@
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
 
-
     /// <summary>
     /// A <c>&lt;typeparam&gt;</c> tag within the XML header documentation for a generic C# element is empty.
     /// </summary>

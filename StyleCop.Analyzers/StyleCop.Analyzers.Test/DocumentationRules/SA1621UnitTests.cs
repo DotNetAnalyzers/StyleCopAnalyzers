@@ -11,7 +11,7 @@
     /// <summary>
     /// This class contains unit tests for <see cref="SA1621GenericTypeParameterDocumentationMustDeclareParameterName"/>.
     /// </summary>
-    public class SA1621UnitTests : CodeFixVerifier
+    public class SA1621UnitTests : DiagnosticVerifier
     {
         public static IEnumerable<object[]> Members
         {

@@ -11,10 +11,8 @@
     /// <summary>
     /// This class contains unit tests for <see cref="SA1619GenericTypeParametersMustBeDocumentedPartialClass"/>.
     /// </summary>
-    public class SA1619UnitTests : CodeFixVerifier
+    public class SA1619UnitTests : DiagnosticVerifier
     {
-        public string DiagnosticId { get; } = SA1619GenericTypeParametersMustBeDocumentedPartialClass.DiagnosticId;
-        
         public static IEnumerable<object[]> Types
         {
             get

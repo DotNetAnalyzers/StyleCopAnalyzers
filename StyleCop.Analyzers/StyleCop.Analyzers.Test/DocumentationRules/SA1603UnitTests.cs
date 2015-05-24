@@ -9,7 +9,7 @@
     using Xunit;
 
     /// <summary>
-    /// This class contains unit tests for <see cref="SA1603DocumentationMustContainValidXml"/>-
+    /// This class contains unit tests for <see cref="SA1603DocumentationMustContainValidXml"/>.
     /// </summary>
     public class SA1603UnitTests : CodeFixVerifier
     {

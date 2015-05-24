@@ -9,7 +9,7 @@
     using Xunit;
 
     /// <summary>
-    /// This class contains unit tests for <see cref="SA1622GenericTypeParameterDocumentationMustHaveText"/>-
+    /// This class contains unit tests for <see cref="SA1622GenericTypeParameterDocumentationMustHaveText"/>.
     /// </summary>
     public class SA1622UnitTests : DiagnosticVerifier
     {
