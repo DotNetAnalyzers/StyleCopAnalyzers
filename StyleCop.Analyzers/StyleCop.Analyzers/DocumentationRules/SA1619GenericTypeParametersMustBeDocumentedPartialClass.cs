@@ -136,7 +136,7 @@
                 return;
             }
 
-            var xmlParameterNames = documentation.Content.GetXmlElements(XmlCommentHelper.TypeParamTag)
+            var xmlParameterNames = documentation.Content.GetXmlElements(XmlCommentHelper.TypeParamXmlTag)
                 .Select(XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>)
                 .Where(x => x != null)
                 .ToImmutableArray();

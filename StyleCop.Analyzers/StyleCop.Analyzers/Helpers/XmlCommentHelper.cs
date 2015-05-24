@@ -19,8 +19,8 @@
         internal const string ReturnsXmlTag = "returns";
         internal const string ValueXmlTag = "value";
         internal const string SeeTag = "see";
-        internal const string ParamTag = "param";
-        internal const string TypeParamTag = "typeparam";
+        internal const string ParamXmlTag = "param";
+        internal const string TypeParamXmlTag = "typeparam";
         internal const string CrefArgumentName = "cref";
         internal const string NameArgumentName = "name";
 

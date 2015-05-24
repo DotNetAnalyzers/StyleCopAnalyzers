@@ -78,7 +78,7 @@
 
         private static void HandleElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax element, XmlNameSyntax name, Location alternativeDiagnosticLocation)
         {
-            if (string.Equals(name.ToString(), XmlCommentHelper.TypeParamTag))
+            if (string.Equals(name.ToString(), XmlCommentHelper.TypeParamXmlTag))
             {
                 var nameAttribute = XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>(element);
 

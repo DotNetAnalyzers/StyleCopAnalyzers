@@ -78,7 +78,7 @@
             ImmutableArray<string> parentTypeParameters = parentTypeParametersEnumerable.ToImmutableArray();
 
             ImmutableArray<XmlNodeSyntax> nodes = syntax.Content
-                .Where(node => string.Equals(GetName(node)?.ToString(), XmlCommentHelper.TypeParamTag))
+                .Where(node => string.Equals(GetName(node)?.ToString(), XmlCommentHelper.TypeParamXmlTag))
                 .ToImmutableArray();
 
             for (int i = 0; i < nodes.Length; i++)

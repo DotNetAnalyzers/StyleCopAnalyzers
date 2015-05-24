@@ -63,7 +63,7 @@
 
             var name = emptyElement?.StartTag?.Name;
 
-            if (string.Equals(name.ToString(), XmlCommentHelper.TypeParamTag) && XmlCommentHelper.IsConsideredEmpty(emptyElement))
+            if (string.Equals(name.ToString(), XmlCommentHelper.TypeParamXmlTag) && XmlCommentHelper.IsConsideredEmpty(emptyElement))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, emptyElement.GetLocation()));
             }
@@ -73,7 +73,7 @@
         {
             XmlEmptyElementSyntax emptyElement = context.Node as XmlEmptyElementSyntax;
 
-            if (string.Equals(emptyElement?.Name.ToString(), XmlCommentHelper.TypeParamTag))
+            if (string.Equals(emptyElement?.Name.ToString(), XmlCommentHelper.TypeParamXmlTag))
             {
                 // <typeparam .../> is empty.
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, emptyElement.GetLocation()));
