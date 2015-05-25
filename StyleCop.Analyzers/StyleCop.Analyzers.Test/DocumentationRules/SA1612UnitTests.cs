@@ -19,7 +19,6 @@
             {
                 yield return new[] { "    public ClassName Method(string foo, string bar) { return null; }" };
                 yield return new[] { "    public delegate ClassName Method(string foo, string bar);" };
-                yield return new[] { "    public ClassName(string foo, string bar) { }" };
                 yield return new[] { "    public ClassName this[string foo, string bar] { get { return null; } set { } }" };
             }
         }
@@ -103,8 +102,8 @@ $$
 
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(10, 21),
-                this.CSharpDiagnostic().WithLocation(11, 21)
+                this.CSharpDiagnostic().WithLocation(10, 21).WithArguments("boo"),
+                this.CSharpDiagnostic().WithLocation(11, 21).WithArguments("far")
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
@@ -130,6 +129,63 @@ public class ClassName
 $$
 }";
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(Declarations))]
+        public async Task TestMembersWithAllDocumentationWrongOrderAsync(string p)
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <param name=""bar"">Param 2</param>
+    /// <param name=""foo"">Param 1</param>
+    $$
+}";
+
+            var diagnostic = this.CSharpDiagnostic()
+                .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}.");
+
+            var expected = new[]
+            {
+                diagnostic.WithLocation(10, 22).WithArguments("bar", 2),
+                diagnostic.WithLocation(11, 22).WithArguments("foo", 1)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", p), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(Declarations))]
+        public async Task TestMembersWithTooManyDocumentationAsync(string p)
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <param name=""foo"">Param 1</param>
+    /// <param name=""bar"">Param 2</param>
+    /// <param name=""bar"">Param 3</param>
+    $$
+}";
+
+            var diagnostic = this.CSharpDiagnostic()
+                .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}.");
+
+            var expected = diagnostic.WithLocation(12, 22).WithArguments("bar", 2);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", p), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
