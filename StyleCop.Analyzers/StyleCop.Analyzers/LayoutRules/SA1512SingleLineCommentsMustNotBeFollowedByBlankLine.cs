@@ -122,6 +122,12 @@
                     continue;
                 }
 
+                if (IsPartOfFileHeader(triviaList, triviaIndex))
+                {
+                    // ignore comments that are part of the file header.
+                    continue;
+                }
+
                 var trailingBlankLineCount = GetTrailingBlankLineCount(triviaList, ref triviaIndex);
                 if (trailingBlankLineCount == 0)
                 {
@@ -163,6 +169,40 @@
             }
 
             return false;
+        }
+
+        private static bool IsPartOfFileHeader(SyntaxTriviaList triviaList, int triviaIndex)
+        {
+            if (triviaList.FullSpan.Start > 0)
+            {
+                return false;
+            }
+
+            var inSingleLineComment = false;
+
+            for (var i = 0; i < triviaList.Count; i++)
+            {
+                switch (triviaList[i].Kind())
+                {
+                case SyntaxKind.WhitespaceTrivia:
+                    break;
+                case SyntaxKind.EndOfLineTrivia:
+                    if (!inSingleLineComment)
+                    {
+                        return triviaIndex < i;
+                    }
+
+                    inSingleLineComment = false;
+                    break;
+                case SyntaxKind.SingleLineCommentTrivia:
+                    inSingleLineComment = true;
+                    break;
+                default:
+                    return triviaIndex < i;
+                }
+            }
+
+            return true;
         }
 
         private static int GetTrailingBlankLineCount(SyntaxTriviaList triviaList, ref int triviaIndex)
