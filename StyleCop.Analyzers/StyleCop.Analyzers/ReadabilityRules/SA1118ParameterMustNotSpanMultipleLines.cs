@@ -23,7 +23,7 @@
     /// <code language="csharp">
     /// return JoinStrings(
     ///     "John",
-    ///     "Smith" + 
+    ///     "Smith" +
     ///     " Doe");
     /// </code>
     ///

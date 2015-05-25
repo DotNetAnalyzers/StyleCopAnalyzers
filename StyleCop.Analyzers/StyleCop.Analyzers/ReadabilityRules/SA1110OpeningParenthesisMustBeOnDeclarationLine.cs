@@ -85,7 +85,7 @@
             {
                 return;
             }
-               
+
             var parameterListSyntax = conversionOperator.ParameterList;
 
             if (parameterListSyntax != null && !parameterListSyntax.OpenParenToken.IsMissing)
@@ -255,7 +255,7 @@
         private void HandleInvocationExpression(SyntaxNodeAnalysisContext context)
         {
             var invocationExpression = (InvocationExpressionSyntax) context.Node;
-            
+
             var identifierNameSyntax = invocationExpression.Expression as IdentifierNameSyntax ??
                                                         invocationExpression.Expression.DescendantNodes().OfType<IdentifierNameSyntax>().LastOrDefault();
 

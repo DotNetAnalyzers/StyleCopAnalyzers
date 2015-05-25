@@ -11,7 +11,7 @@
     /// </summary>
     /// <remarks>
     /// <para>
-    /// A violation of this rule occurs when a using static directive is placed before a normal or an alias using directive. 
+    /// A violation of this rule occurs when a using static directive is placed before a normal or an alias using directive.
     /// Placing the using static directives together below normal and alias using-directives can make the code cleaner and easier to read,
     /// and can help make it easier to identify the static members used throughout the code.
     /// </para>

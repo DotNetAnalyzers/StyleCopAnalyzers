@@ -24,7 +24,7 @@
     /// <code language="csharp">
     /// public object Method()
     /// {
-    ///     return null; 
+    ///     return null;
     /// }
     /// </code>
     ///

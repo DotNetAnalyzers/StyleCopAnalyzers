@@ -20,12 +20,12 @@
     /// <code language="csharp">
     /// public bool Enabled
     /// {
-    ///     get 
-    ///     { 
+    ///     get
+    ///     {
     ///         Console.WriteLine("Getting the enabled flag.");
-    /// 
-    /// 
-    ///         return this.enabled; 
+    ///
+    ///
+    ///         return this.enabled;
     ///     }
     /// }
     /// </code>

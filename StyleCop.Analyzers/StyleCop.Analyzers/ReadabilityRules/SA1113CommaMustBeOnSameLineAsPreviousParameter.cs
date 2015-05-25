@@ -19,11 +19,11 @@
     /// public string JoinName(string first, string last)
     /// {
     ///     string name = JoinStrings(
-    ///         first, 
+    ///         first,
     ///         last);
     /// }
     ///
-    /// public int this[int x, 
+    /// public int this[int x,
     ///    int y]
     /// {
     ///     get { return this.items[x, y]; }

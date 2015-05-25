@@ -73,8 +73,8 @@
                     {
                         string name = declarator.Identifier.ToString();
 
-                        if (!string.IsNullOrEmpty(name) 
-                            && char.IsLower(name[0]) 
+                        if (!string.IsNullOrEmpty(name)
+                            && char.IsLower(name[0])
                             && !NamedTypeHelpers.IsContainedInNativeMethodsClass(declaration))
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptor, declarator.Identifier.GetLocation(), name));

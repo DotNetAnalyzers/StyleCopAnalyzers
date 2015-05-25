@@ -32,7 +32,7 @@
 
         /// <summary>
         /// This helper is used by documentation diagnostics to check if a XML comment should be considered empty.
-        /// A comment is empty if 
+        /// A comment is empty if
         /// - it is null
         /// - it does not have any text in any XML element and it does not have an empty XML element in it.
         /// </summary>

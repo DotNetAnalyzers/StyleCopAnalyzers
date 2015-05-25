@@ -89,7 +89,7 @@ namespace Foot
         [Fact]
         public async Task TestCorrectSpacingAsync()
         {
-            
+
             await this.VerifyCSharpDiagnosticAsync(CorrectCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 

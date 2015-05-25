@@ -13,7 +13,7 @@
     ///
     /// <para>A closing square bracket must never be preceded by whitespace, unless it is the first character on the
     /// line.</para>
-    /// 
+    ///
     /// <para>A closing square bracket must be followed by whitespace, unless it is the last character on the line, it
     /// is followed by a closing bracket or an opening parenthesis, it is followed by a comma or semicolon, or it is
     /// followed by certain types of operator symbols.</para>

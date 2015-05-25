@@ -36,7 +36,7 @@
     ///
     /// <code language="csharp">
     /// /// &lt;summary&gt;
-    /// /// Gets the name of the customer. 
+    /// /// Gets the name of the customer.
     /// /// &lt;/summary&gt;
     /// public string Name
     /// {
@@ -66,7 +66,7 @@
     ///
     /// <code language="csharp">
     /// /// &lt;summary&gt;
-    /// /// Gets or sets the name of the customer. 
+    /// /// Gets or sets the name of the customer.
     /// /// &lt;/summary&gt;
     /// protected string Name
     /// {
@@ -82,7 +82,7 @@
     /// internal class Class1
     /// {
     ///     /// &lt;summary&gt;
-    ///     /// Gets or sets the name of the customer. 
+    ///     /// Gets or sets the name of the customer.
     ///     /// &lt;/summary&gt;
     ///     protected string Name
     ///     {
@@ -98,7 +98,7 @@
     ///     public class Class2
     ///     {
     ///         /// &lt;summary&gt;
-    ///         /// Gets or sets the name of the customer. 
+    ///         /// Gets or sets the name of the customer.
     ///         /// &lt;/summary&gt;
     ///         public string Name
     ///         {
@@ -124,7 +124,7 @@
     ///         public class Class3
     ///         {
     ///             /// &lt;summary&gt;
-    ///             /// Gets or sets the name of the customer. 
+    ///             /// Gets or sets the name of the customer.
     ///             /// &lt;/summary&gt;
     ///             public string Name
     ///             {
@@ -147,7 +147,7 @@
     ///     public class Class2
     ///     {
     ///         /// &lt;summary&gt;
-    ///         /// Gets or sets the name of the customer. 
+    ///         /// Gets or sets the name of the customer.
     ///         /// &lt;/summary&gt;
     ///         internal string Name
     ///         {

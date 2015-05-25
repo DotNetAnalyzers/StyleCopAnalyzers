@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
 
     internal class EnumerableHelpers
     {
@@ -41,8 +42,9 @@
                     yield return enumerator1.Current;
                     hasMore1 = enumerator1.MoveNext();
                 }
-                else // hasMore2
+                else
                 {
+                    Debug.Assert(hasMore2, nameof(hasMore2));
                     yield return enumerator2.Current;
                     hasMore2 = enumerator2.MoveNext();
                 }

@@ -14,7 +14,7 @@
     /// <para>A violation of this rule occurs when a clause within a query expression does not begin on the same line as
     /// the previous clause, or on the line after the query clause. For example:</para>
     /// <code language="csharp">
-    /// object x = select a in b 
+    /// object x = select a in b
     ///     from c;
     /// </code>
     /// <para>The query clause can correctly be written as:</para>
@@ -23,9 +23,9 @@
     /// </code>
     /// <para>or:</para>
     /// <code language="csharp">
-    /// object x = 
-    ///     select a 
-    ///     in b 
+    /// object x =
+    ///     select a
+    ///     in b
     ///     from c;
     /// </code>
     /// </remarks>

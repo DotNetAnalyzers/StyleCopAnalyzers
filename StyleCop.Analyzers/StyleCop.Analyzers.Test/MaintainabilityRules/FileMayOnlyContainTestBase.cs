@@ -1,8 +1,7 @@
-﻿using Microsoft.CodeAnalysis;
-using Xunit;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using TestHelper;
+using Xunit;
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
