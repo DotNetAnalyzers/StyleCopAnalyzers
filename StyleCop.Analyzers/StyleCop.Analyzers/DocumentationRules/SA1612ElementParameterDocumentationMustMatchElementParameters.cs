@@ -32,7 +32,6 @@
         /// </summary>
         public const string DiagnosticId = "SA1612";
         private const string Title = "Element parameter documentation must match element parameters";
-        private const string MessageFormat = "Element parameter documentation must match element parameters";
         private const string Category = "StyleCop.CSharp.DocumentationRules";
         private const string Description = "The documentation describing the parameters to a C# method, constructor, delegate or indexer element does not match the actual parameters on the element.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1612.html";
