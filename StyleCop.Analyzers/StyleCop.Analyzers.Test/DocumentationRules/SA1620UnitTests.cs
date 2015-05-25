@@ -354,7 +354,7 @@ public class ClassName
 
         [Theory]
         [MemberData(nameof(Types))]
-        public async Task TestTypesWithTooMabyDocumentationAsync(string p)
+        public async Task TestTypesWithTooManyDocumentationAsync(string p)
         {
             var testCode = @"
 /// <summary>
