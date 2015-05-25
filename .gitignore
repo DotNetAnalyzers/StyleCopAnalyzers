@@ -1,0 +1,14 @@
+# Build output
+bin/
+obj/
+
+# Artifacts of the IDE and build
+*.sln.ide/
+.vs/
+packages/
+*.suo
+*.user
+TestResults/
+.nuget/NuGet.exe
+build/nuget/
+*.log
