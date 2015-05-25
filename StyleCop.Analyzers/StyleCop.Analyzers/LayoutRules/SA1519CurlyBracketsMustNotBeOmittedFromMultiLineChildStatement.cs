@@ -25,16 +25,16 @@
     /// multiple lines, to increase the readability and maintainability of the code.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1519CurlyBrackets : DiagnosticAnalyzer
+    public class SA1519CurlyBracketsMustNotBeOmittedFromMultiLineChildStatement : DiagnosticAnalyzer
     {
         /// <summary>
-        /// The ID for diagnostics produced by the <see cref="SA1519CurlyBrackets"/> analyzer.
+        /// The ID for diagnostics produced by the <see cref="SA1519CurlyBracketsMustNotBeOmittedFromMultiLineChildStatement"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1519";
-        private const string Title = "Curly brackets must not be omitted";
-        private const string MessageFormat = "Curly brackets must not be omitted";
+        private const string Title = "Curly brackets must not be omitted from multi-line child statement";
+        private const string MessageFormat = "Curly brackets must not be omitted from multi-line child statement";
         private const string Category = "StyleCop.CSharp.LayoutRules";
-        private const string Description = "The opening and closing curly brackets for a C# statement have been omitted.";
+        private const string Description = "The opening and closing curly brackets for a multi-line C# statement have been omitted.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1519.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
