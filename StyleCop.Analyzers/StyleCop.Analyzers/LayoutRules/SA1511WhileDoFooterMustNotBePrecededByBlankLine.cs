@@ -61,7 +61,7 @@
             var doStatement = (DoStatementSyntax)context.Node;
             var whileKeyword = doStatement.WhileKeyword;
 
-            if (!TriviaHelper.HasLeadingBlankLines(whileKeyword))
+            if (!whileKeyword.HasLeadingBlankLines())
             {
                 return;
             }

@@ -73,37 +73,40 @@
         private void HandleElseStatement(SyntaxNodeAnalysisContext context)
         {
             var elseClause = (ElseClauseSyntax)context.Node;
+            var elseKeyword = elseClause.ElseKeyword;
 
-            if (!TriviaHelper.HasLeadingBlankLines(elseClause.ElseKeyword))
+            if (!elseKeyword.HasLeadingBlankLines())
             {
                 return;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, elseClause.ElseKeyword.GetLocation(), elseClause.ElseKeyword.ToString()));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, elseKeyword.GetLocation(), elseKeyword.ToString()));
         }
 
         private void HandleCatchClause(SyntaxNodeAnalysisContext context)
         {
             var catchClause = (CatchClauseSyntax)context.Node;
+            var catchKeyword = catchClause.CatchKeyword;
 
-            if (!TriviaHelper.HasLeadingBlankLines(catchClause.CatchKeyword))
+            if (!catchKeyword.HasLeadingBlankLines())
             {
                 return;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, catchClause.CatchKeyword.GetLocation(), catchClause.CatchKeyword.ToString()));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, catchKeyword.GetLocation(), catchKeyword.ToString()));
         }
 
         private void HandleFinallyClause(SyntaxNodeAnalysisContext context)
         {
             var finallyClause = (FinallyClauseSyntax)context.Node;
+            var finallyKeyword = finallyClause.FinallyKeyword;
 
-            if (!TriviaHelper.HasLeadingBlankLines(finallyClause.FinallyKeyword))
+            if (!finallyKeyword.HasLeadingBlankLines())
             {
                 return;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, finallyClause.FinallyKeyword.GetLocation(), finallyClause.FinallyKeyword.ToString()));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, finallyKeyword.GetLocation(), finallyKeyword.ToString()));
         }
     }
 }

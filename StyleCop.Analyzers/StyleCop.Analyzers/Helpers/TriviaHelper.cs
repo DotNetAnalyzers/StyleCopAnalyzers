@@ -150,7 +150,7 @@
         /// </summary>
         /// <param name="token">The token to check for leading blank lines.</param>
         /// <returns>True if the token has leading blank lines.</returns>
-        internal static bool HasLeadingBlankLines(SyntaxToken token)
+        internal static bool HasLeadingBlankLines(this SyntaxToken token)
         {
             if (!token.HasLeadingTrivia)
             {
