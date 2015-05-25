@@ -120,6 +120,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DocumentationRules\FileHeaderTestBase.cs" />
     <Compile Include="DocumentationRules\SA1600UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1601UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1602UnitTests.cs" />
@@ -144,6 +145,13 @@
     <Compile Include="DocumentationRules\SA1621UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1622UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1626UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1633UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1634UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1635UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1637UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1638UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1639UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1640UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1642UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1643UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1651UnitTests.cs" />
