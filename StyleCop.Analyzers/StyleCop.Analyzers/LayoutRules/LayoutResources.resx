@@ -135,6 +135,9 @@
   <data name="SA1509CodeFix" xml:space="preserve">
     <value>Remove blank lines preceding this curly bracket</value>
   </data>
+  <data name="SA1511CodeFix" xml:space="preserve">
+    <value>Remove blank line before while</value>
+  </data>
   <data name="SA1512CodeFix" xml:space="preserve">
     <value>Remove blank line after comment</value>
   </data>

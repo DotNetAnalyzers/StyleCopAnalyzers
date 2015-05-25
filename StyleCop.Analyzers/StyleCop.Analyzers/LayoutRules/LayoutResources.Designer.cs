@@ -116,6 +116,15 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Remove blank line before while.
+        /// </summary>
+        internal static string SA1511CodeFix {
+            get {
+                return ResourceManager.GetString("SA1511CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove blank line after comment.
         /// </summary>
         internal static string SA1512CodeFix {
