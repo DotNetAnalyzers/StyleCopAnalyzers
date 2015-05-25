@@ -138,6 +138,11 @@
     <Compile Include="DocumentationRules\SA1615UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1616UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1617UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1618UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1619UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1620UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1621UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1622UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1626UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1642UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1643UnitTests.cs" />
