@@ -1,11 +1,10 @@
 ﻿namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System.Collections.Immutable;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using System.Diagnostics;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
     /// A call to <see cref="O:System.Diagnostics.Debug.Assert"/> in C# code does not include a descriptive message.
