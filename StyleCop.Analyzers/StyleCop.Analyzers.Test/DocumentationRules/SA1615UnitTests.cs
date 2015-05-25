@@ -29,8 +29,10 @@
             {
                 yield return new[] { "    public          Task      MethodAsync(string foo, string bar) { return null; }" };
                 yield return new[] { "    public          Task<int> MethodAsync(string foo, string bar) { return null; }" };
+                yield return new[] { "    public          TASK      MethodAsync(string foo, string bar) { return null; }" };
                 yield return new[] { "    public delegate Task      MethodAsync(string foo, string bar);" };
                 yield return new[] { "    public delegate Task<int> MethodAsync(string foo, string bar);" };
+                yield return new[] { "    public delegate TASK      MethodAsync(string foo, string bar);" };
             }
         }
 
@@ -46,6 +48,10 @@
                 yield return new[] { "    public          Task<int> MethodAsync(string foo, string bar) { return null; }", "Fact" };
                 yield return new[] { "    public          Task<int> MethodAsync(string foo, string bar) { return null; }", "Theory" };
                 yield return new[] { "    public          Task<int> MethodAsync(string foo, string bar) { return null; }", "Test" };
+                yield return new[] { "    public          TASK      MethodAsync(string foo, string bar) { return null; }", "TestMethod" };
+                yield return new[] { "    public          TASK      MethodAsync(string foo, string bar) { return null; }", "Fact" };
+                yield return new[] { "    public          TASK      MethodAsync(string foo, string bar) { return null; }", "Theory" };
+                yield return new[] { "    public          TASK      MethodAsync(string foo, string bar) { return null; }", "Test" };
             }
         }
 
@@ -159,6 +165,7 @@ $$
         {
             var testCode = @"
 using System.Threading.Tasks;
+using TASK = System.Threading.Tasks.Task<int>;
 /// <summary>
 /// Foo
 /// </summary>
@@ -171,6 +178,7 @@ $$
 }";
             var fixedCode = @"
 using System.Threading.Tasks;
+using TASK = System.Threading.Tasks.Task<int>;
 /// <summary>
 /// Foo
 /// </summary>
@@ -183,7 +191,7 @@ public class ClassName
 $$
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(11, 21);
+            var expected = this.CSharpDiagnostic().WithLocation(12, 21);
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -196,6 +204,7 @@ $$
         {
             var testCode = @"
 using System.Threading.Tasks;
+using TASK = System.Threading.Tasks.Task<int>;
 /// <summary>
 /// Foo
 /// </summary>
@@ -211,6 +220,7 @@ internal sealed class ##Attribute : System.Attribute { }
 ";
             var fixedCode = @"
 using System.Threading.Tasks;
+using TASK = System.Threading.Tasks.Task<int>;
 /// <summary>
 /// Foo
 /// </summary>
@@ -226,7 +236,7 @@ $$
 internal sealed class ##Attribute : System.Attribute { }
 ";
 
-            var expected = this.CSharpDiagnostic().WithLocation(12, 21);
+            var expected = this.CSharpDiagnostic().WithLocation(13, 21);
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration).Replace("##", testAttribute), expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode.Replace("$$", declaration).Replace("##", testAttribute), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
