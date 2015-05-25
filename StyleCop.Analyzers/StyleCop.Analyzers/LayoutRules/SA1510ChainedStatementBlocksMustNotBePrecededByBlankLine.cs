@@ -1,8 +1,12 @@
 ﻿namespace StyleCop.Analyzers.LayoutRules
 {
+    using System;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Chained C# statements are separated by a blank line.
@@ -38,7 +42,7 @@
         /// </summary>
         public const string DiagnosticId = "SA1510";
         private const string Title = "Chained statement blocks must not be preceded by blank line";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "'{0}' statement must not be preceded by a blank line";
         private const string Category = "StyleCop.CSharp.LayoutRules";
         private const string Description = "Chained C# statements are separated by a blank line.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1510.html";
@@ -61,7 +65,45 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleElseStatement, SyntaxKind.ElseClause);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleCatchClause, SyntaxKind.CatchClause);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleFinallyClause, SyntaxKind.FinallyClause);
+        }
+
+        private void HandleElseStatement(SyntaxNodeAnalysisContext context)
+        {
+            var elseClause = (ElseClauseSyntax)context.Node;
+
+            if (!TriviaHelper.HasLeadingBlankLines(elseClause.ElseKeyword))
+            {
+                return;
+            }
+
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, elseClause.ElseKeyword.GetLocation(), elseClause.ElseKeyword.ToString()));
+        }
+
+        private void HandleCatchClause(SyntaxNodeAnalysisContext context)
+        {
+            var catchClause = (CatchClauseSyntax)context.Node;
+
+            if (!TriviaHelper.HasLeadingBlankLines(catchClause.CatchKeyword))
+            {
+                return;
+            }
+
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, catchClause.CatchKeyword.GetLocation(), catchClause.CatchKeyword.ToString()));
+        }
+
+        private void HandleFinallyClause(SyntaxNodeAnalysisContext context)
+        {
+            var finallyClause = (FinallyClauseSyntax)context.Node;
+
+            if (!TriviaHelper.HasLeadingBlankLines(finallyClause.FinallyKeyword))
+            {
+                return;
+            }
+
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, finallyClause.FinallyKeyword.GetLocation(), finallyClause.FinallyKeyword.ToString()));
         }
     }
 }

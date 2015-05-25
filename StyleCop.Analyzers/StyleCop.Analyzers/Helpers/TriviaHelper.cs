@@ -144,5 +144,112 @@
             triviaIndex = prevToken.TrailingTrivia.Count + token.LeadingTrivia.IndexOf(trivia);
             return prevToken.TrailingTrivia.AddRange(token.LeadingTrivia);
         }
+
+        /// <summary>
+        /// Determines if the given token has leading blank lines. Leading whitespace on the same line as the token is ignored.
+        /// </summary>
+        /// <param name="token">The token to check for leading blank lines.</param>
+        /// <returns>True if the token has leading blank lines.</returns>
+        internal static bool HasLeadingBlankLines(SyntaxToken token)
+        {
+            if (!token.HasLeadingTrivia)
+            {
+                return false;
+            }
+
+            var triviaList = token.LeadingTrivia;
+
+            // skip any leading whitespace
+            var index = triviaList.Count - 1;
+            while ((index >= 0) && triviaList[index].IsKind(SyntaxKind.WhitespaceTrivia))
+            {
+                index--;
+            }
+
+            if ((index < 0) || !triviaList[index].IsKind(SyntaxKind.EndOfLineTrivia))
+            {
+                return false;
+            }
+
+            var blankLineCount = -1;
+            while (index >= 0)
+            {
+                switch (triviaList[index].Kind())
+                {
+                    case SyntaxKind.WhitespaceTrivia:
+                        // ignore;
+                        break;
+                    case SyntaxKind.EndOfLineTrivia:
+                        blankLineCount++;
+                        break;
+                    case SyntaxKind.IfDirectiveTrivia:
+                    case SyntaxKind.ElifDirectiveTrivia:
+                    case SyntaxKind.ElseDirectiveTrivia:
+                    case SyntaxKind.EndIfDirectiveTrivia:
+                        // directive trivia have an embedded end of line
+                        blankLineCount++;
+                        return blankLineCount > 0;
+                    default:
+                        return blankLineCount > 0;
+                }
+
+                index--;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Strips all leading blank lines from the given token.
+        /// </summary>
+        /// <param name="token">The token to strip.</param>
+        /// <returns>A new token without leading blank lines.</returns>
+        internal static SyntaxToken WithoutLeadingBlankLines(this SyntaxToken token)
+        {
+            var triviaList = token.LeadingTrivia;
+            var leadingWhitespaceStart = triviaList.Count - 1;
+
+            // skip leading whitespace in front of the while keyword
+            while ((leadingWhitespaceStart > 0) && triviaList[leadingWhitespaceStart - 1].IsKind(SyntaxKind.WhitespaceTrivia))
+            {
+                leadingWhitespaceStart--;
+            }
+
+            var blankLinesStart = leadingWhitespaceStart - 1;
+            var done = false;
+            while (!done && (blankLinesStart >= 0))
+            {
+                switch (triviaList[blankLinesStart].Kind())
+                {
+                    case SyntaxKind.WhitespaceTrivia:
+                    case SyntaxKind.EndOfLineTrivia:
+                        blankLinesStart--;
+                        break;
+
+                    case SyntaxKind.IfDirectiveTrivia:
+                    case SyntaxKind.ElifDirectiveTrivia:
+                    case SyntaxKind.ElseDirectiveTrivia:
+                    case SyntaxKind.EndIfDirectiveTrivia:
+                        // directives include an embedded end of line
+                        blankLinesStart++;
+                        done = true;
+                        break;
+
+                    default:
+                        // include the first end of line (as it is part of the non blank line trivia)
+                        while (!triviaList[blankLinesStart].IsKind(SyntaxKind.EndOfLineTrivia))
+                        {
+                            blankLinesStart++;
+                        }
+
+                        blankLinesStart++;
+                        done = true;
+                        break;
+                }
+            }
+
+            var newLeadingTrivia = SyntaxFactory.TriviaList(triviaList.Take(blankLinesStart).Concat(triviaList.Skip(leadingWhitespaceStart)));
+            return token.WithLeadingTrivia(newLeadingTrivia);
+        }
     }
 }

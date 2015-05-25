@@ -5,6 +5,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The while footer at the bottom of a do-while statement is separated from the statement by a blank line.
@@ -60,59 +61,12 @@
             var doStatement = (DoStatementSyntax)context.Node;
             var whileKeyword = doStatement.WhileKeyword;
 
-            if (!whileKeyword.HasLeadingTrivia)
-            {
-                return;
-            }
-
-            if (!HasLeadingBlankLines(whileKeyword.LeadingTrivia))
+            if (!TriviaHelper.HasLeadingBlankLines(whileKeyword))
             {
                 return;
             }
 
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, whileKeyword.GetLocation()));
-        }
-
-        private static bool HasLeadingBlankLines(SyntaxTriviaList triviaList)
-        {
-            // skip any leading whitespace
-            var index = triviaList.Count - 1;
-            while ((index >= 0) && triviaList[index].IsKind(SyntaxKind.WhitespaceTrivia))
-            {
-                index--;
-            }
-
-            if ((index < 0) || !triviaList[index].IsKind(SyntaxKind.EndOfLineTrivia))
-            {
-                return false;
-            }
-
-            var blankLineCount = -1;
-            while (index >= 0)
-            {
-                switch (triviaList[index].Kind())
-                {
-                case SyntaxKind.WhitespaceTrivia:
-                    // ignore;
-                    break;
-                case SyntaxKind.EndOfLineTrivia:
-                    blankLineCount++;
-                    break;
-                case SyntaxKind.IfDirectiveTrivia:
-                case SyntaxKind.ElifDirectiveTrivia:
-                case SyntaxKind.ElseDirectiveTrivia:
-                case SyntaxKind.EndIfDirectiveTrivia:
-                    // directive trivia have an embedded end of line
-                    blankLineCount++;
-                    return blankLineCount > 0;
-                default:
-                    return blankLineCount > 0;
-                }
-
-                index--;
-            }
-
-            return true;
         }
     }
 }
