@@ -34,7 +34,7 @@
     ///         fullName = fullName.Trim();
     ///
     /// A line of commented-out code beginning with four slashes:
-    ///         ////fullName = asfd; 
+    ///         ////fullName = asfd;
     ///
     ///         return fullName;
     ///     }

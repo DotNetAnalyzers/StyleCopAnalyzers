@@ -113,7 +113,7 @@ $$
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
         }
-        
+
         [Theory]
         [MemberData(nameof(WithReturnValue))]
         public async Task TestMethodWithReturnTypeWithDocumentationAsync(string declaration)

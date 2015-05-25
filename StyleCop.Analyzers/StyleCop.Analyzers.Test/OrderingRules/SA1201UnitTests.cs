@@ -53,7 +53,7 @@ public struct FooStruct { }
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync("namespace OuterNamespace { " + testCode + " }", expected, CancellationToken.None).ConfigureAwait(false);
         }
-        
+
         [Fact]
         public async Task TestTypeMemberOrderCorrectOrderClassAsync()
         {

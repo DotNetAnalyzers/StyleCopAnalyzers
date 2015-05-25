@@ -22,7 +22,7 @@
     ///     get
     ///     {
     ///
-    ///         return this.enabled; 
+    ///         return this.enabled;
     ///     }
     /// }
     /// </code>

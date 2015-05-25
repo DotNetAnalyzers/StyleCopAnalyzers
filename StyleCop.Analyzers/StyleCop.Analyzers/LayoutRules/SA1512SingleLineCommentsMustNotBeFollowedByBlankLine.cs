@@ -23,7 +23,7 @@
     /// <code language="csharp">
     /// public bool Enabled
     /// {
-    ///     get 
+    ///     get
     ///     {
     ///         // Return the value of the 'enabled' field.
     ///
@@ -40,13 +40,13 @@
     /// <code language="csharp">
     /// public bool Enabled
     /// {
-    ///     get 
+    ///     get
     ///     {
     ///         // This is a sample comment which doesn't really say anything.
     ///         // This is another part of the comment.
     ///
     ///         // There is a blank line above this comment but that is ok.
-    ///         return this.enabled;  
+    ///         return this.enabled;
     ///     }
     /// }
     /// </code>
