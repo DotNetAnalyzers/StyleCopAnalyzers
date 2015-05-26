@@ -78,6 +78,30 @@
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleLambda, SyntaxKind.ParenthesizedLambdaExpression);
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleOperatorDeclaration, SyntaxKind.OperatorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleConstructorInitializer, SyntaxKind.BaseConstructorInitializer, SyntaxKind.ThisConstructorInitializer);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleElementBinding, SyntaxKind.ElementBindingExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleImpliticElementAccess, SyntaxKind.ImplicitElementAccess);
+        }
+
+        private void HandleImpliticElementAccess(SyntaxNodeAnalysisContext context)
+        {
+            var implicitElementAccess = (ImplicitElementAccessSyntax)context.Node;
+
+            AnalyzeArgumentList(context, implicitElementAccess.ArgumentList);
+        }
+
+        private void HandleElementBinding(SyntaxNodeAnalysisContext context)
+        {
+            var elementBinding = (ElementBindingExpressionSyntax) context.Node;
+
+            AnalyzeArgumentList(context, elementBinding.ArgumentList);
+        }
+
+        private void HandleConstructorInitializer(SyntaxNodeAnalysisContext context)
+        {
+            var constructorInitializer = (ConstructorInitializerSyntax) context.Node;
+
+            AnalyzeArgumentList(context, constructorInitializer.ArgumentList);
         }
 
         private void HandleOperatorDeclaration(SyntaxNodeAnalysisContext context)

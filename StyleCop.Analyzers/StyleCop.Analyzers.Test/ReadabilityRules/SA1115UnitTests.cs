@@ -87,6 +87,50 @@ string s)
         }
 
         [Fact]
+        public async Task TestConstructorInitializerEmptyLinesBetweenParameters()
+        {
+            var testCode = @"
+class Foo
+{
+    public Foo() : this(1,
+
+2) 
+    {
+    }
+
+    public Foo(int i, int z)
+    {
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestConstructorInitializerBaseEmptyLinesBetweenParameters()
+        {
+            var testCode = @"
+class FooParent
+{
+    public FooParent(int i, int j) {}
+}
+class Foo : FooParent
+{
+    public Foo(int i, int z) : base(i,
+
+z)
+    {
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 1);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestConstructorSecondParameterOnTheNextLine()
         {
             var testCode = @"
@@ -268,6 +312,31 @@ class Foo
         }
 
         [Fact]
+        public async Task TestIndexerCallInConditionalExpressionEmptyLinesBetweenParameters()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar()
+    {
+        var f = new Foo();
+        var b = f?[0,
+
+1];
+    }
+
+    public int this[int i, int j]
+    {
+        get { return 0; }
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(9, 1);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestIndexerCallUsingThisEmptyLinesBetweenParameters()
         {
             var testCode = @"
@@ -306,6 +375,75 @@ class Foo
     public int this[int i, int j]
     {
         get { return 0; }
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestIndexerCallInConditionalExpressionSecondParameterOnTheNextLine()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar()
+    {
+        var f = new Foo();
+        var b = f?[0,
+1];
+    }
+
+    public int this[int i, int j]
+    {
+        get { return 0; }
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestIndexerCallInObjectInitializerBlankLineBetweenParameters()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar()
+    {
+        var f = new Foo() {[0,
+
+1] =3}; 
+    }
+
+    public int this[int i, int j]
+    {
+        get { return 0; }
+        set {}
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 1);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestIndexerCallInObjectInitializerSecondParameterOnTheNextLine()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar()
+    {
+        var f = new Foo() {[0,
+1] =3}; 
+    }
+
+    public int this[int i, int j]
+    {
+        get { return 0; }
+        set {}
     }
 }";
 
