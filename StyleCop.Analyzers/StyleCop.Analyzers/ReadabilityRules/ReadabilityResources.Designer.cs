@@ -494,7 +494,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to The parameter must begin on the line after the previous parameter..
         /// </summary>
         internal static string SA1115MessageFormat {
             get {
