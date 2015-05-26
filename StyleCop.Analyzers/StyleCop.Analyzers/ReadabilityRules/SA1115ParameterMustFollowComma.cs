@@ -65,8 +65,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleBaseMethodDeclaration, SyntaxKind.ConstructorDeclaration, SyntaxKind.MethodDeclaration, SyntaxKind.OperatorDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleInvocation, SyntaxKind.InvocationExpression);
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleObjectCreation, SyntaxKind.ObjectCreationExpression);
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
@@ -77,7 +76,6 @@
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleAnonymousMethod, SyntaxKind.AnonymousMethodExpression);
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleLambda, SyntaxKind.ParenthesizedLambdaExpression);
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleOperatorDeclaration, SyntaxKind.OperatorDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleConstructorInitializer, SyntaxKind.BaseConstructorInitializer, SyntaxKind.ThisConstructorInitializer);
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleElementBinding, SyntaxKind.ElementBindingExpression);
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleImpliticElementAccess, SyntaxKind.ImplicitElementAccess);
@@ -102,13 +100,6 @@
             var constructorInitializer = (ConstructorInitializerSyntax) context.Node;
 
             AnalyzeArgumentList(context, constructorInitializer.ArgumentList);
-        }
-
-        private void HandleOperatorDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            var operatorDeclaration = (OperatorDeclarationSyntax) context.Node;
-
-            AnalyzeParameterList(context, operatorDeclaration.ParameterList);
         }
 
         private void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
@@ -237,18 +228,11 @@
             AnalyzeArgumentList(context, invocation.ArgumentList);
         }
 
-        private void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
+        private void HandleBaseMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var constructorDeclaration = (ConstructorDeclarationSyntax) context.Node;
+            var constructorDeclaration = (BaseMethodDeclarationSyntax) context.Node;
 
             AnalyzeParameterList(context, constructorDeclaration.ParameterList);
-        }
-
-        private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            var methodDeclaration = (MethodDeclarationSyntax)context.Node;
-
-            AnalyzeParameterList(context, methodDeclaration.ParameterList);
         }
 
         private static void AnalyzeArgumentList(SyntaxNodeAnalysisContext context, BaseArgumentListSyntax argumentListSyntax)
