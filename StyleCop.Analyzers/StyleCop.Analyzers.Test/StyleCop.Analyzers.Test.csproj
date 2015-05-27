@@ -16,6 +16,8 @@
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -72,6 +74,10 @@
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.Workspaces.Desktop, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.0.0\lib\net45\Microsoft.CodeAnalysis.Workspaces.Desktop.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -294,6 +300,7 @@
     <Compile Include="ReadabilityRules\SA1124UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1125UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1126UnitTests.cs" />
+    <Compile Include="Settings\SettingsUnitTests.cs" />
     <Compile Include="SpacingRules\NumberSignSpacingTestBase.cs" />
     <Compile Include="SpacingRules\SA1000UnitTests.cs" />
     <Compile Include="SpacingRules\SA1001UnitTests.cs" />

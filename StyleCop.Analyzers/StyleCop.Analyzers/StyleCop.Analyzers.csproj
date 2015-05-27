@@ -136,7 +136,9 @@
     <Compile Include="Helpers\NamedTypeHelpers.cs" />
     <Compile Include="Helpers\NameSyntaxHelpers.cs" />
     <Compile Include="Helpers\RenameHelper.cs" />
+    <Compile Include="Settings\SettingsHelper.cs" />
     <Compile Include="Helpers\SpecializedTasks.cs" />
+    <Compile Include="Settings\StyleCopSettings.cs" />
     <Compile Include="Helpers\SyntaxTreeHelpers.cs" />
     <Compile Include="Helpers\TokenHelpers.cs" />
     <Compile Include="Helpers\TriviaHelper.cs" />
@@ -410,6 +412,10 @@
     </Reference>
     <Reference Include="System.Collections.Immutable, Version=1.1.36.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.Collections.Immutable.1.1.36\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.7.0.1\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Composition.AttributedModel">
