@@ -298,32 +298,42 @@
                 // Invalid indexer #1
                 this.CSharpDiagnostic().WithLocation(8, 13),
                 this.CSharpDiagnostic().WithLocation(12, 13),
+
                 // Invalid indexer #2
                 this.CSharpDiagnostic().WithLocation(20, 13),
                 this.CSharpDiagnostic().WithLocation(21, 31),
                 this.CSharpDiagnostic().WithLocation(23, 13),
                 this.CSharpDiagnostic().WithLocation(24, 32),
+
                 // Invalid indexer #3
                 this.CSharpDiagnostic().WithLocation(30, 13),
                 this.CSharpDiagnostic().WithLocation(33, 13),
+
                 // Invalid indexer #4
                 this.CSharpDiagnostic().WithLocation(42, 31),
                 this.CSharpDiagnostic().WithLocation(46, 32),
+
                 // Invalid indexer #5
                 this.CSharpDiagnostic().WithLocation(53, 9),
                 this.CSharpDiagnostic().WithLocation(57, 9),
+
                 // Invalid indexer #6 (Only report once for accessor statements on a single line)
                 this.CSharpDiagnostic().WithLocation(65, 9),
                 this.CSharpDiagnostic().WithLocation(68, 9),
+
                 // Invalid indexer #7
                 this.CSharpDiagnostic().WithLocation(72, 34),
+
                 // Invalid indexer #8
                 this.CSharpDiagnostic().WithLocation(77, 35),
                 this.CSharpDiagnostic().WithLocation(78, 35),
+
                 // Invalid indexer #9
                 this.CSharpDiagnostic().WithLocation(81, 34),
+
                 // Invalid indexer #10
                 this.CSharpDiagnostic().WithLocation(87, 35),
+
                 // Invalid indexer #11
                 this.CSharpDiagnostic().WithLocation(91, 5)
             };

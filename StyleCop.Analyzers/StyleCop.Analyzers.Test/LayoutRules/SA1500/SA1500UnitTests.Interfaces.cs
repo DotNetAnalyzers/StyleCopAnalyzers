@@ -113,15 +113,20 @@
             {
                 // InvalidInterface1
                 this.CSharpDiagnostic().WithLocation(3, 40),
+
                 // InvalidInterface2
                 this.CSharpDiagnostic().WithLocation(6, 40),
+
                 // InvalidInterface3
                 this.CSharpDiagnostic().WithLocation(10, 40),
                 this.CSharpDiagnostic().WithLocation(11, 21),
+
                 // InvalidInterface4
                 this.CSharpDiagnostic().WithLocation(13, 40),
+
                 // InvalidInterface5
                 this.CSharpDiagnostic().WithLocation(18, 21),
+
                 // InvalidInterface6
                 this.CSharpDiagnostic().WithLocation(21, 5)
             };

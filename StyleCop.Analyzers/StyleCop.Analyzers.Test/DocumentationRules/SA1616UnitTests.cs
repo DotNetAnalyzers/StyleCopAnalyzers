@@ -136,6 +136,7 @@ $$
             var expected = this.CSharpDiagnostic().WithLocation(10, 8);
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
+
             // The code fix does not alter this case.
             await this.VerifyCSharpFixAsync(testCode.Replace("$$", declaration), testCode.Replace("$$", declaration), cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
@@ -160,6 +161,7 @@ $$
             var expected = this.CSharpDiagnostic().WithLocation(10, 8);
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
+
             // The code fix does not alter this case.
             await this.VerifyCSharpFixAsync(testCode.Replace("$$", declaration), testCode.Replace("$$", declaration), cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
@@ -184,6 +186,7 @@ $$
             var expected = this.CSharpDiagnostic().WithLocation(10, 8);
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
+
             // The code fix does not alter this case.
             await this.VerifyCSharpFixAsync(testCode.Replace("$$", declaration), testCode.Replace("$$", declaration), cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }

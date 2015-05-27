@@ -65,8 +65,6 @@ namespace TestHelper
             }
 
             var supportedDiagnosticsSpecificOptions = new Dictionary<string, ReportDiagnostic>();
-            // Report exceptions during the analysis process as errors
-            supportedDiagnosticsSpecificOptions.Add("AD0001", ReportDiagnostic.Error);
             foreach (var analyzer in analyzers)
             {
                 foreach (var diagnostic in analyzer.SupportedDiagnostics)
@@ -75,6 +73,9 @@ namespace TestHelper
                     supportedDiagnosticsSpecificOptions[diagnostic.Id] = ReportDiagnostic.Default;
                 }
             }
+
+            // Report exceptions during the analysis process as errors
+            supportedDiagnosticsSpecificOptions.Add("AD0001", ReportDiagnostic.Error);
 
             var diagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
             foreach (var project in projects)

@@ -110,15 +110,20 @@
             {
                 // InvalidEnum1
                 this.CSharpDiagnostic().WithLocation(3, 30),
+
                 // InvalidEnum2
                 this.CSharpDiagnostic().WithLocation(6, 30),
+
                 // InvalidEnum3
                 this.CSharpDiagnostic().WithLocation(10, 30),
                 this.CSharpDiagnostic().WithLocation(11, 14),
+
                 // InvalidEnum4
                 this.CSharpDiagnostic().WithLocation(13, 30),
+
                 // InvalidEnum5
                 this.CSharpDiagnostic().WithLocation(18, 14),
+
                 // InvalidEnum6
                 this.CSharpDiagnostic().WithLocation(21, 5)
             };

@@ -113,15 +113,20 @@
             {
                 // InvalidStruct1
                 this.CSharpDiagnostic().WithLocation(3, 34),
+
                 // InvalidStruct2
                 this.CSharpDiagnostic().WithLocation(6, 34),
+
                 // InvalidStruct3
                 this.CSharpDiagnostic().WithLocation(10, 34),
                 this.CSharpDiagnostic().WithLocation(11, 27),
+
                 // InvalidStruct4
                 this.CSharpDiagnostic().WithLocation(13, 34),
+
                 // InvalidStruct5
                 this.CSharpDiagnostic().WithLocation(18, 27),
+
                 // InvalidStruct6
                 this.CSharpDiagnostic().WithLocation(21, 5)
             };

@@ -47,6 +47,7 @@
                             if (messageParameter?.Expression != null)
                             {
                                 Optional<object> constantValue = context.SemanticModel.GetConstantValue(messageParameter.Expression);
+
                                 // Report a diagnostic if the message is constant and null or whitespace
                                 if (constantValue.HasValue && string.IsNullOrWhiteSpace(constantValue.Value as string))
                                 {

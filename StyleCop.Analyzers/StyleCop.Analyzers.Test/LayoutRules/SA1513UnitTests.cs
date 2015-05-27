@@ -450,16 +450,22 @@ public class Foo
             {
                 // Invalid #1
                 this.CSharpDiagnostic().WithLocation(17, 10),
+
                 // Invalid #2
                 this.CSharpDiagnostic().WithLocation(25, 6),
+
                 // Invalid #3
                 this.CSharpDiagnostic().WithLocation(35, 14),
+
                 // Invalid #4
                 this.CSharpDiagnostic().WithLocation(45, 10),
+
                 // Invalid #5
                 this.CSharpDiagnostic().WithLocation(52, 10),
+
                 // Invalid #6
                 this.CSharpDiagnostic().WithLocation(65, 14),
+
                 // Invalid #7
                 this.CSharpDiagnostic().WithLocation(73, 14)
             };

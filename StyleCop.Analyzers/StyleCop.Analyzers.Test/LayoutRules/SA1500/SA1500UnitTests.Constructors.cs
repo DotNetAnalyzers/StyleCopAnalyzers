@@ -133,15 +133,20 @@ public class Foo
             {
                 // Invalid constructor #1
                 this.CSharpDiagnostic().WithLocation(6, 18),
+
                 // Invalid constructor #2
                 this.CSharpDiagnostic().WithLocation(10, 24),
+
                 // Invalid constructor #3
                 this.CSharpDiagnostic().WithLocation(15, 24),
                 this.CSharpDiagnostic().WithLocation(16, 25),
+
                 // Invalid constructor #4
                 this.CSharpDiagnostic().WithLocation(19, 25),
+
                 // Invalid constructor #5
                 this.CSharpDiagnostic().WithLocation(25, 25),
+
                 // Invalid constructor #6
                 this.CSharpDiagnostic().WithLocation(29, 5)
             };

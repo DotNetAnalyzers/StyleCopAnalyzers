@@ -243,20 +243,25 @@ public class Foo
                 // Invalid event #1
                 this.CSharpDiagnostic().WithLocation(10, 13),
                 this.CSharpDiagnostic().WithLocation(14, 16),
+
                 // Invalid event #2
                 this.CSharpDiagnostic().WithLocation(22, 13),
                 this.CSharpDiagnostic().WithLocation(23, 33),
                 this.CSharpDiagnostic().WithLocation(25, 16),
                 this.CSharpDiagnostic().WithLocation(26, 33),
+
                 // Invalid event #3
                 this.CSharpDiagnostic().WithLocation(32, 13),
                 this.CSharpDiagnostic().WithLocation(35, 16),
+
                 // Invalid event #4
                 this.CSharpDiagnostic().WithLocation(44, 33),
                 this.CSharpDiagnostic().WithLocation(48, 33),
+
                 // Invalid event #5
                 this.CSharpDiagnostic().WithLocation(55, 9),
                 this.CSharpDiagnostic().WithLocation(59, 9),
+
                 // Invalid event #6 (Only report once for accessor statement on a single line)
                 this.CSharpDiagnostic().WithLocation(67, 9),
                 this.CSharpDiagnostic().WithLocation(70, 9)

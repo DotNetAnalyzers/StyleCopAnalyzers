@@ -113,15 +113,20 @@
             {
                 // InvalidClass1
                 this.CSharpDiagnostic().WithLocation(3, 32),
+
                 // InvalidClass2
                 this.CSharpDiagnostic().WithLocation(6, 32),
+
                 // InvalidClass3
                 this.CSharpDiagnostic().WithLocation(10, 32),
                 this.CSharpDiagnostic().WithLocation(11, 27),
+
                 // InvalidClass4
                 this.CSharpDiagnostic().WithLocation(13, 32),
+
                 // InvalidClass5
                 this.CSharpDiagnostic().WithLocation(18, 27),
+
                 // InvalidClass6
                 this.CSharpDiagnostic().WithLocation(21, 5)
             };

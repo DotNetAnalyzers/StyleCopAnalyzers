@@ -214,6 +214,7 @@ public struct FooStruct { }
     public string
 }
 ";
+
             // We don't care about the syntax errors.
             var expected = new[]
             {

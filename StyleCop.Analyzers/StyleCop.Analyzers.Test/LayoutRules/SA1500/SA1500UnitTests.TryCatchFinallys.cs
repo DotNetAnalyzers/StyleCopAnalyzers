@@ -256,10 +256,12 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(10, 13),
                 this.CSharpDiagnostic().WithLocation(12, 27),
                 this.CSharpDiagnostic().WithLocation(14, 17),
+
                 // Invalid try ... catch ... finally #2
                 this.CSharpDiagnostic().WithLocation(18, 13),
                 this.CSharpDiagnostic().WithLocation(21, 27),
                 this.CSharpDiagnostic().WithLocation(24, 17),
+
                 // Invalid try ... catch ... finally #3
                 this.CSharpDiagnostic().WithLocation(29, 13),
                 this.CSharpDiagnostic().WithLocation(30, 21),
@@ -267,14 +269,17 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(32, 21),
                 this.CSharpDiagnostic().WithLocation(33, 17),
                 this.CSharpDiagnostic().WithLocation(34, 21),
+
                 // Invalid try ... catch ... finally #4
                 this.CSharpDiagnostic().WithLocation(37, 13),
                 this.CSharpDiagnostic().WithLocation(39, 27),
                 this.CSharpDiagnostic().WithLocation(41, 17),
+
                 // Invalid try ... catch ... finally #5
                 this.CSharpDiagnostic().WithLocation(47, 21),
                 this.CSharpDiagnostic().WithLocation(50, 21),
                 this.CSharpDiagnostic().WithLocation(53, 21),
+
                 // Invalid try ... catch ... finally #6
                 this.CSharpDiagnostic().WithLocation(57, 9),
                 this.CSharpDiagnostic().WithLocation(60, 9),

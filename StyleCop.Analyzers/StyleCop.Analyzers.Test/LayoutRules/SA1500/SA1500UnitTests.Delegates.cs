@@ -243,28 +243,39 @@ public class Foo
             {
                 // Invalid delegate #1
                 this.CSharpDiagnostic().WithLocation(14, 37),
+
                 // Invalid delegate #2
                 this.CSharpDiagnostic().WithLocation(18, 37),
+
                 // Invalid delegate #3
                 this.CSharpDiagnostic().WithLocation(23, 37),
                 this.CSharpDiagnostic().WithLocation(24, 29),
+
                 // Invalid delegate #4
                 this.CSharpDiagnostic().WithLocation(27, 37),
+
                 // Invalid delegate #5
                 this.CSharpDiagnostic().WithLocation(33, 29),
+
                 // Invalid delegate #6
                 this.CSharpDiagnostic().WithLocation(37, 9),
+
                 // Invalid delegate #7
                 this.CSharpDiagnostic().WithLocation(41, 34),
+
                 // Invalid delegate #8
                 this.CSharpDiagnostic().WithLocation(45, 34),
+
                 // Invalid delegate #9
                 this.CSharpDiagnostic().WithLocation(50, 34),
                 this.CSharpDiagnostic().WithLocation(51, 29),
+
                 // Invalid delegate #10
                 this.CSharpDiagnostic().WithLocation(54, 34),
+
                 // Invalid delegate #11
                 this.CSharpDiagnostic().WithLocation(60, 29),
+
                 // Invalid delegate #12
                 this.CSharpDiagnostic().WithLocation(64, 9)
             };
