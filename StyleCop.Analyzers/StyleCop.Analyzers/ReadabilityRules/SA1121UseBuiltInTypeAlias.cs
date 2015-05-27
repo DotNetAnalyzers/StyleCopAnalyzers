@@ -243,7 +243,6 @@
         {
             // The only time a type name can appear as an argument is for the invocation expression created for the
             // nameof keyword. This assumption is the foundation of the following simple analysis algorithm.
-
             if (identifierNameSyntax.Parent == null)
             {
                 return false;

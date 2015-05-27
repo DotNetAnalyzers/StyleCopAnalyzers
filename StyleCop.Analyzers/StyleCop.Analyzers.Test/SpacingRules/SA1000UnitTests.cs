@@ -467,7 +467,6 @@ select x;";
         {
             // There is no way to have a 'yield' keyword which is not followed by a space. All we need to do is verify
             // that no diagnostic is reported for its use with a space.
-
             string statementWithSpace = @"yield return 3;";
             await this.TestKeywordStatementAsync(statementWithSpace, EmptyDiagnosticResults, statementWithSpace, returnType: "IEnumerable<int>").ConfigureAwait(false);
         }
@@ -477,7 +476,6 @@ select x;";
         {
             // There is no way to have a 'yield' keyword which is not followed by a space. All we need to do is verify
             // that no diagnostic is reported for its use with a space.
-
             string statementWithSpace = @"yield break;";
             await this.TestKeywordStatementAsync(statementWithSpace, EmptyDiagnosticResults, statementWithSpace, returnType: "IEnumerable<int>").ConfigureAwait(false);
         }
