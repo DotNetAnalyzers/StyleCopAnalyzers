@@ -91,7 +91,6 @@
                 if (binSyntax.Left is BinaryExpressionSyntax)
                 {
                     // Check if the operations are of the same kind
-
                     var left = (BinaryExpressionSyntax)binSyntax.Left;
                     if (left.OperatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken) || left.OperatorToken.IsKind(SyntaxKind.BarBarToken))
                     {
@@ -106,7 +105,6 @@
                 if (binSyntax.Right is BinaryExpressionSyntax)
                 {
                     // Check if the operations are of the same kind
-
                     var right = (BinaryExpressionSyntax)binSyntax.Right;
                     if (right.OperatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken) || right.OperatorToken.IsKind(SyntaxKind.BarBarToken))
                     {

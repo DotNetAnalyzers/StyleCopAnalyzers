@@ -161,6 +161,7 @@
             {
                 var genericNameArgumentNames = genericName.TypeArgumentList.Arguments.Cast<SimpleNameSyntax>().Select(p => p.Identifier.ToString());
                 var classParameterNames = typeParameterList?.Parameters.Select(p => p.Identifier.ToString()) ?? Enumerable.Empty<string>();
+
                 // Make sure the names match up
                 return genericNameArgumentNames.SequenceEqual(classParameterNames);
             }

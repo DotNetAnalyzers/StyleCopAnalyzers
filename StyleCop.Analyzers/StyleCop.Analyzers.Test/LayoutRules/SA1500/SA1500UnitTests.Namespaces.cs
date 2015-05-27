@@ -104,15 +104,20 @@ namespace InvalidNamespace6
             {
                 // InvalidNamespace1
                 this.CSharpDiagnostic().WithLocation(1, 29),
+
                 // InvalidNamespace2
                 this.CSharpDiagnostic().WithLocation(4, 29),
+
                 // InvalidNamespace3
                 this.CSharpDiagnostic().WithLocation(8, 29),
                 this.CSharpDiagnostic().WithLocation(9, 19),
+
                 // InvalidNamespace4
                 this.CSharpDiagnostic().WithLocation(11, 29),
+
                 // InvalidNamespace5
                 this.CSharpDiagnostic().WithLocation(16, 19),
+
                 // InvalidNamespace6
                 this.CSharpDiagnostic().WithLocation(19, 1)
             };

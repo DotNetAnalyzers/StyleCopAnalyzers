@@ -359,38 +359,51 @@ public class Foo
                 // Invalid property #1
                 this.CSharpDiagnostic().WithLocation(10, 13),
                 this.CSharpDiagnostic().WithLocation(14, 13),
+
                 // Invalid property #2
                 this.CSharpDiagnostic().WithLocation(22, 13),
                 this.CSharpDiagnostic().WithLocation(23, 31),
                 this.CSharpDiagnostic().WithLocation(25, 13),
                 this.CSharpDiagnostic().WithLocation(26, 32),
+
                 // Invalid property #3
                 this.CSharpDiagnostic().WithLocation(32, 13),
                 this.CSharpDiagnostic().WithLocation(35, 13),
+
                 // Invalid property #4
                 this.CSharpDiagnostic().WithLocation(44, 31),
                 this.CSharpDiagnostic().WithLocation(48, 32),
+
                 // Invalid property #5
                 this.CSharpDiagnostic().WithLocation(55, 9),
                 this.CSharpDiagnostic().WithLocation(59, 9),
+
                 // Invalid property #6 (Only report once for accessor statements on a single line)
                 this.CSharpDiagnostic().WithLocation(67, 9),
                 this.CSharpDiagnostic().WithLocation(70, 9),
+
                 // Invalid property #7
                 this.CSharpDiagnostic().WithLocation(76, 35),
+
                 // Invalid property #8
                 this.CSharpDiagnostic().WithLocation(79, 27),
+
                 // Invalid property #9
                 this.CSharpDiagnostic().WithLocation(84, 27),
                 this.CSharpDiagnostic().WithLocation(85, 35),
+
                 // Invalid property #10
                 this.CSharpDiagnostic().WithLocation(88, 28),
+
                 // Invalid property #11
                 this.CSharpDiagnostic().WithLocation(93, 5),
+
                 // Invalid property #12
                 this.CSharpDiagnostic().WithLocation(101, 11),
+
                 // Invalid property #13
                 this.CSharpDiagnostic().WithLocation(104, 45),
+
                 // Invalid property #14
                 this.CSharpDiagnostic().WithLocation(111, 45)
             };

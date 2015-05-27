@@ -199,15 +199,20 @@
             {
                 // Invalid if #1
                 this.CSharpDiagnostic().WithLocation(8, 21),
+
                 // Invalid if #2
                 this.CSharpDiagnostic().WithLocation(12, 21),
+
                 // Invalid if #3
                 this.CSharpDiagnostic().WithLocation(17, 21),
                 this.CSharpDiagnostic().WithLocation(18, 20),
+
                 // Invalid if #4
                 this.CSharpDiagnostic().WithLocation(21, 21),
+
                 // Invalid if #5
                 this.CSharpDiagnostic().WithLocation(27, 20),
+
                 // Invalid if #6
                 this.CSharpDiagnostic().WithLocation(31, 9)
             };
@@ -342,15 +347,20 @@
             {
                 // Invalid if ... else #1
                 this.CSharpDiagnostic().WithLocation(11, 14),
+
                 // Invalid if ... else #2
                 this.CSharpDiagnostic().WithLocation(18, 14),
+
                 // Invalid if ... else #3
                 this.CSharpDiagnostic().WithLocation(26, 14),
                 this.CSharpDiagnostic().WithLocation(27, 20),
+
                 // Invalid if ... else #4
                 this.CSharpDiagnostic().WithLocation(33, 14),
+
                 // Invalid if ... else #5
                 this.CSharpDiagnostic().WithLocation(42, 20),
+
                 // Invalid if ... else #6
                 this.CSharpDiagnostic().WithLocation(49, 9)
             };

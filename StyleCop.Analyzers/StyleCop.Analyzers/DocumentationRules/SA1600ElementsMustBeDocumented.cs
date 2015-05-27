@@ -244,15 +244,18 @@
 
         private bool NeedsComment(SyntaxTokenList modifiers, SyntaxKind defaultModifier)
         {
-
-            return (modifiers.Any(SyntaxKind.PublicKeyword)
+            if (!(modifiers.Any(SyntaxKind.PublicKeyword)
                 || modifiers.Any(SyntaxKind.ProtectedKeyword)
                 || modifiers.Any(SyntaxKind.InternalKeyword)
                 || defaultModifier == SyntaxKind.PublicKeyword
                 || defaultModifier == SyntaxKind.ProtectedKeyword
-                || defaultModifier == SyntaxKind.InternalKeyword)
-                // Ignore partial classes because they get reported as SA1601
-                && !modifiers.Any(SyntaxKind.PartialKeyword);
+                || defaultModifier == SyntaxKind.InternalKeyword))
+            {
+                return false;
+            }
+
+            // Also ignore partial classes because they get reported as SA1601
+            return !modifiers.Any(SyntaxKind.PartialKeyword);
         }
 
         private bool IsNestedType(BaseTypeDeclarationSyntax typeDeclaration)

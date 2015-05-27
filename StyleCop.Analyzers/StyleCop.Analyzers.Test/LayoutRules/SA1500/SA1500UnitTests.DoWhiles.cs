@@ -248,35 +248,48 @@
             {
                 // Invalid do ... while #1
                 this.CSharpDiagnostic().WithLocation(10, 9),
+
                 // Invalid do ... while #2
                 this.CSharpDiagnostic().WithLocation(13, 12),
+
                 // Invalid do ... while #3
                 this.CSharpDiagnostic().WithLocation(18, 12),
                 this.CSharpDiagnostic().WithLocation(19, 9),
+
                 // Invalid do ... while #4
                 this.CSharpDiagnostic().WithLocation(25, 9),
+
                 // Invalid do ... while #5
                 this.CSharpDiagnostic().WithLocation(30, 20),
+
                 // Invalid do ... while #6
                 this.CSharpDiagnostic().WithLocation(36, 20),
+
                 // Invalid do ... while #7
                 this.CSharpDiagnostic().WithLocation(40, 9),
+
                 // Invalid do ... while #8
                 this.CSharpDiagnostic().WithLocation(46, 9),
                 this.CSharpDiagnostic().WithLocation(47, 9),
+
                 // Invalid do ... while #9
                 this.CSharpDiagnostic().WithLocation(50, 12),
+
                 // Invalid do ... while #10
                 this.CSharpDiagnostic().WithLocation(56, 12),
                 this.CSharpDiagnostic().WithLocation(58, 9),
+
                 // Invalid do ... while #11
                 this.CSharpDiagnostic().WithLocation(61, 12),
                 this.CSharpDiagnostic().WithLocation(62, 20),
+
                 // Invalid do ... while #12
                 this.CSharpDiagnostic().WithLocation(66, 12),
                 this.CSharpDiagnostic().WithLocation(67, 20),
+
                 // Invalid do ... while #13
                 this.CSharpDiagnostic().WithLocation(70, 12),
+
                 // Invalid do ... while #14
                 this.CSharpDiagnostic().WithLocation(75, 12),
                 this.CSharpDiagnostic().WithLocation(76, 9)

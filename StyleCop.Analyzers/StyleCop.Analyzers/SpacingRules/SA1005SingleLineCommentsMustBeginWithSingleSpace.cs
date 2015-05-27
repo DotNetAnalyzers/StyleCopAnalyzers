@@ -143,7 +143,6 @@
 
             // No need to handle documentation comments ("///") because they're not
             // reported as SingleLineCommentTrivia.
-
             int spaceCount = 0;
             for (int i = 2; (i < text.Length) && (text[i] == ' '); i++)
             {

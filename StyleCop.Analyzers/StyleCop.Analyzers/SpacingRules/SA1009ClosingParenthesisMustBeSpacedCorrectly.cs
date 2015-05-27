@@ -128,12 +128,14 @@
 
             case SyntaxKind.PlusToken:
                 precedesStickyCharacter = nextToken.Parent.IsKind(SyntaxKind.UnaryPlusExpression);
+
                 // this will be reported as SA1022
                 suppressFollowingSpaceError = true;
                 break;
 
             case SyntaxKind.MinusToken:
                 precedesStickyCharacter = nextToken.Parent.IsKind(SyntaxKind.UnaryMinusExpression);
+
                 // this will be reported as SA1021
                 suppressFollowingSpaceError = true;
                 break;

@@ -84,7 +84,6 @@
                 if (binSyntax.Left is BinaryExpressionSyntax)
                 {
                     // Check if the operations are of the same kind
-
                     var left = (BinaryExpressionSyntax)binSyntax.Left;
 
                     if (!this.IsSameFamily(binSyntax.OperatorToken, left.OperatorToken))
@@ -96,7 +95,6 @@
                 if (binSyntax.Right is BinaryExpressionSyntax)
                 {
                     // Check if the operations are of the same kind
-
                     var right = (BinaryExpressionSyntax)binSyntax.Right;
 
                     if (!this.IsSameFamily(binSyntax.OperatorToken, right.OperatorToken))
