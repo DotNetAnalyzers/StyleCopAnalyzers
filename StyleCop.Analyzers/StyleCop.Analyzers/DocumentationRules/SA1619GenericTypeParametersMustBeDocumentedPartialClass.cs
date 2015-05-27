@@ -111,6 +111,12 @@
         {
             TypeDeclarationSyntax typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
+            if (typeDeclaration.TypeParameterList == null)
+            {
+                // We are only interested in generic types
+                return;
+            }
+
             if (!typeDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
             {
                 return;
