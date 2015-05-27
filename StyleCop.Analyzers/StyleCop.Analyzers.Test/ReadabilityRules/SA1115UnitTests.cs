@@ -1,4 +1,6 @@
-﻿namespace StyleCop.Analyzers.Test.ReadabilityRules
+﻿using System.Collections.Generic;
+
+namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
@@ -10,14 +12,14 @@
     public class SA1115UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestMethodDeclarationEmptyLinesBetweenParameters()
+        public async Task TestMethodDeclarationEmptyLinesBetweenParametersAsync()
         {
             var testCode = @"
 class Foo
@@ -39,7 +41,7 @@ int k)
         }
 
         [Fact]
-        public async Task TestMethodDeclarationSecondParameterOnTheNextLine()
+        public async Task TestMethodDeclarationSecondParameterOnTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -54,7 +56,7 @@ string s)
         }
 
         [Fact]
-        public async Task TestMethodDeclarationParametersAtTheSameLine()
+        public async Task TestMethodDeclarationParametersAtTheSameLineAsync()
         {
             var testCode = @"
 class Foo
@@ -68,7 +70,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestConstructorEmptyLinesBetweenParameters()
+        public async Task TestConstructorEmptyLinesBetweenParametersAsync()
         {
             var testCode = @"
 class Foo
@@ -87,7 +89,7 @@ string s)
         }
 
         [Fact]
-        public async Task TestConstructorInitializerEmptyLinesBetweenParameters()
+        public async Task TestConstructorInitializerEmptyLinesBetweenParametersAsync()
         {
             var testCode = @"
 class Foo
@@ -109,7 +111,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestConstructorInitializerBaseEmptyLinesBetweenParameters()
+        public async Task TestConstructorInitializerBaseEmptyLinesBetweenParametersAsync()
         {
             var testCode = @"
 class FooParent
@@ -131,7 +133,7 @@ z)
         }
 
         [Fact]
-        public async Task TestConstructorSecondParameterOnTheNextLine()
+        public async Task TestConstructorSecondParameterOnTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -146,7 +148,7 @@ string s)
         }
 
         [Fact]
-        public async Task TestConstructorParametersAtTheSameLine()
+        public async Task TestConstructorParametersAtTheSameLineAsync()
         {
             var testCode = @"
 class Foo
@@ -160,7 +162,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestMethodCallEmptyLinesBetweenParameters()
+        public async Task TestMethodCallEmptyLinesBetweenParametersAsync()
         {
             var testCode = @"
 class Foo
@@ -183,7 +185,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestMethodCallSecondParameterOnTheNextLine()
+        public async Task TestMethodCallSecondParameterOnTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -203,7 +205,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestMethodCallParametersAtTheSameLine()
+        public async Task TestMethodCallParametersAtTheSameLineAsync()
         {
             var testCode = @"
 class Foo
@@ -222,7 +224,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestConstructorCallEmptyLinesBetweenParameters()
+        public async Task TestConstructorCallEmptyLinesBetweenParametersAsync()
         {
             var testCode = @"
 class Foo
@@ -248,7 +250,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestConstructorCallSecondParameterOnTheNextLine()
+        public async Task TestConstructorCallSecondParameterOnTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -269,7 +271,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestConstructorCallParametersAtTheSameLine()
+        public async Task TestConstructorCallParametersAtTheSameLineAsync()
         {
             var testCode = @"
 class Foo
@@ -288,7 +290,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestIndexerCallEmptyLinesBetweenParameters()
+        public async Task TestIndexerCallEmptyLinesBetweenParametersAsync()
         {
             var testCode = @"
 class Foo
@@ -312,7 +314,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestIndexerCallInConditionalExpressionEmptyLinesBetweenParameters()
+        public async Task TestIndexerCallInConditionalExpressionEmptyLinesBetweenParametersAsync()
         {
             var testCode = @"
 class Foo
@@ -337,7 +339,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestIndexerCallUsingThisEmptyLinesBetweenParameters()
+        public async Task TestIndexerCallUsingThisEmptyLinesBetweenParametersAsync()
         {
             var testCode = @"
 class Foo
@@ -361,7 +363,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestIndexerCallSecondParameterOnTheNextLine()
+        public async Task TestIndexerCallSecondParameterOnTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -382,7 +384,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestIndexerCallInConditionalExpressionSecondParameterOnTheNextLine()
+        public async Task TestIndexerCallInConditionalExpressionSecondParameterOnTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -404,7 +406,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestIndexerCallInObjectInitializerBlankLineBetweenParameters()
+        public async Task TestIndexerCallInObjectInitializerBlankLineBetweenParametersAsync()
         {
             var testCode = @"
 class Foo
@@ -429,7 +431,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestIndexerCallInObjectInitializerSecondParameterOnTheNextLine()
+        public async Task TestIndexerCallInObjectInitializerSecondParameterOnTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -451,7 +453,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestIndexerCallParametersAtTheSameLine()
+        public async Task TestIndexerCallParametersAtTheSameLineAsync()
         {
             var testCode = @"
 class Foo
@@ -471,7 +473,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestIndexerDeclarationEmptyLinesBetweenParameters()
+        public async Task TestIndexerDeclarationEmptyLinesBetweenParametersAsync()
         {
             var testCode = @"
 class Foo
@@ -490,7 +492,7 @@ int j]
         }
 
         [Fact]
-        public async Task TestIndexerDeclarationSecondParameterOnTheNextLine()
+        public async Task TestIndexerDeclarationSecondParameterOnTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -506,7 +508,7 @@ int j]
         }
 
         [Fact]
-        public async Task TestIndexerDeclarationParametersAtTheSameLine()
+        public async Task TestIndexerDeclarationParametersAtTheSameLineAsync()
         {
             var testCode = @"
 class Foo
@@ -521,7 +523,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestArrayCreationEmptyLinesBetweenParameters()
+        public async Task TestArrayCreationEmptyLinesBetweenParametersAsync()
         {
             var testCode = @"
 class Foo
@@ -540,7 +542,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestArrayCreationSecondParameterOnTheNextLine()
+        public async Task TestArrayCreationSecondParameterOnTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -556,7 +558,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestArrayCreationParametersAtTheSameLine()
+        public async Task TestArrayCreationParametersAtTheSameLineAsync()
         {
             var testCode = @"
 class Foo
@@ -571,7 +573,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestArrayCallEmptyLinesBetweenParameters()
+        public async Task TestArrayCallEmptyLinesBetweenParametersAsync()
         {
             var testCode = @"
 class Foo
@@ -591,7 +593,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestArrayCallSecondParameterOnTheNextLine()
+        public async Task TestArrayCallSecondParameterOnTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -608,7 +610,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestArrayCallParametersAtTheSameLine()
+        public async Task TestArrayCallParametersAtTheSameLineAsync()
         {
             var testCode = @"
 class Foo
@@ -624,7 +626,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestAttributeEmptyLinesBetweenParameters()
+        public async Task TestAttributeEmptyLinesBetweenParametersAsync()
         {
             var testCode = @"
 [System.AttributeUsage(System.AttributeTargets.Class)]
@@ -648,7 +650,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestAttributeSecondParameterOnTheNextLine()
+        public async Task TestAttributeSecondParameterOnTheNextLineAsync()
         {
             var testCode = @"
 [System.AttributeUsage(System.AttributeTargets.Class)]
@@ -669,7 +671,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestAttributeParametersAtTheSameLine()
+        public async Task TestAttributeParametersAtTheSameLineAsync()
         {
             var testCode = @"
 [System.AttributeUsage(System.AttributeTargets.Class)]
@@ -689,7 +691,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestAttributeListEmptyLinesBetweenParameters()
+        public async Task TestAttributeListEmptyLinesBetweenParametersAsync()
         {
             var testCode = @"
 [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = true)]
@@ -710,7 +712,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestAttributeListSecondParameterOnTheNextLine()
+        public async Task TestAttributeListSecondParameterOnTheNextLineAsync()
         {
             var testCode = @"
 [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = true)]
@@ -728,7 +730,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestAttributeListParametersAtTheSameLine()
+        public async Task TestAttributeListParametersAtTheSameLineAsync()
         {
             var testCode = @"
 [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = true)]
@@ -745,7 +747,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestAnonymousMethodDeclarationEmptyLinesBetweenParameters()
+        public async Task TestAnonymousMethodDeclarationEmptyLinesBetweenParametersAsync()
         {
             var testCode = @"
 class Foo
@@ -769,7 +771,7 @@ int h)
         }
 
         [Fact]
-        public async Task TestAnonymousMethodDeclarationSecondParameterOnTheNextLine()
+        public async Task TestAnonymousMethodDeclarationSecondParameterOnTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -788,7 +790,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestAnonymousMethodDeclarationParametersAtTheSameLine()
+        public async Task TestAnonymousMethodDeclarationParametersAtTheSameLineAsync()
         {
             var testCode = @"
 class Foo
@@ -803,7 +805,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestLambdaEmptyLinesBetweenParameters()
+        public async Task TestLambdaEmptyLinesBetweenParametersAsync()
         {
             var testCode = @"
 class Foo
@@ -829,7 +831,7 @@ z) => {};
         }
 
         [Fact]
-        public async Task TestLambdaExplicitParametersTypesEmptyLinesBetweenParameters()
+        public async Task TestLambdaExplicitParametersTypesEmptyLinesBetweenParametersAsync()
         {
             var testCode = @"
 class Foo
@@ -855,7 +857,7 @@ int z) => {};
         }
 
         [Fact]
-        public async Task TestLambdaSecondParameterOnTheNextLine()
+        public async Task TestLambdaSecondParameterOnTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -873,7 +875,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestLambdaParametersAtTheSameLine()
+        public async Task TestLambdaParametersAtTheSameLineAsync()
         {
             var testCode = @"
 class Foo
@@ -888,7 +890,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestDelegateDeclarationEmptyLinesBetweenParameters()
+        public async Task TestDelegateDeclarationEmptyLinesBetweenParametersAsync()
         {
             var testCode = @"
 class Foo
@@ -908,7 +910,7 @@ int z);
         }
 
         [Fact]
-        public async Task TestDelegateDeclarationSecondParameterOnTheNextLine()
+        public async Task TestDelegateDeclarationSecondParameterOnTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -922,7 +924,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestDelegateDeclarationParametersAtTheSameLine()
+        public async Task TestDelegateDeclarationParametersAtTheSameLineAsync()
         {
             var testCode = @"
 class Foo
@@ -934,7 +936,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestOperatorOverloadEmptyLinesBetweenParameters()
+        public async Task TestOperatorOverloadEmptyLinesBetweenParametersAsync()
         {
             var testCode = @"
 public class Foo
@@ -953,7 +955,7 @@ Foo b)
         }
 
         [Fact]
-        public async Task TestOperatorOverloadSecondParameterOnTheNextLine()
+        public async Task TestOperatorOverloadSecondParameterOnTheNextLineAsync()
         {
             var testCode = @"
 public class Foo
@@ -969,7 +971,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestOperatorOverloadParametersAtTheSameLine()
+        public async Task TestOperatorOverloadParametersAtTheSameLineAsync()
         {
             var testCode = @"
 public class Foo
@@ -983,9 +985,9 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1115ParameterMustFollowComma();
+            yield return new SA1115ParameterMustFollowComma();
         }
     }
 }
