@@ -1,12 +1,13 @@
 ﻿namespace StyleCop.Analyzers.DocumentationRules
 {
-    using System.Collections.Immutable;
-    using System.Linq;
     using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using System;
+    using System.Collections.Immutable;
+    using System.Linq;
 
     /// <summary>
     /// A C# code element is missing a documentation header.
