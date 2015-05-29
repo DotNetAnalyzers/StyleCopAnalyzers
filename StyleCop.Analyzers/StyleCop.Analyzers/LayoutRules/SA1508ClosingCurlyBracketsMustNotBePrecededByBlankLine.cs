@@ -18,9 +18,9 @@
     /// <code language="csharp">
     /// public bool Enabled
     /// {
-    ///     get 
-    ///     { 
-    ///         return this.enabled; 
+    ///     get
+    ///     {
+    ///         return this.enabled;
     ///
     ///     }
     ///

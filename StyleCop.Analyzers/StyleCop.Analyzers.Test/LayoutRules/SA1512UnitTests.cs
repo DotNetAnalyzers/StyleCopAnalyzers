@@ -188,6 +188,83 @@ namespace Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that a standard file header will not produce a diagnostic
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestStandardHeaderAsync()
+        {
+            var testCode = @"// <copyright file=""Test0.cs"" company =""FooBar Inc."">
+//     Copyright (c) FooBar Inc. All rights reserved.
+// </copyright>
+
+namespace Foo
+{
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a non-standard file header will not produce a diagnostic
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestNonStandardHeaderAsync()
+        {
+            var testCode = @"// This file was originally obtained from 
+// httpx://github.com/???/Test0.cs
+// It is subject to {some license}
+// This file has been modified since obtaining it from its original source.
+
+namespace Foo
+{
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the first comment (followed by a blank line) after a standard file header will produce the expected diagnostic.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestStandardHeaderFollowedBySingleLineCommentWithTrailingBlankLineAsync()
+        {
+            var testCode = @"// <copyright file=""Test0.cs"" company =""FooBar Inc."">
+//     Copyright (c) FooBar Inc. All rights reserved.
+// </copyright>
+
+// This is not part of the file header!
+
+namespace Foo
+{
+}
+";
+
+            var fixedTestCode = @"// <copyright file=""Test0.cs"" company =""FooBar Inc."">
+//     Copyright (c) FooBar Inc. All rights reserved.
+// </copyright>
+
+// This is not part of the file header!
+namespace Foo
+{
+}
+";
+
+            DiagnosticResult[] expectedDiagnostic =
+            {
+                this.CSharpDiagnostic().WithLocation(5, 1)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {

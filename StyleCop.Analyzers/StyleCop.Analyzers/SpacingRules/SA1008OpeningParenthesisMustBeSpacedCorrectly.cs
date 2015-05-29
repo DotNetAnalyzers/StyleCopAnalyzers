@@ -122,6 +122,7 @@
                 case SyntaxKind.WhileKeyword:
                     allowLeadingNoSpace = false;
                     allowLeadingSpace = true;
+
                     // allow these to be reported as SA1000
                     reportPrecedingError = false;
                     break;
@@ -135,6 +136,7 @@
                 case SyntaxKind.UncheckedKeyword:
                     allowLeadingNoSpace = true;
                     allowLeadingSpace = false;
+
                     // allow these to be reported as SA1000
                     reportPrecedingError = false;
                     break;

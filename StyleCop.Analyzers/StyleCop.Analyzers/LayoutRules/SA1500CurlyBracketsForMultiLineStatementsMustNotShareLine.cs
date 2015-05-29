@@ -191,6 +191,7 @@
                 if (previousToken.GetLocation().GetLineSpan().StartLinePosition.Line == line)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+
                     // no need to report more than one instance for this token
                     return;
                 }

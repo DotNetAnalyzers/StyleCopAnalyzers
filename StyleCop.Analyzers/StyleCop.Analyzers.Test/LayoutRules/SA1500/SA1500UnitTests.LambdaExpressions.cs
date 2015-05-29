@@ -238,28 +238,39 @@ public class Foo
             {
                 // Invalid lambda expression #1
                 this.CSharpDiagnostic().WithLocation(12, 30),
+
                 // Invalid lambda expression #2
                 this.CSharpDiagnostic().WithLocation(16, 30),
+
                 // Invalid lambda expression #3
                 this.CSharpDiagnostic().WithLocation(21, 30),
                 this.CSharpDiagnostic().WithLocation(22, 29),
+
                 // Invalid lambda expression #4
                 this.CSharpDiagnostic().WithLocation(25, 30),
+
                 // Invalid lambda expression #5
                 this.CSharpDiagnostic().WithLocation(31, 29),
+
                 // Invalid lambda expression #6
                 this.CSharpDiagnostic().WithLocation(35, 9),
+
                 // Invalid lambda expression #7
                 this.CSharpDiagnostic().WithLocation(39, 31),
+
                 // Invalid lambda expression #8
                 this.CSharpDiagnostic().WithLocation(43, 31),
+
                 // Invalid lambda expression #9
                 this.CSharpDiagnostic().WithLocation(48, 31),
                 this.CSharpDiagnostic().WithLocation(49, 29),
+
                 // Invalid lambda expression #10
                 this.CSharpDiagnostic().WithLocation(52, 31),
+
                 // Invalid lambda expression #11
                 this.CSharpDiagnostic().WithLocation(58, 29),
+
                 // Invalid lambda expression #12
                 this.CSharpDiagnostic().WithLocation(62, 9)
             };

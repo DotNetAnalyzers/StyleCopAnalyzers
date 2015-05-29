@@ -1,13 +1,12 @@
 ﻿namespace StyleCop.Analyzers.DocumentationRules
 {
-    using System.Linq;
     using System.Collections.Immutable;
+    using System.Linq;
+    using Helpers;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Helpers;
-    using System;
+    using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
     /// A C# code element is missing a documentation header.
@@ -141,7 +140,7 @@
             if (declaration != null && this.NeedsComment(declaration.Modifiers, defaultVisibility))
             {
                 if (!XmlCommentHelper.HasDocumentation(declaration))
-                { 
+                {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
                 }
             }
@@ -245,15 +244,18 @@
 
         private bool NeedsComment(SyntaxTokenList modifiers, SyntaxKind defaultModifier)
         {
-
-            return (modifiers.Any(SyntaxKind.PublicKeyword)
+            if (!(modifiers.Any(SyntaxKind.PublicKeyword)
                 || modifiers.Any(SyntaxKind.ProtectedKeyword)
                 || modifiers.Any(SyntaxKind.InternalKeyword)
                 || defaultModifier == SyntaxKind.PublicKeyword
                 || defaultModifier == SyntaxKind.ProtectedKeyword
-                || defaultModifier == SyntaxKind.InternalKeyword)
-                // Ignore partial classes because they get reported as SA1601
-                && !modifiers.Any(SyntaxKind.PartialKeyword);
+                || defaultModifier == SyntaxKind.InternalKeyword))
+            {
+                return false;
+            }
+
+            // Also ignore partial classes because they get reported as SA1601
+            return !modifiers.Any(SyntaxKind.PartialKeyword);
         }
 
         private bool IsNestedType(BaseTypeDeclarationSyntax typeDeclaration)

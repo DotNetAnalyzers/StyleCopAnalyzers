@@ -1,8 +1,12 @@
 ﻿namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A generic, partial C# element is missing documentation for one or more of its generic type parameters, and the
@@ -75,13 +79,13 @@
         /// </summary>
         public const string DiagnosticId = "SA1619";
         private const string Title = "Generic type parameters must be documented partial class";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "The documentation for type parameter '{0}' is missing";
         private const string Category = "StyleCop.CSharp.DocumentationRules";
         private const string Description = "A generic, partial C# element is missing documentation for one or more of its generic type parameters, and the documentation for the element contains a <summary> tag.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1619.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -98,7 +102,58 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
+        }
+
+        private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            TypeDeclarationSyntax typeDeclaration = (TypeDeclarationSyntax)context.Node;
+
+            if (typeDeclaration.TypeParameterList == null)
+            {
+                // We are only interested in generic types
+                return;
+            }
+
+            if (!typeDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+            {
+                return;
+            }
+
+            var documentation = typeDeclaration.GetDocumentationCommentTriviaSyntax();
+
+            if (documentation == null)
+            {
+                // Don't report if the documentation is missing
+                return;
+            }
+
+            if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag) != null)
+            {
+                // Ignore nodes with an <inheritdoc/> tag.
+                return;
+            }
+
+            if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.SummaryXmlTag) == null)
+            {
+                // Ignore nodes without a <summary> tag.
+                return;
+            }
+
+            var xmlParameterNames = documentation.Content.GetXmlElements(XmlCommentHelper.TypeParamXmlTag)
+                .Select(XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>)
+                .Where(x => x != null)
+                .ToImmutableArray();
+
+            foreach (var parameter in typeDeclaration.TypeParameterList.Parameters)
+            {
+                if (!xmlParameterNames.Any(x => x.Identifier.Identifier.ValueText == parameter.Identifier.ValueText))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, parameter.Identifier.GetLocation(), parameter.Identifier.ValueText));
+                }
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace StyleCop.Analyzers.OrderingRules
 {
-    using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -30,7 +30,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1211.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -47,54 +47,71 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleUsingDirectiveSyntax, SyntaxKind.UsingDirective);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleCompilationUnit, SyntaxKind.CompilationUnit);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleNamespaceDeclaration, SyntaxKind.NamespaceDeclaration);
         }
 
-        private void HandleUsingDirectiveSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context)
         {
-            UsingDirectiveSyntax syntax = context.Node as UsingDirectiveSyntax;
-            if (syntax.Alias?.Name?.IsMissing != false)
+            var compilationUnit = context.Node as CompilationUnitSyntax;
+            if (compilationUnit != null)
+            {
+                HandleUsingDirectives(context, compilationUnit.Usings);
+            }
+        }
+
+        private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var namespaceDeclaration = context.Node as NamespaceDeclarationSyntax;
+            if (namespaceDeclaration != null)
+            {
+                HandleUsingDirectives(context, namespaceDeclaration.Usings);
+            }
+        }
+
+        private static void HandleUsingDirectives(SyntaxNodeAnalysisContext context, SyntaxList<UsingDirectiveSyntax> usingDirectives)
+        {
+            if (usingDirectives.Count == 0)
             {
                 return;
             }
 
-            CompilationUnitSyntax compilationUnit = syntax.Parent as CompilationUnitSyntax;
-            SyntaxList<UsingDirectiveSyntax>? usingDirectives = compilationUnit?.Usings;
-            if (!usingDirectives.HasValue)
-            {
-                NamespaceDeclarationSyntax namespaceDeclaration = syntax.Parent as NamespaceDeclarationSyntax;
-                usingDirectives = namespaceDeclaration?.Usings;
-            }
-
-            if (!usingDirectives.HasValue)
-            {
-                return;
-            }
+            var usingAliasNames = new List<string>();
+            UsingDirectiveSyntax prevAliasUsingDirective = null;
 
             foreach (var usingDirective in usingDirectives)
             {
-                // we are only interested in nodes before the current node
-                if (usingDirective == syntax)
-                {
-                    continue;
-                }
-
                 // only interested in using alias directives
                 if (usingDirective.Alias?.Name?.IsMissing != false)
                 {
                     continue;
                 }
 
-                string alias = syntax.Alias.Name.ToString();
-                string precedingAlias = usingDirective.Alias.Name.ToString();
-                if (string.Compare(alias, precedingAlias, StringComparison.OrdinalIgnoreCase) >= 0)
+                string currentAliasName = usingDirective.Alias.Name.Identifier.ValueText;
+                if (prevAliasUsingDirective != null)
                 {
-                    continue;
+                    string currentLowerInvariant = currentAliasName.ToLowerInvariant();
+                    string prevAliasName = prevAliasUsingDirective.Alias.Name.Identifier.ValueText;
+                    if (string.CompareOrdinal(prevAliasName.ToLowerInvariant(), currentLowerInvariant) > 0)
+                    {
+                        // Find alias before which should be placed current alias
+                        foreach (string aliasName in usingAliasNames)
+                        {
+                            if (string.CompareOrdinal(aliasName.ToLowerInvariant(), currentLowerInvariant) > 0)
+                            {
+                                prevAliasName = aliasName;
+                                break;
+                            }
+                        }
+
+                        // Using alias directive for '{currentAliasName}' must appear before using alias directive for '{prevAliasName}'
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, usingDirective.GetLocation(), currentAliasName, prevAliasName));
+                        return;
+                    }
                 }
 
-                // Using alias directive for '{alias}' must appear before using alias directive for '{precedingAlias}'
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.GetLocation(), alias, precedingAlias));
-                break;
+                usingAliasNames.Add(currentAliasName);
+                prevAliasUsingDirective = usingDirective;
             }
         }
     }

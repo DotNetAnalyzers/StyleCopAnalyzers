@@ -3,6 +3,7 @@
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A C# code file is missing a standard file header.
@@ -70,30 +71,45 @@
         /// </summary>
         public const string DiagnosticId = "SA1633";
         private const string Title = "File must have header";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "The file header {0}";
         private const string Category = "StyleCop.CSharp.DocumentationRules";
         private const string Description = "A C# code file is missing a standard file header.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1633.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        {
-            get
-            {
-                return SupportedDiagnosticsValue;
-            }
-        }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => SupportedDiagnosticsValue;
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTreeAxtion);
+        }
+
+        private static void HandleSyntaxTreeAxtion(SyntaxTreeAnalysisContext context)
+        {
+            var root = context.Tree.GetRoot(context.CancellationToken);
+
+            // don't process empty files
+            if (root.FullSpan.IsEmpty)
+            {
+                return;
+            }
+
+            var fileHeader = FileHeaderHelpers.ParseFileHeader(root);
+            if (fileHeader.IsMissing)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, fileHeader.GetLocation(context.Tree), "is missing or not located at the top of the file."));
+            }
+            else if (fileHeader.IsMalformed)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, fileHeader.GetLocation(context.Tree), "XML is invalid."));
+            }
         }
     }
 }

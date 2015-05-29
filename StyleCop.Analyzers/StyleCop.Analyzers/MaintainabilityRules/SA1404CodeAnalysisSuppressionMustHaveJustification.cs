@@ -77,7 +77,6 @@
                             if (attributeArgument?.NameEquals?.Name?.Identifier.ValueText == nameof(SuppressMessageAttribute.Justification))
                             {
                                 // Check if the justification is not empty
-
                                 var value = context.SemanticModel.GetConstantValue(attributeArgument.Expression);
 
                                 // If value does not have a value the expression is not constant -> Compilation error

@@ -13,7 +13,7 @@
     /// the header syntax, see the following article:
     /// <see href="http://msdn.microsoft.com/en-us/magazine/cc302121.aspx">XML Comments Let You Build Documentation
     /// Directly From Your Visual Studio .NET Source Files</see>.</para>
-    /// 
+    ///
     /// <para>As an alternative to authoring documentation directly within the code file, it is possible to place
     /// documentation for multiple elements within a separate XML file, and then reference a section of that file within
     /// an element's documentation header. This causes the compiler to import the documentation for that element from

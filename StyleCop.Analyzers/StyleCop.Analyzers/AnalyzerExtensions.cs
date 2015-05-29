@@ -1,4 +1,4 @@
-﻿// This file originally obtained from 
+﻿// This file originally obtained from
 // https://github.com/code-cracker/code-cracker/blob/08c1a01337964924eeed12be8b14c8ce8ec6b626/src/Common/CodeCracker.Common/Extensions/AnalyzerExtensions.cs
 // It is subject to the Apache License 2.0
 // This file has been modified since obtaining it from its original source.

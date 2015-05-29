@@ -10,7 +10,7 @@
     /// </summary>
     /// <remarks>
     /// <para>A violation of this rule occurs when the spacing around a colon is not correct.</para>
-    /// 
+    ///
     /// <para>The spacing around a colon depends upon the type of colon and how it is used within the code. A colon
     /// appearing within an element declaration must always have a single space on either side, unless it is the first
     /// or last character on the line. For example all of the colons below follow this rule:</para>
@@ -31,7 +31,7 @@
     /// _label:
     /// switch (x)
     /// {
-    ///     case 2: 
+    ///     case 2:
     ///         return x;
     /// }
     /// </code>

@@ -27,9 +27,9 @@
     /// <code language="csharp">
     /// public object Method()
     /// {
-    ///     lock (this) 
+    ///     lock (this)
     ///     {
-    ///         return this.value; 
+    ///         return this.value;
     ///     }
     /// }
     /// </code>

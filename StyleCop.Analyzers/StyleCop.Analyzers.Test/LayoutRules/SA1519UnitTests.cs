@@ -616,7 +616,7 @@ public class Foo
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1519CurlyBrackets();
+            yield return new SA1519CurlyBracketsMustNotBeOmittedFromMultiLineChildStatement();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

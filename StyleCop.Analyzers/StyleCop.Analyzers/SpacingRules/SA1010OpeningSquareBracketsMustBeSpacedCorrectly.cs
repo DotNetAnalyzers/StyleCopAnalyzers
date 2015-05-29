@@ -94,6 +94,7 @@
             {
                 SyntaxToken precedingToken = token.GetPreviousToken();
                 precededBySpace = precedingToken.HasTrailingTrivia;
+
                 // ignore if handled by SA1026
                 ignorePrecedingSpaceProblem = precededBySpace && precedingToken.IsKind(SyntaxKind.NewKeyword);
             }

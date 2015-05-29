@@ -89,7 +89,7 @@ namespace Foot
         [Fact]
         public async Task TestCorrectSpacingAsync()
         {
-            
+
             await this.VerifyCSharpDiagnosticAsync(CorrectCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -170,7 +170,6 @@ namespace Foot
         public async Task HasEmptyLineWorksCorrectlyAsync()
         {
             // This test increases code coverage in SA1516ElementsMustBeSeparatedByBlankLine.HasEmptyLine
-
             var testCode = @"using System;
 
 namespace Foo
@@ -195,7 +194,6 @@ namespace Foo
         public async Task GetDiagnosticLocationWorksCorrectlyAsync()
         {
             // This test increases code coverage in SA1516ElementsMustBeSeparatedByBlankLine.GetDiagnosticLocation
-
             var testCode = @"using System;
 
 namespace Foo

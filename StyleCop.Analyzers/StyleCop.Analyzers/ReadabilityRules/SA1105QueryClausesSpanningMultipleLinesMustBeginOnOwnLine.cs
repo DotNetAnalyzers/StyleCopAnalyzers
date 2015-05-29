@@ -11,7 +11,7 @@
     /// <para>A violation of this rule occurs when a query clause spans across multiple lines, but does not begin on its
     /// own line. For example:</para>
     /// <code language="csharp">
-    /// object x = 
+    /// object x =
     ///     select a in b from c.GetCustomers(
     ///         2, "x");
     /// </code>

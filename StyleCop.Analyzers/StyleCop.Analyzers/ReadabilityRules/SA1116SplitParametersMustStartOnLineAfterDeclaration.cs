@@ -12,7 +12,7 @@
     /// <para>A violation of this rule occurs when the parameters to a method or indexer span across multiple lines, but
     /// the first parameter does not start on the line after the opening bracket. For example:</para>
     /// <code language="csharp">
-    /// public string JoinName(string first, 
+    /// public string JoinName(string first,
     ///     string last)
     /// {
     /// }

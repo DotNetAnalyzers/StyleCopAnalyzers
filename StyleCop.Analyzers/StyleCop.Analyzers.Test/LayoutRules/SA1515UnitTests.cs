@@ -59,6 +59,19 @@ namespace Foo
             ////return 0;
             return x;
         }
+
+        public void Qux()
+        {
+            switch (this.Baz())
+            {
+                case 1:
+                    // Single line comment after case statement is valid
+                    break;
+                default:
+                    // Single line comment after default statement is valid
+                    return;
+            }
+        }
     }
 }
 ";

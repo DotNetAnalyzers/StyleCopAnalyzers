@@ -71,6 +71,7 @@
     <Compile Include="DocumentationRules\SA1613ElementParameterDocumentationMustDeclareParameterName.cs" />
     <Compile Include="DocumentationRules\SA1614ElementParameterDocumentationMustHaveText.cs" />
     <Compile Include="DocumentationRules\SA1615ElementReturnValueMustBeDocumented.cs" />
+    <Compile Include="DocumentationRules\SA1615SA1616CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1616ElementReturnValueDocumentationMustHaveText.cs" />
     <Compile Include="DocumentationRules\SA1617CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1617VoidReturnValueMustNotBeDocumented.cs" />
@@ -114,6 +115,8 @@
     <Compile Include="GeneratedCodeAnalysisExtensions.cs" />
     <Compile Include="Helpers\DocumentationCommentExtensions.cs" />
     <Compile Include="Helpers\EnumerableHelpers.cs" />
+    <Compile Include="Helpers\FileHeader.cs" />
+    <Compile Include="Helpers\FileHeaderHelpers.cs" />
     <Compile Include="Helpers\IndentationHelper.cs" />
     <Compile Include="Helpers\IndentationOptions.cs" />
     <Compile Include="Helpers\NamedTypeHelpers.cs" />
@@ -145,6 +148,7 @@
     <Compile Include="LayoutRules\SA1509CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1509OpeningCurlyBracketsMustNotBePrecededByBlankLine.cs" />
     <Compile Include="LayoutRules\SA1510ChainedStatementBlocksMustNotBePrecededByBlankLine.cs" />
+    <Compile Include="LayoutRules\SA1511CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1511WhileDoFooterMustNotBePrecededByBlankLine.cs" />
     <Compile Include="LayoutRules\SA1512CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1512SingleLineCommentsMustNotBeFollowedByBlankLine.cs" />
@@ -159,7 +163,7 @@
     <Compile Include="LayoutRules\SA1517CodeMustNotContainBlankLinesAtStartOfFile.cs" />
     <Compile Include="LayoutRules\SA1518CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1518CodeMustNotContainBlankLinesAtEndOfFile.cs" />
-    <Compile Include="LayoutRules\SA1519CurlyBrackets.cs" />
+    <Compile Include="LayoutRules\SA1519CurlyBracketsMustNotBeOmittedFromMultiLineChildStatement.cs" />
     <Compile Include="LayoutRules\SA1520UseCurlyBracketsConsistently.cs" />
     <Compile Include="MaintainabilityRules\MaintainabilityResources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -386,7 +390,7 @@
     <Analyzer Include="..\..\packages\AsyncUsageAnalyzers.1.0.0-alpha001\tools\analyzers\AsyncUsageAnalyzers.dll" />
     <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0-rc2\tools\analyzers\C#\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0-rc2\tools\analyzers\C#\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
-    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0-alpha006\tools\analyzers\StyleCop.Analyzers.dll" />
+    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0-alpha008\tools\analyzers\C#\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="DocumentationRules\DocumentationResources.resx">

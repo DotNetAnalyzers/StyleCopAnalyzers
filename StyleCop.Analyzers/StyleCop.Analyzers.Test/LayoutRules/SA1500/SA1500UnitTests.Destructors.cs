@@ -184,15 +184,20 @@ public class Foo
             {
                 // Invalid destructor #1
                 this.CSharpDiagnostic().WithLocation(8, 23),
+
                 // Invalid destructor #2
                 this.CSharpDiagnostic().WithLocation(15, 23),
+
                 // Invalid destructor #3
                 this.CSharpDiagnostic().WithLocation(23, 23),
                 this.CSharpDiagnostic().WithLocation(24, 29),
+
                 // Invalid destructor #4
                 this.CSharpDiagnostic().WithLocation(30, 23),
+
                 // Invalid destructor #5
                 this.CSharpDiagnostic().WithLocation(39, 29),
+
                 // Invalid destructor #6
                 this.CSharpDiagnostic().WithLocation(46, 9)
             };

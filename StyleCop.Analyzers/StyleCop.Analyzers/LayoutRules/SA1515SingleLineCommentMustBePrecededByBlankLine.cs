@@ -244,7 +244,9 @@
             }
 
             var prevToken = token.GetPreviousToken();
-            return prevToken.IsKind(SyntaxKind.OpenBraceToken);
+            return prevToken.IsKind(SyntaxKind.OpenBraceToken)
+                   || prevToken.Parent.IsKind(SyntaxKind.CaseSwitchLabel)
+                   || prevToken.Parent.IsKind(SyntaxKind.DefaultSwitchLabel);
         }
 
         private static bool IsPrecededByDirectiveTrivia(SyntaxTriviaList triviaList, int triviaIndex)

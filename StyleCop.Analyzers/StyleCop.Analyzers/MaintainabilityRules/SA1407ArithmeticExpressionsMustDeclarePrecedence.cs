@@ -1,12 +1,10 @@
 ﻿namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System.Collections.Immutable;
-    using System.Linq;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using System;
+    using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
     /// A C# statement contains a complex arithmetic expression which omits parenthesis around operators.
@@ -86,7 +84,6 @@
                 if (binSyntax.Left is BinaryExpressionSyntax)
                 {
                     // Check if the operations are of the same kind
-
                     var left = (BinaryExpressionSyntax)binSyntax.Left;
 
                     if (!this.IsSameFamily(binSyntax.OperatorToken, left.OperatorToken))
@@ -98,7 +95,6 @@
                 if (binSyntax.Right is BinaryExpressionSyntax)
                 {
                     // Check if the operations are of the same kind
-
                     var right = (BinaryExpressionSyntax)binSyntax.Right;
 
                     if (!this.IsSameFamily(binSyntax.OperatorToken, right.OperatorToken))

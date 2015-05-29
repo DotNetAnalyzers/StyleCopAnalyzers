@@ -164,7 +164,7 @@
                 return;
             }
 
-            if (context.SemanticModel.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(SA1519CurlyBrackets.DiagnosticId, ReportDiagnostic.Default) != ReportDiagnostic.Suppress)
+            if (context.SemanticModel.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(SA1519CurlyBracketsMustNotBeOmittedFromMultiLineChildStatement.DiagnosticId, ReportDiagnostic.Default) != ReportDiagnostic.Suppress)
             {
                 // diagnostics for multi-line statements is handled by SA1519, as long as it's not suppressed
                 Location location = childStatement.GetLocation();

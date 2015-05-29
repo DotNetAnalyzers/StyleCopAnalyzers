@@ -33,7 +33,7 @@
         /// </summary>
         /// <remarks>
         /// These are valid for SA1500 only, some will report other diagnostics outside of the unit test scenario.
-        /// 
+        ///
         /// The class is marked unsafe to make testing the fixed statement possible.
         /// </remarks>
         /// <param name="token">The source code preceding the opening <c>{</c> of a statement block.</param>
@@ -159,7 +159,7 @@
 
             testCode = testCode.Replace("#TOKEN#", token);
             fixedTestCode = fixedTestCode.Replace("#TOKEN#", token);
-            var tokenLength = token.Length; 
+            var tokenLength = token.Length;
 
             DiagnosticResult[] expectedDiagnostics =
             {

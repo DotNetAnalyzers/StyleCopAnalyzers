@@ -372,32 +372,40 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(14, 32),
                 this.CSharpDiagnostic().WithLocation(14, 34),
                 this.CSharpDiagnostic().WithLocation(14, 36),
+
                 // Invalid object initializer #2
                 this.CSharpDiagnostic().WithLocation(18, 5),
                 this.CSharpDiagnostic().WithLocation(19, 9),
                 this.CSharpDiagnostic().WithLocation(21, 13),
+
                 // Invalid object initializer #3
                 this.CSharpDiagnostic().WithLocation(28, 41),
                 this.CSharpDiagnostic().WithLocation(29, 21),
                 this.CSharpDiagnostic().WithLocation(31, 28),
+
                 // Invalid object initializer #4
                 this.CSharpDiagnostic().WithLocation(49, 36),
                 this.CSharpDiagnostic().WithLocation(49, 38),
                 this.CSharpDiagnostic().WithLocation(49, 40),
+
                 // Invalid object initializer #5
                 this.CSharpDiagnostic().WithLocation(53, 9),
                 this.CSharpDiagnostic().WithLocation(54, 13),
                 this.CSharpDiagnostic().WithLocation(56, 17),
+
                 // Invalid object initializer #6
                 this.CSharpDiagnostic().WithLocation(63, 31),
                 this.CSharpDiagnostic().WithLocation(64, 25),
                 this.CSharpDiagnostic().WithLocation(66, 32),
+
                 // Invalid object initializer #7
                 this.CSharpDiagnostic().WithLocation(79, 32),
                 this.CSharpDiagnostic().WithLocation(79, 34),
+
                 // Invalid object initializer #8
                 this.CSharpDiagnostic().WithLocation(83, 9),
                 this.CSharpDiagnostic().WithLocation(85, 13),
+
                 // Invalid object initializer #9
                 this.CSharpDiagnostic().WithLocation(90, 29),
                 this.CSharpDiagnostic().WithLocation(92, 34)

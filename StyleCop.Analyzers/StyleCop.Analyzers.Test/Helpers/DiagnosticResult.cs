@@ -1,5 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
-using System;
+﻿using System;
+using Microsoft.CodeAnalysis;
 
 namespace TestHelper
 {
@@ -139,6 +139,13 @@ namespace TestHelper
         {
             DiagnosticResult result = this;
             result.MessageArguments = arguments;
+            return result;
+        }
+
+        public DiagnosticResult WithMessageFormat(LocalizableString messageFormat)
+        {
+            DiagnosticResult result = this;
+            result.MessageFormat = messageFormat;
             return result;
         }
 
