@@ -84,8 +84,7 @@ namespace Bar
             DiagnosticResult[] expected = new[]
             {
                 this.CSharpDiagnostic().WithLocation(5, 5).WithArguments("System", "System.Threading"),
-                this.CSharpDiagnostic().WithLocation(11, 5).WithArguments("System.Threading", "Foo"),
-                this.CSharpDiagnostic().WithLocation(12, 5).WithArguments("System", "Foo")
+                this.CSharpDiagnostic().WithLocation(12, 5).WithArguments("System", "System.Threading")
             };
 
             await this.VerifyCSharpDiagnosticAsync(namespaceDeclaration, expected, CancellationToken.None).ConfigureAwait(false);
@@ -112,6 +111,7 @@ namespace Foo
             var compilationUnit = @"
 using System.Threading;
 using global::System.IO;
+using global::System.Linq;
 using global::System;
 
 namespace Foo
@@ -123,8 +123,59 @@ namespace Foo
             DiagnosticResult[] expected = new[]
             {
                 this.CSharpDiagnostic().WithLocation(3, 1).WithArguments("System.IO", "System.Threading"),
-                this.CSharpDiagnostic().WithLocation(4, 1).WithArguments("System", "System.Threading"),
-                this.CSharpDiagnostic().WithLocation(9, 5).WithArguments("System", "Foo")
+                this.CSharpDiagnostic().WithLocation(4, 1).WithArguments("System.Linq", "System.Threading"),
+                this.CSharpDiagnostic().WithLocation(5, 1).WithArguments("System", "System.IO"),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(compilationUnit, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestValidOrderedUsingDirectivesWithStaticUsingDirectivesAsync()
+        {
+            var namespaceDeclaration = @"namespace Foo
+{
+    using System;
+    using Foo;
+    using static System.Uri;
+    using static System.Math;
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(namespaceDeclaration, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestInvalidOrderedUsingWithUsingAliasDirectivesAsync()
+        {
+            var compilationUnit = @"using System.IO;
+using System;
+using A2 = System.IO;
+using A1 = System.Threading;";
+
+            DiagnosticResult[] expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(2, 1).WithArguments("System", "System.IO")
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(compilationUnit, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestUsingDirectivesWithNonWordCharactersAsync()
+        {
+            var compilationUnit = @"namespace \u0041Test_ {}
+namespace ATestA {}
+
+namespace Test
+{
+    using Test;
+    using \u0041Test_;
+    using ATestA;
+}";
+            DiagnosticResult[] expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(7, 5).WithArguments(@"\u0041Test_", "Test"),
+                this.CSharpDiagnostic().WithLocation(8, 5).WithArguments("ATestA", "Test")
             };
 
             await this.VerifyCSharpDiagnosticAsync(compilationUnit, expected, CancellationToken.None).ConfigureAwait(false);
