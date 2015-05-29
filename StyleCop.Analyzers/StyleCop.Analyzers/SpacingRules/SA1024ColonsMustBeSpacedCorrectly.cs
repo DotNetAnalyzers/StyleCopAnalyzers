@@ -57,7 +57,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1024.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -74,27 +74,22 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
         }
 
-        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
             {
-                switch (token.Kind())
+                if (token.Kind() == SyntaxKind.ColonToken)
                 {
-                case SyntaxKind.ColonToken:
-                    this.HandleColonToken(context, token);
-                    break;
-
-                default:
-                    break;
+                    HandleColonToken(context, token);
                 }
             }
         }
 
-        private void HandleColonToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private static void HandleColonToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
             {
@@ -138,12 +133,13 @@
                 }
             }
 
-            bool? hasPrecedingSpace = null;
-            if (!token.HasLeadingTrivia)
+            bool hasPrecedingSpace = token.HasLeadingTrivia;
+            if (!hasPrecedingSpace)
             {
                 // only the first token on the line has leading trivia, and those are ignored
                 SyntaxToken precedingToken = token.GetPreviousToken();
-                if (precedingToken.HasTrailingTrivia)
+                SyntaxTriviaList triviaList = precedingToken.TrailingTrivia;
+                if (triviaList.Count > 0 && !triviaList.Last().IsKind(SyntaxKind.MultiLineCommentTrivia))
                 {
                     hasPrecedingSpace = true;
                 }
@@ -155,7 +151,7 @@
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "followed"));
             }
 
-            if (hasPrecedingSpace.HasValue && hasPrecedingSpace != requireBefore)
+            if (hasPrecedingSpace != requireBefore)
             {
                 // colon must{ not}? be {preceded} by a space
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), requireBefore ? string.Empty : " not", "preceded"));
