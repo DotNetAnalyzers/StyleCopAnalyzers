@@ -71,12 +71,12 @@
 
         private static void HandleUsingDirectives(SyntaxNodeAnalysisContext context, SyntaxList<UsingDirectiveSyntax> usingDirectives)
         {
-            if (usingDirectives.Count == 0)
+            if (usingDirectives.Count < 2)
             {
                 return;
             }
 
-            var usingAliasNames = new List<string>();
+            var usingAliasNames = new Stack<string>(usingDirectives.Count);
             UsingDirectiveSyntax prevAliasUsingDirective = null;
 
             foreach (var usingDirective in usingDirectives)
@@ -100,6 +100,9 @@
                             if (string.CompareOrdinal(aliasName.ToLowerInvariant(), currentLowerInvariant) > 0)
                             {
                                 prevAliasName = aliasName;
+                            }
+                            else
+                            {
                                 break;
                             }
                         }
@@ -110,7 +113,7 @@
                     }
                 }
 
-                usingAliasNames.Add(currentAliasName);
+                usingAliasNames.Push(currentAliasName);
                 prevAliasUsingDirective = usingDirective;
             }
         }
