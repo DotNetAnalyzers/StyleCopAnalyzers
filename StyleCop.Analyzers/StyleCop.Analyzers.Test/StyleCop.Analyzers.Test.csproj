@@ -235,7 +235,6 @@
     <Compile Include="OrderingRules\SA1201UnitTests.cs" />
     <Compile Include="OrderingRules\SA1205UnitTests.cs" />
     <Compile Include="OrderingRules\SA1208UnitTests.cs" />
-    <Compile Include="OrderingRules\SA1210UnitTests.cs" />
     <Compile Include="OrderingRules\SA1209UnitTests.cs" />
     <Compile Include="OrderingRules\SA1210UnitTests.cs" />
     <Compile Include="OrderingRules\SA1211UnitTests.cs" />
