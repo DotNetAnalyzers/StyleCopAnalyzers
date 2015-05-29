@@ -194,6 +194,7 @@
     <Compile Include="LayoutRules\SA1502\SA1502UnitTests.TypeDeclarations.cs" />
     <Compile Include="LayoutRules\SA1503UnitTests.cs" />
     <Compile Include="LayoutRules\SA1504UnitTests.cs" />
+    <Compile Include="LayoutRules\SA1505UnitTests.cs" />
     <Compile Include="LayoutRules\SA1507UnitTests.cs" />
     <Compile Include="LayoutRules\SA1509UnitTests.cs" />
     <Compile Include="LayoutRules\SA1511UnitTests.cs" />
