@@ -56,35 +56,35 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleCompilationUnit, SyntaxKind.CompilationUnit);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleNamespaceDeclaration, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleCompilationUnit, SyntaxKind.CompilationUnit);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleNamespaceDeclaration, SyntaxKind.NamespaceDeclaration);
         }
 
-        private void HandleCompilationUnit(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context)
         {
             var compilationUnit = (CompilationUnitSyntax)context.Node;
 
-            ProcessUsings(compilationUnit.Usings, context);
+            ProcessUsings(context, compilationUnit.Usings);
         }
 
-        private void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context)
         {
             var namespaceDeclaration = (NamespaceDeclarationSyntax)context.Node;
 
-            ProcessUsings(namespaceDeclaration.Usings, context);
+            ProcessUsings(context, namespaceDeclaration.Usings);
         }
 
-        private static void ProcessUsings(SyntaxList<UsingDirectiveSyntax> usings, SyntaxNodeAnalysisContext context)
+        private static void ProcessUsings(SyntaxNodeAnalysisContext context, SyntaxList<UsingDirectiveSyntax> usings)
         {
             var usingsDirectivesWithoutAliasAndStatic = usings.Where(ExcludeAliasAndStaticUsingDirectives);
             var systemUsingDirectives = usingsDirectivesWithoutAliasAndStatic.Where(directive => directive.IsSystemUsingDirective());
             var usingDirectives = usingsDirectivesWithoutAliasAndStatic.Where(directive => !directive.IsSystemUsingDirective());
 
-            CheckOrderAndReportDiagnostic(usingDirectives.ToList(), context);
-            CheckOrderAndReportDiagnostic(systemUsingDirectives.ToList(), context);
+            CheckOrderAndReportDiagnostic(context, usingDirectives.ToList());
+            CheckOrderAndReportDiagnostic(context, systemUsingDirectives.ToList());
         }
 
-        private static void CheckOrderAndReportDiagnostic(IList<UsingDirectiveSyntax> usings, SyntaxNodeAnalysisContext context)
+        private static void CheckOrderAndReportDiagnostic(SyntaxNodeAnalysisContext context, IList<UsingDirectiveSyntax> usings)
         {
             if (usings.Count <= 1)
             {
