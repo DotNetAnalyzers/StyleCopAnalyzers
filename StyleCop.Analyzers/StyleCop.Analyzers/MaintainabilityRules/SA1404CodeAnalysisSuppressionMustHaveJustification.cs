@@ -70,7 +70,6 @@
                     var suppressMessageType = context.SemanticModel.Compilation.GetTypeByMetadataName(typeof(SuppressMessageAttribute).FullName);
                     if (symbol.ContainingType == suppressMessageType)
                     {
-
                         foreach (var argument in attribute.ArgumentList.ChildNodes())
                         {
                             var attributeArgument = argument as AttributeArgumentSyntax;

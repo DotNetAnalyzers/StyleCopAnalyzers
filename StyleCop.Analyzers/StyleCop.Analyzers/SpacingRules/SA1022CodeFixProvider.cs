@@ -57,7 +57,6 @@
 
         private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxToken token)
         {
-
             bool precededBySpace;
             bool firstInLine;
             bool followsSpecialCharacter;

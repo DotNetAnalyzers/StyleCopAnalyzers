@@ -116,7 +116,6 @@
 
             if (parameterListSyntax != null && !parameterListSyntax.Parameters.Any())
             {
-
                 if (!parameterListSyntax.OpenParenToken.IsMissing &&
                     !parameterListSyntax.CloseParenToken.IsMissing)
                 {
