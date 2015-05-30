@@ -136,11 +136,11 @@ public class Foo<T> :object where T :IFormattable
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(3, 21).WithArguments(string.Empty, "followed"),
-                this.CSharpDiagnostic().WithLocation(3, 37).WithArguments(string.Empty, "followed"),
-                this.CSharpDiagnostic().WithLocation(5, 18).WithArguments(string.Empty, "followed"),
-                this.CSharpDiagnostic().WithLocation(8, 23).WithArguments(string.Empty, "followed"),
-                this.CSharpDiagnostic().WithLocation(10, 30).WithArguments(string.Empty, "followed"),
+                this.CSharpDiagnostic().WithLocation(3, 21).WithArguments(string.Empty, "followed", string.Empty),
+                this.CSharpDiagnostic().WithLocation(3, 37).WithArguments(string.Empty, "followed", string.Empty),
+                this.CSharpDiagnostic().WithLocation(5, 18).WithArguments(string.Empty, "followed", string.Empty),
+                this.CSharpDiagnostic().WithLocation(8, 23).WithArguments(string.Empty, "followed", string.Empty),
+                this.CSharpDiagnostic().WithLocation(10, 30).WithArguments(string.Empty, "followed", string.Empty),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -181,11 +181,11 @@ public class Foo<T>: object where T: IFormattable
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(3, 20).WithArguments(string.Empty, "preceded"),
-                this.CSharpDiagnostic().WithLocation(3, 36).WithArguments(string.Empty, "preceded"),
-                this.CSharpDiagnostic().WithLocation(5, 27).WithArguments(string.Empty, "preceded"),
-                this.CSharpDiagnostic().WithLocation(8, 22).WithArguments(string.Empty, "preceded"),
-                this.CSharpDiagnostic().WithLocation(10, 29).WithArguments(string.Empty, "preceded"),
+                this.CSharpDiagnostic().WithLocation(3, 20).WithArguments(string.Empty, "preceded", string.Empty),
+                this.CSharpDiagnostic().WithLocation(3, 36).WithArguments(string.Empty, "preceded", string.Empty),
+                this.CSharpDiagnostic().WithLocation(5, 27).WithArguments(string.Empty, "preceded", string.Empty),
+                this.CSharpDiagnostic().WithLocation(8, 22).WithArguments(string.Empty, "preceded", string.Empty),
+                this.CSharpDiagnostic().WithLocation(10, 29).WithArguments(string.Empty, "preceded", string.Empty),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -226,10 +226,55 @@ public class Foo<T> : object where T : IFormattable
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(10, 19).WithArguments(" not", "preceded"),
-                this.CSharpDiagnostic().WithLocation(15, 12).WithArguments(" not", "preceded"),
-                this.CSharpDiagnostic().WithLocation(19, 20).WithArguments(" not", "preceded"),
-                this.CSharpDiagnostic().WithLocation(21, 21).WithArguments(" not", "preceded"),
+                this.CSharpDiagnostic().WithLocation(10, 19).WithArguments(" not", "preceded", string.Empty),
+                this.CSharpDiagnostic().WithLocation(15, 12).WithArguments(" not", "preceded", string.Empty),
+                this.CSharpDiagnostic().WithLocation(19, 20).WithArguments(" not", "preceded", string.Empty),
+                this.CSharpDiagnostic().WithLocation(21, 21).WithArguments(" not", "preceded", string.Empty),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer will produce the proper diagnostics when the colons not preceded and not followed by space.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestInvalidSpacedColonsMustBePrecededAndFollowedAsync()
+        {
+            const string testCode = @"using System;
+
+public class Foo<T>:object where T:IFormattable
+{
+    public Foo():base()
+    {
+    }
+    public Foo(int x):this()
+    {
+        Bar(value: x > 2 ? 2:3);
+    }
+
+    private int Bar(int value)
+    {
+    _label:
+        switch (value)
+        {
+            case 2:
+            case 3:
+                return value;
+            default:
+                goto _label;
+        }
+    }
+}";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(3, 20).WithArguments(string.Empty, "preceded", " and followed"),
+                this.CSharpDiagnostic().WithLocation(3, 35).WithArguments(string.Empty, "preceded", " and followed"),
+                this.CSharpDiagnostic().WithLocation(5, 17).WithArguments(string.Empty, "preceded", " and followed"),
+                this.CSharpDiagnostic().WithLocation(8, 22).WithArguments(string.Empty, "preceded", " and followed"),
+                this.CSharpDiagnostic().WithLocation(10, 29).WithArguments(string.Empty, "preceded", " and followed"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
