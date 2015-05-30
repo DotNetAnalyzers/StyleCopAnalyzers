@@ -14,12 +14,12 @@
     /// <summary>
     /// Implements a code fix for <see cref="SA1505OpeningCurlyBracketsMustNotBeFollowedByBlankLine"/>.
     /// </summary>
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1505CodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1508CodeFixProvider))]
     [Shared]
-    public class SA1505CodeFixProvider : CodeFixProvider
+    public class SA1508CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1505OpeningCurlyBracketsMustNotBeFollowedByBlankLine.DiagnosticId);
+            ImmutableArray.Create(SA1508ClosingCurlyBracketsMustNotBePrecededByBlankLine.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
@@ -35,7 +35,7 @@
         {
             foreach (var diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1505CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1508CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token)), diagnostic);
             }
 
             return Task.FromResult(true);
@@ -45,34 +45,43 @@
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
-            var openBraceToken = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-            var nextToken = openBraceToken.GetNextToken();
+            var closeBraceToken = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
+            var previousToken = closeBraceToken.GetPreviousToken();
 
-            var triviaList = openBraceToken.TrailingTrivia.AddRange(nextToken.LeadingTrivia);
+            var triviaList = previousToken.TrailingTrivia.AddRange(closeBraceToken.LeadingTrivia);
 
-            var firstEndOfLineIndex = triviaList.IndexOf(SyntaxKind.EndOfLineTrivia);
-            var lastEndOfLineIndex = -1;
+            // skip all leading whitespace for the close brace
+            var index = triviaList.Count - 1;
+            while (triviaList[index].IsKind(SyntaxKind.WhitespaceTrivia))
+            {
+                index--;
+            }
+
+            var firstLeadingWhitespace = index + 1;
 
             var done = false;
-            for (var i = firstEndOfLineIndex + 1; !done && (i < triviaList.Count); i++)
+            var lastEndOfLineIndex = -1;
+            while (!done && index >= 0)
             {
-                switch (triviaList[i].Kind())
+                switch (triviaList[index].Kind())
                 {
-                case SyntaxKind.WhitespaceTrivia:
-                    break;
-                case SyntaxKind.EndOfLineTrivia:
-                    lastEndOfLineIndex = i;
-                    break;
-                default:
-                    done = true;
-                    break;
+                    case SyntaxKind.WhitespaceTrivia:
+                        break;
+                    case SyntaxKind.EndOfLineTrivia:
+                        lastEndOfLineIndex = index;
+                        break;
+                    default:
+                        done = true;
+                        break;
                 }
+
+                index--;
             }
 
             var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>()
             {
-                [openBraceToken] = openBraceToken.WithTrailingTrivia(triviaList.Take(firstEndOfLineIndex + 1)),
-                [nextToken] = nextToken.WithLeadingTrivia(triviaList.Skip(lastEndOfLineIndex + 1))
+                [previousToken] = previousToken.WithTrailingTrivia(triviaList.Take(lastEndOfLineIndex + 1)),
+                [closeBraceToken] = closeBraceToken.WithLeadingTrivia(triviaList.Skip(firstLeadingWhitespace))
             };
 
             var newSyntaxRoot = syntaxRoot.ReplaceTokens(replaceMap.Keys, (t1, t2) => replaceMap[t1]);

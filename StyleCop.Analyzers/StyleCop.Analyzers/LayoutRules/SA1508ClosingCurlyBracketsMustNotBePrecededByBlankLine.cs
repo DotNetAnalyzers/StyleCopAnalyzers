@@ -2,6 +2,8 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -39,30 +41,120 @@
         /// </summary>
         public const string DiagnosticId = "SA1508";
         private const string Title = "Closing curly brackets must not be preceded by blank line";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "A closing curly bracket must not be preceded by a blank line.";
         private const string Category = "StyleCop.CSharp.LayoutRules";
         private const string Description = "A closing curly bracket within a C# element, statement, or expression is preceded by a blank line.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1508.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        {
-            get
-            {
-                return SupportedDiagnosticsValue;
-            }
-        }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => SupportedDiagnosticsValue;
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleBlock, SyntaxKind.Block);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleInitializers, SyntaxKind.ObjectInitializerExpression, SyntaxKind.CollectionInitializerExpression, SyntaxKind.ArrayInitializerExpression, SyntaxKind.ComplexElementInitializerExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleAnonymousObjectCreation, SyntaxKind.AnonymousObjectCreationExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleSwitchStatement, SyntaxKind.SwitchStatement);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleNamespaceDeclaration, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleAccessorList, SyntaxKind.AccessorList);
+        }
+
+        private void HandleBlock(SyntaxNodeAnalysisContext context)
+        {
+            var block = (BlockSyntax)context.Node;
+            this.AnalyzeCloseBrace(context, block.CloseBraceToken);
+        }
+
+        private void HandleInitializers(SyntaxNodeAnalysisContext context)
+        {
+            var expression = (InitializerExpressionSyntax)context.Node;
+            this.AnalyzeCloseBrace(context, expression.CloseBraceToken);
+        }
+
+        private void HandleAnonymousObjectCreation(SyntaxNodeAnalysisContext context)
+        {
+            var expression = (AnonymousObjectCreationExpressionSyntax)context.Node;
+            this.AnalyzeCloseBrace(context, expression.CloseBraceToken);
+        }
+
+        private void HandleSwitchStatement(SyntaxNodeAnalysisContext context)
+        {
+            var switchStatement = (SwitchStatementSyntax)context.Node;
+            this.AnalyzeCloseBrace(context, switchStatement.CloseBraceToken);
+        }
+
+        private void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var namespaceDeclaration = (NamespaceDeclarationSyntax)context.Node;
+            this.AnalyzeCloseBrace(context, namespaceDeclaration.CloseBraceToken);
+        }
+
+        private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var typeDeclaration = (BaseTypeDeclarationSyntax)context.Node;
+            this.AnalyzeCloseBrace(context, typeDeclaration.CloseBraceToken);
+        }
+
+        private void HandleAccessorList(SyntaxNodeAnalysisContext context)
+        {
+            var accessorList = (AccessorListSyntax)context.Node;
+            this.AnalyzeCloseBrace(context, accessorList.CloseBraceToken);
+        }
+
+        private void AnalyzeCloseBrace(SyntaxNodeAnalysisContext context, SyntaxToken closeBraceToken)
+        {
+            var previousToken = closeBraceToken.GetPreviousToken();
+            if ((GetLine(closeBraceToken) - GetLine(previousToken)) < 2)
+            {
+                // there will be no blank lines when the closing brace and the preceding token are not at least two lines apart.
+                return;
+            }
+
+            var separatingTrivia = previousToken.TrailingTrivia.AddRange(closeBraceToken.LeadingTrivia);
+
+            // skip all leading whitespace for the close brace
+            var index = separatingTrivia.Count - 1;
+            while (separatingTrivia[index].IsKind(SyntaxKind.WhitespaceTrivia))
+            {
+                index--;
+            }
+
+            var done = false;
+            var eolCount = 0;
+            while (!done && index >= 0)
+            {
+                switch (separatingTrivia[index].Kind())
+                {
+                    case SyntaxKind.WhitespaceTrivia:
+                        break;
+                    case SyntaxKind.EndOfLineTrivia:
+                        eolCount++;
+                        break;
+                    default:
+                        done = true;
+                        break;
+                }
+
+                index--;
+            }
+
+            if (eolCount > 1)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, closeBraceToken.GetLocation()));
+            }
+        }
+
+        private static int GetLine(SyntaxToken token)
+        {
+            return token.GetLocation().GetLineSpan().StartLinePosition.Line;
         }
     }
 }

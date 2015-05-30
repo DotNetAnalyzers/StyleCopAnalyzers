@@ -118,6 +118,15 @@ namespace StyleCop.Analyzers.LayoutRules {
         /// <summary>
         ///   Looks up a localized string similar to Remove blank lines preceding this curly bracket.
         /// </summary>
+        internal static string SA1508CodeFix {
+            get {
+                return ResourceManager.GetString("SA1508CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove blank lines preceding this curly bracket.
+        /// </summary>
         internal static string SA1509CodeFix {
             get {
                 return ResourceManager.GetString("SA1509CodeFix", resourceCulture);
