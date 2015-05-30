@@ -148,6 +148,7 @@
     <Compile Include="LayoutRules\SA1509CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1509OpeningCurlyBracketsMustNotBePrecededByBlankLine.cs" />
     <Compile Include="LayoutRules\SA1510ChainedStatementBlocksMustNotBePrecededByBlankLine.cs" />
+    <Compile Include="LayoutRules\SA1510CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1511CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1511WhileDoFooterMustNotBePrecededByBlankLine.cs" />
     <Compile Include="LayoutRules\SA1512CodeFixProvider.cs" />

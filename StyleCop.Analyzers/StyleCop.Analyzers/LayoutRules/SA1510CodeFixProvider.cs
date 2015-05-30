@@ -11,14 +11,14 @@
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// Implements a code fix for <see cref="SA1511WhileDoFooterMustNotBePrecededByBlankLine"/>.
+    /// Implements a code fix for <see cref="SA1510ChainedStatementBlocksMustNotBePrecededByBlankLine"/>.
     /// </summary>
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1511CodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1510CodeFixProvider))]
     [Shared]
-    public class SA1511CodeFixProvider : CodeFixProvider
+    public class SA1510CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1511WhileDoFooterMustNotBePrecededByBlankLine.DiagnosticId);
+            ImmutableArray.Create(SA1510ChainedStatementBlocksMustNotBePrecededByBlankLine.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
@@ -34,7 +34,7 @@
         {
             foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1511CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1510CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token)), diagnostic);
             }
 
             return Task.FromResult(true);
@@ -44,9 +44,9 @@
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
-            var whileToken = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
+            var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
 
-            var newSyntaxRoot = syntaxRoot.ReplaceToken(whileToken, whileToken.WithoutLeadingBlankLines());
+            var newSyntaxRoot = syntaxRoot.ReplaceToken(token, token.WithoutLeadingBlankLines());
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
     }
