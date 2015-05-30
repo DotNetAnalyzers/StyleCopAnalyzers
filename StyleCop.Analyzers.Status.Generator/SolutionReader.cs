@@ -133,7 +133,7 @@
 
                 INamedTypeSymbol classSymbol = semanticModel.GetDeclaredSymbol(classSyntaxNode) as INamedTypeSymbol;
 
-                if (classSymbol == null || !this.InheritsFrom(classSymbol, this.diagnosticAnalyzerTypeSymbol))
+                if (!this.InheritsFrom(classSymbol, this.diagnosticAnalyzerTypeSymbol))
                 {
                     continue;
                 }
