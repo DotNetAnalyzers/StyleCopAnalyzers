@@ -93,7 +93,9 @@
         {
             MemoryStream memStream = new MemoryStream();
 
-            var emitResult = this.compilation.Emit(memStream);
+            string path = Path.Combine(Path.GetDirectoryName(this.SlnPath), this.ProjectName);
+
+            var emitResult = this.compilation.Emit(memStream, manifestResources: ResourceReader.GetResourcesRecursive(path));
 
             if (!emitResult.Success)
             {
