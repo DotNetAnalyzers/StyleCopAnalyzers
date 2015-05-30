@@ -6,7 +6,7 @@
     /// An exception that gets thrown if the compilation failed.
     /// </summary>
     [Serializable]
-    public class CompilationFailedException : System.Exception
+    public class CompilationFailedException : Exception
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CompilationFailedException"/> class.
@@ -30,7 +30,7 @@
         /// </summary>
         /// <param name="message">The message that should be reported</param>
         /// <param name="inner">The exception that caused this exception to be thrown</param>
-        public CompilationFailedException(string message, System.Exception inner) : base(message, inner)
+        public CompilationFailedException(string message, Exception inner) : base(message, inner)
         {
 
         }
