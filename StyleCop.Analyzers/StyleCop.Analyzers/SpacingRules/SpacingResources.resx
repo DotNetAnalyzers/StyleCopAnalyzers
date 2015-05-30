@@ -222,6 +222,9 @@
   <data name="SA1022CodeFix" xml:space="preserve">
     <value>Fix spacing</value>
   </data>
+  <data name="SA1024CodeFix" xml:space="preserve">
+    <value>Fix spacing</value>
+  </data>
   <data name="SA1025Description" xml:space="preserve">
     <value>The code contains multiple whitespace characters in a row.</value>
   </data>
