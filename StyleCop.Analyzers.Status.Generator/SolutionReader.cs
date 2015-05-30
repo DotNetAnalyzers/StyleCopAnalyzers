@@ -21,7 +21,7 @@
     /// </summary>
     public class SolutionReader
     {
-        private static Regex diagnosticPathRegex = new Regex(@"(?<type>[A-Za-z]+)Rules\\(?<id>SA[0-9]{4})(?<name>[A-Za-z]+)\.cs$");
+        private static Regex diagnosticPathRegex = new Regex(@"(?<type>[A-Za-z]+)Rules\\(?<id>S[A-Z][0-9]{4})(?<name>[A-Za-z]+)\.cs$");
         private INamedTypeSymbol diagnosticAnalyzerTypeSymbol;
         private INamedTypeSymbol noCodeFixAttributeTypeSymbol;
 
