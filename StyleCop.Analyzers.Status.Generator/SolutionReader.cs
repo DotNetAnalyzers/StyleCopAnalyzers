@@ -123,7 +123,6 @@
 
                 string id = match.Groups["id"].Value;
                 string shortName = match.Groups["name"].Value;
-                string type = match.Groups["type"].Value;
                 CodeFixStatus codeFixStatus;
                 string noCodeFixReason = null;
                 bool hasImplementation = true;
