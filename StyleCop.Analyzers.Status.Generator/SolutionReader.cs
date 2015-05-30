@@ -39,6 +39,8 @@
 
         private string SlnPath { get; set; }
 
+        private string ProjectName { get; set; }
+
         private ImmutableArray<CodeFixProvider> CodeFixProviders { get; set; }
 
         /// <summary>
@@ -49,9 +51,11 @@
         /// <returns>A <see cref="Task{SolutionReader}"/> representing the asynchronous operation</returns>
         public static async Task<SolutionReader> CreateAsync(string pathToSln, string projectName = "StyleCop.Analyzers")
         {
+
             SolutionReader reader = new SolutionReader();
 
             reader.SlnPath = pathToSln;
+            reader.ProjectName = projectName;
             reader.workspace = MSBuildWorkspace.Create(properties: new Dictionary<string, string> { { "Configuration", "Release" } });
 
             await reader.InitializeAsync();
@@ -62,7 +66,7 @@
         private async Task InitializeAsync()
         {
             this.solution = await this.workspace.OpenSolutionAsync(this.SlnPath);
-            this.project = this.solution.Projects.Single(x => x.Name == "StyleCop.Analyzers");
+            this.project = this.solution.Projects.Single(x => x.Name == this.ProjectName);
             this.compilation = await this.project.GetCompilationAsync();
             this.compilation = this.compilation.WithOptions(this.compilation.Options.WithOutputKind(OutputKind.DynamicallyLinkedLibrary));
             this.booleanType = this.compilation.GetSpecialType(SpecialType.System_Boolean);
