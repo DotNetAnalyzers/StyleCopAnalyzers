@@ -94,7 +94,6 @@
                 CheckIfLocationOfOpenAndCloseTokensAreTheSame(context,
                     invocationExpression.ArgumentList.OpenParenToken, invocationExpression.ArgumentList.CloseParenToken);
             }
-
         }
 
         private void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
@@ -139,6 +138,5 @@
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, closeParenLocation));
             }
         }
-
     }
 }

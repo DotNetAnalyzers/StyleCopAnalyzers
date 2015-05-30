@@ -50,7 +50,6 @@ public class Foo
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-
         }
 
         [Fact]

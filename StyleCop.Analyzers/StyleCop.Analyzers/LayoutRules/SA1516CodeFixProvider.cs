@@ -56,7 +56,6 @@
             var newDocument = context.Document.WithSyntaxRoot(newSyntaxRoot);
 
             return Task.FromResult(newDocument);
-
         }
 
         private SyntaxNode GetRelevantNode(SyntaxNode innerNode)
