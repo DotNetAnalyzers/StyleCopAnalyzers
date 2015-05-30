@@ -129,6 +129,9 @@
   <data name="SA1503CodeFix" xml:space="preserve">
     <value>Wrap with curly brackets</value>
   </data>
+  <data name="SA1505CodeFix" xml:space="preserve">
+    <value>Remove blank lines following this curly bracket</value>
+  </data>
   <data name="SA1507CodeFix" xml:space="preserve">
     <value>Remove multiple blank lines</value>
   </data>
