@@ -125,7 +125,6 @@
                 string shortName = match.Groups["name"].Value;
                 CodeFixStatus codeFixStatus;
                 string noCodeFixReason = null;
-                bool hasImplementation = true;
 
                 // Check if this syntax tree represents a diagnostic
                 SyntaxNode syntaxRoot = await syntaxTree.GetRootAsync();
@@ -139,16 +138,7 @@
                     continue;
                 }
 
-                foreach (var trivia in syntaxRoot.DescendantTrivia())
-                {
-                    if (trivia.IsKind(SyntaxKind.SingleLineCommentTrivia))
-                    {
-                        if (trivia.ToFullString().Contains("TODO: Implement analysis"))
-                        {
-                            hasImplementation = false;
-                        }
-                    }
-                }
+                bool hasImplementation = HasImplementation(syntaxRoot);
 
                 codeFixStatus = this.HasCodeFix(id, classSymbol, out noCodeFixReason);
 
@@ -172,6 +162,23 @@
             }
 
             return diagnostics.ToImmutable();
+        }
+
+        private static bool HasImplementation(SyntaxNode syntaxRoot)
+        {
+            bool hasImplementation = true;
+            foreach (var trivia in syntaxRoot.DescendantTrivia())
+            {
+                if (trivia.IsKind(SyntaxKind.SingleLineCommentTrivia))
+                {
+                    if (trivia.ToFullString().Contains("TODO: Implement analysis"))
+                    {
+                        hasImplementation = false;
+                    }
+                }
+            }
+
+            return hasImplementation;
         }
 
         private string GetStatus(INamedTypeSymbol classSymbol, SyntaxNode root, SemanticModel model)
