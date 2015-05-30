@@ -235,13 +235,8 @@
 
         private bool InheritsFrom(INamedTypeSymbol declaration, INamedTypeSymbol possibleBaseType)
         {
-            while (true)
+            while (declaration != null)
             {
-                if (declaration == null)
-                {
-                    return false;
-                }
-
                 if (declaration == possibleBaseType)
                 {
                     return true;
@@ -249,6 +244,8 @@
 
                 declaration = declaration.BaseType;
             }
+
+            return false;
         }
     }
 }
