@@ -138,8 +138,8 @@
             {
                 // only the first token on the line has leading trivia, and those are ignored
                 SyntaxToken precedingToken = token.GetPreviousToken();
-                SyntaxTriviaList triviaList = precedingToken.TrailingTrivia;
-                if (triviaList.Count > 0 && !triviaList.Last().IsKind(SyntaxKind.MultiLineCommentTrivia))
+                SyntaxTriviaList combinedTrivia = precedingToken.TrailingTrivia.AddRange(token.LeadingTrivia);
+                if (combinedTrivia .Count > 0 && !combinedTrivia .Last().IsKind(SyntaxKind.MultiLineCommentTrivia))
                 {
                     hasPrecedingSpace = true;
                 }

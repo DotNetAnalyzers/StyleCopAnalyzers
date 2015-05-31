@@ -2,6 +2,7 @@
 {
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
@@ -30,11 +31,8 @@
             return WellKnownFixAllProviders.BatchFixer;
         }
 
-        /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1024ColonsMustBeSpacedCorrectly.DiagnosticId))
@@ -42,19 +40,20 @@
                     continue;
                 }
 
-                SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (token.IsMissing)
-                {
-                    continue;
-                }
-
-                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1024CodeFix, t => GetTransformedDocumentAsync(context.Document, root, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1024CodeFix,
+                                        cancellation => GetTransformedDocumentAsync(context.Document, diagnostic.Location.SourceSpan.Start, cancellation)),
+                                        diagnostic);
             }
+
+            return Task.FromResult(true);
         }
 
-        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxToken token)
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, int position, CancellationToken cancellationToken)
         {
+            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            SyntaxToken token = root.FindToken(position);
             bool requireBefore = true;
+
             switch (token.Parent.Kind())
             {
                 case SyntaxKind.LabeledStatement:
@@ -85,8 +84,8 @@
             {
                 // only the first token on the line has leading trivia, and those are ignored
                 SyntaxToken precedingToken = token.GetPreviousToken();
-                SyntaxTriviaList triviaList = precedingToken.TrailingTrivia;
-                if (triviaList.Count > 0 && !triviaList.Last().IsKind(SyntaxKind.MultiLineCommentTrivia))
+                SyntaxTriviaList combinedTrivia = precedingToken.TrailingTrivia.AddRange(token.LeadingTrivia);
+                if (combinedTrivia .Count > 0 && !combinedTrivia .Last().IsKind(SyntaxKind.MultiLineCommentTrivia))
                 {
                     hasPrecedingSpace = true;
                 }
@@ -98,16 +97,18 @@
                 SyntaxToken corrected = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, whitespace))
                                              .WithLeadingTrivia(token.LeadingTrivia.Add(whitespace));
                 Document updatedDocument = document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
-                return Task.FromResult(updatedDocument);
+                return updatedDocument;
             }
-            else if (missingFollowingSpace)
+
+            if (missingFollowingSpace)
             {
                 SyntaxTrivia whitespace = SyntaxFactory.Space;
                 SyntaxToken corrected = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, whitespace));
                 Document updatedDocument = document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
-                return Task.FromResult(updatedDocument);
+                return updatedDocument;
             }
-            else if (hasPrecedingSpace != requireBefore)
+
+            if (hasPrecedingSpace != requireBefore)
             {
                 SyntaxToken corrected;
 
@@ -122,10 +123,10 @@
                 }
 
                 Document updatedDocument = document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
-                return Task.FromResult(updatedDocument);
+                return updatedDocument;
             }
 
-            return Task.FromResult(document);
+            return document;
         }
     }
 }
