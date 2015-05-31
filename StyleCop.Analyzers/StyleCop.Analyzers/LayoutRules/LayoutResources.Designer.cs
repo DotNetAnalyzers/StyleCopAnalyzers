@@ -107,7 +107,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Remove blank after documentation header.
+        ///   Looks up a localized string similar to Remove blank line(s) after documentation header.
         /// </summary>
         internal static string SA1506CodeFix {
             get {
