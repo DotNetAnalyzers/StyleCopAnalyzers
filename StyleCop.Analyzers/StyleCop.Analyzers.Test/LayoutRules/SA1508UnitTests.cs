@@ -125,17 +125,26 @@
         private struct Helper
         {
             public int A;
-            public int B;
+            public string B;
         }
 
         public void TestMethod()
         {
-            var v1 = new Helper { A = 10, B = 5  };
+            var v1 = new Helper { A = 10, B = ""5"" };
             var v2 = new Helper
             {
                 A = 5,
-                B = 10
+                B = ""5""
             };
+
+            var v3 = new Helper
+            {
+                A = 5,
+                B = @""This is a string spanning multiple lines
+It was introduced as a regression to make sure that 
+tokens spanning multiple lines will use the end position
+to determine the spacing with the close brace.
+""           };
         }
     }
 }

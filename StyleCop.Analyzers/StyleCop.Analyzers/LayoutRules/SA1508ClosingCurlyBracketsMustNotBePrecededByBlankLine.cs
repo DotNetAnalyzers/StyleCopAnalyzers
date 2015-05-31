@@ -112,7 +112,7 @@
         private void AnalyzeCloseBrace(SyntaxNodeAnalysisContext context, SyntaxToken closeBraceToken)
         {
             var previousToken = closeBraceToken.GetPreviousToken();
-            if ((GetLine(closeBraceToken) - GetLine(previousToken)) < 2)
+            if ((closeBraceToken.GetLocation().GetLineSpan().StartLinePosition.Line - previousToken.GetLocation().GetLineSpan().EndLinePosition.Line) < 2)
             {
                 // there will be no blank lines when the closing brace and the preceding token are not at least two lines apart.
                 return;
@@ -150,11 +150,6 @@
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, closeBraceToken.GetLocation()));
             }
-        }
-
-        private static int GetLine(SyntaxToken token)
-        {
-            return token.GetLocation().GetLineSpan().StartLinePosition.Line;
         }
     }
 }
