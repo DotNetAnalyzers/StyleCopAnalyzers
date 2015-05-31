@@ -51,7 +51,7 @@
         /// </summary>
         public const string DiagnosticId = "SA1024";
         private const string Title = "Colons Must Be Spaced Correctly";
-        private const string MessageFormat = "Colon must{0} be {1} by a space.";
+        private const string MessageFormat = "Colon must{0} be {1}{2} by a space.";
         private const string Category = "StyleCop.CSharp.SpacingRules";
         private const string Description = "A colon within a C# element is not spaced correctly.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1024.html";
@@ -138,23 +138,27 @@
             {
                 // only the first token on the line has leading trivia, and those are ignored
                 SyntaxToken precedingToken = token.GetPreviousToken();
-                SyntaxTriviaList triviaList = precedingToken.TrailingTrivia;
-                if (triviaList.Count > 0 && !triviaList.Last().IsKind(SyntaxKind.MultiLineCommentTrivia))
+                SyntaxTriviaList combinedTrivia = precedingToken.TrailingTrivia.AddRange(token.LeadingTrivia);
+                if (combinedTrivia.Count > 0 && !combinedTrivia.Last().IsKind(SyntaxKind.MultiLineCommentTrivia))
                 {
                     hasPrecedingSpace = true;
                 }
             }
 
-            if (missingFollowingSpace)
+            if (missingFollowingSpace && requireBefore && !hasPrecedingSpace)
             {
-                // colon must{} be {followed} by a space
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "followed"));
+                // colon must{} be {preceded}{ and followed} by a space
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "preceded", " and followed"));
             }
-
-            if (hasPrecedingSpace != requireBefore)
+            else if (missingFollowingSpace)
             {
-                // colon must{ not}? be {preceded} by a space
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), requireBefore ? string.Empty : " not", "preceded"));
+                // colon must{} be {followed}{} by a space
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "followed", string.Empty));
+            }
+            else if (hasPrecedingSpace != requireBefore)
+            {
+                // colon must{ not}? be {preceded}{} by a space
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), requireBefore ? string.Empty : " not", "preceded", string.Empty));
             }
         }
     }

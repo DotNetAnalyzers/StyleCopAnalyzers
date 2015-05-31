@@ -318,6 +318,7 @@
     <Compile Include="SpacingRules\SA1022CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1022PositiveSignsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1023DereferenceAndAccessOfSymbolsMustBeSpacedCorrectly.cs" />
+    <Compile Include="SpacingRules\SA1024CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1024ColonsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1025CodeMustNotContainMultipleWhitespaceInARow.cs" />
     <Compile Include="SpacingRules\SA1026CodeFixProvider.cs" />
