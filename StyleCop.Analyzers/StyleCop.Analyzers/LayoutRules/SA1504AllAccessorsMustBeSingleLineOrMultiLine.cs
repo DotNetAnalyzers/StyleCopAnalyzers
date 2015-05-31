@@ -107,7 +107,6 @@
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, accessorsAnalyzeResult.SingleLineAccessors.Single().Keyword.GetLocation()));
             }
-
         }
 
         private AccessorsAnalysisResult AnalyzeAccessorsLineSpans(IEnumerable<AccessorDeclarationSyntax> accessors)

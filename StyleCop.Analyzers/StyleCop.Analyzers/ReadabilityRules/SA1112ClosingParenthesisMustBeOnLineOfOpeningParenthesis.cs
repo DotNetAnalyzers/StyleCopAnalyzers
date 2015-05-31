@@ -94,7 +94,6 @@
                 CheckIfLocationOfOpenAndCloseTokensAreTheSame(context,
                     invocationExpression.ArgumentList.OpenParenToken, invocationExpression.ArgumentList.CloseParenToken);
             }
-
         }
 
         private void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
@@ -117,7 +116,6 @@
 
             if (parameterListSyntax != null && !parameterListSyntax.Parameters.Any())
             {
-
                 if (!parameterListSyntax.OpenParenToken.IsMissing &&
                     !parameterListSyntax.CloseParenToken.IsMissing)
                 {
@@ -139,6 +137,5 @@
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, closeParenLocation));
             }
         }
-
     }
 }
