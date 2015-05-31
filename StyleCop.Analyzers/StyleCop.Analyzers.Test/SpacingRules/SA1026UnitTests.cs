@@ -1,0 +1,73 @@
+﻿namespace StyleCop.Analyzers.Test.SpacingRules
+{
+    using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.SpacingRules;
+    using TestHelper;
+    using Xunit;
+
+    /// <summary>
+    /// Unit tests for <see cref="SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation"/>
+    /// </summary>
+    public class SA1026UnitTests : CodeFixVerifier
+    {
+        /// <summary>
+        /// Verifies that the analyzer will properly handle an empty source.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestEmptySourceAsync()
+        {
+            var testCode = string.Empty;
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestValidSpacingOfImplicitlyTypedArrayAsync()
+        {
+            const string testCode = @"public class Foo
+{
+    public Foo()
+    {
+        var ints = new[] { 1, 2, 3 };
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData(" ")]
+        [InlineData("  ")]
+        [InlineData("\t")]
+        [InlineData("\r")]
+        [InlineData("\n")]
+        [InlineData("\r\n")]
+        [InlineData(" \t \r\n")]
+        public async Task TestInvalidSpacingOfImplicitlyTypedArrayAsync(string space)
+        {
+            string testCode = string.Format("public class Foo {{ public Foo() {{ var ints = new{0}[] {{ 1, 2, 3 }}; }} }}", space);
+            const string expectedCode = "public class Foo { public Foo() { var ints = new[] { 1, 2, 3 }; } }";
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(1, 46);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(expectedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, expectedCode).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        {
+            yield return new SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation();
+        }
+
+        /// <inheritdoc/>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1026CodeFixProvider();
+        }
+    }
+}
