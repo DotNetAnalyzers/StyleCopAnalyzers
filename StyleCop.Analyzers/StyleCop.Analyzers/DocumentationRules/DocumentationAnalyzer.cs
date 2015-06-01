@@ -36,7 +36,7 @@
 
             bool isNestedInClassOrStruct = this.IsNestedType(declaration);
 
-            if (declaration != null && !XmlCommentHelper.HasDocumentation(declaration))
+            if (declaration != null && !XmlCommentHelper.HasDocumentation(declaration) && !declaration.Modifiers.Any(SyntaxKind.PartialKeyword))
             {
                 var effective = EffectiveVisibilityHelper.ResolveVisibilityForChild(
                     EffectiveVisibilityHelper.EffectiveVisibility(declaration.Modifiers, isNestedInClassOrStruct ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword),
@@ -65,7 +65,7 @@
                 defaultVisibility = SyntaxKind.PublicKeyword;
             }
 
-            if (declaration != null && !XmlCommentHelper.HasDocumentation(declaration))
+            if (declaration != null && !XmlCommentHelper.HasDocumentation(declaration) && !declaration.Modifiers.Any(SyntaxKind.PartialKeyword))
             {
                 var effective = EffectiveVisibilityHelper.ResolveVisibilityForChild(
                     EffectiveVisibilityHelper.EffectiveVisibility(declaration.Modifiers, defaultVisibility),
@@ -329,7 +329,7 @@
                 {
                     var effective = EffectiveVisibilityHelper.ResolveVisibilityForChild(SyntaxKind.PublicKeyword, enumMemberDeclaration.Parent as BaseTypeDeclarationSyntax);
 
-                    ReportDiagnostic(context, this.DescriptorFromEffectiveVisibility(SyntaxKind.PublicKeyword, context), enumMemberDeclaration.Identifier);
+                    ReportDiagnostic(context, this.DescriptorFromEffectiveVisibility(effective, context), enumMemberDeclaration.Identifier);
                 }
             }
         }
