@@ -20,11 +20,6 @@
         /// <returns>The name contained in the <see cref="NameSyntax"/>, with its alias removed (if any).</returns>
         internal static string ToUnaliasedString(this NameSyntax nameSyntax)
         {
-            return BuildName(nameSyntax);
-        }
-
-        private static string BuildName(NameSyntax nameSyntax)
-        {
             var sb = new StringBuilder();
 
             BuildName(nameSyntax, sb);
@@ -36,7 +31,8 @@
         {
             if (nameSyntax.IsKind(SyntaxKind.IdentifierName))
             {
-                builder.Append(((IdentifierNameSyntax)nameSyntax).Identifier.ValueText);
+                var identifierNameSyntax = (IdentifierNameSyntax)nameSyntax;
+                builder.Append(identifierNameSyntax.Identifier.ValueText);
             }
             else if (nameSyntax.IsKind(SyntaxKind.QualifiedName))
             {
