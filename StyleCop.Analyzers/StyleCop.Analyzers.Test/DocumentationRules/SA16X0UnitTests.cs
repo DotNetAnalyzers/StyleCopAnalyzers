@@ -549,9 +549,16 @@ internal enum TypeName
     Bar
 }}";
 
-            DiagnosticResult expected = this.CSharpDiagnostic(expectedDiagnosticId).WithLocation(6, 5);
+            if (expectedDiagnosticId == NoDiagnostic)
+            {
+                await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, enumModifier), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            }
+            else
+            {
+                DiagnosticResult expected = this.CSharpDiagnostic(expectedDiagnosticId).WithLocation(6, 5);
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, enumModifier), expected, CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, enumModifier), expected, CancellationToken.None).ConfigureAwait(false);
+            }
         }
 
         [Theory]
