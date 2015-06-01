@@ -141,6 +141,7 @@
     <Compile Include="LayoutRules\SA1504AllAccessorsMustBeSingleLineOrMultiLine.cs" />
     <Compile Include="LayoutRules\SA1505CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1505OpeningCurlyBracketsMustNotBeFollowedByBlankLine.cs" />
+    <Compile Include="LayoutRules\SA1506CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1506ElementDocumentationHeadersMustNotBeFollowedByBlankLine.cs" />
     <Compile Include="LayoutRules\SA1507CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1507CodeMustNotContainMultipleBlankLinesInARow.cs" />
