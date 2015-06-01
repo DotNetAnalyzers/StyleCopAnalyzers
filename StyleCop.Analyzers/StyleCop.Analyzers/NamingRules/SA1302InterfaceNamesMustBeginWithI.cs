@@ -1,6 +1,4 @@
-﻿using StyleCop.Analyzers.Helpers;
-
-namespace StyleCop.Analyzers.NamingRules
+﻿namespace StyleCop.Analyzers.NamingRules
 {
     using System;
     using System.Collections.Immutable;
@@ -8,6 +6,7 @@ namespace StyleCop.Analyzers.NamingRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The name of a C# interface does not begin with the capital letter I.
