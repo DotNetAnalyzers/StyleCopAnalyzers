@@ -286,7 +286,6 @@
                 CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(context, lastArgument,
                     objectCreation.ArgumentList.CloseParenToken);
             }
-
         }
 
         private void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)

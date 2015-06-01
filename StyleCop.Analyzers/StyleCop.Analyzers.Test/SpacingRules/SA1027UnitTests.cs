@@ -12,7 +12,6 @@
     /// <summary>
     /// Unit tests for <see cref="SA1027TabsMustNotBeUsed"/>
     /// </summary>
-
     public class SA1027UnitTests : CodeFixVerifier
     {
         /// <summary>

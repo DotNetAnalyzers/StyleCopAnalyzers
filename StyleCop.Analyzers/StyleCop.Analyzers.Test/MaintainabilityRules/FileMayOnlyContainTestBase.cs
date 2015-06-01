@@ -1,10 +1,10 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using TestHelper;
-using Xunit;
-
-namespace StyleCop.Analyzers.Test.MaintainabilityRules
+﻿namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
+    using System.Threading;
+    using System.Threading.Tasks;
+    using TestHelper;
+    using Xunit;
+
     public abstract class FileMayOnlyContainTestBase : CodeFixVerifier
     {
         public abstract string Keyword { get; }

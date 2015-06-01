@@ -13,7 +13,6 @@
     /// </summary>
     internal static class FileHeaderHelpers
     {
-
         internal static FileHeader ParseFileHeader(SyntaxNode root)
         {
             var firstToken = root.GetFirstToken(includeZeroWidth: true);

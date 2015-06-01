@@ -94,7 +94,6 @@
                     var left = (BinaryExpressionSyntax)binSyntax.Left;
                     if (left.OperatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken) || left.OperatorToken.IsKind(SyntaxKind.BarBarToken))
                     {
-
                         if (!this.IsSameFamily(binSyntax.OperatorToken, left.OperatorToken))
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptor, left.GetLocation()));

@@ -248,7 +248,6 @@
 
             default:
                 return null;
-
             }
         }
 

@@ -98,6 +98,24 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Remove blank lines following this curly bracket.
+        /// </summary>
+        internal static string SA1505CodeFix {
+            get {
+                return ResourceManager.GetString("SA1505CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove blank line(s) after documentation header.
+        /// </summary>
+        internal static string SA1506CodeFix {
+            get {
+                return ResourceManager.GetString("SA1506CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove multiple blank lines.
         /// </summary>
         internal static string SA1507CodeFix {
@@ -109,9 +127,27 @@ namespace StyleCop.Analyzers.LayoutRules {
         /// <summary>
         ///   Looks up a localized string similar to Remove blank lines preceding this curly bracket.
         /// </summary>
+        internal static string SA1508CodeFix {
+            get {
+                return ResourceManager.GetString("SA1508CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove blank lines preceding this curly bracket.
+        /// </summary>
         internal static string SA1509CodeFix {
             get {
                 return ResourceManager.GetString("SA1509CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove blank line before chained statement.
+        /// </summary>
+        internal static string SA1510CodeFix {
+            get {
+                return ResourceManager.GetString("SA1510CodeFix", resourceCulture);
             }
         }
         

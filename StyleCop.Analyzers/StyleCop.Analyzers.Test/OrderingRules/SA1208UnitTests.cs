@@ -190,7 +190,6 @@ namespace Test
 
             await this.VerifyCSharpDiagnosticAsync(compilationUnitWithoutDiagnostic, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(new[] { source1, source2, source3 }, expected, CancellationToken.None).ConfigureAwait(false);
-
         }
 
         [Fact]
