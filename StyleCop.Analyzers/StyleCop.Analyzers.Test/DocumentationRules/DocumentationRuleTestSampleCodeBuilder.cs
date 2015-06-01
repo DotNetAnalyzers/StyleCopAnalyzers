@@ -112,7 +112,6 @@
             this.Write(BuildSymbolWithPositionMarkers(name, expectError));
 
             this.Write("()\r\n{\r\n}\r\n");
-
         }
 
         public void WriteField(string name, DocumentationOptions documentationOptions, ExpectedResult expectError, params string[] modifiers)

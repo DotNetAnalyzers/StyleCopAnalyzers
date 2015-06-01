@@ -1,12 +1,10 @@
 ﻿namespace StyleCop.Analyzers.DocumentationRules
 {
+    using System;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using StyleCop.Analyzers.Helpers;
-    using System;
+    using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
     /// An item within a C# enumeration is missing an XML documentation header.
@@ -34,7 +32,7 @@
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1602EnumerationItemsMustBeDocumented : DiagnosticAnalyzer
+    public class SA1602EnumerationItemsMustBeDocumented : DocumentationAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1602EnumerationItemsMustBeDocumented"/> analyzer.
@@ -55,30 +53,15 @@
 
         private const string Title = "Enumeration items must be documented";
         private const string MessageFormat = "Enumeration items must be documented";
-        private const string Description = "An item within a publicly visible C# enumeration is missing an Xml documentation header.";
-
-        private const string TitleInternal = "Enumeration items must be documented (internal visibility)";
-        private const string MessageFormatInternal = "Enumeration items must be documented (internal visibility)";
-        private const string DescriptionInternal = "An item within an internal C# enumeration is missing an Xml documentation header.";
-
-        private const string TitlePrivate = "Enumeration items must be documented (private visibility)";
-        private const string MessageFormatPrivate = "Enumeration items must be documented (private visibility)";
-        private const string DescriptionPrivate = "An item within a private C# enumeration is missing an Xml documentation header.";
-
         private const string Category = "StyleCop.CSharp.DocumentationRules";
+        private const string Description = "An item within a publicly visible C# enumeration is missing an Xml documentation header.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1602.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly DiagnosticDescriptor DescriptorInternal =
-            new DiagnosticDescriptor(DiagnosticIdInternal, TitleInternal, MessageFormatInternal, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, DescriptionInternal, HelpLink);
-
-        private static readonly DiagnosticDescriptor DescriptorPrivate =
-            new DiagnosticDescriptor(DiagnosticIdPrivate, TitlePrivate, MessageFormatPrivate, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, DescriptionPrivate, HelpLink);
-
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
-            ImmutableArray.Create(Descriptor, DescriptorInternal, DescriptorPrivate);
+            ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
@@ -95,35 +78,26 @@
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleEnumMember, SyntaxKind.EnumMemberDeclaration);
         }
 
-        private static DiagnosticDescriptor DescriptorFromEffectiveVisibility(SyntaxKind visibility)
+        /// <inheritdoc/>
+        protected override DiagnosticDescriptor DescriptorFromEffectiveVisibility(SyntaxKind visibility, SyntaxNodeAnalysisContext context)
         {
             switch (visibility)
             {
             case SyntaxKind.PublicKeyword:
-                return Descriptor;
+                return (context.SemanticModel.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(CS1591DiagnosticId, ReportDiagnostic.Default) != ReportDiagnostic.Suppress)
+                    ? null
+                    : Descriptor;
 
             case SyntaxKind.InternalKeyword:
-                return DescriptorInternal;
+                return (context.SemanticModel.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(SA16X0NonPrivateElementsMustBeDocumented.DiagnosticId, ReportDiagnostic.Default) != ReportDiagnostic.Suppress)
+                    ? null
+                    : Descriptor;
 
             case SyntaxKind.PrivateKeyword:
-                return DescriptorPrivate;
+                return Descriptor;
 
             default:
                 throw new ArgumentOutOfRangeException("visibility");
-            }
-        }
-
-        private void HandleEnumMember(SyntaxNodeAnalysisContext context)
-        {
-            EnumMemberDeclarationSyntax enumMemberDeclaration = context.Node as EnumMemberDeclarationSyntax;
-            if (enumMemberDeclaration != null)
-            {
-                if (!XmlCommentHelper.HasDocumentation(enumMemberDeclaration))
-                {
-                    var effective = EffectiveVisibilityHelper.ResolveVisibilityForChild(SyntaxKind.PublicKeyword, enumMemberDeclaration.Parent as BaseTypeDeclarationSyntax);
-
-                    context.ReportDiagnostic(Diagnostic.Create(DescriptorFromEffectiveVisibility(effective), enumMemberDeclaration.Identifier.GetLocation()));
-                }
             }
         }
     }
