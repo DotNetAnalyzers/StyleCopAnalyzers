@@ -22,16 +22,16 @@
     /// for non-private elements only.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA16X0NonPrivateElementsMustBeDocumented : DocumentationAnalyzer
+    public class SA16X0InternalElementsMustBeDocumented : DocumentationAnalyzer
     {
         /// <summary>
-        /// The ID for diagnostics produced by the <see cref="SA16X0NonPrivateElementsMustBeDocumented"/> analyzer.
+        /// The ID for diagnostics produced by the <see cref="SA16X0InternalElementsMustBeDocumented"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA16X0";
 
-        private const string Title = "Non-public elements must be documented";
-        private const string MessageFormat = "Non-public elements must be documented";
-        private const string Description = "A non-public C# code element is missing a documentation header.";
+        private const string Title = "Internal elements must be documented";
+        private const string MessageFormat = "Internal elements must be documented";
+        private const string Description = "An internal C# code element is missing a documentation header.";
 
         private const string Category = "StyleCop.CSharp.DocumentationRules";
         private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA16X0.md";

@@ -112,7 +112,7 @@
     <Compile Include="DocumentationRules\SA1650ElementDocumentationMustBeSpelledCorrectly.cs" />
     <Compile Include="DocumentationRules\SA1651CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1651DoNotUsePlaceholderElements.cs" />
-    <Compile Include="DocumentationRules\SA16X0NonPrivateElementsMustBeDocumented.cs" />
+    <Compile Include="DocumentationRules\SA16X0InternalElementsMustBeDocumented.cs" />
     <Compile Include="DocumentationRules\StandardTextDiagnosticBase.cs" />
     <Compile Include="GeneratedCodeAnalysisExtensions.cs" />
     <Compile Include="Helpers\DocumentationCommentExtensions.cs" />

@@ -109,7 +109,7 @@
                     : Descriptor;
 
             case SyntaxKind.InternalKeyword:
-                return (context.SemanticModel.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(SA16X0NonPrivateElementsMustBeDocumented.DiagnosticId, ReportDiagnostic.Default) != ReportDiagnostic.Suppress)
+                return (context.SemanticModel.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(SA16X0InternalElementsMustBeDocumented.DiagnosticId, ReportDiagnostic.Default) != ReportDiagnostic.Suppress)
                     ? null
                     : Descriptor;
 

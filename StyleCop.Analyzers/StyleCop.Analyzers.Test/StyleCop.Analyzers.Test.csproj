@@ -124,6 +124,7 @@
     <Compile Include="DocumentationRules\DocumentationOptions.cs" />
     <Compile Include="DocumentationRules\DocumentationRuleTestSampleCodeBuilder.cs" />
     <Compile Include="DocumentationRules\ExpectedResult.cs" />
+    <Compile Include="DocumentationRules\SA16X0UnitTests.cs" />
     <Compile Include="DocumentationRules\SampleCodeBuilder.cs" />
     <Compile Include="DocumentationRules\SA1600UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1601UnitTests.cs" />

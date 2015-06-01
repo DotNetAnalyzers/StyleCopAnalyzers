@@ -13,6 +13,9 @@
     /// </summary>
     public class SA1601UnitTests : CodeFixVerifier
     {
+        private const string DiagnosticId = SA1601PartialElementsMustBeDocumented.DiagnosticId;
+        private const string NoDiagnostic = null;
+
         [Fact]
         public async Task TestEmptySourceAsync()
         {
@@ -37,12 +40,12 @@ public partial {0} TypeName
         }
 
         [Theory]
-        [InlineData("class", "public", SA1601PartialElementsMustBeDocumented.DiagnosticId)]
-        ////[InlineData("class", "internal", SA1601PartialElementsMustBeDocumented.DiagnosticIdInternal)]
-        [InlineData("struct", "public", SA1601PartialElementsMustBeDocumented.DiagnosticId)]
-        [InlineData("struct", "public", SA1601PartialElementsMustBeDocumented.DiagnosticId)]
-        [InlineData("interface", "public", SA1601PartialElementsMustBeDocumented.DiagnosticId)]
-        public async Task TestPartialTypeWithoutDocumentationAsync(string typeKeyword, string typeModifier, string expectedDiagnosticId)
+        [InlineData("class", "public")]
+        [InlineData("class", "internal")]
+        [InlineData("struct", "public")]
+        [InlineData("struct", "internal")]
+        [InlineData("interface", "public")]
+        public async Task TestPartialTypeWithoutDocumentationAsync(string typeKeyword, string typeModifier)
         {
             var testCode = @"
 {0} partial {1}
@@ -50,9 +53,7 @@ TypeName
 {{
 }}";
 
-            DiagnosticResult expected = this.CSharpDiagnostic(expectedDiagnosticId).WithLocation(3, 1);
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeModifier, typeKeyword), expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeModifier, typeKeyword), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -70,9 +71,7 @@ TypeName
 {{
 }}";
 
-            DiagnosticResult expected = this.CSharpDiagnostic(SA1601PartialElementsMustBeDocumented.DiagnosticId).WithLocation(6, 1);
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKeyword), expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKeyword), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -92,42 +91,44 @@ public partial class TypeName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-////        [Fact]
-////        public async Task TestPartialMethodWithoutDocumentationAsync()
-////        {
-////            var testCode = @"
-/////// <summary>
-/////// Some Documentation
-/////// </summary>
-////public partial class TypeName
-////{
-////    partial void MemberName();
-////}";
+        [Fact]
+        public async Task TestPartialMethodWithoutDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Some Documentation
+/// </summary>
+public partial class TypeName
+{
+    partial void
+MemberName();
+}";
 
-////            DiagnosticResult expected = this.CSharpDiagnostic(SA1601PartialElementsMustBeDocumented.DiagnosticIdPrivate).WithLocation(7, 18);
+            DiagnosticResult expected = this.CSharpDiagnostic(DiagnosticId).WithLocation(8, 1);
 
-////            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-////        }
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
 
-////        [Fact]
-////        public async Task TestPartialMethodWithEmptyDocumentationAsync()
-////        {
-////            var testCode = @"
-/////// <summary>
-/////// Some Documentation
-/////// </summary>
-////public partial class TypeName
-////{
-////    /// <summary>
-////    ///
-////    /// </summary>
-////    partial void MemberName();
-////}";
+        [Fact]
+        public async Task TestPartialMethodWithEmptyDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Some Documentation
+/// </summary>
+public partial class TypeName
+{
+    /// <summary>
+    ///
+    /// </summary>
+    partial void
+MemberName();
+}";
 
-////            DiagnosticResult expected = this.CSharpDiagnostic(SA1601PartialElementsMustBeDocumented.DiagnosticIdPrivate).WithLocation(10, 18);
+            DiagnosticResult expected = this.CSharpDiagnostic(DiagnosticId).WithLocation(11, 1);
 
-////            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-////        }
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {

@@ -39,18 +39,6 @@
         /// </summary>
         public const string DiagnosticId = "SA1602";
 
-        /// <summary>
-        /// The ID for diagnostics produced by the <see cref="SA1602EnumerationItemsMustBeDocumented"/> analyzer
-        /// for internal members.
-        /// </summary>
-        public const string DiagnosticIdInternal = "SA1602In";
-
-        /// <summary>
-        /// The ID for diagnostics produced by the <see cref="SA1602EnumerationItemsMustBeDocumented"/> analyzer
-        /// for private members.
-        /// </summary>
-        public const string DiagnosticIdPrivate = "SA1602Pr";
-
         private const string Title = "Enumeration items must be documented";
         private const string MessageFormat = "Enumeration items must be documented";
         private const string Category = "StyleCop.CSharp.DocumentationRules";
@@ -89,7 +77,7 @@
                     : Descriptor;
 
             case SyntaxKind.InternalKeyword:
-                return (context.SemanticModel.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(SA16X0NonPrivateElementsMustBeDocumented.DiagnosticId, ReportDiagnostic.Default) != ReportDiagnostic.Suppress)
+                return (context.SemanticModel.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(SA16X0InternalElementsMustBeDocumented.DiagnosticId, ReportDiagnostic.Default) != ReportDiagnostic.Suppress)
                     ? null
                     : Descriptor;
 

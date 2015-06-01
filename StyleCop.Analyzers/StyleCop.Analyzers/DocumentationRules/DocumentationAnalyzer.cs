@@ -290,7 +290,7 @@
                 {
                     if (!XmlCommentHelper.HasDocumentation(methodDeclaration))
                     {
-                        ReportDiagnostic(context, this.DescriptorFromEffectiveVisibility(SyntaxKind.PublicKeyword, context), methodDeclaration.Identifier);
+                        ReportDiagnostic(context, this.DescriptorFromEffectiveVisibility(SyntaxKind.PrivateKeyword, context), methodDeclaration.Identifier);
                     }
                 }
             }
