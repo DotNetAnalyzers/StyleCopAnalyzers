@@ -55,7 +55,12 @@
             MethodDeclarationSyntax declaration = context.Node as MethodDeclarationSyntax;
             SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
 
-            if (this.IsInterfaceMemberDeclaration(declaration) || declaration.ExplicitInterfaceSpecifier != null)
+            if (declaration.ExplicitInterfaceSpecifier != null)
+            {
+                // Treat explicit interface implementation as private.
+                defaultVisibility = SyntaxKind.PrivateKeyword;
+            }
+            else if (this.IsInterfaceMemberDeclaration(declaration))
             {
                 defaultVisibility = SyntaxKind.PublicKeyword;
             }
@@ -115,7 +120,12 @@
             PropertyDeclarationSyntax declaration = context.Node as PropertyDeclarationSyntax;
             SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
 
-            if (this.IsInterfaceMemberDeclaration(declaration) || declaration.ExplicitInterfaceSpecifier != null)
+            if (declaration.ExplicitInterfaceSpecifier != null)
+            {
+                // Treat explicit interface implementation as private.
+                defaultVisibility = SyntaxKind.PrivateKeyword;
+            }
+            else if (this.IsInterfaceMemberDeclaration(declaration))
             {
                 defaultVisibility = SyntaxKind.PublicKeyword;
             }
@@ -139,7 +149,12 @@
             IndexerDeclarationSyntax declaration = context.Node as IndexerDeclarationSyntax;
             SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
 
-            if (this.IsInterfaceMemberDeclaration(declaration) || declaration.ExplicitInterfaceSpecifier != null)
+            if (declaration.ExplicitInterfaceSpecifier != null)
+            {
+                // Treat explicit interface implementation as private.
+                defaultVisibility = SyntaxKind.PrivateKeyword;
+            }
+            else if (this.IsInterfaceMemberDeclaration(declaration))
             {
                 defaultVisibility = SyntaxKind.PublicKeyword;
             }
@@ -208,6 +223,11 @@
             SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
 
             if (declaration.ExplicitInterfaceSpecifier != null)
+            {
+                // Treat explicit interface implementation as private.
+                defaultVisibility = SyntaxKind.PrivateKeyword;
+            }
+            else if (this.IsInterfaceMemberDeclaration(declaration))
             {
                 defaultVisibility = SyntaxKind.PublicKeyword;
             }
