@@ -1,9 +1,9 @@
 ﻿namespace StyleCop.Analyzers.OrderingRules
 {
-    using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
-    using System.Threading;
+    using System.Globalization;
 
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -11,8 +11,6 @@
     using Microsoft.CodeAnalysis.Diagnostics;
 
     using StyleCop.Analyzers.Helpers;
-    using System.Collections.Generic;
-
 
     /// <summary>
     /// The using directives within a C# code file are not sorted alphabetically by namespace.
@@ -33,7 +31,7 @@
         /// </summary>
         public const string DiagnosticId = "SA1210";
         private const string Title = "Using directives must be ordered alphabetically by namespace";
-        private const string MessageFormat = "Using directive for '{0}' must appear before directive for '{1}'";
+        private const string MessageFormat = "Using directives must be ordered alphabetically by the namespaces.";
         private const string Category = "StyleCop.CSharp.OrderingRules";
         private const string Description = "The using directives within a C# code file are not sorted alphabetically by namespace.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1210.html";
@@ -80,33 +78,25 @@
             var systemUsingDirectives = usingsDirectivesWithoutAliasAndStatic.Where(directive => directive.IsSystemUsingDirective());
             var usingDirectives = usingsDirectivesWithoutAliasAndStatic.Where(directive => !directive.IsSystemUsingDirective());
 
-            CheckOrderAndReportDiagnostic(context, usingDirectives.ToList());
-            CheckOrderAndReportDiagnostic(context, systemUsingDirectives.ToList());
+            CheckIncorrectlyOrderedUsingsAndReportDiagnostic(context, usingDirectives);
+            CheckIncorrectlyOrderedUsingsAndReportDiagnostic(context, systemUsingDirectives);
         }
 
-        private static void CheckOrderAndReportDiagnostic(SyntaxNodeAnalysisContext context, IList<UsingDirectiveSyntax> usings)
+        private static void CheckIncorrectlyOrderedUsingsAndReportDiagnostic(SyntaxNodeAnalysisContext context, IEnumerable<UsingDirectiveSyntax> usings)
         {
-            if (usings.Count <= 1)
+            UsingDirectiveSyntax previousUsingDirective = null;
+
+            foreach (var directive in usings)
             {
-                return;
-            }
-
-            var properPositionsOfUsingDirectives = usings.OrderBy(directive => directive.Name.ToUnaliasedString()).Select((directive, idx) => new { Directive = directive, Index = idx }).ToDictionary(item => item.Directive, item => item.Index);
-            var usingsPositions = new List<int>(usings.Count - 1);
-
-            for (int i = 1; i < usings.Count; i++)
-            {
-                usingsPositions.Add(properPositionsOfUsingDirectives[usings[i - 1]]);
-                var currentUsingDirectiveProperPosition = properPositionsOfUsingDirectives[usings[i]];
-
-                var isAnyUsingDirectiveNameBeforeWrongOrdered = usingsPositions.Any(position => position > currentUsingDirectiveProperPosition);
-                if (isAnyUsingDirectiveNameBeforeWrongOrdered)
+                if (previousUsingDirective != null)
                 {
-                    var positionOfUsingThatShouldBeBefore = usingsPositions.Where(value => value > currentUsingDirectiveProperPosition).Min();
-                    var indexOfUsingThatShouldBeBefore = usingsPositions.IndexOf(positionOfUsingThatShouldBeBefore);
-
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, usings[i].GetLocation(), usings[i].Name.ToUnaliasedString(), usings[indexOfUsingThatShouldBeBefore].Name.ToUnaliasedString()));
+                    if (CultureInfo.InvariantCulture.CompareInfo.Compare(previousUsingDirective.Name.ToUnaliasedString(), directive.Name.ToUnaliasedString(), CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreWidth) > 0)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, previousUsingDirective.GetLocation()));
+                    }
                 }
+
+                previousUsingDirective = directive;
             }
         }
 

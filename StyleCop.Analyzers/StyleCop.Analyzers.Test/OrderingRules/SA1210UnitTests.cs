@@ -1,8 +1,8 @@
 ﻿namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Collections.Generic;
-    using System.Threading.Tasks;
     using System.Threading;
+    using System.Threading.Tasks;
 
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.OrderingRules;
@@ -55,11 +55,16 @@ namespace Bar
         public async Task TestInvalidOrderedUsingDirectivesInCompilationUnitAsync()
         {
             var compilationUnit = @"
-using System.IO;
 using System.Threading;
-using System;";
+using System.IO;
+using System;
+using System.Linq;";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 1).WithArguments("System", "System.IO");
+            DiagnosticResult[] expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(2, 1),
+                this.CSharpDiagnostic().WithLocation(3, 1)
+            };
 
             await this.VerifyCSharpDiagnosticAsync(compilationUnit, expected, CancellationToken.None).ConfigureAwait(false);
         }
@@ -77,14 +82,16 @@ namespace Foo
 namespace Bar
 {
     using Foo;
+    using Bar;
     using System.Threading;
     using System;
 }";
 
             DiagnosticResult[] expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(5, 5).WithArguments("System", "System.Threading"),
-                this.CSharpDiagnostic().WithLocation(12, 5).WithArguments("System", "System.Threading")
+                this.CSharpDiagnostic().WithLocation(4, 5),
+                this.CSharpDiagnostic().WithLocation(10, 5),
+                this.CSharpDiagnostic().WithLocation(12, 5)
             };
 
             await this.VerifyCSharpDiagnosticAsync(namespaceDeclaration, expected, CancellationToken.None).ConfigureAwait(false);
@@ -100,7 +107,7 @@ namespace Foo
     using /*A*/ System.Threading;
     using System.IO; //sth
 }";
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 5).WithArguments("System.IO", "System.Threading");
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 5);
 
             await this.VerifyCSharpDiagnosticAsync(namespaceDeclaration, expected, CancellationToken.None).ConfigureAwait(false);
         }
@@ -122,9 +129,8 @@ namespace Foo
 
             DiagnosticResult[] expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(3, 1).WithArguments("System.IO", "System.Threading"),
-                this.CSharpDiagnostic().WithLocation(4, 1).WithArguments("System.Linq", "System.Threading"),
-                this.CSharpDiagnostic().WithLocation(5, 1).WithArguments("System", "System.IO"),
+                this.CSharpDiagnostic().WithLocation(2, 1),
+                this.CSharpDiagnostic().WithLocation(4, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(compilationUnit, expected, CancellationToken.None).ConfigureAwait(false);
@@ -152,10 +158,7 @@ using System;
 using A2 = System.IO;
 using A1 = System.Threading;";
 
-            DiagnosticResult[] expected = new[]
-            {
-                this.CSharpDiagnostic().WithLocation(2, 1).WithArguments("System", "System.IO")
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(1, 1);
 
             await this.VerifyCSharpDiagnosticAsync(compilationUnit, expected, CancellationToken.None).ConfigureAwait(false);
         }
@@ -172,11 +175,7 @@ namespace Test
     using \u0041Test_;
     using ATestA;
 }";
-            DiagnosticResult[] expected = new[]
-            {
-                this.CSharpDiagnostic().WithLocation(7, 5).WithArguments(@"\u0041Test_", "Test"),
-                this.CSharpDiagnostic().WithLocation(8, 5).WithArguments("ATestA", "Test")
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 5);
 
             await this.VerifyCSharpDiagnosticAsync(compilationUnit, expected, CancellationToken.None).ConfigureAwait(false);
         }
