@@ -32,7 +32,7 @@
         private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1026.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -49,54 +49,31 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
         }
 
-        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
             {
-                switch (token.Kind())
+                if (!token.IsKind(SyntaxKind.NewKeyword))
                 {
-                case SyntaxKind.NewKeyword:
-                    this.HandleNewKeywordToken(context, token);
-                    break;
+                    continue;
+                }
 
-                default:
-                    break;
+                if (token.IsMissing || !token.Parent.IsKind(SyntaxKind.ImplicitArrayCreationExpression))
+                {
+                    continue;
+                }
+
+                SyntaxTriviaList trailingTriviaList = token.TrailingTrivia;
+                if (trailingTriviaList.Count > 0 &&
+                    (trailingTriviaList[0].IsKind(SyntaxKind.WhitespaceTrivia) || trailingTriviaList[0].IsKind(SyntaxKind.EndOfLineTrivia)))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));
                 }
             }
-        }
-
-        private void HandleNewKeywordToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
-        {
-            if (token.IsMissing)
-            {
-                return;
-            }
-
-            if (!token.Parent.IsKind(SyntaxKind.ImplicitArrayCreationExpression))
-            {
-                return;
-            }
-
-            this.HandleDisallowedSpaceToken(context, token);
-        }
-
-        private void HandleDisallowedSpaceToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
-        {
-            if (token.IsMissing || !token.HasTrailingTrivia)
-            {
-                return;
-            }
-
-            if (!token.TrailingTrivia.First().IsKind(SyntaxKind.WhitespaceTrivia))
-            {
-                return;
-            }
-
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));
         }
     }
 }
