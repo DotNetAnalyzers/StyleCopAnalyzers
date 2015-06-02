@@ -2,7 +2,10 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// An element documentation header above a C# element is not preceded by a blank line.
@@ -60,30 +63,103 @@
         /// </summary>
         public const string DiagnosticId = "SA1514";
         private const string Title = "Element documentation header must be preceded by blank line";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "Element documentation header must be preceded by blank line";
         private const string Category = "StyleCop.CSharp.LayoutRules";
         private const string Description = "An element documentation header above a C# element is not preceded by a blank line.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1514.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        {
-            get
-            {
-                return SupportedDiagnosticsValue;
-            }
-        }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => SupportedDiagnosticsValue;
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeActionHonorExclusions(
+                this.HandleDeclaration,
+                SyntaxKind.ClassDeclaration,
+                SyntaxKind.StructDeclaration,
+                SyntaxKind.InterfaceDeclaration,
+                SyntaxKind.EnumDeclaration,
+                SyntaxKind.MethodDeclaration,
+                SyntaxKind.ConstructorDeclaration,
+                SyntaxKind.DestructorDeclaration,
+                SyntaxKind.PropertyDeclaration,
+                SyntaxKind.IndexerDeclaration,
+                SyntaxKind.FieldDeclaration,
+                SyntaxKind.DelegateDeclaration,
+                SyntaxKind.EventDeclaration,
+                SyntaxKind.EventFieldDeclaration);
+        }
+
+        private void HandleDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var nodeTriviaList = context.Node.GetLeadingTrivia();
+            var documentationHeaderIndex = context.Node.GetLeadingTrivia().IndexOf(SyntaxKind.SingleLineDocumentationCommentTrivia);
+
+            if (documentationHeaderIndex == -1)
+            {
+                // there is no documentation header.
+                return;
+            }
+
+            var documentationHeader = nodeTriviaList[documentationHeaderIndex];
+            var triviaList = TriviaHelper.GetContainingTriviaList(documentationHeader, out documentationHeaderIndex);
+            var eolCount = 0;
+            var done = false;
+            for (var i = documentationHeaderIndex - 1; !done && (i >= 0); i--)
+            {
+                switch (triviaList[i].Kind())
+                {
+                case SyntaxKind.WhitespaceTrivia:
+                    break;
+                case SyntaxKind.EndOfLineTrivia:
+                    eolCount++;
+                    break;
+                case SyntaxKind.IfDirectiveTrivia:
+                case SyntaxKind.ElseDirectiveTrivia:
+                case SyntaxKind.ElifDirectiveTrivia:
+                    // if the documentation header is inside a directive trivia, no leading blank line is needed
+                    return;
+
+                case SyntaxKind.EndIfDirectiveTrivia:
+                    eolCount++;
+                    done = true;
+                    break;
+                default:
+                    done = true;
+                    return;
+                }
+            }
+
+            if (eolCount >= 2)
+            {
+                // there is a blank line available
+                return;
+            }
+
+            if (!done)
+            {
+                var prevToken = documentationHeader.Token.GetPreviousToken();
+                if (prevToken.IsKind(SyntaxKind.OpenBraceToken))
+                {
+                    // no leading blank line necessary at start of scope.
+                    return;
+                }
+            }
+
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, GetDiagnosticLocation(documentationHeader)));
+        }
+
+        private static Location GetDiagnosticLocation(SyntaxTrivia documentationHeader)
+        {
+            var documentationHeaderStructure = (DocumentationCommentTriviaSyntax)documentationHeader.GetStructure();
+            return Location.Create(documentationHeaderStructure.SyntaxTree, documentationHeaderStructure.GetLeadingTrivia().Span);
         }
     }
 }
