@@ -179,6 +179,15 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert blank line before documentation header.
+        /// </summary>
+        internal static string SA1514CodeFix {
+            get {
+                return ResourceManager.GetString("SA1514CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Insert blank line before comment.
         /// </summary>
         internal static string SA1515CodeFix {

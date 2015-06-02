@@ -42,6 +42,7 @@
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1119";
+
         /// <summary>
         /// The ID for the helper diagnostic used to mark the parentheses tokens surrounding the expression with
         /// <see cref="WellKnownDiagnosticTags.Unnecessary"/>.
