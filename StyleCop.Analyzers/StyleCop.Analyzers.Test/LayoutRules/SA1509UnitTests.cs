@@ -704,6 +704,64 @@ class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that an interface declaration surrounded by pragma statements will not produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestInterfaceDeclarationWithSurroundingPragmasAsync()
+        {
+            var testCode = @"#define TEST1
+
+namespace TestNamespace
+{
+
+#pragma warning disable SA1302 // Interface names must begin with I
+    public interface ActiveConfiguredProject<out T>
+#pragma warning restore SA1302 // Interface names must begin with I
+    {
+        /// <summary>
+        /// Gets the ConfiguredProject exported value.
+        /// </summary>
+        T Value { get; }
+    }
+
+    public interface TestInterface1
+#if TEST1
+    {
+        int Value { get; }
+    }
+#else
+    {
+    }
+#endif
+
+    public interface TestInterface2
+#if TEST2
+    {
+        int Value { get; }
+    }
+#else
+    {
+    }
+#endif
+
+    public interface TestInterface3
+#if TEST2
+    {
+        double Value { get; }
+    }
+#elif TEST1
+    {
+        int Value { get; }
+    }
+#endif
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1509OpeningCurlyBracketsMustNotBePrecededByBlankLine();
