@@ -99,16 +99,13 @@
                     case SyntaxKind.EndOfLineTrivia:
                         eolCount++;
                         break;
-                    case SyntaxKind.IfDirectiveTrivia:
-                    case SyntaxKind.ElifDirectiveTrivia:
-                    case SyntaxKind.ElseDirectiveTrivia:
-                    case SyntaxKind.EndIfDirectiveTrivia:
-                    case SyntaxKind.PragmaWarningDirectiveTrivia:
-                        // These have a built-in end of line
-                        eolCount++;
-                        done = true;
-                        break;
                     default:
+                        if (triviaList[i].IsDirective)
+                        {
+                            // These have a built-in end of line
+                            eolCount++;
+                        }
+
                         done = true;
                         break;
                 }
