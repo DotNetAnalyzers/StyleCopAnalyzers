@@ -30,6 +30,7 @@
     <DocumentationFile>bin\Debug\StyleCop.Analyzers.Test.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
     <CodeAnalysisRuleSet>..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -42,6 +43,7 @@
     <DocumentationFile>bin\Release\StyleCop.Analyzers.Test.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
     <CodeAnalysisRuleSet>..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CodeAnalysis, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -272,6 +274,7 @@
     <Compile Include="SpacingRules\SA1005UnitTests.cs" />
     <Compile Include="SpacingRules\SA1006UnitTests.cs" />
     <Compile Include="SpacingRules\SA1007UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1008UnitTests.cs" />
     <Compile Include="SpacingRules\SA1021UnitTests.cs" />
     <Compile Include="SpacingRules\SA1022UnitTests.cs" />
     <Compile Include="SpacingRules\SA1024UnitTests.cs" />
