@@ -1,12 +1,17 @@
 ﻿namespace StyleCop.Analyzers.SpacingRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1018NullableTypeSymbolsMustNotBePrecededBySpace"/>.
@@ -34,7 +39,7 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
             foreach (var diagnostic in context.Diagnostics)
             {
@@ -43,34 +48,54 @@
                     continue;
                 }
 
-                SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (!token.IsKind(SyntaxKind.QuestionToken))
+                var nullableType = (NullableTypeSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
+                var questionToken = nullableType.QuestionToken;
+                var precedingToken = questionToken.GetPreviousToken();
+                var triviaList = precedingToken.TrailingTrivia.AddRange(questionToken.LeadingTrivia);
+
+                if (triviaList.Any(UnsupportedTriviaKind))
                 {
+                    // cannot only automatically fix multiline comments (/* ... */)
                     continue;
                 }
 
-                bool firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
-                if (firstInLine)
-                {
-                    continue;
-                }
-
-                SyntaxToken previousToken = token.GetPreviousToken();
-                if (!previousToken.HasTrailingTrivia)
-                {
-                    continue;
-                }
-
-                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1018CodeFix, t => GetTransformedDocumentAsync(context.Document, root, previousToken)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1018CodeFix, cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxToken previousToken)
+        private static bool UnsupportedTriviaKind(SyntaxTrivia trivia)
         {
-            SyntaxToken corrected = previousToken.WithoutTrailingWhitespace().WithoutFormatting();
-            Document updatedDocument = document.WithSyntaxRoot(root.ReplaceToken(previousToken, corrected));
+            switch (trivia.Kind())
+            {
+                case SyntaxKind.WhitespaceTrivia:
+                case SyntaxKind.EndOfLineTrivia:
+                case SyntaxKind.MultiLineCommentTrivia:
+                    return false;
 
-            return Task.FromResult(updatedDocument);
+                default:
+                    return true;
+            }
+        }
+
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+        {
+            var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+
+            var nullableType = (NullableTypeSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
+            var questionToken = nullableType.QuestionToken;
+            var precedingToken = questionToken.GetPreviousToken();
+
+            var triviaList = precedingToken.TrailingTrivia.AddRange(questionToken.LeadingTrivia);
+            var correctedTriviaList = triviaList.Where(t => !t.IsKind(SyntaxKind.WhitespaceTrivia) && !t.IsKind(SyntaxKind.EndOfLineTrivia));
+
+            var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>()
+            {
+                [precedingToken] = precedingToken.WithTrailingTrivia(correctedTriviaList),
+                [questionToken] = questionToken.WithLeadingTrivia()
+            };
+
+            var newSyntaxRoot = syntaxRoot.ReplaceTokens(replaceMap.Keys, (t1, t2) => replaceMap[t1]);
+            return document.WithSyntaxRoot(newSyntaxRoot);
         }
     }
 }

@@ -1,8 +1,10 @@
 ﻿namespace StyleCop.Analyzers.SpacingRules
 {
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -29,7 +31,7 @@
         private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1018.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -46,48 +48,28 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleQuestionToken, SyntaxKind.NullableType);
         }
 
-        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private void HandleQuestionToken(SyntaxNodeAnalysisContext context)
         {
-            SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
-            foreach (var token in root.DescendantTokens())
-            {
-                switch (token.Kind())
-                {
-                case SyntaxKind.QuestionToken:
-                    this.HandleQuestionToken(context, token);
-                    break;
+            var nullableType = (NullableTypeSyntax)context.Node;
+            var questionToken = nullableType.QuestionToken;
 
-                default:
-                    break;
-                }
-            }
-        }
-
-        private void HandleQuestionToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
-        {
-            if (token.IsMissing)
+            if (questionToken.IsMissing)
             {
                 return;
             }
 
-            if (token.Parent.Kind() != SyntaxKind.NullableType)
-            {
-                return;
-            }
+            /* Do not test for the first character on the line!
+             * The StyleCop documentation is wrong there, the actual StyleCop code does not accept it.
+             */
 
-            if (token.IsFirstTokenOnLine(context.CancellationToken))
+            SyntaxToken precedingToken = questionToken.GetPreviousToken();
+            var triviaList = precedingToken.TrailingTrivia.AddRange(questionToken.LeadingTrivia);
+            if (triviaList.Any(t => t.IsKind(SyntaxKind.WhitespaceTrivia) || t.IsKind(SyntaxKind.EndOfLineTrivia)))
             {
-                return;
-            }
-
-            SyntaxToken precedingToken = token.GetPreviousToken();
-            if (precedingToken.HasTrailingTrivia)
-            {
-                // nullable type symbol must not be preceded by a space
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, questionToken.GetLocation()));
             }
         }
     }
