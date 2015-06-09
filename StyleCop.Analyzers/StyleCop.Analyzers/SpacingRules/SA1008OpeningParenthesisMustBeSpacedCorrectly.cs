@@ -1,6 +1,5 @@
 ﻿namespace StyleCop.Analyzers.SpacingRules
 {
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
     using Microsoft.CodeAnalysis;
@@ -44,32 +43,34 @@
         private const string MessagePreceded = "Opening parenthesis must be preceded by a space.";
         private const string MessageNotFollowed = "Opening parenthesis must not be followed by a space.";
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
-            ImmutableArray.Create<DiagnosticDescriptor>()
-                .Add(DescriptorNotPreceded)
-                .Add(DescriptorPreceded)
-                .Add(DescriptorNotFollowed);
+        private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue;
+
+        static SA1008OpeningParenthesisMustBeSpacedCorrectly()
+        {
+            DescriptorNotPreceded = new DiagnosticDescriptor(DiagnosticId, Title, MessageNotPreceded, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            DescriptorPreceded = new DiagnosticDescriptor(DiagnosticId, Title, MessagePreceded, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            DescriptorNotFollowed = new DiagnosticDescriptor(DiagnosticId, Title, MessageNotFollowed, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+
+            SupportedDiagnosticsValue = ImmutableArray.Create(DescriptorNotPreceded, DescriptorPreceded, DescriptorNotFollowed);
+        }
 
         /// <summary>
         /// Gets the diagnostic descriptor for an opening parenthesis that must not be preceded by whitespace.
         /// </summary>
         /// <value>The diagnostic descriptor for an opening parenthesis that must not be preceded by whitespace.</value>
-        public static DiagnosticDescriptor DescriptorNotPreceded =>
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageNotPreceded, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+        public static DiagnosticDescriptor DescriptorNotPreceded { get; }
 
         /// <summary>
         /// Gets the diagnostic descriptor for an opening parenthesis that must be preceded by whitespace.
         /// </summary>
         /// <value>The diagnostic descriptor for an opening parenthesis that must be preceded by whitespace.</value>
-        public static DiagnosticDescriptor DescriptorPreceded =>
-            new DiagnosticDescriptor(DiagnosticId, Title, MessagePreceded, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+        public static DiagnosticDescriptor DescriptorPreceded { get; }
 
         /// <summary>
         /// Gets the diagnostic descriptor for an opening parenthesis that must not be followed by whitespace.
         /// </summary>
         /// <value>The diagnostic descriptor for an opening parenthesis that must not be followed by whitespace.</value>
-        public static DiagnosticDescriptor DescriptorNotFollowed =>
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageNotFollowed, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+        public static DiagnosticDescriptor DescriptorNotFollowed { get; }
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
