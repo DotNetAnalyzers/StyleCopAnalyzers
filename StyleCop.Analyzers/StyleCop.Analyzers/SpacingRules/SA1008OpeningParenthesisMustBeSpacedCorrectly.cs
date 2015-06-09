@@ -27,17 +27,49 @@
         /// The ID for diagnostics produced by the <see cref="SA1008OpeningParenthesisMustBeSpacedCorrectly"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1008";
+
+        internal const string LocationKey = "location";
+        internal const string ActionKey = "action";
+        internal const string LocationPreceding = "preceding";
+        internal const string LocationFollowing = "following";
+        internal const string ActionInsert = "insert";
+        internal const string ActionRemove = "remove";
+
         private const string Title = "Opening parenthesis must be spaced correctly";
-        private const string MessageFormat = "Opening parenthesis must{0} be {1} by a space.";
         private const string Category = "StyleCop.CSharp.SpacingRules";
         private const string Description = "An opening parenthesis within a C# statement is not spaced correctly.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1008.html";
 
-        private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+        private const string MessageNotPreceded = "Opening parenthesis must not be preceded by a space.";
+        private const string MessagePreceded = "Opening parenthesis must be preceded by a space.";
+        private const string MessageNotFollowed = "Opening parenthesis must not be followed by a space.";
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
-            ImmutableArray.Create(Descriptor);
+            ImmutableArray.Create<DiagnosticDescriptor>()
+                .Add(DescriptorNotPreceded)
+                .Add(DescriptorPreceded)
+                .Add(DescriptorNotFollowed);
+
+        /// <summary>
+        /// Gets the diagnostic descriptor for an opening parenthesis that must not be preceded by whitespace.
+        /// </summary>
+        /// <value>The diagnostic descriptor for an opening parenthesis that must not be preceded by whitespace.</value>
+        public static DiagnosticDescriptor DescriptorNotPreceded =>
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageNotPreceded, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+
+        /// <summary>
+        /// Gets the diagnostic descriptor for an opening parenthesis that must be preceded by whitespace.
+        /// </summary>
+        /// <value>The diagnostic descriptor for an opening parenthesis that must be preceded by whitespace.</value>
+        public static DiagnosticDescriptor DescriptorPreceded =>
+            new DiagnosticDescriptor(DiagnosticId, Title, MessagePreceded, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+
+        /// <summary>
+        /// Gets the diagnostic descriptor for an opening parenthesis that must not be followed by whitespace.
+        /// </summary>
+        /// <value>The diagnostic descriptor for an opening parenthesis that must not be followed by whitespace.</value>
+        public static DiagnosticDescriptor DescriptorNotFollowed =>
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageNotFollowed, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
@@ -93,7 +125,7 @@
                         case SyntaxKind.EndOfLineTrivia:
                             isFirstOnLine = true;
                             done = true;
-                            return;
+                            break;
 
                         default:
                             done = true;
@@ -103,7 +135,6 @@
             }
 
             bool haveLeadingSpace;
-            bool haveTrailingSpace;
             bool partOfUnaryExpression;
             bool startOfIndexer;
 
@@ -123,7 +154,6 @@
                 case SyntaxKind.CatchDeclaration:
                 case SyntaxKind.CatchFilterClause:
                     haveLeadingSpace = true;
-                    haveTrailingSpace = false;
                     break;
 
                 case SyntaxKind.ArgumentList:
@@ -135,7 +165,6 @@
                 case SyntaxKind.SizeOfExpression:
                 case SyntaxKind.TypeOfExpression:
                     haveLeadingSpace = false;
-                    haveTrailingSpace = false;
                     break;
 
                 case SyntaxKind.ParenthesizedExpression:
@@ -144,7 +173,6 @@
                     var partOfCastExpression = prevToken.IsKind(SyntaxKind.CloseParenToken) && prevToken.Parent.IsKind(SyntaxKind.CastExpression);
 
                     haveLeadingSpace = !partOfUnaryExpression && !startOfIndexer && !partOfCastExpression;
-                    haveTrailingSpace = false;
                     break;
 
                 case SyntaxKind.CastExpression:
@@ -154,18 +182,15 @@
                     var partOfInterpolation = prevToken.IsKind(SyntaxKind.OpenBraceToken) && prevToken.Parent.IsKind(SyntaxKind.Interpolation);
 
                     haveLeadingSpace = !partOfUnaryExpression && !startOfIndexer && !consecutiveCast && !partOfInterpolation;
-                    haveTrailingSpace = false;
                     break;
 
                 case SyntaxKind.ParameterList:
                     var partOfLambdaExpression = token.Parent.Parent.IsKind(SyntaxKind.ParenthesizedLambdaExpression);
                     haveLeadingSpace = partOfLambdaExpression;
-                    haveTrailingSpace = false;
                     break;
 
                 default:
                     haveLeadingSpace = false;
-                    haveTrailingSpace = false;
                     break;
             }
 
@@ -176,27 +201,23 @@
                 var hasLeadingComment = (leadingTriviaList.Count > 0) && leadingTriviaList.Last().IsKind(SyntaxKind.MultiLineCommentTrivia);
                 var hasLeadingSpace = (leadingTriviaList.Count > 0) && leadingTriviaList.Last().IsKind(SyntaxKind.WhitespaceTrivia);
 
-                if (!isFirstOnLine && !hasLeadingComment && (haveLeadingSpace ^ hasLeadingSpace))
+                if (!isFirstOnLine && !hasLeadingComment && (haveLeadingSpace != hasLeadingSpace))
                 {
-                    var properties = new Dictionary<string, string>
-                    {
-                        { "location", "preceding" },
-                        { "action", haveLeadingSpace ? "insert" : "remove" }
-                    };
+                    var properties = ImmutableDictionary.Create<string, string>()
+                        .Add(LocationKey, LocationPreceding)
+                        .Add(ActionKey, haveLeadingSpace ? ActionInsert : ActionRemove);
 
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), haveLeadingSpace ? string.Empty : " not", "preceded"));
+                    context.ReportDiagnostic(Diagnostic.Create(haveLeadingSpace ? DescriptorPreceded : DescriptorNotPreceded, token.GetLocation(), properties.ToImmutableDictionary()));
                 }
             }
 
-            if (haveTrailingSpace ^ HasTrailingSpace(token))
+            if (HasTrailingSpace(token))
             {
-                var properties = new Dictionary<string, string>
-                {
-                    { "location", "following" },
-                    { "action", haveTrailingSpace ? "insert" : "remove" }
-                };
+                var properties = ImmutableDictionary.Create<string, string>()
+                    .Add(LocationKey, LocationFollowing)
+                    .Add(ActionKey, ActionRemove);
 
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), haveTrailingSpace ? string.Empty : " not", "followed"));
+                context.ReportDiagnostic(Diagnostic.Create(DescriptorNotFollowed, token.GetLocation(), properties.ToImmutableDictionary()));
             }
         }
 

@@ -49,13 +49,13 @@
             var openParenToken = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
 
             string location;
-            if (!diagnostic.Properties.TryGetValue("location", out location))
+            if (!diagnostic.Properties.TryGetValue(SA1008OpeningParenthesisMustBeSpacedCorrectly.LocationKey, out location))
             {
                 return document;
             }
 
             string action;
-            if (!diagnostic.Properties.TryGetValue("action", out action))
+            if (!diagnostic.Properties.TryGetValue(SA1008OpeningParenthesisMustBeSpacedCorrectly.ActionKey, out action))
             {
                 return document;
             }
@@ -64,14 +64,14 @@
             SyntaxTriviaList triviaList;
             switch (location)
             {
-                case "preceding":
+                case SA1008OpeningParenthesisMustBeSpacedCorrectly.LocationPreceding:
                     switch (action)
                     {
-                        case "insert":
+                        case SA1008OpeningParenthesisMustBeSpacedCorrectly.ActionInsert:
                             replaceMap[openParenToken] = openParenToken.WithLeadingTrivia(openParenToken.LeadingTrivia.Add(SyntaxFactory.Space));
                             break;
 
-                        case "remove":
+                        case SA1008OpeningParenthesisMustBeSpacedCorrectly.ActionRemove:
                             var prevToken = openParenToken.GetPreviousToken();
                             triviaList = prevToken.TrailingTrivia.AddRange(openParenToken.LeadingTrivia);
 
@@ -85,14 +85,14 @@
 
                     break;
 
-                case "following":
+                case SA1008OpeningParenthesisMustBeSpacedCorrectly.LocationFollowing:
                     switch (action)
                     {
-                        case "insert":
+                        case SA1008OpeningParenthesisMustBeSpacedCorrectly.ActionInsert:
                             replaceMap[openParenToken] = openParenToken.WithTrailingTrivia(openParenToken.TrailingTrivia.Insert(0, SyntaxFactory.Space));
                             break;
 
-                        case "remove":
+                        case SA1008OpeningParenthesisMustBeSpacedCorrectly.ActionRemove:
                             var nextToken = openParenToken.GetNextToken();
                             triviaList = openParenToken.TrailingTrivia.AddRange(nextToken.LeadingTrivia);
 

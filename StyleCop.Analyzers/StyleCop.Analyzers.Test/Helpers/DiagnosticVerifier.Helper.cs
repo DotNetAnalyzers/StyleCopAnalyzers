@@ -221,5 +221,12 @@
                 return new DiagnosticResult(supportedDiagnostics.Single(i => i.Id == diagnosticId));
             }
         }
+
+        protected DiagnosticResult CSharpDiagnostic(DiagnosticDescriptor descriptor)
+        {
+            var analyzers = this.GetCSharpDiagnosticAnalyzers();
+            var supportedDiagnostics = analyzers.SelectMany(analyzer => analyzer.SupportedDiagnostics);
+            return new DiagnosticResult(supportedDiagnostics.Single(dd => dd.Equals(descriptor)));
+        }
     }
 }

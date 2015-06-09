@@ -9,15 +9,13 @@
     using TestHelper;
     using Xunit;
 
+    using static StyleCop.Analyzers.SpacingRules.SA1008OpeningParenthesisMustBeSpacedCorrectly;
+
     /// <summary>
     /// Unit tests for the <see cref="SA1008OpeningParenthesisMustBeSpacedCorrectly"/> class.
     /// </summary>
     public class SA1008UnitTests : CodeFixVerifier
     {
-        private const string NotArgument = " not";
-        private const string PrecededArgument = "preceded";
-        private const string FollowedArgument = "followed";
-
         /// <summary>
         /// Verifies that the analyzer will properly handle an empty source.
         /// </summary>
@@ -54,6 +52,8 @@
             var test8 = (ushort) ((System.Array)array).Length;
 
             TestMethod2( (int)test1);
+            TestMethod2(
+                ( int)test1);
         }
 
         public void TestMethod2(int x)
@@ -81,6 +81,8 @@
             var test8 = (ushort)((System.Array)array).Length;
 
             TestMethod2((int)test1);
+            TestMethod2(
+                (int)test1);
         }
 
         public void TestMethod2(int x)
@@ -93,31 +95,34 @@
             DiagnosticResult[] expectedDiagnostic =
             {
                 // test1
-                this.CSharpDiagnostic().WithLocation(9, 24).WithArguments(string.Empty, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorPreceded).WithLocation(9, 24),
 
                 // test2
-                this.CSharpDiagnostic().WithLocation(10, 25).WithArguments(NotArgument, FollowedArgument),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(10, 25),
 
                 // test3
-                this.CSharpDiagnostic().WithLocation(11, 34).WithArguments(NotArgument, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorNotPreceded).WithLocation(11, 34),
 
                 // test4
-                this.CSharpDiagnostic().WithLocation(12, 32).WithArguments(NotArgument, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorNotPreceded).WithLocation(12, 32),
 
                 // test5
-                this.CSharpDiagnostic().WithLocation(13, 25).WithArguments(NotArgument, FollowedArgument),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(13, 25),
 
                 // test6
-                this.CSharpDiagnostic().WithLocation(14, 27).WithArguments(NotArgument, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorNotPreceded).WithLocation(14, 27),
 
                 // test7
-                this.CSharpDiagnostic().WithLocation(15, 29).WithArguments(NotArgument, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorNotPreceded).WithLocation(15, 29),
 
                 // test8
-                this.CSharpDiagnostic().WithLocation(16, 34).WithArguments(NotArgument, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorNotPreceded).WithLocation(16, 34),
 
-                // TestMethod2
-                this.CSharpDiagnostic().WithLocation(18, 24).WithArguments(NotArgument, FollowedArgument)
+                // TestMethod2 - 1st call
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(18, 24),
+
+                // TestMethod2 - 2nd call
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(20, 17)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
@@ -213,21 +218,21 @@
             DiagnosticResult[] expectedDiagnostics =
             {
                 // TestMethod1
-                this.CSharpDiagnostic().WithLocation(5, 32).WithArguments(NotArgument, FollowedArgument),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(5, 32),
 
                 // TestMethod2
-                this.CSharpDiagnostic().WithLocation(9, 32).WithArguments(NotArgument, FollowedArgument),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(9, 32),
 
                 // TestMethod3
-                this.CSharpDiagnostic().WithLocation(13, 33).WithArguments(NotArgument, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorNotPreceded).WithLocation(13, 33),
 
                 // TestMethod4
-                this.CSharpDiagnostic().WithLocation(17, 33).WithArguments(NotArgument, PrecededArgument),
-                this.CSharpDiagnostic().WithLocation(17, 33).WithArguments(NotArgument, FollowedArgument),
+                this.CSharpDiagnostic(DescriptorNotPreceded).WithLocation(17, 33),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(17, 33),
 
                 // TestMethod5
-                this.CSharpDiagnostic().WithLocation(21, 33).WithArguments(NotArgument, PrecededArgument),
-                this.CSharpDiagnostic().WithLocation(21, 33).WithArguments(NotArgument, FollowedArgument)
+                this.CSharpDiagnostic(DescriptorNotPreceded).WithLocation(21, 33),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(21, 33)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -283,23 +288,23 @@
             DiagnosticResult[] expectedDiagnostics =
             {
                 // v1
-                this.CSharpDiagnostic().WithLocation(9, 21).WithArguments(string.Empty, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorPreceded).WithLocation(9, 21),
 
                 // v2
-                this.CSharpDiagnostic().WithLocation(10, 22).WithArguments(NotArgument, FollowedArgument),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(10, 22),
 
                 // v3
-                this.CSharpDiagnostic().WithLocation(11, 22).WithArguments(NotArgument, FollowedArgument),
-                this.CSharpDiagnostic().WithLocation(11, 33).WithArguments(string.Empty, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(11, 22),
+                this.CSharpDiagnostic(DescriptorPreceded).WithLocation(11, 33),
 
                 // v4
-                this.CSharpDiagnostic().WithLocation(12, 24).WithArguments(NotArgument, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorNotPreceded).WithLocation(12, 24),
 
                 // v5
-                this.CSharpDiagnostic().WithLocation(13, 31).WithArguments(NotArgument, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorNotPreceded).WithLocation(13, 31),
 
                 // v6
-                this.CSharpDiagnostic().WithLocation(14, 29).WithArguments(NotArgument, PrecededArgument)
+                this.CSharpDiagnostic(DescriptorNotPreceded).WithLocation(14, 29)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -349,16 +354,16 @@
             DiagnosticResult[] expectedDiagnostics =
             {
                 // v1
-                this.CSharpDiagnostic().WithLocation(7, 30).WithArguments(NotArgument, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorNotPreceded).WithLocation(7, 30),
 
                 // v2
-                this.CSharpDiagnostic().WithLocation(8, 29).WithArguments(NotArgument, FollowedArgument),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(8, 29),
 
                 // v3
-                this.CSharpDiagnostic().WithLocation(10, 32).WithArguments(NotArgument, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorNotPreceded).WithLocation(10, 32),
 
                 // v4
-                this.CSharpDiagnostic().WithLocation(11, 31).WithArguments(NotArgument, FollowedArgument)
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(11, 31)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -402,10 +407,10 @@
             DiagnosticResult[] expectedDiagnostics =
             {
                 // v1
-                this.CSharpDiagnostic().WithLocation(7, 30).WithArguments(NotArgument, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorNotPreceded).WithLocation(7, 30),
 
                 // v2
-                this.CSharpDiagnostic().WithLocation(8, 29).WithArguments(NotArgument, FollowedArgument)
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(8, 29)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -449,10 +454,10 @@
             DiagnosticResult[] expectedDiagnostics =
             {
                 // v1
-                this.CSharpDiagnostic().WithLocation(7, 29).WithArguments(NotArgument, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorNotPreceded).WithLocation(7, 29),
 
                 // v2
-                this.CSharpDiagnostic().WithLocation(8, 28).WithArguments(NotArgument, FollowedArgument)
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(8, 28)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -496,10 +501,10 @@
             DiagnosticResult[] expectedDiagnostics =
             {
                 // v1
-                this.CSharpDiagnostic().WithLocation(7, 29).WithArguments(NotArgument, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorNotPreceded).WithLocation(7, 29),
 
                 // v2
-                this.CSharpDiagnostic().WithLocation(8, 28).WithArguments(NotArgument, FollowedArgument)
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(8, 28)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -543,10 +548,10 @@
             DiagnosticResult[] expectedDiagnostics =
             {
                 // v1
-                this.CSharpDiagnostic().WithLocation(7, 29).WithArguments(NotArgument, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorNotPreceded).WithLocation(7, 29),
 
                 // v2
-                this.CSharpDiagnostic().WithLocation(8, 28).WithArguments(NotArgument, FollowedArgument)
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(8, 28)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -606,10 +611,10 @@
             DiagnosticResult[] expectedDiagnostics =
             {
                 // v1
-                this.CSharpDiagnostic().WithLocation(10, 20).WithArguments(NotArgument, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorNotPreceded).WithLocation(10, 20),
 
                 // v2
-                this.CSharpDiagnostic().WithLocation(15, 19).WithArguments(NotArgument, FollowedArgument)
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(15, 19)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -681,14 +686,14 @@
             DiagnosticResult[] expectedDiagnostics =
             {
                 // 1st while statement
-                this.CSharpDiagnostic().WithLocation(9, 18).WithArguments(string.Empty, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorPreceded).WithLocation(9, 18),
 
                 // 2nd while statement
-                this.CSharpDiagnostic().WithLocation(14, 19).WithArguments(NotArgument, FollowedArgument),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(14, 19),
 
                 // 3rd while statement
-                this.CSharpDiagnostic().WithLocation(19, 19).WithArguments(NotArgument, FollowedArgument),
-                this.CSharpDiagnostic().WithLocation(19, 33).WithArguments(string.Empty, PrecededArgument)
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(19, 19),
+                this.CSharpDiagnostic(DescriptorPreceded).WithLocation(19, 33)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -766,14 +771,14 @@
             DiagnosticResult[] expectedDiagnostics =
             {
                 // 1st do statement
-                this.CSharpDiagnostic().WithLocation(13, 18).WithArguments(string.Empty, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorPreceded).WithLocation(13, 18),
 
                 // 2nd do statement
-                this.CSharpDiagnostic().WithLocation(19, 19).WithArguments(NotArgument, FollowedArgument),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(19, 19),
 
                 // 3rd do statement
-                this.CSharpDiagnostic().WithLocation(25, 19).WithArguments(NotArgument, FollowedArgument),
-                this.CSharpDiagnostic().WithLocation(25, 33).WithArguments(string.Empty, PrecededArgument)
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(25, 19),
+                this.CSharpDiagnostic(DescriptorPreceded).WithLocation(25, 33)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -835,13 +840,13 @@
             DiagnosticResult[] expectedDiagnostics =
             {
                 // 1st for statement
-                this.CSharpDiagnostic().WithLocation(7, 16).WithArguments(string.Empty, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorPreceded).WithLocation(7, 16),
 
                 // 2nd for statement
-                this.CSharpDiagnostic().WithLocation(11, 17).WithArguments(NotArgument, FollowedArgument),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(11, 17),
 
                 // 3rd for statement
-                this.CSharpDiagnostic().WithLocation(15, 28).WithArguments(string.Empty, PrecededArgument)
+                this.CSharpDiagnostic(DescriptorPreceded).WithLocation(15, 28)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -911,13 +916,13 @@
             DiagnosticResult[] expectedDiagnostics =
             {
                 // 1st foreach statement
-                this.CSharpDiagnostic().WithLocation(11, 20).WithArguments(string.Empty, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorPreceded).WithLocation(11, 20),
 
                 // 2nd foreach statement
-                this.CSharpDiagnostic().WithLocation(15, 21).WithArguments(NotArgument, FollowedArgument),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(15, 21),
 
                 // 3rd foreach statement
-                this.CSharpDiagnostic().WithLocation(19, 30).WithArguments(string.Empty, PrecededArgument)
+                this.CSharpDiagnostic(DescriptorPreceded).WithLocation(19, 30)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -979,10 +984,10 @@
             DiagnosticResult[] expectedDiagnostics =
             {
                 // 1st using statement
-                this.CSharpDiagnostic().WithLocation(9, 18).WithArguments(string.Empty, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorPreceded).WithLocation(9, 18),
 
                 // 2nd using statement
-                this.CSharpDiagnostic().WithLocation(14, 19).WithArguments(NotArgument, FollowedArgument)
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(14, 19)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -1060,11 +1065,11 @@
             DiagnosticResult[] expectedDiagnostics =
             {
                 // 1st using statement
-                this.CSharpDiagnostic().WithLocation(15, 22).WithArguments(string.Empty, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorPreceded).WithLocation(15, 22),
 
                 // 2nd using statement
-                this.CSharpDiagnostic().WithLocation(20, 23).WithArguments(NotArgument, FollowedArgument),
-                this.CSharpDiagnostic().WithLocation(23, 31).WithArguments(NotArgument, PrecededArgument)
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(20, 23),
+                this.CSharpDiagnostic(DescriptorNotPreceded).WithLocation(23, 31)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -1126,10 +1131,10 @@
             DiagnosticResult[] expectedDiagnostics =
             {
                 // 1st using statement
-                this.CSharpDiagnostic().WithLocation(9, 17).WithArguments(string.Empty, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorPreceded).WithLocation(9, 17),
 
                 // 2nd using statement
-                this.CSharpDiagnostic().WithLocation(14, 18).WithArguments(NotArgument, FollowedArgument)
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(14, 18)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -1197,16 +1202,16 @@
             DiagnosticResult[] expectedDiagnostics =
             {
                 // 1st if statement
-                this.CSharpDiagnostic().WithLocation(7, 15).WithArguments(string.Empty, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorPreceded).WithLocation(7, 15),
 
                 // 2nd if statement
-                this.CSharpDiagnostic().WithLocation(12, 16).WithArguments(NotArgument, FollowedArgument),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(12, 16),
 
                 // 3rd if statement
-                this.CSharpDiagnostic().WithLocation(17, 16).WithArguments(NotArgument, FollowedArgument),
-                this.CSharpDiagnostic().WithLocation(17, 18).WithArguments(NotArgument, FollowedArgument),
-                this.CSharpDiagnostic().WithLocation(17, 29).WithArguments(string.Empty, PrecededArgument),
-                this.CSharpDiagnostic().WithLocation(17, 29).WithArguments(NotArgument, FollowedArgument)
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(17, 16),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(17, 18),
+                this.CSharpDiagnostic(DescriptorPreceded).WithLocation(17, 29),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(17, 29)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -1268,10 +1273,10 @@
             DiagnosticResult[] expectedDiagnostics =
             {
                 // 1st switch statement
-                this.CSharpDiagnostic().WithLocation(7, 19).WithArguments(string.Empty, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorPreceded).WithLocation(7, 19),
 
                 // 2nd switch statement
-                this.CSharpDiagnostic().WithLocation(13, 20).WithArguments(NotArgument, FollowedArgument)
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(13, 20)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -1345,16 +1350,16 @@
             DiagnosticResult[] expectedDiagnostics =
             {
                 // 1st catch clause
-                this.CSharpDiagnostic().WithLocation(12, 18).WithArguments(string.Empty, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorPreceded).WithLocation(12, 18),
 
                 // 1st catch clause
-                this.CSharpDiagnostic().WithLocation(15, 19).WithArguments(NotArgument, FollowedArgument),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(15, 19),
 
                 // 3rd catch clause
-                this.CSharpDiagnostic().WithLocation(18, 53).WithArguments(string.Empty, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorPreceded).WithLocation(18, 53),
 
                 // 4th catch clause
-                this.CSharpDiagnostic().WithLocation(21, 51).WithArguments(NotArgument, FollowedArgument)
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(21, 51)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -1416,14 +1421,14 @@
             DiagnosticResult[] expectedDiagnostics =
             {
                 // 1st constructor constraint
-                this.CSharpDiagnostic().WithLocation(5, 49).WithArguments(NotArgument, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorNotPreceded).WithLocation(5, 49),
 
                 // 2nd constructor constraint
-                this.CSharpDiagnostic().WithLocation(10, 48).WithArguments(NotArgument, FollowedArgument),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(10, 48),
 
                 // 3rd constructor constraint
-                this.CSharpDiagnostic().WithLocation(15, 49).WithArguments(NotArgument, PrecededArgument),
-                this.CSharpDiagnostic().WithLocation(15, 49).WithArguments(NotArgument, FollowedArgument)
+                this.CSharpDiagnostic(DescriptorNotPreceded).WithLocation(15, 49),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(15, 49)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -1489,14 +1494,14 @@
             DiagnosticResult[] expectedDiagnostics =
             {
                 // 1st attribute
-                this.CSharpDiagnostic().WithLocation(7, 19).WithArguments(NotArgument, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorNotPreceded).WithLocation(7, 19),
 
                 // 2nd attribute
-                this.CSharpDiagnostic().WithLocation(12, 18).WithArguments(NotArgument, FollowedArgument),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(12, 18),
 
                 // 3rd attribute
-                this.CSharpDiagnostic().WithLocation(17, 19).WithArguments(NotArgument, PrecededArgument),
-                this.CSharpDiagnostic().WithLocation(17, 19).WithArguments(NotArgument, FollowedArgument)
+                this.CSharpDiagnostic(DescriptorNotPreceded).WithLocation(17, 19),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(17, 19)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -1574,10 +1579,10 @@
             DiagnosticResult[] expectedDiagnostics =
             {
                 // v1
-                this.CSharpDiagnostic().WithLocation(9, 34).WithArguments(string.Empty, PrecededArgument),
+                this.CSharpDiagnostic(DescriptorPreceded).WithLocation(9, 34),
 
                 // v2
-                this.CSharpDiagnostic().WithLocation(10, 35).WithArguments(NotArgument, FollowedArgument)
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(10, 35)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
