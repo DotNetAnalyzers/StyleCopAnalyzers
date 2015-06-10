@@ -89,6 +89,7 @@ namespace MetaCompilation
 
         private void SetupAnalysis(CompilationStartAnalysisContext context)
         {
+            //information collector
             CompilationAnalyzer compilationAnalyzer = new CompilationAnalyzer();
 
             context.RegisterSymbolAction(compilationAnalyzer.AddClass, SymbolKind.NamedType);
