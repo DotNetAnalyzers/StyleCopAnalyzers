@@ -161,6 +161,24 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Place on multiple lines.
+        /// </summary>
+        internal static string SA1103CodeFixMultipleLines {
+            get {
+                return ResourceManager.GetString("SA1103CodeFixMultipleLines", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Place on single line.
+        /// </summary>
+        internal static string SA1103CodeFixSingleLine {
+            get {
+                return ResourceManager.GetString("SA1103CodeFixSingleLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The clauses within a C# query expression are not all placed on the same line, and each clause is not placed on its own line..
         /// </summary>
         internal static string SA1103Description {
@@ -170,7 +188,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Query clauses must be on separate lines or all on one line.
         /// </summary>
         internal static string SA1103MessageFormat {
             get {

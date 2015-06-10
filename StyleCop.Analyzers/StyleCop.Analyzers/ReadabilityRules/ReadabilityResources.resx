@@ -150,11 +150,17 @@
   <data name="SA1102Title" xml:space="preserve">
     <value>Query clause must follow previous clause</value>
   </data>
+  <data name="SA1103CodeFixMultipleLines" xml:space="preserve">
+    <value>Place on multiple lines</value>
+  </data>
+  <data name="SA1103CodeFixSingleLine" xml:space="preserve">
+    <value>Place on single line</value>
+  </data>
   <data name="SA1103Description" xml:space="preserve">
     <value>The clauses within a C# query expression are not all placed on the same line, and each clause is not placed on its own line.</value>
   </data>
   <data name="SA1103MessageFormat" xml:space="preserve">
-    <value />
+    <value>Query clauses must be on separate lines or all on one line</value>
   </data>
   <data name="SA1103Title" xml:space="preserve">
     <value>Query clauses must be on separate lines or all on one line</value>

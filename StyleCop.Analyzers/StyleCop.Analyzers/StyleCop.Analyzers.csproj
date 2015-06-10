@@ -119,6 +119,7 @@
     <Compile Include="Helpers\FileHeaderHelpers.cs" />
     <Compile Include="Helpers\IndentationHelper.cs" />
     <Compile Include="Helpers\IndentationOptions.cs" />
+    <Compile Include="Helpers\LocationHelpers.cs" />
     <Compile Include="Helpers\NamedTypeHelpers.cs" />
     <Compile Include="Helpers\NameSyntaxHelpers.cs" />
     <Compile Include="Helpers\RenameHelper.cs" />
@@ -257,6 +258,7 @@
     <Compile Include="ReadabilityRules\SA1101CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1101PrefixLocalCallsWithThis.cs" />
     <Compile Include="ReadabilityRules\SA1102QueryClauseMustFollowPreviousClause.cs" />
+    <Compile Include="ReadabilityRules\SA1103CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1103QueryClausesMustBeOnSeparateLinesOrAllOnOneLine.cs" />
     <Compile Include="ReadabilityRules\SA1104QueryClauseMustBeginOnNewLineWhenPreviousClauseSpansMultipleLines.cs" />
     <Compile Include="ReadabilityRules\SA1105QueryClausesSpanningMultipleLinesMustBeginOnOwnLine.cs" />

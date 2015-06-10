@@ -10,6 +10,30 @@
     internal static class IndentationHelper
     {
         /// <summary>
+        /// Gets the first token on the textline that the given token is on.
+        /// </summary>
+        /// <param name="token">The token used to determine the textline.</param>
+        /// <returns>The first token on the textline of the given token.</returns>
+        public static SyntaxToken GetFirstTokenOnTextLine(SyntaxToken token)
+        {
+            while (true)
+            {
+                var precedingToken = token.GetPreviousToken();
+                if (precedingToken.IsKind(SyntaxKind.None))
+                {
+                    return token;
+                }
+
+                if (precedingToken.GetLine() < token.GetLine())
+                {
+                    return token;
+                }
+
+                token = precedingToken;
+            }
+        }
+
+        /// <summary>
         /// Gets the number of steps that the given node is indented.
         /// </summary>
         /// <param name="indentationOptions">The indentation options to use.</param>
