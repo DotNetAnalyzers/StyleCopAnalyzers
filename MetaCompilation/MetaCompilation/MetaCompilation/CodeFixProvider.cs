@@ -41,7 +41,19 @@ namespace MetaCompilation
             {
                 TextSpan diagnosticSpan = diagnostic.Location.SourceSpan;
                 //TODO: if statements for each diagnostic id, to register a code fix
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.missingId))
+                {
+                    var declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf()
+                        .OfType<ClassDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Remove invalid statement",
+                        c => MissingIdAsync(context.Document, declaration, c)), diagnostic);
+                }
             }
+        }
+
+        private async Task<Document> MissingIdAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
+        {
+            throw new NotImplementedException();
         }
     }
 }

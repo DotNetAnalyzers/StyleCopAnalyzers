@@ -9,7 +9,6 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
-
 namespace MetaCompilation
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
@@ -250,7 +249,7 @@ namespace MetaCompilation
                 List<string> idNames = new List<string>();
                 foreach (IFieldSymbol field in _analyzerFieldSymbols)
                 {
-                    if (field.IsConst && field.IsStatic && field.DeclaredAccessibility.ToString() == "public" && field.Type.ToString() == "string")
+                    if (field.IsConst && field.IsStatic && field.DeclaredAccessibility.ToString() == "Public" && field.Type.ToString() == "string")
                     {
                         if (field.Name == null)
                         {
