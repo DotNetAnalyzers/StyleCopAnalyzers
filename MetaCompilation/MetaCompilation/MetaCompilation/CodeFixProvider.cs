@@ -5,6 +5,7 @@ using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -23,7 +24,7 @@ namespace MetaCompilation
             get
             {
                 //TODO: add any new rules
-                return ImmutableArray.Create(MetaCompilationAnalyzer.missingId);
+                return ImmutableArray.Create(MetaCompilationAnalyzer.MissingId);
             }
         }
 
@@ -34,12 +35,11 @@ namespace MetaCompilation
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
-            foreach (var diagnostic in context.Diagnostics)
+            foreach (Diagnostic diagnostic in context.Diagnostics)
             {
-                var diagnosticSpan = diagnostic.Location.SourceSpan;
-
+                TextSpan diagnosticSpan = diagnostic.Location.SourceSpan;
                 //TODO: if statements for each diagnostic id, to register a code fix
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.missingId))
                 {

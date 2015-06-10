@@ -1,9 +1,12 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System;
+
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+
 using TestHelper;
+
 using MetaCompilation;
 
 namespace MetaCompilation.Test
@@ -11,6 +14,5 @@ namespace MetaCompilation.Test
     [TestClass]
     public class UnitTest : CodeFixVerifier
     {
-
-    }        
+    }
 }

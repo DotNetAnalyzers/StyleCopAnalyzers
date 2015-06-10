@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
+
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -15,9 +16,9 @@ namespace MetaCompilation
     {
 
         #region id rules
-        public const string missingId = "missingId";
-        internal static DiagnosticDescriptor missingIdRule = new DiagnosticDescriptor(
-            id: missingId,
+        public const string MissingId = "missingId";
+        internal static DiagnosticDescriptor MissingIdRule = new DiagnosticDescriptor(
+            id: MissingId,
             title: "You are missing a diagnostic id",
             messageFormat: "You are missing a diagnostic id",
             category: "Syntax",
@@ -26,45 +27,45 @@ namespace MetaCompilation
         #endregion
 
         #region initialize rules
-        public const string missingInit = "missingInit";
-        internal static DiagnosticDescriptor missingInitRule = new DiagnosticDescriptor(
-            id: missingInit,
+        public const string MissingInit = "missingInit";
+        internal static DiagnosticDescriptor MissingInitRule = new DiagnosticDescriptor(
+            id: MissingInit,
             title: "You are missing the required Initialize method",
             messageFormat: "You are missing the required Initialize method",
             category: "Syntax",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
-        public const string missingRegisterStatement = "missingRegister";
-        internal static DiagnosticDescriptor missingRegisterRule = new DiagnosticDescriptor(
-            id: missingRegisterStatement,
+        public const string MissingRegisterStatement = "missingRegister";
+        internal static DiagnosticDescriptor MissingRegisterRule = new DiagnosticDescriptor(
+            id: MissingRegisterStatement,
             title: "You need to register an action within the Initialize method",
             messageFormat: "You need to register an action within the Initialize method",
             category: "Syntax",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
-        public const string tooManyInitStatements = "incorrectInit001";
-        internal static DiagnosticDescriptor tooManyInitStatementsRule = new DiagnosticDescriptor(
-            id: tooManyInitStatements,
+        public const string TooManyInitStatements = "incorrectInit001";
+        internal static DiagnosticDescriptor TooManyInitStatementsRule = new DiagnosticDescriptor(
+            id: TooManyInitStatements,
             title: "Please only have one statement within Initiailize. You will only be registering one action.",
             messageFormat: "Please only have one statement within Initiailize. You will only be registering one action.",
             category: "Syntax",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
-        public const string incorrectInitStatement = "incorrectInit002";
-        internal static DiagnosticDescriptor incorrectInitStatementRule = new DiagnosticDescriptor(
-            id: incorrectInitStatement,
+        public const string IncorrectInitStatement = "incorrectInit002";
+        internal static DiagnosticDescriptor IncorrectInitStatementRule = new DiagnosticDescriptor(
+            id: IncorrectInitStatement,
             title: "This statement needs to register for a supported action",
             messageFormat: "This statement needs to register for a supported action",
             category: "Syntax",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
-        public const string incorrectInitSig = "initSignature";
-        internal static DiagnosticDescriptor incorrectInitSigRule = new DiagnosticDescriptor(
-            id: incorrectInitSig,
+        public const string IncorrectInitSig = "initSignature";
+        internal static DiagnosticDescriptor IncorrectInitSigRule = new DiagnosticDescriptor(
+            id: IncorrectInitSig,
             title: "The signature for the Initialize method is incorrect",
             messageFormat: "The signature for the Initialize method is incorrect",
             category: "Syntax",
@@ -76,7 +77,7 @@ namespace MetaCompilation
         {
             get
             {
-                return ImmutableArray.Create(missingIdRule, missingInitRule, missingRegisterRule, tooManyInitStatementsRule, incorrectInitStatementRule, incorrectInitSigRule);
+                return ImmutableArray.Create(MissingIdRule, MissingInitRule, MissingRegisterRule, TooManyInitStatementsRule, IncorrectInitStatementRule, IncorrectInitSigRule);
             }
         }
 
@@ -87,6 +88,7 @@ namespace MetaCompilation
 
         private void SetupAnalysis(CompilationStartAnalysisContext context)
         {
+            //information collector
             CompilationAnalyzer compilationAnalyzer = new CompilationAnalyzer();
 
             context.RegisterSymbolAction(compilationAnalyzer.AddClass, SymbolKind.NamedType);
@@ -99,38 +101,49 @@ namespace MetaCompilation
 
         class CompilationAnalyzer
         {
-            List<IMethodSymbol> analyzerMethodSymbols = new List<IMethodSymbol>();
-            List<IPropertySymbol> analyzerPropertySymbols = new List<IPropertySymbol>();
-            List<IFieldSymbol> analyzerFieldSymbols = new List<IFieldSymbol>();
-            List<INamedTypeSymbol> otherClassSymbols = new List<INamedTypeSymbol>();
-            IMethodSymbol initializeSymbol = null;
-            IPropertySymbol propertySymbol = null; 
-            INamedTypeSymbol analyzerClassSymbol = null;
-            Dictionary<string, string> branchesDict = new Dictionary<string, string>();
+            private List<IMethodSymbol> _analyzerMethodSymbols = new List<IMethodSymbol>();
+            private List<IPropertySymbol> _analyzerPropertySymbols = new List<IPropertySymbol>();
+            private List<IFieldSymbol> _analyzerFieldSymbols = new List<IFieldSymbol>();
+            private List<INamedTypeSymbol> _otherClassSymbols = new List<INamedTypeSymbol>();
+            private IMethodSymbol _initializeSymbol = null;
+            private IPropertySymbol _propertySymbol = null; 
+            private INamedTypeSymbol _analyzerClassSymbol = null;
+            private Dictionary<string, string> _branchesDict = new Dictionary<string, string>();
 
             internal void ReportCompilationEndDiagnostics(CompilationAnalysisContext context)
             {
                 //supported main branches for tutorial
-                branchesDict.Add("RegisterSyntaxNodeAction", "SyntaxNode");
+                _branchesDict.Add("RegisterSyntaxNodeAction", "SyntaxNode");
 
                 //supported sub-branches for tutorial
                 List<string> allowedKinds = new List<string>();
                 allowedKinds.Add("IfStatement");
 
-                if (analyzerClassSymbol == null)
+                if (_analyzerClassSymbol == null)
                 {
                     return;
                 }
 
                 //gather initialize info
                 List<object> registerInfo = CheckInitialize(context);
-                if (registerInfo == null) return;
-               
+                if (registerInfo == null)
+                {
+                    return;
+                }
                 var registerSymbol = (IMethodSymbol)registerInfo[0];
-                if (registerSymbol == null) return;
+                if (registerSymbol == null)
+                {
+                    return;
+                }
                 var registerArgs = (List<ISymbol>)registerInfo[1];
-                if (registerArgs == null) return;
-                if (registerArgs.Count == 0) return;
+                if (registerArgs == null)
+                {
+                    return;
+                }
+                if (registerArgs.Count == 0)
+                {
+                    return;
+                }
                 if (registerArgs.Count > 0)
                 {
                     if (registerArgs[0] != null)
@@ -145,9 +158,12 @@ namespace MetaCompilation
                 }
 
                 var invocationExpression = (InvocationExpressionSyntax)registerInfo[2];
-                if (invocationExpression == null) return;
+                if (invocationExpression == null)
+                {
+                    return;
+                }
                 //interpret initialize info
-                if (branchesDict.ContainsKey(registerSymbol.Name.ToString()))
+                if (_branchesDict.ContainsKey(registerSymbol.Name.ToString()))
                 {
                     string kindName = null;
                     if (kind != null)
@@ -158,21 +174,21 @@ namespace MetaCompilation
                     if (kindName == null || allowedKinds.Contains(kindName))
                     {
                         //look for and interpret id fields
-                        var idNames = CheckIds(branchesDict[registerSymbol.Name.ToString()], kindName, context);
+                        List<string> idNames = CheckIds(_branchesDict[registerSymbol.Name.ToString()], kindName, context);
                         if (idNames.Count > 0)
                         {
                             //look for and interpret rule fields
-                            var ruleNames = CheckRules(idNames, branchesDict[registerSymbol.Name.ToString()], kindName, context);
+                            List<string> ruleNames = CheckRules(idNames, _branchesDict[registerSymbol.Name.ToString()], kindName, context);
 
                             if (ruleNames.Count > 0)
                             {
                                 //look for and interpret SupportedDiagnostics property
-                                var supportedDiagnosticsCorrect = CheckSupportedDiagnostics(ruleNames, context);
+                               bool supportedDiagnosticsCorrect = CheckSupportedDiagnostics(ruleNames, context);
 
                                 if (supportedDiagnosticsCorrect)
                                 {
                                     //check the SyntaxNode, Symbol, Compilation, CodeBlock, etc analysis method(s)
-                                    var analysisCorrect = CheckAnlaysis(branchesDict[registerSymbol.Name.ToString()], kindName, ruleNames, context);
+                                    bool analysisCorrect = CheckAnlaysis(_branchesDict[registerSymbol.Name.ToString()], kindName, ruleNames, context);
                                     if (analysisCorrect)
                                     {
                                         //diagnostic to go to code fix
@@ -195,22 +211,19 @@ namespace MetaCompilation
                         else
                         {
                             // diagnostic for missing id names
-                            var analyzerClassSyntax = analyzerClassSymbol.DeclaringSyntaxReferences[0].GetSyntax() as ClassDeclarationSyntax;
-                            ReportDiagnostic(context, missingIdRule, analyzerClassSyntax.Identifier.GetLocation(), analyzerClassSyntax.Identifier.ToString());
+                           var analyzerClassSyntax = _analyzerClassSymbol.DeclaringSyntaxReferences[0].GetSyntax() as ClassDeclarationSyntax;
+                           ReportDiagnostic(context, MissingIdRule, analyzerClassSyntax.Identifier.GetLocation(), analyzerClassSyntax.Identifier.ToString());
                         }
                     }
                     else
                     {
-                        ReportDiagnostic(context, incorrectInitStatementRule, invocationExpression.GetLocation(), incorrectInitStatementRule.MessageFormat);
+                        ReportDiagnostic(context, IncorrectInitStatementRule, invocationExpression.GetLocation(), IncorrectInitStatementRule.MessageFormat);
                     }
                 }
                 else
                 {
                     //diagnostic
                 }
-
-
-                
             }
 
             internal bool CheckAnlaysis(string branch, string kind, List<string> ruleNames, CompilationAnalysisContext context)
@@ -234,11 +247,14 @@ namespace MetaCompilation
             internal List<string> CheckIds(string branch, string kind, CompilationAnalysisContext context)
             {
                 List<string> idNames = new List<string>();
-                foreach (IFieldSymbol field in analyzerFieldSymbols)
+                foreach (IFieldSymbol field in _analyzerFieldSymbols)
                 {
                     if (field.IsConst && field.IsStatic && field.DeclaredAccessibility.ToString() == "Public" && field.Type.ToString() == "string")
                     {
-                        if (field.Name == null) continue;
+                        if (field.Name == null)
+                        {
+                            continue;
+                        }
                         idNames.Add(field.Name.ToString());
                     }
                 }
@@ -255,55 +271,62 @@ namespace MetaCompilation
                 InvocationExpressionSyntax invocExpr = null;
 
                 
-                if (initializeSymbol == null)
+                if (_initializeSymbol == null)
                 {
                     //the initialize method was not found
-                    ReportDiagnostic(context, missingInitRule, analyzerClassSymbol.Locations[0], missingInitRule.MessageFormat);
+                    ReportDiagnostic(context, MissingInitRule, _analyzerClassSymbol.Locations[0], MissingInitRule.MessageFormat);
                     return new List<object>(new object[] { registerCall, registerArgs });
                 }
                 else
                 {
                     //checking method signature
-                    var parameters = initializeSymbol.Parameters;
-                    if (parameters.Count() != 1 || parameters[0].Type.ToString() != "Microsoft.CodeAnalysis.Diagnostics.AnalysisContext" || parameters[0].Name.ToString() != "context" || initializeSymbol.DeclaredAccessibility.ToString() != "Public" || !initializeSymbol.IsOverride || !initializeSymbol.ReturnsVoid)
+                    ImmutableArray<IParameterSymbol> parameters = _initializeSymbol.Parameters;
+                    if (parameters.Count() != 1 || parameters[0].Type.ToString() != "Microsoft.CodeAnalysis.Diagnostics.AnalysisContext" || parameters[0].Name.ToString() != "context" || _initializeSymbol.DeclaredAccessibility.ToString() != "Public" || !_initializeSymbol.IsOverride || !_initializeSymbol.ReturnsVoid)
                     {
-                        ReportDiagnostic(context, incorrectInitSigRule, initializeSymbol.Locations[0], missingInitRule.MessageFormat);
+                        ReportDiagnostic(context, IncorrectInitSigRule, _initializeSymbol.Locations[0], MissingInitRule.MessageFormat);
                         return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                     }
                     
                     //looking at the contents of the initialize method
-                    var initializeMethod = initializeSymbol.DeclaringSyntaxReferences[0].GetSyntax() as MethodDeclarationSyntax;
-                    if (initializeMethod == null) return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
+                    var initializeMethod = _initializeSymbol.DeclaringSyntaxReferences[0].GetSyntax() as MethodDeclarationSyntax;
+                    if (initializeMethod == null)
+                    {
+                        return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
+                    }
 
                     var codeBlock = initializeMethod.Body as BlockSyntax;
-                    if (codeBlock == null) return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
+                    if (codeBlock == null)
+                    {
+                        return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
+                    }
 
-                    var statements = codeBlock.Statements;
+                    SyntaxList<StatementSyntax> statements = codeBlock.Statements;
                     if (statements.Count == 0)
                     {
                         //no statements inside initiailize
-                        ReportDiagnostic(context, missingRegisterRule, initializeSymbol.Locations[0], missingRegisterRule.MessageFormat);
+                        ReportDiagnostic(context, MissingRegisterRule, _initializeSymbol.Locations[0], MissingRegisterRule.MessageFormat);
                         return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                     }
                     else if (statements.Count > 1)
                     {
                         //too many statements inside initialize
-                        ReportDiagnostic(context, tooManyInitStatementsRule, statements[0].GetLocation(), tooManyInitStatementsRule.MessageFormat);
+                        ReportDiagnostic(context, TooManyInitStatementsRule, statements[0].GetLocation(), TooManyInitStatementsRule.MessageFormat);
                         return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                     }
                     else
                     {
                         //only one statement inside initialize
                         var statement = statements[0] as ExpressionStatementSyntax;
-                        if (statement == null) {
-                            ReportDiagnostic(context, incorrectInitStatementRule, initializeMethod.GetLocation(), incorrectInitStatementRule.MessageFormat);
+                        if (statement == null)
+                        {
+                            ReportDiagnostic(context, IncorrectInitStatementRule, initializeMethod.GetLocation(), IncorrectInitStatementRule.MessageFormat);
                             return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                         }
 
                         var invocationExpr = statement.Expression as InvocationExpressionSyntax;
                         if (invocationExpr == null)
                         {
-                            ReportDiagnostic(context, incorrectInitStatementRule, statement.GetLocation(), incorrectInitStatementRule.MessageFormat);
+                            ReportDiagnostic(context, IncorrectInitStatementRule, statement.GetLocation(), IncorrectInitStatementRule.MessageFormat);
                             return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                         }
                         invocExpr = invocationExpr;
@@ -311,31 +334,31 @@ namespace MetaCompilation
                         var memberExpr = invocationExpr.Expression as MemberAccessExpressionSyntax;
                         if (memberExpr == null)
                         {
-                            ReportDiagnostic(context, incorrectInitStatementRule, invocationExpr.GetLocation(), incorrectInitStatementRule.MessageFormat);
+                            ReportDiagnostic(context, IncorrectInitStatementRule, invocationExpr.GetLocation(), IncorrectInitStatementRule.MessageFormat);
                             return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                         }
 
                         var memberExprContext = memberExpr.Expression as IdentifierNameSyntax;
                         if (memberExprContext == null)
                         {
-                            ReportDiagnostic(context, incorrectInitStatementRule, memberExpr.GetLocation(), incorrectInitStatementRule.MessageFormat);
+                            ReportDiagnostic(context, IncorrectInitStatementRule, memberExpr.GetLocation(), IncorrectInitStatementRule.MessageFormat);
                             return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                         }
                         if (memberExprContext.Identifier.ToString() != "context")
                         {
-                            ReportDiagnostic(context, incorrectInitStatementRule, memberExprContext.GetLocation(), incorrectInitStatementRule.MessageFormat);
+                            ReportDiagnostic(context, IncorrectInitStatementRule, memberExprContext.GetLocation(), IncorrectInitStatementRule.MessageFormat);
                             return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                         }
 
                         var memberExprRegister = memberExpr.Name as IdentifierNameSyntax;
                         if (memberExprRegister == null)
                         {
-                            ReportDiagnostic(context, incorrectInitStatementRule, memberExpr.GetLocation(), incorrectInitStatementRule.MessageFormat);
+                            ReportDiagnostic(context, IncorrectInitStatementRule, memberExpr.GetLocation(), IncorrectInitStatementRule.MessageFormat);
                             return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                         }
-                        if (!branchesDict.ContainsKey(memberExprRegister.ToString()))
+                        if (!_branchesDict.ContainsKey(memberExprRegister.ToString()))
                         {
-                            ReportDiagnostic(context, incorrectInitStatementRule, memberExprRegister.GetLocation(), incorrectInitStatementRule.MessageFormat);
+                            ReportDiagnostic(context, IncorrectInitStatementRule, memberExprRegister.GetLocation(), IncorrectInitStatementRule.MessageFormat);
                             return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                         }
 
@@ -347,22 +370,26 @@ namespace MetaCompilation
                         {
                             registerCall = context.Compilation.GetSemanticModel(memberExpr.SyntaxTree).GetSymbolInfo(memberExpr).CandidateSymbols[0] as IMethodSymbol;
                         }
-                        if (registerCall == null) return new List<object>(new object[] { registerCall, registerArgs });
 
-                        var arguments = invocationExpr.ArgumentList.Arguments;
+                        if (registerCall == null)
+                        {
+                            return new List<object>(new object[] { registerCall, registerArgs });
+                        }
+
+                        SeparatedSyntaxList<ArgumentSyntax> arguments = invocationExpr.ArgumentList.Arguments;
                         if (arguments == null)
                         {
-                            ReportDiagnostic(context, incorrectInitStatementRule, memberExpr.GetLocation(), incorrectInitStatementRule.MessageFormat);
+                            ReportDiagnostic(context, IncorrectInitStatementRule, memberExpr.GetLocation(), IncorrectInitStatementRule.MessageFormat);
                             return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                         }
                         if (arguments.Count() > 0)
                         {
-                            var actionSymbol = context.Compilation.GetSemanticModel(invocationExpr.SyntaxTree).GetSymbolInfo(arguments[0].Expression).Symbol as IMethodSymbol;
+                            IMethodSymbol actionSymbol = context.Compilation.GetSemanticModel(invocationExpr.SyntaxTree).GetSymbolInfo(arguments[0].Expression).Symbol as IMethodSymbol;
                             registerArgs.Add(actionSymbol);
 
                             if (arguments.Count() > 1)
                             {
-                                var kindSymbol = context.Compilation.GetSemanticModel(invocationExpr.SyntaxTree).GetSymbolInfo(arguments[1].Expression).Symbol as IFieldSymbol;
+                                IFieldSymbol kindSymbol = context.Compilation.GetSemanticModel(invocationExpr.SyntaxTree).GetSymbolInfo(arguments[1].Expression).Symbol as IFieldSymbol;
                                 if (kindSymbol == null)
                                 {
                                     return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
@@ -373,10 +400,8 @@ namespace MetaCompilation
                                 }
                             }
                         }
-
                     }
                 }
-
 
                 return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
             }
@@ -402,18 +427,18 @@ namespace MetaCompilation
                 {
                     return;
                 }
-                if (analyzerMethodSymbols.Contains(sym))
+                if (_analyzerMethodSymbols.Contains(sym))
                 {
                     return;
                 }
 
                 if (sym.Name.ToString() == "Initialize")
                 {
-                    initializeSymbol = sym;
+                    _initializeSymbol = sym;
                     return;
                 }
 
-                analyzerMethodSymbols.Add(sym);
+                _analyzerMethodSymbols.Add(sym);
             }
 
             internal void AddProperty(SymbolAnalysisContext context)
@@ -436,18 +461,18 @@ namespace MetaCompilation
                 {
                     return;
                 }
-                if (analyzerPropertySymbols.Contains(sym))
+                if (_analyzerPropertySymbols.Contains(sym))
                 {
                     return;
                 }
 
                 if (sym.Name.ToString() == "SupportedDiagnostics")
                 {
-                    propertySymbol = sym;
+                    _propertySymbol = sym;
                     return;
                 }
 
-                analyzerPropertySymbols.Add(sym);
+                _analyzerPropertySymbols.Add(sym);
             }
 
             internal void AddField(SymbolAnalysisContext context)
@@ -470,12 +495,12 @@ namespace MetaCompilation
                 {
                     return;
                 }
-                if (analyzerFieldSymbols.Contains(sym))
+                if (_analyzerFieldSymbols.Contains(sym))
                 {
                     return;
                 }
 
-                analyzerFieldSymbols.Add(sym);
+                _analyzerFieldSymbols.Add(sym);
             }
 
             internal void AddClass(SymbolAnalysisContext context)
@@ -492,17 +517,23 @@ namespace MetaCompilation
                 }
                 if (sym.BaseType.ToString() != "Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")
                 {
-                    if (sym.ContainingType == null) return;
-                    if (sym.ContainingType.BaseType == null) return;
+                    if (sym.ContainingType == null)
+                    {
+                        return;
+                    }
+                    if (sym.ContainingType.BaseType == null)
+                    {
+                        return;
+                    }
                     if (sym.ContainingType.BaseType.ToString() == "Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")
                     {
-                        if (otherClassSymbols.Contains(sym))
+                        if (_otherClassSymbols.Contains(sym))
                         {
                             return;
                         }
                         else
                         {
-                            otherClassSymbols.Add(sym);
+                            _otherClassSymbols.Add(sym);
                             return;
                         }
                     }
@@ -512,21 +543,21 @@ namespace MetaCompilation
                     }
                 }
 
-                analyzerClassSymbol = sym;
+                _analyzerClassSymbol = sym;
             }
             #endregion
 
             internal void ClearState()
             {
-                analyzerClassSymbol = null;
-                analyzerFieldSymbols = new List<IFieldSymbol>();
-                analyzerMethodSymbols = new List<IMethodSymbol>();
-                analyzerPropertySymbols = new List<IPropertySymbol>();
+                _analyzerClassSymbol = null;
+                _analyzerFieldSymbols = new List<IFieldSymbol>();
+                _analyzerMethodSymbols = new List<IMethodSymbol>();
+                _analyzerPropertySymbols = new List<IPropertySymbol>();
             }
 
             public static void ReportDiagnostic(CompilationAnalysisContext context, DiagnosticDescriptor rule, Location location, params object[] messageArgs)
             {
-                var diagnostic = Diagnostic.Create(rule, location, messageArgs);
+                Diagnostic diagnostic = Diagnostic.Create(rule, location, messageArgs);
                 context.ReportDiagnostic(diagnostic);
             }
         }
