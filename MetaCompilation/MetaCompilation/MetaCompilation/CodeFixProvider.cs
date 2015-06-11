@@ -52,7 +52,6 @@ namespace MetaCompilation
 
         private async Task<Document> MissingIdAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
         {
-            // Code fix partially completed
             var idToken = SyntaxFactory.ParseToken("spacingRuleId");
             
             var expressionKind = SyntaxFactory.ParseExpression("\"IfSpacing\"") as ExpressionSyntax;
