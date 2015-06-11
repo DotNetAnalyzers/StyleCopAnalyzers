@@ -41,12 +41,10 @@ namespace MetaCompilation
             {
                 TextSpan diagnosticSpan = diagnostic.Location.SourceSpan;
                 //TODO: if statements for each diagnostic id, to register a code fix
-                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.missingId))
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingId))
                 {
-                    var declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf()
-                        .OfType<ClassDeclarationSyntax>().First();
-                    context.RegisterCodeFix(CodeAction.Create("Remove invalid statement",
-                        c => MissingIdAsync(context.Document, declaration, c)), diagnostic);
+                    ClassDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Remove invalid statement", c => MissingIdAsync(context.Document, declaration, c)), diagnostic);
                 }
             }
         }
