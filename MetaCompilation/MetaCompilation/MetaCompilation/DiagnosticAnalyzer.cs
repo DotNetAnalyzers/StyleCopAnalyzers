@@ -319,7 +319,7 @@ namespace MetaCompilation
                         var statement = statements[0] as ExpressionStatementSyntax;
                         if (statement == null)
                         {
-                            ReportDiagnostic(context, IncorrectInitStatementRule, initializeMethod.GetLocation(), IncorrectInitStatementRule.MessageFormat);
+                            ReportDiagnostic(context, IncorrectInitStatementRule, statements[0].GetLocation(), IncorrectInitStatementRule.MessageFormat);
                             return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                         }
 
