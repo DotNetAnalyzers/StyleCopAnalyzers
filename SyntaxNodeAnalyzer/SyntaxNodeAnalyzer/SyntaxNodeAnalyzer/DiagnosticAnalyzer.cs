@@ -57,7 +57,7 @@ namespace SyntaxNodeAnalyzer
             }
 
             var diagnostic = Diagnostic.Create(Rule, diagnosticLocation, Rule.MessageFormat);
-            obj.ReportDiagnostic(diagnostic);
+            context.ReportDiagnostic(diagnostic);
         }
     }
 }
