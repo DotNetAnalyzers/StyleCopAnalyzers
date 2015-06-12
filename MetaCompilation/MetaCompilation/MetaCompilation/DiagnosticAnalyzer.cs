@@ -15,7 +15,7 @@ namespace MetaCompilation
     public class MetaCompilationAnalyzer : DiagnosticAnalyzer
     {
         #region id rules
-        public const string MissingId = "missingId";
+        public const string MissingId = "MetaAnalyzer001";
         internal static DiagnosticDescriptor MissingIdRule = new DiagnosticDescriptor(
             id: MissingId,
             title: "You are missing a diagnostic id",
@@ -26,7 +26,7 @@ namespace MetaCompilation
         #endregion
 
         #region Initialize rules
-        public const string MissingInit = "missingInit";
+        public const string MissingInit = "MetaAnalyzer002";
         internal static DiagnosticDescriptor MissingInitRule = new DiagnosticDescriptor(
             id: MissingInit,
             title: "You are missing the required Initialize method",
@@ -35,7 +35,7 @@ namespace MetaCompilation
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
-        public const string MissingRegisterStatement = "missingRegister";
+        public const string MissingRegisterStatement = "MetaAnalyzer003";
         internal static DiagnosticDescriptor MissingRegisterRule = new DiagnosticDescriptor(
             id: MissingRegisterStatement,
             title: "You need to register an action within the Initialize method",
@@ -44,7 +44,7 @@ namespace MetaCompilation
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
-        public const string TooManyInitStatements = "incorrectInit001";
+        public const string TooManyInitStatements = "MetaAnalyzer004";
         internal static DiagnosticDescriptor TooManyInitStatementsRule = new DiagnosticDescriptor(
             id: TooManyInitStatements,
             title: "Please only have one statement within Initiailize. You will only be registering one action.",
@@ -53,7 +53,7 @@ namespace MetaCompilation
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
-        public const string IncorrectInitStatement = "incorrectInit002";
+        public const string IncorrectInitStatement = "MetaAnalyzer005";
         internal static DiagnosticDescriptor IncorrectInitStatementRule = new DiagnosticDescriptor(
             id: IncorrectInitStatement,
             title: "This statement needs to register for a supported action",
@@ -62,7 +62,7 @@ namespace MetaCompilation
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
-        public const string IncorrectInitSig = "initSignature";
+        public const string IncorrectInitSig = "MetaAnalyzer006";
         internal static DiagnosticDescriptor IncorrectInitSigRule = new DiagnosticDescriptor(
             id: IncorrectInitSig,
             title: "The signature for the Initialize method is incorrect",
@@ -73,7 +73,7 @@ namespace MetaCompilation
         #endregion
 
         #region SupportedDiagnostics rules
-        public const string MissingSuppDiag = "missingSuppDiag";
+        public const string MissingSuppDiag = "MetaAnalyzer007";
         internal static DiagnosticDescriptor MissingSuppDiagRule = new DiagnosticDescriptor(
             id: MissingSuppDiag,
             title: "You are missing the required SupportedDiagnostics method",
@@ -82,7 +82,7 @@ namespace MetaCompilation
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
-        public const string IncorrectSigSuppDiag = "incorrectSignatureSuppDiag";
+        public const string IncorrectSigSuppDiag = "MetaAnalyzer008";
         internal static DiagnosticDescriptor IncorrectSigSuppDiagRule = new DiagnosticDescriptor(
             id: IncorrectSigSuppDiag,
             title: "The signature of the SupportedDiagnostics property is incorrect",
@@ -91,7 +91,7 @@ namespace MetaCompilation
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
-        public const string MissingAccessor = "missingAccessor";
+        public const string MissingAccessor = "MetaAnalyzer009";
         internal static DiagnosticDescriptor MissingAccessorRule = new DiagnosticDescriptor(
             id: MissingAccessor,
             title: "You are missing a get accessor in your SupportedDiagnostics property",
@@ -100,7 +100,7 @@ namespace MetaCompilation
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
-        public const string TooManyAccessors = "tooManyAccessors";
+        public const string TooManyAccessors = "MetaAnalyzer010";
         internal static DiagnosticDescriptor TooManyAccessorsRule = new DiagnosticDescriptor(
             id: TooManyAccessors,
             title: "You only need a get accessor for this property",
@@ -109,7 +109,7 @@ namespace MetaCompilation
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
-        public const string IncorrectAccessorReturn = "incorrectReturn";
+        public const string IncorrectAccessorReturn = "MetaAnalyzer011";
         internal static DiagnosticDescriptor IncorrectAccessorReturnRule = new DiagnosticDescriptor(
             id: IncorrectAccessorReturn,
             title: "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules",
@@ -118,7 +118,7 @@ namespace MetaCompilation
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
-        public const string SuppDiagReturnValue = "ImmutableArray";
+        public const string SuppDiagReturnValue = "MetaAnalyzer012";
         internal static DiagnosticDescriptor SuppDiagReturnValueRule = new DiagnosticDescriptor(
             id: SuppDiagReturnValue,
             title: "You need to create an immutable array",
@@ -127,7 +127,7 @@ namespace MetaCompilation
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
-        public const string SupportedRules = "SupportedRules";
+        public const string SupportedRules = "MetaAnalyzer013";
         internal static DiagnosticDescriptor SupportedRulesRule = new DiagnosticDescriptor(
             id: SupportedRules,
             title: "The immutable array should contain every DiagnosticDescriptor rule that was created",
