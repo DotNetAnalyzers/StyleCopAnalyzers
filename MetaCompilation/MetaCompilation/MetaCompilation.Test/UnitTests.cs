@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestHelper;
+using System.Runtime;
 using MetaCompilation;
 
 namespace MetaCompilation.Test
@@ -93,6 +94,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         //check missingId code fix and diagnostic
+        [TestMethod]
         public void TestMethod3()
         {
             var test = @"using System;
@@ -152,7 +154,7 @@ namespace SyntaxNodeAnalyzer
                 }
 
                 var diagnostic = Diagnostic.Create(Rule, diagnosticLocation, Rule.MessageFormat);
-                obj.ReportDiagnostic(diagnostic);
+                context.ReportDiagnostic(diagnostic);
             }
         }
     }
@@ -160,14 +162,15 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingId,
-                Message = "You are missing a diagnostic Id",
+                Message = "You are missing a diagnostic id",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 22) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
 
-            var fixtest = @"using System;
+           /* var fixtest = @"using System;
+using System.Runtime;
 using System.Collections.Generic;
             using System.Collections.Immutable;
             using System.Linq;
@@ -226,20 +229,22 @@ namespace SyntaxNodeAnalyzer
                 }
 
                 var diagnostic = Diagnostic.Create(Rule, diagnosticLocation, Rule.MessageFormat);
-                obj.ReportDiagnostic(diagnostic);
+                context.ReportDiagnostic(diagnostic);
             }
         }
     }
 ";
-            VerifyCSharpFix(test, fixtest);
+            VerifyCSharpFix(test, fixtest);*/
         }
 
         // test for missing Initialize method
+        [TestMethod]
         public void TestMethod4()
         {
             var test = @"using System;
+using System.Runtime;
 using System.Collections.Generic;
-            using System.Collections.Immutable;
+            using System.Collections;
             using System.Linq;
             using System.Threading;
             using Microsoft.CodeAnalysis;
@@ -291,7 +296,7 @@ namespace SyntaxNodeAnalyzer
                 }
 
                 var diagnostic = Diagnostic.Create(Rule, diagnosticLocation, Rule.MessageFormat);
-                obj.ReportDiagnostic(diagnostic);
+                context.ReportDiagnostic(diagnostic);
             }
         }
     }";
@@ -300,75 +305,76 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.MissingInit,
                 Message = "You are missing the required Initialize method",
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test1.cs", 15, 22) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 16, 22) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
 
-            var fixTest = @"using System;
-using System.Collections.Generic;
-            using System.Collections.Immutable;
-            using System.Linq;
-            using System.Threading;
-            using Microsoft.CodeAnalysis;
-            using Microsoft.CodeAnalysis.CSharp;
-            using Microsoft.CodeAnalysis.CSharp.Syntax;
-            using Microsoft.CodeAnalysis.Diagnostics;
-            using Microsoft.CodeAnalysis.Text;
+                   /* var fixTest = @"using System;
+        using System.Runtime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a;
+        using System.Collections.Generic;
+                    using System.Collections.Immutable;
+                    using System.Linq;
+                    using System.Threading;
+                    using Microsoft.CodeAnalysis;
+                    using Microsoft.CodeAnalysis.CSharp;
+                    using Microsoft.CodeAnalysis.CSharp.Syntax;
+                    using Microsoft.CodeAnalysis.Diagnostics;
+                    using Microsoft.CodeAnalysis.Text;
 
-namespace SyntaxNodeAnalyzer
-    {
-        [DiagnosticAnalyzer(LanguageNames.CSharp)]
-        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
-        {
-            public const string spacingRuleId = ""IfSpacing"";
-
-            internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
-                id: spacingRuleId, //make the id specific
-                title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
-                messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
-                category: ""Syntax"", //make the category specific
-                defaultSeverity: DiagnosticSeverity.Warning, //possible options
-                isEnabledByDefault: true);
-
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        namespace SyntaxNodeAnalyzer
             {
-                get
+                [DiagnosticAnalyzer(LanguageNames.CSharp)]
+                public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
                 {
-                    return ImmutableArray.Create(Rule);
-                }
-            }
+                    public const string spacingRuleId = ""IfSpacing"";
 
-            private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
-            {
-                var ifStatement = (IfStatementSyntax)context.Node;
-                var ifKeyword = ifStatement.IfKeyword;
-                var openParen = ifStatement.OpenParenToken;
-                var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, TextSpan.FromBounds(ifKeyword.Span.Start, openParen.Span.Start));
+                    internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+                        id: spacingRuleId, //make the id specific
+                        title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
+                        messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
+                        category: ""Syntax"", //make the category specific
+                        defaultSeverity: DiagnosticSeverity.Warning, //possible options
+                        isEnabledByDefault: true);
 
-                if (ifKeyword.HasTrailingTrivia)
-                {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
                     {
-                        if (trailingTrivia.ToString() == "" "")
+                        get
                         {
-                            return;
+                            return ImmutableArray.Create(Rule);
                         }
                     }
+
+                    private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+                    {
+                        var ifStatement = (IfStatementSyntax)context.Node;
+                        var ifKeyword = ifStatement.IfKeyword;
+                        var openParen = ifStatement.OpenParenToken;
+                        var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, TextSpan.FromBounds(ifKeyword.Span.Start, openParen.Span.Start));
+
+                        if (ifKeyword.HasTrailingTrivia)
+                        {
+                            var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                            if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                            {
+                                if (trailingTrivia.ToString() == "" "")
+                                {
+                                    return;
+                                }
+                            }
+                        }
+
+                        var diagnostic = Diagnostic.Create(Rule, diagnosticLocation, Rule.MessageFormat);
+                        context.ReportDiagnostic(diagnostic);
+                    }
+
+                    public override void Initialize(AnalysisContext context)
+                    {
+                        throw new NotImplementedException();
+                    }
                 }
-
-                var diagnostic = Diagnostic.Create(Rule, diagnosticLocation, Rule.MessageFormat);
-                obj.ReportDiagnostic(diagnostic);
-            }
-
-            public override void Initialize(AnalysisContext context)
-            {
-                throw new NotImplementedException();
-            }
-        }
-    }";
-            VerifyCSharpFix(test, fixTest);
+            }";
+                    VerifyCSharpFix(test, fixTest);*/
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

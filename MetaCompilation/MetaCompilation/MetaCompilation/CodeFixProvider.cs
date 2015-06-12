@@ -25,7 +25,7 @@ namespace MetaCompilation
             get
             {
                 //TODO: add any new rules
-                return ImmutableArray.Create(MetaCompilationAnalyzer.MissingId, MetaCompilationAnalyzer.MissingInit);
+                return ImmutableArray.Create(MetaCompilationAnalyzer.MissingId, MetaCompilationAnalyzer.MissingInit, MetaCompilationAnalyzer.MissingRegisterStatement);
             }
         }
 
@@ -53,6 +53,12 @@ namespace MetaCompilation
                 {
                     ClassDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("Each analyzer must have an Initialize method to register actions to be performed when changes occur", c => MissingInitAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingRegisterStatement))
+                {
+                    MethodDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("The Initialize method must register an action to be performed when changes occur", c => MissingRegisterAsync(context.Document, declaration, c)), diagnostic);
                 }
             }
         }
@@ -110,6 +116,20 @@ namespace MetaCompilation
 
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root.ReplaceNode(declaration, newClassDeclaration);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+
+        private async Task<Document> MissingRegisterAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        {
+            var registerExpression = SyntaxFactory.ExpressionStatement(SyntaxFactory.ParseExpression("context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement)"));
+
+            var newInitBlock = SyntaxFactory.Block(registerExpression);
+            var newInitDeclaration = declaration.WithBody(newInitBlock);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, newInitDeclaration);
             var newDocument = document.WithSyntaxRoot(newRoot);
 
             return newDocument;
