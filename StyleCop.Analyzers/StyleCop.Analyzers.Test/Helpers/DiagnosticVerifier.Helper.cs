@@ -221,5 +221,10 @@
                 return new DiagnosticResult(supportedDiagnostics.Single(i => i.Id == diagnosticId));
             }
         }
+
+        protected DiagnosticResult CSharpDiagnostic(DiagnosticDescriptor descriptor)
+        {
+            return this.CSharpDiagnostic(descriptor.Id).WithMessageFormat(descriptor.MessageFormat);
+        }
     }
 }

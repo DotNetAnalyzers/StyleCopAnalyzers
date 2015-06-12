@@ -203,6 +203,7 @@
     <Compile Include="LayoutRules\SA1511UnitTests.cs" />
     <Compile Include="LayoutRules\SA1512UnitTests.cs" />
     <Compile Include="LayoutRules\SA1513UnitTests.cs" />
+    <Compile Include="LayoutRules\SA1514UnitTests.cs" />
     <Compile Include="LayoutRules\SA1515UnitTests.cs" />
     <Compile Include="LayoutRules\SA1516UnitTests.cs" />
     <Compile Include="LayoutRules\SA1517UnitTests.cs" />
@@ -272,6 +273,7 @@
     <Compile Include="SpacingRules\SA1005UnitTests.cs" />
     <Compile Include="SpacingRules\SA1006UnitTests.cs" />
     <Compile Include="SpacingRules\SA1007UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1008UnitTests.cs" />
     <Compile Include="SpacingRules\SA1021UnitTests.cs" />
     <Compile Include="SpacingRules\SA1022UnitTests.cs" />
     <Compile Include="SpacingRules\SA1024UnitTests.cs" />
