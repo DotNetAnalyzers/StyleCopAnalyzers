@@ -316,7 +316,7 @@ namespace MetaCompilation
                     return false;
                 }
 
-                if (_propertySymbol.Name.ToString() != "SupportedDiagnostics" || _propertySymbol.DeclaredAccessibility.ToString() != "Public" || 
+                if (_propertySymbol.Name.ToString() != "SupportedDiagnostics" || _propertySymbol.DeclaredAccessibility != Accessibility.Public || 
                     !_propertySymbol.IsOverride || _propertySymbol.OverriddenProperty.ToString() != "Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer.SupportedDiagnostics" 
                     || _propertySymbol.Type.ToString() != "System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor>")
                 {
@@ -504,7 +504,7 @@ namespace MetaCompilation
                 List<string> idNames = new List<string>();
                 foreach (IFieldSymbol field in _analyzerFieldSymbols)
                 {
-                    if (field.IsConst && field.IsStatic && field.DeclaredAccessibility.ToString() == "Public" && field.Type.ToString() == "string")
+                    if (field.IsConst && field.IsStatic && field.DeclaredAccessibility == Accessibility.Public && field.Type.ToString() == "string")
                     {
                         if (field.Name == null)
                         {
@@ -536,7 +536,7 @@ namespace MetaCompilation
                 {
                     //checking method signature
                     ImmutableArray<IParameterSymbol> parameters = _initializeSymbol.Parameters;
-                    if (parameters.Count() != 1 || parameters[0].Type.ToString() != "Microsoft.CodeAnalysis.Diagnostics.AnalysisContext" || parameters[0].Name.ToString() != "context" || _initializeSymbol.DeclaredAccessibility.ToString() != "Public" || !_initializeSymbol.IsOverride || !_initializeSymbol.ReturnsVoid)
+                    if (parameters.Count() != 1 || parameters[0].Type.ToString() != "Microsoft.CodeAnalysis.Diagnostics.AnalysisContext" || parameters[0].Name.ToString() != "context" || _initializeSymbol.DeclaredAccessibility != Accessibility.Public || !_initializeSymbol.IsOverride || !_initializeSymbol.ReturnsVoid)
                     {
                         ReportDiagnostic(context, IncorrectInitSigRule, _initializeSymbol.Locations[0], MissingInitRule.MessageFormat);
                         return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
