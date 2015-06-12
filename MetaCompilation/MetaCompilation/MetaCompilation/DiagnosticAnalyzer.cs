@@ -310,83 +310,40 @@ namespace MetaCompilation
             //returns a boolean based on whether or not the SupportedDiagnostics property is correct
             internal bool CheckSupportedDiagnostics(List<string> ruleNames, CompilationAnalysisContext context)
             {
-                if (_propertySymbol == null)
-                {
-                    ReportDiagnostic(context, MissingSuppDiagRule, _analyzerClassSymbol.Locations[0], MissingSuppDiagRule.MessageFormat);
-                    return false;
-                }
-
-                if (_propertySymbol.Name.ToString() != "SupportedDiagnostics" || _propertySymbol.DeclaredAccessibility != Accessibility.Public || 
-                    !_propertySymbol.IsOverride || _propertySymbol.OverriddenProperty.ToString() != "Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer.SupportedDiagnostics" 
-                    || _propertySymbol.Type.ToString() != "System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor>")
-                {
-                    ReportDiagnostic(context, IncorrectSigSuppDiagRule, _propertySymbol.Locations[0], IncorrectSigSuppDiagRule.MessageFormat);
-                    return false;
-                }
-
-                var propertyDeclaration = _propertySymbol.DeclaringSyntaxReferences[0].GetSyntax() as PropertyDeclarationSyntax;
+                var propertyDeclaration = SuppDiagPropertySymbol(context);
                 if (propertyDeclaration == null)
                 {
                     return false;
                 }
 
-                AccessorListSyntax accessorList = propertyDeclaration.AccessorList;
-                if (accessorList == null)
-                {
-                    return false;
-                }
+                SyntaxList<StatementSyntax> statements = SuppDiagAccessor(context, propertyDeclaration);
 
-                SyntaxList<AccessorDeclarationSyntax> accessors = accessorList.Accessors;
-                if (accessors == null || accessors.Count == 0)
-                {
-                    ReportDiagnostic(context, MissingAccessorRule, propertyDeclaration.GetLocation(), MissingAccessorRule.MessageFormat);
-                    return false;
-                }
-                if (accessors.Count > 1)
-                {
-                    ReportDiagnostic(context, TooManyAccessorsRule, accessorList.GetLocation(), TooManyAccessorsRule.MessageFormat);
-                    return false;
-                }
-
-                var getAccessor = accessors.First() as AccessorDeclarationSyntax;
-                if (getAccessor == null || getAccessor.Keyword.ToString() != "get")
-                {
-                    ReportDiagnostic(context, MissingAccessorRule, propertyDeclaration.GetLocation(), MissingAccessorRule.MessageFormat);
-                    return false;
-                }
-
-                var accessorBody = getAccessor.Body as BlockSyntax;
-                if (accessorBody == null)
-                {
-                    ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessor.Keyword.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
-                    return false;
-                }
-
-                SyntaxList<StatementSyntax> statements = accessorBody.Statements;
                 if (statements.Count == 0)
                 {
-                    ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessor.Keyword.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, propertyDeclaration.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
                     return false;
                 }
+
+                var getAccessorKeywordLocation = propertyDeclaration.AccessorList.Accessors.First().GetLocation();
 
                 IEnumerable<ReturnStatementSyntax> returnStatements = statements.OfType<ReturnStatementSyntax>();
                 if (returnStatements.Count() == 0)
                 {
-                    ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessor.Keyword.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessorKeywordLocation, IncorrectAccessorReturnRule.MessageFormat);
                     return false;
                 }
 
                 ReturnStatementSyntax returnStatement = returnStatements.First();
                 if (returnStatement == null)
                 {
-                    ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessor.Keyword.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessorKeywordLocation, IncorrectAccessorReturnRule.MessageFormat);
                     return false;
                 }
 
                 var returnExpression = returnStatement.Expression;
                 if (returnExpression == null)
                 {
-                    ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessor.Keyword.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessorKeywordLocation, IncorrectAccessorReturnRule.MessageFormat);
                     return false;
                 }
 
@@ -394,152 +351,189 @@ namespace MetaCompilation
                 {
                     var valueClause = returnExpression as InvocationExpressionSyntax;
                     var returnDeclaration = returnStatement as ReturnStatementSyntax;
-                    if (valueClause == null)
-                    {
-                        ReportDiagnostic(context, IncorrectAccessorReturnRule, returnDeclaration.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
-                        return false;
-                    }
-
-                    var valueExpression = valueClause.Expression as MemberAccessExpressionSyntax;
-                    if (valueExpression == null)
-                    {
-                        ReportDiagnostic(context, IncorrectAccessorReturnRule, returnDeclaration.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
-                        return false;
-                    }
-
-                    if (valueExpression.ToString() != "ImmutableArray.Create")
-                    {
-                        ReportDiagnostic(context, SuppDiagReturnValueRule, returnDeclaration.GetLocation(), SuppDiagReturnValueRule.MessageFormat);
-                        return false;
-                    }
-
-                    var valueArguments = valueClause.ArgumentList as ArgumentListSyntax;
-                    if (valueArguments == null)
-                    {
-                        return false;
-                    }
-
-                    SeparatedSyntaxList<ArgumentSyntax> valueArgs = valueArguments.Arguments;
-                    if (valueArgs == null)
-                    {
-                        return false;
-                    }
-
-
-                    foreach (ArgumentSyntax arg in valueArgs)
-                    {
-                        if (ruleNames.Count == 0)
-                        {
-                            ReportDiagnostic(context, SupportedRulesRule, valueExpression.GetLocation(), SupportedRulesRule.MessageFormat);
-                            return false;
-                        }
-                        if (ruleNames.Contains(arg.ToString()))
-                        {
-                            ruleNames.Remove(arg.ToString());
-                        }
-                    }
+                    SuppDiagReturnCheck(context, valueClause, returnDeclaration.GetLocation(), ruleNames);
                 }
                 else if (returnExpression.GetType().ToString() == "Microsoft.CodeAnalysis.CSharp.Syntax.IdentifierNameSyntax")
                 {
-                    var returnSymbolInfo = context.Compilation.GetSemanticModel(returnStatement.SyntaxTree).GetSymbolInfo(returnExpression as IdentifierNameSyntax);
-                    ILocalSymbol returnSymbol = null;
-                    if (returnSymbolInfo.CandidateSymbols.Count() == 0)
-                    {
-                        returnSymbol = returnSymbolInfo.Symbol as ILocalSymbol;
-                    }
-                    else
-                    {
-                        returnSymbol = returnSymbolInfo.CandidateSymbols[0] as ILocalSymbol;
-                    }
-
-                    if (returnSymbol == null)
-                    {
-                        ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessor.Keyword.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
-                        return false;
-                    }
-
-                    if (returnSymbol.Type.ToString() != "System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor>")
-                    {
-                        ReportDiagnostic(context, IncorrectAccessorReturnRule, returnSymbol.Locations[0], IncorrectAccessorReturnRule.MessageFormat);
-                        return false;
-                    }
-
-                    var returnDeclaration = returnSymbol.DeclaringSyntaxReferences[0].GetSyntax() as VariableDeclaratorSyntax;
-                    if (returnDeclaration == null)
-                    {
-                        ReportDiagnostic(context, IncorrectAccessorReturnRule, returnSymbol.Locations[0], IncorrectAccessorReturnRule.MessageFormat);
-                        return false;
-                    }
-
-                    var equalsValueClause = returnDeclaration.Initializer as EqualsValueClauseSyntax;
-                    if (equalsValueClause == null)
-                    {
-                        ReportDiagnostic(context, IncorrectAccessorReturnRule, returnDeclaration.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
-                        return false;
-                    }
-
-                    var valueClause = equalsValueClause.Value as InvocationExpressionSyntax;
-                    if (valueClause == null)
-                    {
-                        ReportDiagnostic(context, IncorrectAccessorReturnRule, returnDeclaration.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
-                        return false;
-                    }
-
-                    var valueExpression = valueClause.Expression as MemberAccessExpressionSyntax;
-                    if (valueExpression == null)
-                    {
-                        ReportDiagnostic(context, IncorrectAccessorReturnRule, returnDeclaration.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
-                        return false;
-                    }
-
-                    if (valueExpression.ToString() != "ImmutableArray.Create")
-                    {
-                        ReportDiagnostic(context, SuppDiagReturnValueRule, returnDeclaration.GetLocation(), SuppDiagReturnValueRule.MessageFormat);
-                        return false;
-                    }
-
-                    var valueArguments = valueClause.ArgumentList as ArgumentListSyntax;
-                    if (valueArguments == null)
+                    SymbolInfo returnSymbolInfo = context.Compilation.GetSemanticModel(returnStatement.SyntaxTree).GetSymbolInfo(returnExpression as IdentifierNameSyntax);
+                    List<object> symbolResult = SuppDiagReturnSymbol(context, returnSymbolInfo, getAccessorKeywordLocation);
+                    if (symbolResult.Count == 0)
                     {
                         return false;
                     }
 
-                    SeparatedSyntaxList<ArgumentSyntax> valueArgs = valueArguments.Arguments;
-                    if (valueArgs == null)
-                    {
-                        return false;
-                    }
-
-                    
-                    foreach (ArgumentSyntax arg in valueArgs)
-                    {
-                        if (ruleNames.Count == 0)
-                        {
-                            ReportDiagnostic(context, SupportedRulesRule, valueExpression.GetLocation(), SupportedRulesRule.MessageFormat);
-                            return false;
-                        }
-                        if (ruleNames.Contains(arg.ToString()))
-                        {
-                            ruleNames.Remove(arg.ToString());
-                        }
-                    }
-
-
+                    InvocationExpressionSyntax valueClause = symbolResult[0] as InvocationExpressionSyntax;
+                    VariableDeclaratorSyntax returnDeclaration = symbolResult[1] as VariableDeclaratorSyntax;
+                    SuppDiagReturnCheck(context, valueClause, returnDeclaration.GetLocation(), ruleNames);
                 }
                 else
                 {
-                    ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessor.Keyword.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessorKeywordLocation, IncorrectAccessorReturnRule.MessageFormat);
                     return false;
                 }
 
                 return true;
 
             }
-            
+
+            #region CheckSupportedDiagnostics helpers
+            internal PropertyDeclarationSyntax SuppDiagPropertySymbol(CompilationAnalysisContext context)
+            {
+                if (_propertySymbol == null)
+                {
+                    ReportDiagnostic(context, MissingSuppDiagRule, _analyzerClassSymbol.Locations[0], MissingSuppDiagRule.MessageFormat);
+                    return null;
+                }
+
+                if (_propertySymbol.Name.ToString() != "SupportedDiagnostics" || _propertySymbol.DeclaredAccessibility != Accessibility.Public ||
+                    !_propertySymbol.IsOverride || _propertySymbol.OverriddenProperty.ToString() != "Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer.SupportedDiagnostics")
+                {
+                    ReportDiagnostic(context, IncorrectSigSuppDiagRule, _propertySymbol.Locations[0], IncorrectSigSuppDiagRule.MessageFormat);
+                    return null;
+                }
+
+                return _propertySymbol.DeclaringSyntaxReferences[0].GetSyntax() as PropertyDeclarationSyntax;
+            }
+            internal SyntaxList<StatementSyntax> SuppDiagAccessor(CompilationAnalysisContext context, PropertyDeclarationSyntax propertyDeclaration)
+            {
+                SyntaxList<StatementSyntax> emptyResult = new SyntaxList<StatementSyntax>();
+
+                AccessorListSyntax accessorList = propertyDeclaration.AccessorList;
+                if (accessorList == null)
+                {
+                    return emptyResult;
+                }
+
+                SyntaxList<AccessorDeclarationSyntax> accessors = accessorList.Accessors;
+                if (accessors == null || accessors.Count == 0)
+                {
+                    ReportDiagnostic(context, MissingAccessorRule, propertyDeclaration.GetLocation(), MissingAccessorRule.MessageFormat);
+                    return emptyResult;
+                }
+                if (accessors.Count > 1)
+                {
+                    ReportDiagnostic(context, TooManyAccessorsRule, accessorList.GetLocation(), TooManyAccessorsRule.MessageFormat);
+                    return emptyResult;
+                }
+
+                var getAccessor = accessors.First() as AccessorDeclarationSyntax;
+                if (getAccessor == null || getAccessor.Keyword.ToString() != "get")
+                {
+                    ReportDiagnostic(context, MissingAccessorRule, propertyDeclaration.GetLocation(), MissingAccessorRule.MessageFormat);
+                    return emptyResult;
+                }
+
+                var accessorBody = getAccessor.Body as BlockSyntax;
+                if (accessorBody == null)
+                {
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessor.Keyword.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
+                    return emptyResult;
+                }
+
+                return accessorBody.Statements;
+            }
+            internal void SuppDiagReturnCheck(CompilationAnalysisContext context, InvocationExpressionSyntax valueClause, Location returnDeclarationLocation, List<string> ruleNames)
+            {
+                if (valueClause == null)
+                {
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, returnDeclarationLocation, IncorrectAccessorReturnRule.MessageFormat);
+                    return;
+                }
+
+                var valueExpression = valueClause.Expression as MemberAccessExpressionSyntax;
+                if (valueExpression == null)
+                {
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, returnDeclarationLocation, IncorrectAccessorReturnRule.MessageFormat);
+                    return;
+                }
+
+                if (valueExpression.ToString() != "ImmutableArray.Create")
+                {
+                    ReportDiagnostic(context, SuppDiagReturnValueRule, returnDeclarationLocation, SuppDiagReturnValueRule.MessageFormat);
+                    return;
+                }
+
+                var valueArguments = valueClause.ArgumentList as ArgumentListSyntax;
+                if (valueArguments == null)
+                {
+                    return;
+                }
+
+                SeparatedSyntaxList<ArgumentSyntax> valueArgs = valueArguments.Arguments;
+                if (valueArgs == null)
+                {
+                    return;
+                }
+
+
+                foreach (ArgumentSyntax arg in valueArgs)
+                {
+                    if (ruleNames.Count == 0)
+                    {
+                        ReportDiagnostic(context, SupportedRulesRule, valueExpression.GetLocation(), SupportedRulesRule.MessageFormat);
+                        return;
+                    }
+                    if (ruleNames.Contains(arg.ToString()))
+                    {
+                        ruleNames.Remove(arg.ToString());
+                    }
+                }
+            }
+            internal List<object> SuppDiagReturnSymbol(CompilationAnalysisContext context, SymbolInfo returnSymbolInfo, Location getAccessorKeywordLocation)
+            {
+                List<object> result = new List<object>();
+
+                ILocalSymbol returnSymbol = null;
+                if (returnSymbolInfo.CandidateSymbols.Count() == 0)
+                {
+                    returnSymbol = returnSymbolInfo.Symbol as ILocalSymbol;
+                }
+                else
+                {
+                    returnSymbol = returnSymbolInfo.CandidateSymbols[0] as ILocalSymbol;
+                }
+
+                if (returnSymbol == null)
+                {
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessorKeywordLocation, IncorrectAccessorReturnRule.MessageFormat);
+                    return result;
+                }
+
+                if (returnSymbol.Type.ToString() != "System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor>")
+                {
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, returnSymbol.Locations[0], IncorrectAccessorReturnRule.MessageFormat);
+                    return result;
+                }
+
+                var returnDeclaration = returnSymbol.DeclaringSyntaxReferences[0].GetSyntax() as VariableDeclaratorSyntax;
+                if (returnDeclaration == null)
+                {
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, returnSymbol.Locations[0], IncorrectAccessorReturnRule.MessageFormat);
+                    return result;
+                }
+
+                var equalsValueClause = returnDeclaration.Initializer as EqualsValueClauseSyntax;
+                if (equalsValueClause == null)
+                {
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, returnDeclaration.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
+                    return result;
+                }
+
+                var valueClause = equalsValueClause.Value as InvocationExpressionSyntax;
+
+                result.Add(valueClause);
+                result.Add(returnDeclaration);
+                return result;
+            }
+            #endregion
+
             //returns a list of rule names
             internal List<string> CheckRules(List<string> idNames, string branch, string kind, CompilationAnalysisContext context)
             {
-                throw new NotImplementedException();
+                //TODO: change back to not implemented
+                var result = new List<string>();
+                result.Add("Rule");
+                return result;
 
             }
             
