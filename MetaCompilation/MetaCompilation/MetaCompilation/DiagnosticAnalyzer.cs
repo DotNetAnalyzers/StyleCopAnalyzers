@@ -276,7 +276,7 @@ namespace MetaCompilation
                                 }
                                 else
                                 {
-                                    //diagnostic
+                                    return;
                                 }
                             }
                             else
@@ -298,7 +298,7 @@ namespace MetaCompilation
                 }
                 else
                 {
-                    //diagnostic
+                    return;
                 }
             }
 
@@ -465,7 +465,6 @@ namespace MetaCompilation
                     return;
                 }
 
-
                 foreach (ArgumentSyntax arg in valueArgs)
                 {
                     if (ruleNames.Count == 0)
@@ -530,11 +529,7 @@ namespace MetaCompilation
             //returns a list of rule names
             internal List<string> CheckRules(List<string> idNames, string branch, string kind, CompilationAnalysisContext context)
             {
-                //TODO: change back to not implemented
-                var result = new List<string>();
-                result.Add("Rule");
-                return result;
-
+                throw new NotImplementedException();
             }
             
             //returns a list of id names, empty if none found
@@ -563,7 +558,6 @@ namespace MetaCompilation
                 IMethodSymbol registerCall = null;
                 List<ISymbol> registerArgs = new List<ISymbol>();
                 InvocationExpressionSyntax invocExpr = null;
-
                 
                 if (_initializeSymbol == null)
                 {
