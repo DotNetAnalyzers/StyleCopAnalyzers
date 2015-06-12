@@ -574,21 +574,7 @@ namespace MetaCompilation
                 else
                 {
                     //checking method signature
-                    ImmutableArray<IParameterSymbol> parameters = _initializeSymbol.Parameters;
-                    if (parameters.Count() != 1 || parameters[0].Type.ToString() != "Microsoft.CodeAnalysis.Diagnostics.AnalysisContext" || parameters[0].Name.ToString() != "context" || _initializeSymbol.DeclaredAccessibility != Accessibility.Public || !_initializeSymbol.IsOverride || !_initializeSymbol.ReturnsVoid)
-                    {
-                        ReportDiagnostic(context, IncorrectInitSigRule, _initializeSymbol.Locations[0], MissingInitRule.MessageFormat);
-                        return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
-                    }
-                    
-                    //looking at the contents of the initialize method
-                    var initializeMethod = _initializeSymbol.DeclaringSyntaxReferences[0].GetSyntax() as MethodDeclarationSyntax;
-                    if (initializeMethod == null)
-                    {
-                        return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
-                    }
-
-                    var codeBlock = initializeMethod.Body as BlockSyntax;
+                    var codeBlock = InitializeOverview(context) as BlockSyntax;
                     if (codeBlock == null)
                     {
                         return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
@@ -610,51 +596,14 @@ namespace MetaCompilation
                     else
                     {
                         //only one statement inside initialize
-                        var statement = statements[0] as ExpressionStatementSyntax;
-                        if (statement == null)
+                        List<object> bodyResults = InitializeBody(context, statements);
+                        if (bodyResults == null)
                         {
-                            ReportDiagnostic(context, IncorrectInitStatementRule, statements[0].GetLocation(), IncorrectInitStatementRule.MessageFormat);
                             return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                         }
-
-                        var invocationExpr = statement.Expression as InvocationExpressionSyntax;
-                        if (invocationExpr == null)
-                        {
-                            ReportDiagnostic(context, IncorrectInitStatementRule, statement.GetLocation(), IncorrectInitStatementRule.MessageFormat);
-                            return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
-                        }
+                        var invocationExpr = bodyResults[0] as InvocationExpressionSyntax;
+                        var memberExpr = bodyResults[1] as MemberAccessExpressionSyntax;
                         invocExpr = invocationExpr;
-
-                        var memberExpr = invocationExpr.Expression as MemberAccessExpressionSyntax;
-                        if (memberExpr == null)
-                        {
-                            ReportDiagnostic(context, IncorrectInitStatementRule, invocationExpr.GetLocation(), IncorrectInitStatementRule.MessageFormat);
-                            return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
-                        }
-
-                        var memberExprContext = memberExpr.Expression as IdentifierNameSyntax;
-                        if (memberExprContext == null)
-                        {
-                            ReportDiagnostic(context, IncorrectInitStatementRule, memberExpr.GetLocation(), IncorrectInitStatementRule.MessageFormat);
-                            return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
-                        }
-                        if (memberExprContext.Identifier.ToString() != "context")
-                        {
-                            ReportDiagnostic(context, IncorrectInitStatementRule, memberExprContext.GetLocation(), IncorrectInitStatementRule.MessageFormat);
-                            return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
-                        }
-
-                        var memberExprRegister = memberExpr.Name as IdentifierNameSyntax;
-                        if (memberExprRegister == null)
-                        {
-                            ReportDiagnostic(context, IncorrectInitStatementRule, memberExpr.GetLocation(), IncorrectInitStatementRule.MessageFormat);
-                            return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
-                        }
-                        if (!_branchesDict.ContainsKey(memberExprRegister.ToString()))
-                        {
-                            ReportDiagnostic(context, IncorrectInitStatementRule, memberExprRegister.GetLocation(), IncorrectInitStatementRule.MessageFormat);
-                            return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
-                        }
 
                         if (context.Compilation.GetSemanticModel(invocationExpr.SyntaxTree).GetSymbolInfo(memberExpr).CandidateSymbols.Count() == 0)
                         {
@@ -699,6 +648,82 @@ namespace MetaCompilation
 
                 return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
             }
+
+            #region CheckInitialize helpers
+            internal BlockSyntax InitializeOverview(CompilationAnalysisContext context)
+            {
+                ImmutableArray<IParameterSymbol> parameters = _initializeSymbol.Parameters;
+                if (parameters.Count() != 1 || parameters[0].Type.ToString() != "Microsoft.CodeAnalysis.Diagnostics.AnalysisContext" || parameters[0].Name.ToString() != "context" || _initializeSymbol.DeclaredAccessibility != Accessibility.Public || !_initializeSymbol.IsOverride || !_initializeSymbol.ReturnsVoid)
+                {
+                    ReportDiagnostic(context, IncorrectInitSigRule, _initializeSymbol.Locations[0], MissingInitRule.MessageFormat);
+                    return null;
+                }
+
+                //looking at the contents of the initialize method
+                var initializeMethod = _initializeSymbol.DeclaringSyntaxReferences[0].GetSyntax() as MethodDeclarationSyntax;
+                if (initializeMethod == null)
+                {
+                    return null;
+                }
+
+                var codeBlock = initializeMethod.Body as BlockSyntax;
+                if (codeBlock == null)
+                {
+                    return null;
+                }
+
+                return codeBlock;
+            }
+            internal List<object> InitializeBody(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements)
+            {
+                var statement = statements[0] as ExpressionStatementSyntax;
+                if (statement == null)
+                {
+                    ReportDiagnostic(context, IncorrectInitStatementRule, statements[0].GetLocation(), IncorrectInitStatementRule.MessageFormat);
+                    return null;
+                }
+
+                var invocationExpr = statement.Expression as InvocationExpressionSyntax;
+                if (invocationExpr == null)
+                {
+                    ReportDiagnostic(context, IncorrectInitStatementRule, statement.GetLocation(), IncorrectInitStatementRule.MessageFormat);
+                    return null;
+                }
+
+                var memberExpr = invocationExpr.Expression as MemberAccessExpressionSyntax;
+                if (memberExpr == null)
+                {
+                    ReportDiagnostic(context, IncorrectInitStatementRule, invocationExpr.GetLocation(), IncorrectInitStatementRule.MessageFormat);
+                    return null;
+                }
+
+                var memberExprContext = memberExpr.Expression as IdentifierNameSyntax;
+                if (memberExprContext == null)
+                {
+                    ReportDiagnostic(context, IncorrectInitStatementRule, memberExpr.GetLocation(), IncorrectInitStatementRule.MessageFormat);
+                    return null;
+                }
+                if (memberExprContext.Identifier.ToString() != "context")
+                {
+                    ReportDiagnostic(context, IncorrectInitStatementRule, memberExprContext.GetLocation(), IncorrectInitStatementRule.MessageFormat);
+                    return null;
+                }
+
+                var memberExprRegister = memberExpr.Name as IdentifierNameSyntax;
+                if (memberExprRegister == null)
+                {
+                    ReportDiagnostic(context, IncorrectInitStatementRule, memberExpr.GetLocation(), IncorrectInitStatementRule.MessageFormat);
+                    return null;
+                }
+                if (!_branchesDict.ContainsKey(memberExprRegister.ToString()))
+                {
+                    ReportDiagnostic(context, IncorrectInitStatementRule, memberExprRegister.GetLocation(), IncorrectInitStatementRule.MessageFormat);
+                    return null;
+                }
+
+                return new List<object>(new object[] { invocationExpr, memberExpr });
+            }
+            #endregion
 
             #region symbol collectors
             internal void AddMethod(SymbolAnalysisContext context)
