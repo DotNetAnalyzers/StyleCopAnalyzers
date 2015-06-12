@@ -40,18 +40,53 @@ namespace MetaCompilation
             foreach (Diagnostic diagnostic in context.Diagnostics)
             {
                 TextSpan diagnosticSpan = diagnostic.Location.SourceSpan;
-
+                
+                //TODO: if statements for each diagnostic id, to register a code fix
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingId))
                 {
                     ClassDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>().First();
-                    context.RegisterCodeFix(CodeAction.Create("Remove invalid statement", c => MissingIdAsync(context.Document, declaration, c)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Add diagnostic id",
+                        c => MissingIdAsync(context.Document, declaration, c)), diagnostic);
+
                 }
             }
         }
 
         private async Task<Document> MissingIdAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
         {
-            throw new NotImplementedException();
+            // Code fix partially completed
+            var idToken = SyntaxFactory.ParseToken("spacingRuleId");
+            
+            var expressionKind = SyntaxFactory.ParseExpression("\"IfSpacing\"") as ExpressionSyntax;
+            
+            var equalsValueClause = SyntaxFactory.EqualsValueClause(expressionKind);
+            var idDeclarator = SyntaxFactory.VariableDeclarator(idToken, null, equalsValueClause);
+
+            var type = SyntaxFactory.ParseTypeName("string");
+
+            var idDeclaratorList = new SeparatedSyntaxList<VariableDeclaratorSyntax>().Add(idDeclarator);
+            var idDeclaration = SyntaxFactory.VariableDeclaration(type, idDeclaratorList);
+
+            var whiteSpace = SyntaxFactory.Whitespace("");
+            var publicModifier = SyntaxFactory.ParseToken("public").WithLeadingTrivia(whiteSpace).WithTrailingTrivia(whiteSpace);
+            var constModifier = SyntaxFactory.ParseToken("const").WithLeadingTrivia(whiteSpace).WithTrailingTrivia(whiteSpace);
+            var modifierList = SyntaxFactory.TokenList(publicModifier, constModifier);
+
+            var attributeList = new SyntaxList<AttributeListSyntax>();
+            var fieldDeclaration = SyntaxFactory.FieldDeclaration(attributeList, modifierList, idDeclaration);
+            var memberList = new SyntaxList<MemberDeclarationSyntax>().Add(fieldDeclaration);
+
+            var newClassDeclaration = declaration.WithMembers(memberList);
+            foreach (MemberDeclarationSyntax member in declaration.Members)
+            {
+                newClassDeclaration = newClassDeclaration.AddMembers(member);
+            }
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, newClassDeclaration);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
         }
     }
 }
