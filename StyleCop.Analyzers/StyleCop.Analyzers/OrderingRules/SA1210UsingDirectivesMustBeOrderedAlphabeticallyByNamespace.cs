@@ -74,9 +74,25 @@
 
         private static void ProcessUsings(SyntaxNodeAnalysisContext context, SyntaxList<UsingDirectiveSyntax> usings)
         {
-            var usingsDirectivesWithoutAliasAndStatic = usings.Where(ExcludeAliasAndStaticUsingDirectives);
-            var systemUsingDirectives = usingsDirectivesWithoutAliasAndStatic.Where(directive => directive.IsSystemUsingDirective());
-            var usingDirectives = usingsDirectivesWithoutAliasAndStatic.Where(directive => !directive.IsSystemUsingDirective());
+            var usingDirectives = new List<UsingDirectiveSyntax>();
+            var systemUsingDirectives = new List<UsingDirectiveSyntax>();
+
+            foreach (var usingDirective in usings)
+            {
+                if (IsAliasOrStaticUsingDirective(usingDirective))
+                {
+                    continue;
+                }
+
+                if (HasNamespaceAliasQualifier(usingDirective) || !usingDirective.IsSystemUsingDirective())
+                {
+                    usingDirectives.Add(usingDirective);
+                }
+                else
+                {
+                    systemUsingDirectives.Add(usingDirective);
+                }
+            }
 
             CheckIncorrectlyOrderedUsingsAndReportDiagnostic(context, usingDirectives);
             CheckIncorrectlyOrderedUsingsAndReportDiagnostic(context, systemUsingDirectives);
@@ -90,7 +106,7 @@
             {
                 if (previousUsingDirective != null)
                 {
-                    if (CultureInfo.InvariantCulture.CompareInfo.Compare(previousUsingDirective.Name.ToUnaliasedString(), directive.Name.ToUnaliasedString(), CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreWidth) > 0)
+                    if (CultureInfo.InvariantCulture.CompareInfo.Compare(previousUsingDirective.Name.ToString(), directive.Name.ToString(), CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreWidth) > 0)
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, previousUsingDirective.GetLocation()));
                     }
@@ -100,6 +116,8 @@
             }
         }
 
-        private static bool ExcludeAliasAndStaticUsingDirectives(UsingDirectiveSyntax usingDirective) => usingDirective.Alias == null && usingDirective.StaticKeyword.IsKind(SyntaxKind.None);
+        private static bool IsAliasOrStaticUsingDirective(UsingDirectiveSyntax usingDirective) => usingDirective.Alias != null || usingDirective.StaticKeyword.IsKind(SyntaxKind.StaticKeyword);
+
+        private static bool HasNamespaceAliasQualifier(UsingDirectiveSyntax usingDirective) => usingDirective.DescendantNodes().Any(node => node.IsKind(SyntaxKind.AliasQualifiedName));
     }
 }
