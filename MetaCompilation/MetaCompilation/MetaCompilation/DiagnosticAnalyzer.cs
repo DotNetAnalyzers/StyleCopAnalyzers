@@ -284,11 +284,12 @@ namespace MetaCompilation
             {
                 throw new NotImplementedException();
             }
-            
+
             //returns a list of rule names
             internal List<string> CheckRules(List<string> idNames, string branch, string kind, CompilationAnalysisContext context)
             {
                 Dictionary<string, string> foundRules = new Dictionary<string, string>(); //Dicitonary(Rule Id, Rule)
+                
                 List<string> ruleNames = new List<string>();
 
                 foreach (var fieldSymbol in _analyzerFieldSymbols)
@@ -307,28 +308,27 @@ namespace MetaCompilation
                         for (int i = 0; i < ruleArgumentList.Arguments.Count; i++)
                         {
                             var currentArg = ruleArgumentList.Arguments[i];
-                            var currentArgName = currentArg.NameColon.Name.ToString();
-                            var currentArgExpr = currentArg.Expression.ToString();
+                            string currentArgName = currentArg.NameColon.Name.ToString();
+                            string currentArgExpr = currentArg.Expression.ToString();
 
                             if (currentArgName == "isEnabledByDefault" && currentArgExpr != "true")
                             {
                                 ReportDiagnostic(context, EnabledByDefaultErrorRule, currentArg.Expression.GetLocation(), EnabledByDefaultErrorRule.MessageFormat);
-                            };
+                            }
 
-                            if (currentArgName == "defaultSeverity")
+                            else if (currentArgName == "defaultSeverity")
                             {
-
                                 var memberAccessExpr = currentArg.Expression as MemberAccessExpressionSyntax;
-                                var identifierExpr = memberAccessExpr.Expression.ToString();
-                                var identifierName = memberAccessExpr.Name.ToString();
-                                if (identifierExpr != "DiagnosticSeverity" || identifierName == null)
+                                string identifierExpr = memberAccessExpr.Expression.ToString();
+                                string identifierName = memberAccessExpr.Name.ToString();
+
+                                if (identifierExpr != "DiagnosticSeverity" && (identifierName != "Warning" || identifierName != "Error" || identifierName != "Hidden" || identifierName != "Info"))
                                 {
                                     ReportDiagnostic(context, DefaultSeverityErrorRule, currentArg.Expression.GetLocation(), DefaultSeverityErrorRule.MessageFormat);
                                 }
-
                             }
 
-                            if (currentArgName == "id")
+                            else if (currentArgName == "id")
                             {
                                 foundRules.Add(currentArgExpr, fieldSymbol.Name.ToString());
                                 bool ruleIdFound = false;
@@ -354,7 +354,7 @@ namespace MetaCompilation
                 return ruleNames;
 
             }
-            
+
             //returns a list of id names, empty if none found
             internal List<string> CheckIds(string branch, string kind, CompilationAnalysisContext context)
             {
