@@ -264,7 +264,7 @@ namespace MetaCompilation
                                 if (supportedDiagnosticsCorrect)
                                 {
                                     //check the SyntaxNode, Symbol, Compilation, CodeBlock, etc analysis method(s)
-                                    bool analysisCorrect = CheckAnlaysis(_branchesDict[registerSymbol.Name.ToString()], kindName, ruleNames, context);
+                                    bool analysisCorrect = CheckAnalysis(_branchesDict[registerSymbol.Name.ToString()], kindName, ruleNames, context);
                                     if (analysisCorrect)
                                     {
                                         //diagnostic to go to code fix
