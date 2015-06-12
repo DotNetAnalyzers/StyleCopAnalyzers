@@ -347,13 +347,13 @@ namespace MetaCompilation
                     return false;
                 }
 
-                if (returnExpression.GetType().ToString() == "Microsoft.CodeAnalysis.CSharp.Syntax.InvocationExpressionSyntax")
+                if (returnExpression is InvocationExpressionSyntax)
                 {
                     var valueClause = returnExpression as InvocationExpressionSyntax;
                     var returnDeclaration = returnStatement as ReturnStatementSyntax;
                     SuppDiagReturnCheck(context, valueClause, returnDeclaration.GetLocation(), ruleNames);
                 }
-                else if (returnExpression.GetType().ToString() == "Microsoft.CodeAnalysis.CSharp.Syntax.IdentifierNameSyntax")
+                else if (returnExpression is IdentifierNameSyntax)
                 {
                     SymbolInfo returnSymbolInfo = context.Compilation.GetSemanticModel(returnStatement.SyntaxTree).GetSymbolInfo(returnExpression as IdentifierNameSyntax);
                     List<object> symbolResult = SuppDiagReturnSymbol(context, returnSymbolInfo, getAccessorKeywordLocation);
@@ -417,7 +417,7 @@ namespace MetaCompilation
                 }
 
                 var getAccessor = accessors.First() as AccessorDeclarationSyntax;
-                if (getAccessor == null || getAccessor.Keyword.ToString() != "get")
+                if (getAccessor == null || getAccessor.Keyword.Kind() != SyntaxKind.GetKeyword)
                 {
                     ReportDiagnostic(context, MissingAccessorRule, propertyDeclaration.GetLocation(), MissingAccessorRule.MessageFormat);
                     return emptyResult;
@@ -543,7 +543,7 @@ namespace MetaCompilation
                 List<string> idNames = new List<string>();
                 foreach (IFieldSymbol field in _analyzerFieldSymbols)
                 {
-                    if (field.IsConst && field.IsStatic && field.DeclaredAccessibility == Accessibility.Public && field.Type.ToString() == "string")
+                    if (field.IsConst && field.IsStatic && field.DeclaredAccessibility == Accessibility.Public && field.Type.SpecialType == SpecialType.System_String)
                     {
                         if (field.Name == null)
                         {
@@ -653,7 +653,7 @@ namespace MetaCompilation
             internal BlockSyntax InitializeOverview(CompilationAnalysisContext context)
             {
                 ImmutableArray<IParameterSymbol> parameters = _initializeSymbol.Parameters;
-                if (parameters.Count() != 1 || parameters[0].Type.ToString() != "Microsoft.CodeAnalysis.Diagnostics.AnalysisContext" || parameters[0].Name.ToString() != "context" || _initializeSymbol.DeclaredAccessibility != Accessibility.Public || !_initializeSymbol.IsOverride || !_initializeSymbol.ReturnsVoid)
+                if (parameters.Count() != 1 || parameters[0].Type != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.AnalysisContext") || parameters[0].Name.ToString() != "context" || _initializeSymbol.DeclaredAccessibility != Accessibility.Public || !_initializeSymbol.IsOverride || !_initializeSymbol.ReturnsVoid)
                 {
                     ReportDiagnostic(context, IncorrectInitSigRule, _initializeSymbol.Locations[0], MissingInitRule.MessageFormat);
                     return null;
@@ -742,7 +742,7 @@ namespace MetaCompilation
                 {
                     return;
                 }
-                if (sym.ContainingType.BaseType.ToString() != "Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")
+                if (sym.ContainingType.BaseType != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer"))
                 {
                     return;
                 }
@@ -776,7 +776,7 @@ namespace MetaCompilation
                 {
                     return;
                 }
-                if (sym.ContainingType.BaseType.ToString() != "Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")
+                if (sym.ContainingType.BaseType != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer"))
                 {
                     return;
                 }
@@ -810,7 +810,7 @@ namespace MetaCompilation
                 {
                     return;
                 }
-                if (sym.ContainingType.BaseType.ToString() != "Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")
+                if (sym.ContainingType.BaseType != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer"))
                 {
                     return;
                 }
@@ -834,7 +834,7 @@ namespace MetaCompilation
                 {
                     return;
                 }
-                if (sym.BaseType.ToString() != "Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")
+                if (sym.BaseType != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer"))
                 {
                     if (sym.ContainingType == null)
                     {
@@ -844,7 +844,7 @@ namespace MetaCompilation
                     {
                         return;
                     }
-                    if (sym.ContainingType.BaseType.ToString() == "Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer")
+                    if (sym.ContainingType.BaseType == context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer"))
                     {
                         if (_otherClassSymbols.Contains(sym))
                         {
