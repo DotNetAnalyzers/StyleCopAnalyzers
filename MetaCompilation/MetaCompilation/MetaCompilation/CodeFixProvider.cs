@@ -1,11 +1,11 @@
-﻿using System;
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -13,6 +13,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Rename;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.CodeAnalysis.Editing;
 
 namespace MetaCompilation
 {
@@ -24,7 +25,7 @@ namespace MetaCompilation
             get
             {
                 //TODO: add any new rules
-                return ImmutableArray.Create(MetaCompilationAnalyzer.MissingId);
+                return ImmutableArray.Create(MetaCompilationAnalyzer.MissingId, MetaCompilationAnalyzer.MissingInit);
             }
         }
 
@@ -44,10 +45,38 @@ namespace MetaCompilation
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingId))
                 {
                     ClassDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>().First();
-                    context.RegisterCodeFix(CodeAction.Create("Add diagnostic id",
+                    context.RegisterCodeFix(CodeAction.Create("Each diagnostic must have a unique id identifying it from other diagnostics",
                         c => MissingIdAsync(context.Document, declaration, c)), diagnostic);
                 }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingInit))
+                {
+                    ClassDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Each analyzer must have an Initialize method to register actions to be performed when changes occur", c => MissingInitAsync(context.Document, declaration, c)), diagnostic);
+                }
             }
+        }
+
+        private async Task<Document> MissingInitAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            var type = SyntaxFactory.ParseTypeName("AnalysisContext");
+            List<SyntaxNode> parameter = new List<SyntaxNode>();
+            parameter.Add(generator.ParameterDeclaration("context", type));
+            var voidDeclaration = SyntaxFactory.PredefinedType(SyntaxFactory.ParseToken("void"));
+            var exceptionStatement = SyntaxFactory.ParseExpression("new NotImplementedException()");
+            List<SyntaxNode> throwStatement = new List<SyntaxNode>();
+            throwStatement.Add(generator.ThrowStatement(exceptionStatement));
+            var initializeDeclaration = generator.MethodDeclaration("Initialize", parameters: parameter, returnType: voidDeclaration,
+                accessibility: Accessibility.Public, modifiers: DeclarationModifiers.Override, statements: throwStatement);
+
+            var newClassDeclaration = generator.AddMembers(declaration, initializeDeclaration);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, newClassDeclaration);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
         }
 
         private async Task<Document> MissingIdAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
