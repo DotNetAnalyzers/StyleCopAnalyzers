@@ -14,7 +14,6 @@ namespace MetaCompilation
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class MetaCompilationAnalyzer : DiagnosticAnalyzer
     {
-
         #region id rules
         public const string MissingId = "missingId";
         internal static DiagnosticDescriptor MissingIdRule = new DiagnosticDescriptor(
@@ -26,7 +25,7 @@ namespace MetaCompilation
             isEnabledByDefault: true);
         #endregion
 
-        #region initialize rules
+        #region Initialize rules
         public const string MissingInit = "missingInit";
         internal static DiagnosticDescriptor MissingInitRule = new DiagnosticDescriptor(
             id: MissingInit,
@@ -73,11 +72,88 @@ namespace MetaCompilation
             isEnabledByDefault: true);
         #endregion
 
+        #region SupportedDiagnostics rules
+        public const string MissingSuppDiag = "missingSuppDiag";
+        internal static DiagnosticDescriptor MissingSuppDiagRule = new DiagnosticDescriptor(
+            id: MissingSuppDiag,
+            title: "You are missing the required SupportedDiagnostics method",
+            messageFormat: "You are missing the required SupportedDiagnostics method",
+            category: "Syntax",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+
+        public const string IncorrectSigSuppDiag = "incorrectSignatureSuppDiag";
+        internal static DiagnosticDescriptor IncorrectSigSuppDiagRule = new DiagnosticDescriptor(
+            id: IncorrectSigSuppDiag,
+            title: "The signature of the SupportedDiagnostics property is incorrect",
+            messageFormat: "The signature of the SupportedDiagnostics property is incorrect",
+            category: "Syntax",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+
+        public const string MissingAccessor = "missingAccessor";
+        internal static DiagnosticDescriptor MissingAccessorRule = new DiagnosticDescriptor(
+            id: MissingAccessor,
+            title: "You are missing a get accessor in your SupportedDiagnostics property",
+            messageFormat: "You are missing a get accessor in your SupportedDiagnostics property",
+            category: "Syntax",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+
+        public const string TooManyAccessors = "tooManyAccessors";
+        internal static DiagnosticDescriptor TooManyAccessorsRule = new DiagnosticDescriptor(
+            id: TooManyAccessors,
+            title: "You only need a get accessor for this property",
+            messageFormat: "You only need a get accessor for this property",
+            category: "Syntax",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+
+        public const string IncorrectAccessorReturn = "incorrectReturn";
+        internal static DiagnosticDescriptor IncorrectAccessorReturnRule = new DiagnosticDescriptor(
+            id: IncorrectAccessorReturn,
+            title: "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules",
+            messageFormat: "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules",
+            category: "Syntax",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+
+        public const string SuppDiagReturnValue = "ImmutableArray";
+        internal static DiagnosticDescriptor SuppDiagReturnValueRule = new DiagnosticDescriptor(
+            id: SuppDiagReturnValue,
+            title: "You need to create an immutable array",
+            messageFormat: "You need to create an immutable array",
+            category: "Syntax",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+
+        public const string SupportedRules = "SupportedRules";
+        internal static DiagnosticDescriptor SupportedRulesRule = new DiagnosticDescriptor(
+            id: SupportedRules,
+            title: "The immutable array should contain every DiagnosticDescriptor rule that was created",
+            messageFormat: "The immutable array should contain every DiagnosticDescriptor rule that was created",
+            category: "Syntax",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+        #endregion
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return ImmutableArray.Create(MissingIdRule, MissingInitRule, MissingRegisterRule, TooManyInitStatementsRule, IncorrectInitStatementRule, IncorrectInitSigRule);
+                return ImmutableArray.Create(MissingIdRule, 
+                                             MissingInitRule, 
+                                             MissingRegisterRule, 
+                                             TooManyInitStatementsRule, 
+                                             IncorrectInitStatementRule, 
+                                             IncorrectInitSigRule,
+                                             MissingSuppDiagRule,
+                                             IncorrectSigSuppDiagRule,
+                                             MissingAccessorRule,
+                                             TooManyAccessorsRule,
+                                             IncorrectAccessorReturnRule,
+                                             SuppDiagReturnValueRule,
+                                             SupportedRulesRule);
             }
         }
 
@@ -226,14 +302,193 @@ namespace MetaCompilation
                 }
             }
 
-            internal bool CheckAnlaysis(string branch, string kind, List<string> ruleNames, CompilationAnalysisContext context)
+            internal bool CheckAnalysis(string branch, string kind, List<string> ruleNames, CompilationAnalysisContext context)
             {
                 throw new NotImplementedException();
             }
 
+            //returns a boolean based on whether or not the SupportedDiagnostics property is correct
             internal bool CheckSupportedDiagnostics(List<string> ruleNames, CompilationAnalysisContext context)
             {
-                throw new NotImplementedException();
+                if (_propertySymbol == null)
+                {
+                    ReportDiagnostic(context, MissingSuppDiagRule, _analyzerClassSymbol.Locations[0], MissingSuppDiagRule.MessageFormat);
+                    return false;
+                }
+
+                if (_propertySymbol.Name.ToString() != "SupportedDiagnostics" || _propertySymbol.DeclaredAccessibility.ToString() != "Public" || 
+                    !_propertySymbol.IsOverride || _propertySymbol.OverriddenProperty.ToString() != "Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer.SupportedDiagnostics" 
+                    || _propertySymbol.Type.ToString() != "System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor>")
+                {
+                    ReportDiagnostic(context, IncorrectSigSuppDiagRule, _propertySymbol.Locations[0], IncorrectSigSuppDiagRule.MessageFormat);
+                    return false;
+                }
+
+                var propertyDeclaration = _propertySymbol.DeclaringSyntaxReferences[0].GetSyntax() as PropertyDeclarationSyntax;
+                if (propertyDeclaration == null)
+                {
+                    return false;
+                }
+
+                AccessorListSyntax accessorList = propertyDeclaration.AccessorList;
+                if (accessorList == null)
+                {
+                    return false;
+                }
+
+                SyntaxList<AccessorDeclarationSyntax> accessors = accessorList.Accessors;
+                if (accessors == null || accessors.Count == 0)
+                {
+                    ReportDiagnostic(context, MissingAccessorRule, propertyDeclaration.GetLocation(), MissingAccessorRule.MessageFormat);
+                    return false;
+                }
+                if (accessors.Count > 1)
+                {
+                    ReportDiagnostic(context, TooManyAccessorsRule, accessorList.GetLocation(), TooManyAccessorsRule.MessageFormat);
+                    return false;
+                }
+
+                var getAccessor = accessors.First() as AccessorDeclarationSyntax;
+                if (getAccessor == null || getAccessor.Keyword.ToString() != "get")
+                {
+                    ReportDiagnostic(context, MissingAccessorRule, propertyDeclaration.GetLocation(), MissingAccessorRule.MessageFormat);
+                    return false;
+                }
+
+                var accessorBody = getAccessor.Body as BlockSyntax;
+                if (accessorBody == null)
+                {
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessor.Keyword.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
+                    return false;
+                }
+
+                SyntaxList<StatementSyntax> statements = accessorBody.Statements;
+                if (statements.Count == 0)
+                {
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessor.Keyword.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
+                    return false;
+                }
+
+                IEnumerable<ReturnStatementSyntax> returnStatements = statements.OfType<ReturnStatementSyntax>();
+                if (returnStatements.Count() == 0)
+                {
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessor.Keyword.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
+                    return false;
+                }
+
+                ReturnStatementSyntax returnStatement = returnStatements.First();
+                if (returnStatement == null)
+                {
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessor.Keyword.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
+                    return false;
+                }
+
+                var returnExpression = returnStatement.Expression;
+                if (returnExpression == null)
+                {
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessor.Keyword.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
+                    return false;
+                }
+
+                if (returnExpression.GetType().ToString() == "Microsoft.CodeAnalysis.CSharp.Syntax.InvocationExpressionSyntax")
+                {
+
+                }
+                else if (returnExpression.GetType().ToString() == "Microsoft.CodeAnalysis.CSharp.Syntax.IdentifierNameSyntax")
+                {
+                    var returnSymbolInfo = context.Compilation.GetSemanticModel(returnStatement.SyntaxTree).GetSymbolInfo(returnExpression as IdentifierNameSyntax);
+                    ILocalSymbol returnSymbol = null;
+                    if (returnSymbolInfo.CandidateSymbols.Count() == 0)
+                    {
+                        returnSymbol = returnSymbolInfo.Symbol as ILocalSymbol;
+                    }
+                    else
+                    {
+                        returnSymbol = returnSymbolInfo.CandidateSymbols[0] as ILocalSymbol;
+                    }
+
+                    if (returnSymbol == null)
+                    {
+                        ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessor.Keyword.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
+                        return false;
+                    }
+
+                    if (returnSymbol.Type.ToString() != "System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor>")
+                    {
+                        ReportDiagnostic(context, IncorrectAccessorReturnRule, returnSymbol.Locations[0], IncorrectAccessorReturnRule.MessageFormat);
+                        return false;
+                    }
+
+                    var returnDeclaration = returnSymbol.DeclaringSyntaxReferences[0].GetSyntax() as VariableDeclaratorSyntax;
+                    if (returnDeclaration == null)
+                    {
+                        ReportDiagnostic(context, IncorrectAccessorReturnRule, returnSymbol.Locations[0], IncorrectAccessorReturnRule.MessageFormat);
+                        return false;
+                    }
+
+                    var equalsValueClause = returnDeclaration.Initializer as EqualsValueClauseSyntax;
+                    if (equalsValueClause == null)
+                    {
+                        ReportDiagnostic(context, IncorrectAccessorReturnRule, returnDeclaration.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
+                        return false;
+                    }
+
+                    var valueClause = equalsValueClause.Value as InvocationExpressionSyntax;
+                    if (valueClause == null)
+                    {
+                        ReportDiagnostic(context, IncorrectAccessorReturnRule, returnDeclaration.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
+                        return false;
+                    }
+
+                    var valueExpression = valueClause.Expression as MemberAccessExpressionSyntax;
+                    if (valueExpression == null)
+                    {
+                        ReportDiagnostic(context, IncorrectAccessorReturnRule, returnDeclaration.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
+                        return false;
+                    }
+
+                    if (valueExpression.ToString() != "ImmutableArray.Create")
+                    {
+                        ReportDiagnostic(context, SuppDiagReturnValueRule, returnDeclaration.GetLocation(), SuppDiagReturnValueRule.MessageFormat);
+                        return false;
+                    }
+
+                    var valueArguments = valueClause.ArgumentList as ArgumentListSyntax;
+                    if (valueArguments == null)
+                    {
+                        return false;
+                    }
+
+                    SeparatedSyntaxList<ArgumentSyntax> valueArgs = valueArguments.Arguments;
+                    if (valueArgs == null)
+                    {
+                        return false;
+                    }
+
+                    
+                    foreach (ArgumentSyntax arg in valueArgs)
+                    {
+                        if (ruleNames.Count == 0)
+                        {
+                            ReportDiagnostic(context, SupportedRulesRule, valueExpression.GetLocation(), SupportedRulesRule.MessageFormat);
+                            return false;
+                        }
+                        if (ruleNames.Contains(arg.ToString()))
+                        {
+                            ruleNames.Remove(arg.ToString());
+                        }
+                    }
+
+
+                }
+                else
+                {
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessor.Keyword.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
+                    return false;
+                }
+
+                return true;
+
             }
             
             //returns a list of rule names
