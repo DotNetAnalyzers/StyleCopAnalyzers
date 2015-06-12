@@ -392,7 +392,52 @@ namespace MetaCompilation
 
                 if (returnExpression.GetType().ToString() == "Microsoft.CodeAnalysis.CSharp.Syntax.InvocationExpressionSyntax")
                 {
+                    var valueClause = returnExpression as InvocationExpressionSyntax;
+                    var returnDeclaration = returnStatement as ReturnStatementSyntax;
+                    if (valueClause == null)
+                    {
+                        ReportDiagnostic(context, IncorrectAccessorReturnRule, returnDeclaration.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
+                        return false;
+                    }
 
+                    var valueExpression = valueClause.Expression as MemberAccessExpressionSyntax;
+                    if (valueExpression == null)
+                    {
+                        ReportDiagnostic(context, IncorrectAccessorReturnRule, returnDeclaration.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
+                        return false;
+                    }
+
+                    if (valueExpression.ToString() != "ImmutableArray.Create")
+                    {
+                        ReportDiagnostic(context, SuppDiagReturnValueRule, returnDeclaration.GetLocation(), SuppDiagReturnValueRule.MessageFormat);
+                        return false;
+                    }
+
+                    var valueArguments = valueClause.ArgumentList as ArgumentListSyntax;
+                    if (valueArguments == null)
+                    {
+                        return false;
+                    }
+
+                    SeparatedSyntaxList<ArgumentSyntax> valueArgs = valueArguments.Arguments;
+                    if (valueArgs == null)
+                    {
+                        return false;
+                    }
+
+
+                    foreach (ArgumentSyntax arg in valueArgs)
+                    {
+                        if (ruleNames.Count == 0)
+                        {
+                            ReportDiagnostic(context, SupportedRulesRule, valueExpression.GetLocation(), SupportedRulesRule.MessageFormat);
+                            return false;
+                        }
+                        if (ruleNames.Contains(arg.ToString()))
+                        {
+                            ruleNames.Remove(arg.ToString());
+                        }
+                    }
                 }
                 else if (returnExpression.GetType().ToString() == "Microsoft.CodeAnalysis.CSharp.Syntax.IdentifierNameSyntax")
                 {
