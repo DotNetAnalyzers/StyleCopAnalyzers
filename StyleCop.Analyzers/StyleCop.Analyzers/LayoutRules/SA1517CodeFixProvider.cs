@@ -38,7 +38,7 @@
                 context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1517CodeFix, token => GetTransformedDocumentAsync(context.Document, token)), diagnostic);
             }
 
-            return Task.FromResult(true);
+            return SpecializedTasks.CompletedTask;
         }
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, CancellationToken token)

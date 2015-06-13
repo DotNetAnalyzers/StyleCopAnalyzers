@@ -9,6 +9,7 @@
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1002SemicolonsMustBeSpacedCorrectly"/>.
@@ -46,7 +47,7 @@
                 context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1002CodeFix, t => GetTransformedDocumentAsync(context.Document, diagnostic, t)), diagnostic);
             }
 
-            return Task.FromResult(true);
+            return SpecializedTasks.CompletedTask;
         }
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
