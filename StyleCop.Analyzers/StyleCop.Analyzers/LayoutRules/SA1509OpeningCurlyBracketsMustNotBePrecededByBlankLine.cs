@@ -64,59 +64,56 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.AnalyzeSyntaxTree);
+            context.RegisterSyntaxTreeActionHonorExclusions(AnalyzeSyntaxTree);
         }
 
-        private void AnalyzeSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void AnalyzeSyntaxTree(SyntaxTreeAnalysisContext context)
         {
-            var root = context.Tree.GetRoot(context.CancellationToken);
-            var openCurlyBraces = root.DescendantTokens()
-                                      .Where(t => t.IsKind(SyntaxKind.OpenBraceToken))
-                                      .ToList();
+            var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
 
-            foreach (var brace in openCurlyBraces)
+            var openBraces = syntaxRoot.DescendantTokens()
+                .Where(t => t.IsKind(SyntaxKind.OpenBraceToken));
+
+            foreach (var openBrace in openBraces)
             {
-                var isPreviousLineEmpty = this.IsPreviousLineEmpty(brace);
-                if (isPreviousLineEmpty.HasValue &&
-                    isPreviousLineEmpty.Value)
+                AnalyzeOpenBrace(context, openBrace);
+            }
+        }
+
+        private static void AnalyzeOpenBrace(SyntaxTreeAnalysisContext context, SyntaxToken openBrace)
+        {
+            var prevToken = openBrace.GetPreviousToken();
+            var triviaList = prevToken.IsKind(SyntaxKind.None) ? openBrace.LeadingTrivia : prevToken.TrailingTrivia.AddRange(openBrace.LeadingTrivia);
+
+            var done = false;
+            var eolCount = 0;
+            for (var i = triviaList.Count - 1; !done && (i >= 0); i--)
+            {
+                switch (triviaList[i].Kind())
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, brace.GetLocation()));
+                case SyntaxKind.WhitespaceTrivia:
+                    break;
+                case SyntaxKind.EndOfLineTrivia:
+                    eolCount++;
+                    break;
+                default:
+                    if (triviaList[i].IsDirective)
+                    {
+                        // These have a built-in end of line
+                        eolCount++;
+                    }
+
+                    done = true;
+                    break;
                 }
             }
-        }
 
-        private bool? IsPreviousLineEmpty(SyntaxToken token)
-        {
-            var fileLinePositionSpan = token.GetLocation().GetLineSpan();
-            if (!fileLinePositionSpan.IsValid)
+            if (eolCount < 2)
             {
-                return null;
+                return;
             }
 
-            var startLine = fileLinePositionSpan.StartLinePosition.Line;
-            var previousToken = token.GetPreviousToken();
-            if (previousToken.IsMissing)
-            {
-                return false;
-            }
-
-            var endLineOfPreviousToken = previousToken.GetLocation().GetLineSpan().EndLinePosition.Line;
-            var blankLinesBetweenTokens = startLine - endLineOfPreviousToken;
-            if (blankLinesBetweenTokens <= 1)
-            {
-                return false;
-            }
-
-            return !CheckIfPreviousLineHasComment(startLine - 1, token);
-        }
-
-        private static bool CheckIfPreviousLineHasComment(int previousLine, SyntaxToken token)
-        {
-            return token.LeadingTrivia
-                .Where(t => t.IsKind(SyntaxKind.MultiLineCommentTrivia) || t.IsKind(SyntaxKind.SingleLineCommentTrivia))
-                .Select(t => t.GetLocation().GetLineSpan())
-                .Where(t => t.IsValid)
-                .Any(l => l.StartLinePosition.Line == previousLine || l.EndLinePosition.Line == previousLine);
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, openBrace.GetLocation()));
         }
     }
 }
