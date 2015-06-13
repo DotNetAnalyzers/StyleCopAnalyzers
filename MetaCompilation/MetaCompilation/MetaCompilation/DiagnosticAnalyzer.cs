@@ -288,8 +288,6 @@ namespace MetaCompilation
             //returns a list of rule names
             internal List<string> CheckRules(List<string> idNames, string branch, string kind, CompilationAnalysisContext context)
             {
-                Dictionary<string, string> foundRules = new Dictionary<string, string>(); //Dicitonary(Rule Id, Rule)
-                
                 List<string> ruleNames = new List<string>();
 
                 foreach (var fieldSymbol in _analyzerFieldSymbols)
@@ -299,6 +297,7 @@ namespace MetaCompilation
                         if (fieldSymbol.DeclaredAccessibility != Accessibility.Internal || !fieldSymbol.IsStatic)
                         {
                             ReportDiagnostic(context, InternalAndStaticErrorRule, fieldSymbol.Locations[0], InternalAndStaticErrorRule.MessageFormat);
+                            return ruleNames;
                         }
 
                         var declaratorSyntax = fieldSymbol.DeclaringSyntaxReferences[0].GetSyntax() as VariableDeclaratorSyntax;
@@ -309,11 +308,11 @@ namespace MetaCompilation
                         {
                             var currentArg = ruleArgumentList.Arguments[i];
                             string currentArgName = currentArg.NameColon.Name.ToString();
-                            string currentArgExpr = currentArg.Expression.ToString();
-
-                            if (currentArgName == "isEnabledByDefault" && currentArgExpr != "true")
+                        
+                            if (currentArgName == "isEnabledByDefault" && currentArg.Expression.ToString() != "true")
                             {
                                 ReportDiagnostic(context, EnabledByDefaultErrorRule, currentArg.Expression.GetLocation(), EnabledByDefaultErrorRule.MessageFormat);
+                                return ruleNames;
                             }
 
                             else if (currentArgName == "defaultSeverity")
@@ -325,27 +324,31 @@ namespace MetaCompilation
                                 if (identifierExpr != "DiagnosticSeverity" && (identifierName != "Warning" || identifierName != "Error" || identifierName != "Hidden" || identifierName != "Info"))
                                 {
                                     ReportDiagnostic(context, DefaultSeverityErrorRule, currentArg.Expression.GetLocation(), DefaultSeverityErrorRule.MessageFormat);
+                                    return ruleNames;
                                 }
                             }
-
+                            
                             else if (currentArgName == "id")
                             {
-                                foundRules.Add(currentArgExpr, fieldSymbol.Name.ToString());
+                                var foundId = currentArg.Expression.ToString();
+                                var foundRule = fieldSymbol.Name.ToString();
+                                
                                 bool ruleIdFound = false;
 
                                 foreach (string idName in idNames)
                                 {
-                                    if (idName == foundRules.Last().Key)
+                                    if (idName == foundId)
                                     {
-                                        ruleNames.Add(foundRules.Last().Value);
+                                        ruleNames.Add(foundRule);
                                         ruleIdFound = true;
                                     }
                                 }
 
                                 if (!ruleIdFound)
                                 {
-                                    var ruleNotFound = foundRules.Last().Value;
                                     ReportDiagnostic(context, MissingIdDeclarationRule, currentArg.Expression.GetLocation(), MissingIdDeclarationRule.MessageFormat);
+                                    List<string> emptyRuleNames = new List<string>();
+                                    return emptyRuleNames;
                                 }
                             }
                         }
