@@ -123,6 +123,7 @@
     <Compile Include="Helpers\NameSyntaxHelpers.cs" />
     <Compile Include="Helpers\RenameHelper.cs" />
     <Compile Include="Helpers\TriviaHelper.cs" />
+    <Compile Include="Helpers\UsingDirectiveSyntaxHelpers.cs" />
     <Compile Include="Helpers\XmlCommentHelper.cs" />
     <Compile Include="Helpers\XmlSyntaxFactory.cs" />
     <Compile Include="LayoutRules\LayoutResources.Designer.cs">
