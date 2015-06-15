@@ -141,6 +141,9 @@
   <data name="SA1101Title" xml:space="preserve">
     <value>Prefix local calls with this</value>
   </data>
+  <data name="SA1102CodeFix" xml:space="preserve">
+    <value>Remove separating lines</value>
+  </data>
   <data name="SA1102Description" xml:space="preserve">
     <value>A C# query clause does not begin on the same line as the previous clause, or on the next line.</value>
   </data>
@@ -169,7 +172,10 @@
     <value>A clause within a C# query expression begins on the same line as the previous clause, when the previous clause spans across multiple lines.</value>
   </data>
   <data name="SA1104MessageFormat" xml:space="preserve">
-    <value />
+    <value>Query clause must begin on new line when previous clause spans multiple lines</value>
+  </data>
+  <data name="SA1104SA1105CodeFix" xml:space="preserve">
+    <value>Insert new line</value>
   </data>
   <data name="SA1104Title" xml:space="preserve">
     <value>Query clause must begin on new line when previous clause spans multiple lines</value>
@@ -178,7 +184,7 @@
     <value>A clause within a C# query expression spans across multiple lines, and does not begin on its own line.</value>
   </data>
   <data name="SA1105MessageFormat" xml:space="preserve">
-    <value />
+    <value>Query clauses spanning multiple lines must begin on own line</value>
   </data>
   <data name="SA1105Title" xml:space="preserve">
     <value>Query clauses spanning multiple lines must begin on own line</value>

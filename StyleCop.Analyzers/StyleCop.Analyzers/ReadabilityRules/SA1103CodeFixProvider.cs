@@ -1,6 +1,5 @@
 ﻿namespace StyleCop.Analyzers.ReadabilityRules
 {
-    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
@@ -15,16 +14,15 @@
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.SpacingRules;
 
-
     /// <summary>
-    /// This class provides a code fix for <see cref="SA1103QueryClausesMustBeOnSeparateLinesOrAllOnOneLine"/>.
+    /// This class provides a code fix for the SA1103 diagnostic.
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1103CodeFixProvider))]
     [Shared]
     public class SA1103CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1103QueryClausesMustBeOnSeparateLinesOrAllOnOneLine.DiagnosticId);
+            ImmutableArray.Create(SA110xQueryClauses.SA1103Descriptor.Id);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
@@ -111,19 +109,9 @@
             var nodeList = CreateQueryNodeList(queryExpression);
 
             var indentationOptions = IndentationOptions.FromDocument(document);
+            var indentationTrivia = QueryIndentationHelpers.GetQueryIndentationTrivia(indentationOptions, queryExpression);
 
-            var firstTokenOnTextLine = IndentationHelper.GetFirstTokenOnTextLine(queryExpression.FromClause.FromKeyword);
-            var indentationSteps = IndentationHelper.GetIndentationSteps(indentationOptions, firstTokenOnTextLine);
-
-            // add an extra indentation step when the first from clause is not properly indented yet
-            if (firstTokenOnTextLine != queryExpression.FromClause.FromKeyword)
-            {
-                indentationSteps++;
-            }
-
-            var indentationTrivia = IndentationHelper.GenerateWhitespaceTrivia(indentationOptions, indentationSteps);
-
-            for (var i = 0; i < nodeList.Length; i++)
+            for (var i = 1; i < nodeList.Length; i++)
             {
                 var token = nodeList[i].GetFirstToken();
                 var precedingToken = token.GetPreviousToken();

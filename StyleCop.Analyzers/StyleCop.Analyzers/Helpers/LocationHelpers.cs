@@ -1,10 +1,5 @@
 ﻿namespace StyleCop.Analyzers.Helpers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
 
     /// <summary>
@@ -20,6 +15,18 @@
         internal static int GetLine(this SyntaxToken token)
         {
             return token.GetLocation().GetLineSpan().StartLinePosition.Line;
+        }
+
+        /// <summary>
+        /// Get a value indicating whether the given node span multiple source text lines.
+        /// </summary>
+        /// <param name="node">The node to check.</param>
+        /// <returns>True, if the node spans multiple source text lines.</returns>
+        internal static bool SpansMultipleLines(this SyntaxNode node)
+        {
+            var lineSpan = node.GetLocation().GetLineSpan();
+
+            return lineSpan.StartLinePosition.Line < lineSpan.EndLinePosition.Line;
         }
     }
 }
