@@ -594,47 +594,53 @@ namespace MetaCompilation
                         for (int i = 0; i < ruleArgumentList.Arguments.Count; i++)
                         {
                             var currentArg = ruleArgumentList.Arguments[i];
-                            string currentArgName = currentArg.NameColon.Name.Identifier.Text;
 
-                            if (currentArgName == "isEnabledByDefault" && currentArg.Expression.ToString() != "true")
+                            if (!currentArg.Expression.IsMissing && !currentArg.NameColon.Name.Identifier.IsMissing)
                             {
-                                ReportDiagnostic(context, EnabledByDefaultErrorRule, currentArg.Expression.GetLocation(), EnabledByDefaultErrorRule.MessageFormat);
-                                return ruleNames;
-                            }
-                            else if (currentArgName == "defaultSeverity")
-                            {
-                                var memberAccessExpr = currentArg.Expression as MemberAccessExpressionSyntax;
-                                string identifierExpr = memberAccessExpr.Expression.ToString();
-                                string identifierName = memberAccessExpr.Name.Identifier.Text;
+                                string currentArgName = currentArg.NameColon.Name.Identifier.Text;
 
-                                if (identifierExpr != "DiagnosticSeverity" && (identifierName != "Warning" || identifierName != "Error" || identifierName != "Hidden" || identifierName != "Info"))
+                                if (currentArgName == "isEnabledByDefault" && currentArg.Expression.ToString() != "true")
                                 {
-                                    ReportDiagnostic(context, DefaultSeverityErrorRule, currentArg.Expression.GetLocation(), DefaultSeverityErrorRule.MessageFormat);
+                                    ReportDiagnostic(context, EnabledByDefaultErrorRule, currentArg.Expression.GetLocation(), EnabledByDefaultErrorRule.MessageFormat);
                                     return ruleNames;
                                 }
-                            }
-                            else if (currentArgName == "id")
-                            {
-                                var foundId = currentArg.Expression.ToString();
-                                var foundRule = fieldSymbol.Name.ToString();
-                                
-                                bool ruleIdFound = false;
-
-                                foreach (string idName in idNames)
+                                else if (currentArgName == "defaultSeverity")
                                 {
-                                    if (idName == foundId)
+                                    var memberAccessExpr = currentArg.Expression as MemberAccessExpressionSyntax;
+                                    if (!memberAccessExpr.Expression.IsMissing && !memberAccessExpr.Name.Identifier.IsMissing)
                                     {
-                                        ruleNames.Add(foundRule);
-                                        ruleIdFound = true;
+                                        string identifierExpr = memberAccessExpr.Expression.ToString();
+                                        string identifierName = memberAccessExpr.Name.Identifier.Text;
+
+                                        if (identifierExpr != "DiagnosticSeverity" && (identifierName != "Warning" || identifierName != "Error" || identifierName != "Hidden" || identifierName != "Info"))
+                                        {
+                                            ReportDiagnostic(context, DefaultSeverityErrorRule, currentArg.Expression.GetLocation(), DefaultSeverityErrorRule.MessageFormat);
+                                            return ruleNames;
+                                        }
                                     }
                                 }
-
-                                if (!ruleIdFound)
+                                else if (currentArgName == "id")
                                 {
-                                    ReportDiagnostic(context, MissingIdDeclarationRule, currentArg.Expression.GetLocation(), MissingIdDeclarationRule.MessageFormat);
-                                    List<string> emptyRuleNames = new List<string>();
-                                    return emptyRuleNames;
-                                }
+                                    var foundId = currentArg.Expression.ToString();
+                                    var foundRule = fieldSymbol.Name.ToString();
+                                    bool ruleIdFound = false;
+
+                                    foreach (string idName in idNames)
+                                    {
+                                        if (idName == foundId)
+                                        {
+                                            ruleNames.Add(foundRule);
+                                            ruleIdFound = true;
+                                        }
+                                    }
+
+                                    if (!ruleIdFound)
+                                    {
+                                        ReportDiagnostic(context, MissingIdDeclarationRule, currentArg.Expression.GetLocation(), MissingIdDeclarationRule.MessageFormat);
+                                        List<string> emptyRuleNames = new List<string>();
+                                        return emptyRuleNames;
+                                    }
+                                } 
                             }
                         }
                     }
