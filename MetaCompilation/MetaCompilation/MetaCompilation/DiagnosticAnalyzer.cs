@@ -20,8 +20,8 @@ namespace MetaCompilation
         public const string MissingIdDeclaration = "MetaAnalyzer017";
         internal static DiagnosticDescriptor MissingIdDeclarationRule = new DiagnosticDescriptor(
             id: MissingIdDeclaration,
-            title: "This diagnoctic id has not been declared.",
-            messageFormat: "This diagnoctic id has not been declared.",
+            title: "This diagnostic id has not been declared.",
+            messageFormat: "This diagnostic id has not been declared.",
             category: "Syntax",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
@@ -307,19 +307,18 @@ namespace MetaCompilation
                         for (int i = 0; i < ruleArgumentList.Arguments.Count; i++)
                         {
                             var currentArg = ruleArgumentList.Arguments[i];
-                            string currentArgName = currentArg.NameColon.Name.ToString();
-                        
+                            string currentArgName = currentArg.NameColon.Name.Identifier.Text;
+
                             if (currentArgName == "isEnabledByDefault" && currentArg.Expression.ToString() != "true")
                             {
                                 ReportDiagnostic(context, EnabledByDefaultErrorRule, currentArg.Expression.GetLocation(), EnabledByDefaultErrorRule.MessageFormat);
                                 return ruleNames;
                             }
-
                             else if (currentArgName == "defaultSeverity")
                             {
                                 var memberAccessExpr = currentArg.Expression as MemberAccessExpressionSyntax;
                                 string identifierExpr = memberAccessExpr.Expression.ToString();
-                                string identifierName = memberAccessExpr.Name.ToString();
+                                string identifierName = memberAccessExpr.Name.Identifier.Text;
 
                                 if (identifierExpr != "DiagnosticSeverity" && (identifierName != "Warning" || identifierName != "Error" || identifierName != "Hidden" || identifierName != "Info"))
                                 {
@@ -327,7 +326,6 @@ namespace MetaCompilation
                                     return ruleNames;
                                 }
                             }
-                            
                             else if (currentArgName == "id")
                             {
                                 var foundId = currentArg.Expression.ToString();
