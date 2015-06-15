@@ -439,7 +439,7 @@ namespace MetaCompilation
                 }
 
                 if (_propertySymbol.Name != "SupportedDiagnostics" || _propertySymbol.DeclaredAccessibility != Accessibility.Public ||
-                    !_propertySymbol.IsOverride || _propertySymbol.OverriddenProperty.Name != "Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer.SupportedDiagnostics")
+                    !_propertySymbol.IsOverride)
                 {
                     ReportDiagnostic(context, IncorrectSigSuppDiagRule, _propertySymbol.Locations[0], IncorrectSigSuppDiagRule.MessageFormat);
                     return null;
