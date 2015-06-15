@@ -394,6 +394,7 @@ namespace MetaCompilation
 
                 return _propertySymbol.DeclaringSyntaxReferences[0].GetSyntax() as PropertyDeclarationSyntax;
             }
+
             internal SyntaxList<StatementSyntax> SuppDiagAccessor(CompilationAnalysisContext context, PropertyDeclarationSyntax propertyDeclaration)
             {
                 SyntaxList<StatementSyntax> emptyResult = new SyntaxList<StatementSyntax>();
@@ -432,6 +433,7 @@ namespace MetaCompilation
 
                 return accessorBody.Statements;
             }
+
             internal void SuppDiagReturnCheck(CompilationAnalysisContext context, InvocationExpressionSyntax valueClause, Location returnDeclarationLocation, List<string> ruleNames)
             {
                 if (valueClause == null)
@@ -478,6 +480,7 @@ namespace MetaCompilation
                     }
                 }
             }
+
             internal List<object> SuppDiagReturnSymbol(CompilationAnalysisContext context, SymbolInfo returnSymbolInfo, Location getAccessorKeywordLocation)
             {
                 List<object> result = new List<object>();
@@ -668,6 +671,7 @@ namespace MetaCompilation
 
                 return codeBlock;
             }
+
             internal List<object> InitializeBody(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements)
             {
                 var statement = statements[0] as ExpressionStatementSyntax;
