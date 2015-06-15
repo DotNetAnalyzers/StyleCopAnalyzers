@@ -51,6 +51,15 @@ namespace MetaCompilation
             category: "Syntax",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
+
+        public const string MissingRule = "MetaAnalyzer019";
+        internal static DiagnosticDescriptor MissingRuleRule = new DiagnosticDescriptor(
+            id: MissingRule,
+            title: "Missing a rule",
+            messageFormat: "You need to have at least one DiagnosticDescriptor rule",
+            category: "Syntax",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
         #endregion
 
         #region id rules
@@ -324,7 +333,8 @@ namespace MetaCompilation
                             }
                             else
                             {
-                                //diagnostic
+                                var analyzerClass = _analyzerClassSymbol.DeclaringSyntaxReferences[0].GetSyntax() as ClassDeclarationSyntax;
+                                ReportDiagnostic(context, MissingRuleRule, analyzerClass.Identifier.GetLocation(), MissingRuleRule.MessageFormat);
                             }
                         }
                         else
