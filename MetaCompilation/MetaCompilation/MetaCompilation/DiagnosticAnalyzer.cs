@@ -239,22 +239,22 @@ namespace MetaCompilation
                     return;
                 }
                 //interpret initialize info
-                if (_branchesDict.ContainsKey(registerSymbol.Name.ToString()))
+                if (_branchesDict.ContainsKey(registerSymbol.Name))
                 {
                     string kindName = null;
                     if (kind != null)
                     {
-                        kindName = kind.Name.ToString();
+                        kindName = kind.Name;
                     }
 
                     if (kindName == null || allowedKinds.Contains(kindName))
                     {
                         //look for and interpret id fields
-                        List<string> idNames = CheckIds(_branchesDict[registerSymbol.Name.ToString()], kindName, context);
+                        List<string> idNames = CheckIds(_branchesDict[registerSymbol.Name], kindName, context);
                         if (idNames.Count > 0)
                         {
                             //look for and interpret rule fields
-                            List<string> ruleNames = CheckRules(idNames, _branchesDict[registerSymbol.Name.ToString()], kindName, context);
+                            List<string> ruleNames = CheckRules(idNames, _branchesDict[registerSymbol.Name], kindName, context);
 
                             if (ruleNames.Count > 0)
                             {
@@ -264,7 +264,7 @@ namespace MetaCompilation
                                 if (supportedDiagnosticsCorrect)
                                 {
                                     //check the SyntaxNode, Symbol, Compilation, CodeBlock, etc analysis method(s)
-                                    bool analysisCorrect = CheckAnalysis(_branchesDict[registerSymbol.Name.ToString()], kindName, ruleNames, context);
+                                    bool analysisCorrect = CheckAnalysis(_branchesDict[registerSymbol.Name], kindName, ruleNames, context);
                                     if (analysisCorrect)
                                     {
                                         //diagnostic to go to code fix
@@ -288,7 +288,7 @@ namespace MetaCompilation
                         {
                             // diagnostic for missing id names
                            var analyzerClassSyntax = _analyzerClassSymbol.DeclaringSyntaxReferences[0].GetSyntax() as ClassDeclarationSyntax;
-                           ReportDiagnostic(context, MissingIdRule, analyzerClassSyntax.Identifier.GetLocation(), analyzerClassSyntax.Identifier.ToString());
+                           ReportDiagnostic(context, MissingIdRule, analyzerClassSyntax.Identifier.GetLocation(), MissingIdRule.MessageFormat);
                         }
                     }
                     else
@@ -385,8 +385,8 @@ namespace MetaCompilation
                     return null;
                 }
 
-                if (_propertySymbol.Name.ToString() != "SupportedDiagnostics" || _propertySymbol.DeclaredAccessibility != Accessibility.Public ||
-                    !_propertySymbol.IsOverride || _propertySymbol.OverriddenProperty.ToString() != "Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer.SupportedDiagnostics")
+                if (_propertySymbol.Name != "SupportedDiagnostics" || _propertySymbol.DeclaredAccessibility != Accessibility.Public ||
+                    !_propertySymbol.IsOverride || _propertySymbol.OverriddenProperty.Name != "Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer.SupportedDiagnostics")
                 {
                     ReportDiagnostic(context, IncorrectSigSuppDiagRule, _propertySymbol.Locations[0], IncorrectSigSuppDiagRule.MessageFormat);
                     return null;
@@ -498,7 +498,7 @@ namespace MetaCompilation
                     return result;
                 }
 
-                if (returnSymbol.Type.ToString() != "System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor>")
+                if (returnSymbol.Type.Name != "System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor>")
                 {
                     ReportDiagnostic(context, IncorrectAccessorReturnRule, returnSymbol.Locations[0], IncorrectAccessorReturnRule.MessageFormat);
                     return result;
@@ -544,7 +544,7 @@ namespace MetaCompilation
                         {
                             continue;
                         }
-                        idNames.Add(field.Name.ToString());
+                        idNames.Add(field.Name);
                     }
                 }
                 return idNames;
@@ -647,7 +647,7 @@ namespace MetaCompilation
             internal BlockSyntax InitializeOverview(CompilationAnalysisContext context)
             {
                 ImmutableArray<IParameterSymbol> parameters = _initializeSymbol.Parameters;
-                if (parameters.Count() != 1 || parameters[0].Type != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.AnalysisContext") || parameters[0].Name.ToString() != "context" || _initializeSymbol.DeclaredAccessibility != Accessibility.Public || !_initializeSymbol.IsOverride || !_initializeSymbol.ReturnsVoid)
+                if (parameters.Count() != 1 || parameters[0].Type != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.AnalysisContext") || parameters[0].Name != "context" || _initializeSymbol.DeclaredAccessibility != Accessibility.Public || !_initializeSymbol.IsOverride || !_initializeSymbol.ReturnsVoid)
                 {
                     ReportDiagnostic(context, IncorrectInitSigRule, _initializeSymbol.Locations[0], MissingInitRule.MessageFormat);
                     return null;
@@ -697,7 +697,7 @@ namespace MetaCompilation
                     ReportDiagnostic(context, IncorrectInitStatementRule, memberExpr.GetLocation(), IncorrectInitStatementRule.MessageFormat);
                     return null;
                 }
-                if (memberExprContext.Identifier.ToString() != "context")
+                if (memberExprContext.Identifier.Text != "context")
                 {
                     ReportDiagnostic(context, IncorrectInitStatementRule, memberExprContext.GetLocation(), IncorrectInitStatementRule.MessageFormat);
                     return null;
@@ -745,7 +745,7 @@ namespace MetaCompilation
                     return;
                 }
 
-                if (sym.Name.ToString() == "Initialize")
+                if (sym.Name == "Initialize")
                 {
                     _initializeSymbol = sym;
                     return;
@@ -779,7 +779,7 @@ namespace MetaCompilation
                     return;
                 }
 
-                if (sym.Name.ToString() == "SupportedDiagnostics")
+                if (sym.Name == "SupportedDiagnostics")
                 {
                     _propertySymbol = sym;
                     return;
