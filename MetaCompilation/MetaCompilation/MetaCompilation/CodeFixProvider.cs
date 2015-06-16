@@ -78,14 +78,12 @@ namespace MetaCompilation
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
             var type = SyntaxFactory.ParseTypeName("AnalysisContext");
-            List<SyntaxNode> parameter = new List<SyntaxNode>();
-            parameter.Add(generator.ParameterDeclaration("context", type));
-            var voidDeclaration = SyntaxFactory.PredefinedType(SyntaxFactory.ParseToken("void"));
-            var exceptionStatement = SyntaxFactory.ParseExpression("new NotImplementedException()");
-            List<SyntaxNode> throwStatement = new List<SyntaxNode>();
-            throwStatement.Add(generator.ThrowStatement(exceptionStatement));
-            var initializeDeclaration = generator.MethodDeclaration("Initialize", parameters: parameter, returnType: voidDeclaration,
-                accessibility: Accessibility.Public, modifiers: DeclarationModifiers.Override, statements: throwStatement);
+            var parameters = new[] { generator.ParameterDeclaration("context", type) };
+            SemanticModel semanticModel = await document.GetSemanticModelAsync();
+            INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException");
+            var statements = new[] { generator.ThrowStatement(generator.ObjectCreationExpression(notImplementedException)) };
+            var initializeDeclaration = generator.MethodDeclaration("Initialize", parameters: parameters,
+                accessibility: Accessibility.Public, modifiers: DeclarationModifiers.Override, statements: statements);
 
             var newClassDeclaration = generator.AddMembers(declaration, initializeDeclaration);
 
