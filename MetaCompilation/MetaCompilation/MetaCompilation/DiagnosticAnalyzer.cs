@@ -28,7 +28,7 @@ namespace MetaCompilation
         public const string MissingIdDeclaration = "MetaAnalyzer017";
         internal static DiagnosticDescriptor MissingIdDeclarationRule = new DiagnosticDescriptor(
             id: MissingIdDeclaration,
-            title: "The diagnostic id decleration is missing.",
+            title: "The diagnostic id declaration is missing.",
             messageFormat: "This diagnostic id has not been declared.",
             category: "Syntax",
             defaultSeverity: DiagnosticSeverity.Error,
@@ -599,23 +599,38 @@ namespace MetaCompilation
                         }
 
                         var declaratorSyntax = fieldSymbol.DeclaringSyntaxReferences[0].GetSyntax() as VariableDeclaratorSyntax;
-                        if (declaratorSyntax == null) return emptyRuleNames;
+                        if (declaratorSyntax == null)
+                        {
+                            return emptyRuleNames;
+                        }
+
                         var objectCreationSyntax = declaratorSyntax.Initializer.Value as ObjectCreationExpressionSyntax;
-                        if (objectCreationSyntax == null) return emptyRuleNames;
+                        if (objectCreationSyntax == null)
+                        {
+                            return emptyRuleNames;
+                        }
+
                         var ruleArgumentList = objectCreationSyntax.ArgumentList;
 
                         for (int i = 0; i < ruleArgumentList.Arguments.Count; i++)
                         {
                             var currentArg = ruleArgumentList.Arguments[i];
-                            if (currentArg == null) return emptyRuleNames;
+                            if (currentArg == null)
+                            {
+                                return emptyRuleNames;
+                            }
+
                             var currentArgExpr = currentArg.Expression;
-                            if (currentArgExpr == null) return emptyRuleNames;
+                            if (currentArgExpr == null)
+                            {
+                                return emptyRuleNames;
+                            }
 
                             if (currentArg.NameColon != null)
                             {
                                 string currentArgName = currentArg.NameColon.Name.Identifier.Text;
 
-                                if (currentArgName == "isEnabledByDefault" && currentArgExpr.ToString() != "true")
+                                if (currentArgName == "isEnabledByDefault" && !currentArgExpr.IsKind(SyntaxKind.TrueLiteralExpression))
                                 {
                                     ReportDiagnostic(context, EnabledByDefaultErrorRule, currentArgExpr.GetLocation(), EnabledByDefaultErrorRule.MessageFormat);
                                     return emptyRuleNames;
@@ -623,30 +638,40 @@ namespace MetaCompilation
                                 else if (currentArgName == "defaultSeverity")
                                 {
                                     var memberAccessExpr = currentArgExpr as MemberAccessExpressionSyntax;
-                                    if (memberAccessExpr == null) return emptyRuleNames;
+                                    if (memberAccessExpr == null)
+                                    {
+                                        return emptyRuleNames;
+                                    }
+
                                     if (memberAccessExpr.Expression != null && memberAccessExpr.Name != null)
                                     {
                                         string identifierExpr = memberAccessExpr.Expression.ToString();
                                         string identifierName = memberAccessExpr.Name.Identifier.Text;
-
                                         if (identifierExpr != "DiagnosticSeverity" && (identifierName != "Warning" || identifierName != "Error" || identifierName != "Hidden" || identifierName != "Info"))
                                         {
                                             ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation(), DefaultSeverityErrorRule.MessageFormat);
                                             return emptyRuleNames;
                                         }
                                     }
-                                    else return emptyRuleNames;
+                                    else
+                                    {
+                                        return emptyRuleNames;
+                                    }
                                 }
                                 else if (currentArgName == "id")
                                 {
-                                    var stringLiteral = currentArgExpr as LiteralExpressionSyntax;
-                                    if (stringLiteral != null)
+                                    if (currentArgExpr.IsKind(SyntaxKind.StringLiteralExpression))
                                     {
                                         ReportDiagnostic(context, IdDeclTypeErrorRule, currentArgExpr.GetLocation(), IdDeclTypeErrorRule.MessageFormat);
                                         return emptyRuleNames;
                                     }
+
+                                    if (fieldSymbol.Name == null)
+                                    {
+                                        return emptyRuleNames;
+                                    }
+
                                     var foundId = currentArgExpr.ToString();
-                                    if (fieldSymbol.Name == null) return emptyRuleNames;
                                     var foundRule = fieldSymbol.Name.ToString();
                                     bool ruleIdFound = false;
 
@@ -654,7 +679,6 @@ namespace MetaCompilation
                                     {
                                         if (idName == foundId)
                                         {
-
                                             ruleNames.Add(foundRule);
                                             ruleIdFound = true;
                                         }
