@@ -161,20 +161,21 @@ namespace SyntaxNodeAnalyzer
         public void TestMethod4()
         {
             var test = @"using System;
-using System.Collections.Generic;
-            using System.Collections;
-            using System.Linq;
-            using System.Threading;
-            using Microsoft.CodeAnalysis;
-            using Microsoft.CodeAnalysis.CSharp;
-            using Microsoft.CodeAnalysis.CSharp.Syntax;
-            using Microsoft.CodeAnalysis.Diagnostics;
-            using Microsoft.CodeAnalysis.Text;
+    using System.Collections.Generic;
+    using System.Collections;
+    using System.Collections.Immutable;
+    using System.Linq;
+    using System.Threading;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Text;
 
-namespace SyntaxNodeAnalyzer
+    namespace SyntaxNodeAnalyzer
     {
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
-        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
         {
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
             {
@@ -190,15 +191,15 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.MissingInit,
                 Message = "You are missing the required Initialize method",
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 22) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 16, 22) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
 
-            var fixtest = @"
-    using System;
+            var fixtest = @"using System;
     using System.Collections.Generic;
     using System.Collections;
+    using System.Collections.Immutable;
     using System.Linq;
     using System.Threading;
     using Microsoft.CodeAnalysis;
@@ -220,11 +221,11 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            public override void Initialize(AnalsisContext context)
-            {
-                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
-            }
+        public override void Initialize(AnalysisContext context)
+        {
+            throw new NotImplementedException();
         }
+    }
     }";
             VerifyCSharpFix(test, fixtest);
         }
