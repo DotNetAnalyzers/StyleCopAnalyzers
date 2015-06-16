@@ -110,15 +110,6 @@ namespace MetaCompilation
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
-        public const string IncorrectInitStatement = "MetaAnalyzer005";
-        internal static DiagnosticDescriptor IncorrectInitStatementRule = new DiagnosticDescriptor(
-            id: IncorrectInitStatement,
-            title: "This statement needs to register for a supported action",
-            messageFormat: "This statement needs to register for a supported action",
-            category: "Syntax",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
-
         public const string IncorrectInitSig = "MetaAnalyzer006";
         internal static DiagnosticDescriptor IncorrectInitSigRule = new DiagnosticDescriptor(
             id: IncorrectInitSig,
@@ -128,7 +119,7 @@ namespace MetaCompilation
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
-        public const string InvalidStatement = "MetaAnalyzer020";
+        public const string InvalidStatement = "MetaAnalyzer005";
         internal static DiagnosticDescriptor InvalidStatementRule = new DiagnosticDescriptor(
             id: InvalidStatement,
             title: "The statement is invalid for the Initialize method",
@@ -211,7 +202,6 @@ namespace MetaCompilation
                                              MissingInitRule, 
                                              MissingRegisterRule, 
                                              TooManyInitStatementsRule, 
-                                             IncorrectInitStatementRule, 
                                              IncorrectInitSigRule,
                                              MissingSuppDiagRule,
                                              IncorrectSigSuppDiagRule,
@@ -365,7 +355,7 @@ namespace MetaCompilation
                     }
                     else
                     {
-                        ReportDiagnostic(context, IncorrectInitStatementRule, invocationExpression.GetLocation(), IncorrectInitStatementRule.MessageFormat);
+                        ReportDiagnostic(context, InvalidStatementRule, invocationExpression.GetLocation(), invocationExpression);
                     }
                 }
                 else
@@ -918,40 +908,40 @@ namespace MetaCompilation
                 var invocationExpr = statement.Expression as InvocationExpressionSyntax;
                 if (invocationExpr == null)
                 {
-                    ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statements[0]);
+                    ReportDiagnostic(context, InvalidStatementRule, statements[0].GetLocation(), statements[0]);
                     return null;
                 }
 
                 var memberExpr = invocationExpr.Expression as MemberAccessExpressionSyntax;
                 if (memberExpr == null)
                 {
-                    ReportDiagnostic(context, InvalidStatementRule, invocationExpr.GetLocation(), statements[0]);
+                    ReportDiagnostic(context, InvalidStatementRule, statements[0].GetLocation(), statements[0]);
                     return null;
                 }
 
                 var memberExprContext = memberExpr.Expression as IdentifierNameSyntax;
                 if (memberExprContext == null)
                 {
-                    ReportDiagnostic(context, InvalidStatementRule, memberExpr.GetLocation(), statements[0]);
+                    ReportDiagnostic(context, InvalidStatementRule, statements[0].GetLocation(), statements[0]);
                     return null;
                 }
 
                 if (memberExprContext.Identifier.Text != "context")
                 {
-                    ReportDiagnostic(context, InvalidStatementRule, memberExprContext.GetLocation(), statements[0]);
+                    ReportDiagnostic(context, InvalidStatementRule, statements[0].GetLocation(), statements[0]);
                     return null;
                 }
 
                 var memberExprRegister = memberExpr.Name as IdentifierNameSyntax;
                 if (memberExprRegister == null)
                 {
-                    ReportDiagnostic(context, InvalidStatementRule, memberExpr.GetLocation(), statements[0]);
+                    ReportDiagnostic(context, InvalidStatementRule, statements[0].GetLocation(), statements[0]);
                     return null;
                 }
 
                 if (!_branchesDict.ContainsKey(memberExprRegister.ToString()))
                 {
-                    ReportDiagnostic(context, InvalidStatementRule, memberExprRegister.GetLocation(), statements[0]);
+                    ReportDiagnostic(context, InvalidStatementRule, statements[0].GetLocation(), statements[0]);
                     return null;
                 }
 

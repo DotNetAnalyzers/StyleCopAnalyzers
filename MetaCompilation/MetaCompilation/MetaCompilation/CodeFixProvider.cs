@@ -49,26 +49,26 @@ namespace MetaCompilation
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingId))
                 {
                     ClassDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>().First();
-                    context.RegisterCodeFix(CodeAction.Create("Each diagnostic must have a unique id identifying it from other diagnostics",
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Each diagnostic must have a unique id identifying it from other diagnostics",
                         c => MissingIdAsync(context.Document, declaration, c)), diagnostic);
                 }
 
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingInit))
                 {
                     ClassDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>().First();
-                    context.RegisterCodeFix(CodeAction.Create("Each analyzer must have an Initialize method to register actions to be performed when changes occur", c => MissingInitAsync(context.Document, declaration, c)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Each analyzer must have an Initialize method to register actions to be performed when changes occur", c => MissingInitAsync(context.Document, declaration, c)), diagnostic);
                 }
 
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingRegisterStatement))
                 {
                     MethodDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
-                    context.RegisterCodeFix(CodeAction.Create("The Initialize method must register an action to be performed when changes occur", c => MissingRegisterAsync(context.Document, declaration, c)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: The Initialize method must register an action to be performed when changes occur", c => MissingRegisterAsync(context.Document, declaration, c)), diagnostic);
                 }
 
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TooManyInitStatements))
                 {
                     MethodDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
-                    context.RegisterCodeFix(CodeAction.Create("The Initialize method must not contain multiple actions to register (for the purpose of this tutorial)", c => MultipleStatementsAsync(context.Document, declaration, c)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: The Initialize method must not contain multiple actions to register (for the purpose of this tutorial)", c => MultipleStatementsAsync(context.Document, declaration, c)), diagnostic);
                 }
             }
         }
