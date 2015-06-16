@@ -1,14 +1,16 @@
+// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
-
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Text;
+
 namespace MetaCompilation
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
@@ -16,10 +18,19 @@ namespace MetaCompilation
     {
         #region rule rules
 
+        public const string IdDeclTypeError = "MetaAnalyzer018";
+        internal static DiagnosticDescriptor IdDeclTypeErrorRule = new DiagnosticDescriptor(
+            id: IdDeclTypeError,
+            title: "Thise diagnostic id type is incorrect.",
+            messageFormat: "The diagnostic id should not be a string literal.",
+            category: "Syntax",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+
         public const string MissingIdDeclaration = "MetaAnalyzer017";
         internal static DiagnosticDescriptor MissingIdDeclarationRule = new DiagnosticDescriptor(
             id: MissingIdDeclaration,
-            title: "This diagnostic id has not been declared.",
+            title: "The diagnostic id declaration is missing.",
             messageFormat: "This diagnostic id has not been declared.",
             category: "Syntax",
             defaultSeverity: DiagnosticSeverity.Error,
@@ -28,7 +39,7 @@ namespace MetaCompilation
         public const string DefaultSeverityError = "MetaAnalyzer016";
         internal static DiagnosticDescriptor DefaultSeverityErrorRule = new DiagnosticDescriptor(
             id: DefaultSeverityError,
-            title: "defaultSeverity must be of the form: DiagnosticSeverity.[severity].",
+            title: "defaultSeverity is incorrectly declared.",
             messageFormat: "defaultSeverity must be of the form: DiagnosticSeverity.[severity].",
             category: "Syntax",
             defaultSeverity: DiagnosticSeverity.Error,
@@ -185,6 +196,46 @@ namespace MetaCompilation
             isEnabledByDefault: true);
         #endregion
 
+        #region analysis rules
+        public const string MissingAnalysisMethod = "MetaAnalyzer018";
+        internal static DiagnosticDescriptor MissingAnalysisMethodRule = new DiagnosticDescriptor(
+            id: MissingAnalysisMethod,
+            title: "Missing analysis method",
+            messageFormat: "You are missing the method that was registered to perform the analysis",
+            category: "Syntax",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+        #endregion
+
+        #region analysis for IfStatement rules
+        public const string IfStatement = "MetaAnalyzer020";
+        internal static DiagnosticDescriptor IfStatementRule = new DiagnosticDescriptor(
+            id: IfStatement,
+            title: "Missing 1st step",
+            messageFormat: "The first step is to extract the if statement from {0}",
+            category: "Syntax",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+
+        public const string IfStatementIncorrect = "MetaAnalyzer022";
+        internal static DiagnosticDescriptor IfStatementIncorrectRule = new DiagnosticDescriptor(
+            id: IfStatementIncorrect,
+            title: "If statement extraction incorrect",
+            messageFormat: "This statement should extract the if statement in question by casting {0}.Node to IfStatementSyntax",
+            category: "Syntax",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+
+        public const string IfKeyword = "MetaAnalyzer021";
+        internal static DiagnosticDescriptor IfKeywordRule = new DiagnosticDescriptor(
+            id: IfKeyword,
+            title: "Missing 2nd step",
+            messageFormat: "The second step is to extract the 'if' keyword from {0}",
+            category: "Syntax",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+        #endregion
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
@@ -205,7 +256,13 @@ namespace MetaCompilation
                                              MissingIdDeclarationRule, 
                                              EnabledByDefaultErrorRule, 
                                              DefaultSeverityErrorRule, 
-                                             InternalAndStaticErrorRule);
+                                             InternalAndStaticErrorRule,
+                                             MissingRuleRule,
+                                             MissingAnalysisMethodRule,
+                                             IfStatementRule,
+                                             IfKeywordRule,
+                                             IfStatementIncorrectRule,
+                                             IdDeclTypeErrorRule);
             }
         }
 
@@ -272,12 +329,10 @@ namespace MetaCompilation
                 {
                     return;
                 }
+                IMethodSymbol analysisMethodSymbol = null;
                 if (registerArgs.Count > 0)
                 {
-                    if (registerArgs[0] != null)
-                    {
-                        var analysisMethodSymbol = (IMethodSymbol)registerArgs[0];
-                    }
+                        analysisMethodSymbol = (IMethodSymbol)registerArgs[0];
                 }
                 IFieldSymbol kind = null;
                 if (registerArgs.Count > 1)
@@ -316,7 +371,7 @@ namespace MetaCompilation
                                 if (supportedDiagnosticsCorrect)
                                 {
                                     //check the SyntaxNode, Symbol, Compilation, CodeBlock, etc analysis method(s)
-                                    bool analysisCorrect = CheckAnalysis(_branchesDict[registerSymbol.Name], kindName, ruleNames, context);
+                                    bool analysisCorrect = CheckAnalysis(_branchesDict[registerSymbol.Name], kindName, ruleNames, context, analysisMethodSymbol);
                                     if (analysisCorrect)
                                     {
                                         //diagnostic to go to code fix
@@ -354,10 +409,165 @@ namespace MetaCompilation
                     return;
                 }
             }
-
-            internal bool CheckAnalysis(string branch, string kind, List<string> ruleNames, CompilationAnalysisContext context)
+            
+            //checks the syntax tree analysis part of the analyzer
+            internal bool CheckAnalysis(string branch, string kind, List<string> ruleNames, CompilationAnalysisContext context, IMethodSymbol analysisMethodSymbol)
             {
-                throw new NotImplementedException();
+                if (branch == "SyntaxNode")
+                {
+                    if (kind == "IfStatement")
+                    {
+                        return CheckIfStatementAnalysis(branch, kind, ruleNames, context, analysisMethodSymbol);
+                    }
+                }
+
+                return false;
+            }
+
+            #region CheckAnalysis for IfStatement
+            internal bool CheckIfStatementAnalysis(string branch, string kind, List<string> ruleNames, CompilationAnalysisContext context, IMethodSymbol analysisMethodSymbol)
+            {
+                var getStatements = AnalysisGetStatements(analysisMethodSymbol);
+                if (getStatements.Count == 0)
+                {
+                    return false;
+                }
+
+                var methodDeclaration = getStatements[0] as MethodDeclarationSyntax;
+                var statements = (SyntaxList<StatementSyntax>)getStatements[1];
+                var contextParameter = methodDeclaration.ParameterList.Parameters[0] as ParameterSyntax;
+                if (contextParameter == null)
+                {
+                    return false;
+                }
+
+                int statementCount = statements.Count;
+                if (statementCount == 0)
+                {
+                    ReportDiagnostic(context, IfStatementRule, methodDeclaration.Identifier.GetLocation(), contextParameter.Identifier.Text);
+                    return false;
+                }
+
+                if (statementCount > 0)
+                {
+                    SyntaxToken statementIdentifierToken = IfStatementAnalysis1(context, statements, contextParameter);
+                    if (statementIdentifierToken.Text == "")
+                    {
+                        ReportDiagnostic(context, IfStatementIncorrectRule, statements[0].GetLocation(), contextParameter.Identifier.Text);
+                        return false;
+                    }
+
+
+                }
+
+
+                return true;
+            }
+
+            internal SyntaxToken IfStatementAnalysis1(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, ParameterSyntax contextParameter)
+            {
+                var emptyResult = SyntaxFactory.Identifier("");
+                var ifStatement = statements[0] as LocalDeclarationStatementSyntax;
+                if (ifStatement == null)
+                {
+                    return emptyResult;
+                }
+
+                var statementVariableDeclaration = ifStatement.Declaration as VariableDeclarationSyntax;
+                if (statementVariableDeclaration == null)
+                {
+                    return emptyResult;
+                }
+
+                SeparatedSyntaxList<VariableDeclaratorSyntax> statementVariables = statementVariableDeclaration.Variables;
+                if (statementVariables == null || statementVariables.Count != 1)
+                {
+                    return emptyResult;
+                }
+
+                var statementVariableDeclarator = statementVariables[0] as VariableDeclaratorSyntax;
+                if (statementVariableDeclarator == null)
+                {
+                    return emptyResult;
+                }
+
+                SyntaxToken statementName = statementVariableDeclarator.Identifier;
+                if (statementName == null)
+                {
+                    return emptyResult;
+                }
+
+                var statementEqualsValueClause = statementVariableDeclarator.Initializer as EqualsValueClauseSyntax;
+                if (statementEqualsValueClause == null)
+                {
+                    return emptyResult;
+                }
+
+                var statementCastExpression = statementEqualsValueClause.Value as CastExpressionSyntax;
+                if (statementCastExpression == null)
+                {
+                    return emptyResult;
+                }
+
+                var statementIdentifier = statementCastExpression.Type as TypeSyntax;
+                //TODO: figure out how to make this not use ToString()
+                if (statementIdentifier == null || statementIdentifier.ToString() != "IfStatementSyntax")
+                {
+                    return emptyResult;
+                }
+
+                var statementExpression = statementCastExpression.Expression as MemberAccessExpressionSyntax;
+                if (statementExpression == null)
+                {
+                    return emptyResult;
+                }
+
+                var statementExpressionIdentifier = statementExpression.Expression as IdentifierNameSyntax;
+                if (statementExpressionIdentifier == null || statementExpressionIdentifier.Identifier.Text != contextParameter.Identifier.Text)
+                {
+                    return emptyResult;
+                }
+
+                var statementExpressionNode = statementExpression.Name as IdentifierNameSyntax;
+                if (statementExpressionNode == null || statementExpressionNode.Identifier.Text != "Node")
+                {
+                    return emptyResult;
+                }
+
+                return statementName;
+            }
+
+            #endregion
+
+            internal List<object> AnalysisGetStatements(IMethodSymbol analysisMethodSymbol)
+            {
+                List<object> result = new List<object>();
+                if (analysisMethodSymbol == null)
+                {
+                    return result;
+                }
+
+                var methodDeclaration = analysisMethodSymbol.DeclaringSyntaxReferences[0].GetSyntax() as MethodDeclarationSyntax;
+                if (methodDeclaration == null)
+                {
+                    return result;
+                }
+
+                var body = methodDeclaration.Body as BlockSyntax;
+                if (body == null)
+                {
+                    return result;
+                }
+
+                SyntaxList<StatementSyntax> statements = body.Statements;
+                if (statements == null)
+                {
+                    return result;
+                }
+
+                result.Add(methodDeclaration);
+                result.Add(statements);
+                return result;
             }
 
             //returns a boolean based on whether or not the SupportedDiagnostics property is correct
@@ -586,64 +796,109 @@ namespace MetaCompilation
             internal List<string> CheckRules(List<string> idNames, string branch, string kind, CompilationAnalysisContext context)
             {
                 List<string> ruleNames = new List<string>();
+                List<string> emptyRuleNames = new List<string>();
 
                 foreach (var fieldSymbol in _analyzerFieldSymbols)
                 {
-                    if (fieldSymbol.Type.MetadataName == "DiagnosticDescriptor")
+                    if (fieldSymbol.Type != null &&  fieldSymbol.Type.MetadataName == "DiagnosticDescriptor")
                     {
                         if (fieldSymbol.DeclaredAccessibility != Accessibility.Internal || !fieldSymbol.IsStatic)
                         {
                             ReportDiagnostic(context, InternalAndStaticErrorRule, fieldSymbol.Locations[0], InternalAndStaticErrorRule.MessageFormat);
-                            return ruleNames;
+                            return emptyRuleNames;
                         }
 
                         var declaratorSyntax = fieldSymbol.DeclaringSyntaxReferences[0].GetSyntax() as VariableDeclaratorSyntax;
+                        if (declaratorSyntax == null)
+                        {
+                            return emptyRuleNames;
+                        }
+
                         var objectCreationSyntax = declaratorSyntax.Initializer.Value as ObjectCreationExpressionSyntax;
+                        if (objectCreationSyntax == null)
+                        {
+                            return emptyRuleNames;
+                        }
+
                         var ruleArgumentList = objectCreationSyntax.ArgumentList;
 
                         for (int i = 0; i < ruleArgumentList.Arguments.Count; i++)
                         {
                             var currentArg = ruleArgumentList.Arguments[i];
-                            string currentArgName = currentArg.NameColon.Name.Identifier.Text;
-
-                            if (currentArgName == "isEnabledByDefault" && currentArg.Expression.ToString() != "true")
+                            if (currentArg == null)
                             {
-                                ReportDiagnostic(context, EnabledByDefaultErrorRule, currentArg.Expression.GetLocation(), EnabledByDefaultErrorRule.MessageFormat);
-                                return ruleNames;
+                                return emptyRuleNames;
                             }
-                            else if (currentArgName == "defaultSeverity")
-                            {
-                                var memberAccessExpr = currentArg.Expression as MemberAccessExpressionSyntax;
-                                string identifierExpr = memberAccessExpr.Expression.ToString();
-                                string identifierName = memberAccessExpr.Name.Identifier.Text;
 
-                                if (identifierExpr != "DiagnosticSeverity" && (identifierName != "Warning" || identifierName != "Error" || identifierName != "Hidden" || identifierName != "Info"))
+                            var currentArgExpr = currentArg.Expression;
+                            if (currentArgExpr == null)
+                            {
+                                return emptyRuleNames;
+                            }
+
+                            if (currentArg.NameColon != null)
+                            {
+                                string currentArgName = currentArg.NameColon.Name.Identifier.Text;
+
+                                if (currentArgName == "isEnabledByDefault" && !currentArgExpr.IsKind(SyntaxKind.TrueLiteralExpression))
                                 {
-                                    ReportDiagnostic(context, DefaultSeverityErrorRule, currentArg.Expression.GetLocation(), DefaultSeverityErrorRule.MessageFormat);
-                                    return ruleNames;
+                                    ReportDiagnostic(context, EnabledByDefaultErrorRule, currentArgExpr.GetLocation(), EnabledByDefaultErrorRule.MessageFormat);
+                                    return emptyRuleNames;
                                 }
-                            }
-                            else if (currentArgName == "id")
-                            {
-                                var foundId = currentArg.Expression.ToString();
-                                var foundRule = fieldSymbol.Name.ToString();
-                                
-                                bool ruleIdFound = false;
-
-                                foreach (string idName in idNames)
+                                else if (currentArgName == "defaultSeverity")
                                 {
-                                    if (idName == foundId)
+                                    var memberAccessExpr = currentArgExpr as MemberAccessExpressionSyntax;
+                                    if (memberAccessExpr == null)
                                     {
-                                        ruleNames.Add(foundRule);
-                                        ruleIdFound = true;
+                                        return emptyRuleNames;
+                                    }
+
+                                    if (memberAccessExpr.Expression != null && memberAccessExpr.Name != null)
+                                    {
+                                        string identifierExpr = memberAccessExpr.Expression.ToString();
+                                        string identifierName = memberAccessExpr.Name.Identifier.Text;
+                                        if (identifierExpr != "DiagnosticSeverity" && (identifierName != "Warning" || identifierName != "Error" || identifierName != "Hidden" || identifierName != "Info"))
+                                        {
+                                            ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation(), DefaultSeverityErrorRule.MessageFormat);
+                                            return emptyRuleNames;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        return emptyRuleNames;
                                     }
                                 }
-
-                                if (!ruleIdFound)
+                                else if (currentArgName == "id")
                                 {
-                                    ReportDiagnostic(context, MissingIdDeclarationRule, currentArg.Expression.GetLocation(), MissingIdDeclarationRule.MessageFormat);
-                                    List<string> emptyRuleNames = new List<string>();
-                                    return emptyRuleNames;
+                                    if (currentArgExpr.IsKind(SyntaxKind.StringLiteralExpression))
+                                    {
+                                        ReportDiagnostic(context, IdDeclTypeErrorRule, currentArgExpr.GetLocation(), IdDeclTypeErrorRule.MessageFormat);
+                                        return emptyRuleNames;
+                                    }
+
+                                    if (fieldSymbol.Name == null)
+                                    {
+                                        return emptyRuleNames;
+                                    }
+
+                                    var foundId = currentArgExpr.ToString();
+                                    var foundRule = fieldSymbol.Name.ToString();
+                                    bool ruleIdFound = false;
+
+                                    foreach (string idName in idNames)
+                                    {
+                                        if (idName == foundId)
+                                        {
+                                            ruleNames.Add(foundRule);
+                                            ruleIdFound = true;
+                                        }
+                                    }
+
+                                    if (!ruleIdFound)
+                                    {
+                                        ReportDiagnostic(context, MissingIdDeclarationRule, currentArgExpr.GetLocation(), MissingIdDeclarationRule.MessageFormat);
+                                        return emptyRuleNames;
+                                    }
                                 }
                             }
                         }

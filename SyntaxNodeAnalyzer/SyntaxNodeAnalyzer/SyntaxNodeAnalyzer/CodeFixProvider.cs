@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
@@ -51,11 +52,8 @@ namespace SyntaxNodeAnalyzer
 
             var newOpenParen = SyntaxFactory.Token(SyntaxFactory.TriviaList(), SyntaxKind.OpenParenToken, openParen.TrailingTrivia);
 
-
             var newIfStatement = SyntaxFactory.IfStatement(newIfKeyword, newOpenParen, ifStatement.Condition, ifStatement.CloseParenToken, ifStatement.Statement, ifStatement.Else);
-
             
-
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root.ReplaceNode(ifStatement, newIfStatement);
             var newDocument = document.WithSyntaxRoot(newRoot);
