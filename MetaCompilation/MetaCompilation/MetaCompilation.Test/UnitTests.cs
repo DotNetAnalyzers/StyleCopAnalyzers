@@ -211,7 +211,7 @@ namespace SyntaxNodeAnalyzer
             };
 
             VerifyCSharpDiagnostic(test, expected);
-            
+
             var fixtest = @"using System;
     using System.Collections.Generic;
     using System.Collections;
