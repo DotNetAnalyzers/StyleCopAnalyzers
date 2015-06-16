@@ -42,12 +42,11 @@ namespace SyntaxNodeAnalyzer
         {
             var ifStatement = (IfStatementSyntax)context.Node;
             var ifKeyword = ifStatement.IfKeyword;
-            var openParen = ifStatement.OpenParenToken;
-            var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, TextSpan.FromBounds(ifKeyword.Span.Start, openParen.Span.Start));
 
             if (ifKeyword.HasTrailingTrivia)
             {
                 var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                     if (trailingTrivia.ToString() == " ")
@@ -57,6 +56,11 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
+            var openParen = ifStatement.OpenParenToken;
+            var startDiagnosticSpan = ifKeyword.Span.Start;
+            var endDiagnosticSpan = openParen.Span.Start;
+            var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+            var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
             var diagnostic = Diagnostic.Create(Rule, diagnosticLocation, Rule.MessageFormat);
             context.ReportDiagnostic(diagnostic);
         }
