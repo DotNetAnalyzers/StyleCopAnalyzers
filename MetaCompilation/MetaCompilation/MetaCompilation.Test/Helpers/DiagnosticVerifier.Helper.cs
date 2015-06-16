@@ -20,6 +20,8 @@ namespace TestHelper
         private static readonly MetadataReference SystemCoreReference = MetadataReference.CreateFromAssembly(typeof(Enumerable).Assembly);
         private static readonly MetadataReference CSharpSymbolsReference = MetadataReference.CreateFromAssembly(typeof(CSharpCompilation).Assembly);
         private static readonly MetadataReference CodeAnalysisReference = MetadataReference.CreateFromAssembly(typeof(Compilation).Assembly);
+        private static readonly MetadataReference SystemCollectionsImmutableReference = MetadataReference.CreateFromAssembly(typeof(ImmutableArray).Assembly); 
+        private static readonly MetadataReference RuntimeReference = MetadataReference.CreateFromFile(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(typeof(object).Assembly.Location), "System.Runtime.dll"));
 
         internal static string DefaultFilePathPrefix = "Test";
         internal static string CSharpDefaultFileExt = "cs";
@@ -161,7 +163,9 @@ namespace TestHelper
                 .AddMetadataReference(projectId, CorlibReference)
                 .AddMetadataReference(projectId, SystemCoreReference)
                 .AddMetadataReference(projectId, CSharpSymbolsReference)
-                .AddMetadataReference(projectId, CodeAnalysisReference);
+                .AddMetadataReference(projectId, CodeAnalysisReference)
+                .AddMetadataReference(projectId, SystemCollectionsImmutableReference)
+                .AddMetadataReference(projectId, RuntimeReference);
 
             int count = 0;
             foreach (var source in sources)
