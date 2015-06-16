@@ -243,6 +243,24 @@ namespace MetaCompilation
             category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
+
+        public const string TrailingTriviaCheckMissing = "MetaAnalyzer026";
+        internal static DiagnosticDescriptor TrailingTriviaCheckMissingRule = new DiagnosticDescriptor(
+            id: TrailingTriviaCheckMissing,
+            title: "Missing 3rd step",
+            messageFormat: "The third step is to begin looking for the space between 'if' and '(' by checking if {0} has trailing trivia",
+            category: "Tutorial",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+
+        public const string TrailingTriviaCheckIncorrect = "MetaAnalyzer027";
+        internal static DiagnosticDescriptor TrailingTriviaCheckIncorrectRule = new DiagnosticDescriptor(
+            id: TrailingTriviaCheckIncorrect,
+            title: "Incorrect 3rd step",
+            messageFormat: "This statement should be an if statement that checks to see if {0} has trailing trivia",
+            category: "Tutorial",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
         #endregion
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
@@ -275,7 +293,9 @@ namespace MetaCompilation
                                              IfStatementMissingRule,
                                              IfKeywordMissingRule,
                                              IfStatementIncorrectRule,
-                                             IfKeywordIncorrectRule);
+                                             IfKeywordIncorrectRule,
+                                             TrailingTriviaCheckMissingRule,
+                                             TrailingTriviaCheckIncorrectRule);
             }
         }
 
@@ -473,6 +493,22 @@ namespace MetaCompilation
                             ReportDiagnostic(context, IfKeywordIncorrectRule, statements[1].GetLocation(), statementIdentifierToken.Text);
                             return false;
                         }
+
+                        if (statementCount > 2)
+                        {
+                            var triviaBlock = IfStatementAnalysis3(context, statements, keywordIdentifierToken) as BlockSyntax;
+                            if (triviaBlock == null)
+                            {
+                                ReportDiagnostic(context, TrailingTriviaCheckIncorrectRule, statements[2].GetLocation(), keywordIdentifierToken.Text);
+                                return false;
+                            }
+
+                        }
+                        else
+                        {
+                            ReportDiagnostic(context, TrailingTriviaCheckMissingRule, statements[1].GetLocation(), keywordIdentifierToken.Text);
+                            return false;
+                        }
                     }
                     else
                     {
@@ -583,6 +619,43 @@ namespace MetaCompilation
                 }
 
                 return keywordIdentifierToken;
+            }
+
+            internal BlockSyntax IfStatementAnalysis3(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, SyntaxToken keywordIdentifierToken)
+            {
+                BlockSyntax emptyResult = null;
+
+                var statement = statements[2] as IfStatementSyntax;
+                if (statement == null)
+                {
+                    return emptyResult;
+                }
+
+                var booleanExpression = statement.Condition as MemberAccessExpressionSyntax;
+                if (booleanExpression == null)
+                {
+                    return emptyResult;
+                }
+
+                var identifier = booleanExpression.Expression as IdentifierNameSyntax;
+                if (identifier == null || identifier.Identifier.Text != keywordIdentifierToken.Text)
+                {
+                    return emptyResult;
+                }
+
+                var name = booleanExpression.Name as IdentifierNameSyntax;
+                if (name == null || name.Identifier.Text != "HasTrailingTrivia")
+                {
+                    return emptyResult;
+                }
+
+                var block = statement.Statement as BlockSyntax;
+                if (block == null)
+                {
+                    return emptyResult;
+                }
+
+                return block;
             }
 
             internal EqualsValueClauseSyntax GetEqualsValueClauseFromLocalDecl(LocalDeclarationStatementSyntax statement)
