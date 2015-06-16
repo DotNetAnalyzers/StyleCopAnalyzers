@@ -8,7 +8,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Text;
+
 namespace MetaCompilation
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
@@ -185,6 +187,46 @@ namespace MetaCompilation
             isEnabledByDefault: true);
         #endregion
 
+        #region analysis rules
+        public const string MissingAnalysisMethod = "MetaAnalyzer018";
+        internal static DiagnosticDescriptor MissingAnalysisMethodRule = new DiagnosticDescriptor(
+            id: MissingAnalysisMethod,
+            title: "Missing analysis method",
+            messageFormat: "You are missing the method that was registered to perform the analysis",
+            category: "Syntax",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+        #endregion
+
+        #region analysis for IfStatement rules
+        public const string IfStatement = "MetaAnalyzer020";
+        internal static DiagnosticDescriptor IfStatementRule = new DiagnosticDescriptor(
+            id: IfStatement,
+            title: "Missing 1st step",
+            messageFormat: "The first step is to extract the if statement from {0}",
+            category: "Syntax",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+
+        public const string IfStatementIncorrect = "MetaAnalyzer022";
+        internal static DiagnosticDescriptor IfStatementIncorrectRule = new DiagnosticDescriptor(
+            id: IfStatementIncorrect,
+            title: "If statement extraction incorrect",
+            messageFormat: "This statement should extract the if statement in question by casting {0}.Node to IfStatementSyntax",
+            category: "Syntax",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+
+        public const string IfKeyword = "MetaAnalyzer021";
+        internal static DiagnosticDescriptor IfKeywordRule = new DiagnosticDescriptor(
+            id: IfKeyword,
+            title: "Missing 2nd step",
+            messageFormat: "The second step is to extract the 'if' keyword from {0}",
+            category: "Syntax",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+        #endregion
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
@@ -205,7 +247,12 @@ namespace MetaCompilation
                                              MissingIdDeclarationRule, 
                                              EnabledByDefaultErrorRule, 
                                              DefaultSeverityErrorRule, 
-                                             InternalAndStaticErrorRule);
+                                             InternalAndStaticErrorRule,
+                                             MissingRuleRule,
+                                             MissingAnalysisMethodRule,
+                                             IfStatementRule,
+                                             IfKeywordRule,
+                                             IfStatementIncorrectRule);
             }
         }
 
@@ -272,12 +319,10 @@ namespace MetaCompilation
                 {
                     return;
                 }
+                IMethodSymbol analysisMethodSymbol = null;
                 if (registerArgs.Count > 0)
                 {
-                    if (registerArgs[0] != null)
-                    {
-                        var analysisMethodSymbol = (IMethodSymbol)registerArgs[0];
-                    }
+                        analysisMethodSymbol = (IMethodSymbol)registerArgs[0];
                 }
                 IFieldSymbol kind = null;
                 if (registerArgs.Count > 1)
@@ -316,7 +361,7 @@ namespace MetaCompilation
                                 if (supportedDiagnosticsCorrect)
                                 {
                                     //check the SyntaxNode, Symbol, Compilation, CodeBlock, etc analysis method(s)
-                                    bool analysisCorrect = CheckAnalysis(_branchesDict[registerSymbol.Name], kindName, ruleNames, context);
+                                    bool analysisCorrect = CheckAnalysis(_branchesDict[registerSymbol.Name], kindName, ruleNames, context, analysisMethodSymbol);
                                     if (analysisCorrect)
                                     {
                                         //diagnostic to go to code fix
@@ -354,10 +399,165 @@ namespace MetaCompilation
                     return;
                 }
             }
-
-            internal bool CheckAnalysis(string branch, string kind, List<string> ruleNames, CompilationAnalysisContext context)
+            
+            //checks the syntax tree analysis part of the analyzer
+            internal bool CheckAnalysis(string branch, string kind, List<string> ruleNames, CompilationAnalysisContext context, IMethodSymbol analysisMethodSymbol)
             {
-                throw new NotImplementedException();
+                if (branch == "SyntaxNode")
+                {
+                    if (kind == "IfStatement")
+                    {
+                        return CheckIfStatementAnalysis(branch, kind, ruleNames, context, analysisMethodSymbol);
+                    }
+                }
+
+                return false;
+            }
+
+            #region CheckAnalysis for IfStatement
+            internal bool CheckIfStatementAnalysis(string branch, string kind, List<string> ruleNames, CompilationAnalysisContext context, IMethodSymbol analysisMethodSymbol)
+            {
+                var getStatements = AnalysisGetStatements(analysisMethodSymbol);
+                if (getStatements.Count == 0)
+                {
+                    return false;
+                }
+
+                var methodDeclaration = getStatements[0] as MethodDeclarationSyntax;
+                var statements = (SyntaxList<StatementSyntax>)getStatements[1];
+                var contextParameter = methodDeclaration.ParameterList.Parameters[0] as ParameterSyntax;
+                if (contextParameter == null)
+                {
+                    return false;
+                }
+
+                int statementCount = statements.Count;
+                if (statementCount == 0)
+                {
+                    ReportDiagnostic(context, IfStatementRule, methodDeclaration.Identifier.GetLocation(), contextParameter.Identifier.Text);
+                    return false;
+                }
+
+                if (statementCount > 0)
+                {
+                    SyntaxToken statementIdentifierToken = IfStatementAnalysis1(context, statements, contextParameter);
+                    if (statementIdentifierToken.Text == "")
+                    {
+                        ReportDiagnostic(context, IfStatementIncorrectRule, statements[0].GetLocation(), contextParameter.Identifier.Text);
+                        return false;
+                    }
+
+
+                }
+
+
+                return true;
+            }
+
+            internal SyntaxToken IfStatementAnalysis1(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, ParameterSyntax contextParameter)
+            {
+                var emptyResult = SyntaxFactory.Identifier("");
+                var ifStatement = statements[0] as LocalDeclarationStatementSyntax;
+                if (ifStatement == null)
+                {
+                    return emptyResult;
+                }
+
+                var statementVariableDeclaration = ifStatement.Declaration as VariableDeclarationSyntax;
+                if (statementVariableDeclaration == null)
+                {
+                    return emptyResult;
+                }
+
+                SeparatedSyntaxList<VariableDeclaratorSyntax> statementVariables = statementVariableDeclaration.Variables;
+                if (statementVariables == null || statementVariables.Count != 1)
+                {
+                    return emptyResult;
+                }
+
+                var statementVariableDeclarator = statementVariables[0] as VariableDeclaratorSyntax;
+                if (statementVariableDeclarator == null)
+                {
+                    return emptyResult;
+                }
+
+                SyntaxToken statementName = statementVariableDeclarator.Identifier;
+                if (statementName == null)
+                {
+                    return emptyResult;
+                }
+
+                var statementEqualsValueClause = statementVariableDeclarator.Initializer as EqualsValueClauseSyntax;
+                if (statementEqualsValueClause == null)
+                {
+                    return emptyResult;
+                }
+
+                var statementCastExpression = statementEqualsValueClause.Value as CastExpressionSyntax;
+                if (statementCastExpression == null)
+                {
+                    return emptyResult;
+                }
+
+                var statementIdentifier = statementCastExpression.Type as TypeSyntax;
+                //TODO: figure out how to make this not use ToString()
+                if (statementIdentifier == null || statementIdentifier.ToString() != "IfStatementSyntax")
+                {
+                    return emptyResult;
+                }
+
+                var statementExpression = statementCastExpression.Expression as MemberAccessExpressionSyntax;
+                if (statementExpression == null)
+                {
+                    return emptyResult;
+                }
+
+                var statementExpressionIdentifier = statementExpression.Expression as IdentifierNameSyntax;
+                if (statementExpressionIdentifier == null || statementExpressionIdentifier.Identifier.Text != contextParameter.Identifier.Text)
+                {
+                    return emptyResult;
+                }
+
+                var statementExpressionNode = statementExpression.Name as IdentifierNameSyntax;
+                if (statementExpressionNode == null || statementExpressionNode.Identifier.Text != "Node")
+                {
+                    return emptyResult;
+                }
+
+                return statementName;
+            }
+
+            #endregion
+
+            internal List<object> AnalysisGetStatements(IMethodSymbol analysisMethodSymbol)
+            {
+                List<object> result = new List<object>();
+                if (analysisMethodSymbol == null)
+                {
+                    return result;
+                }
+
+                var methodDeclaration = analysisMethodSymbol.DeclaringSyntaxReferences[0].GetSyntax() as MethodDeclarationSyntax;
+                if (methodDeclaration == null)
+                {
+                    return result;
+                }
+
+                var body = methodDeclaration.Body as BlockSyntax;
+                if (body == null)
+                {
+                    return result;
+                }
+
+                SyntaxList<StatementSyntax> statements = body.Statements;
+                if (statements == null)
+                {
+                    return result;
+                }
+
+                result.Add(methodDeclaration);
+                result.Add(statements);
+                return result;
             }
 
             //returns a boolean based on whether or not the SupportedDiagnostics property is correct
