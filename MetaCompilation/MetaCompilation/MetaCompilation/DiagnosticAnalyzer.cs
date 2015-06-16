@@ -208,9 +208,9 @@ namespace MetaCompilation
         #endregion
 
         #region analysis for IfStatement rules
-        public const string IfStatement = "MetaAnalyzer020";
-        internal static DiagnosticDescriptor IfStatementRule = new DiagnosticDescriptor(
-            id: IfStatement,
+        public const string IfStatementMissing = "MetaAnalyzer024";
+        internal static DiagnosticDescriptor IfStatementMissingRule = new DiagnosticDescriptor(
+            id: IfStatementMissing,
             title: "Missing 1st step",
             messageFormat: "The first step is to extract the if statement from {0}",
             category: "Syntax",
@@ -226,11 +226,20 @@ namespace MetaCompilation
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
-        public const string IfKeyword = "MetaAnalyzer021";
-        internal static DiagnosticDescriptor IfKeywordRule = new DiagnosticDescriptor(
-            id: IfKeyword,
+        public const string IfKeywordMissing = "MetaAnalyzer021";
+        internal static DiagnosticDescriptor IfKeywordMissingRule = new DiagnosticDescriptor(
+            id: IfKeywordMissing,
             title: "Missing 2nd step",
             messageFormat: "The second step is to extract the 'if' keyword from {0}",
+            category: "Syntax",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+
+        public const string IfKeywordIncorrect = "MetaAnalyzer025";
+        internal static DiagnosticDescriptor IfKeywordIncorrectRule = new DiagnosticDescriptor(
+            id: IfKeywordIncorrect,
+            title: "Incorrect 2nd step",
+            messageFormat: "This statement should extract the 'if' keyword from {0}",
             category: "Syntax",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
@@ -259,10 +268,14 @@ namespace MetaCompilation
                                              InternalAndStaticErrorRule,
                                              MissingRuleRule,
                                              MissingAnalysisMethodRule,
-                                             IfStatementRule,
-                                             IfKeywordRule,
+                                             IfStatementMissingRule,
+                                             IfKeywordMissingRule,
                                              IfStatementIncorrectRule,
-                                             IdDeclTypeErrorRule);
+                                             IdDeclTypeErrorRule,
+                                             IfStatementMissingRule,
+                                             IfKeywordMissingRule,
+                                             IfStatementIncorrectRule,
+                                             IfKeywordIncorrectRule);
             }
         }
 
@@ -442,11 +455,6 @@ namespace MetaCompilation
                 }
 
                 int statementCount = statements.Count;
-                if (statementCount == 0)
-                {
-                    ReportDiagnostic(context, IfStatementRule, methodDeclaration.Identifier.GetLocation(), contextParameter.Identifier.Text);
-                    return false;
-                }
 
                 if (statementCount > 0)
                 {
@@ -457,8 +465,27 @@ namespace MetaCompilation
                         return false;
                     }
 
-
+                    if (statementCount > 1)
+                    {
+                        SyntaxToken keywordIdentifierToken = IfStatementAnalysis2(context, statements, statementIdentifierToken);
+                        if (keywordIdentifierToken.Text == "")
+                        {
+                            ReportDiagnostic(context, IfKeywordIncorrectRule, statements[1].GetLocation(), statementIdentifierToken.Text);
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        ReportDiagnostic(context, IfKeywordMissingRule, statements[0].GetLocation(), statementIdentifierToken.Text);
+                    }
                 }
+                else
+                {
+                    ReportDiagnostic(context, IfStatementMissingRule, methodDeclaration.Identifier.GetLocation(), contextParameter.Identifier.Text);
+                    return false;
+                }
+
+
 
 
                 return true;
@@ -473,31 +500,13 @@ namespace MetaCompilation
                     return emptyResult;
                 }
 
-                var statementVariableDeclaration = ifStatement.Declaration as VariableDeclarationSyntax;
-                if (statementVariableDeclaration == null)
-                {
-                    return emptyResult;
-                }
-
-                SeparatedSyntaxList<VariableDeclaratorSyntax> statementVariables = statementVariableDeclaration.Variables;
-                if (statementVariables == null || statementVariables.Count != 1)
-                {
-                    return emptyResult;
-                }
-
-                var statementVariableDeclarator = statementVariables[0] as VariableDeclaratorSyntax;
-                if (statementVariableDeclarator == null)
-                {
-                    return emptyResult;
-                }
-
-                SyntaxToken statementName = statementVariableDeclarator.Identifier;
+                var statementName = GetIdentifierTokenFromLocalDecl(ifStatement);
                 if (statementName == null)
                 {
                     return emptyResult;
                 }
 
-                var statementEqualsValueClause = statementVariableDeclarator.Initializer as EqualsValueClauseSyntax;
+                var statementEqualsValueClause = GetEqualsValueClauseFromLocalDecl(ifStatement);
                 if (statementEqualsValueClause == null)
                 {
                     return emptyResult;
@@ -537,6 +546,123 @@ namespace MetaCompilation
                 return statementName;
             }
 
+            internal SyntaxToken IfStatementAnalysis2(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, SyntaxToken statementIdentifierToken)
+            {
+                var emptyResult = SyntaxFactory.Identifier("");
+                var statement = statements[1] as LocalDeclarationStatementSyntax;
+                if (statement == null)
+                {
+                    return emptyResult;
+                }
+
+                SyntaxToken keywordIdentifierToken = GetIdentifierTokenFromLocalDecl(statement);
+                if (keywordIdentifierToken == null)
+                {
+                    return emptyResult;
+                }
+
+                var equalsValueClause = GetEqualsValueClauseFromLocalDecl(statement);
+                if (equalsValueClause == null)
+                {
+                    return emptyResult;
+                }
+
+                var memberExpr = equalsValueClause.Value as MemberAccessExpressionSyntax;
+                if (memberExpr == null)
+                {
+                    return emptyResult;
+                }
+
+                var identifier = memberExpr.Expression as IdentifierNameSyntax;
+                if (identifier == null || identifier.Identifier.Text != statementIdentifierToken.Text)
+                {
+                    return emptyResult;
+                }
+
+                var name = memberExpr.Name as IdentifierNameSyntax;
+                if (name == null || name.Identifier.Text != "IfKeyword")
+                {
+                    return emptyResult;
+                }
+
+                return keywordIdentifierToken;
+            }
+
+            internal EqualsValueClauseSyntax GetEqualsValueClauseFromLocalDecl(LocalDeclarationStatementSyntax statement)
+            {
+                EqualsValueClauseSyntax emptyResult = null;
+                if (statement == null)
+                {
+                    return emptyResult;
+                }
+
+                var variableDeclaration = statement.Declaration as VariableDeclarationSyntax;
+                if (variableDeclaration == null)
+                {
+                    return emptyResult;
+                }
+
+                SeparatedSyntaxList<VariableDeclaratorSyntax> variables = variableDeclaration.Variables;
+                if (variables == null || variables.Count != 1)
+                {
+                    return emptyResult;
+                }
+
+                var variableDeclarator = variables[0] as VariableDeclaratorSyntax;
+                if (variableDeclarator == null)
+                {
+                    return emptyResult;
+                }
+
+                SyntaxToken identifier = variableDeclarator.Identifier;
+                if (identifier == null)
+                {
+                    return emptyResult;
+                }
+
+                var equalsValueClause = variableDeclarator.Initializer as EqualsValueClauseSyntax;
+                if (equalsValueClause == null)
+                {
+                    return emptyResult;
+                }
+
+                return equalsValueClause;
+            }
+
+            internal SyntaxToken GetIdentifierTokenFromLocalDecl(LocalDeclarationStatementSyntax statement)
+            {
+                var emptyResult = SyntaxFactory.Identifier("");
+                if (statement == null)
+                {
+                    return emptyResult;
+                }
+
+                var variableDeclaration = statement.Declaration as VariableDeclarationSyntax;
+                if (variableDeclaration == null)
+                {
+                    return emptyResult;
+                }
+
+                SeparatedSyntaxList<VariableDeclaratorSyntax> variables = variableDeclaration.Variables;
+                if (variables == null || variables.Count != 1)
+                {
+                    return emptyResult;
+                }
+
+                var variableDeclarator = variables[0] as VariableDeclaratorSyntax;
+                if (variableDeclarator == null)
+                {
+                    return emptyResult;
+                }
+
+                SyntaxToken identifier = variableDeclarator.Identifier;
+                if (identifier == null)
+                {
+                    return emptyResult;
+                }
+
+                return identifier;
+            }
             #endregion
 
             internal List<object> AnalysisGetStatements(IMethodSymbol analysisMethodSymbol)
