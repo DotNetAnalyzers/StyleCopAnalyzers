@@ -261,6 +261,24 @@ namespace MetaCompilation
             category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
+
+        public const string TrailingTriviaVarMissing = "MetaAnalyzer028";
+        internal static DiagnosticDescriptor TrailingTriviaVarMissingRule = new DiagnosticDescriptor(
+            id: TrailingTriviaVarMissing,
+            title: "Missing 4th step",
+            messageFormat: "The fourth step is to extract the last trailing trivia of {0} into a variable",
+            category: "Tutorial",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+
+        public const string TrailingTriviaVarIncorrect = "MetaAnalyzer029";
+        internal static DiagnosticDescriptor TrailingTriviaVarIncorrectRule = new DiagnosticDescriptor(
+            id: TrailingTriviaVarIncorrect,
+            title: "Incorrect 4th step",
+            messageFormat: "This statement should extract the last trailing trivia of {0} into a variable",
+            category: "Tutorial",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
         #endregion
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
@@ -295,7 +313,9 @@ namespace MetaCompilation
                                              IfStatementIncorrectRule,
                                              IfKeywordIncorrectRule,
                                              TrailingTriviaCheckMissingRule,
-                                             TrailingTriviaCheckIncorrectRule);
+                                             TrailingTriviaCheckIncorrectRule,
+                                             TrailingTriviaVarMissingRule,
+                                             TrailingTriviaVarIncorrectRule);
             }
         }
 
@@ -503,6 +523,28 @@ namespace MetaCompilation
                                 return false;
                             }
 
+                            SyntaxList<StatementSyntax> triviaBlockStatements = triviaBlock.Statements;
+                            if (triviaBlockStatements == null)
+                            {
+                                ReportDiagnostic(context, TrailingTriviaVarMissingRule, triviaBlock.GetLocation(), keywordIdentifierToken.Text);
+                                return false;
+                            }
+
+                            if (triviaBlockStatements.Count > 0)
+                            {
+                                SyntaxToken triviaIdentifierToken = IfStatementAnalysis4(context, triviaBlockStatements, keywordIdentifierToken);
+                                if (triviaIdentifierToken.Text == "")
+                                {
+                                    ReportDiagnostic(context, TrailingTriviaVarIncorrectRule, triviaBlockStatements[0].GetLocation(), keywordIdentifierToken.Text);
+                                    return false;
+                                }
+                            }
+                            else
+                            {
+                                ReportDiagnostic(context, TrailingTriviaVarMissingRule, triviaBlock.GetLocation(), keywordIdentifierToken.Text);
+                                return false;
+                            }
+
                         }
                         else
                         {
@@ -534,7 +576,7 @@ namespace MetaCompilation
                 }
 
                 var statementName = GetIdentifierTokenFromLocalDecl(ifStatement);
-                if (statementName == null)
+                if (statementName.Text == "")
                 {
                     return emptyResult;
                 }
@@ -589,7 +631,7 @@ namespace MetaCompilation
                 }
 
                 SyntaxToken keywordIdentifierToken = GetIdentifierTokenFromLocalDecl(statement);
-                if (keywordIdentifierToken == null)
+                if (keywordIdentifierToken.Text == "")
                 {
                     return emptyResult;
                 }
@@ -656,6 +698,66 @@ namespace MetaCompilation
                 }
 
                 return block;
+            }
+
+            internal SyntaxToken IfStatementAnalysis4(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, SyntaxToken keywordIdentifierToken)
+            {
+                var emptyResult = SyntaxFactory.Identifier("");
+                var statement = statements[0] as LocalDeclarationStatementSyntax;
+                if (statement == null)
+                {
+                    return emptyResult;
+                }
+
+                SyntaxToken triviaIdentifierToken = GetIdentifierTokenFromLocalDecl(statement);
+                if (triviaIdentifierToken.Text == "")
+                {
+                    return emptyResult;
+                }
+
+                var statementEqualsValueClause = GetEqualsValueClauseFromLocalDecl(statement);
+                if (statementEqualsValueClause == null)
+                {
+                    return emptyResult;
+                }
+
+                var invocationExpression = statementEqualsValueClause.Value as InvocationExpressionSyntax;
+                if (invocationExpression == null)
+                {
+                    return emptyResult;
+                }
+
+                var memberExpr = invocationExpression.Expression as MemberAccessExpressionSyntax;
+                if (memberExpr == null)
+                {
+                    return emptyResult;
+                }
+
+                var memberExprInner = memberExpr.Expression as MemberAccessExpressionSyntax;
+                if (memberExprInner == null)
+                {
+                    return emptyResult;
+                }
+
+                var innerIdentifier = memberExprInner.Expression as IdentifierNameSyntax;
+                if (innerIdentifier == null || innerIdentifier.Identifier.Text != keywordIdentifierToken.Text)
+                {
+                    return emptyResult;
+                }
+
+                var innerName = memberExprInner.Name as IdentifierNameSyntax;
+                if (innerName == null || innerName.Identifier.Text != "TrailingTrivia")
+                {
+                    return emptyResult;
+                }
+
+                var memberExprName = memberExpr.Name as IdentifierNameSyntax;
+                if (memberExprName == null || memberExprName.Identifier.Text != "Last")
+                {
+                    return emptyResult;
+                }
+
+                return triviaIdentifierToken;
             }
 
             internal EqualsValueClauseSyntax GetEqualsValueClauseFromLocalDecl(LocalDeclarationStatementSyntax statement)
