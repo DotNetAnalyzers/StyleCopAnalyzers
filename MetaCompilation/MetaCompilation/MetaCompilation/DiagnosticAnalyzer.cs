@@ -23,7 +23,7 @@ namespace MetaCompilation
             id: IdDeclTypeError,
             title: "Thise diagnostic id type is incorrect.",
             messageFormat: "The diagnostic id should not be a string literal.",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -32,7 +32,7 @@ namespace MetaCompilation
             id: MissingIdDeclaration,
             title: "The diagnostic id declaration is missing.",
             messageFormat: "This diagnostic id has not been declared.",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -41,7 +41,7 @@ namespace MetaCompilation
             id: DefaultSeverityError,
             title: "defaultSeverity is incorrectly declared.",
             messageFormat: "defaultSeverity must be of the form: DiagnosticSeverity.[severity].",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -50,7 +50,7 @@ namespace MetaCompilation
             id: EnabledByDefaultError,
             title: "isEnabledByDefault should be set to true.",
             messageFormat: "isEnabledByDefault should be set to true.",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -59,7 +59,7 @@ namespace MetaCompilation
             id: InternalAndStaticError,
             title: "The DiagnosticDescriptor should be internal and static.",
             messageFormat: "The DiagnosticDescriptor should be internal and static.",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -68,7 +68,7 @@ namespace MetaCompilation
             id: MissingRule,
             title: "Missing a rule",
             messageFormat: "You need to have at least one DiagnosticDescriptor rule",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
         #endregion
@@ -79,7 +79,7 @@ namespace MetaCompilation
             id: MissingId,
             title: "You are missing a diagnostic id",
             messageFormat: "You are missing a diagnostic id",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
         #endregion
@@ -90,7 +90,7 @@ namespace MetaCompilation
             id: MissingInit,
             title: "You are missing the required Initialize method",
             messageFormat: "You are missing the required Initialize method",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -99,7 +99,7 @@ namespace MetaCompilation
             id: MissingRegisterStatement,
             title: "You need to register an action within the Initialize method",
             messageFormat: "You need to register an action within the Initialize method",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -108,7 +108,7 @@ namespace MetaCompilation
             id: TooManyInitStatements,
             title: "Please only have one statement within Initiailize. You will only be registering one action.",
             messageFormat: "Please only have one statement within Initiailize. You will only be registering one action.",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -117,7 +117,7 @@ namespace MetaCompilation
             id: IncorrectInitStatement,
             title: "This statement needs to register for a supported action",
             messageFormat: "This statement needs to register for a supported action",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -126,7 +126,7 @@ namespace MetaCompilation
             id: IncorrectInitSig,
             title: "The signature for the Initialize method is incorrect",
             messageFormat: "The signature for the Initialize method is incorrect",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
         #endregion
@@ -137,7 +137,7 @@ namespace MetaCompilation
             id: MissingSuppDiag,
             title: "You are missing the required SupportedDiagnostics method",
             messageFormat: "You are missing the required SupportedDiagnostics method",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -146,7 +146,7 @@ namespace MetaCompilation
             id: IncorrectSigSuppDiag,
             title: "The signature of the SupportedDiagnostics property is incorrect",
             messageFormat: "The signature of the SupportedDiagnostics property is incorrect",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -155,7 +155,7 @@ namespace MetaCompilation
             id: MissingAccessor,
             title: "You are missing a get accessor in your SupportedDiagnostics property",
             messageFormat: "You are missing a get accessor in your SupportedDiagnostics property",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -164,7 +164,7 @@ namespace MetaCompilation
             id: TooManyAccessors,
             title: "You only need a get accessor for this property",
             messageFormat: "You only need a get accessor for this property",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -173,7 +173,7 @@ namespace MetaCompilation
             id: IncorrectAccessorReturn,
             title: "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules",
             messageFormat: "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -182,7 +182,7 @@ namespace MetaCompilation
             id: SuppDiagReturnValue,
             title: "You need to create an immutable array",
             messageFormat: "You need to create an immutable array",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -191,7 +191,7 @@ namespace MetaCompilation
             id: SupportedRules,
             title: "The immutable array should contain every DiagnosticDescriptor rule that was created",
             messageFormat: "The immutable array should contain every DiagnosticDescriptor rule that was created",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
         #endregion
@@ -202,7 +202,7 @@ namespace MetaCompilation
             id: MissingAnalysisMethod,
             title: "Missing analysis method",
             messageFormat: "You are missing the method that was registered to perform the analysis",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
         #endregion
@@ -213,7 +213,7 @@ namespace MetaCompilation
             id: IfStatementMissing,
             title: "Missing 1st step",
             messageFormat: "The first step is to extract the if statement from {0}",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -222,7 +222,7 @@ namespace MetaCompilation
             id: IfStatementIncorrect,
             title: "If statement extraction incorrect",
             messageFormat: "This statement should extract the if statement in question by casting {0}.Node to IfStatementSyntax",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -231,7 +231,7 @@ namespace MetaCompilation
             id: IfKeywordMissing,
             title: "Missing 2nd step",
             messageFormat: "The second step is to extract the 'if' keyword from {0}",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -240,7 +240,7 @@ namespace MetaCompilation
             id: IfKeywordIncorrect,
             title: "Incorrect 2nd step",
             messageFormat: "This statement should extract the 'if' keyword from {0}",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
         #endregion
@@ -484,9 +484,6 @@ namespace MetaCompilation
                     ReportDiagnostic(context, IfStatementMissingRule, methodDeclaration.Identifier.GetLocation(), contextParameter.Identifier.Text);
                     return false;
                 }
-
-
-
 
                 return true;
             }
