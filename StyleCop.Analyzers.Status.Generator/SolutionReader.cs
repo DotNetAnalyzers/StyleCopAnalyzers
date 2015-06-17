@@ -191,6 +191,11 @@
 
             VariableDeclaratorSyntax node = root.FindNode(members.Locations.FirstOrDefault().SourceSpan) as VariableDeclaratorSyntax;
 
+            if (node == null)
+            {
+                return "Unknown";
+            }
+
             ObjectCreationExpressionSyntax initializer = node.Initializer.Value as ObjectCreationExpressionSyntax;
 
             // We use the fact that the only parameter that returns a boolean is the one we are interested in
