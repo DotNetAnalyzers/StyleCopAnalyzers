@@ -279,6 +279,15 @@ namespace MetaCompilation
             category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
+
+        public const string InvalidStatement = "MetaAnalyzer020";
+        internal static DiagnosticDescriptor InvalidStatementRule = new DiagnosticDescriptor(
+            id: InvalidStatement,
+            title: "The Initialize method only registers actions: the statement is invalid",
+            messageFormat: "The Initialize method only registers actions: the statement '{0}' is invalid",
+            category: "Syntax",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
         #endregion
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
@@ -315,7 +324,9 @@ namespace MetaCompilation
                                              TrailingTriviaCheckMissingRule,
                                              TrailingTriviaCheckIncorrectRule,
                                              TrailingTriviaVarMissingRule,
-                                             TrailingTriviaVarIncorrectRule);
+                                             TrailingTriviaVarIncorrectRule,
+                                             InvalidStatementRule,
+                                             IdDeclTypeErrorRule);
             }
         }
 
@@ -1256,9 +1267,61 @@ namespace MetaCompilation
                     }
                     else if (statements.Count > 1)
                     {
-                        //too many statements inside initialize
-                        ReportDiagnostic(context, TooManyInitStatementsRule, statements[0].GetLocation(), TooManyInitStatementsRule.MessageFormat);
-                        return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
+                        foreach (var statement in statements)
+                        {
+                            if (statement.Kind() != SyntaxKind.ExpressionStatement)
+                            {
+                                ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
+                                statements = statements.Remove(statement);
+                                continue;
+                            }
+                        }
+
+                        if (statements.Count() > 1)
+                        {
+                            foreach (ExpressionStatementSyntax statement in statements)
+                            {
+                                var expression = statement.Expression as InvocationExpressionSyntax;
+                                if (expression == null)
+                                {
+                                    ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.Expression);
+                                    statements = statements.Remove(statement);
+                                    continue;
+                                }
+
+                                var expressionStart = expression.Expression as MemberAccessExpressionSyntax;
+                                if (expressionStart == null || expressionStart.Name == null)
+                                {
+                                    ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.Expression);
+                                    statements = statements.Remove(statement);
+                                    continue;
+                                }
+
+                                var preExpressionStart = expressionStart.Expression as IdentifierNameSyntax;
+                                if (preExpressionStart == null || preExpressionStart.Identifier == null ||
+                                    preExpressionStart.Identifier.ValueText != "context")
+                                {
+                                    ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.Expression);
+                                    statements = statements.Remove(statement);
+                                    continue;
+                                }
+
+                                var name = expressionStart.Name.ToString();
+                                if (!_branchesDict.ContainsKey(name))
+                                {
+                                    ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.Expression);
+                                    statements = statements.Remove(statement);
+                                    continue;
+                                }
+                            }
+
+                            if (statements.Count() > 1)
+                            {
+                                //too many statements inside initialize
+                                ReportDiagnostic(context, TooManyInitStatementsRule, statements[0].GetLocation(), TooManyInitStatementsRule.MessageFormat);
+                                return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
+                            }
+                        }
                     }
                     else
                     {
