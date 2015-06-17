@@ -56,24 +56,24 @@ namespace MetaCompilation
 
         #region id rules
         public const string MissingId = "MetaAnalyzer001";
-        internal static DiagnosticDescriptor MissingIdRule = CreateRule(MissingId, "You are missing a diagnostic id", "You are missing a diagnostic id");
+        internal static DiagnosticDescriptor MissingIdRule = CreateRule(MissingId, "The analyzer is missing a diagnostic id", "The analyzer '{0}' is missing a diagnostic id");
         #endregion
 
         #region Initialize rules
         public const string MissingInit = "MetaAnalyzer002";
-        internal static DiagnosticDescriptor MissingInitRule = CreateRule(MissingInit, "You are missing the required Initialize method", "You are missing the required Initialize method");
+        internal static DiagnosticDescriptor MissingInitRule = CreateRule(MissingInit, "The analyzer is missing the required Initialize method", "The analyzer '{0}' is missing the required Initialize method");
 
         public const string MissingRegisterStatement = "MetaAnalyzer003";
-        internal static DiagnosticDescriptor MissingRegisterRule = CreateRule(MissingRegisterStatement, "You need to register an action within the Initialize method", "You need to register an action within the Initialize method");
+        internal static DiagnosticDescriptor MissingRegisterRule = CreateRule(MissingRegisterStatement, "An action must be registered within the method", "An action must be registered within the '{0}' method");
 
         public const string TooManyInitStatements = "MetaAnalyzer004";
-        internal static DiagnosticDescriptor TooManyInitStatementsRule = CreateRule(TooManyInitStatements, "Please only have one statement within Initiailize. You will only be registering one action", "Please only have one statement within Initiailize. You will only be registering one action");
+        internal static DiagnosticDescriptor TooManyInitStatementsRule = CreateRule(TooManyInitStatements, "The method registers multiple actions", "The method '{0}' registers multiple actions");
 
         public const string IncorrectInitStatement = "MetaAnalyzer005";
         internal static DiagnosticDescriptor IncorrectInitStatementRule = CreateRule(IncorrectInitStatement, "This statement needs to register for a supported action", "This statement needs to register for a supported action");
 
         public const string IncorrectInitSig = "MetaAnalyzer006";
-        internal static DiagnosticDescriptor IncorrectInitSigRule = CreateRule(IncorrectInitSig, "The signature for the Initialize method is incorrect", "The signature for the Initialize method is incorrect");
+        internal static DiagnosticDescriptor IncorrectInitSigRule = CreateRule(IncorrectInitSig, "The signature for the method is incorrect", "The signature for the '{0}' method is incorrect");
 
         public const string InvalidStatement = "MetaAnalyzer020";
         internal static DiagnosticDescriptor InvalidStatementRule = CreateRule(InvalidStatement, "The Initialize method only registers actions: the statement is invalid", "The Initialize method only registers actions: the statement '{0}' is invalid");
@@ -141,7 +141,6 @@ namespace MetaCompilation
                                              MissingInitRule, 
                                              MissingRegisterRule, 
                                              TooManyInitStatementsRule, 
-                                             IncorrectInitStatementRule, 
                                              IncorrectInitSigRule,
                                              MissingSuppDiagRule,
                                              IncorrectSigSuppDiagRule,
@@ -302,13 +301,12 @@ namespace MetaCompilation
                         else
                         {
                             // diagnostic for missing id names
-                           var analyzerClassSyntax = _analyzerClassSymbol.DeclaringSyntaxReferences[0].GetSyntax() as ClassDeclarationSyntax;
-                           ReportDiagnostic(context, MissingIdRule, analyzerClassSyntax.Identifier.GetLocation(), MissingIdRule.MessageFormat);
+                           ReportDiagnostic(context, MissingIdRule, _analyzerClassSymbol.Locations[0], _analyzerClassSymbol.Name.ToString());
                         }
                     }
                     else
                     {
-                        ReportDiagnostic(context, IncorrectInitStatementRule, invocationExpression.GetLocation(), IncorrectInitStatementRule.MessageFormat);
+                        ReportDiagnostic(context, InvalidStatementRule, invocationExpression.GetLocation(), invocationExpression);
                     }
                 }
                 else
@@ -1078,7 +1076,6 @@ namespace MetaCompilation
             }
 
             //returns a symbol for the register call, and a list of the arguments
-            //assumes that there is only one thing registered
             internal List<object> CheckInitialize(CompilationAnalysisContext context)
             {
                 //default values for returning
@@ -1089,7 +1086,7 @@ namespace MetaCompilation
                 if (_initializeSymbol == null)
                 {
                     //the initialize method was not found
-                    ReportDiagnostic(context, MissingInitRule, _analyzerClassSymbol.Locations[0], MissingInitRule.MessageFormat);
+                    ReportDiagnostic(context, MissingInitRule, _analyzerClassSymbol.Locations[0], _analyzerClassSymbol.Name.ToString());
                     return new List<object>(new object[] { registerCall, registerArgs });
                 }
                 else
@@ -1105,7 +1102,7 @@ namespace MetaCompilation
                     if (statements.Count == 0)
                     {
                         //no statements inside initiailize
-                        ReportDiagnostic(context, MissingRegisterRule, _initializeSymbol.Locations[0], MissingRegisterRule.MessageFormat);
+                        ReportDiagnostic(context, MissingRegisterRule, _initializeSymbol.Locations[0], _initializeSymbol.Name.ToString());
                         return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                     }
                     else if (statements.Count > 1)
@@ -1161,7 +1158,7 @@ namespace MetaCompilation
                             if (statements.Count() > 1)
                             {
                                 //too many statements inside initialize
-                                ReportDiagnostic(context, TooManyInitStatementsRule, statements[0].GetLocation(), TooManyInitStatementsRule.MessageFormat);
+                                ReportDiagnostic(context, TooManyInitStatementsRule, _initializeSymbol.Locations[0], _initializeSymbol.Name.ToString());
                                 return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                             }
                         }
@@ -1195,7 +1192,7 @@ namespace MetaCompilation
                         SeparatedSyntaxList<ArgumentSyntax> arguments = invocationExpr.ArgumentList.Arguments;
                         if (arguments == null)
                         {
-                            ReportDiagnostic(context, IncorrectInitStatementRule, memberExpr.GetLocation(), IncorrectInitStatementRule.MessageFormat);
+                            ReportDiagnostic(context, InvalidStatementRule, memberExpr.GetLocation(), memberExpr.Name.ToString());
                             return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                         }
                         if (arguments.Count() > 0)
@@ -1226,9 +1223,11 @@ namespace MetaCompilation
             internal BlockSyntax InitializeOverview(CompilationAnalysisContext context)
             {
                 ImmutableArray<IParameterSymbol> parameters = _initializeSymbol.Parameters;
-                if (parameters.Count() != 1 || parameters[0].Type != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.AnalysisContext") || parameters[0].Name != "context" || _initializeSymbol.DeclaredAccessibility != Accessibility.Public || !_initializeSymbol.IsOverride || !_initializeSymbol.ReturnsVoid)
+                if (parameters.Count() != 1 || parameters[0].Type != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.AnalysisContext") 
+                    || parameters[0].Name != "context" || _initializeSymbol.DeclaredAccessibility != Accessibility.Public 
+                    || !_initializeSymbol.IsOverride || !_initializeSymbol.ReturnsVoid)
                 {
-                    ReportDiagnostic(context, IncorrectInitSigRule, _initializeSymbol.Locations[0], MissingInitRule.MessageFormat);
+                    ReportDiagnostic(context, IncorrectInitSigRule, _initializeSymbol.Locations[0], _initializeSymbol.Name.ToString());
                     return null;
                 }
 
@@ -1253,45 +1252,47 @@ namespace MetaCompilation
                 var statement = statements[0] as ExpressionStatementSyntax;
                 if (statement == null)
                 {
-                    ReportDiagnostic(context, IncorrectInitStatementRule, statements[0].GetLocation(), IncorrectInitStatementRule.MessageFormat);
+                    ReportDiagnostic(context, InvalidStatementRule, statements[0].GetLocation(), statements[0]);
                     return null;
                 }
 
                 var invocationExpr = statement.Expression as InvocationExpressionSyntax;
                 if (invocationExpr == null)
                 {
-                    ReportDiagnostic(context, IncorrectInitStatementRule, statement.GetLocation(), IncorrectInitStatementRule.MessageFormat);
+                    ReportDiagnostic(context, InvalidStatementRule, statements[0].GetLocation(), statements[0]);
                     return null;
                 }
 
                 var memberExpr = invocationExpr.Expression as MemberAccessExpressionSyntax;
                 if (memberExpr == null)
                 {
-                    ReportDiagnostic(context, IncorrectInitStatementRule, invocationExpr.GetLocation(), IncorrectInitStatementRule.MessageFormat);
+                    ReportDiagnostic(context, InvalidStatementRule, statements[0].GetLocation(), statements[0]);
                     return null;
                 }
 
                 var memberExprContext = memberExpr.Expression as IdentifierNameSyntax;
                 if (memberExprContext == null)
                 {
-                    ReportDiagnostic(context, IncorrectInitStatementRule, memberExpr.GetLocation(), IncorrectInitStatementRule.MessageFormat);
+                    ReportDiagnostic(context, InvalidStatementRule, statements[0].GetLocation(), statements[0]);
                     return null;
                 }
+
                 if (memberExprContext.Identifier.Text != "context")
                 {
-                    ReportDiagnostic(context, IncorrectInitStatementRule, memberExprContext.GetLocation(), IncorrectInitStatementRule.MessageFormat);
+                    ReportDiagnostic(context, InvalidStatementRule, statements[0].GetLocation(), statements[0]);
                     return null;
                 }
 
                 var memberExprRegister = memberExpr.Name as IdentifierNameSyntax;
                 if (memberExprRegister == null)
                 {
-                    ReportDiagnostic(context, IncorrectInitStatementRule, memberExpr.GetLocation(), IncorrectInitStatementRule.MessageFormat);
+                    ReportDiagnostic(context, InvalidStatementRule, statements[0].GetLocation(), statements[0]);
                     return null;
                 }
+
                 if (!_branchesDict.ContainsKey(memberExprRegister.ToString()))
                 {
-                    ReportDiagnostic(context, IncorrectInitStatementRule, memberExprRegister.GetLocation(), IncorrectInitStatementRule.MessageFormat);
+                    ReportDiagnostic(context, InvalidStatementRule, statements[0].GetLocation(), statements[0]);
                     return null;
                 }
 
