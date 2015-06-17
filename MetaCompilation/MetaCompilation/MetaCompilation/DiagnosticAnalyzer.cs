@@ -768,15 +768,19 @@ namespace MetaCompilation
                     }
                     else if (statements.Count > 1)
                     {
+                        SyntaxList<StatementSyntax> newStatements = new SyntaxList<StatementSyntax>();
                         foreach (var statement in statements)
                         {
-                            if (statement.Kind() != SyntaxKind.ExpressionStatement)
+                            if (statement.Kind() == SyntaxKind.ExpressionStatement)
+                            {
+                                newStatements = newStatements.Add(statement);
+                            }
+                            else
                             {
                                 ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
-                                statements = statements.Remove(statement);
-                                continue;
                             }
                         }
+                        statements = newStatements;
 
                         if (statements.Count() > 1)
                         {
@@ -820,13 +824,14 @@ namespace MetaCompilation
                             {
                                 //too many statements inside initialize
                                 ReportDiagnostic(context, TooManyInitStatementsRule, statements[0].GetLocation(), TooManyInitStatementsRule.MessageFormat);
-                                return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                             }
+                                return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                         }
+                        return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                     }
+                    //only one statement inside initialize
                     else
                     {
-                        //only one statement inside initialize
                         List<object> bodyResults = InitializeBody(context, statements);
                         if (bodyResults == null)
                         {
@@ -876,6 +881,7 @@ namespace MetaCompilation
                         }
                     }
                 }
+                
 
                 return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
             }
