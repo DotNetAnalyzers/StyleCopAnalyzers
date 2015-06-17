@@ -25,7 +25,10 @@ namespace MetaCompilation
             get
             {
                 //TODO: add any new rules
-                return ImmutableArray.Create(MetaCompilationAnalyzer.MissingId, MetaCompilationAnalyzer.MissingInit, MetaCompilationAnalyzer.MissingRegisterStatement);
+                return ImmutableArray.Create(MetaCompilationAnalyzer.MissingId, 
+                    MetaCompilationAnalyzer.MissingInit, 
+                    MetaCompilationAnalyzer.MissingRegisterStatement,
+                    MetaCompilationAnalyzer.TooManyInitStatements);
             }
         }
 
@@ -61,6 +64,12 @@ namespace MetaCompilation
                 {
                     MethodDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("The Initialize method must register an action to be performed when changes occur", c => MissingRegisterAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TooManyInitStatements))
+                {
+                    MethodDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("The Initialize method must not contain multiple actions to register (for the purpose of this tutorial)", c => MultipleStatementsAsync(context.Document, declaration, c)), diagnostic);
                 }
             }
         }
@@ -130,6 +139,47 @@ namespace MetaCompilation
 
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root.ReplaceNode(declaration, newInitDeclaration);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+
+        private async Task<Document> MultipleStatementsAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        {
+            var statements = declaration.Body.Statements;
+
+            var newBlock = declaration.Body;
+
+            foreach (ExpressionStatementSyntax statement in statements)
+            {
+                var expression = statement.Expression as InvocationExpressionSyntax;
+                var expressionStart = expression.Expression as MemberAccessExpressionSyntax;
+                if (expressionStart == null || expressionStart.Name == null ||
+                    expressionStart.Name.ToString() != "RegisterSyntaxNodeAction")
+                {
+                    statements = statements.Remove(statement);
+                }
+
+                if (expression.ArgumentList == null || expression.ArgumentList.Arguments.Count() != 2)
+                {
+                    statements = statements.Remove(statement);
+                }
+                var argumentMethod = expression.ArgumentList.Arguments[0].Expression as IdentifierNameSyntax;
+                var argumentKind = expression.ArgumentList.Arguments[1].Expression as MemberAccessExpressionSyntax;
+                var preArgumentKind = argumentKind.Expression as IdentifierNameSyntax;
+                if (argumentMethod.Identifier == null || argumentKind.Name == null || preArgumentKind.Identifier == null ||
+                    argumentMethod.Identifier.ValueText != "AnalyzeIfStatement" || argumentKind.Name.ToString() != "IfStatement" ||
+                    preArgumentKind.Identifier.ValueText != "SyntaxKind")
+                {
+                    statements = statements.Remove(statement);
+                }
+            }
+
+            newBlock = newBlock.WithStatements(statements);
+            var newDeclaration = declaration.WithBody(newBlock);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, newDeclaration);
             var newDocument = document.WithSyntaxRoot(newRoot);
 
             return newDocument;
