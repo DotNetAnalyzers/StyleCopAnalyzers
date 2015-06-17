@@ -23,7 +23,7 @@ namespace MetaCompilation
             id: IdDeclTypeError,
             title: "Thise diagnostic id type is incorrect.",
             messageFormat: "The diagnostic id should not be a string literal.",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -32,7 +32,7 @@ namespace MetaCompilation
             id: MissingIdDeclaration,
             title: "The diagnostic id declaration is missing.",
             messageFormat: "This diagnostic id has not been declared.",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -41,7 +41,7 @@ namespace MetaCompilation
             id: DefaultSeverityError,
             title: "defaultSeverity is incorrectly declared.",
             messageFormat: "defaultSeverity must be of the form: DiagnosticSeverity.[severity].",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -50,7 +50,7 @@ namespace MetaCompilation
             id: EnabledByDefaultError,
             title: "isEnabledByDefault should be set to true.",
             messageFormat: "isEnabledByDefault should be set to true.",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -59,7 +59,7 @@ namespace MetaCompilation
             id: InternalAndStaticError,
             title: "The DiagnosticDescriptor should be internal and static.",
             messageFormat: "The DiagnosticDescriptor should be internal and static.",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -68,7 +68,7 @@ namespace MetaCompilation
             id: MissingRule,
             title: "Missing a rule",
             messageFormat: "You need to have at least one DiagnosticDescriptor rule",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
         #endregion
@@ -79,7 +79,7 @@ namespace MetaCompilation
             id: MissingId,
             title: "You are missing a diagnostic id",
             messageFormat: "You are missing a diagnostic id",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
         #endregion
@@ -90,7 +90,7 @@ namespace MetaCompilation
             id: MissingInit,
             title: "You are missing the required Initialize method",
             messageFormat: "You are missing the required Initialize method",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -99,7 +99,7 @@ namespace MetaCompilation
             id: MissingRegisterStatement,
             title: "You need to register an action within the Initialize method",
             messageFormat: "You need to register an action within the Initialize method",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -108,7 +108,7 @@ namespace MetaCompilation
             id: TooManyInitStatements,
             title: "Please only have one statement within Initiailize. You will only be registering one action.",
             messageFormat: "Please only have one statement within Initiailize. You will only be registering one action.",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -117,7 +117,7 @@ namespace MetaCompilation
             id: IncorrectInitStatement,
             title: "This statement needs to register for a supported action",
             messageFormat: "This statement needs to register for a supported action",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -126,7 +126,7 @@ namespace MetaCompilation
             id: IncorrectInitSig,
             title: "The signature for the Initialize method is incorrect",
             messageFormat: "The signature for the Initialize method is incorrect",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
         #endregion
@@ -137,7 +137,7 @@ namespace MetaCompilation
             id: MissingSuppDiag,
             title: "You are missing the required SupportedDiagnostics method",
             messageFormat: "You are missing the required SupportedDiagnostics method",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -146,7 +146,7 @@ namespace MetaCompilation
             id: IncorrectSigSuppDiag,
             title: "The signature of the SupportedDiagnostics property is incorrect",
             messageFormat: "The signature of the SupportedDiagnostics property is incorrect",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -155,7 +155,7 @@ namespace MetaCompilation
             id: MissingAccessor,
             title: "You are missing a get accessor in your SupportedDiagnostics property",
             messageFormat: "You are missing a get accessor in your SupportedDiagnostics property",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -164,7 +164,7 @@ namespace MetaCompilation
             id: TooManyAccessors,
             title: "You only need a get accessor for this property",
             messageFormat: "You only need a get accessor for this property",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -173,7 +173,7 @@ namespace MetaCompilation
             id: IncorrectAccessorReturn,
             title: "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules",
             messageFormat: "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -182,7 +182,7 @@ namespace MetaCompilation
             id: SuppDiagReturnValue,
             title: "You need to create an immutable array",
             messageFormat: "You need to create an immutable array",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -191,7 +191,7 @@ namespace MetaCompilation
             id: SupportedRules,
             title: "The immutable array should contain every DiagnosticDescriptor rule that was created",
             messageFormat: "The immutable array should contain every DiagnosticDescriptor rule that was created",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
         #endregion
@@ -202,18 +202,18 @@ namespace MetaCompilation
             id: MissingAnalysisMethod,
             title: "Missing analysis method",
             messageFormat: "You are missing the method that was registered to perform the analysis",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
         #endregion
 
         #region analysis for IfStatement rules
-        public const string IfStatement = "MetaAnalyzer020";
-        internal static DiagnosticDescriptor IfStatementRule = new DiagnosticDescriptor(
-            id: IfStatement,
+        public const string IfStatementMissing = "MetaAnalyzer024";
+        internal static DiagnosticDescriptor IfStatementMissingRule = new DiagnosticDescriptor(
+            id: IfStatementMissing,
             title: "Missing 1st step",
             messageFormat: "The first step is to extract the if statement from {0}",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
@@ -222,16 +222,61 @@ namespace MetaCompilation
             id: IfStatementIncorrect,
             title: "If statement extraction incorrect",
             messageFormat: "This statement should extract the if statement in question by casting {0}.Node to IfStatementSyntax",
-            category: "Syntax",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
 
-        public const string IfKeyword = "MetaAnalyzer021";
-        internal static DiagnosticDescriptor IfKeywordRule = new DiagnosticDescriptor(
-            id: IfKeyword,
+        public const string IfKeywordMissing = "MetaAnalyzer021";
+        internal static DiagnosticDescriptor IfKeywordMissingRule = new DiagnosticDescriptor(
+            id: IfKeywordMissing,
             title: "Missing 2nd step",
             messageFormat: "The second step is to extract the 'if' keyword from {0}",
-            category: "Syntax",
+            category: "Tutorial",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+
+        public const string IfKeywordIncorrect = "MetaAnalyzer025";
+        internal static DiagnosticDescriptor IfKeywordIncorrectRule = new DiagnosticDescriptor(
+            id: IfKeywordIncorrect,
+            title: "Incorrect 2nd step",
+            messageFormat: "This statement should extract the 'if' keyword from {0}",
+            category: "Tutorial",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+
+        public const string TrailingTriviaCheckMissing = "MetaAnalyzer026";
+        internal static DiagnosticDescriptor TrailingTriviaCheckMissingRule = new DiagnosticDescriptor(
+            id: TrailingTriviaCheckMissing,
+            title: "Missing 3rd step",
+            messageFormat: "The third step is to begin looking for the space between 'if' and '(' by checking if {0} has trailing trivia",
+            category: "Tutorial",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+
+        public const string TrailingTriviaCheckIncorrect = "MetaAnalyzer027";
+        internal static DiagnosticDescriptor TrailingTriviaCheckIncorrectRule = new DiagnosticDescriptor(
+            id: TrailingTriviaCheckIncorrect,
+            title: "Incorrect 3rd step",
+            messageFormat: "This statement should be an if statement that checks to see if {0} has trailing trivia",
+            category: "Tutorial",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+
+        public const string TrailingTriviaVarMissing = "MetaAnalyzer028";
+        internal static DiagnosticDescriptor TrailingTriviaVarMissingRule = new DiagnosticDescriptor(
+            id: TrailingTriviaVarMissing,
+            title: "Missing 4th step",
+            messageFormat: "The fourth step is to extract the last trailing trivia of {0} into a variable",
+            category: "Tutorial",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+
+        public const string TrailingTriviaVarIncorrect = "MetaAnalyzer029";
+        internal static DiagnosticDescriptor TrailingTriviaVarIncorrectRule = new DiagnosticDescriptor(
+            id: TrailingTriviaVarIncorrect,
+            title: "Incorrect 4th step",
+            messageFormat: "This statement should extract the last trailing trivia of {0} into a variable",
+            category: "Tutorial",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
         #endregion
@@ -259,10 +304,18 @@ namespace MetaCompilation
                                              InternalAndStaticErrorRule,
                                              MissingRuleRule,
                                              MissingAnalysisMethodRule,
-                                             IfStatementRule,
-                                             IfKeywordRule,
+                                             IfStatementMissingRule,
+                                             IfKeywordMissingRule,
                                              IfStatementIncorrectRule,
-                                             IdDeclTypeErrorRule);
+                                             IdDeclTypeErrorRule,
+                                             IfStatementMissingRule,
+                                             IfKeywordMissingRule,
+                                             IfStatementIncorrectRule,
+                                             IfKeywordIncorrectRule,
+                                             TrailingTriviaCheckMissingRule,
+                                             TrailingTriviaCheckIncorrectRule,
+                                             TrailingTriviaVarMissingRule,
+                                             TrailingTriviaVarIncorrectRule);
             }
         }
 
@@ -442,11 +495,6 @@ namespace MetaCompilation
                 }
 
                 int statementCount = statements.Count;
-                if (statementCount == 0)
-                {
-                    ReportDiagnostic(context, IfStatementRule, methodDeclaration.Identifier.GetLocation(), contextParameter.Identifier.Text);
-                    return false;
-                }
 
                 if (statementCount > 0)
                 {
@@ -457,9 +505,63 @@ namespace MetaCompilation
                         return false;
                     }
 
+                    if (statementCount > 1)
+                    {
+                        SyntaxToken keywordIdentifierToken = IfStatementAnalysis2(context, statements, statementIdentifierToken);
+                        if (keywordIdentifierToken.Text == "")
+                        {
+                            ReportDiagnostic(context, IfKeywordIncorrectRule, statements[1].GetLocation(), statementIdentifierToken.Text);
+                            return false;
+                        }
 
+                        if (statementCount > 2)
+                        {
+                            var triviaBlock = IfStatementAnalysis3(context, statements, keywordIdentifierToken) as BlockSyntax;
+                            if (triviaBlock == null)
+                            {
+                                ReportDiagnostic(context, TrailingTriviaCheckIncorrectRule, statements[2].GetLocation(), keywordIdentifierToken.Text);
+                                return false;
+                            }
+
+                            SyntaxList<StatementSyntax> triviaBlockStatements = triviaBlock.Statements;
+                            if (triviaBlockStatements == null)
+                            {
+                                ReportDiagnostic(context, TrailingTriviaVarMissingRule, triviaBlock.GetLocation(), keywordIdentifierToken.Text);
+                                return false;
+                            }
+
+                            if (triviaBlockStatements.Count > 0)
+                            {
+                                SyntaxToken triviaIdentifierToken = IfStatementAnalysis4(context, triviaBlockStatements, keywordIdentifierToken);
+                                if (triviaIdentifierToken.Text == "")
+                                {
+                                    ReportDiagnostic(context, TrailingTriviaVarIncorrectRule, triviaBlockStatements[0].GetLocation(), keywordIdentifierToken.Text);
+                                    return false;
+                                }
+                            }
+                            else
+                            {
+                                ReportDiagnostic(context, TrailingTriviaVarMissingRule, triviaBlock.GetLocation(), keywordIdentifierToken.Text);
+                                return false;
+                            }
+
+                        }
+                        else
+                        {
+                            ReportDiagnostic(context, TrailingTriviaCheckMissingRule, statements[1].GetLocation(), keywordIdentifierToken.Text);
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        ReportDiagnostic(context, IfKeywordMissingRule, statements[0].GetLocation(), statementIdentifierToken.Text);
+                    }
                 }
-
+                else
+                {
+                    ReportDiagnostic(context, IfStatementMissingRule, methodDeclaration.Identifier.GetLocation(), contextParameter.Identifier.Text);
+                    return false;
+                }
 
                 return true;
             }
@@ -473,31 +575,13 @@ namespace MetaCompilation
                     return emptyResult;
                 }
 
-                var statementVariableDeclaration = ifStatement.Declaration as VariableDeclarationSyntax;
-                if (statementVariableDeclaration == null)
+                var statementName = GetIdentifierTokenFromLocalDecl(ifStatement);
+                if (statementName.Text == "")
                 {
                     return emptyResult;
                 }
 
-                SeparatedSyntaxList<VariableDeclaratorSyntax> statementVariables = statementVariableDeclaration.Variables;
-                if (statementVariables == null || statementVariables.Count != 1)
-                {
-                    return emptyResult;
-                }
-
-                var statementVariableDeclarator = statementVariables[0] as VariableDeclaratorSyntax;
-                if (statementVariableDeclarator == null)
-                {
-                    return emptyResult;
-                }
-
-                SyntaxToken statementName = statementVariableDeclarator.Identifier;
-                if (statementName == null)
-                {
-                    return emptyResult;
-                }
-
-                var statementEqualsValueClause = statementVariableDeclarator.Initializer as EqualsValueClauseSyntax;
+                var statementEqualsValueClause = GetEqualsValueClauseFromLocalDecl(ifStatement);
                 if (statementEqualsValueClause == null)
                 {
                     return emptyResult;
@@ -537,6 +621,220 @@ namespace MetaCompilation
                 return statementName;
             }
 
+            internal SyntaxToken IfStatementAnalysis2(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, SyntaxToken statementIdentifierToken)
+            {
+                var emptyResult = SyntaxFactory.Identifier("");
+                var statement = statements[1] as LocalDeclarationStatementSyntax;
+                if (statement == null)
+                {
+                    return emptyResult;
+                }
+
+                SyntaxToken keywordIdentifierToken = GetIdentifierTokenFromLocalDecl(statement);
+                if (keywordIdentifierToken.Text == "")
+                {
+                    return emptyResult;
+                }
+
+                var equalsValueClause = GetEqualsValueClauseFromLocalDecl(statement);
+                if (equalsValueClause == null)
+                {
+                    return emptyResult;
+                }
+
+                var memberExpr = equalsValueClause.Value as MemberAccessExpressionSyntax;
+                if (memberExpr == null)
+                {
+                    return emptyResult;
+                }
+
+                var identifier = memberExpr.Expression as IdentifierNameSyntax;
+                if (identifier == null || identifier.Identifier.Text != statementIdentifierToken.Text)
+                {
+                    return emptyResult;
+                }
+
+                var name = memberExpr.Name as IdentifierNameSyntax;
+                if (name == null || name.Identifier.Text != "IfKeyword")
+                {
+                    return emptyResult;
+                }
+
+                return keywordIdentifierToken;
+            }
+
+            internal BlockSyntax IfStatementAnalysis3(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, SyntaxToken keywordIdentifierToken)
+            {
+                BlockSyntax emptyResult = null;
+
+                var statement = statements[2] as IfStatementSyntax;
+                if (statement == null)
+                {
+                    return emptyResult;
+                }
+
+                var booleanExpression = statement.Condition as MemberAccessExpressionSyntax;
+                if (booleanExpression == null)
+                {
+                    return emptyResult;
+                }
+
+                var identifier = booleanExpression.Expression as IdentifierNameSyntax;
+                if (identifier == null || identifier.Identifier.Text != keywordIdentifierToken.Text)
+                {
+                    return emptyResult;
+                }
+
+                var name = booleanExpression.Name as IdentifierNameSyntax;
+                if (name == null || name.Identifier.Text != "HasTrailingTrivia")
+                {
+                    return emptyResult;
+                }
+
+                var block = statement.Statement as BlockSyntax;
+                if (block == null)
+                {
+                    return emptyResult;
+                }
+
+                return block;
+            }
+
+            internal SyntaxToken IfStatementAnalysis4(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, SyntaxToken keywordIdentifierToken)
+            {
+                var emptyResult = SyntaxFactory.Identifier("");
+                var statement = statements[0] as LocalDeclarationStatementSyntax;
+                if (statement == null)
+                {
+                    return emptyResult;
+                }
+
+                SyntaxToken triviaIdentifierToken = GetIdentifierTokenFromLocalDecl(statement);
+                if (triviaIdentifierToken.Text == "")
+                {
+                    return emptyResult;
+                }
+
+                var statementEqualsValueClause = GetEqualsValueClauseFromLocalDecl(statement);
+                if (statementEqualsValueClause == null)
+                {
+                    return emptyResult;
+                }
+
+                var invocationExpression = statementEqualsValueClause.Value as InvocationExpressionSyntax;
+                if (invocationExpression == null)
+                {
+                    return emptyResult;
+                }
+
+                var memberExpr = invocationExpression.Expression as MemberAccessExpressionSyntax;
+                if (memberExpr == null)
+                {
+                    return emptyResult;
+                }
+
+                var memberExprInner = memberExpr.Expression as MemberAccessExpressionSyntax;
+                if (memberExprInner == null)
+                {
+                    return emptyResult;
+                }
+
+                var innerIdentifier = memberExprInner.Expression as IdentifierNameSyntax;
+                if (innerIdentifier == null || innerIdentifier.Identifier.Text != keywordIdentifierToken.Text)
+                {
+                    return emptyResult;
+                }
+
+                var innerName = memberExprInner.Name as IdentifierNameSyntax;
+                if (innerName == null || innerName.Identifier.Text != "TrailingTrivia")
+                {
+                    return emptyResult;
+                }
+
+                var memberExprName = memberExpr.Name as IdentifierNameSyntax;
+                if (memberExprName == null || memberExprName.Identifier.Text != "Last")
+                {
+                    return emptyResult;
+                }
+
+                return triviaIdentifierToken;
+            }
+
+            internal EqualsValueClauseSyntax GetEqualsValueClauseFromLocalDecl(LocalDeclarationStatementSyntax statement)
+            {
+                EqualsValueClauseSyntax emptyResult = null;
+                if (statement == null)
+                {
+                    return emptyResult;
+                }
+
+                var variableDeclaration = statement.Declaration as VariableDeclarationSyntax;
+                if (variableDeclaration == null)
+                {
+                    return emptyResult;
+                }
+
+                SeparatedSyntaxList<VariableDeclaratorSyntax> variables = variableDeclaration.Variables;
+                if (variables == null || variables.Count != 1)
+                {
+                    return emptyResult;
+                }
+
+                var variableDeclarator = variables[0] as VariableDeclaratorSyntax;
+                if (variableDeclarator == null)
+                {
+                    return emptyResult;
+                }
+
+                SyntaxToken identifier = variableDeclarator.Identifier;
+                if (identifier == null)
+                {
+                    return emptyResult;
+                }
+
+                var equalsValueClause = variableDeclarator.Initializer as EqualsValueClauseSyntax;
+                if (equalsValueClause == null)
+                {
+                    return emptyResult;
+                }
+
+                return equalsValueClause;
+            }
+
+            internal SyntaxToken GetIdentifierTokenFromLocalDecl(LocalDeclarationStatementSyntax statement)
+            {
+                var emptyResult = SyntaxFactory.Identifier("");
+                if (statement == null)
+                {
+                    return emptyResult;
+                }
+
+                var variableDeclaration = statement.Declaration as VariableDeclarationSyntax;
+                if (variableDeclaration == null)
+                {
+                    return emptyResult;
+                }
+
+                SeparatedSyntaxList<VariableDeclaratorSyntax> variables = variableDeclaration.Variables;
+                if (variables == null || variables.Count != 1)
+                {
+                    return emptyResult;
+                }
+
+                var variableDeclarator = variables[0] as VariableDeclaratorSyntax;
+                if (variableDeclarator == null)
+                {
+                    return emptyResult;
+                }
+
+                SyntaxToken identifier = variableDeclarator.Identifier;
+                if (identifier == null)
+                {
+                    return emptyResult;
+                }
+
+                return identifier;
+            }
             #endregion
 
             internal List<object> AnalysisGetStatements(IMethodSymbol analysisMethodSymbol)
