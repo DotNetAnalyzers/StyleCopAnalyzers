@@ -16,278 +16,121 @@ namespace MetaCompilation
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class MetaCompilationAnalyzer : DiagnosticAnalyzer
     {
+        public const string RuleCategory = "Tutorial";
+        public const DiagnosticSeverity RuleDefaultSeverity = DiagnosticSeverity.Error;
+        public const bool RuleEnabledByDefault = true;
+        public static DiagnosticDescriptor CreateRule(string id, string title, string messageFormat)
+        {
+            DiagnosticDescriptor rule = new DiagnosticDescriptor(
+                id: id,
+                title: title,
+                messageFormat: messageFormat,
+                defaultSeverity: RuleDefaultSeverity,
+                isEnabledByDefault: RuleEnabledByDefault,
+                category: RuleCategory
+                );
+
+            return rule;
+        }
+
         #region rule rules
 
         public const string IdDeclTypeError = "MetaAnalyzer018";
-        internal static DiagnosticDescriptor IdDeclTypeErrorRule = new DiagnosticDescriptor(
-            id: IdDeclTypeError,
-            title: "Thise diagnostic id type is incorrect.",
-            messageFormat: "The diagnostic id should not be a string literal.",
-            category: "Tutorial",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor IdDeclTypeErrorRule = CreateRule(IdDeclTypeError, "This diagnostic id type is incorrect", "The diagnostic id should not be a string literal");
 
         public const string MissingIdDeclaration = "MetaAnalyzer017";
-        internal static DiagnosticDescriptor MissingIdDeclarationRule = new DiagnosticDescriptor(
-            id: MissingIdDeclaration,
-            title: "The diagnostic id declaration is missing.",
-            messageFormat: "This diagnostic id has not been declared.",
-            category: "Tutorial",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor MissingIdDeclarationRule = CreateRule(MissingIdDeclaration, "The diagnostic id declaration is missing", "This diagnostic id has not been declared");
 
         public const string DefaultSeverityError = "MetaAnalyzer016";
-        internal static DiagnosticDescriptor DefaultSeverityErrorRule = new DiagnosticDescriptor(
-            id: DefaultSeverityError,
-            title: "defaultSeverity is incorrectly declared.",
-            messageFormat: "defaultSeverity must be of the form: DiagnosticSeverity.[severity].",
-            category: "Tutorial",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor DefaultSeverityErrorRule = CreateRule(DefaultSeverityError, "defaultSeverity is incorrectly declared", "defaultSeverity must be of the form: DiagnosticSeverity.[severity]");
 
         public const string EnabledByDefaultError = "MetaAnalyzer015";
-        internal static DiagnosticDescriptor EnabledByDefaultErrorRule = new DiagnosticDescriptor(
-            id: EnabledByDefaultError,
-            title: "isEnabledByDefault should be set to true.",
-            messageFormat: "isEnabledByDefault should be set to true.",
-            category: "Tutorial",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor EnabledByDefaultErrorRule = CreateRule(EnabledByDefaultError, "isEnabledByDefault should be set to true", "isEnabledByDefault should be set to true");
 
         public const string InternalAndStaticError = "MetaAnalyzer014";
-        internal static DiagnosticDescriptor InternalAndStaticErrorRule = new DiagnosticDescriptor(
-            id: InternalAndStaticError,
-            title: "The DiagnosticDescriptor should be internal and static.",
-            messageFormat: "The DiagnosticDescriptor should be internal and static.",
-            category: "Tutorial",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor InternalAndStaticErrorRule = CreateRule(InternalAndStaticError, "The DiagnosticDescriptor should be internal and static", "The DiagnosticDescriptor should be internal and static");
 
         public const string MissingRule = "MetaAnalyzer019";
-        internal static DiagnosticDescriptor MissingRuleRule = new DiagnosticDescriptor(
-            id: MissingRule,
-            title: "Missing a rule",
-            messageFormat: "You need to have at least one DiagnosticDescriptor rule",
-            category: "Tutorial",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor MissingRuleRule = CreateRule(MissingRule, "Missing a rule", "You need to have at least one DiagnosticDescriptor rule");
         #endregion
 
         #region id rules
         public const string MissingId = "MetaAnalyzer001";
-        internal static DiagnosticDescriptor MissingIdRule = new DiagnosticDescriptor(
-            id: MissingId,
-            title: "You are missing a diagnostic id",
-            messageFormat: "You are missing a diagnostic id",
-            category: "Tutorial",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor MissingIdRule = CreateRule(MissingId, "You are missing a diagnostic id", "You are missing a diagnostic id");
         #endregion
 
         #region Initialize rules
         public const string MissingInit = "MetaAnalyzer002";
-        internal static DiagnosticDescriptor MissingInitRule = new DiagnosticDescriptor(
-            id: MissingInit,
-            title: "You are missing the required Initialize method",
-            messageFormat: "You are missing the required Initialize method",
-            category: "Tutorial",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor MissingInitRule = CreateRule(MissingInit, "You are missing the required Initialize method", "You are missing the required Initialize method");
 
         public const string MissingRegisterStatement = "MetaAnalyzer003";
-        internal static DiagnosticDescriptor MissingRegisterRule = new DiagnosticDescriptor(
-            id: MissingRegisterStatement,
-            title: "You need to register an action within the Initialize method",
-            messageFormat: "You need to register an action within the Initialize method",
-            category: "Tutorial",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor MissingRegisterRule = CreateRule(MissingRegisterStatement, "You need to register an action within the Initialize method", "You need to register an action within the Initialize method");
 
         public const string TooManyInitStatements = "MetaAnalyzer004";
-        internal static DiagnosticDescriptor TooManyInitStatementsRule = new DiagnosticDescriptor(
-            id: TooManyInitStatements,
-            title: "Please only have one statement within Initiailize. You will only be registering one action.",
-            messageFormat: "Please only have one statement within Initiailize. You will only be registering one action.",
-            category: "Tutorial",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor TooManyInitStatementsRule = CreateRule(TooManyInitStatements, "Please only have one statement within Initiailize. You will only be registering one action", "Please only have one statement within Initiailize. You will only be registering one action");
 
         public const string IncorrectInitStatement = "MetaAnalyzer005";
-        internal static DiagnosticDescriptor IncorrectInitStatementRule = new DiagnosticDescriptor(
-            id: IncorrectInitStatement,
-            title: "This statement needs to register for a supported action",
-            messageFormat: "This statement needs to register for a supported action",
-            category: "Tutorial",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor IncorrectInitStatementRule = CreateRule(IncorrectInitStatement, "This statement needs to register for a supported action", "This statement needs to register for a supported action");
 
         public const string IncorrectInitSig = "MetaAnalyzer006";
-        internal static DiagnosticDescriptor IncorrectInitSigRule = new DiagnosticDescriptor(
-            id: IncorrectInitSig,
-            title: "The signature for the Initialize method is incorrect",
-            messageFormat: "The signature for the Initialize method is incorrect",
-            category: "Tutorial",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor IncorrectInitSigRule = CreateRule(IncorrectInitSig, "The signature for the Initialize method is incorrect", "The signature for the Initialize method is incorrect");
+
+        public const string InvalidStatement = "MetaAnalyzer020";
+        internal static DiagnosticDescriptor InvalidStatementRule = CreateRule(InvalidStatement, "The Initialize method only registers actions: the statement is invalid", "The Initialize method only registers actions: the statement '{0}' is invalid");
         #endregion
 
         #region SupportedDiagnostics rules
         public const string MissingSuppDiag = "MetaAnalyzer007";
-        internal static DiagnosticDescriptor MissingSuppDiagRule = new DiagnosticDescriptor(
-            id: MissingSuppDiag,
-            title: "You are missing the required SupportedDiagnostics method",
-            messageFormat: "You are missing the required SupportedDiagnostics method",
-            category: "Tutorial",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor MissingSuppDiagRule = CreateRule(MissingSuppDiag, "You are missing the required SupportedDiagnostics method", "You are missing the required SupportedDiagnostics method");
 
         public const string IncorrectSigSuppDiag = "MetaAnalyzer008";
-        internal static DiagnosticDescriptor IncorrectSigSuppDiagRule = new DiagnosticDescriptor(
-            id: IncorrectSigSuppDiag,
-            title: "The signature of the SupportedDiagnostics property is incorrect",
-            messageFormat: "The signature of the SupportedDiagnostics property is incorrect",
-            category: "Tutorial",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor IncorrectSigSuppDiagRule = CreateRule(IncorrectSigSuppDiag, "The signature of the SupportedDiagnostics property is incorrect", "The signature of the SupportedDiagnostics property is incorrect");
 
         public const string MissingAccessor = "MetaAnalyzer009";
-        internal static DiagnosticDescriptor MissingAccessorRule = new DiagnosticDescriptor(
-            id: MissingAccessor,
-            title: "You are missing a get accessor in your SupportedDiagnostics property",
-            messageFormat: "You are missing a get accessor in your SupportedDiagnostics property",
-            category: "Tutorial",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor MissingAccessorRule = CreateRule(MissingAccessor, "You are missing a get accessor in your SupportedDiagnostics property", "You are missing a get accessor in your SupportedDiagnostics property");
 
         public const string TooManyAccessors = "MetaAnalyzer010";
-        internal static DiagnosticDescriptor TooManyAccessorsRule = new DiagnosticDescriptor(
-            id: TooManyAccessors,
-            title: "You only need a get accessor for this property",
-            messageFormat: "You only need a get accessor for this property",
-            category: "Tutorial",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor TooManyAccessorsRule = CreateRule(TooManyAccessors, "You only need a get accessor for this property", "You only need a get accessor for this property");
 
         public const string IncorrectAccessorReturn = "MetaAnalyzer011";
-        internal static DiagnosticDescriptor IncorrectAccessorReturnRule = new DiagnosticDescriptor(
-            id: IncorrectAccessorReturn,
-            title: "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules",
-            messageFormat: "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules",
-            category: "Tutorial",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor IncorrectAccessorReturnRule = CreateRule(IncorrectAccessorReturn, "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules", "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules");
 
         public const string SuppDiagReturnValue = "MetaAnalyzer012";
-        internal static DiagnosticDescriptor SuppDiagReturnValueRule = new DiagnosticDescriptor(
-            id: SuppDiagReturnValue,
-            title: "You need to create an immutable array",
-            messageFormat: "You need to create an immutable array",
-            category: "Tutorial",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor SuppDiagReturnValueRule = CreateRule(SuppDiagReturnValue, "You need to create an immutable array", "You need to create an immutable array");
 
         public const string SupportedRules = "MetaAnalyzer013";
-        internal static DiagnosticDescriptor SupportedRulesRule = new DiagnosticDescriptor(
-            id: SupportedRules,
-            title: "The immutable array should contain every DiagnosticDescriptor rule that was created",
-            messageFormat: "The immutable array should contain every DiagnosticDescriptor rule that was created",
-            category: "Tutorial",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor SupportedRulesRule = CreateRule(SupportedRules, "The immutable array should contain every DiagnosticDescriptor rule that was created", "The immutable array should contain every DiagnosticDescriptor rule that was created");
         #endregion
 
         #region analysis rules
         public const string MissingAnalysisMethod = "MetaAnalyzer018";
-        internal static DiagnosticDescriptor MissingAnalysisMethodRule = new DiagnosticDescriptor(
-            id: MissingAnalysisMethod,
-            title: "Missing analysis method",
-            messageFormat: "You are missing the method that was registered to perform the analysis",
-            category: "Tutorial",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor MissingAnalysisMethodRule = CreateRule(MissingAnalysisMethod, "Missing analysis method", "You are missing the method that was registered to perform the analysis");
         #endregion
 
         #region analysis for IfStatement rules
         public const string IfStatementMissing = "MetaAnalyzer024";
-        internal static DiagnosticDescriptor IfStatementMissingRule = new DiagnosticDescriptor(
-            id: IfStatementMissing,
-            title: "Missing 1st step",
-            messageFormat: "The first step is to extract the if statement from {0}",
-            category: "Tutorial",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor IfStatementMissingRule = CreateRule(IfStatementMissing, "Missing 1st step", "The first step is to extract the if statement from {0}");
 
         public const string IfStatementIncorrect = "MetaAnalyzer022";
-        internal static DiagnosticDescriptor IfStatementIncorrectRule = new DiagnosticDescriptor(
-            id: IfStatementIncorrect,
-            title: "If statement extraction incorrect",
-            messageFormat: "This statement should extract the if statement in question by casting {0}.Node to IfStatementSyntax",
-            category: "Tutorial",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor IfStatementIncorrectRule = CreateRule(IfStatementIncorrect, "If statement extraction incorrect", "This statement should extract the if statement in question by casting {0}.Node to IfStatementSyntax");
 
         public const string IfKeywordMissing = "MetaAnalyzer021";
-        internal static DiagnosticDescriptor IfKeywordMissingRule = new DiagnosticDescriptor(
-            id: IfKeywordMissing,
-            title: "Missing 2nd step",
-            messageFormat: "The second step is to extract the 'if' keyword from {0}",
-            category: "Tutorial",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor IfKeywordMissingRule = CreateRule(IfKeywordMissing, "Missing 2nd step", "The second step is to extract the 'if' keyword from {0}");
 
         public const string IfKeywordIncorrect = "MetaAnalyzer025";
-        internal static DiagnosticDescriptor IfKeywordIncorrectRule = new DiagnosticDescriptor(
-            id: IfKeywordIncorrect,
-            title: "Incorrect 2nd step",
-            messageFormat: "This statement should extract the 'if' keyword from {0}",
-            category: "Tutorial",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor IfKeywordIncorrectRule = CreateRule(IfKeywordIncorrect, "Incorrect 2nd step", "This statement should extract the 'if' keyword from {0}");
 
         public const string TrailingTriviaCheckMissing = "MetaAnalyzer026";
-        internal static DiagnosticDescriptor TrailingTriviaCheckMissingRule = new DiagnosticDescriptor(
-            id: TrailingTriviaCheckMissing,
-            title: "Missing 3rd step",
-            messageFormat: "The third step is to begin looking for the space between 'if' and '(' by checking if {0} has trailing trivia",
-            category: "Tutorial",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor TrailingTriviaCheckMissingRule = CreateRule(TrailingTriviaCheckMissing, "Missing 3rd step", "The third step is to begin looking for the space between 'if' and '(' by checking if {0} has trailing trivia");
 
         public const string TrailingTriviaCheckIncorrect = "MetaAnalyzer027";
-        internal static DiagnosticDescriptor TrailingTriviaCheckIncorrectRule = new DiagnosticDescriptor(
-            id: TrailingTriviaCheckIncorrect,
-            title: "Incorrect 3rd step",
-            messageFormat: "This statement should be an if statement that checks to see if {0} has trailing trivia",
-            category: "Tutorial",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor TrailingTriviaCheckIncorrectRule = CreateRule(TrailingTriviaCheckIncorrect, "Incorrect 3rd step", "This statement should be an if statement that checks to see if {0} has trailing trivia");
 
         public const string TrailingTriviaVarMissing = "MetaAnalyzer028";
-        internal static DiagnosticDescriptor TrailingTriviaVarMissingRule = new DiagnosticDescriptor(
-            id: TrailingTriviaVarMissing,
-            title: "Missing 4th step",
-            messageFormat: "The fourth step is to extract the last trailing trivia of {0} into a variable",
-            category: "Tutorial",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor TrailingTriviaVarMissingRule = CreateRule(TrailingTriviaVarMissing, "Missing 4th step", "The fourth step is to extract the last trailing trivia of {0} into a variable");
 
         public const string TrailingTriviaVarIncorrect = "MetaAnalyzer029";
-        internal static DiagnosticDescriptor TrailingTriviaVarIncorrectRule = new DiagnosticDescriptor(
-            id: TrailingTriviaVarIncorrect,
-            title: "Incorrect 4th step",
-            messageFormat: "This statement should extract the last trailing trivia of {0} into a variable",
-            category: "Tutorial",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
-
-        public const string InvalidStatement = "MetaAnalyzer020";
-        internal static DiagnosticDescriptor InvalidStatementRule = new DiagnosticDescriptor(
-            id: InvalidStatement,
-            title: "The Initialize method only registers actions: the statement is invalid",
-            messageFormat: "The Initialize method only registers actions: the statement '{0}' is invalid",
-            category: "Syntax",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor TrailingTriviaVarIncorrectRule = CreateRule(TrailingTriviaVarIncorrect, "Incorrect 4th step", "This statement should extract the last trailing trivia of {0} into a variable");
         #endregion
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
