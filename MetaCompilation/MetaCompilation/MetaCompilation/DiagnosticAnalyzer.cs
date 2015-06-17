@@ -8,199 +8,129 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Text;
+
 namespace MetaCompilation
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class MetaCompilationAnalyzer : DiagnosticAnalyzer
     {
+        public const string RuleCategory = "Tutorial";
+        public const DiagnosticSeverity RuleDefaultSeverity = DiagnosticSeverity.Error;
+        public const bool RuleEnabledByDefault = true;
+        public static DiagnosticDescriptor CreateRule(string id, string title, string messageFormat)
+        {
+            DiagnosticDescriptor rule = new DiagnosticDescriptor(
+                id: id,
+                title: title,
+                messageFormat: messageFormat,
+                defaultSeverity: RuleDefaultSeverity,
+                isEnabledByDefault: RuleEnabledByDefault,
+                category: RuleCategory
+                );
+
+            return rule;
+        }
+
         #region rule rules
 
         public const string IdDeclTypeError = "MetaAnalyzer018";
-        internal static DiagnosticDescriptor IdDeclTypeErrorRule = new DiagnosticDescriptor(
-            id: IdDeclTypeError,
-            title: "Thise diagnostic id type is incorrect.",
-            messageFormat: "The diagnostic id should not be a string literal.",
-            category: "Syntax",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor IdDeclTypeErrorRule = CreateRule(IdDeclTypeError, "This diagnostic id type is incorrect", "The diagnostic id should not be a string literal");
 
         public const string MissingIdDeclaration = "MetaAnalyzer017";
-        internal static DiagnosticDescriptor MissingIdDeclarationRule = new DiagnosticDescriptor(
-            id: MissingIdDeclaration,
-            title: "The diagnostic id declaration is missing.",
-            messageFormat: "This diagnostic id has not been declared.",
-            category: "Syntax",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor MissingIdDeclarationRule = CreateRule(MissingIdDeclaration, "The diagnostic id declaration is missing", "This diagnostic id has not been declared");
 
         public const string DefaultSeverityError = "MetaAnalyzer016";
-        internal static DiagnosticDescriptor DefaultSeverityErrorRule = new DiagnosticDescriptor(
-            id: DefaultSeverityError,
-            title: "defaultSeverity is incorrectly declared.",
-            messageFormat: "defaultSeverity must be of the form: DiagnosticSeverity.[severity].",
-            category: "Syntax",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor DefaultSeverityErrorRule = CreateRule(DefaultSeverityError, "defaultSeverity is incorrectly declared", "defaultSeverity must be of the form: DiagnosticSeverity.[severity]");
 
         public const string EnabledByDefaultError = "MetaAnalyzer015";
-        internal static DiagnosticDescriptor EnabledByDefaultErrorRule = new DiagnosticDescriptor(
-            id: EnabledByDefaultError,
-            title: "isEnabledByDefault should be set to true.",
-            messageFormat: "isEnabledByDefault should be set to true.",
-            category: "Syntax",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor EnabledByDefaultErrorRule = CreateRule(EnabledByDefaultError, "isEnabledByDefault should be set to true", "isEnabledByDefault should be set to true");
 
         public const string InternalAndStaticError = "MetaAnalyzer014";
-        internal static DiagnosticDescriptor InternalAndStaticErrorRule = new DiagnosticDescriptor(
-            id: InternalAndStaticError,
-            title: "The DiagnosticDescriptor should be internal and static.",
-            messageFormat: "The DiagnosticDescriptor should be internal and static.",
-            category: "Syntax",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor InternalAndStaticErrorRule = CreateRule(InternalAndStaticError, "The DiagnosticDescriptor should be internal and static", "The DiagnosticDescriptor should be internal and static");
 
         public const string MissingRule = "MetaAnalyzer019";
-        internal static DiagnosticDescriptor MissingRuleRule = new DiagnosticDescriptor(
-            id: MissingRule,
-            title: "Missing a rule",
-            messageFormat: "You need to have at least one DiagnosticDescriptor rule",
-            category: "Syntax",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor MissingRuleRule = CreateRule(MissingRule, "Missing a rule", "You need to have at least one DiagnosticDescriptor rule");
         #endregion
 
         #region id rules
         public const string MissingId = "MetaAnalyzer001";
-        internal static DiagnosticDescriptor MissingIdRule = new DiagnosticDescriptor(
-            id: MissingId,
-            title: "You are missing a diagnostic id",
-            messageFormat: "You are missing a diagnostic id",
-            category: "Syntax",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor MissingIdRule = CreateRule(MissingId, "You are missing a diagnostic id", "You are missing a diagnostic id");
         #endregion
 
         #region Initialize rules
         public const string MissingInit = "MetaAnalyzer002";
-        internal static DiagnosticDescriptor MissingInitRule = new DiagnosticDescriptor(
-            id: MissingInit,
-            title: "You are missing the required Initialize method",
-            messageFormat: "You are missing the required Initialize method",
-            category: "Syntax",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor MissingInitRule = CreateRule(MissingInit, "You are missing the required Initialize method", "You are missing the required Initialize method");
 
         public const string MissingRegisterStatement = "MetaAnalyzer003";
-        internal static DiagnosticDescriptor MissingRegisterRule = new DiagnosticDescriptor(
-            id: MissingRegisterStatement,
-            title: "You need to register an action within the Initialize method",
-            messageFormat: "You need to register an action within the Initialize method",
-            category: "Syntax",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor MissingRegisterRule = CreateRule(MissingRegisterStatement, "You need to register an action within the Initialize method", "You need to register an action within the Initialize method");
 
         public const string TooManyInitStatements = "MetaAnalyzer004";
-        internal static DiagnosticDescriptor TooManyInitStatementsRule = new DiagnosticDescriptor(
-            id: TooManyInitStatements,
-            title: "Please only have one statement within Initiailize. You will only be registering one action.",
-            messageFormat: "Please only have one statement within Initiailize. You will only be registering one action.",
-            category: "Syntax",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor TooManyInitStatementsRule = CreateRule(TooManyInitStatements, "Please only have one statement within Initiailize. You will only be registering one action", "Please only have one statement within Initiailize. You will only be registering one action");
 
         public const string IncorrectInitStatement = "MetaAnalyzer005";
-        internal static DiagnosticDescriptor IncorrectInitStatementRule = new DiagnosticDescriptor(
-            id: IncorrectInitStatement,
-            title: "This statement needs to register for a supported action",
-            messageFormat: "This statement needs to register for a supported action",
-            category: "Syntax",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor IncorrectInitStatementRule = CreateRule(IncorrectInitStatement, "This statement needs to register for a supported action", "This statement needs to register for a supported action");
 
         public const string IncorrectInitSig = "MetaAnalyzer006";
-        internal static DiagnosticDescriptor IncorrectInitSigRule = new DiagnosticDescriptor(
-            id: IncorrectInitSig,
-            title: "The signature for the Initialize method is incorrect",
-            messageFormat: "The signature for the Initialize method is incorrect",
-            category: "Syntax",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor IncorrectInitSigRule = CreateRule(IncorrectInitSig, "The signature for the Initialize method is incorrect", "The signature for the Initialize method is incorrect");
+
+        public const string InvalidStatement = "MetaAnalyzer020";
+        internal static DiagnosticDescriptor InvalidStatementRule = CreateRule(InvalidStatement, "The Initialize method only registers actions: the statement is invalid", "The Initialize method only registers actions: the statement '{0}' is invalid");
         #endregion
 
         #region SupportedDiagnostics rules
         public const string MissingSuppDiag = "MetaAnalyzer007";
-        internal static DiagnosticDescriptor MissingSuppDiagRule = new DiagnosticDescriptor(
-            id: MissingSuppDiag,
-            title: "You are missing the required SupportedDiagnostics method",
-            messageFormat: "You are missing the required SupportedDiagnostics method",
-            category: "Syntax",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor MissingSuppDiagRule = CreateRule(MissingSuppDiag, "You are missing the required SupportedDiagnostics method", "You are missing the required SupportedDiagnostics method");
 
         public const string IncorrectSigSuppDiag = "MetaAnalyzer008";
-        internal static DiagnosticDescriptor IncorrectSigSuppDiagRule = new DiagnosticDescriptor(
-            id: IncorrectSigSuppDiag,
-            title: "The signature of the SupportedDiagnostics property is incorrect",
-            messageFormat: "The signature of the SupportedDiagnostics property is incorrect",
-            category: "Syntax",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor IncorrectSigSuppDiagRule = CreateRule(IncorrectSigSuppDiag, "The signature of the SupportedDiagnostics property is incorrect", "The signature of the SupportedDiagnostics property is incorrect");
 
         public const string MissingAccessor = "MetaAnalyzer009";
-        internal static DiagnosticDescriptor MissingAccessorRule = new DiagnosticDescriptor(
-            id: MissingAccessor,
-            title: "You are missing a get accessor in your SupportedDiagnostics property",
-            messageFormat: "You are missing a get accessor in your SupportedDiagnostics property",
-            category: "Syntax",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor MissingAccessorRule = CreateRule(MissingAccessor, "You are missing a get accessor in your SupportedDiagnostics property", "You are missing a get accessor in your SupportedDiagnostics property");
 
         public const string TooManyAccessors = "MetaAnalyzer010";
-        internal static DiagnosticDescriptor TooManyAccessorsRule = new DiagnosticDescriptor(
-            id: TooManyAccessors,
-            title: "You only need a get accessor for this property",
-            messageFormat: "You only need a get accessor for this property",
-            category: "Syntax",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor TooManyAccessorsRule = CreateRule(TooManyAccessors, "You only need a get accessor for this property", "You only need a get accessor for this property");
 
         public const string IncorrectAccessorReturn = "MetaAnalyzer011";
-        internal static DiagnosticDescriptor IncorrectAccessorReturnRule = new DiagnosticDescriptor(
-            id: IncorrectAccessorReturn,
-            title: "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules",
-            messageFormat: "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules",
-            category: "Syntax",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor IncorrectAccessorReturnRule = CreateRule(IncorrectAccessorReturn, "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules", "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules");
 
         public const string SuppDiagReturnValue = "MetaAnalyzer012";
-        internal static DiagnosticDescriptor SuppDiagReturnValueRule = new DiagnosticDescriptor(
-            id: SuppDiagReturnValue,
-            title: "You need to create an immutable array",
-            messageFormat: "You need to create an immutable array",
-            category: "Syntax",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor SuppDiagReturnValueRule = CreateRule(SuppDiagReturnValue, "You need to create an immutable array", "You need to create an immutable array");
 
         public const string SupportedRules = "MetaAnalyzer013";
-        internal static DiagnosticDescriptor SupportedRulesRule = new DiagnosticDescriptor(
-            id: SupportedRules,
-            title: "The immutable array should contain every DiagnosticDescriptor rule that was created",
-            messageFormat: "The immutable array should contain every DiagnosticDescriptor rule that was created",
-            category: "Syntax",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        internal static DiagnosticDescriptor SupportedRulesRule = CreateRule(SupportedRules, "The immutable array should contain every DiagnosticDescriptor rule that was created", "The immutable array should contain every DiagnosticDescriptor rule that was created");
+        #endregion
 
-        public const string InvalidStatement = "MetaAnalyzer020";
-        internal static DiagnosticDescriptor InvalidStatementRule = new DiagnosticDescriptor(
-            id: InvalidStatement,
-            title: "The Initialize method only registers actions: the statement is invalid",
-            messageFormat: "The Initialize method only registers actions: the statement '{0}' is invalid",
-            category: "Syntax",
-            defaultSeverity: DiagnosticSeverity.Error,
-            isEnabledByDefault: true);
+        #region analysis rules
+        public const string MissingAnalysisMethod = "MetaAnalyzer018";
+        internal static DiagnosticDescriptor MissingAnalysisMethodRule = CreateRule(MissingAnalysisMethod, "Missing analysis method", "You are missing the method that was registered to perform the analysis");
+        #endregion
+
+        #region analysis for IfStatement rules
+        public const string IfStatementMissing = "MetaAnalyzer024";
+        internal static DiagnosticDescriptor IfStatementMissingRule = CreateRule(IfStatementMissing, "Missing 1st step", "The first step is to extract the if statement from {0}");
+
+        public const string IfStatementIncorrect = "MetaAnalyzer022";
+        internal static DiagnosticDescriptor IfStatementIncorrectRule = CreateRule(IfStatementIncorrect, "If statement extraction incorrect", "This statement should extract the if statement in question by casting {0}.Node to IfStatementSyntax");
+
+        public const string IfKeywordMissing = "MetaAnalyzer021";
+        internal static DiagnosticDescriptor IfKeywordMissingRule = CreateRule(IfKeywordMissing, "Missing 2nd step", "The second step is to extract the 'if' keyword from {0}");
+
+        public const string IfKeywordIncorrect = "MetaAnalyzer025";
+        internal static DiagnosticDescriptor IfKeywordIncorrectRule = CreateRule(IfKeywordIncorrect, "Incorrect 2nd step", "This statement should extract the 'if' keyword from {0}");
+
+        public const string TrailingTriviaCheckMissing = "MetaAnalyzer026";
+        internal static DiagnosticDescriptor TrailingTriviaCheckMissingRule = CreateRule(TrailingTriviaCheckMissing, "Missing 3rd step", "The third step is to begin looking for the space between 'if' and '(' by checking if {0} has trailing trivia");
+
+        public const string TrailingTriviaCheckIncorrect = "MetaAnalyzer027";
+        internal static DiagnosticDescriptor TrailingTriviaCheckIncorrectRule = CreateRule(TrailingTriviaCheckIncorrect, "Incorrect 3rd step", "This statement should be an if statement that checks to see if {0} has trailing trivia");
+
+        public const string TrailingTriviaVarMissing = "MetaAnalyzer028";
+        internal static DiagnosticDescriptor TrailingTriviaVarMissingRule = CreateRule(TrailingTriviaVarMissing, "Missing 4th step", "The fourth step is to extract the last trailing trivia of {0} into a variable");
+
+        public const string TrailingTriviaVarIncorrect = "MetaAnalyzer029";
+        internal static DiagnosticDescriptor TrailingTriviaVarIncorrectRule = CreateRule(TrailingTriviaVarIncorrect, "Incorrect 4th step", "This statement should extract the last trailing trivia of {0} into a variable");
         #endregion
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
@@ -224,6 +154,20 @@ namespace MetaCompilation
                                              EnabledByDefaultErrorRule, 
                                              DefaultSeverityErrorRule, 
                                              InternalAndStaticErrorRule,
+                                             MissingRuleRule,
+                                             MissingAnalysisMethodRule,
+                                             IfStatementMissingRule,
+                                             IfKeywordMissingRule,
+                                             IfStatementIncorrectRule,
+                                             IdDeclTypeErrorRule,
+                                             IfStatementMissingRule,
+                                             IfKeywordMissingRule,
+                                             IfStatementIncorrectRule,
+                                             IfKeywordIncorrectRule,
+                                             TrailingTriviaCheckMissingRule,
+                                             TrailingTriviaCheckIncorrectRule,
+                                             TrailingTriviaVarMissingRule,
+                                             TrailingTriviaVarIncorrectRule,
                                              InvalidStatementRule,
                                              IdDeclTypeErrorRule);
             }
@@ -292,12 +236,10 @@ namespace MetaCompilation
                 {
                     return;
                 }
+                IMethodSymbol analysisMethodSymbol = null;
                 if (registerArgs.Count > 0)
                 {
-                    if (registerArgs[0] != null)
-                    {
-                        var analysisMethodSymbol = (IMethodSymbol)registerArgs[0];
-                    }
+                        analysisMethodSymbol = (IMethodSymbol)registerArgs[0];
                 }
                 IFieldSymbol kind = null;
                 if (registerArgs.Count > 1)
@@ -336,7 +278,7 @@ namespace MetaCompilation
                                 if (supportedDiagnosticsCorrect)
                                 {
                                     //check the SyntaxNode, Symbol, Compilation, CodeBlock, etc analysis method(s)
-                                    bool analysisCorrect = CheckAnalysis(_branchesDict[registerSymbol.Name], kindName, ruleNames, context);
+                                    bool analysisCorrect = CheckAnalysis(_branchesDict[registerSymbol.Name], kindName, ruleNames, context, analysisMethodSymbol);
                                     if (analysisCorrect)
                                     {
                                         //diagnostic to go to code fix
@@ -374,10 +316,410 @@ namespace MetaCompilation
                     return;
                 }
             }
-
-            internal bool CheckAnalysis(string branch, string kind, List<string> ruleNames, CompilationAnalysisContext context)
+            
+            //checks the syntax tree analysis part of the analyzer
+            internal bool CheckAnalysis(string branch, string kind, List<string> ruleNames, CompilationAnalysisContext context, IMethodSymbol analysisMethodSymbol)
             {
-                throw new NotImplementedException();
+                if (branch == "SyntaxNode")
+                {
+                    if (kind == "IfStatement")
+                    {
+                        return CheckIfStatementAnalysis(branch, kind, ruleNames, context, analysisMethodSymbol);
+                    }
+                }
+
+                return false;
+            }
+
+            #region CheckAnalysis for IfStatement
+            internal bool CheckIfStatementAnalysis(string branch, string kind, List<string> ruleNames, CompilationAnalysisContext context, IMethodSymbol analysisMethodSymbol)
+            {
+                var getStatements = AnalysisGetStatements(analysisMethodSymbol);
+                if (getStatements.Count == 0)
+                {
+                    return false;
+                }
+
+                var methodDeclaration = getStatements[0] as MethodDeclarationSyntax;
+                var statements = (SyntaxList<StatementSyntax>)getStatements[1];
+                var contextParameter = methodDeclaration.ParameterList.Parameters[0] as ParameterSyntax;
+                if (contextParameter == null)
+                {
+                    return false;
+                }
+
+                int statementCount = statements.Count;
+
+                if (statementCount > 0)
+                {
+                    SyntaxToken statementIdentifierToken = IfStatementAnalysis1(context, statements, contextParameter);
+                    if (statementIdentifierToken.Text == "")
+                    {
+                        ReportDiagnostic(context, IfStatementIncorrectRule, statements[0].GetLocation(), contextParameter.Identifier.Text);
+                        return false;
+                    }
+
+                    if (statementCount > 1)
+                    {
+                        SyntaxToken keywordIdentifierToken = IfStatementAnalysis2(context, statements, statementIdentifierToken);
+                        if (keywordIdentifierToken.Text == "")
+                        {
+                            ReportDiagnostic(context, IfKeywordIncorrectRule, statements[1].GetLocation(), statementIdentifierToken.Text);
+                            return false;
+                        }
+
+                        if (statementCount > 2)
+                        {
+                            var triviaBlock = IfStatementAnalysis3(context, statements, keywordIdentifierToken) as BlockSyntax;
+                            if (triviaBlock == null)
+                            {
+                                ReportDiagnostic(context, TrailingTriviaCheckIncorrectRule, statements[2].GetLocation(), keywordIdentifierToken.Text);
+                                return false;
+                            }
+
+                            SyntaxList<StatementSyntax> triviaBlockStatements = triviaBlock.Statements;
+                            if (triviaBlockStatements == null)
+                            {
+                                ReportDiagnostic(context, TrailingTriviaVarMissingRule, triviaBlock.GetLocation(), keywordIdentifierToken.Text);
+                                return false;
+                            }
+
+                            if (triviaBlockStatements.Count > 0)
+                            {
+                                SyntaxToken triviaIdentifierToken = IfStatementAnalysis4(context, triviaBlockStatements, keywordIdentifierToken);
+                                if (triviaIdentifierToken.Text == "")
+                                {
+                                    ReportDiagnostic(context, TrailingTriviaVarIncorrectRule, triviaBlockStatements[0].GetLocation(), keywordIdentifierToken.Text);
+                                    return false;
+                                }
+                            }
+                            else
+                            {
+                                ReportDiagnostic(context, TrailingTriviaVarMissingRule, triviaBlock.GetLocation(), keywordIdentifierToken.Text);
+                                return false;
+                            }
+
+                        }
+                        else
+                        {
+                            ReportDiagnostic(context, TrailingTriviaCheckMissingRule, statements[1].GetLocation(), keywordIdentifierToken.Text);
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        ReportDiagnostic(context, IfKeywordMissingRule, statements[0].GetLocation(), statementIdentifierToken.Text);
+                    }
+                }
+                else
+                {
+                    ReportDiagnostic(context, IfStatementMissingRule, methodDeclaration.Identifier.GetLocation(), contextParameter.Identifier.Text);
+                    return false;
+                }
+
+                return true;
+            }
+
+            internal SyntaxToken IfStatementAnalysis1(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, ParameterSyntax contextParameter)
+            {
+                var emptyResult = SyntaxFactory.Identifier("");
+                var ifStatement = statements[0] as LocalDeclarationStatementSyntax;
+                if (ifStatement == null)
+                {
+                    return emptyResult;
+                }
+
+                var statementName = GetIdentifierTokenFromLocalDecl(ifStatement);
+                if (statementName.Text == "")
+                {
+                    return emptyResult;
+                }
+
+                var statementEqualsValueClause = GetEqualsValueClauseFromLocalDecl(ifStatement);
+                if (statementEqualsValueClause == null)
+                {
+                    return emptyResult;
+                }
+
+                var statementCastExpression = statementEqualsValueClause.Value as CastExpressionSyntax;
+                if (statementCastExpression == null)
+                {
+                    return emptyResult;
+                }
+
+                var statementIdentifier = statementCastExpression.Type as TypeSyntax;
+                //TODO: figure out how to make this not use ToString()
+                if (statementIdentifier == null || statementIdentifier.ToString() != "IfStatementSyntax")
+                {
+                    return emptyResult;
+                }
+
+                var statementExpression = statementCastExpression.Expression as MemberAccessExpressionSyntax;
+                if (statementExpression == null)
+                {
+                    return emptyResult;
+                }
+
+                var statementExpressionIdentifier = statementExpression.Expression as IdentifierNameSyntax;
+                if (statementExpressionIdentifier == null || statementExpressionIdentifier.Identifier.Text != contextParameter.Identifier.Text)
+                {
+                    return emptyResult;
+                }
+
+                var statementExpressionNode = statementExpression.Name as IdentifierNameSyntax;
+                if (statementExpressionNode == null || statementExpressionNode.Identifier.Text != "Node")
+                {
+                    return emptyResult;
+                }
+
+                return statementName;
+            }
+
+            internal SyntaxToken IfStatementAnalysis2(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, SyntaxToken statementIdentifierToken)
+            {
+                var emptyResult = SyntaxFactory.Identifier("");
+                var statement = statements[1] as LocalDeclarationStatementSyntax;
+                if (statement == null)
+                {
+                    return emptyResult;
+                }
+
+                SyntaxToken keywordIdentifierToken = GetIdentifierTokenFromLocalDecl(statement);
+                if (keywordIdentifierToken.Text == "")
+                {
+                    return emptyResult;
+                }
+
+                var equalsValueClause = GetEqualsValueClauseFromLocalDecl(statement);
+                if (equalsValueClause == null)
+                {
+                    return emptyResult;
+                }
+
+                var memberExpr = equalsValueClause.Value as MemberAccessExpressionSyntax;
+                if (memberExpr == null)
+                {
+                    return emptyResult;
+                }
+
+                var identifier = memberExpr.Expression as IdentifierNameSyntax;
+                if (identifier == null || identifier.Identifier.Text != statementIdentifierToken.Text)
+                {
+                    return emptyResult;
+                }
+
+                var name = memberExpr.Name as IdentifierNameSyntax;
+                if (name == null || name.Identifier.Text != "IfKeyword")
+                {
+                    return emptyResult;
+                }
+
+                return keywordIdentifierToken;
+            }
+
+            internal BlockSyntax IfStatementAnalysis3(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, SyntaxToken keywordIdentifierToken)
+            {
+                BlockSyntax emptyResult = null;
+
+                var statement = statements[2] as IfStatementSyntax;
+                if (statement == null)
+                {
+                    return emptyResult;
+                }
+
+                var booleanExpression = statement.Condition as MemberAccessExpressionSyntax;
+                if (booleanExpression == null)
+                {
+                    return emptyResult;
+                }
+
+                var identifier = booleanExpression.Expression as IdentifierNameSyntax;
+                if (identifier == null || identifier.Identifier.Text != keywordIdentifierToken.Text)
+                {
+                    return emptyResult;
+                }
+
+                var name = booleanExpression.Name as IdentifierNameSyntax;
+                if (name == null || name.Identifier.Text != "HasTrailingTrivia")
+                {
+                    return emptyResult;
+                }
+
+                var block = statement.Statement as BlockSyntax;
+                if (block == null)
+                {
+                    return emptyResult;
+                }
+
+                return block;
+            }
+
+            internal SyntaxToken IfStatementAnalysis4(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, SyntaxToken keywordIdentifierToken)
+            {
+                var emptyResult = SyntaxFactory.Identifier("");
+                var statement = statements[0] as LocalDeclarationStatementSyntax;
+                if (statement == null)
+                {
+                    return emptyResult;
+                }
+
+                SyntaxToken triviaIdentifierToken = GetIdentifierTokenFromLocalDecl(statement);
+                if (triviaIdentifierToken.Text == "")
+                {
+                    return emptyResult;
+                }
+
+                var statementEqualsValueClause = GetEqualsValueClauseFromLocalDecl(statement);
+                if (statementEqualsValueClause == null)
+                {
+                    return emptyResult;
+                }
+
+                var invocationExpression = statementEqualsValueClause.Value as InvocationExpressionSyntax;
+                if (invocationExpression == null)
+                {
+                    return emptyResult;
+                }
+
+                var memberExpr = invocationExpression.Expression as MemberAccessExpressionSyntax;
+                if (memberExpr == null)
+                {
+                    return emptyResult;
+                }
+
+                var memberExprInner = memberExpr.Expression as MemberAccessExpressionSyntax;
+                if (memberExprInner == null)
+                {
+                    return emptyResult;
+                }
+
+                var innerIdentifier = memberExprInner.Expression as IdentifierNameSyntax;
+                if (innerIdentifier == null || innerIdentifier.Identifier.Text != keywordIdentifierToken.Text)
+                {
+                    return emptyResult;
+                }
+
+                var innerName = memberExprInner.Name as IdentifierNameSyntax;
+                if (innerName == null || innerName.Identifier.Text != "TrailingTrivia")
+                {
+                    return emptyResult;
+                }
+
+                var memberExprName = memberExpr.Name as IdentifierNameSyntax;
+                if (memberExprName == null || memberExprName.Identifier.Text != "Last")
+                {
+                    return emptyResult;
+                }
+
+                return triviaIdentifierToken;
+            }
+
+            internal EqualsValueClauseSyntax GetEqualsValueClauseFromLocalDecl(LocalDeclarationStatementSyntax statement)
+            {
+                EqualsValueClauseSyntax emptyResult = null;
+                if (statement == null)
+                {
+                    return emptyResult;
+                }
+
+                var variableDeclaration = statement.Declaration as VariableDeclarationSyntax;
+                if (variableDeclaration == null)
+                {
+                    return emptyResult;
+                }
+
+                SeparatedSyntaxList<VariableDeclaratorSyntax> variables = variableDeclaration.Variables;
+                if (variables == null || variables.Count != 1)
+                {
+                    return emptyResult;
+                }
+
+                var variableDeclarator = variables[0] as VariableDeclaratorSyntax;
+                if (variableDeclarator == null)
+                {
+                    return emptyResult;
+                }
+
+                SyntaxToken identifier = variableDeclarator.Identifier;
+                if (identifier == null)
+                {
+                    return emptyResult;
+                }
+
+                var equalsValueClause = variableDeclarator.Initializer as EqualsValueClauseSyntax;
+                if (equalsValueClause == null)
+                {
+                    return emptyResult;
+                }
+
+                return equalsValueClause;
+            }
+
+            internal SyntaxToken GetIdentifierTokenFromLocalDecl(LocalDeclarationStatementSyntax statement)
+            {
+                var emptyResult = SyntaxFactory.Identifier("");
+                if (statement == null)
+                {
+                    return emptyResult;
+                }
+
+                var variableDeclaration = statement.Declaration as VariableDeclarationSyntax;
+                if (variableDeclaration == null)
+                {
+                    return emptyResult;
+                }
+
+                SeparatedSyntaxList<VariableDeclaratorSyntax> variables = variableDeclaration.Variables;
+                if (variables == null || variables.Count != 1)
+                {
+                    return emptyResult;
+                }
+
+                var variableDeclarator = variables[0] as VariableDeclaratorSyntax;
+                if (variableDeclarator == null)
+                {
+                    return emptyResult;
+                }
+
+                SyntaxToken identifier = variableDeclarator.Identifier;
+                if (identifier == null)
+                {
+                    return emptyResult;
+                }
+
+                return identifier;
+            }
+            #endregion
+
+            internal List<object> AnalysisGetStatements(IMethodSymbol analysisMethodSymbol)
+            {
+                List<object> result = new List<object>();
+                if (analysisMethodSymbol == null)
+                {
+                    return result;
+                }
+
+                var methodDeclaration = analysisMethodSymbol.DeclaringSyntaxReferences[0].GetSyntax() as MethodDeclarationSyntax;
+                if (methodDeclaration == null)
+                {
+                    return result;
+                }
+
+                var body = methodDeclaration.Body as BlockSyntax;
+                if (body == null)
+                {
+                    return result;
+                }
+
+                SyntaxList<StatementSyntax> statements = body.Statements;
+                if (statements == null)
+                {
+                    return result;
+                }
+
+                result.Add(methodDeclaration);
+                result.Add(statements);
+                return result;
             }
 
             //returns a boolean based on whether or not the SupportedDiagnostics property is correct
