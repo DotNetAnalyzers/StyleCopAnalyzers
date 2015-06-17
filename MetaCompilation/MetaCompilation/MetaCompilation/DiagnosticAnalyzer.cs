@@ -196,8 +196,8 @@ namespace MetaCompilation
         public const string InvalidStatement = "MetaAnalyzer020";
         internal static DiagnosticDescriptor InvalidStatementRule = new DiagnosticDescriptor(
             id: InvalidStatement,
-            title: "The initialize method should only register actions",
-            messageFormat: "'{0}' is an invalid statement",
+            title: "The Initialize method only registers actions: the statement is invalid",
+            messageFormat: "The Initialize method only registers actions: the statement '{0}' is invalid",
             category: "Syntax",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
