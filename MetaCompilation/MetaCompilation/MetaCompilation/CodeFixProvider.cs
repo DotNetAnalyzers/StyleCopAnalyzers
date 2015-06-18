@@ -29,7 +29,8 @@ namespace MetaCompilation
                     MetaCompilationAnalyzer.MissingInit, 
                     MetaCompilationAnalyzer.MissingRegisterStatement,
                     MetaCompilationAnalyzer.TooManyInitStatements,
-                    MetaCompilationAnalyzer.InvalidStatement);
+                    MetaCompilationAnalyzer.InvalidStatement,
+                    MetaCompilationAnalyzer.IncorrectInitSig);
             }
         }
 
@@ -77,35 +78,22 @@ namespace MetaCompilation
                     StatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("The Initialize method can only register actions, all other statements are invalid", c => InvalidStatementAsync(context.Document, declaration, c)), diagnostic);
                 }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectInitSig))
+                {
+                    MethodDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("The Initialize method must have the correct signature to differentiate it", c => IncorrectSigAsync(context.Document, declaration, c)), diagnostic);
+                }
             }
         }
 
-        private async Task<Document> MissingInitAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
-        {
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-            var type = SyntaxFactory.ParseTypeName("AnalysisContext");
-            var parameters = new[] { generator.ParameterDeclaration("context", type) };
-            SemanticModel semanticModel = await document.GetSemanticModelAsync();
-            INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException");
-            var statements = new[] { generator.ThrowStatement(generator.ObjectCreationExpression(notImplementedException)) };
-            var initializeDeclaration = generator.MethodDeclaration("Initialize", parameters: parameters,
-                accessibility: Accessibility.Public, modifiers: DeclarationModifiers.Override, statements: statements);
-
-            var newClassDeclaration = generator.AddMembers(declaration, initializeDeclaration);
-
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(declaration, newClassDeclaration);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-
-            return newDocument;
-        }
-
+        #region id code fix
         private async Task<Document> MissingIdAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
         {
             var idToken = SyntaxFactory.ParseToken("spacingRuleId");
-            
+
             var expressionKind = SyntaxFactory.ParseExpression("\"IfSpacing\"") as ExpressionSyntax;
-            
+
             var equalsValueClause = SyntaxFactory.EqualsValueClause(expressionKind);
             var idDeclarator = SyntaxFactory.VariableDeclarator(idToken, null, equalsValueClause);
 
@@ -128,6 +116,23 @@ namespace MetaCompilation
             {
                 newClassDeclaration = newClassDeclaration.AddMembers(member);
             }
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, newClassDeclaration);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+        #endregion
+
+        #region initialize code fix
+        private async Task<Document> MissingInitAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            SemanticModel semanticModel = await document.GetSemanticModelAsync();
+            var initializeDeclaration = BuildInitialize(document, semanticModel);
+
+            var newClassDeclaration = generator.AddMembers(declaration, initializeDeclaration);
 
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root.ReplaceNode(declaration, newClassDeclaration);
@@ -205,5 +210,26 @@ namespace MetaCompilation
 
             return newDocument;
         }
+
+        private async Task<Document> IncorrectSigAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+
+        #region helper functions
+        private  SyntaxNode BuildInitialize(Document document, SemanticModel semanticModel)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            var type = SyntaxFactory.ParseTypeName("AnalysisContext");
+            var parameters = new[] { generator.ParameterDeclaration("context", type) };
+            INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException");
+            var statements = new[] { generator.ThrowStatement(generator.ObjectCreationExpression(notImplementedException)) };
+            var initializeDeclaration = generator.MethodDeclaration("Initialize", parameters: parameters,
+                accessibility: Accessibility.Public, modifiers: DeclarationModifiers.Override, statements: statements);
+
+            return initializeDeclaration;
+        }
+        #endregion
     }
 }
