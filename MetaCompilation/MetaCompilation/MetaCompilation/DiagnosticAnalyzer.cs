@@ -16,10 +16,12 @@ namespace MetaCompilation
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class MetaCompilationAnalyzer : DiagnosticAnalyzer
     {
+        //default values for the DiagnosticDescriptors
         public const string RuleCategory = "Tutorial";
         public const DiagnosticSeverity RuleDefaultSeverity = DiagnosticSeverity.Error;
         public const bool RuleEnabledByDefault = true;
 
+        //creates a DiagnosticDescriptor with the above defaults
         public static DiagnosticDescriptor CreateRule(string id, string title, string messageFormat)
         {
             DiagnosticDescriptor rule = new DiagnosticDescriptor(
@@ -261,19 +263,23 @@ namespace MetaCompilation
             context.RegisterCompilationStartAction(SetupAnalysis);
         }
 
+        //creates an instance of a class to perform the analysis statefully, and registers for various actions
         private void SetupAnalysis(CompilationStartAnalysisContext context)
         {
-            //information collector
+            //state collector
             CompilationAnalyzer compilationAnalyzer = new CompilationAnalyzer();
 
+            //collects all class, method, field, and property symbols as state
             context.RegisterSymbolAction(compilationAnalyzer.AddClass, SymbolKind.NamedType);
             context.RegisterSymbolAction(compilationAnalyzer.AddMethod, SymbolKind.Method);
             context.RegisterSymbolAction(compilationAnalyzer.AddField, SymbolKind.Field);
             context.RegisterSymbolAction(compilationAnalyzer.AddProperty, SymbolKind.Property);
 
+            //analyzes the state that has been collected
             context.RegisterCompilationEndAction(compilationAnalyzer.ReportCompilationEndDiagnostics);
         }
 
+        //performs stateful analysis
         class CompilationAnalyzer
         {
             private List<IMethodSymbol> _analyzerMethodSymbols = new List<IMethodSymbol>();
@@ -285,6 +291,7 @@ namespace MetaCompilation
             private INamedTypeSymbol _analyzerClassSymbol = null;
             private Dictionary<string, string> _branchesDict = new Dictionary<string, string>();
 
+            //"main" method, performs the analysis once state has been collected
             internal void ReportCompilationEndDiagnostics(CompilationAnalysisContext context)
             {
                 //supported main branches for tutorial
@@ -335,6 +342,7 @@ namespace MetaCompilation
                 {
                     return;
                 }
+                
                 //interpret initialize info
                 if (_branchesDict.ContainsKey(registerSymbol.Name))
                 {
@@ -364,7 +372,7 @@ namespace MetaCompilation
                                     bool analysisCorrect = CheckAnalysis(_branchesDict[registerSymbol.Name], kindName, ruleNames, context, analysisMethodSymbol);
                                     if (analysisCorrect)
                                     {
-                                        //diagnostic to go to code fix once 
+                                        //TODO: diagnostic to go to code fix once there is a tutorial for the code fix writing
                                     }
                                     else
                                     {
@@ -384,7 +392,6 @@ namespace MetaCompilation
                         }
                         else
                         {
-                            // diagnostic for missing id names
                            ReportDiagnostic(context, MissingIdRule, _analyzerClassSymbol.Locations[0], _analyzerClassSymbol.Name.ToString());
                         }
                     }
@@ -399,7 +406,7 @@ namespace MetaCompilation
                 }
             }
             
-            //checks the syntax tree analysis part of the analyzer
+            //checks the syntax tree analysis part of the user analyzer, returns a bool representing whether the check was successful or not
             internal bool CheckAnalysis(string branch, string kind, List<string> ruleNames, CompilationAnalysisContext context, IMethodSymbol analysisMethodSymbol)
             {
                 if (branch == "SyntaxNode")
@@ -414,6 +421,7 @@ namespace MetaCompilation
             }
 
             #region CheckAnalysis for IfStatement
+            //checks the AnalyzeIfStatement of the user's analyzer, returns a bool representing whether the check was successful or not
             internal bool CheckIfStatementAnalysis(string branch, string kind, List<string> ruleNames, CompilationAnalysisContext context, IMethodSymbol analysisMethodSymbol)
             {
                 var getStatements = AnalysisGetStatements(analysisMethodSymbol);
@@ -603,6 +611,7 @@ namespace MetaCompilation
                 return true;
             }
 
+            //checks step one of the user's AnalyzerIfStatement method, returns a SyntaxToken of "" if analysis failed
             internal SyntaxToken IfStatementAnalysis1(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, ParameterSyntax contextParameter)
             {
                 var emptyResult = SyntaxFactory.Identifier("");
@@ -658,6 +667,7 @@ namespace MetaCompilation
                 return statementName;
             }
 
+            //checks step two of the user's AnalyzerIfStatement method, returns a SyntaxToken of "" if analysis failed
             internal SyntaxToken IfStatementAnalysis2(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, SyntaxToken statementIdentifierToken)
             {
                 var emptyResult = SyntaxFactory.Identifier("");
@@ -700,6 +710,7 @@ namespace MetaCompilation
                 return keywordIdentifierToken;
             }
 
+            //checks step three of the user's AnalyzerIfStatement method, returns null if analysis failed
             internal BlockSyntax IfStatementAnalysis3(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, SyntaxToken keywordIdentifierToken)
             {
                 BlockSyntax emptyResult = null;
@@ -737,6 +748,7 @@ namespace MetaCompilation
                 return block;
             }
 
+            //checks step four of the user's AnalyzerIfStatement method, returns a SyntaxToken of "" if analysis failed
             internal SyntaxToken IfStatementAnalysis4(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, SyntaxToken keywordIdentifierToken)
             {
                 var emptyResult = SyntaxFactory.Identifier("");
@@ -797,6 +809,7 @@ namespace MetaCompilation
                 return triviaIdentifierToken;
             }
 
+            //checks step five of the user's AnalyzerIfStatement method, returns null if analysis failed
             internal BlockSyntax IfStatementAnalysis5(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, SyntaxToken triviaIdentifierToken)
             {
                 BlockSyntax emptyResult = null;
@@ -874,7 +887,8 @@ namespace MetaCompilation
 
                 return block;
             }
-            
+
+            //checks step six of the user's AnalyzerIfStatement method, returns null if analysis failed
             internal BlockSyntax IfStatementAnalysis6(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, SyntaxToken triviaIdentifierToken)
             {
                 BlockSyntax emptyResult = null;
@@ -948,6 +962,7 @@ namespace MetaCompilation
                 return block;
             }
 
+            //checks step seven of the user's AnalyzerIfStatement method, returns a bool representing whether or not analysis failed
             internal bool IfStatementAnalysis7(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements)
             {
                 var statement = statements[0] as ReturnStatementSyntax;
@@ -959,6 +974,7 @@ namespace MetaCompilation
                 return true;
             }
 
+            //checks the buildup steps of creating a diagnostic, returns a bool representing whether or not analysis failed
             internal bool CheckDiagnosticCreation(CompilationAnalysisContext context, SyntaxToken statementIdentifierToken, SyntaxToken keywordIdentifierToken, List<string> ruleNames, SyntaxList<StatementSyntax> statements, ParameterSyntax contextParameter)
             {
                 int statementCount = statements.Count;
@@ -1064,6 +1080,7 @@ namespace MetaCompilation
                 return true;
             }
 
+            //checks the open parenthesis variable, returns a SyntaxToken of "" if analysis failed
             internal SyntaxToken OpenParenAnalysis(CompilationAnalysisContext context, SyntaxToken statementIdentifierToken, SyntaxList<StatementSyntax> statements)
             {
                 var emptyResult = SyntaxFactory.Identifier("");
@@ -1107,6 +1124,7 @@ namespace MetaCompilation
                 return openParenIdentifier;
             }
 
+            //checks the start of the diagnostic span, returns a SyntaxToken of "" if analysis failed
             internal SyntaxToken StartAnalysis(CompilationAnalysisContext context, SyntaxToken keywordIdentifierToken, SyntaxList<StatementSyntax> statements)
             {
                 var emptyResult = SyntaxFactory.Identifier("");
@@ -1162,6 +1180,7 @@ namespace MetaCompilation
                 return startToken;
             }
 
+            //checks the end of the diagnostic span, returns a SyntaxToken of "" if analysis failed
             internal SyntaxToken EndAnalysis(CompilationAnalysisContext context, SyntaxToken openParenToken, SyntaxList<StatementSyntax> statements)
             {
                 var emptyResult = SyntaxFactory.Identifier("");
@@ -1217,6 +1236,7 @@ namespace MetaCompilation
                 return endToken;
             }
 
+            //checks the creation of the diagnostic span, returns a SyntaxToken of "" if analysis failed
             internal SyntaxToken SpanAnalysis(CompilationAnalysisContext context, SyntaxToken startToken, SyntaxToken endToken, SyntaxList<StatementSyntax> statements)
             {
                 var emptyResult = SyntaxFactory.Identifier("");
@@ -1302,6 +1322,7 @@ namespace MetaCompilation
                 return spanToken;
             }
 
+            //checks the creation of the diagnostics location, returns a SyntaxToken of "" if analysis failed
             internal SyntaxToken LocationAnalysis(CompilationAnalysisContext context, SyntaxToken statementIdentifierToken, SyntaxToken spanToken, SyntaxList<StatementSyntax> statements)
             {
                 var emptyResult = SyntaxFactory.Identifier("");
@@ -1399,6 +1420,7 @@ namespace MetaCompilation
                 return locationToken;
             }
 
+            //checks the creation of the diagnostic itself, returns a SyntaxToken of "" if analysis failed
             internal SyntaxToken DiagnosticCreationCheck(CompilationAnalysisContext context, List<string> ruleNames, SyntaxToken locationToken, SyntaxList<StatementSyntax> statements, ParameterSyntax contextParameter)
             {
                 var emptyResult = SyntaxFactory.Identifier("");
@@ -1508,6 +1530,7 @@ namespace MetaCompilation
                 return diagnosticToken;
             }
 
+            //checks the reporting of the diagnostic, returns a bool representing whether or not analysis failed
             internal bool DiagnosticReportCheck(CompilationAnalysisContext context, SyntaxToken diagnosticToken, ParameterSyntax contextParameter, SyntaxList<StatementSyntax> statements)
             {
                 var statement = statements[9] as ExpressionStatementSyntax;
@@ -1567,6 +1590,7 @@ namespace MetaCompilation
                 return true;
             }
 
+            //extracts the equals value clause from a local declaration statement, returns null if failed
             internal EqualsValueClauseSyntax GetEqualsValueClauseFromLocalDecl(LocalDeclarationStatementSyntax statement)
             {
                 EqualsValueClauseSyntax emptyResult = null;
@@ -1608,6 +1632,7 @@ namespace MetaCompilation
                 return equalsValueClause;
             }
 
+            //extracts the name of the variable from a local declaration statement, returns a SyntaxToken of "" if analysis failed
             internal SyntaxToken GetIdentifierTokenFromLocalDecl(LocalDeclarationStatementSyntax statement)
             {
                 var emptyResult = SyntaxFactory.Identifier("");
@@ -1644,6 +1669,7 @@ namespace MetaCompilation
             }
             #endregion
 
+            //returns a list containing the method declaration, and the statements within the method, returns an empty list if failed
             internal List<object> AnalysisGetStatements(IMethodSymbol analysisMethodSymbol)
             {
                 List<object> result = new List<object>();
@@ -1745,6 +1771,7 @@ namespace MetaCompilation
             }
 
             #region CheckSupportedDiagnostics helpers
+            //returns the property declaration, null if the property symbol is incorrect
             internal PropertyDeclarationSyntax SuppDiagPropertySymbol(CompilationAnalysisContext context)
             {
                 if (_propertySymbol == null)
@@ -1763,6 +1790,7 @@ namespace MetaCompilation
                 return _propertySymbol.DeclaringSyntaxReferences[0].GetSyntax() as PropertyDeclarationSyntax;
             }
 
+            //returns the statements of the get accessor, empty list if get accessor not found/incorrect
             internal SyntaxList<StatementSyntax> SuppDiagAccessor(CompilationAnalysisContext context, PropertyDeclarationSyntax propertyDeclaration)
             {
                 SyntaxList<StatementSyntax> emptyResult = new SyntaxList<StatementSyntax>();
@@ -1802,6 +1830,7 @@ namespace MetaCompilation
                 return accessorBody.Statements;
             }
 
+            //checks the return value of the get accessor within SupportedDiagnostics
             internal void SuppDiagReturnCheck(CompilationAnalysisContext context, InvocationExpressionSyntax valueClause, Location returnDeclarationLocation, List<string> ruleNames)
             {
                 if (valueClause == null)
@@ -1855,6 +1884,7 @@ namespace MetaCompilation
                 }
             }
 
+            //returns the valueClause of the return statement from SupportedDiagnostics and the return declaration, empty list if failed
             internal List<object> SuppDiagReturnSymbol(CompilationAnalysisContext context, SymbolInfo returnSymbolInfo, Location getAccessorKeywordLocation)
             {
                 List<object> result = new List<object>();
@@ -2178,6 +2208,7 @@ namespace MetaCompilation
             }
 
             #region CheckInitialize helpers
+            //checks the signature of initialize and returns the block of the method, null if failed
             internal BlockSyntax InitializeOverview(CompilationAnalysisContext context)
             {
                 ImmutableArray<IParameterSymbol> parameters = _initializeSymbol.Parameters;
@@ -2205,6 +2236,7 @@ namespace MetaCompilation
                 return codeBlock;
             }
 
+            //checks the body of initializer, returns the invocation expression and member expression of the register statements, null if failed
             internal List<object> InitializeBody(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements)
             {
                 var statement = statements[0] as ExpressionStatementSyntax;
@@ -2259,6 +2291,7 @@ namespace MetaCompilation
             #endregion
 
             #region symbol collectors
+            //stores a method in state
             internal void AddMethod(SymbolAnalysisContext context)
             {
                 var sym = (IMethodSymbol)context.Symbol;
@@ -2293,6 +2326,7 @@ namespace MetaCompilation
                 _analyzerMethodSymbols.Add(sym);
             }
 
+            //stores a property in state
             internal void AddProperty(SymbolAnalysisContext context)
             {
                 var sym = (IPropertySymbol)context.Symbol;
@@ -2327,6 +2361,7 @@ namespace MetaCompilation
                 _analyzerPropertySymbols.Add(sym);
             }
 
+            //stores a field in state
             internal void AddField(SymbolAnalysisContext context)
             {
                 var sym = (IFieldSymbol)context.Symbol;
@@ -2355,6 +2390,7 @@ namespace MetaCompilation
                 _analyzerFieldSymbols.Add(sym);
             }
 
+            //stores a class in state
             internal void AddClass(SymbolAnalysisContext context)
             {
                 var sym = (INamedTypeSymbol)context.Symbol;
@@ -2399,14 +2435,20 @@ namespace MetaCompilation
             }
             #endregion
 
+            //clears all state
             internal void ClearState()
             {
                 _analyzerClassSymbol = null;
                 _analyzerFieldSymbols = new List<IFieldSymbol>();
                 _analyzerMethodSymbols = new List<IMethodSymbol>();
                 _analyzerPropertySymbols = new List<IPropertySymbol>();
-            }
+                _otherClassSymbols = new List<INamedTypeSymbol>();
+                _initializeSymbol = null;
+                _propertySymbol = null;
+                _branchesDict = new Dictionary<string, string>();
+        }
 
+            //reports a diagnostics
             public static void ReportDiagnostic(CompilationAnalysisContext context, DiagnosticDescriptor rule, Location location, params object[] messageArgs)
             {
                 Diagnostic diagnostic = Diagnostic.Create(rule, location, messageArgs);
