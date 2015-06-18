@@ -28,7 +28,8 @@ namespace MetaCompilation
                 return ImmutableArray.Create(MetaCompilationAnalyzer.MissingId, 
                     MetaCompilationAnalyzer.MissingInit, 
                     MetaCompilationAnalyzer.MissingRegisterStatement,
-                    MetaCompilationAnalyzer.TooManyInitStatements);
+                    MetaCompilationAnalyzer.TooManyInitStatements,
+                    MetaCompilationAnalyzer.InvalidStatement);
             }
         }
 
@@ -69,6 +70,12 @@ namespace MetaCompilation
                 {
                     MethodDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("Tutorial: The Initialize method must not contain multiple actions to register (for the purpose of this tutorial)", c => MultipleStatementsAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.InvalidStatement))
+                {
+                    StatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("The Initialize method can only register actions, all other statements are invalid", c => InvalidStatementAsync(context.Document, declaration, c)), diagnostic);
                 }
             }
         }
@@ -179,6 +186,21 @@ namespace MetaCompilation
 
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root.ReplaceNode(declaration, newDeclaration);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+
+        private async Task<Document> InvalidStatementAsync(Document document, StatementSyntax declaration, CancellationToken c)
+        {
+            BlockSyntax initializeCodeBlock = declaration.Parent as BlockSyntax;
+            MethodDeclarationSyntax initializeDeclaration = initializeCodeBlock.Parent as MethodDeclarationSyntax;
+
+            BlockSyntax newCodeBlock = initializeCodeBlock.WithStatements(initializeCodeBlock.Statements.Remove(declaration));
+            MethodDeclarationSyntax newInitializeDeclaration = initializeDeclaration.WithBody(newCodeBlock);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(initializeDeclaration, newInitializeDeclaration);
             var newDocument = document.WithSyntaxRoot(newRoot);
 
             return newDocument;

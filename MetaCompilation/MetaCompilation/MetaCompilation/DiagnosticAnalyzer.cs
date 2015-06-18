@@ -1112,8 +1112,7 @@ namespace MetaCompilation
                             if (statement.Kind() != SyntaxKind.ExpressionStatement)
                             {
                                 ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
-                                statements = statements.Remove(statement);
-                                continue;
+                                return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                             }
                         }
 
@@ -1124,34 +1123,30 @@ namespace MetaCompilation
                                 var expression = statement.Expression as InvocationExpressionSyntax;
                                 if (expression == null)
                                 {
-                                    ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.Expression);
-                                    statements = statements.Remove(statement);
-                                    continue;
+                                    ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
+                                    return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                                 }
 
                                 var expressionStart = expression.Expression as MemberAccessExpressionSyntax;
                                 if (expressionStart == null || expressionStart.Name == null)
                                 {
-                                    ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.Expression);
-                                    statements = statements.Remove(statement);
-                                    continue;
+                                    ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
+                                    return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                                 }
 
                                 var preExpressionStart = expressionStart.Expression as IdentifierNameSyntax;
                                 if (preExpressionStart == null || preExpressionStart.Identifier == null ||
                                     preExpressionStart.Identifier.ValueText != "context")
                                 {
-                                    ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.Expression);
-                                    statements = statements.Remove(statement);
-                                    continue;
+                                    ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
+                                    return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                                 }
 
                                 var name = expressionStart.Name.ToString();
                                 if (!_branchesDict.ContainsKey(name))
                                 {
-                                    ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.Expression);
-                                    statements = statements.Remove(statement);
-                                    continue;
+                                    ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
+                                    return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                                 }
                             }
 
@@ -1162,10 +1157,11 @@ namespace MetaCompilation
                                 return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                             }
                         }
+                        return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                     }
+                    //only one statement inside initialize
                     else
                     {
-                        //only one statement inside initialize
                         List<object> bodyResults = InitializeBody(context, statements);
                         if (bodyResults == null)
                         {
@@ -1215,6 +1211,7 @@ namespace MetaCompilation
                         }
                     }
                 }
+                
 
                 return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
             }
