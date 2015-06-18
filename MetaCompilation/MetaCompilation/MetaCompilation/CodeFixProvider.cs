@@ -213,7 +213,14 @@ namespace MetaCompilation
 
         private async Task<Document> IncorrectSigAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
-            throw new NotImplementedException();
+            SemanticModel semanticModel = await document.GetSemanticModelAsync();
+            var initializeDeclaration = BuildInitialize(document, semanticModel);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, initializeDeclaration);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
         }
         #endregion
 
