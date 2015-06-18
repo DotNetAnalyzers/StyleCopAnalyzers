@@ -1295,7 +1295,8 @@ namespace MetaCompilation
                                     {
                                         string identifierExpr = memberAccessExpr.Expression.ToString();
                                         string identifierName = memberAccessExpr.Name.Identifier.Text;
-                                        if (identifierExpr != "DiagnosticSeverity" && (identifierName != "Warning" || identifierName != "Error" || identifierName != "Hidden" || identifierName != "Info"))
+                                        List<string> severities = new List<string> { "Warning", "Error", "Hidden", "Info" };
+                                        if (identifierExpr == "DiagnosticSeverity" && !severities.Contains(identifierName))
                                         {
                                             ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation(), DefaultSeverityErrorRule.MessageFormat);
                                             return emptyRuleNames;
