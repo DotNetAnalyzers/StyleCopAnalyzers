@@ -5,7 +5,6 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestHelper;
-using System.Runtime;
 using MetaCompilation;
 
 namespace MetaCompilation.Test
@@ -569,7 +568,7 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
         {
-        public const int spacingRuleId = ""IfSpacing"";
+        public const string spacingRuleId = ""IfSpacing"";
         public const int practice = 7;
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
             {
@@ -585,6 +584,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+            VerifyCSharpFix(test, fixtest);
         }
         #endregion
 
@@ -1570,7 +1570,1156 @@ namespace SyntaxNodeAnalyzer
         [TestMethod]
         public void TestMethod21()
         {
+            var test = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
 
+namespace SyntaxNodeAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+           context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+           break;
+        }
+    }
+}";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.InvalidStatement,
+                Message = "The Initialize method only registers actions: the statement 'break;' is invalid",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 12) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+           context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+    }
+}";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        //invalid check statement
+        [TestMethod]
+        public void TestMethod22()
+        {
+            var test = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+           context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+           checked { var num = num + 1; }
+        }
+    }
+}";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.InvalidStatement,
+                Message = "The Initialize method only registers actions: the statement 'checked { var num = num + 1; }' is invalid",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 12) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+           context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+    }
+}";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        // invalid continue statement
+        [TestMethod]
+        public void TestMethod23()
+        {
+            var test = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+           context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+           continue;
+        }
+    }
+}";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.InvalidStatement,
+                Message = "The Initialize method only registers actions: the statement 'continue;' is invalid",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 12) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+           context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+    }
+}";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        // do while statement
+        [TestMethod]
+        public void TestMethod24()
+        {
+            var test = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+           context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+           do { var i = 1; } while (i > 3);
+        }
+    }
+}";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.InvalidStatement,
+                Message = "The Initialize method only registers actions: the statement 'do { var i = 1; } while (i > 3);' is invalid",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 12) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+           context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+    }
+}";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        // invalid random expression statement
+        [TestMethod]
+        public void TestMethod25()
+        {
+            var test = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+           context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+           context.GetHashCode();
+        }
+    }
+}";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.InvalidStatement,
+                Message = "The Initialize method only registers actions: the statement 'context.GetHashCode();' is invalid",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 12) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+           context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+    }
+}";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        // invalid foreach statement
+        [TestMethod]
+        public void TestMethod26()
+        {
+            var test = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+           context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+           foreach() { break; }
+        }
+    }
+}";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.InvalidStatement,
+                Message = "The Initialize method only registers actions: the statement 'foreach() { break; }' is invalid",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 12) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+           context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+    }
+}";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        // invalid for statement
+        [TestMethod]
+        public void TestMethod27()
+        {
+            var test = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+                for(int i = 1; i < 3; i++) { i++; }
+            }
+        }
+    }";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.InvalidStatement,
+                Message = "The Initialize method only registers actions: the statement 'for(int i = 1; i < 3; i++) { i++; }' is invalid",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            }
+        }
+    }";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        // invalid if statement
+        [TestMethod]
+        public void TestMethod28()
+        {
+            var test = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+                if (i < 3) { i++; }
+            }
+        }
+    }";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.InvalidStatement,
+                Message = "The Initialize method only registers actions: the statement 'if (i < 3) { i++; }' is invalid",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            }
+        }
+    }";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        // invalid labeled statement
+        [TestMethod]
+        public void TestMethod29()
+        {
+            var test = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+                context: return context;
+            }
+        }
+    }";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.InvalidStatement,
+                Message = "The Initialize method only registers actions: the statement 'context: return context;' is invalid",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            }
+        }
+    }";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        // invalid local declaration statement
+        [TestMethod]
+        public void TestMethod30()
+        {
+            var test = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+                int i;
+            }
+        }
+    }";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.InvalidStatement,
+                Message = "The Initialize method only registers actions: the statement 'int i;' is invalid",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            }
+        }
+    }";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        // invalid lock statement
+        [TestMethod]
+        public void TestMethod31()
+        {
+            var test = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+                lock () {}
+            }
+        }
+    }";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.InvalidStatement,
+                Message = "The Initialize method only registers actions: the statement 'lock () {}' is invalid",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            }
+        }
+    }";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        // invalid return statement
+        [TestMethod]
+        public void TestMethod32()
+        {
+            var test = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+                return;
+            }
+        }
+    }";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.InvalidStatement,
+                Message = "The Initialize method only registers actions: the statement 'return;' is invalid",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            }
+        }
+    }";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        // multiple invalid statements
+        [TestMethod]
+        public void TestMethod33()
+        {
+            var test = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+                int one = 1;
+                int two = 2;
+            }
+        }
+    }";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.InvalidStatement,
+                Message = "The Initialize method only registers actions: the statement 'int one = 1;' is invalid",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+                int two = 2;
+            }
+        }
+    }";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        // one invalid statement, no valid statements
+        [TestMethod]
+        public void TestMethod34()
+        {
+            var test = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                int one = 1;
+            }
+        }
+    }";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.InvalidStatement,
+                Message = "The Initialize method only registers actions: the statement 'int one = 1;' is invalid",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 24, 17) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+            }
+        }
+    }";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        // multiple invalid statements, no valid statements
+        [TestMethod]
+        public void TestMethod35()
+        {
+            var test = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                int one = 1;
+                int two = 2;
+            }
+        }
+    }";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.InvalidStatement,
+                Message = "The Initialize method only registers actions: the statement 'int one = 1;' is invalid",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 24, 17) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                int two = 2;
+            }
+        }
+    }";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        // multiple valid statements, one invalid statement
+        [TestMethod]
+        public void TestMethod36()
+        {
+            var test = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfKeyword);
+                int one = 1;
+                int two = 2;
+            }
+        }
+    }";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.InvalidStatement,
+                Message = "The Initialize method only registers actions: the statement 'int one = 1;' is invalid",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 17) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfKeyword);
+                int two = 2;
+            }
+        }
+    }";
+            VerifyCSharpFix(test, fixtest);
         }
         #endregion
 
