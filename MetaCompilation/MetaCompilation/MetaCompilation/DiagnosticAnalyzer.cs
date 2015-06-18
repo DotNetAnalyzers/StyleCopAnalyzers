@@ -19,6 +19,7 @@ namespace MetaCompilation
         public const string RuleCategory = "Tutorial";
         public const DiagnosticSeverity RuleDefaultSeverity = DiagnosticSeverity.Error;
         public const bool RuleEnabledByDefault = true;
+
         public static DiagnosticDescriptor CreateRule(string id, string title, string messageFormat)
         {
             DiagnosticDescriptor rule = new DiagnosticDescriptor(
@@ -105,11 +106,14 @@ namespace MetaCompilation
         #region analysis rules
         public const string MissingAnalysisMethod = "MetaAnalyzer018";
         internal static DiagnosticDescriptor MissingAnalysisMethodRule = CreateRule(MissingAnalysisMethod, "Missing analysis method", "You are missing the method that was registered to perform the analysis");
+
+        public const string TooManyStatements = "MetaAnalyzer036";
+        internal static DiagnosticDescriptor TooManyStatementsRule = CreateRule(TooManyStatements, "Too many statements", "This {0} should only have {1} statement(s)");
         #endregion
 
         #region analysis for IfStatement rules
         public const string IfStatementMissing = "MetaAnalyzer024";
-        internal static DiagnosticDescriptor IfStatementMissingRule = CreateRule(IfStatementMissing, "Missing 1st step", "The first step is to extract the if statement from {0}");
+        internal static DiagnosticDescriptor IfStatementMissingRule = CreateRule(IfStatementMissing, "Missing 1st step", "The first step of the node analysis is to extract the if statement from {0}");
 
         public const string IfStatementIncorrect = "MetaAnalyzer022";
         internal static DiagnosticDescriptor IfStatementIncorrectRule = CreateRule(IfStatementIncorrect, "If statement extraction incorrect", "This statement should extract the if statement in question by casting {0}.Node to IfStatementSyntax");
@@ -131,6 +135,24 @@ namespace MetaCompilation
 
         public const string TrailingTriviaVarIncorrect = "MetaAnalyzer029";
         internal static DiagnosticDescriptor TrailingTriviaVarIncorrectRule = CreateRule(TrailingTriviaVarIncorrect, "Incorrect 4th step", "This statement should extract the last trailing trivia of {0} into a variable");
+
+        public const string TrailingTriviaKindCheckMissing = "MetaAnalyzer030";
+        internal static DiagnosticDescriptor TrailingTriviaKindCheckMissingRule = CreateRule(TrailingTriviaKindCheckMissing, "Missing 5th step", "The fifth step is to check the kind of {0}");
+
+        public const string TrailingTriviaKindCheckIncorrect = "MetaAnalyzer031";
+        internal static DiagnosticDescriptor TrailingTriviaKindCheckIncorrectRule = CreateRule(TrailingTriviaKindCheckIncorrect, "Incorrect 5th step", "This statement should check to see if the kind of {0} is whitespace trivia");
+
+        public const string WhitespaceCheckMissing = "MetaAnalyzer032";
+        internal static DiagnosticDescriptor WhitespaceCheckMissingRule = CreateRule(WhitespaceCheckMissing, "Missing 6th step", "The sixth step is to make sure {0} is a single whitespace");
+
+        public const string WhitespaceCheckIncorrect = "MetaAnalyzer033";
+        internal static DiagnosticDescriptor WhitespaceCheckIncorrectRule = CreateRule(WhitespaceCheckIncorrect, "Incorrect 6th step", "This statement should check to see if {0} is a single whitespace");
+
+        public const string ReturnStatementMissing = "MetaAnalyzer034";
+        internal static DiagnosticDescriptor ReturnStatementMissingRule = CreateRule(ReturnStatementMissing, "Missing 7th step", "The seventh step is to return from {0}");
+
+        public const string ReturnStatementIncorrect = "MetaAnalyzer035";
+        internal static DiagnosticDescriptor ReturnStatementIncorrectRule = CreateRule(ReturnStatementIncorrect, "Incorrect 7th step", "This statement should return from {0}, because reaching this point in the code means that the if statement being analyzed has the correct spacing");
         #endregion
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
@@ -168,7 +190,13 @@ namespace MetaCompilation
                                              TrailingTriviaVarMissingRule,
                                              TrailingTriviaVarIncorrectRule,
                                              InvalidStatementRule,
-                                             IdDeclTypeErrorRule);
+                                             IdDeclTypeErrorRule,
+                                             TrailingTriviaKindCheckIncorrectRule,
+                                             TrailingTriviaKindCheckMissingRule,
+                                             WhitespaceCheckMissingRule,
+                                             WhitespaceCheckIncorrectRule,
+                                             ReturnStatementMissingRule,
+                                             ReturnStatementIncorrectRule);
             }
         }
 
@@ -366,6 +394,7 @@ namespace MetaCompilation
                             return false;
                         }
 
+                        //outer if statement in user analyzer
                         if (statementCount > 2)
                         {
                             var triviaBlock = IfStatementAnalysis3(context, statements, keywordIdentifierToken) as BlockSyntax;
@@ -390,6 +419,84 @@ namespace MetaCompilation
                                     ReportDiagnostic(context, TrailingTriviaVarIncorrectRule, triviaBlockStatements[0].GetLocation(), keywordIdentifierToken.Text);
                                     return false;
                                 }
+
+                                //inner if statement in user analyzer
+                                if (triviaBlockStatements.Count > 1)
+                                {
+                                    BlockSyntax triviaKindCheckBlock = IfStatementAnalysis5(context, triviaBlockStatements, triviaIdentifierToken);
+                                    if (triviaKindCheckBlock == null)
+                                    {
+                                        ReportDiagnostic(context, TrailingTriviaKindCheckIncorrectRule, triviaBlockStatements[1].GetLocation(), triviaIdentifierToken.Text);
+                                        return false;
+                                    }
+
+                                    SyntaxList<StatementSyntax> triviaKindCheckBlockStatements = triviaKindCheckBlock.Statements;
+                                    if (triviaKindCheckBlockStatements == null)
+                                    {
+                                        ReportDiagnostic(context, TrailingTriviaKindCheckIncorrectRule, triviaBlockStatements[1].GetLocation(), triviaIdentifierToken.Text);
+                                        return false;
+                                    }
+
+                                    //inner inner if statement in user analyzer
+                                    if (triviaKindCheckBlockStatements.Count > 0)
+                                    {
+                                        BlockSyntax triviaCheckBlock = IfStatementAnalysis6(context, triviaKindCheckBlock.Statements, triviaIdentifierToken);
+                                        if (triviaCheckBlock == null)
+                                        {
+                                            ReportDiagnostic(context, WhitespaceCheckIncorrectRule, triviaKindCheckBlockStatements[0].GetLocation(), triviaIdentifierToken);
+                                            return false;
+                                        }
+
+                                        SyntaxList<StatementSyntax> triviaCheckBlockStatements = triviaCheckBlock.Statements;
+                                        if (triviaCheckBlockStatements == null)
+                                        {
+                                            ReportDiagnostic(context, WhitespaceCheckIncorrectRule, triviaKindCheckBlockStatements[0].GetLocation(), triviaIdentifierToken);
+                                            return false;
+                                        }
+
+                                        if (triviaCheckBlockStatements.Count > 0)
+                                        {
+                                            if (!IfStatementAnalysis7(context, triviaCheckBlockStatements))
+                                            {
+                                                ReportDiagnostic(context, ReturnStatementIncorrectRule, triviaCheckBlockStatements[0].GetLocation(), methodDeclaration.Identifier.Text);
+                                                return false;
+                                            }
+
+                                            if (triviaCheckBlockStatements.Count > 1)
+                                            {
+                                                ReportDiagnostic(context, TooManyStatementsRule, triviaCheckBlock.GetLocation(), "if block", "1");
+                                                return false;
+                                            }
+                                            //successfully through if statement checks
+                                        }
+                                        else
+                                        {
+                                            ReportDiagnostic(context, ReturnStatementMissingRule, triviaCheckBlock.GetLocation(), methodDeclaration.Identifier.Text);
+                                            return false;
+                                        }
+
+                                        if (triviaKindCheckBlockStatements.Count > 1)
+                                        {
+                                            ReportDiagnostic(context, TooManyStatementsRule, triviaKindCheckBlock.GetLocation(), "if block", "1");
+                                            return false;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        ReportDiagnostic(context, WhitespaceCheckMissingRule, triviaKindCheckBlock.GetLocation(), triviaIdentifierToken);
+                                        return false;
+                                    }
+
+                                    if (triviaBlockStatements.Count > 2)
+                                    {
+                                        ReportDiagnostic(context, TooManyStatementsRule, triviaBlock.GetLocation(), "if block", "2");
+                                    }
+                                }
+                                else
+                                {
+                                    ReportDiagnostic(context, TrailingTriviaKindCheckMissingRule, triviaBlockStatements[0].GetLocation(), triviaIdentifierToken.Text);
+                                    return false;
+                                }
                             }
                             else
                             {
@@ -397,6 +504,20 @@ namespace MetaCompilation
                                 return false;
                             }
 
+                            //check diagnostic reporting statements
+                            if (statementCount > 3)
+                            {
+                                bool diagnosticReportingCorrect = CheckDiagnosticReporting(context, statementIdentifierToken, keywordIdentifierToken, ruleNames, statements);
+                                if (!diagnosticReportingCorrect)
+                                {
+                                    return false;
+                                }
+
+                                if (statementCount > 10)
+                                {
+                                    ReportDiagnostic(context, TooManyStatementsRule, methodDeclaration.GetLocation(), "method", "10"); 
+                                }
+                            }
                         }
                         else
                         {
@@ -610,6 +731,173 @@ namespace MetaCompilation
                 }
 
                 return triviaIdentifierToken;
+            }
+
+            internal BlockSyntax IfStatementAnalysis5(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, SyntaxToken triviaIdentifierToken)
+            {
+                BlockSyntax emptyResult = null;
+
+                var statement = statements[1] as IfStatementSyntax;
+                if (statement == null)
+                {
+                    return emptyResult;
+                }
+
+                var booleanExpression = statement.Condition as BinaryExpressionSyntax;
+                if (booleanExpression == null)
+                {
+                    return emptyResult;
+                }
+
+                var left = booleanExpression.Left as InvocationExpressionSyntax;
+                if (left == null)
+                {
+                    return emptyResult;
+                }
+
+                var leftMemberExpr = left.Expression as MemberAccessExpressionSyntax;
+                if (leftMemberExpr == null)
+                {
+                    return emptyResult;
+                }
+
+                var leftIdentifier = leftMemberExpr.Expression as IdentifierNameSyntax;
+                if (leftIdentifier == null || leftIdentifier.Identifier.Text != triviaIdentifierToken.Text)
+                {
+                    return emptyResult;
+                }
+
+                var leftName = leftMemberExpr.Name as IdentifierNameSyntax;
+                if (leftName == null || leftName.Identifier.Text != "Kind")
+                {
+                    return emptyResult;
+                }
+
+                var leftArgumentList = left.ArgumentList as ArgumentListSyntax;
+                if (leftArgumentList == null)
+                {
+                    return emptyResult;
+                }
+
+                SeparatedSyntaxList<ArgumentSyntax> leftArgs = leftArgumentList.Arguments;
+                if (leftArgs == null || leftArgs.Count != 0)
+                {
+                    return emptyResult;
+                }
+
+                var right = booleanExpression.Right as MemberAccessExpressionSyntax;
+                if (right == null)
+                {
+                    return emptyResult;
+                }
+
+                var rightIdentifier = right.Expression as IdentifierNameSyntax;
+                if (rightIdentifier == null || rightIdentifier.Identifier.Text != "SyntaxKind")
+                {
+                    return emptyResult;
+                }
+
+                var rightName = right.Name as IdentifierNameSyntax;
+                if (rightName == null || rightName.Identifier.Text != "WhitespaceTrivia") {
+                    return emptyResult;
+                }
+
+                var block = statement.Statement as BlockSyntax;
+                if (block == null)
+                {
+                    return emptyResult;
+                }
+
+                return block;
+            }
+            
+            internal BlockSyntax IfStatementAnalysis6(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, SyntaxToken triviaIdentifierToken)
+            {
+                BlockSyntax emptyResult = null;
+
+                var statement = statements[0] as IfStatementSyntax;
+                if (statement == null)
+                {
+                    return emptyResult;
+                }
+
+                var booleanExpression = statement.Condition as BinaryExpressionSyntax;
+                if (booleanExpression == null)
+                {
+                    return emptyResult;
+                }
+
+                var left = booleanExpression.Left as InvocationExpressionSyntax;
+                if (left == null)
+                {
+                    return emptyResult;
+                }
+
+                var leftMemberExpr = left.Expression as MemberAccessExpressionSyntax;
+                if (leftMemberExpr == null)
+                {
+                    return emptyResult;
+                }
+
+                var leftIdentifier = leftMemberExpr.Expression as IdentifierNameSyntax;
+                if (leftIdentifier == null || leftIdentifier.Identifier.Text != triviaIdentifierToken.Text)
+                {
+                    return emptyResult;
+                }
+
+                var leftName = leftMemberExpr.Name as IdentifierNameSyntax;
+                if (leftName == null || leftName.Identifier.Text != "ToString")
+                {
+                    return emptyResult;
+                }
+
+                var leftArgumentList = left.ArgumentList as ArgumentListSyntax;
+                if (leftArgumentList == null)
+                {
+                    return emptyResult;
+                }
+
+                SeparatedSyntaxList<ArgumentSyntax> leftArgs = leftArgumentList.Arguments;
+                if (leftArgs == null || leftArgs.Count != 0)
+                {
+                    return emptyResult;
+                }
+
+                var right = booleanExpression.Right as LiteralExpressionSyntax;
+                if (right == null)
+                {
+                    return emptyResult;
+                }
+
+                SyntaxToken rightToken = right.Token;
+                if (rightToken == null || rightToken.Text != "\" \"")
+                {
+                    return emptyResult;
+                }
+
+                var block = statement.Statement as BlockSyntax;
+                if (block == null)
+                {
+                    return emptyResult;
+                }
+
+                return block;
+            }
+
+            internal bool IfStatementAnalysis7(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements)
+            {
+                var statement = statements[0] as ReturnStatementSyntax;
+                if (statement == null)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            internal bool CheckDiagnosticReporting(CompilationAnalysisContext context, SyntaxToken statementIdentifierToken, SyntaxToken keywordIdentifierToken, List<string> ruleNames, SyntaxList<StatementSyntax> statements)
+            {
+                throw new NotImplementedException();
             }
 
             internal EqualsValueClauseSyntax GetEqualsValueClauseFromLocalDecl(LocalDeclarationStatementSyntax statement)
