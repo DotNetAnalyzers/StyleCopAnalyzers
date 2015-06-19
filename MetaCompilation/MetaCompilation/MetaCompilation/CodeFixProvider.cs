@@ -33,7 +33,8 @@ namespace MetaCompilation
                     MetaCompilationAnalyzer.IfStatementIncorrect,
                     MetaCompilationAnalyzer.IfKeywordIncorrect,
                     MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect,
-                    MetaCompilationAnalyzer.TrailingTriviaVarMissing);
+                    MetaCompilationAnalyzer.TrailingTriviaVarMissing,
+                    MetaCompilationAnalyzer.TrailingTriviaVarIncorrect);
             }
         }
 
@@ -85,25 +86,31 @@ namespace MetaCompilation
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfStatementIncorrect))
                 {
                     StatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>().First();
-                    context.RegisterCodeFix(CodeAction.Create("The first statement of the analyzer must access the node to be analyzed", c => IncorrectIfAsync(context.Document, declaration, c)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: The first statement of the analyzer must access the node to be analyzed", c => IncorrectIfAsync(context.Document, declaration, c)), diagnostic);
                 }
                 
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfKeywordIncorrect))
                 {
                     StatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>().First();
-                    context.RegisterCodeFix(CodeAction.Create("The second statement of the analyzer must access the keyword from the node being analyzed", c => IncorrectKeywordAsync(context.Document, declaration, c)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: The second statement of the analyzer must access the keyword from the node being analyzed", c => IncorrectKeywordAsync(context.Document, declaration, c)), diagnostic);
                 }
 
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect))
                 {
                     StatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>().First();
-                    context.RegisterCodeFix(CodeAction.Create("The third statement of the analyzer must be an if statement checking the trailing trivia of the node being analyzed", c => TrailingCheckIncorrectAsync(context.Document, declaration, c)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: The third statement of the analyzer must be an if statement checking the trailing trivia of the node being analyzed", c => TrailingCheckIncorrectAsync(context.Document, declaration, c)), diagnostic);
                 }
 
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaVarMissing))
                 {
                     IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
-                    context.RegisterCodeFix(CodeAction.Create("The fourth statement of the analyzer should store the last trailing trivia of the if keyword", c => TrailingVarMissingAsync(context.Document, declaration, c)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: The fourth statement of the analyzer should store the last trailing trivia of the if keyword", c => TrailingVarMissingAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaVarIncorrect))
+                {
+                    IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: The fourth statement of the analyzer should store the last trailing trivia of the if keyword", c => TrailingVarIncorrectAsync(context.Document, declaration, c)), diagnostic);
                 }
             }
         }
@@ -269,8 +276,27 @@ namespace MetaCompilation
 
         private async Task<Document> TrailingVarMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
+            var localDeclaration = new SyntaxList<SyntaxNode>().Add(TriviaVarMissingHelper(document, declaration));
+
             var oldBlock = declaration.Statement as BlockSyntax;
-            var newBlock = TriviaVarMissingHelper(document, declaration);
+            var newBlock = oldBlock.WithStatements(localDeclaration);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(oldBlock, newBlock);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+
+        private async Task<Document> TrailingVarIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        {
+            var localDeclaration = TriviaVarMissingHelper(document, declaration) as LocalDeclarationStatementSyntax;
+
+
+            var oldBlock = declaration.Statement as BlockSyntax;
+            var oldStatement = oldBlock.Statements[0];
+            var newStatements = oldBlock.Statements.Replace(oldStatement, localDeclaration);
+            var newBlock = oldBlock.WithStatements(newStatements);
 
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root.ReplaceNode(oldBlock, newBlock);
@@ -333,12 +359,9 @@ namespace MetaCompilation
             var parameters = new SyntaxList<SyntaxNode>();
             var variableExpression = generator.InvocationExpression(fullVariable, parameters);
 
-            var localDeclaration = new SyntaxList<SyntaxNode>().Add(generator.LocalDeclarationStatement("trailingTrivia", variableExpression));
+            var localDeclaration = generator.LocalDeclarationStatement("trailingTrivia", variableExpression);
 
-            var oldBlock = declaration.Statement as BlockSyntax;
-            var newBlock = oldBlock.WithStatements(localDeclaration);
-
-            return newBlock;
+            return localDeclaration;
         }
         #endregion
     }
