@@ -30,7 +30,8 @@ namespace MetaCompilation
                     MetaCompilationAnalyzer.MissingRegisterStatement,
                     MetaCompilationAnalyzer.TooManyInitStatements,
                     MetaCompilationAnalyzer.InvalidStatement,
-                    MetaCompilationAnalyzer.IfStatementIncorrect);
+                    MetaCompilationAnalyzer.IfStatementIncorrect,
+                    MetaCompilationAnalyzer.IfKeywordIncorrect);
             }
         }
 
@@ -83,6 +84,12 @@ namespace MetaCompilation
                 {
                     StatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("The first statement of the analyzer must access the node to be analyzed", c => IncorrectIfAsync(context.Document, declaration, c)), diagnostic);
+                }
+                
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfKeywordIncorrect))
+                {
+                    StatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("The second statement of the analyzer must access the keyword from the node being analyzed", c => IncorrectKeywordAsync(context.Document, declaration, c)), diagnostic);
                 }
             }
         }
@@ -225,6 +232,23 @@ namespace MetaCompilation
 
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root.ReplaceNode(declaration, ifStatement);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+
+        private async Task<Document> IncorrectKeywordAsync(Document document, StatementSyntax declaration, CancellationToken c)
+        {
+            var methodBlock = declaration.Parent as BlockSyntax;
+            var firstStatement = methodBlock.Statements[0] as LocalDeclarationStatementSyntax;
+
+            var generator = SyntaxGenerator.GetGenerator(document);
+            var variableName = generator.IdentifierName(firstStatement.Declaration.Variables[0].Identifier.ValueText);
+            var initializer = generator.MemberAccessExpression(variableName, "IfKeyword");
+            var ifKeyword = generator.LocalDeclarationStatement("ifKeyword", initializer);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, ifKeyword);
             var newDocument = document.WithSyntaxRoot(newRoot);
 
             return newDocument;
