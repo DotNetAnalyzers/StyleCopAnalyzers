@@ -29,7 +29,8 @@ namespace MetaCompilation
                     MetaCompilationAnalyzer.MissingInit, 
                     MetaCompilationAnalyzer.MissingRegisterStatement,
                     MetaCompilationAnalyzer.TooManyInitStatements,
-                    MetaCompilationAnalyzer.InvalidStatement);
+                    MetaCompilationAnalyzer.InvalidStatement,
+                    MetaCompilationAnalyzer.IfStatementIncorrect);
             }
         }
 
@@ -76,6 +77,12 @@ namespace MetaCompilation
                 {
                     StatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("The Initialize method can only register actions, all other statements are invalid", c => InvalidStatementAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfStatementIncorrect))
+                {
+                    StatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("The first statement of the analyzer must access the node to be analyzed", c => IncorrectIfAsync(context.Document, declaration, c)), diagnostic);
                 }
             }
         }
@@ -201,6 +208,23 @@ namespace MetaCompilation
 
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root.ReplaceNode(initializeDeclaration, newInitializeDeclaration);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+
+        private async Task<Document> IncorrectIfAsync(Document document, StatementSyntax declaration, CancellationToken c)
+        {
+            var generator = SyntaxGenerator.GetGenerator(document);
+
+            var type = SyntaxFactory.ParseTypeName("IfStatementSyntax");
+            var expression = generator.IdentifierName("context");
+            var memberAccessExpression = generator.MemberAccessExpression(expression, "Node");
+            var initializer = generator.CastExpression(type, memberAccessExpression);
+            var ifStatement = generator.LocalDeclarationStatement("ifStatement", initializer);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, ifStatement);
             var newDocument = document.WithSyntaxRoot(newRoot);
 
             return newDocument;
