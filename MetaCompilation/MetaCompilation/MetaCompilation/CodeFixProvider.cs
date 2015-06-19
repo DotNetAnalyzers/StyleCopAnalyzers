@@ -31,7 +31,8 @@ namespace MetaCompilation
                     MetaCompilationAnalyzer.TooManyInitStatements,
                     MetaCompilationAnalyzer.InvalidStatement,
                     MetaCompilationAnalyzer.IfStatementIncorrect,
-                    MetaCompilationAnalyzer.IfKeywordIncorrect);
+                    MetaCompilationAnalyzer.IfKeywordIncorrect,
+                    MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect);
             }
         }
 
@@ -90,6 +91,12 @@ namespace MetaCompilation
                 {
                     StatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("The second statement of the analyzer must access the keyword from the node being analyzed", c => IncorrectKeywordAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect))
+                {
+                    StatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("The third statement of the analyzer must be an if statement checking the trailing trivia of the node being analyzed", c => TrailingCheckIncorrectAsync(context.Document, declaration, c)), diagnostic);
                 }
             }
         }
@@ -222,13 +229,7 @@ namespace MetaCompilation
 
         private async Task<Document> IncorrectIfAsync(Document document, StatementSyntax declaration, CancellationToken c)
         {
-            var generator = SyntaxGenerator.GetGenerator(document);
-
-            var type = SyntaxFactory.ParseTypeName("IfStatementSyntax");
-            var expression = generator.IdentifierName("context");
-            var memberAccessExpression = generator.MemberAccessExpression(expression, "Node");
-            var initializer = generator.CastExpression(type, memberAccessExpression);
-            var ifStatement = generator.LocalDeclarationStatement("ifStatement", initializer);
+            var ifStatement = IfHelper(document);
 
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root.ReplaceNode(declaration, ifStatement);
@@ -239,6 +240,42 @@ namespace MetaCompilation
 
         private async Task<Document> IncorrectKeywordAsync(Document document, StatementSyntax declaration, CancellationToken c)
         {
+            var ifKeyword = KeywordHelper(document, declaration);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, ifKeyword);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+
+        private async Task<Document> TrailingCheckIncorrectAsync(Document document, StatementSyntax declaration, CancellationToken c)
+        {
+            var ifStatement = TriviaCheckHelper(document, declaration);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, ifStatement);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+
+        #region Helper functions
+        private SyntaxNode IfHelper(Document document)
+        {
+            var generator = SyntaxGenerator.GetGenerator(document);
+
+            var type = SyntaxFactory.ParseTypeName("IfStatementSyntax");
+            var expression = generator.IdentifierName("context");
+            var memberAccessExpression = generator.MemberAccessExpression(expression, "Node");
+            var initializer = generator.CastExpression(type, memberAccessExpression);
+            var ifStatement = generator.LocalDeclarationStatement("ifStatement", initializer);
+
+            return ifStatement;
+        }
+
+        private SyntaxNode KeywordHelper(Document document, StatementSyntax declaration)
+        {
             var methodBlock = declaration.Parent as BlockSyntax;
             var firstStatement = methodBlock.Statements[0] as LocalDeclarationStatementSyntax;
 
@@ -247,11 +284,22 @@ namespace MetaCompilation
             var initializer = generator.MemberAccessExpression(variableName, "IfKeyword");
             var ifKeyword = generator.LocalDeclarationStatement("ifKeyword", initializer);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(declaration, ifKeyword);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-
-            return newDocument;
+            return ifKeyword;
         }
+
+        private SyntaxNode TriviaCheckHelper(Document document, StatementSyntax declaration)
+        {
+            var methodBlock = declaration.Parent as BlockSyntax;
+            var secondStatement = methodBlock.Statements[1] as LocalDeclarationStatementSyntax;
+
+            var generator = SyntaxGenerator.GetGenerator(document);
+            var variableName = generator.IdentifierName(secondStatement.Declaration.Variables[0].Identifier.ValueText);
+            var conditional = generator.MemberAccessExpression(variableName, "HasTrailingTrivia");
+            var trueStatements = new SyntaxList<SyntaxNode>();
+            var ifStatement = generator.IfStatement(conditional, trueStatements);
+
+            return ifStatement;
+        }
+        #endregion
     }
 }
