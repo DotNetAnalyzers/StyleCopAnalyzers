@@ -70,7 +70,7 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor MissingRegisterRule = CreateRule(MissingRegisterStatement, "An action must be registered within the method", "An action must be registered within the '{0}' method");
 
         public const string TooManyInitStatements = "MetaAnalyzer004";
-        internal static DiagnosticDescriptor TooManyInitStatementsRule = CreateRule(TooManyInitStatements, "The method registers multiple actions", "The method '{0}' registers multiple actions");
+        internal static DiagnosticDescriptor TooManyInitStatementsRule = CreateRule(TooManyInitStatements, "The method registers multiple actions", "The '{0}' method registers multiple actions");
 
         public const string IncorrectInitStatement = "MetaAnalyzer005";
         internal static DiagnosticDescriptor IncorrectInitStatementRule = CreateRule(IncorrectInitStatement, "This statement needs to register for a supported action", "This statement needs to register for a supported action");
@@ -254,7 +254,8 @@ namespace MetaCompilation
                                              SpanIncorrectRule,
                                              SpanMissingRule,
                                              LocationIncorrectRule,
-                                             LocationMissingRule);
+                                             LocationMissingRule,
+                                             TooManyStatementsRule);
             }
         }
 
