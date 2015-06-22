@@ -25,8 +25,8 @@ namespace MetaCompilation
             get
             {
                 //TODO: should be 47 when done
-                return ImmutableArray.Create(MetaCompilationAnalyzer.MissingId, 
-                                             MetaCompilationAnalyzer.MissingInit, 
+                return ImmutableArray.Create(MetaCompilationAnalyzer.MissingId,
+                                             MetaCompilationAnalyzer.MissingInit,
                                              MetaCompilationAnalyzer.MissingRegisterStatement,
                                              MetaCompilationAnalyzer.TooManyInitStatements,
                                              MetaCompilationAnalyzer.InvalidStatement,
@@ -53,7 +53,13 @@ namespace MetaCompilation
                                              MetaCompilationAnalyzer.DiagnosticMissing,
                                              MetaCompilationAnalyzer.DiagnosticIncorrect,
                                              MetaCompilationAnalyzer.DiagnosticReportIncorrect,
-                                             MetaCompilationAnalyzer.DiagnosticReportMissing);
+                                             MetaCompilationAnalyzer.DiagnosticReportMissing,
+                                             MetaCompilationAnalyzer.InternalAndStaticError,
+                                             MetaCompilationAnalyzer.EnabledByDefaultError,
+                                             MetaCompilationAnalyzer.DefaultSeverityError,
+                                             MetaCompilationAnalyzer.MissingIdDeclaration,
+                                             MetaCompilationAnalyzer.IdDeclTypeError,
+                                             MetaCompilationAnalyzer.IncorrectInitSig);
             }
         }
 
@@ -69,8 +75,7 @@ namespace MetaCompilation
             foreach (Diagnostic diagnostic in context.Diagnostics)
             {
                 TextSpan diagnosticSpan = diagnostic.Location.SourceSpan;
-
-                //TODO: if statements for each diagnostic id, to register a code fix
+                
                 //TODO: change this to else if once we are done (creates less merge conflicts without else if)
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingId))
                 {
@@ -103,6 +108,39 @@ namespace MetaCompilation
                     context.RegisterCodeFix(CodeAction.Create("Tutorial: The Initialize method can only register actions, all other statements are invalid", c => InvalidStatementAsync(context.Document, declaration, c)), diagnostic);
                 }
 
+                if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.InternalAndStaticError))
+                {
+                    FieldDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<FieldDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Rules must be declared as both internal and static.", c => InternalStaticAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.EnabledByDefaultError))
+                {
+                    LiteralExpressionSyntax literalExpression = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<LiteralExpressionSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Rules should be enabled by default.", c => EnabledByDefaultAsync(context.Document, literalExpression, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.DefaultSeverityError))
+                {
+                    MemberAccessExpressionSyntax memberAccessExpression = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MemberAccessExpressionSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("defaultSeverity should be set to \"Error\" if something is not allowed by the language authorities.", c => DiagnosticSeverityError(context.Document, memberAccessExpression, c)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("defaultSeverity should be set to \"Warning\" if something is suspicious but allowed.", c => DiagnosticSeverityWarning(context.Document, memberAccessExpression, c)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("defaultSeverity should be set to \"Hidden\" if something is an issue, but is not surfaced by normal means.", c => DiagnosticSeverityHidden(context.Document, memberAccessExpression, c)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("defaultSeverity should be set to \"Info\" for information that does not indicate a problem.", c => DiagnosticSeverityInfo(context.Document, memberAccessExpression, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.MissingIdDeclaration))
+                {
+                    VariableDeclaratorSyntax ruleDeclarationField = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<VariableDeclaratorSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Generate a public field for this rule id.", c => MissingIdDeclarationAsync(context.Document, ruleDeclarationField, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.IdDeclTypeError))
+                {
+                    LiteralExpressionSyntax literalExpression = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<LiteralExpressionSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Rule ids should not be string literals.", c => IdDeclTypeAsync(context.Document, literalExpression, c)), diagnostic);
+                }
+           
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfStatementIncorrect))
                 {
                     StatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>().First();
@@ -679,12 +717,20 @@ namespace MetaCompilation
         private async Task<Document> MissingIdAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
         {
             var idToken = SyntaxFactory.ParseToken("spacingRuleId");
-
             var expressionKind = SyntaxFactory.ParseExpression("\"IfSpacing\"") as ExpressionSyntax;
+            var newClassDeclaration = newIdCreator(idToken, expressionKind, declaration);
 
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, newClassDeclaration);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+
+        private ClassDeclarationSyntax newIdCreator(SyntaxToken idToken, ExpressionSyntax expressionKind, ClassDeclarationSyntax declaration)
+        {
             var equalsValueClause = SyntaxFactory.EqualsValueClause(expressionKind);
             var idDeclarator = SyntaxFactory.VariableDeclarator(idToken, null, equalsValueClause);
-
             var type = SyntaxFactory.ParseTypeName("string");
 
             var idDeclaratorList = new SeparatedSyntaxList<VariableDeclaratorSyntax>().Add(idDeclarator);
@@ -705,11 +751,7 @@ namespace MetaCompilation
                 newClassDeclaration = newClassDeclaration.AddMembers(member);
             }
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(declaration, newClassDeclaration);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-
-            return newDocument;
+            return newClassDeclaration;
         }
         #endregion
 
@@ -801,6 +843,21 @@ namespace MetaCompilation
             return newDocument;
         }
 
+
+        private async Task<Document> InternalStaticAsync(Document document, FieldDeclarationSyntax declaration, CancellationToken c)
+        {
+            var whiteSpace = SyntaxFactory.Whitespace(" ");
+            var internalKeyword = SyntaxFactory.ParseToken("internal").WithTrailingTrivia(whiteSpace);
+            var staticKeyword = SyntaxFactory.ParseToken("static").WithTrailingTrivia(whiteSpace);
+            var modifierList = SyntaxFactory.TokenList(internalKeyword, staticKeyword);
+            var newFieldDeclaration = declaration.WithModifiers(modifierList).WithLeadingTrivia(declaration.GetLeadingTrivia()).WithTrailingTrivia(whiteSpace);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, newFieldDeclaration);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+            return newDocument;
+        }
+
         private async Task<Document> IncorrectSigAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SemanticModel semanticModel = await document.GetSemanticModelAsync();
@@ -809,7 +866,17 @@ namespace MetaCompilation
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root.ReplaceNode(declaration, initializeDeclaration);
             var newDocument = document.WithSyntaxRoot(newRoot);
+            return newDocument;
+        }
 
+
+        private async Task<Document> EnabledByDefaultAsync(Document document, LiteralExpressionSyntax literalExpression, CancellationToken c)
+        {
+            var newLiteralExpression = (SyntaxFactory.ParseExpression("true").WithLeadingTrivia(literalExpression.GetLeadingTrivia()).WithTrailingTrivia(literalExpression.GetTrailingTrivia())) as LiteralExpressionSyntax;
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(literalExpression, newLiteralExpression);
+            var newDocument = document.WithSyntaxRoot(newRoot);
             return newDocument;
         }
 
@@ -820,9 +887,20 @@ namespace MetaCompilation
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root.ReplaceNode(declaration, ifStatement);
             var newDocument = document.WithSyntaxRoot(newRoot);
-
             return newDocument;
         }
+
+
+        private async Task<Document> DiagnosticSeverityError(Document document, MemberAccessExpressionSyntax memberAccessExpression, CancellationToken c)
+        {
+            var newMemberAccessExpressionName = SyntaxFactory.ParseName("Error");
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(memberAccessExpression.Name, newMemberAccessExpressionName);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+            return newDocument;
+        }
+
         #endregion
 
         #region helper functions
@@ -846,7 +924,16 @@ namespace MetaCompilation
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root.ReplaceNode(declaration, ifKeyword);
             var newDocument = document.WithSyntaxRoot(newRoot);
+            return newDocument;
+        }
 
+        private async Task<Document> DiagnosticSeverityWarning(Document document, MemberAccessExpressionSyntax memberAccessExpression, CancellationToken c)
+        {
+            var newMemberAccessExpressionName = SyntaxFactory.ParseName("Warning");
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(memberAccessExpression.Name, newMemberAccessExpressionName);
+            var newDocument = document.WithSyntaxRoot(newRoot);
             return newDocument;
         }
 
@@ -857,7 +944,16 @@ namespace MetaCompilation
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root.ReplaceNode(declaration, ifStatement);
             var newDocument = document.WithSyntaxRoot(newRoot);
+            return newDocument;
+        }
 
+        private async Task<Document> DiagnosticSeverityHidden(Document document, MemberAccessExpressionSyntax memberAccessExpression, CancellationToken c)
+        {
+            var newMemberAccessExpressionName = SyntaxFactory.ParseName("Hidden");
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(memberAccessExpression.Name, newMemberAccessExpressionName);
+            var newDocument = document.WithSyntaxRoot(newRoot);
             return newDocument;
         }
 
@@ -871,7 +967,17 @@ namespace MetaCompilation
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root.ReplaceNode(oldBlock, newBlock);
             var newDocument = document.WithSyntaxRoot(newRoot);
+            return newDocument;
+        }
 
+
+        private async Task<Document> DiagnosticSeverityInfo(Document document, MemberAccessExpressionSyntax memberAccessExpression, CancellationToken c)
+        {
+            var newMemberAccessExpressionName = SyntaxFactory.ParseName("Info");
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(memberAccessExpression.Name, newMemberAccessExpressionName);
+            var newDocument = document.WithSyntaxRoot(newRoot);
             return newDocument;
         }
 
@@ -916,7 +1022,35 @@ namespace MetaCompilation
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root.ReplaceNode(oldBlock, newBlock);
             var newDocument = document.WithSyntaxRoot(newRoot);
+            return newDocument;
+        }
 
+
+        private async Task<Document> MissingIdDeclarationAsync(Document document, VariableDeclaratorSyntax ruleDeclarationField, CancellationToken c)
+        {
+            var classDeclaration = ruleDeclarationField.Parent.Parent.Parent as ClassDeclarationSyntax;
+            var objectCreationSyntax = ruleDeclarationField.Initializer.Value as ObjectCreationExpressionSyntax;
+            var ruleArgumentList = objectCreationSyntax.ArgumentList;
+
+            string currentRuleId = null;
+            for (int i = 0; i < ruleArgumentList.Arguments.Count; i++)
+            {
+                var currentArg = ruleArgumentList.Arguments[i];
+                string currentArgName = currentArg.NameColon.Name.Identifier.Text;
+                if (currentArgName == "id")
+                {
+                    currentRuleId = currentArg.Expression.ToString();
+                    break;
+                }
+            }
+
+            var idToken = SyntaxFactory.ParseToken(currentRuleId);
+            var expressionKind = SyntaxFactory.ParseExpression("\"DescriptiveId\"") as ExpressionSyntax;
+            var newClassDeclaration = newIdCreator(idToken, expressionKind, classDeclaration);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(classDeclaration, newClassDeclaration);
+            var newDocument = document.WithSyntaxRoot(newRoot);
             return newDocument;
         }
 
@@ -946,10 +1080,19 @@ namespace MetaCompilation
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root.ReplaceNode(oldBlock, newBlock);
             var newDocument = document.WithSyntaxRoot(newRoot);
-
             return newDocument;
         }
 
+
+        private async Task<Document> IdDeclTypeAsync(Document document, LiteralExpressionSyntax literalExpression, CancellationToken c)
+        {
+            var idName = SyntaxFactory.ParseName(literalExpression.Token.Value.ToString()) as IdentifierNameSyntax;
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(literalExpression, idName);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+            return newDocument;
+        }
         private async Task<Document> ReturnIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
             IfStatementSyntax ifStatement;
@@ -985,9 +1128,9 @@ namespace MetaCompilation
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root.ReplaceNode(oldBlock, newBlock);
             var newDocument = document.WithSyntaxRoot(newRoot);
-
             return newDocument;
         }
+
         #endregion
 
         #region Helper functions
@@ -1089,5 +1232,6 @@ namespace MetaCompilation
             return newIfStatement;
         }
         #endregion
+
     }
 }
