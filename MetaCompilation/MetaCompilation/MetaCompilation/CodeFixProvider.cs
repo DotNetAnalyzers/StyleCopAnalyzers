@@ -35,7 +35,8 @@ namespace MetaCompilation
                     MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect,
                     MetaCompilationAnalyzer.TrailingTriviaVarMissing,
                     MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
-                    MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect);
+                    MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
+                    MetaCompilationAnalyzer.WhitespaceCheckIncorrect);
             }
         }
 
@@ -118,6 +119,12 @@ namespace MetaCompilation
                 {
                     IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("Tutorial: The fifth statement of the analyzer should be a check of the kind of trivia following the if keyword", c => TrailingKindCheckIncorrectAsync(context.Document, declaration, c)), diagnostic);
+                }
+                
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.WhitespaceCheckIncorrect))
+                {
+                    IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: The sixth statement of the analyzer should be a check to ensure the whitespace after if statement keyword is correct", c => WhitespaceCheckIncorrectAsync(context.Document, declaration, c)), diagnostic);
                 }
             }
         }
@@ -340,6 +347,36 @@ namespace MetaCompilation
             return newDocument;
         }
 
+        private async Task<Document> WhitespaceCheckIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        {
+            IfStatementSyntax ifStatement;
+            var ifBlockStatements = new SyntaxList<SyntaxNode>();
+
+            if (declaration.Parent.Parent.Parent.Parent.Kind() == SyntaxKind.MethodDeclaration)
+            {
+                ifStatement = declaration as IfStatementSyntax;
+            }
+            else
+            {
+                ifStatement = declaration.Parent.Parent as IfStatementSyntax;
+                var ifBlock = declaration.Statement as BlockSyntax;
+                ifBlockStatements = ifBlock.Statements;
+            }
+
+            var newIfStatement = WhitespaceCheckHelper(document, ifStatement, ifBlockStatements) as StatementSyntax;
+
+            var oldBlock = ifStatement.Statement as BlockSyntax;
+            var oldStatement = oldBlock.Statements[0];
+            var newStatement = oldBlock.Statements.Replace(oldStatement, newIfStatement);
+            var newBlock = oldBlock.WithStatements(newStatement);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(oldBlock, newBlock);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+
         #region Helper functions
         private SyntaxNode IfHelper(Document document)
         {
@@ -413,6 +450,26 @@ namespace MetaCompilation
             var whitespaceTrivia = generator.MemberAccessExpression(generator.IdentifierName("SyntaxKind"), "WhitespaceTrivia");
 
             var equalsExpression = generator.ValueEqualsExpression(trailingTriviaKind, whitespaceTrivia);
+
+            var newIfStatement = generator.IfStatement(equalsExpression, ifBlockStatements);
+
+            return newIfStatement;
+        }
+
+        private SyntaxNode WhitespaceCheckHelper(Document document, IfStatementSyntax ifStatement, SyntaxList<SyntaxNode> ifBlockStatements)
+        {
+            var generator = SyntaxGenerator.GetGenerator(document);
+
+            var ifOneBlock = ifStatement.Parent as BlockSyntax;
+            var ifTwoBlock = ifStatement.Statement as BlockSyntax;
+
+            var trailingTriviaDeclaration = ifOneBlock.Statements[0] as LocalDeclarationStatementSyntax;
+            var trailingTrivia = generator.IdentifierName(trailingTriviaDeclaration.Declaration.Variables[0].Identifier.ValueText);
+            var arguments = new SyntaxList<SyntaxNode>();
+
+            var trailingTriviaToString = generator.InvocationExpression(generator.MemberAccessExpression(trailingTrivia, "ToString"), arguments);
+            var rightSide = generator.LiteralExpression(" ");
+            var equalsExpression = generator.ValueEqualsExpression(trailingTriviaToString, rightSide);
 
             var newIfStatement = generator.IfStatement(equalsExpression, ifBlockStatements);
 
