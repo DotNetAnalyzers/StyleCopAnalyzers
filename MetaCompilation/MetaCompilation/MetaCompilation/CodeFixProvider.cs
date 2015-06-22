@@ -436,7 +436,6 @@ namespace MetaCompilation
         private SyntaxNode IfHelper(Document document)
         {
             var generator = SyntaxGenerator.GetGenerator(document);
-
             var type = SyntaxFactory.ParseTypeName("IfStatementSyntax");
             var expression = generator.IdentifierName("context");
             var memberAccessExpression = generator.MemberAccessExpression(expression, "Node");
