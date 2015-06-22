@@ -69,7 +69,8 @@ namespace MetaCompilation
             foreach (Diagnostic diagnostic in context.Diagnostics)
             {
                 TextSpan diagnosticSpan = diagnostic.Location.SourceSpan;
-                
+
+                //TODO: if statements for each diagnostic id, to register a code fix
                 //TODO: change this to else if once we are done (creates less merge conflicts without else if)
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingId))
                 {
@@ -107,7 +108,13 @@ namespace MetaCompilation
                     StatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("Tutorial: The first statement of the analyzer must access the node to be analyzed", c => IncorrectIfAsync(context.Document, declaration, c)), diagnostic);
                 }
-                
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectInitSig))
+                {
+                    MethodDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: The initialize method must have the correct signature to be called", c => IncorrectSigAsync(context.Document, declaration, c)), diagnostic);
+                }
+
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfKeywordIncorrect))
                 {
                     StatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>().First();
@@ -137,7 +144,7 @@ namespace MetaCompilation
                     IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("Tutorial: The fifth statement of the analyzer should be a check of the kind of trivia following the if keyword", c => TrailingKindCheckIncorrectAsync(context.Document, declaration, c)), diagnostic);
                 }
-                
+
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.WhitespaceCheckIncorrect))
                 {
                     IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
@@ -668,32 +675,13 @@ namespace MetaCompilation
             return localDeclaration;
         }
 
-        private async Task<Document> MissingInitAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
-        {
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-            var type = SyntaxFactory.ParseTypeName("AnalysisContext");
-            var parameters = new[] { generator.ParameterDeclaration("context", type) };
-            SemanticModel semanticModel = await document.GetSemanticModelAsync();
-            INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException");
-            var statements = new[] { generator.ThrowStatement(generator.ObjectCreationExpression(notImplementedException)) };
-            var initializeDeclaration = generator.MethodDeclaration("Initialize", parameters: parameters,
-                accessibility: Accessibility.Public, modifiers: DeclarationModifiers.Override, statements: statements);
-
-            var newClassDeclaration = generator.AddMembers(declaration, initializeDeclaration);
-
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(declaration, newClassDeclaration);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-
-            return newDocument;
-        }
-
+        #region id code fix
         private async Task<Document> MissingIdAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
         {
             var idToken = SyntaxFactory.ParseToken("spacingRuleId");
-            
+
             var expressionKind = SyntaxFactory.ParseExpression("\"IfSpacing\"") as ExpressionSyntax;
-            
+
             var equalsValueClause = SyntaxFactory.EqualsValueClause(expressionKind);
             var idDeclarator = SyntaxFactory.VariableDeclarator(idToken, null, equalsValueClause);
 
@@ -716,6 +704,23 @@ namespace MetaCompilation
             {
                 newClassDeclaration = newClassDeclaration.AddMembers(member);
             }
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, newClassDeclaration);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+        #endregion
+
+        #region initialize code fix
+        private async Task<Document> MissingInitAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            SemanticModel semanticModel = await document.GetSemanticModelAsync();
+            var initializeDeclaration = BuildInitialize(document, semanticModel);
+
+            var newClassDeclaration = generator.AddMembers(declaration, initializeDeclaration);
 
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root.ReplaceNode(declaration, newClassDeclaration);
@@ -796,6 +801,18 @@ namespace MetaCompilation
             return newDocument;
         }
 
+        private async Task<Document> IncorrectSigAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        {
+            SemanticModel semanticModel = await document.GetSemanticModelAsync();
+            var initializeDeclaration = BuildInitialize(document, semanticModel);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, initializeDeclaration);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+
         private async Task<Document> IncorrectIfAsync(Document document, StatementSyntax declaration, CancellationToken c)
         {
             var ifStatement = IfHelper(document);
@@ -805,6 +822,21 @@ namespace MetaCompilation
             var newDocument = document.WithSyntaxRoot(newRoot);
 
             return newDocument;
+        }
+        #endregion
+
+        #region helper functions
+        private SyntaxNode BuildInitialize(Document document, SemanticModel semanticModel)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            var type = SyntaxFactory.ParseTypeName("AnalysisContext");
+            var parameters = new[] { generator.ParameterDeclaration("context", type) };
+            INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException");
+            var statements = new[] { generator.ThrowStatement(generator.ObjectCreationExpression(notImplementedException)) };
+            var initializeDeclaration = generator.MethodDeclaration("Initialize", parameters: parameters,
+                accessibility: Accessibility.Public, modifiers: DeclarationModifiers.Override, statements: statements);
+
+            return initializeDeclaration;
         }
 
         private async Task<Document> IncorrectKeywordAsync(Document document, StatementSyntax declaration, CancellationToken c)
@@ -956,6 +988,7 @@ namespace MetaCompilation
 
             return newDocument;
         }
+        #endregion
 
         #region Helper functions
         private SyntaxNode IfHelper(Document document)
