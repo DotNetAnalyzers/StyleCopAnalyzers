@@ -29,7 +29,16 @@ namespace MetaCompilation
                     MetaCompilationAnalyzer.MissingInit, 
                     MetaCompilationAnalyzer.MissingRegisterStatement,
                     MetaCompilationAnalyzer.TooManyInitStatements,
-                    MetaCompilationAnalyzer.InvalidStatement);
+                    MetaCompilationAnalyzer.InvalidStatement,
+                    MetaCompilationAnalyzer.IfStatementIncorrect,
+                    MetaCompilationAnalyzer.IfKeywordIncorrect,
+                    MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect,
+                    MetaCompilationAnalyzer.TrailingTriviaVarMissing,
+                    MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
+                    MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
+                    MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
+                    MetaCompilationAnalyzer.ReturnStatementIncorrect,
+                    MetaCompilationAnalyzer.TooManyStatements);
             }
         }
 
@@ -76,6 +85,60 @@ namespace MetaCompilation
                 {
                     StatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("The Initialize method can only register actions, all other statements are invalid", c => InvalidStatementAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfStatementIncorrect))
+                {
+                    StatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: The first statement of the analyzer must access the node to be analyzed", c => IncorrectIfAsync(context.Document, declaration, c)), diagnostic);
+                }
+                
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfKeywordIncorrect))
+                {
+                    StatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: The second statement of the analyzer must access the keyword from the node being analyzed", c => IncorrectKeywordAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect))
+                {
+                    StatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: The third statement of the analyzer must be an if statement checking the trailing trivia of the node being analyzed", c => TrailingCheckIncorrectAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaVarMissing))
+                {
+                    IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: The fourth statement of the analyzer should store the last trailing trivia of the if keyword", c => TrailingVarMissingAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaVarIncorrect))
+                {
+                    IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: The fourth statement of the analyzer should store the last trailing trivia of the if keyword", c => TrailingVarIncorrectAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect))
+                {
+                    IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: The fifth statement of the analyzer should be a check of the kind of trivia following the if keyword", c => TrailingKindCheckIncorrectAsync(context.Document, declaration, c)), diagnostic);
+                }
+                
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.WhitespaceCheckIncorrect))
+                {
+                    IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: The sixth statement of the analyzer should be a check to ensure the whitespace after if statement keyword is correct", c => WhitespaceCheckIncorrectAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.ReturnStatementIncorrect))
+                {
+                    IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: The seventh step of the analyzer should quit the analysis (if the if statement is formatted properly)", c => ReturnIncorrectAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TooManyStatements))
+                {
+                    IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Thre are too many statments within this if block; its only purpose is to return if the statement is formatted properly", c => TooManyStatementsAsync(context.Document, declaration, c)), diagnostic);
                 }
             }
         }
@@ -152,23 +215,24 @@ namespace MetaCompilation
 
         private async Task<Document> MultipleStatementsAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
-            var statements = declaration.Body.Statements;
+            SyntaxList<StatementSyntax> statements = new SyntaxList<StatementSyntax>();
+            SyntaxList<StatementSyntax> initializeStatements = declaration.Body.Statements;
 
             var newBlock = declaration.Body;
 
-            foreach (ExpressionStatementSyntax statement in statements)
+            foreach (ExpressionStatementSyntax statement in initializeStatements)
             {
                 var expression = statement.Expression as InvocationExpressionSyntax;
                 var expressionStart = expression.Expression as MemberAccessExpressionSyntax;
                 if (expressionStart == null || expressionStart.Name == null ||
                     expressionStart.Name.ToString() != "RegisterSyntaxNodeAction")
                 {
-                    statements = statements.Remove(statement);
+                    continue;
                 }
 
                 if (expression.ArgumentList == null || expression.ArgumentList.Arguments.Count() != 2)
                 {
-                    statements = statements.Remove(statement);
+                    continue;
                 }
                 var argumentMethod = expression.ArgumentList.Arguments[0].Expression as IdentifierNameSyntax;
                 var argumentKind = expression.ArgumentList.Arguments[1].Expression as MemberAccessExpressionSyntax;
@@ -177,8 +241,9 @@ namespace MetaCompilation
                     argumentMethod.Identifier.ValueText != "AnalyzeIfStatement" || argumentKind.Name.ToString() != "IfStatement" ||
                     preArgumentKind.Identifier.ValueText != "SyntaxKind")
                 {
-                    statements = statements.Remove(statement);
+                    continue;
                 }
+                statements = statements.Add(statement);
             }
 
             newBlock = newBlock.WithStatements(statements);
@@ -205,5 +270,266 @@ namespace MetaCompilation
 
             return newDocument;
         }
+
+        private async Task<Document> IncorrectIfAsync(Document document, StatementSyntax declaration, CancellationToken c)
+        {
+            var ifStatement = IfHelper(document);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, ifStatement);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+
+        private async Task<Document> IncorrectKeywordAsync(Document document, StatementSyntax declaration, CancellationToken c)
+        {
+            var ifKeyword = KeywordHelper(document, declaration);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, ifKeyword);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+
+        private async Task<Document> TrailingCheckIncorrectAsync(Document document, StatementSyntax declaration, CancellationToken c)
+        {
+            var ifStatement = TriviaCheckHelper(document, declaration);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, ifStatement);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+
+        private async Task<Document> TrailingVarMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        {
+            var localDeclaration = new SyntaxList<SyntaxNode>().Add(TriviaVarMissingHelper(document, declaration));
+
+            var oldBlock = declaration.Statement as BlockSyntax;
+            var newBlock = oldBlock.WithStatements(localDeclaration);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(oldBlock, newBlock);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+
+        private async Task<Document> TrailingVarIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        {
+            var localDeclaration = TriviaVarMissingHelper(document, declaration) as LocalDeclarationStatementSyntax;
+
+            var oldBlock = declaration.Statement as BlockSyntax;
+            var oldStatement = oldBlock.Statements[0];
+            var newStatements = oldBlock.Statements.Replace(oldStatement, localDeclaration);
+            var newBlock = oldBlock.WithStatements(newStatements);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(oldBlock, newBlock);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+
+        private async Task<Document> TrailingKindCheckIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        {
+            IfStatementSyntax ifStatement;
+            var ifBlockStatements = new SyntaxList<SyntaxNode>();
+            if (declaration.Parent.Parent.Kind() == SyntaxKind.MethodDeclaration)
+            {
+                ifStatement = declaration as IfStatementSyntax;
+            }
+            else
+            {
+                ifStatement = declaration.Parent.Parent as IfStatementSyntax;
+                var ifBlock = declaration.Statement as BlockSyntax;
+                ifBlockStatements = ifBlock.Statements;
+            }
+
+            var newIfStatement = TriviaKindCheckHelper(document, ifStatement, ifBlockStatements) as StatementSyntax;
+
+            var oldBlock = ifStatement.Statement as BlockSyntax;
+            var oldStatement = oldBlock.Statements[1];
+            var newStatements = oldBlock.Statements.Replace(oldStatement, newIfStatement);
+            var newBlock = oldBlock.WithStatements(newStatements);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(oldBlock, newBlock);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+
+        private async Task<Document> WhitespaceCheckIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        {
+            IfStatementSyntax ifStatement;
+            var ifBlockStatements = new SyntaxList<SyntaxNode>();
+
+            if (declaration.Parent.Parent.Parent.Parent.Kind() == SyntaxKind.MethodDeclaration)
+            {
+                ifStatement = declaration as IfStatementSyntax;
+            }
+            else
+            {
+                ifStatement = declaration.Parent.Parent as IfStatementSyntax;
+                var ifBlock = declaration.Statement as BlockSyntax;
+                ifBlockStatements = ifBlock.Statements;
+            }
+
+            var newIfStatement = WhitespaceCheckHelper(document, ifStatement, ifBlockStatements) as StatementSyntax;
+
+            var oldBlock = ifStatement.Statement as BlockSyntax;
+            var oldStatement = oldBlock.Statements[0];
+            var newStatement = oldBlock.Statements.Replace(oldStatement, newIfStatement);
+            var newBlock = oldBlock.WithStatements(newStatement);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(oldBlock, newBlock);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+
+        private async Task<Document> ReturnIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        {
+            IfStatementSyntax ifStatement;
+            if (declaration.Parent.Parent.Parent.Parent.Parent.Parent.Kind() != SyntaxKind.MethodDeclaration)
+            {
+                ifStatement = declaration.Parent.Parent as IfStatementSyntax;
+            }
+            else
+            {
+                ifStatement = declaration;
+            }
+
+            var generator = SyntaxGenerator.GetGenerator(document);
+            var returnStatement = generator.ReturnStatement() as ReturnStatementSyntax;
+
+            var oldBlock = ifStatement.Statement as BlockSyntax;
+            var newStatement = oldBlock.Statements.Replace(oldBlock.Statements[0], returnStatement);
+            var newBlock = oldBlock.WithStatements(newStatement);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(oldBlock, newBlock);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+
+        private async Task<Document> TooManyStatementsAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        {
+            var oldBlock = declaration.Statement as BlockSyntax;
+            var onlyStatement = new SyntaxList<StatementSyntax>().Add(oldBlock.Statements[0]);
+            var newBlock = oldBlock.WithStatements(onlyStatement);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(oldBlock, newBlock);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+
+        #region Helper functions
+        private SyntaxNode IfHelper(Document document)
+        {
+            var generator = SyntaxGenerator.GetGenerator(document);
+
+            var type = SyntaxFactory.ParseTypeName("IfStatementSyntax");
+            var expression = generator.IdentifierName("context");
+            var memberAccessExpression = generator.MemberAccessExpression(expression, "Node");
+            var initializer = generator.CastExpression(type, memberAccessExpression);
+            var ifStatement = generator.LocalDeclarationStatement("ifStatement", initializer);
+
+            return ifStatement;
+        }
+
+        private SyntaxNode KeywordHelper(Document document, StatementSyntax declaration)
+        {
+            var methodBlock = declaration.Parent as BlockSyntax;
+            var firstStatement = methodBlock.Statements[0] as LocalDeclarationStatementSyntax;
+
+            var generator = SyntaxGenerator.GetGenerator(document);
+            var variableName = generator.IdentifierName(firstStatement.Declaration.Variables[0].Identifier.ValueText);
+            var initializer = generator.MemberAccessExpression(variableName, "IfKeyword");
+            var ifKeyword = generator.LocalDeclarationStatement("ifKeyword", initializer);
+
+            return ifKeyword;
+        }
+
+        private SyntaxNode TriviaCheckHelper(Document document, StatementSyntax declaration)
+        {
+            var methodBlock = declaration.Parent as BlockSyntax;
+            var secondStatement = methodBlock.Statements[1] as LocalDeclarationStatementSyntax;
+
+            var generator = SyntaxGenerator.GetGenerator(document);
+            var variableName = generator.IdentifierName(secondStatement.Declaration.Variables[0].Identifier.ValueText);
+            var conditional = generator.MemberAccessExpression(variableName, "HasTrailingTrivia");
+            var trueStatements = new SyntaxList<SyntaxNode>();
+            var ifStatement = generator.IfStatement(conditional, trueStatements);
+
+            return ifStatement;
+        }
+
+        private SyntaxNode TriviaVarMissingHelper(Document document, IfStatementSyntax declaration)
+        {
+            var methodBlock = declaration.Parent as BlockSyntax;
+            var secondStatement = methodBlock.Statements[1] as LocalDeclarationStatementSyntax;
+
+            var generator = SyntaxGenerator.GetGenerator(document);
+            var variableName = generator.IdentifierName(secondStatement.Declaration.Variables[0].Identifier.ValueText);
+
+            var ifTrailing = generator.MemberAccessExpression(variableName, "TrailingTrivia");
+            var fullVariable = generator.MemberAccessExpression(ifTrailing, "Last");
+            var parameters = new SyntaxList<SyntaxNode>();
+            var variableExpression = generator.InvocationExpression(fullVariable, parameters);
+
+            var localDeclaration = generator.LocalDeclarationStatement("trailingTrivia", variableExpression);
+
+            return localDeclaration;
+        }
+
+        private SyntaxNode TriviaKindCheckHelper(Document document, IfStatementSyntax ifStatement, SyntaxList<SyntaxNode> ifBlockStatements)
+        {
+            var generator = SyntaxGenerator.GetGenerator(document);
+
+            var ifOneBlock = ifStatement.Statement as BlockSyntax;
+
+            var trailingTriviaDeclaration = ifOneBlock.Statements[0] as LocalDeclarationStatementSyntax;
+            var trailingTrivia = generator.IdentifierName(trailingTriviaDeclaration.Declaration.Variables[0].Identifier.ValueText);
+            var arguments = new SyntaxList<SyntaxNode>();
+            var trailingTriviaKind = generator.InvocationExpression(generator.MemberAccessExpression(trailingTrivia, "Kind"), arguments);
+
+            var whitespaceTrivia = generator.MemberAccessExpression(generator.IdentifierName("SyntaxKind"), "WhitespaceTrivia");
+
+            var equalsExpression = generator.ValueEqualsExpression(trailingTriviaKind, whitespaceTrivia);
+
+            var newIfStatement = generator.IfStatement(equalsExpression, ifBlockStatements);
+
+            return newIfStatement;
+        }
+
+        private SyntaxNode WhitespaceCheckHelper(Document document, IfStatementSyntax ifStatement, SyntaxList<SyntaxNode> ifBlockStatements)
+        {
+            var generator = SyntaxGenerator.GetGenerator(document);
+
+            var ifOneBlock = ifStatement.Parent as BlockSyntax;
+            var ifTwoBlock = ifStatement.Statement as BlockSyntax;
+
+            var trailingTriviaDeclaration = ifOneBlock.Statements[0] as LocalDeclarationStatementSyntax;
+            var trailingTrivia = generator.IdentifierName(trailingTriviaDeclaration.Declaration.Variables[0].Identifier.ValueText);
+            var arguments = new SyntaxList<SyntaxNode>();
+
+            var trailingTriviaToString = generator.InvocationExpression(generator.MemberAccessExpression(trailingTrivia, "ToString"), arguments);
+            var rightSide = generator.LiteralExpression(" ");
+            var equalsExpression = generator.ValueEqualsExpression(trailingTriviaToString, rightSide);
+
+            var newIfStatement = generator.IfStatement(equalsExpression, ifBlockStatements);
+
+            return newIfStatement;
+        }
+        #endregion
     }
 }
