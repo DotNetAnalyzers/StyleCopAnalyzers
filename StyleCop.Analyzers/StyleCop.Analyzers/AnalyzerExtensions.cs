@@ -64,5 +64,24 @@ namespace StyleCop.Analyzers
                 },
                 syntaxKinds);
         }
+
+        internal static void RegisterSyntaxNodeActionHonorExclusions<TLanguageKindEnum>(this CompilationStartAnalysisContext context, Action<SyntaxNodeAnalysisContext> action, params TLanguageKindEnum[] syntaxKinds) where TLanguageKindEnum : struct
+        {
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (c.IsGenerated())
+                    {
+                        return;
+                    }
+
+                    // Honor the containing document item's ExcludeFromStylecop=True
+                    // MSBuild metadata, if analyzers have access to it.
+                    //// TODO: code here
+
+                    action(c);
+                },
+                syntaxKinds);
+        }
     }
 }
