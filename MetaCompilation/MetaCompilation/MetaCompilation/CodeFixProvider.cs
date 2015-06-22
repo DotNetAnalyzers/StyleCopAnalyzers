@@ -55,7 +55,7 @@ namespace MetaCompilation
             {
                 TextSpan diagnosticSpan = diagnostic.Location.SourceSpan;
                 
-                //TODO: if statements for each diagnostic id, to register a code fix
+                //TODO: change this to else if once we are done (creates less merge conflicts without else if)
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingId))
                 {
                     ClassDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>().First();
