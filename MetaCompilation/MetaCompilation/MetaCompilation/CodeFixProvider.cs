@@ -37,7 +37,8 @@ namespace MetaCompilation
                     MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
                     MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
                     MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
-                    MetaCompilationAnalyzer.ReturnStatementIncorrect);
+                    MetaCompilationAnalyzer.ReturnStatementIncorrect,
+                    MetaCompilationAnalyzer.TooManyStatements);
             }
         }
 
@@ -132,6 +133,12 @@ namespace MetaCompilation
                 {
                     IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("Tutorial: The seventh step of the analyzer should quit the analysis (if the if statement is formatted properly)", c => ReturnIncorrectAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TooManyStatements))
+                {
+                    IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Thre are too many statments within this if block; its only purpose is to return if the statement is formatted properly", c => TooManyStatementsAsync(context.Document, declaration, c)), diagnostic);
                 }
             }
         }
@@ -386,12 +393,35 @@ namespace MetaCompilation
 
         private async Task<Document> ReturnIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
+            IfStatementSyntax ifStatement;
+            if (declaration.Parent.Parent.Parent.Parent.Parent.Parent.Kind() != SyntaxKind.MethodDeclaration)
+            {
+                ifStatement = declaration.Parent.Parent as IfStatementSyntax;
+            }
+            else
+            {
+                ifStatement = declaration;
+            }
+
             var generator = SyntaxGenerator.GetGenerator(document);
             var returnStatement = generator.ReturnStatement() as ReturnStatementSyntax;
 
-            var oldBlock = declaration.Statement as BlockSyntax;
+            var oldBlock = ifStatement.Statement as BlockSyntax;
             var newStatement = oldBlock.Statements.Replace(oldBlock.Statements[0], returnStatement);
             var newBlock = oldBlock.WithStatements(newStatement);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(oldBlock, newBlock);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+
+        private async Task<Document> TooManyStatementsAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        {
+            var oldBlock = declaration.Statement as BlockSyntax;
+            var onlyStatement = new SyntaxList<StatementSyntax>().Add(oldBlock.Statements[0]);
+            var newBlock = oldBlock.WithStatements(onlyStatement);
 
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root.ReplaceNode(oldBlock, newBlock);

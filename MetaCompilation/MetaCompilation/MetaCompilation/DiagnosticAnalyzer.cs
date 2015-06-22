@@ -196,7 +196,8 @@ namespace MetaCompilation
                                              WhitespaceCheckMissingRule,
                                              WhitespaceCheckIncorrectRule,
                                              ReturnStatementMissingRule,
-                                             ReturnStatementIncorrectRule);
+                                             ReturnStatementIncorrectRule,
+                                             TooManyStatementsRule);
             }
         }
 
