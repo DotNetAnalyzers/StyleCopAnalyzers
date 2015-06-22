@@ -215,23 +215,24 @@ namespace MetaCompilation
 
         private async Task<Document> MultipleStatementsAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
-            var statements = declaration.Body.Statements;
+            SyntaxList<StatementSyntax> statements = new SyntaxList<StatementSyntax>();
+            SyntaxList<StatementSyntax> initializeStatements = declaration.Body.Statements;
 
             var newBlock = declaration.Body;
 
-            foreach (ExpressionStatementSyntax statement in statements)
+            foreach (ExpressionStatementSyntax statement in initializeStatements)
             {
                 var expression = statement.Expression as InvocationExpressionSyntax;
                 var expressionStart = expression.Expression as MemberAccessExpressionSyntax;
                 if (expressionStart == null || expressionStart.Name == null ||
                     expressionStart.Name.ToString() != "RegisterSyntaxNodeAction")
                 {
-                    statements = statements.Remove(statement);
+                    continue;
                 }
 
                 if (expression.ArgumentList == null || expression.ArgumentList.Arguments.Count() != 2)
                 {
-                    statements = statements.Remove(statement);
+                    continue;
                 }
                 var argumentMethod = expression.ArgumentList.Arguments[0].Expression as IdentifierNameSyntax;
                 var argumentKind = expression.ArgumentList.Arguments[1].Expression as MemberAccessExpressionSyntax;
@@ -240,8 +241,9 @@ namespace MetaCompilation
                     argumentMethod.Identifier.ValueText != "AnalyzeIfStatement" || argumentKind.Name.ToString() != "IfStatement" ||
                     preArgumentKind.Identifier.ValueText != "SyntaxKind")
                 {
-                    statements = statements.Remove(statement);
+                    continue;
                 }
+                statements = statements.Add(statement);
             }
 
             newBlock = newBlock.WithStatements(statements);
