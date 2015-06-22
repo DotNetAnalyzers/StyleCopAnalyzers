@@ -36,7 +36,8 @@ namespace MetaCompilation
                     MetaCompilationAnalyzer.TrailingTriviaVarMissing,
                     MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
                     MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                    MetaCompilationAnalyzer.WhitespaceCheckIncorrect);
+                    MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
+                    MetaCompilationAnalyzer.ReturnStatementIncorrect);
             }
         }
 
@@ -125,6 +126,12 @@ namespace MetaCompilation
                 {
                     IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("Tutorial: The sixth statement of the analyzer should be a check to ensure the whitespace after if statement keyword is correct", c => WhitespaceCheckIncorrectAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.ReturnStatementIncorrect))
+                {
+                    IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: The seventh step of the analyzer should quit the analysis (if the if statement is formatted properly)", c => ReturnIncorrectAsync(context.Document, declaration, c)), diagnostic);
                 }
             }
         }
@@ -368,6 +375,22 @@ namespace MetaCompilation
             var oldBlock = ifStatement.Statement as BlockSyntax;
             var oldStatement = oldBlock.Statements[0];
             var newStatement = oldBlock.Statements.Replace(oldStatement, newIfStatement);
+            var newBlock = oldBlock.WithStatements(newStatement);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(oldBlock, newBlock);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+
+        private async Task<Document> ReturnIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        {
+            var generator = SyntaxGenerator.GetGenerator(document);
+            var returnStatement = generator.ReturnStatement() as ReturnStatementSyntax;
+
+            var oldBlock = declaration.Statement as BlockSyntax;
+            var newStatement = oldBlock.Statements.Replace(oldBlock.Statements[0], returnStatement);
             var newBlock = oldBlock.WithStatements(newStatement);
 
             var root = await document.GetSyntaxRootAsync();
