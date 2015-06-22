@@ -10,27 +10,22 @@ This repository contains an implementation of the StyleCop rules using the .NET 
 
 The preferable way to use the analyzers is to add the nuget package [StyleCop.Analyzers](http://www.nuget.org/packages/StyleCop.Analyzers/)
 to the project where you want to enforce StyleCop rules.
-You can also build a vsix extension from source and install it into visual studio to use it in all
-C# projects opened in visual studio.
 
 Currently the only way to configure the rules is to change the severity for them in a ruleset file.
 
-## Building
+## Installation
 
-Visual Studio 2015 RC is required for building this repository.
-The Visual Studio 2015 RC SDK is required for building the vsix extension project and for
-debugging in an experimental visual studio hive.
+StyleCopAnalyzers can be installed using the NuGet Package Manager in Visual Studio 2015 RC.
+
+![Install via nuget](https://cloud.githubusercontent.com/assets/1408396/8233513/491f301a-159c-11e5-8b7a-1e16a0695da6.png)
+
+## Team Considerations
+
+If you use older versions of Visual Studio in addition to Visual Studio 2015, you may still install these analyzers. They will be automatically disabled when you open the project back up in Visual Studio 2013 or earlier.
 
 ## Contributing
 
-If you want to contribute code you can get started by looking for issues marked as
-[up for grabs](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/labels/up%20for%20grabs).
-We also have the [easy](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/labels/easy) tag
-for issues suitable if you are unfamiliar with roslyn.
-
-Also see the [contributing guide](CONTRIBUTING.md).
-
-You can also help by filing issues, participating in discussions and doing code review.
+See [Contributing](CONTRIBUTING.md)
 
 ## Current status
 
