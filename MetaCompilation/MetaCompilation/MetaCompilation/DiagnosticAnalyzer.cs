@@ -39,32 +39,32 @@ namespace MetaCompilation
         #region rule rules
 
         public const string IdDeclTypeError = "MetaAnalyzer018";
-        internal static DiagnosticDescriptor IdDeclTypeErrorRule = CreateRule(IdDeclTypeError, "This diagnostic id type is incorrect", "The diagnostic id should not be a string literal");
+        internal static DiagnosticDescriptor IdDeclTypeErrorRule = CreateRule(IdDeclTypeError, "DiagnosticDescriptor 'id' incorrect", "The diagnostic id should be the const declared above this");
 
         public const string MissingIdDeclaration = "MetaAnalyzer017";
-        internal static DiagnosticDescriptor MissingIdDeclarationRule = CreateRule(MissingIdDeclaration, "The diagnostic id declaration is missing", "This diagnostic id has not been declared");
+        internal static DiagnosticDescriptor MissingIdDeclarationRule = CreateRule(MissingIdDeclaration, "Diagnostic id declaration missing", "This diagnostic id has not been declared");
 
         public const string DefaultSeverityError = "MetaAnalyzer016";
-        internal static DiagnosticDescriptor DefaultSeverityErrorRule = CreateRule(DefaultSeverityError, "defaultSeverity is incorrectly declared", "defaultSeverity must be of the form: DiagnosticSeverity.[severity]");
+        internal static DiagnosticDescriptor DefaultSeverityErrorRule = CreateRule(DefaultSeverityError, "defaultSeverity incorrect", "defaultSeverity must be of the form: DiagnosticSeverity.[severity]");
 
         public const string EnabledByDefaultError = "MetaAnalyzer015";
-        internal static DiagnosticDescriptor EnabledByDefaultErrorRule = CreateRule(EnabledByDefaultError, "isEnabledByDefault should be set to true", "isEnabledByDefault should be set to true");
+        internal static DiagnosticDescriptor EnabledByDefaultErrorRule = CreateRule(EnabledByDefaultError, "isEnabledByDefault incorrect", "isEnabledByDefault should be set to true");
 
         public const string InternalAndStaticError = "MetaAnalyzer014";
-        internal static DiagnosticDescriptor InternalAndStaticErrorRule = CreateRule(InternalAndStaticError, "The DiagnosticDescriptor should be internal and static", "The DiagnosticDescriptor should be internal and static");
+        internal static DiagnosticDescriptor InternalAndStaticErrorRule = CreateRule(InternalAndStaticError, "DiagnosticDescriptor modifiers incorrect", "The {0} field should be internal and static");
 
         public const string MissingRule = "MetaAnalyzer019";
-        internal static DiagnosticDescriptor MissingRuleRule = CreateRule(MissingRule, "Missing a rule", "You need to have at least one DiagnosticDescriptor rule");
+        internal static DiagnosticDescriptor MissingRuleRule = CreateRule(MissingRule, "Missing DiagnosticDescriptor", "You need to have at least one DiagnosticDescriptor rule");
         #endregion
 
         #region id rules
         public const string MissingId = "MetaAnalyzer001";
-        internal static DiagnosticDescriptor MissingIdRule = CreateRule(MissingId, "The analyzer is missing a diagnostic id", "The analyzer '{0}' is missing a diagnostic id");
+        internal static DiagnosticDescriptor MissingIdRule = CreateRule(MissingId, "Missing diagnostic id", "The analyzer '{0}' is missing a diagnostic id");
         #endregion
 
         #region Initialize rules
         public const string MissingInit = "MetaAnalyzer002";
-        internal static DiagnosticDescriptor MissingInitRule = CreateRule(MissingInit, "The analyzer is missing the required Initialize method", "The analyzer '{0}' is missing the required Initialize method");
+        internal static DiagnosticDescriptor MissingInitRule = CreateRule(MissingInit, "Missing Initialize method", "The analyzer '{0}' is missing the required Initialize method");
 
         public const string MissingRegisterStatement = "MetaAnalyzer003";
         internal static DiagnosticDescriptor MissingRegisterRule = CreateRule(MissingRegisterStatement, "An action must be registered within the method", "An action must be registered within the '{0}' method");
@@ -76,33 +76,33 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor IncorrectInitStatementRule = CreateRule(IncorrectInitStatement, "This statement needs to register for a supported action", "This statement needs to register for a supported action");
 
         public const string IncorrectInitSig = "MetaAnalyzer006";
-        internal static DiagnosticDescriptor IncorrectInitSigRule = CreateRule(IncorrectInitSig, "The signature for the method is incorrect", "The signature for the '{0}' method is incorrect");
+        internal static DiagnosticDescriptor IncorrectInitSigRule = CreateRule(IncorrectInitSig, "Incorrect method signature", "The signature for the '{0}' method is incorrect");
 
         public const string InvalidStatement = "MetaAnalyzer020";
-        internal static DiagnosticDescriptor InvalidStatementRule = CreateRule(InvalidStatement, "The Initialize method only registers actions: the statement is invalid", "The Initialize method only registers actions: the statement '{0}' is invalid");
+        internal static DiagnosticDescriptor InvalidStatementRule = CreateRule(InvalidStatement, "Incorrect statement", "The Initialize method only registers actions: the statement '{0}' is invalid");
         #endregion
 
         #region SupportedDiagnostics rules
         public const string MissingSuppDiag = "MetaAnalyzer007";
-        internal static DiagnosticDescriptor MissingSuppDiagRule = CreateRule(MissingSuppDiag, "You are missing the required SupportedDiagnostics method", "You are missing the required SupportedDiagnostics method");
+        internal static DiagnosticDescriptor MissingSuppDiagRule = CreateRule(MissingSuppDiag, "Missing SupportedDiagnostics property", "You are missing the required SupportedDiagnostics property");
 
         public const string IncorrectSigSuppDiag = "MetaAnalyzer008";
-        internal static DiagnosticDescriptor IncorrectSigSuppDiagRule = CreateRule(IncorrectSigSuppDiag, "The signature of the SupportedDiagnostics property is incorrect", "The signature of the SupportedDiagnostics property is incorrect");
+        internal static DiagnosticDescriptor IncorrectSigSuppDiagRule = CreateRule(IncorrectSigSuppDiag, "Incorrect SupportedDiagnostics property", "The signature of the SupportedDiagnostics property is incorrect");
 
         public const string MissingAccessor = "MetaAnalyzer009";
-        internal static DiagnosticDescriptor MissingAccessorRule = CreateRule(MissingAccessor, "You are missing a get accessor in your SupportedDiagnostics property", "You are missing a get accessor in your SupportedDiagnostics property");
+        internal static DiagnosticDescriptor MissingAccessorRule = CreateRule(MissingAccessor, "Missing get accessor", "The {0} property is missing a get accessor");
 
         public const string TooManyAccessors = "MetaAnalyzer010";
-        internal static DiagnosticDescriptor TooManyAccessorsRule = CreateRule(TooManyAccessors, "You only need a get accessor for this property", "You only need a get accessor for this property");
+        internal static DiagnosticDescriptor TooManyAccessorsRule = CreateRule(TooManyAccessors, "You only need a get accessor for this property", "The {0} property only needs a get accessor");
 
         public const string IncorrectAccessorReturn = "MetaAnalyzer011";
-        internal static DiagnosticDescriptor IncorrectAccessorReturnRule = CreateRule(IncorrectAccessorReturn, "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules", "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules");
+        internal static DiagnosticDescriptor IncorrectAccessorReturnRule = CreateRule(IncorrectAccessorReturn, "Get accessor return value incorrect", "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules");
 
         public const string SuppDiagReturnValue = "MetaAnalyzer012";
-        internal static DiagnosticDescriptor SuppDiagReturnValueRule = CreateRule(SuppDiagReturnValue, "You need to create an immutable array", "You need to create an immutable array");
+        internal static DiagnosticDescriptor SuppDiagReturnValueRule = CreateRule(SuppDiagReturnValue, "SupportedDiagnostics return value incorrect", "The {0} property's get accessor needs to return an ImmutableArray");
 
         public const string SupportedRules = "MetaAnalyzer013";
-        internal static DiagnosticDescriptor SupportedRulesRule = CreateRule(SupportedRules, "The immutable array should contain every DiagnosticDescriptor rule that was created", "The immutable array should contain every DiagnosticDescriptor rule that was created");
+        internal static DiagnosticDescriptor SupportedRulesRule = CreateRule(SupportedRules, "ImmutableArray incorrect", "The immutable array should contain every DiagnosticDescriptor rule that was created");
         #endregion
 
         #region analysis rules
@@ -1746,7 +1746,7 @@ namespace MetaCompilation
                 {
                     var valueClause = returnExpression as InvocationExpressionSyntax;
                     var returnDeclaration = returnStatement as ReturnStatementSyntax;
-                    SuppDiagReturnCheck(context, valueClause, returnDeclaration.GetLocation(), ruleNames);
+                    SuppDiagReturnCheck(context, valueClause, returnDeclaration.GetLocation(), ruleNames, propertyDeclaration);
                 }
                 else if (returnExpression is IdentifierNameSyntax)
                 {
@@ -1759,7 +1759,7 @@ namespace MetaCompilation
 
                     InvocationExpressionSyntax valueClause = symbolResult[0] as InvocationExpressionSyntax;
                     VariableDeclaratorSyntax returnDeclaration = symbolResult[1] as VariableDeclaratorSyntax;
-                    SuppDiagReturnCheck(context, valueClause, returnDeclaration.GetLocation(), ruleNames);
+                    SuppDiagReturnCheck(context, valueClause, returnDeclaration.GetLocation(), ruleNames, propertyDeclaration);
                 }
                 else
                 {
@@ -1805,19 +1805,19 @@ namespace MetaCompilation
                 SyntaxList<AccessorDeclarationSyntax> accessors = accessorList.Accessors;
                 if (accessors == null || accessors.Count == 0)
                 {
-                    ReportDiagnostic(context, MissingAccessorRule, propertyDeclaration.GetLocation(), MissingAccessorRule.MessageFormat);
+                    ReportDiagnostic(context, MissingAccessorRule, propertyDeclaration.GetLocation(), propertyDeclaration.Identifier.Text);
                     return emptyResult;
                 }
                 if (accessors.Count > 1)
                 {
-                    ReportDiagnostic(context, TooManyAccessorsRule, accessorList.GetLocation(), TooManyAccessorsRule.MessageFormat);
+                    ReportDiagnostic(context, TooManyAccessorsRule, accessorList.GetLocation(), propertyDeclaration.Identifier.Text);
                     return emptyResult;
                 }
 
                 var getAccessor = accessors.First() as AccessorDeclarationSyntax;
                 if (getAccessor == null || getAccessor.Keyword.Kind() != SyntaxKind.GetKeyword)
                 {
-                    ReportDiagnostic(context, MissingAccessorRule, propertyDeclaration.GetLocation(), MissingAccessorRule.MessageFormat);
+                    ReportDiagnostic(context, MissingAccessorRule, propertyDeclaration.GetLocation(), propertyDeclaration.Identifier.Text);
                     return emptyResult;
                 }
 
@@ -1832,7 +1832,7 @@ namespace MetaCompilation
             }
 
             //checks the return value of the get accessor within SupportedDiagnostics
-            internal void SuppDiagReturnCheck(CompilationAnalysisContext context, InvocationExpressionSyntax valueClause, Location returnDeclarationLocation, List<string> ruleNames)
+            internal void SuppDiagReturnCheck(CompilationAnalysisContext context, InvocationExpressionSyntax valueClause, Location returnDeclarationLocation, List<string> ruleNames, PropertyDeclarationSyntax propertyDeclaration)
             {
                 if (valueClause == null)
                 {
@@ -1849,7 +1849,7 @@ namespace MetaCompilation
 
                 if (valueExpression.ToString() != "ImmutableArray.Create")
                 {
-                    ReportDiagnostic(context, SuppDiagReturnValueRule, returnDeclarationLocation, SuppDiagReturnValueRule.MessageFormat);
+                    ReportDiagnostic(context, SuppDiagReturnValueRule, returnDeclarationLocation, propertyDeclaration.Identifier.Text);
                     return;
                 }
 
@@ -1946,7 +1946,7 @@ namespace MetaCompilation
                     {
                         if (fieldSymbol.DeclaredAccessibility != Accessibility.Internal || !fieldSymbol.IsStatic)
                         {
-                            ReportDiagnostic(context, InternalAndStaticErrorRule, fieldSymbol.Locations[0], InternalAndStaticErrorRule.MessageFormat);
+                            ReportDiagnostic(context, InternalAndStaticErrorRule, fieldSymbol.Locations[0], fieldSymbol.Name);
                             return emptyRuleNames;
                         }
 
@@ -2107,49 +2107,42 @@ namespace MetaCompilation
                                 return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                             }
                         }
-
-                        if (statements.Count() > 1)
+                        foreach (ExpressionStatementSyntax statement in statements)
                         {
-                            foreach (ExpressionStatementSyntax statement in statements)
+                            var expression = statement.Expression as InvocationExpressionSyntax;
+                            if (expression == null)
                             {
-                                var expression = statement.Expression as InvocationExpressionSyntax;
-                                if (expression == null)
-                                {
-                                    ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
-                                    return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
-                                }
-
-                                var expressionStart = expression.Expression as MemberAccessExpressionSyntax;
-                                if (expressionStart == null || expressionStart.Name == null)
-                                {
-                                    ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
-                                    return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
-                                }
-
-                                var preExpressionStart = expressionStart.Expression as IdentifierNameSyntax;
-                                if (preExpressionStart == null || preExpressionStart.Identifier == null ||
-                                    preExpressionStart.Identifier.ValueText != "context")
-                                {
-                                    ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
-                                    return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
-                                }
-
-                                var name = expressionStart.Name.ToString();
-                                if (!_branchesDict.ContainsKey(name))
-                                {
-                                    ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
-                                    return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
-                                }
+                                ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
+                                return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                             }
 
-                            if (statements.Count() > 1)
+                            var expressionStart = expression.Expression as MemberAccessExpressionSyntax;
+                            if (expressionStart == null || expressionStart.Name == null)
                             {
-                                //too many statements inside initialize
-                                ReportDiagnostic(context, TooManyInitStatementsRule, _initializeSymbol.Locations[0], _initializeSymbol.Name.ToString());
+                                ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
+                                return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
+                            }
+
+                            var preExpressionStart = expressionStart.Expression as IdentifierNameSyntax;
+                            if (preExpressionStart == null || preExpressionStart.Identifier == null ||
+                                preExpressionStart.Identifier.ValueText != "context")
+                            {
+                                ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
+                                return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
+                            }
+
+                            var name = expressionStart.Name.ToString();
+                            if (!_branchesDict.ContainsKey(name))
+                            {
+                                ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
                                 return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                             }
                         }
+                            
+                        //too many statements inside initialize
+                        ReportDiagnostic(context, TooManyInitStatementsRule, _initializeSymbol.Locations[0], _initializeSymbol.Name.ToString());
                         return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
+
                     }
                     //only one statement inside initialize
                     else
@@ -2178,17 +2171,17 @@ namespace MetaCompilation
                         }
 
                         SeparatedSyntaxList<ArgumentSyntax> arguments = invocationExpr.ArgumentList.Arguments;
-                        if (arguments == null)
+                        if (arguments == null || arguments.Count == 0)
                         {
-                            ReportDiagnostic(context, InvalidStatementRule, memberExpr.GetLocation(), memberExpr.Name.ToString());
+                            ReportDiagnostic(context, MissingRegisterRule, memberExpr.GetLocation(), memberExpr.Name.ToString());
                             return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                         }
-                        if (arguments.Count() > 0)
+                        if (arguments.Count > 0)
                         {
                             IMethodSymbol actionSymbol = context.Compilation.GetSemanticModel(invocationExpr.SyntaxTree).GetSymbolInfo(arguments[0].Expression).Symbol as IMethodSymbol;
                             registerArgs.Add(actionSymbol);
 
-                            if (arguments.Count() > 1)
+                            if (arguments.Count > 1)
                             {
                                 IFieldSymbol kindSymbol = context.Compilation.GetSemanticModel(invocationExpr.SyntaxTree).GetSymbolInfo(arguments[1].Expression).Symbol as IFieldSymbol;
                                 if (kindSymbol == null)
@@ -2203,7 +2196,6 @@ namespace MetaCompilation
                         }
                     }
                 }
-                
 
                 return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
             }

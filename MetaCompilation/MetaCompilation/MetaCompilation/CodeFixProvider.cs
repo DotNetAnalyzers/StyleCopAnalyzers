@@ -24,21 +24,36 @@ namespace MetaCompilation
         {
             get
             {
-                //TODO: add any new rules
+                //TODO: should be 47 when done
                 return ImmutableArray.Create(MetaCompilationAnalyzer.MissingId, 
-                    MetaCompilationAnalyzer.MissingInit, 
-                    MetaCompilationAnalyzer.MissingRegisterStatement,
-                    MetaCompilationAnalyzer.TooManyInitStatements,
-                    MetaCompilationAnalyzer.InvalidStatement,
-                    MetaCompilationAnalyzer.IfStatementIncorrect,
-                    MetaCompilationAnalyzer.IfKeywordIncorrect,
-                    MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect,
-                    MetaCompilationAnalyzer.TrailingTriviaVarMissing,
-                    MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
-                    MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                    MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
-                    MetaCompilationAnalyzer.ReturnStatementIncorrect,
-                    MetaCompilationAnalyzer.TooManyStatements);
+                                             MetaCompilationAnalyzer.MissingInit, 
+                                             MetaCompilationAnalyzer.MissingRegisterStatement,
+                                             MetaCompilationAnalyzer.TooManyInitStatements,
+                                             MetaCompilationAnalyzer.InvalidStatement,
+                                             MetaCompilationAnalyzer.IfStatementIncorrect,
+                                             MetaCompilationAnalyzer.IfKeywordIncorrect,
+                                             MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect,
+                                             MetaCompilationAnalyzer.TrailingTriviaVarMissing,
+                                             MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
+                                             MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
+                                             MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
+                                             MetaCompilationAnalyzer.ReturnStatementIncorrect,
+                                             MetaCompilationAnalyzer.TooManyStatements,
+                                             MetaCompilationAnalyzer.LocationMissing,
+                                             MetaCompilationAnalyzer.LocationIncorrect,
+                                             MetaCompilationAnalyzer.SpanMissing,
+                                             MetaCompilationAnalyzer.SpanIncorrect,
+                                             MetaCompilationAnalyzer.EndSpanIncorrect,
+                                             MetaCompilationAnalyzer.EndSpanMissing,
+                                             MetaCompilationAnalyzer.StartSpanIncorrect,
+                                             MetaCompilationAnalyzer.StartSpanMissing,
+                                             MetaCompilationAnalyzer.OpenParenIncorrect,
+                                             MetaCompilationAnalyzer.OpenParenMissing,
+                                             MetaCompilationAnalyzer.MissingAnalysisMethod,
+                                             MetaCompilationAnalyzer.DiagnosticMissing,
+                                             MetaCompilationAnalyzer.DiagnosticIncorrect,
+                                             MetaCompilationAnalyzer.DiagnosticReportIncorrect,
+                                             MetaCompilationAnalyzer.DiagnosticReportMissing);
             }
         }
 
@@ -84,7 +99,7 @@ namespace MetaCompilation
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.InvalidStatement))
                 {
                     StatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>().First();
-                    context.RegisterCodeFix(CodeAction.Create("The Initialize method can only register actions, all other statements are invalid", c => InvalidStatementAsync(context.Document, declaration, c)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: The Initialize method can only register actions, all other statements are invalid", c => InvalidStatementAsync(context.Document, declaration, c)), diagnostic);
                 }
 
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfStatementIncorrect))
@@ -140,7 +155,517 @@ namespace MetaCompilation
                     IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("Tutorial: Thre are too many statments within this if block; its only purpose is to return if the statement is formatted properly", c => TooManyStatementsAsync(context.Document, declaration, c)), diagnostic);
                 }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.LocationMissing))
+                {
+                    MethodDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Create a diagnostic location. This is where the red squiggle will appear in the code that you are analyzing", c => AddLocationAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.LocationIncorrect))
+                {
+                    try
+                    {
+                        LocalDeclarationStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<LocalDeclarationStatementSyntax>().First();
+                        context.RegisterCodeFix(CodeAction.Create("Tutorial: Create a diagnostic location. This is where the red squiggle will appear in the code that you are analyzing", c => ReplaceLocationAsync(context.Document, declaration, c)), diagnostic);
+                    }
+                    catch
+                    {
+                        return;
+                    }
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.SpanMissing))
+                {
+                    MethodDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Create a diagnostic span. This is where the red squiggle will appear in the code that you are analyzing", c => AddSpanAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.SpanIncorrect))
+                {
+                    try
+                    {
+                        LocalDeclarationStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<LocalDeclarationStatementSyntax>().First();
+                        context.RegisterCodeFix(CodeAction.Create("Tutorial: Create a diagnostic span. This is where the red squiggle will appear in the code that you are analyzing", c => ReplaceSpanAsync(context.Document, declaration, c)), diagnostic);
+                    }
+                    catch
+                    {
+                        return;
+                    }
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.EndSpanMissing))
+                {
+                    MethodDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Create an int that is the end of the diagnostic span", c => AddEndSpanAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.EndSpanIncorrect))
+                {
+                    try
+                    {
+                        LocalDeclarationStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<LocalDeclarationStatementSyntax>().First();
+                        context.RegisterCodeFix(CodeAction.Create("Tutorial: Create an int that is the end of the diagnostic span", c => ReplaceEndSpanAsync(context.Document, declaration, c)), diagnostic);
+                    }
+                    catch
+                    {
+                        return;
+                    }
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.StartSpanMissing))
+                {
+                    MethodDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Create an int that is the start of the diagnostic span", c => AddStartSpanAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.StartSpanIncorrect))
+                {
+                    try
+                    {
+                        LocalDeclarationStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<LocalDeclarationStatementSyntax>().First();
+                        context.RegisterCodeFix(CodeAction.Create("Tutorial: Create an int that is the start of the diagnostic span", c => ReplaceStartSpanAsync(context.Document, declaration, c)), diagnostic);
+                    }
+                    catch
+                    {
+                        return;
+                    }
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.OpenParenMissing))
+                {
+                    MethodDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Extract the open parenthesis from the if statement", c => AddOpenParenAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.OpenParenIncorrect))
+                {
+                    try
+                    {
+                        LocalDeclarationStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<LocalDeclarationStatementSyntax>().First();
+                        context.RegisterCodeFix(CodeAction.Create("Tutorial: Extract the open parenthesis from the if statement", c => ReplaceOpenParenAsync(context.Document, declaration, c)), diagnostic);
+                    }
+                    catch
+                    {
+                        return;
+                    }
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.DiagnosticMissing))
+                {
+                    ClassDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Create the diagnostic that is going to be reported", c => AddDiagnosticAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.DiagnosticIncorrect))
+                {
+                    try
+                    {
+                        LocalDeclarationStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<LocalDeclarationStatementSyntax>().First();
+                        context.RegisterCodeFix(CodeAction.Create("Tutorial: Create the diagnostic that is going to be reported", c => ReplaceDiagnosticAsync(context.Document, declaration, c)), diagnostic);
+                    }
+                    catch
+                    {
+                        return;
+                    }
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.DiagnosticReportMissing))
+                {
+                    MethodDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Report the diagnostic to the context of the if statement in question", c => AddDiagnosticReportAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.DiagnosticReportIncorrect))
+                {
+                    try
+                    {
+                        ExpressionStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ExpressionStatementSyntax>().First();
+                        context.RegisterCodeFix(CodeAction.Create("Tutorial: Report the diagnostic to the context of the if statement in question", c => ReplaceDiagnosticReportAsync(context.Document, declaration, c)), diagnostic);
+                    }
+                    catch
+                    {
+                        return;
+                    }
+                }
             }
+        }
+
+        private async Task<Document> ReplaceDiagnosticReportAsync(Document document, ExpressionStatementSyntax declaration, CancellationToken c)
+        {
+            var methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
+
+            SyntaxNode diagnosticReport = CreateDiagnosticReport(document, methodDeclaration);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, diagnosticReport);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+            return newDocument;
+        }
+
+        private async Task<Document> AddDiagnosticReportAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            SyntaxNode diagnosticReport = CreateDiagnosticReport(document, declaration);
+            var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
+            var newStatements = oldStatements.Add(diagnosticReport);
+            var newMethod = generator.WithStatements(declaration, newStatements);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, newMethod);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+            return newDocument;
+        }
+
+        private SyntaxNode CreateDiagnosticReport(Document document, MethodDeclarationSyntax declaration)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            string argumentName = (declaration.Body.Statements[8] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+            var argumentExpression = generator.IdentifierName(argumentName);
+            var argument = generator.Argument(argumentExpression);
+
+            string contextName = (declaration.ParameterList.Parameters[0].Identifier.Text);
+            var identifier = generator.IdentifierName(contextName);
+            var memberExpression = generator.MemberAccessExpression(identifier, "ReportDiagnostic");
+            var expression = generator.InvocationExpression(memberExpression, argument);
+
+            SyntaxNode expressionStatement = generator.ExpressionStatement(expression);
+            return expressionStatement;
+        }
+
+        private async Task<Document> ReplaceDiagnosticAsync(Document document, LocalDeclarationStatementSyntax declaration, CancellationToken c)
+        {
+            var methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
+            var classDeclaration = methodDeclaration.Ancestors().OfType<ClassDeclarationSyntax>().First();
+
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            string ruleName = GetFirstRuleName(classDeclaration);
+
+            var diagnostic = CreateDiagnostic(document, methodDeclaration, ruleName);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, diagnostic);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+            return newDocument;
+        }
+
+        private async Task<Document> AddDiagnosticAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            string ruleName = GetFirstRuleName(declaration);
+            MethodDeclarationSyntax analysis = GetAnalysis(declaration);
+
+            var diagnostic = CreateDiagnostic(document, analysis, ruleName);
+
+            var oldStatements = (SyntaxList<SyntaxNode>)analysis.Body.Statements;
+            var newStatements = oldStatements.Add(diagnostic);
+            var newMethod = generator.WithStatements(analysis, newStatements);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(analysis, newMethod);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+            return newDocument;
+        }
+
+        private string GetFirstRuleName(ClassDeclarationSyntax declaration)
+        {
+            SyntaxList<MemberDeclarationSyntax> members = declaration.Members;
+            FieldDeclarationSyntax rule = null;
+
+            foreach (var member in members)
+            {
+                rule = member as FieldDeclarationSyntax;
+                if (rule != null && rule.Declaration.Type.ToString() == "DiagnosticDescriptor")
+                {
+                    break;
+                }
+            }
+
+            return rule.Declaration.Variables[0].Identifier.Text;
+        }
+
+        private MethodDeclarationSyntax GetAnalysis(ClassDeclarationSyntax declaration)
+        {
+            SyntaxList<MemberDeclarationSyntax> members = declaration.Members;
+            MethodDeclarationSyntax analysis = null;
+
+            foreach (var member in members)
+            {
+                analysis = member as MethodDeclarationSyntax;
+                if (analysis != null && analysis.Identifier.Text != "Initialize")
+                {
+                    break;
+                }
+            }
+
+            return analysis;
+        }
+
+        private SyntaxNode CreateDiagnostic(Document document, MethodDeclarationSyntax declaration, string ruleName)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            var identifier = generator.IdentifierName("Diagnostic");
+            var expression = generator.MemberAccessExpression(identifier, "Create");
+
+            SyntaxList<SyntaxNode> arguments = new SyntaxList<SyntaxNode>();
+
+            var ruleExpression = generator.IdentifierName(ruleName);
+            var ruleArg = generator.Argument(ruleExpression);
+
+            string locationName = (declaration.Body.Statements[7] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+            var locationExpression = generator.IdentifierName(locationName);
+            var locationArg = generator.Argument(locationExpression);
+
+            var messageExpression = generator.MemberAccessExpression(ruleExpression, "MessageFormat");
+            var messageArg = generator.Argument(messageExpression);
+
+            arguments = arguments.Add(ruleArg);
+            arguments = arguments.Add(locationArg);
+            arguments = arguments.Add(messageArg);
+
+            string name = "diagnostic";
+            var initializer = generator.InvocationExpression(expression, arguments);
+            SyntaxNode localDeclaration = generator.LocalDeclarationStatement(name, initializer);
+
+            return localDeclaration;
+        }
+
+
+        //replaces an incorrect open parenthsis statement
+        private async Task<Document> ReplaceOpenParenAsync(Document document, LocalDeclarationStatementSyntax declaration, CancellationToken c)
+        {
+            var methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
+
+            SyntaxNode openParen = CreateOpenParen(document, methodDeclaration);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, openParen);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+            return newDocument;
+        }
+
+        //adds the open parenthesis statement
+        private async Task<Document> AddOpenParenAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            SyntaxNode openParen = CreateOpenParen(document, declaration);
+            var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
+            var newStatements = oldStatements.Add(openParen);
+            var newMethod = generator.WithStatements(declaration, newStatements);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, newMethod);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+            return newDocument;
+        }
+
+        //creates the open parenthesis statement
+        private SyntaxNode CreateOpenParen(Document document, MethodDeclarationSyntax declaration)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            string name = "openParen";
+
+            string expressionString = (declaration.Body.Statements[0] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+            var expression = generator.IdentifierName(expressionString);
+
+            var initializer = generator.MemberAccessExpression(expression, "OpenParenToken");
+            SyntaxNode localDeclaration = generator.LocalDeclarationStatement(name, initializer);
+
+            return localDeclaration;
+        }
+
+        //replaces an incorrect start span statement
+        private async Task<Document> ReplaceStartSpanAsync(Document document, LocalDeclarationStatementSyntax declaration, CancellationToken c)
+        {
+            var methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
+
+            SyntaxNode startSpan = CreateEndOrStartSpan(document, methodDeclaration, "startDiagnosticSpan");
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, startSpan);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+            return newDocument;
+        }
+
+        //adds a start span statement
+        private async Task<Document> AddStartSpanAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            SyntaxNode startSpan = CreateEndOrStartSpan(document, declaration, "startDiagnosticSpan");
+            var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
+            var newStatements = oldStatements.Add(startSpan);
+            var newMethod = generator.WithStatements(declaration, newStatements);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, newMethod);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+            return newDocument;
+        }
+
+        //replace an incorrect end span statement
+        private async Task<Document> ReplaceEndSpanAsync(Document document, LocalDeclarationStatementSyntax declaration, CancellationToken c)
+        {
+            var methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
+
+            SyntaxNode endSpan = CreateEndOrStartSpan(document, methodDeclaration, "endDiagnosticSpan");
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, endSpan);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+            return newDocument;
+        }
+
+        //adds an end span statement
+        private async Task<Document> AddEndSpanAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            SyntaxNode endSpan = CreateEndOrStartSpan(document, declaration, "endDiagnosticSpan");
+            var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
+            var newStatements = oldStatements.Add(endSpan);
+            var newMethod = generator.WithStatements(declaration, newStatements);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, newMethod);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+            return newDocument;
+        }
+
+        //creates an end or start span statement
+        private SyntaxNode CreateEndOrStartSpan(Document document, MethodDeclarationSyntax declaration, string variableName)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            SyntaxNode identifier = null;
+            if (variableName == "startDiagnosticSpan")
+            {
+                string identifierString = (declaration.Body.Statements[1] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+                identifier = generator.IdentifierName(identifierString);
+            }
+            else if (variableName == "endDiagnosticSpan")
+            {
+                string identifierString = (declaration.Body.Statements[3] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+                identifier = generator.IdentifierName(identifierString);
+            }
+
+            SyntaxNode expression = generator.MemberAccessExpression(identifier, "Span");
+            SyntaxNode initializer = generator.MemberAccessExpression(expression, "Start");
+
+            SyntaxNode localDeclaration = generator.LocalDeclarationStatement(variableName, initializer);
+
+            return localDeclaration;
+        }
+
+        //replaces an incorrect diagnostic span statement
+        private async Task<Document> ReplaceSpanAsync(Document document, LocalDeclarationStatementSyntax declaration, CancellationToken c)
+        {
+            var methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
+
+            SyntaxNode span = CreateSpan(document, methodDeclaration);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, span);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+            return newDocument;
+        }
+
+        //adds the diagnostic span statement
+        private async Task<Document> AddSpanAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            SyntaxNode span = CreateSpan(document, declaration);
+            var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
+            var newStatements = oldStatements.Add(span);
+            var newMethod = generator.WithStatements(declaration, newStatements);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, newMethod);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+            return newDocument;
+        }
+
+        //creates the diagnostic span statement
+        private SyntaxNode CreateSpan(Document document, MethodDeclarationSyntax declaration)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            string name = "diagnosticSpan";
+            SyntaxNode memberIdentifier = generator.IdentifierName("TextSpan");
+            SyntaxNode memberName = generator.IdentifierName("FromBounds");
+            SyntaxNode expression = generator.MemberAccessExpression(memberIdentifier, memberName);
+
+            SyntaxList<SyntaxNode> arguments = new SyntaxList<SyntaxNode>();
+            string startIdentifier = (declaration.Body.Statements[4] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+            var startSpanIdentifier = generator.IdentifierName(startIdentifier);
+
+            string endIdentifier = (declaration.Body.Statements[5] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+            var endSpanIdentifier = generator.IdentifierName(endIdentifier);
+
+            arguments = arguments.Add(startSpanIdentifier);
+            arguments = arguments.Add(endSpanIdentifier);
+
+            SyntaxNode initializer = generator.InvocationExpression(expression, arguments);
+            SyntaxNode localDeclaration = generator.LocalDeclarationStatement(name, initializer);
+
+            return localDeclaration;
+        }
+
+        //replace an incorrect diagnostic location statement
+        private async Task<Document> ReplaceLocationAsync(Document document, LocalDeclarationStatementSyntax declaration, CancellationToken c)
+        {
+            var methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
+
+            SyntaxNode location = CreateLocation(document, methodDeclaration);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, location);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+            return newDocument;
+        }
+
+        //adds the diagnostic location statement
+        private async Task<Document> AddLocationAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            SyntaxNode location = CreateLocation(document, declaration);
+            var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
+            var newStatements = oldStatements.Add(location);
+            var newMethod = generator.WithStatements(declaration, newStatements);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(declaration, newMethod);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+            return newDocument;
+        }
+
+        //creates the diagnostic location statement
+        private SyntaxNode CreateLocation(Document document, MethodDeclarationSyntax declaration)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            string name = "diagnosticLocation";
+            SyntaxNode memberIdentifier = generator.IdentifierName("Location");
+            SyntaxNode memberName = generator.IdentifierName("Create");
+            SyntaxNode expression = generator.MemberAccessExpression(memberIdentifier, memberName);
+
+            SyntaxList<SyntaxNode> arguments = new SyntaxList<SyntaxNode>();
+            string ifStatementIdentifier = (declaration.Body.Statements[0] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+            var treeIdentifier = generator.IdentifierName(ifStatementIdentifier);
+            var treeArgExpression = generator.MemberAccessExpression(treeIdentifier, "SyntaxTree");
+            var treeArg = generator.Argument(treeArgExpression);
+
+            string spanIdentifier = (declaration.Body.Statements[6] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+            var spanArgIdentifier = generator.IdentifierName(spanIdentifier);
+            var spanArg = generator.Argument(spanArgIdentifier);
+
+            arguments = arguments.Add(treeArg);
+            arguments = arguments.Add(spanArg);
+
+            SyntaxNode initializer = generator.InvocationExpression(expression, arguments);
+            SyntaxNode localDeclaration = generator.LocalDeclarationStatement(name, initializer);
+
+            return localDeclaration;
         }
 
         private async Task<Document> MissingInitAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
