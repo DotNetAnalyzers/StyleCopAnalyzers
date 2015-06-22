@@ -34,7 +34,8 @@ namespace MetaCompilation
                     MetaCompilationAnalyzer.IfKeywordIncorrect,
                     MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect,
                     MetaCompilationAnalyzer.TrailingTriviaVarMissing,
-                    MetaCompilationAnalyzer.TrailingTriviaVarIncorrect);
+                    MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
+                    MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect);
             }
         }
 
@@ -111,6 +112,12 @@ namespace MetaCompilation
                 {
                     IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("Tutorial: The fourth statement of the analyzer should store the last trailing trivia of the if keyword", c => TrailingVarIncorrectAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect))
+                {
+                    IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: The fifth statement of the analyzer should be a check of the kind of trivia following the if keyword", c => TrailingKindCheckIncorrectAsync(context.Document, declaration, c)), diagnostic);
                 }
             }
         }
@@ -292,10 +299,38 @@ namespace MetaCompilation
         {
             var localDeclaration = TriviaVarMissingHelper(document, declaration) as LocalDeclarationStatementSyntax;
 
-
             var oldBlock = declaration.Statement as BlockSyntax;
             var oldStatement = oldBlock.Statements[0];
             var newStatements = oldBlock.Statements.Replace(oldStatement, localDeclaration);
+            var newBlock = oldBlock.WithStatements(newStatements);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(oldBlock, newBlock);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+
+        private async Task<Document> TrailingKindCheckIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        {
+            IfStatementSyntax ifStatement;
+            var ifBlockStatements = new SyntaxList<SyntaxNode>();
+            if (declaration.Parent.Parent.Kind() == SyntaxKind.MethodDeclaration)
+            {
+                ifStatement = declaration as IfStatementSyntax;
+            }
+            else
+            {
+                ifStatement = declaration.Parent.Parent as IfStatementSyntax;
+                var ifBlock = declaration.Statement as BlockSyntax;
+                ifBlockStatements = ifBlock.Statements;
+            }
+
+            var newIfStatement = TriviaKindCheckHelper(document, ifStatement, ifBlockStatements) as StatementSyntax;
+
+            var oldBlock = ifStatement.Statement as BlockSyntax;
+            var oldStatement = oldBlock.Statements[1];
+            var newStatements = oldBlock.Statements.Replace(oldStatement, newIfStatement);
             var newBlock = oldBlock.WithStatements(newStatements);
 
             var root = await document.GetSyntaxRootAsync();
@@ -362,6 +397,26 @@ namespace MetaCompilation
             var localDeclaration = generator.LocalDeclarationStatement("trailingTrivia", variableExpression);
 
             return localDeclaration;
+        }
+
+        private SyntaxNode TriviaKindCheckHelper(Document document, IfStatementSyntax ifStatement, SyntaxList<SyntaxNode> ifBlockStatements)
+        {
+            var generator = SyntaxGenerator.GetGenerator(document);
+
+            var ifOneBlock = ifStatement.Statement as BlockSyntax;
+
+            var trailingTriviaDeclaration = ifOneBlock.Statements[0] as LocalDeclarationStatementSyntax;
+            var trailingTrivia = generator.IdentifierName(trailingTriviaDeclaration.Declaration.Variables[0].Identifier.ValueText);
+            var arguments = new SyntaxList<SyntaxNode>();
+            var trailingTriviaKind = generator.InvocationExpression(generator.MemberAccessExpression(trailingTrivia, "Kind"), arguments);
+
+            var whitespaceTrivia = generator.MemberAccessExpression(generator.IdentifierName("SyntaxKind"), "WhitespaceTrivia");
+
+            var equalsExpression = generator.ValueEqualsExpression(trailingTriviaKind, whitespaceTrivia);
+
+            var newIfStatement = generator.IfStatement(equalsExpression, ifBlockStatements);
+
+            return newIfStatement;
         }
         #endregion
     }
