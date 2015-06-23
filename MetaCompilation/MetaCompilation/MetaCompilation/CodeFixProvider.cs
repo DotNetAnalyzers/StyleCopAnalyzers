@@ -32,6 +32,7 @@ namespace MetaCompilation
                     MetaCompilationAnalyzer.InvalidStatement,
                     MetaCompilationAnalyzer.IfStatementIncorrect,
                     MetaCompilationAnalyzer.IfKeywordIncorrect,
+                    MetaCompilationAnalyzer.IfKeywordMissing,
                     MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect,
                     MetaCompilationAnalyzer.TrailingTriviaVarMissing,
                     MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
@@ -100,6 +101,12 @@ namespace MetaCompilation
                 {
                     StatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("Tutorial: The second statement of the analyzer must access the keyword from the node being analyzed", c => IncorrectKeywordAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfKeywordMissing))
+                {
+                    MethodDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: The second statement of the analyzer must access the keyword from the node being analyzed", c => MissingKeywordAsync(context.Document, declaration, c)), diagnostic);
                 }
 
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect))
@@ -303,10 +310,24 @@ namespace MetaCompilation
 
         private async Task<Document> IncorrectKeywordAsync(Document document, StatementSyntax declaration, CancellationToken c)
         {
-            var ifKeyword = KeywordHelper(document, declaration);
+            var methodBlock = declaration.Parent as BlockSyntax;
+            var ifKeyword = KeywordHelper(document, methodBlock);
 
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root.ReplaceNode(declaration, ifKeyword);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+
+        private async Task<Document> MissingKeywordAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        {
+            var methodBlock = declaration.Body as BlockSyntax;
+            var ifKeyword = KeywordHelper(document, methodBlock) as StatementSyntax;
+            var newBlock = methodBlock.AddStatements(ifKeyword);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(methodBlock, newBlock);
             var newDocument = document.WithSyntaxRoot(newRoot);
 
             return newDocument;
@@ -510,9 +531,8 @@ namespace MetaCompilation
             return ifStatement;
         }
 
-        private SyntaxNode KeywordHelper(Document document, StatementSyntax declaration)
+        private SyntaxNode KeywordHelper(Document document, BlockSyntax methodBlock)
         {
-            var methodBlock = declaration.Parent as BlockSyntax;
             var firstStatement = methodBlock.Statements[0] as LocalDeclarationStatementSyntax;
 
             var generator = SyntaxGenerator.GetGenerator(document);
