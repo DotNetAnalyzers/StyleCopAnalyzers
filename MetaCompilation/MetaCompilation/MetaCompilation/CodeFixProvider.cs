@@ -111,34 +111,34 @@ namespace MetaCompilation
                 if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.InternalAndStaticError))
                 {
                     FieldDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<FieldDeclarationSyntax>().First();
-                    context.RegisterCodeFix(CodeAction.Create("Rules must be declared as both internal and static.", c => InternalStaticAsync(context.Document, declaration, c)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Rules must be declared as both internal and static.", c => InternalStaticAsync(context.Document, declaration, c)), diagnostic);
                 }
 
                 if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.EnabledByDefaultError))
                 {
                     LiteralExpressionSyntax literalExpression = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<LiteralExpressionSyntax>().First();
-                    context.RegisterCodeFix(CodeAction.Create("Rules should be enabled by default.", c => EnabledByDefaultAsync(context.Document, literalExpression, c)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Rules should be enabled by default.", c => EnabledByDefaultAsync(context.Document, literalExpression, c)), diagnostic);
                 }
 
                 if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.DefaultSeverityError))
                 {
                     MemberAccessExpressionSyntax memberAccessExpression = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MemberAccessExpressionSyntax>().First();
-                    context.RegisterCodeFix(CodeAction.Create("defaultSeverity should be set to \"Error\" if something is not allowed by the language authorities.", c => DiagnosticSeverityError(context.Document, memberAccessExpression, c)), diagnostic);
-                    context.RegisterCodeFix(CodeAction.Create("defaultSeverity should be set to \"Warning\" if something is suspicious but allowed.", c => DiagnosticSeverityWarning(context.Document, memberAccessExpression, c)), diagnostic);
-                    context.RegisterCodeFix(CodeAction.Create("defaultSeverity should be set to \"Hidden\" if something is an issue, but is not surfaced by normal means.", c => DiagnosticSeverityHidden(context.Document, memberAccessExpression, c)), diagnostic);
-                    context.RegisterCodeFix(CodeAction.Create("defaultSeverity should be set to \"Info\" for information that does not indicate a problem.", c => DiagnosticSeverityInfo(context.Document, memberAccessExpression, c)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: defaultSeverity should be set to \"Error\" if something is not allowed by the language authorities.", c => DiagnosticSeverityError(context.Document, memberAccessExpression, c)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: defaultSeverity should be set to \"Warning\" if something is suspicious but allowed.", c => DiagnosticSeverityWarning(context.Document, memberAccessExpression, c)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: defaultSeverity should be set to \"Hidden\" if something is an issue, but is not surfaced by normal means.", c => DiagnosticSeverityHidden(context.Document, memberAccessExpression, c)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: defaultSeverity should be set to \"Info\" for information that does not indicate a problem.", c => DiagnosticSeverityInfo(context.Document, memberAccessExpression, c)), diagnostic);
                 }
 
                 if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.MissingIdDeclaration))
                 {
                     VariableDeclaratorSyntax ruleDeclarationField = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<VariableDeclaratorSyntax>().First();
-                    context.RegisterCodeFix(CodeAction.Create("Generate a public field for this rule id.", c => MissingIdDeclarationAsync(context.Document, ruleDeclarationField, c)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Generate a public field for this rule id.", c => MissingIdDeclarationAsync(context.Document, ruleDeclarationField, c)), diagnostic);
                 }
 
                 if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.IdDeclTypeError))
                 {
                     LiteralExpressionSyntax literalExpression = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<LiteralExpressionSyntax>().First();
-                    context.RegisterCodeFix(CodeAction.Create("Rule ids should not be string literals.", c => IdDeclTypeAsync(context.Document, literalExpression, c)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Rule ids should not be string literals.", c => IdDeclTypeAsync(context.Document, literalExpression, c)), diagnostic);
                 }
            
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfStatementIncorrect))
@@ -326,8 +326,11 @@ namespace MetaCompilation
         private async Task<Document> ReplaceDiagnosticReportAsync(Document document, ExpressionStatementSyntax declaration, CancellationToken c)
         {
             var methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            string argumentName = (methodDeclaration.Body.Statements[8] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+            string contextName = (methodDeclaration.ParameterList.Parameters[0].Identifier.Text);
 
-            SyntaxNode diagnosticReport = CreateDiagnosticReport(document, methodDeclaration);
+            SyntaxNode diagnosticReport = CodeFixNodeCreator.CreateDiagnosticReport(generator, argumentName, contextName);
 
             return await ReplaceNode(declaration, diagnosticReport, document);
         }
@@ -335,29 +338,14 @@ namespace MetaCompilation
         private async Task<Document> AddDiagnosticReportAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-            SyntaxNode diagnosticReport = CreateDiagnosticReport(document, declaration);
+            string argumentName = (declaration.Body.Statements[8] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+            string contextName = (declaration.ParameterList.Parameters[0].Identifier.Text);
+            SyntaxNode diagnosticReport = CodeFixNodeCreator.CreateDiagnosticReport(generator, argumentName, contextName);
             var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
             var newStatements = oldStatements.Add(diagnosticReport);
             var newMethod = generator.WithStatements(declaration, newStatements);
 
             return await ReplaceNode(declaration, newMethod, document);
-        }
-
-        private SyntaxNode CreateDiagnosticReport(Document document, MethodDeclarationSyntax declaration)
-        {
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-
-            string argumentName = (declaration.Body.Statements[8] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
-            var argumentExpression = generator.IdentifierName(argumentName);
-            var argument = generator.Argument(argumentExpression);
-
-            string contextName = (declaration.ParameterList.Parameters[0].Identifier.Text);
-            var identifier = generator.IdentifierName(contextName);
-            var memberExpression = generator.MemberAccessExpression(identifier, "ReportDiagnostic");
-            var expression = generator.InvocationExpression(memberExpression, argument);
-
-            SyntaxNode expressionStatement = generator.ExpressionStatement(expression);
-            return expressionStatement;
         }
 
         private async Task<Document> ReplaceDiagnosticAsync(Document document, LocalDeclarationStatementSyntax declaration, CancellationToken c)
@@ -366,10 +354,11 @@ namespace MetaCompilation
             var classDeclaration = methodDeclaration.Ancestors().OfType<ClassDeclarationSyntax>().First();
 
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            string locationName = (methodDeclaration.Body.Statements[7] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
 
-            string ruleName = GetFirstRuleName(classDeclaration);
+            string ruleName = CodeFixNodeCreator.GetFirstRuleName(classDeclaration);
 
-            var diagnostic = CreateDiagnostic(document, methodDeclaration, ruleName);
+            var diagnostic = CodeFixNodeCreator.CreateDiagnostic(generator, locationName, ruleName);
 
             return await ReplaceNode(declaration, diagnostic, document);
         }
@@ -378,10 +367,11 @@ namespace MetaCompilation
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            string ruleName = GetFirstRuleName(declaration);
-            MethodDeclarationSyntax analysis = GetAnalysis(declaration);
+            string ruleName = CodeFixNodeCreator.GetFirstRuleName(declaration);
+            MethodDeclarationSyntax analysis = CodeFixNodeCreator.GetAnalysis(declaration);
+            string locationName = (analysis.Body.Statements[7] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
 
-            var diagnostic = CreateDiagnostic(document, analysis, ruleName);
+            var diagnostic = CodeFixNodeCreator.CreateDiagnostic(generator, locationName, ruleName);
 
             var oldStatements = (SyntaxList<SyntaxNode>)analysis.Body.Statements;
             var newStatements = oldStatements.Add(diagnostic);
@@ -390,76 +380,15 @@ namespace MetaCompilation
             return await ReplaceNode(analysis, newMethod, document);
         }
 
-        private string GetFirstRuleName(ClassDeclarationSyntax declaration)
-        {
-            SyntaxList<MemberDeclarationSyntax> members = declaration.Members;
-            FieldDeclarationSyntax rule = null;
-
-            foreach (var member in members)
-            {
-                rule = member as FieldDeclarationSyntax;
-                if (rule != null && rule.Declaration.Type.ToString() == "DiagnosticDescriptor")
-                {
-                    break;
-                }
-            }
-
-            return rule.Declaration.Variables[0].Identifier.Text;
-        }
-
-        private MethodDeclarationSyntax GetAnalysis(ClassDeclarationSyntax declaration)
-        {
-            SyntaxList<MemberDeclarationSyntax> members = declaration.Members;
-            MethodDeclarationSyntax analysis = null;
-
-            foreach (var member in members)
-            {
-                analysis = member as MethodDeclarationSyntax;
-                if (analysis != null && analysis.Identifier.Text != "Initialize")
-                {
-                    break;
-                }
-            }
-
-            return analysis;
-        }
-
-        private SyntaxNode CreateDiagnostic(Document document, MethodDeclarationSyntax declaration, string ruleName)
-        {
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-
-            var identifier = generator.IdentifierName("Diagnostic");
-            var expression = generator.MemberAccessExpression(identifier, "Create");
-
-            SyntaxList<SyntaxNode> arguments = new SyntaxList<SyntaxNode>();
-
-            var ruleExpression = generator.IdentifierName(ruleName);
-            var ruleArg = generator.Argument(ruleExpression);
-
-            string locationName = (declaration.Body.Statements[7] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
-            var locationExpression = generator.IdentifierName(locationName);
-            var locationArg = generator.Argument(locationExpression);
-
-            var messageExpression = generator.MemberAccessExpression(ruleExpression, "MessageFormat");
-            var messageArg = generator.Argument(messageExpression);
-
-            arguments = arguments.Add(ruleArg);
-            arguments = arguments.Add(locationArg);
-            arguments = arguments.Add(messageArg);
-
-            string name = "diagnostic";
-            var initializer = generator.InvocationExpression(expression, arguments);
-            SyntaxNode localDeclaration = generator.LocalDeclarationStatement(name, initializer);
-
-            return localDeclaration;
-        }
-
         //replaces an incorrect open parenthsis statement
         private async Task<Document> ReplaceOpenParenAsync(Document document, LocalDeclarationStatementSyntax declaration, CancellationToken c)
         {
-            var methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            SyntaxNode openParen = CreateOpenParen(document, methodDeclaration);
+            var methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
+            string expressionString = (methodDeclaration.Body.Statements[0] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+
+            SyntaxNode openParen = CodeFixNodeCreator.CreateOpenParen(generator, expressionString);
 
             return await ReplaceNode(declaration, openParen, document);
         }
@@ -468,7 +397,9 @@ namespace MetaCompilation
         private async Task<Document> AddOpenParenAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-            SyntaxNode openParen = CreateOpenParen(document, declaration);
+
+            string expressionString = (declaration.Body.Statements[0] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+            SyntaxNode openParen = CodeFixNodeCreator.CreateOpenParen(generator, expressionString);
             var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
             var newStatements = oldStatements.Add(openParen);
             var newMethod = generator.WithStatements(declaration, newStatements);
@@ -476,27 +407,15 @@ namespace MetaCompilation
             return await ReplaceNode(declaration, newMethod, document);
         }
 
-        //creates the open parenthesis statement
-        private SyntaxNode CreateOpenParen(Document document, MethodDeclarationSyntax declaration)
-        {
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-            string name = "openParen";
-
-            string expressionString = (declaration.Body.Statements[0] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
-            var expression = generator.IdentifierName(expressionString);
-
-            var initializer = generator.MemberAccessExpression(expression, "OpenParenToken");
-            SyntaxNode localDeclaration = generator.LocalDeclarationStatement(name, initializer);
-
-            return localDeclaration;
-        }
-
         //replaces an incorrect start span statement
         private async Task<Document> ReplaceStartSpanAsync(Document document, LocalDeclarationStatementSyntax declaration, CancellationToken c)
         {
-            var methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            SyntaxNode startSpan = CreateEndOrStartSpan(document, methodDeclaration, "startDiagnosticSpan");
+            var methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
+            string identifierString = (methodDeclaration.Body.Statements[1] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+
+            SyntaxNode startSpan = CodeFixNodeCreator.CreateEndOrStartSpan(generator, identifierString, "startDiagnosticSpan");
 
             return await ReplaceNode(declaration, startSpan, document);
         }
@@ -505,7 +424,9 @@ namespace MetaCompilation
         private async Task<Document> AddStartSpanAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-            SyntaxNode startSpan = CreateEndOrStartSpan(document, declaration, "startDiagnosticSpan");
+
+            string identifierString = (declaration.Body.Statements[1] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+            SyntaxNode startSpan = CodeFixNodeCreator.CreateEndOrStartSpan(generator, identifierString, "startDiagnosticSpan");
             var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
             var newStatements = oldStatements.Add(startSpan);
             var newMethod = generator.WithStatements(declaration, newStatements);
@@ -516,9 +437,12 @@ namespace MetaCompilation
         //replace an incorrect end span statement
         private async Task<Document> ReplaceEndSpanAsync(Document document, LocalDeclarationStatementSyntax declaration, CancellationToken c)
         {
-            var methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            SyntaxNode endSpan = CreateEndOrStartSpan(document, methodDeclaration, "endDiagnosticSpan");
+            var methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
+            string identifierString = (methodDeclaration.Body.Statements[3] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+
+            SyntaxNode endSpan = CodeFixNodeCreator.CreateEndOrStartSpan(generator, identifierString, "endDiagnosticSpan");
 
             return await ReplaceNode(declaration, endSpan, document);
         }
@@ -527,7 +451,9 @@ namespace MetaCompilation
         private async Task<Document> AddEndSpanAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-            SyntaxNode endSpan = CreateEndOrStartSpan(document, declaration, "endDiagnosticSpan");
+
+            string identifierString = (declaration.Body.Statements[3] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+            SyntaxNode endSpan = CodeFixNodeCreator.CreateEndOrStartSpan(generator, identifierString, "endDiagnosticSpan");
             var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
             var newStatements = oldStatements.Add(endSpan);
             var newMethod = generator.WithStatements(declaration, newStatements);
@@ -535,37 +461,16 @@ namespace MetaCompilation
             return await ReplaceNode(declaration, newMethod, document);
         }
 
-        //creates an end or start span statement
-        private SyntaxNode CreateEndOrStartSpan(Document document, MethodDeclarationSyntax declaration, string variableName)
-        {
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-
-            SyntaxNode identifier = null;
-            if (variableName == "startDiagnosticSpan")
-            {
-                string identifierString = (declaration.Body.Statements[1] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
-                identifier = generator.IdentifierName(identifierString);
-            }
-            else if (variableName == "endDiagnosticSpan")
-            {
-                string identifierString = (declaration.Body.Statements[3] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
-                identifier = generator.IdentifierName(identifierString);
-            }
-
-            SyntaxNode expression = generator.MemberAccessExpression(identifier, "Span");
-            SyntaxNode initializer = generator.MemberAccessExpression(expression, "Start");
-
-            SyntaxNode localDeclaration = generator.LocalDeclarationStatement(variableName, initializer);
-
-            return localDeclaration;
-        }
-
         //replaces an incorrect diagnostic span statement
         private async Task<Document> ReplaceSpanAsync(Document document, LocalDeclarationStatementSyntax declaration, CancellationToken c)
         {
-            var methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            SyntaxNode span = CreateSpan(document, methodDeclaration);
+            var methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
+            string startIdentifier = (methodDeclaration.Body.Statements[4] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+            string endIdentifier = (methodDeclaration.Body.Statements[5] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+
+            SyntaxNode span = CodeFixNodeCreator.CreateSpan(generator, startIdentifier, endIdentifier);
 
             return await ReplaceNode(declaration, span, document);
         }
@@ -574,7 +479,10 @@ namespace MetaCompilation
         private async Task<Document> AddSpanAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-            SyntaxNode span = CreateSpan(document, declaration);
+
+            string startIdentifier = (declaration.Body.Statements[4] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+            string endIdentifier = (declaration.Body.Statements[5] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+            SyntaxNode span = CodeFixNodeCreator.CreateSpan(generator, startIdentifier, endIdentifier);
             var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
             var newStatements = oldStatements.Add(span);
             var newMethod = generator.WithStatements(declaration, newStatements);
@@ -582,37 +490,16 @@ namespace MetaCompilation
             return await ReplaceNode(declaration, newMethod, document);
         }
 
-        //creates the diagnostic span statement
-        private SyntaxNode CreateSpan(Document document, MethodDeclarationSyntax declaration)
-        {
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-            string name = "diagnosticSpan";
-            SyntaxNode memberIdentifier = generator.IdentifierName("TextSpan");
-            SyntaxNode memberName = generator.IdentifierName("FromBounds");
-            SyntaxNode expression = generator.MemberAccessExpression(memberIdentifier, memberName);
-
-            SyntaxList<SyntaxNode> arguments = new SyntaxList<SyntaxNode>();
-            string startIdentifier = (declaration.Body.Statements[4] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
-            var startSpanIdentifier = generator.IdentifierName(startIdentifier);
-
-            string endIdentifier = (declaration.Body.Statements[5] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
-            var endSpanIdentifier = generator.IdentifierName(endIdentifier);
-
-            arguments = arguments.Add(startSpanIdentifier);
-            arguments = arguments.Add(endSpanIdentifier);
-
-            SyntaxNode initializer = generator.InvocationExpression(expression, arguments);
-            SyntaxNode localDeclaration = generator.LocalDeclarationStatement(name, initializer);
-
-            return localDeclaration;
-        }
-
         //replace an incorrect diagnostic location statement
         private async Task<Document> ReplaceLocationAsync(Document document, LocalDeclarationStatementSyntax declaration, CancellationToken c)
         {
-            var methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            SyntaxNode location = CreateLocation(document, methodDeclaration);
+            var methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
+            string ifStatementIdentifier = (methodDeclaration.Body.Statements[0] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+            string spanIdentifier = (methodDeclaration.Body.Statements[6] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+
+            SyntaxNode location = CodeFixNodeCreator.CreateLocation(generator, ifStatementIdentifier, spanIdentifier);
 
             return await ReplaceNode(declaration, location, document);
         }
@@ -621,7 +508,10 @@ namespace MetaCompilation
         private async Task<Document> AddLocationAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-            SyntaxNode location = CreateLocation(document, declaration);
+
+            string ifStatementIdentifier = (declaration.Body.Statements[0] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+            string spanIdentifier = (declaration.Body.Statements[6] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+            SyntaxNode location = CodeFixNodeCreator.CreateLocation(generator, ifStatementIdentifier, spanIdentifier);
             var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
             var newStatements = oldStatements.Add(location);
             var newMethod = generator.WithStatements(declaration, newStatements);
@@ -629,69 +519,14 @@ namespace MetaCompilation
             return await ReplaceNode(declaration, newMethod, document);
         }
 
-        //creates the diagnostic location statement
-        private SyntaxNode CreateLocation(Document document, MethodDeclarationSyntax declaration)
-        {
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-            string name = "diagnosticLocation";
-            SyntaxNode memberIdentifier = generator.IdentifierName("Location");
-            SyntaxNode memberName = generator.IdentifierName("Create");
-            SyntaxNode expression = generator.MemberAccessExpression(memberIdentifier, memberName);
-
-            SyntaxList<SyntaxNode> arguments = new SyntaxList<SyntaxNode>();
-            string ifStatementIdentifier = (declaration.Body.Statements[0] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
-            var treeIdentifier = generator.IdentifierName(ifStatementIdentifier);
-            var treeArgExpression = generator.MemberAccessExpression(treeIdentifier, "SyntaxTree");
-            var treeArg = generator.Argument(treeArgExpression);
-
-            string spanIdentifier = (declaration.Body.Statements[6] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
-            var spanArgIdentifier = generator.IdentifierName(spanIdentifier);
-            var spanArg = generator.Argument(spanArgIdentifier);
-
-            arguments = arguments.Add(treeArg);
-            arguments = arguments.Add(spanArg);
-
-            SyntaxNode initializer = generator.InvocationExpression(expression, arguments);
-            SyntaxNode localDeclaration = generator.LocalDeclarationStatement(name, initializer);
-
-            return localDeclaration;
-        }
-
         #region id code fix
         private async Task<Document> MissingIdAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
         {
             var idToken = SyntaxFactory.ParseToken("spacingRuleId");
             var expressionKind = SyntaxFactory.ParseExpression("\"IfSpacing\"") as ExpressionSyntax;
-            var newClassDeclaration = newIdCreator(idToken, expressionKind, declaration);
+            var newClassDeclaration = CodeFixNodeCreator.NewIdCreator(idToken, expressionKind, declaration);
 
             return await ReplaceNode(declaration, newClassDeclaration, document);
-        }
-
-        private ClassDeclarationSyntax newIdCreator(SyntaxToken idToken, ExpressionSyntax expressionKind, ClassDeclarationSyntax declaration)
-        {
-            var equalsValueClause = SyntaxFactory.EqualsValueClause(expressionKind);
-            var idDeclarator = SyntaxFactory.VariableDeclarator(idToken, null, equalsValueClause);
-            var type = SyntaxFactory.ParseTypeName("string");
-
-            var idDeclaratorList = new SeparatedSyntaxList<VariableDeclaratorSyntax>().Add(idDeclarator);
-            var idDeclaration = SyntaxFactory.VariableDeclaration(type, idDeclaratorList);
-
-            var whiteSpace = SyntaxFactory.Whitespace("");
-            var publicModifier = SyntaxFactory.ParseToken("public").WithLeadingTrivia(whiteSpace).WithTrailingTrivia(whiteSpace);
-            var constModifier = SyntaxFactory.ParseToken("const").WithLeadingTrivia(whiteSpace).WithTrailingTrivia(whiteSpace);
-            var modifierList = SyntaxFactory.TokenList(publicModifier, constModifier);
-
-            var attributeList = new SyntaxList<AttributeListSyntax>();
-            var fieldDeclaration = SyntaxFactory.FieldDeclaration(attributeList, modifierList, idDeclaration);
-            var memberList = new SyntaxList<MemberDeclarationSyntax>().Add(fieldDeclaration);
-
-            var newClassDeclaration = declaration.WithMembers(memberList);
-            foreach (MemberDeclarationSyntax member in declaration.Members)
-            {
-                newClassDeclaration = newClassDeclaration.AddMembers(member);
-            }
-
-            return newClassDeclaration;
         }
         #endregion
 
@@ -700,7 +535,8 @@ namespace MetaCompilation
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
             SemanticModel semanticModel = await document.GetSemanticModelAsync();
-            var initializeDeclaration = BuildInitialize(document, semanticModel);
+            INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException");
+            var initializeDeclaration = CodeFixNodeCreator.BuildInitialize(generator, notImplementedException);
 
             var newClassDeclaration = generator.AddMembers(declaration, initializeDeclaration);
 
@@ -780,8 +616,10 @@ namespace MetaCompilation
 
         private async Task<Document> IncorrectSigAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
             SemanticModel semanticModel = await document.GetSemanticModelAsync();
-            var initializeDeclaration = BuildInitialize(document, semanticModel);
+            INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException");
+            var initializeDeclaration = CodeFixNodeCreator.BuildInitialize(generator, notImplementedException);
 
             return await ReplaceNode(declaration, initializeDeclaration, document);
         }
@@ -795,7 +633,8 @@ namespace MetaCompilation
 
         private async Task<Document> IncorrectIfAsync(Document document, StatementSyntax declaration, CancellationToken c)
         {
-            var ifStatement = IfHelper(document);
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            var ifStatement = CodeFixNodeCreator.IfHelper(generator);
 
             return await ReplaceNode(declaration, ifStatement, document);
         }
@@ -808,22 +647,10 @@ namespace MetaCompilation
         }
         #endregion
 
-        private SyntaxNode BuildInitialize(Document document, SemanticModel semanticModel)
-        {
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-            var type = SyntaxFactory.ParseTypeName("AnalysisContext");
-            var parameters = new[] { generator.ParameterDeclaration("context", type) };
-            INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException");
-            var statements = new[] { generator.ThrowStatement(generator.ObjectCreationExpression(notImplementedException)) };
-            var initializeDeclaration = generator.MethodDeclaration("Initialize", parameters: parameters,
-                accessibility: Accessibility.Public, modifiers: DeclarationModifiers.Override, statements: statements);
-
-            return initializeDeclaration;
-        }
-
         private async Task<Document> IncorrectKeywordAsync(Document document, StatementSyntax declaration, CancellationToken c)
         {
-            var ifKeyword = KeywordHelper(document, declaration);
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            var ifKeyword = CodeFixNodeCreator.KeywordHelper(generator, declaration);
 
             return await ReplaceNode(declaration, ifKeyword, document);
         }
@@ -837,7 +664,8 @@ namespace MetaCompilation
 
         private async Task<Document> TrailingCheckIncorrectAsync(Document document, StatementSyntax declaration, CancellationToken c)
         {
-            var ifStatement = TriviaCheckHelper(document, declaration);
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            SyntaxNode ifStatement = CodeFixNodeCreator.TriviaCheckHelper(generator, declaration);
 
             return await ReplaceNode(declaration, ifStatement, document);
         }
@@ -851,7 +679,8 @@ namespace MetaCompilation
 
         private async Task<Document> TrailingVarMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
-            var localDeclaration = new SyntaxList<SyntaxNode>().Add(TriviaVarMissingHelper(document, declaration));
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            var localDeclaration = new SyntaxList<SyntaxNode>().Add(CodeFixNodeCreator.TriviaVarMissingHelper(generator, declaration));
 
             var oldBlock = declaration.Statement as BlockSyntax;
             var newBlock = oldBlock.WithStatements(localDeclaration);
@@ -868,7 +697,9 @@ namespace MetaCompilation
 
         private async Task<Document> TrailingVarIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
-            var localDeclaration = TriviaVarMissingHelper(document, declaration) as LocalDeclarationStatementSyntax;
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            var localDeclaration = CodeFixNodeCreator.TriviaVarMissingHelper(generator, declaration) as LocalDeclarationStatementSyntax;
 
             var oldBlock = declaration.Statement as BlockSyntax;
             var oldStatement = oldBlock.Statements[0];
@@ -880,6 +711,8 @@ namespace MetaCompilation
 
         private async Task<Document> TrailingKindCheckIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
             IfStatementSyntax ifStatement;
             var ifBlockStatements = new SyntaxList<SyntaxNode>();
             if (declaration.Parent.Parent.Kind() == SyntaxKind.MethodDeclaration)
@@ -893,7 +726,7 @@ namespace MetaCompilation
                 ifBlockStatements = ifBlock.Statements;
             }
 
-            var newIfStatement = TriviaKindCheckHelper(document, ifStatement, ifBlockStatements) as StatementSyntax;
+            var newIfStatement = CodeFixNodeCreator.TriviaKindCheckHelper(generator, ifStatement, ifBlockStatements) as StatementSyntax;
 
             var oldBlock = ifStatement.Statement as BlockSyntax;
             var oldStatement = oldBlock.Statements[1];
@@ -923,13 +756,15 @@ namespace MetaCompilation
 
             var idToken = SyntaxFactory.ParseToken(currentRuleId);
             var expressionKind = SyntaxFactory.ParseExpression("\"DescriptiveId\"") as ExpressionSyntax;
-            var newClassDeclaration = newIdCreator(idToken, expressionKind, classDeclaration);
+            var newClassDeclaration = CodeFixNodeCreator.NewIdCreator(idToken, expressionKind, classDeclaration);
 
             return await ReplaceNode(classDeclaration, newClassDeclaration, document);
         }
 
         private async Task<Document> WhitespaceCheckIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
             IfStatementSyntax ifStatement;
             var ifBlockStatements = new SyntaxList<SyntaxNode>();
 
@@ -944,7 +779,7 @@ namespace MetaCompilation
                 ifBlockStatements = ifBlock.Statements;
             }
 
-            var newIfStatement = WhitespaceCheckHelper(document, ifStatement, ifBlockStatements) as StatementSyntax;
+            var newIfStatement = CodeFixNodeCreator.WhitespaceCheckHelper(generator, ifStatement, ifBlockStatements) as StatementSyntax;
 
             var oldBlock = ifStatement.Statement as BlockSyntax;
             var oldStatement = oldBlock.Statements[0];
@@ -995,103 +830,283 @@ namespace MetaCompilation
             return await ReplaceNode(oldBlock, newBlock, document);
         }
 
-        private SyntaxNode IfHelper(Document document)
+        class CodeFixNodeCreator
         {
-            var generator = SyntaxGenerator.GetGenerator(document);
+            internal static SyntaxNode IfHelper(SyntaxGenerator generator)
+            {
+                var type = SyntaxFactory.ParseTypeName("IfStatementSyntax");
+                var expression = generator.IdentifierName("context");
+                var memberAccessExpression = generator.MemberAccessExpression(expression, "Node");
+                var initializer = generator.CastExpression(type, memberAccessExpression);
+                var ifStatement = generator.LocalDeclarationStatement("ifStatement", initializer);
 
-            var type = SyntaxFactory.ParseTypeName("IfStatementSyntax");
-            var expression = generator.IdentifierName("context");
-            var memberAccessExpression = generator.MemberAccessExpression(expression, "Node");
-            var initializer = generator.CastExpression(type, memberAccessExpression);
-            var ifStatement = generator.LocalDeclarationStatement("ifStatement", initializer);
+                return ifStatement;
+            }
 
-            return ifStatement;
+            internal static SyntaxNode KeywordHelper(SyntaxGenerator generator, StatementSyntax declaration)
+            {
+                var methodBlock = declaration.Parent as BlockSyntax;
+                var firstStatement = methodBlock.Statements[0] as LocalDeclarationStatementSyntax;
+                var variableName = generator.IdentifierName(firstStatement.Declaration.Variables[0].Identifier.ValueText);
+                var initializer = generator.MemberAccessExpression(variableName, "IfKeyword");
+                var ifKeyword = generator.LocalDeclarationStatement("ifKeyword", initializer);
+
+                return ifKeyword;
+            }
+
+            internal static SyntaxNode TriviaCheckHelper(SyntaxGenerator generator, StatementSyntax declaration)
+            {
+                var methodBlock = declaration.Parent as BlockSyntax;
+                var secondStatement = methodBlock.Statements[1] as LocalDeclarationStatementSyntax;
+
+                var variableName = generator.IdentifierName(secondStatement.Declaration.Variables[0].Identifier.ValueText);
+                var conditional = generator.MemberAccessExpression(variableName, "HasTrailingTrivia");
+                var trueStatements = new SyntaxList<SyntaxNode>();
+                var ifStatement = generator.IfStatement(conditional, trueStatements);
+
+                return ifStatement;
+            }
+
+            internal static SyntaxNode TriviaVarMissingHelper(SyntaxGenerator generator, IfStatementSyntax declaration)
+            {
+                var methodBlock = declaration.Parent as BlockSyntax;
+                var secondStatement = methodBlock.Statements[1] as LocalDeclarationStatementSyntax;
+
+                var variableName = generator.IdentifierName(secondStatement.Declaration.Variables[0].Identifier.ValueText);
+
+                var ifTrailing = generator.MemberAccessExpression(variableName, "TrailingTrivia");
+                var fullVariable = generator.MemberAccessExpression(ifTrailing, "Last");
+                var parameters = new SyntaxList<SyntaxNode>();
+                var variableExpression = generator.InvocationExpression(fullVariable, parameters);
+
+                var localDeclaration = generator.LocalDeclarationStatement("trailingTrivia", variableExpression);
+
+                return localDeclaration;
+            }
+
+            internal static SyntaxNode TriviaKindCheckHelper(SyntaxGenerator generator, IfStatementSyntax ifStatement, SyntaxList<SyntaxNode> ifBlockStatements)
+            {
+                var ifOneBlock = ifStatement.Statement as BlockSyntax;
+
+                var trailingTriviaDeclaration = ifOneBlock.Statements[0] as LocalDeclarationStatementSyntax;
+                var trailingTrivia = generator.IdentifierName(trailingTriviaDeclaration.Declaration.Variables[0].Identifier.ValueText);
+                var arguments = new SyntaxList<SyntaxNode>();
+                var trailingTriviaKind = generator.InvocationExpression(generator.MemberAccessExpression(trailingTrivia, "Kind"), arguments);
+
+                var whitespaceTrivia = generator.MemberAccessExpression(generator.IdentifierName("SyntaxKind"), "WhitespaceTrivia");
+
+                var equalsExpression = generator.ValueEqualsExpression(trailingTriviaKind, whitespaceTrivia);
+
+                var newIfStatement = generator.IfStatement(equalsExpression, ifBlockStatements);
+
+                return newIfStatement;
+            }
+
+            internal static SyntaxNode WhitespaceCheckHelper(SyntaxGenerator generator, IfStatementSyntax ifStatement, SyntaxList<SyntaxNode> ifBlockStatements)
+            {
+                var ifOneBlock = ifStatement.Parent as BlockSyntax;
+                var ifTwoBlock = ifStatement.Statement as BlockSyntax;
+
+                var trailingTriviaDeclaration = ifOneBlock.Statements[0] as LocalDeclarationStatementSyntax;
+                var trailingTrivia = generator.IdentifierName(trailingTriviaDeclaration.Declaration.Variables[0].Identifier.ValueText);
+                var arguments = new SyntaxList<SyntaxNode>();
+
+                var trailingTriviaToString = generator.InvocationExpression(generator.MemberAccessExpression(trailingTrivia, "ToString"), arguments);
+                var rightSide = generator.LiteralExpression(" ");
+                var equalsExpression = generator.ValueEqualsExpression(trailingTriviaToString, rightSide);
+
+                var newIfStatement = generator.IfStatement(equalsExpression, ifBlockStatements);
+
+                return newIfStatement;
+            }
+
+            internal static SyntaxNode BuildInitialize(SyntaxGenerator generator, INamedTypeSymbol notImplementedException)
+            {
+                var type = SyntaxFactory.ParseTypeName("AnalysisContext");
+                var parameters = new[] { generator.ParameterDeclaration("context", type) };
+
+                var statements = new[] { generator.ThrowStatement(generator.ObjectCreationExpression(notImplementedException)) };
+                var initializeDeclaration = generator.MethodDeclaration("Initialize", parameters: parameters, accessibility: Accessibility.Public, modifiers: DeclarationModifiers.Override, statements: statements);
+
+                return initializeDeclaration;
+            }
+
+            internal static ClassDeclarationSyntax NewIdCreator(SyntaxToken idToken, ExpressionSyntax expressionKind, ClassDeclarationSyntax declaration)
+            {
+                var equalsValueClause = SyntaxFactory.EqualsValueClause(expressionKind);
+                var idDeclarator = SyntaxFactory.VariableDeclarator(idToken, null, equalsValueClause);
+                var type = SyntaxFactory.ParseTypeName("string");
+
+                var idDeclaratorList = new SeparatedSyntaxList<VariableDeclaratorSyntax>().Add(idDeclarator);
+                var idDeclaration = SyntaxFactory.VariableDeclaration(type, idDeclaratorList);
+
+                var whiteSpace = SyntaxFactory.Whitespace("");
+                var publicModifier = SyntaxFactory.ParseToken("public").WithLeadingTrivia(whiteSpace).WithTrailingTrivia(whiteSpace);
+                var constModifier = SyntaxFactory.ParseToken("const").WithLeadingTrivia(whiteSpace).WithTrailingTrivia(whiteSpace);
+                var modifierList = SyntaxFactory.TokenList(publicModifier, constModifier);
+
+                var attributeList = new SyntaxList<AttributeListSyntax>();
+                var fieldDeclaration = SyntaxFactory.FieldDeclaration(attributeList, modifierList, idDeclaration);
+                var memberList = new SyntaxList<MemberDeclarationSyntax>().Add(fieldDeclaration);
+
+                var newClassDeclaration = declaration.WithMembers(memberList);
+                foreach (MemberDeclarationSyntax member in declaration.Members)
+                {
+                    newClassDeclaration = newClassDeclaration.AddMembers(member);
+                }
+
+                return newClassDeclaration;
+            }
+
+            //creates the diagnostic location statement
+            internal static SyntaxNode CreateLocation(SyntaxGenerator generator, string ifStatementIdentifier, string spanIdentifier)
+            {
+                string name = "diagnosticLocation";
+                SyntaxNode memberIdentifier = generator.IdentifierName("Location");
+                SyntaxNode memberName = generator.IdentifierName("Create");
+                SyntaxNode expression = generator.MemberAccessExpression(memberIdentifier, memberName);
+
+                SyntaxList<SyntaxNode> arguments = new SyntaxList<SyntaxNode>();
+
+                var treeIdentifier = generator.IdentifierName(ifStatementIdentifier);
+                var treeArgExpression = generator.MemberAccessExpression(treeIdentifier, "SyntaxTree");
+                var treeArg = generator.Argument(treeArgExpression);
+
+                var spanArgIdentifier = generator.IdentifierName(spanIdentifier);
+                var spanArg = generator.Argument(spanArgIdentifier);
+
+                arguments = arguments.Add(treeArg);
+                arguments = arguments.Add(spanArg);
+
+                SyntaxNode initializer = generator.InvocationExpression(expression, arguments);
+                SyntaxNode localDeclaration = generator.LocalDeclarationStatement(name, initializer);
+
+                return localDeclaration;
+            }
+
+            //creates the diagnostic span statement
+            internal static SyntaxNode CreateSpan(SyntaxGenerator generator, string startIdentifier, string endIdentifier)
+            {
+                string name = "diagnosticSpan";
+                SyntaxNode memberIdentifier = generator.IdentifierName("TextSpan");
+                SyntaxNode memberName = generator.IdentifierName("FromBounds");
+                SyntaxNode expression = generator.MemberAccessExpression(memberIdentifier, memberName);
+
+                SyntaxList<SyntaxNode> arguments = new SyntaxList<SyntaxNode>();
+
+                var startSpanIdentifier = generator.IdentifierName(startIdentifier);
+                var endSpanIdentifier = generator.IdentifierName(endIdentifier);
+
+                arguments = arguments.Add(startSpanIdentifier);
+                arguments = arguments.Add(endSpanIdentifier);
+
+                SyntaxNode initializer = generator.InvocationExpression(expression, arguments);
+                SyntaxNode localDeclaration = generator.LocalDeclarationStatement(name, initializer);
+
+                return localDeclaration;
+            }
+
+            //creates an end or start span statement
+            internal static SyntaxNode CreateEndOrStartSpan(SyntaxGenerator generator, string identifierString, string variableName)
+            {
+                SyntaxNode identifier = null;
+
+                identifier = generator.IdentifierName(identifierString);
+
+                SyntaxNode expression = generator.MemberAccessExpression(identifier, "Span");
+                SyntaxNode initializer = generator.MemberAccessExpression(expression, "Start");
+
+                SyntaxNode localDeclaration = generator.LocalDeclarationStatement(variableName, initializer);
+
+                return localDeclaration;
+            }
+
+            //creates the open parenthesis statement
+            internal static SyntaxNode CreateOpenParen(SyntaxGenerator generator, string expressionString)
+            {
+                string name = "openParen";
+
+                var expression = generator.IdentifierName(expressionString);
+
+                var initializer = generator.MemberAccessExpression(expression, "OpenParenToken");
+                SyntaxNode localDeclaration = generator.LocalDeclarationStatement(name, initializer);
+
+                return localDeclaration;
+            }
+
+            internal static SyntaxNode CreateDiagnostic(SyntaxGenerator generator, string locationName, string ruleName)
+            {
+                var identifier = generator.IdentifierName("Diagnostic");
+                var expression = generator.MemberAccessExpression(identifier, "Create");
+
+                SyntaxList<SyntaxNode> arguments = new SyntaxList<SyntaxNode>();
+
+                var ruleExpression = generator.IdentifierName(ruleName);
+                var ruleArg = generator.Argument(ruleExpression);
+
+                var locationExpression = generator.IdentifierName(locationName);
+                var locationArg = generator.Argument(locationExpression);
+
+                var messageExpression = generator.MemberAccessExpression(ruleExpression, "MessageFormat");
+                var messageArg = generator.Argument(messageExpression);
+
+                arguments = arguments.Add(ruleArg);
+                arguments = arguments.Add(locationArg);
+                arguments = arguments.Add(messageArg);
+
+                string name = "diagnostic";
+                var initializer = generator.InvocationExpression(expression, arguments);
+                SyntaxNode localDeclaration = generator.LocalDeclarationStatement(name, initializer);
+
+                return localDeclaration;
+            }
+
+            internal static string GetFirstRuleName(ClassDeclarationSyntax declaration)
+            {
+                SyntaxList<MemberDeclarationSyntax> members = declaration.Members;
+                FieldDeclarationSyntax rule = null;
+
+                foreach (var member in members)
+                {
+                    rule = member as FieldDeclarationSyntax;
+                    if (rule != null && rule.Declaration.Type.ToString() == "DiagnosticDescriptor")
+                    {
+                        break;
+                    }
+                }
+
+                return rule.Declaration.Variables[0].Identifier.Text;
+            }
+
+            internal static MethodDeclarationSyntax GetAnalysis(ClassDeclarationSyntax declaration)
+            {
+                SyntaxList<MemberDeclarationSyntax> members = declaration.Members;
+                MethodDeclarationSyntax analysis = null;
+
+                foreach (var member in members)
+                {
+                    analysis = member as MethodDeclarationSyntax;
+                    if (analysis != null && analysis.Identifier.Text != "Initialize")
+                    {
+                        break;
+                    }
+                }
+
+                return analysis;
+            }
+
+            internal static SyntaxNode CreateDiagnosticReport(SyntaxGenerator generator, string argumentName, string contextName)
+            {
+                var argumentExpression = generator.IdentifierName(argumentName);
+                var argument = generator.Argument(argumentExpression);
+
+                var identifier = generator.IdentifierName(contextName);
+                var memberExpression = generator.MemberAccessExpression(identifier, "ReportDiagnostic");
+                var expression = generator.InvocationExpression(memberExpression, argument);
+
+                SyntaxNode expressionStatement = generator.ExpressionStatement(expression);
+                return expressionStatement;
+            }
         }
-
-        private SyntaxNode KeywordHelper(Document document, StatementSyntax declaration)
-        {
-            var methodBlock = declaration.Parent as BlockSyntax;
-            var firstStatement = methodBlock.Statements[0] as LocalDeclarationStatementSyntax;
-
-            var generator = SyntaxGenerator.GetGenerator(document);
-            var variableName = generator.IdentifierName(firstStatement.Declaration.Variables[0].Identifier.ValueText);
-            var initializer = generator.MemberAccessExpression(variableName, "IfKeyword");
-            var ifKeyword = generator.LocalDeclarationStatement("ifKeyword", initializer);
-
-            return ifKeyword;
-        }
-
-        private SyntaxNode TriviaCheckHelper(Document document, StatementSyntax declaration)
-        {
-            var methodBlock = declaration.Parent as BlockSyntax;
-            var secondStatement = methodBlock.Statements[1] as LocalDeclarationStatementSyntax;
-
-            var generator = SyntaxGenerator.GetGenerator(document);
-            var variableName = generator.IdentifierName(secondStatement.Declaration.Variables[0].Identifier.ValueText);
-            var conditional = generator.MemberAccessExpression(variableName, "HasTrailingTrivia");
-            var trueStatements = new SyntaxList<SyntaxNode>();
-            var ifStatement = generator.IfStatement(conditional, trueStatements);
-
-            return ifStatement;
-        }
-
-        private SyntaxNode TriviaVarMissingHelper(Document document, IfStatementSyntax declaration)
-        {
-            var methodBlock = declaration.Parent as BlockSyntax;
-            var secondStatement = methodBlock.Statements[1] as LocalDeclarationStatementSyntax;
-
-            var generator = SyntaxGenerator.GetGenerator(document);
-            var variableName = generator.IdentifierName(secondStatement.Declaration.Variables[0].Identifier.ValueText);
-
-            var ifTrailing = generator.MemberAccessExpression(variableName, "TrailingTrivia");
-            var fullVariable = generator.MemberAccessExpression(ifTrailing, "Last");
-            var parameters = new SyntaxList<SyntaxNode>();
-            var variableExpression = generator.InvocationExpression(fullVariable, parameters);
-
-            var localDeclaration = generator.LocalDeclarationStatement("trailingTrivia", variableExpression);
-
-            return localDeclaration;
-        }
-
-        private SyntaxNode TriviaKindCheckHelper(Document document, IfStatementSyntax ifStatement, SyntaxList<SyntaxNode> ifBlockStatements)
-        {
-            var generator = SyntaxGenerator.GetGenerator(document);
-
-            var ifOneBlock = ifStatement.Statement as BlockSyntax;
-
-            var trailingTriviaDeclaration = ifOneBlock.Statements[0] as LocalDeclarationStatementSyntax;
-            var trailingTrivia = generator.IdentifierName(trailingTriviaDeclaration.Declaration.Variables[0].Identifier.ValueText);
-            var arguments = new SyntaxList<SyntaxNode>();
-            var trailingTriviaKind = generator.InvocationExpression(generator.MemberAccessExpression(trailingTrivia, "Kind"), arguments);
-
-            var whitespaceTrivia = generator.MemberAccessExpression(generator.IdentifierName("SyntaxKind"), "WhitespaceTrivia");
-
-            var equalsExpression = generator.ValueEqualsExpression(trailingTriviaKind, whitespaceTrivia);
-
-            var newIfStatement = generator.IfStatement(equalsExpression, ifBlockStatements);
-
-            return newIfStatement;
-        }
-
-        private SyntaxNode WhitespaceCheckHelper(Document document, IfStatementSyntax ifStatement, SyntaxList<SyntaxNode> ifBlockStatements)
-        {
-            var generator = SyntaxGenerator.GetGenerator(document);
-
-            var ifOneBlock = ifStatement.Parent as BlockSyntax;
-            var ifTwoBlock = ifStatement.Statement as BlockSyntax;
-
-            var trailingTriviaDeclaration = ifOneBlock.Statements[0] as LocalDeclarationStatementSyntax;
-            var trailingTrivia = generator.IdentifierName(trailingTriviaDeclaration.Declaration.Variables[0].Identifier.ValueText);
-            var arguments = new SyntaxList<SyntaxNode>();
-
-            var trailingTriviaToString = generator.InvocationExpression(generator.MemberAccessExpression(trailingTrivia, "ToString"), arguments);
-            var rightSide = generator.LiteralExpression(" ");
-            var equalsExpression = generator.ValueEqualsExpression(trailingTriviaToString, rightSide);
-
-            var newIfStatement = generator.IfStatement(equalsExpression, ifBlockStatements);
-
-            return newIfStatement;
-        }
-
     }
 }
