@@ -2496,6 +2496,8 @@ namespace MetaCompilation
                 {
                     return false;
                 }
+
+                return true;
             }
 
             //returns a bool representing whether or not the fix method is correct
