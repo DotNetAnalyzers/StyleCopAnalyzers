@@ -40,7 +40,8 @@ namespace MetaCompilation
                     MetaCompilationAnalyzer.ReturnStatementIncorrect,
                     MetaCompilationAnalyzer.TooManyStatements,
                     MetaCompilationAnalyzer.ReturnStatementMissing,
-                    MetaCompilationAnalyzer.WhitespaceCheckMissing);
+                    MetaCompilationAnalyzer.WhitespaceCheckMissing,
+                    MetaCompilationAnalyzer.TrailingTriviaKindCheckMissing);
             }
         }
 
@@ -124,7 +125,13 @@ namespace MetaCompilation
                     IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("Tutorial: The fifth statement of the analyzer should be a check of the kind of trivia following the if keyword", c => TrailingKindCheckIncorrectAsync(context.Document, declaration, c)), diagnostic);
                 }
-                
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaKindCheckMissing))
+                {
+                    IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: The third statement of the analyzer must be an if statement checking the trailing trivia of the node being analyzed", c => TrailingKindCheckMissingAsync(context.Document, declaration, c)), diagnostic);
+                }
+
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.WhitespaceCheckIncorrect))
                 {
                     IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
@@ -367,6 +374,21 @@ namespace MetaCompilation
             var oldStatement = oldBlock.Statements[1];
             var newStatements = oldBlock.Statements.Replace(oldStatement, newIfStatement);
             var newBlock = oldBlock.WithStatements(newStatements);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(oldBlock, newBlock);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+
+        private async Task<Document> TrailingKindCheckMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        {
+            var ifBlockStatements = new SyntaxList<SyntaxNode>();
+            var newIfStatement = new SyntaxList<SyntaxNode>().Add(TriviaKindCheckHelper(document, declaration, ifBlockStatements) as StatementSyntax);
+
+            var oldBlock = declaration.Statement as BlockSyntax;
+            var newBlock = oldBlock.WithStatements(newIfStatement);
 
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root.ReplaceNode(oldBlock, newBlock);
