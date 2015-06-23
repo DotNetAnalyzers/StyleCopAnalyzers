@@ -13,6 +13,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Rename;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.CodeAnalysis.Editing;
 
 namespace SyntaxNodeAnalyzer
 {
@@ -43,17 +44,17 @@ namespace SyntaxNodeAnalyzer
 
         private async Task<Document> FixSpacingAsync(Document document, IfStatementSyntax ifStatement, CancellationToken c)
         {
+            var generator = SyntaxGenerator.GetGenerator(document);
+
             var ifKeyword = ifStatement.IfKeyword;
-            var openParen = ifStatement.OpenParenToken;
-
-            var whitespace = SyntaxFactory.SyntaxTrivia(SyntaxKind.WhitespaceTrivia, " ");
-            var trailingTrivia = SyntaxFactory.TriviaList(whitespace);
-            var newIfKeyword = SyntaxFactory.Token(ifKeyword.LeadingTrivia, SyntaxKind.IfKeyword, trailingTrivia);
-
-            var newOpenParen = SyntaxFactory.Token(SyntaxFactory.TriviaList(), SyntaxKind.OpenParenToken, openParen.TrailingTrivia);
-
-            var newIfStatement = SyntaxFactory.IfStatement(newIfKeyword, newOpenParen, ifStatement.Condition, ifStatement.CloseParenToken, ifStatement.Statement, ifStatement.Else);
-            
+            var ifBlock = ifStatement.Statement as BlockSyntax;
+            var closeBrace = ifBlock.CloseBraceToken;
+            var ifBlockStatements = ifBlock.Statements;
+ 
+            var leadingTrivia = ifKeyword.LeadingTrivia;
+            var trailingTrivia = closeBrace.TrailingTrivia;
+            var newIfStatement = generator.IfStatement(ifStatement.Condition, ifBlockStatements).WithLeadingTrivia(leadingTrivia).WithTrailingTrivia(trailingTrivia);
+      
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root.ReplaceNode(ifStatement, newIfStatement);
             var newDocument = document.WithSyntaxRoot(newRoot);
