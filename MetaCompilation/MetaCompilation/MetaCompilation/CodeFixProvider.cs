@@ -25,8 +25,8 @@ namespace MetaCompilation
             get
             {
                 //TODO: add any new rules
-                return ImmutableArray.Create(MetaCompilationAnalyzer.MissingId, 
-                    MetaCompilationAnalyzer.MissingInit, 
+                return ImmutableArray.Create(MetaCompilationAnalyzer.MissingId,
+                    MetaCompilationAnalyzer.MissingInit,
                     MetaCompilationAnalyzer.MissingRegisterStatement,
                     MetaCompilationAnalyzer.TooManyInitStatements,
                     MetaCompilationAnalyzer.InvalidStatement,
@@ -39,7 +39,8 @@ namespace MetaCompilation
                     MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
                     MetaCompilationAnalyzer.ReturnStatementIncorrect,
                     MetaCompilationAnalyzer.TooManyStatements,
-                    MetaCompilationAnalyzer.ReturnStatementMissing);
+                    MetaCompilationAnalyzer.ReturnStatementMissing,
+                    MetaCompilationAnalyzer.WhitespaceCheckMissing);
             }
         }
 
@@ -146,6 +147,12 @@ namespace MetaCompilation
                 {
                     IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("Tutorial: There must be a return statement indicating that the spacing for the if statement is correct", c => ReturnMissingAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.WhitespaceCheckMissing))
+                {
+                    IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: The sixth statement of the analyzer should be a check to ensure the whitespace after the if statement keyword is correct", c => WhitespaceCheckMissingAsync(context.Document, declaration, c)), diagnostic);
                 }
             }
         }
@@ -390,6 +397,21 @@ namespace MetaCompilation
             var oldStatement = oldBlock.Statements[0];
             var newStatement = oldBlock.Statements.Replace(oldStatement, newIfStatement);
             var newBlock = oldBlock.WithStatements(newStatement);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(oldBlock, newBlock);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+
+        private async Task<Document> WhitespaceCheckMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        {
+            var ifBlockStatements = new SyntaxList<SyntaxNode>();
+            var newIfStatement = new SyntaxList<SyntaxNode>().Add(WhitespaceCheckHelper(document, declaration, ifBlockStatements) as StatementSyntax);
+
+            var oldBlock = declaration.Statement as BlockSyntax;
+            var newBlock = oldBlock.WithStatements(newIfStatement);
 
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root.ReplaceNode(oldBlock, newBlock);
