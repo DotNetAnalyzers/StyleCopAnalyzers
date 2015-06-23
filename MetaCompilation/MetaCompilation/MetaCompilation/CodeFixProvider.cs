@@ -31,6 +31,7 @@ namespace MetaCompilation
                     MetaCompilationAnalyzer.TooManyInitStatements,
                     MetaCompilationAnalyzer.InvalidStatement,
                     MetaCompilationAnalyzer.IfStatementIncorrect,
+                    MetaCompilationAnalyzer.IfStatementMissing,
                     MetaCompilationAnalyzer.IfKeywordIncorrect,
                     MetaCompilationAnalyzer.IfKeywordMissing,
                     MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect,
@@ -95,6 +96,12 @@ namespace MetaCompilation
                 {
                     StatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("Tutorial: The first statement of the analyzer must access the node to be analyzed", c => IncorrectIfAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfStatementMissing))
+                {
+                    MethodDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: The first statement of the analyzer must access the node to be analyzed", c => MissingIfAsync(context.Document, declaration, c)), diagnostic);
                 }
                 
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfKeywordIncorrect))
@@ -303,6 +310,20 @@ namespace MetaCompilation
 
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root.ReplaceNode(declaration, ifStatement);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return newDocument;
+        }
+
+        private async Task<Document> MissingIfAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        {
+            var ifStatement = IfHelper(document) as StatementSyntax;
+
+            var oldBlock = declaration.Body as BlockSyntax;
+            var newBlock = oldBlock.AddStatements(ifStatement);
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(oldBlock, newBlock);
             var newDocument = document.WithSyntaxRoot(newRoot);
 
             return newDocument;
