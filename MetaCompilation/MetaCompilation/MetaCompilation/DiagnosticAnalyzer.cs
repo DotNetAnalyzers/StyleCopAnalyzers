@@ -291,6 +291,9 @@ namespace MetaCompilation
             private IPropertySymbol _propertySymbol = null; 
             private INamedTypeSymbol _analyzerClassSymbol = null;
             private Dictionary<string, string> _branchesDict = new Dictionary<string, string>();
+            private IPropertySymbol _codeFixFixableDiagnostics = null;
+            private List<IMethodSymbol> _codeFixMethodSymbols = new List<IMethodSymbol>();
+            private IMethodSymbol _registerCodeFixesAsync = null;
 
             //"main" method, performs the analysis once state has been collected
             internal void ReportCompilationEndDiagnostics(CompilationAnalysisContext context)
@@ -1590,6 +1593,7 @@ namespace MetaCompilation
 
                 return true;
             }
+            #endregion
 
             //extracts the equals value clause from a local declaration statement, returns null if failed
             internal EqualsValueClauseSyntax GetEqualsValueClauseFromLocalDecl(LocalDeclarationStatementSyntax statement)
@@ -1668,7 +1672,6 @@ namespace MetaCompilation
 
                 return identifier;
             }
-            #endregion
 
             //returns a list containing the method declaration, and the statements within the method, returns an empty list if failed
             internal List<object> AnalysisGetStatements(IMethodSymbol analysisMethodSymbol)
@@ -2311,7 +2314,21 @@ namespace MetaCompilation
                 }
                 if (sym.ContainingType.BaseType != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer"))
                 {
-                    return;
+                    if (sym.ContainingType.BaseType != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider"))
+                    {
+                        return;
+                    }
+
+                    if (sym.Name == "RegisterCodeFixesAsync")
+                    {
+                        _registerCodeFixesAsync = sym;
+                        return;
+                    }
+                    else
+                    {
+                        _codeFixMethodSymbols.Add(sym);
+                        return;
+                    }
                 }
                 if (_analyzerMethodSymbols.Contains(sym))
                 {
@@ -2346,6 +2363,17 @@ namespace MetaCompilation
                 }
                 if (sym.ContainingType.BaseType != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer"))
                 {
+                    if (sym.ContainingType.BaseType != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider"))
+                    {
+                        return;
+                    }
+
+                    if (sym.Name == "FixableDiagnosticIds")
+                    {
+                        _codeFixFixableDiagnostics = sym;
+                        return;
+                    }
+
                     return;
                 }
                 if (_analyzerPropertySymbols.Contains(sym))
