@@ -6,6 +6,10 @@
           Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props') AND '$(MSBuildProjectExtension)' != '.vcxproj'" />
 
   <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">14.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <MinimumVisualStudioVersion>$(VisualStudioVersion)</MinimumVisualStudioVersion>
+
     <AnalyzersToolsPath Condition="'$(VSLToolsPath)' == ''">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..'))</AnalyzersToolsPath>
     <AnalyzersTargetsPath Condition="'$(VSLTargetsPath)' == ''">$(MSBuildThisFileDirectory)</AnalyzersTargetsPath>
     
@@ -40,7 +44,7 @@
   
   <PropertyGroup>
     <OutDir Condition="'$(OutDir)' == ''">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\Binaries\$(Configuration)'))\</OutDir>
-    <BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)' == ''">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\..\..\Binaries\Obj\$(MSBuildProjectName)'))\</BaseIntermediateOutputPath>
+    <BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)' == ''">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..\Binaries\Obj\$(MSBuildProjectName)'))\</BaseIntermediateOutputPath>
   </PropertyGroup>
   
   <PropertyGroup>
@@ -121,22 +125,5 @@
     <FakeSignToolPath>$(MSBuildThisFileDirectory)..\..\packages\FakeSign.0.9.2\tools\FakeSign.exe</FakeSignToolPath>
   </PropertyGroup>
   
-  <!-- TODO: figure out what file this should be in. -->
-  <!-- TODO: figure out versioning; different projects will need different versions. -->
-  <!-- NuGet version -->
-  <PropertyGroup>
-    <BuildNumberSuffix Condition="('$(TF_BUILD_BUILDNUMBER)' != '')
-                     and ($(TF_BUILD_BUILDNUMBER.Split('_').Length) == 2)">$(TF_BUILD_BUILDNUMBER.Split('_')[1])</BuildNumberSuffix>
-    <BuildNumberPart1 Condition="'$(BuildNumberSuffix)' != ''">
-      $(BuildNumberSuffix.Split('.')[0])
-    </BuildNumberPart1>
-    <BuildNumberPart2 Condition="'$(BuildNumberSuffix)' != ''">
-      $(BuildNumberSuffix.Split('.')[1].PadLeft(2,'0'))
-    </BuildNumberPart2>
-
-    <NuGetReleaseVersion>$(RoslynSemanticVersion)</NuGetReleaseVersion>
-    <NuGetPreReleaseVersion>$(NuGetReleaseVersion)-rc3</NuGetPreReleaseVersion>
-    <NuGetPerBuildPreReleaseVersion Condition="'$(BuildNumberSuffix)' != ''">$(NuGetPreReleaseVersion)-$(BuildNumberPart1.Trim())-$(BuildNumberPart2.Trim())</NuGetPerBuildPreReleaseVersion>
-  </PropertyGroup>
-  
+  <Import Project="Analyzers.Versions.targets" />
 </Project>
