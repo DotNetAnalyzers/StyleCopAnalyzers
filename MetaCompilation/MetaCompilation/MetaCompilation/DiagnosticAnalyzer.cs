@@ -199,6 +199,8 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor LocationIncorrectRule = CreateRule(LocationIncorrect, "Diagnostic location variable incorrect", "This statement should use Location.Create, {0}, and {1} to create the location of the diagnostic");
         #endregion
 
+       
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
@@ -286,7 +288,7 @@ namespace MetaCompilation
             private List<IMethodSymbol> _analyzerMethodSymbols = new List<IMethodSymbol>();
             private List<IPropertySymbol> _analyzerPropertySymbols = new List<IPropertySymbol>();
             private List<IFieldSymbol> _analyzerFieldSymbols = new List<IFieldSymbol>();
-            private List<INamedTypeSymbol> _otherClassSymbols = new List<INamedTypeSymbol>();
+            private List<INamedTypeSymbol> _otherAnalyzerClassSymbols = new List<INamedTypeSymbol>();
             private IMethodSymbol _initializeSymbol = null;
             private IPropertySymbol _propertySymbol = null;
             private INamedTypeSymbol _analyzerClassSymbol = null;
@@ -294,6 +296,7 @@ namespace MetaCompilation
             private IPropertySymbol _codeFixFixableDiagnostics = null;
             private List<IMethodSymbol> _codeFixMethodSymbols = new List<IMethodSymbol>();
             private IMethodSymbol _registerCodeFixesAsync = null;
+            private INamedTypeSymbol _codeFixClassSymbol = null;
 
             //"main" method, performs the analysis once state has been collected
             internal void ReportCompilationEndDiagnostics(CompilationAnalysisContext context)
@@ -2444,23 +2447,30 @@ namespace MetaCompilation
                     }
                     if (sym.ContainingType.BaseType == context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer"))
                     {
-                        if (_otherClassSymbols.Contains(sym))
+                        if (_otherAnalyzerClassSymbols.Contains(sym))
                         {
                             return;
                         }
                         else
                         {
-                            _otherClassSymbols.Add(sym);
+                            _otherAnalyzerClassSymbols.Add(sym);
                             return;
                         }
                     }
-                    else
-                    {
-                        return;
-                    }
                 }
-
-                _analyzerClassSymbol = sym;
+                if (sym.BaseType == context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer"))
+                {
+                    _analyzerClassSymbol = sym;
+                }
+                else if (sym.BaseType == context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider"))
+                {
+                    _codeFixClassSymbol = sym;
+                }
+                else
+                {
+                    return;
+                }
+                
             }
             #endregion
 
@@ -2506,7 +2516,6 @@ namespace MetaCompilation
                 throw new NotImplementedException();
             }
 
-
             //return a list with the branch that the code fix is in, and the name of the registered method. null if failed 
             internal List<string> CheckRegisterCodeFixesAsync(CompilationAnalysisContext context)
             {
@@ -2519,7 +2528,6 @@ namespace MetaCompilation
                 throw new NotImplementedException();
             }
 
-
             //clears all state
             internal void ClearState()
             {
@@ -2527,7 +2535,7 @@ namespace MetaCompilation
                 _analyzerFieldSymbols = new List<IFieldSymbol>();
                 _analyzerMethodSymbols = new List<IMethodSymbol>();
                 _analyzerPropertySymbols = new List<IPropertySymbol>();
-                _otherClassSymbols = new List<INamedTypeSymbol>();
+                _otherAnalyzerClassSymbols = new List<INamedTypeSymbol>();
                 _initializeSymbol = null;
                 _propertySymbol = null;
                 _branchesDict = new Dictionary<string, string>();
