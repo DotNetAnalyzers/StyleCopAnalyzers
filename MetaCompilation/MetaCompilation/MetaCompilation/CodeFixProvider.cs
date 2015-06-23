@@ -315,16 +315,21 @@ namespace MetaCompilation
             }
         }
 
+        private async Task<Document> ReplaceNode(SyntaxNode oldNode, SyntaxNode newNode, Document document)
+        {
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(oldNode, newNode);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+            return newDocument;
+        }
+
         private async Task<Document> ReplaceDiagnosticReportAsync(Document document, ExpressionStatementSyntax declaration, CancellationToken c)
         {
             var methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
 
             SyntaxNode diagnosticReport = CreateDiagnosticReport(document, methodDeclaration);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(declaration, diagnosticReport);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(declaration, diagnosticReport, document);
         }
 
         private async Task<Document> AddDiagnosticReportAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
@@ -335,10 +340,7 @@ namespace MetaCompilation
             var newStatements = oldStatements.Add(diagnosticReport);
             var newMethod = generator.WithStatements(declaration, newStatements);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(declaration, newMethod);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(declaration, newMethod, document);
         }
 
         private SyntaxNode CreateDiagnosticReport(Document document, MethodDeclarationSyntax declaration)
@@ -369,10 +371,7 @@ namespace MetaCompilation
 
             var diagnostic = CreateDiagnostic(document, methodDeclaration, ruleName);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(declaration, diagnostic);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(declaration, diagnostic, document);
         }
 
         private async Task<Document> AddDiagnosticAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
@@ -388,10 +387,7 @@ namespace MetaCompilation
             var newStatements = oldStatements.Add(diagnostic);
             var newMethod = generator.WithStatements(analysis, newStatements);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(analysis, newMethod);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(analysis, newMethod, document);
         }
 
         private string GetFirstRuleName(ClassDeclarationSyntax declaration)
@@ -458,7 +454,6 @@ namespace MetaCompilation
             return localDeclaration;
         }
 
-
         //replaces an incorrect open parenthsis statement
         private async Task<Document> ReplaceOpenParenAsync(Document document, LocalDeclarationStatementSyntax declaration, CancellationToken c)
         {
@@ -466,10 +461,7 @@ namespace MetaCompilation
 
             SyntaxNode openParen = CreateOpenParen(document, methodDeclaration);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(declaration, openParen);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(declaration, openParen, document);
         }
 
         //adds the open parenthesis statement
@@ -481,10 +473,7 @@ namespace MetaCompilation
             var newStatements = oldStatements.Add(openParen);
             var newMethod = generator.WithStatements(declaration, newStatements);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(declaration, newMethod);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(declaration, newMethod, document);
         }
 
         //creates the open parenthesis statement
@@ -509,10 +498,7 @@ namespace MetaCompilation
 
             SyntaxNode startSpan = CreateEndOrStartSpan(document, methodDeclaration, "startDiagnosticSpan");
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(declaration, startSpan);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(declaration, startSpan, document);
         }
 
         //adds a start span statement
@@ -524,10 +510,7 @@ namespace MetaCompilation
             var newStatements = oldStatements.Add(startSpan);
             var newMethod = generator.WithStatements(declaration, newStatements);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(declaration, newMethod);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(declaration, newMethod, document);
         }
 
         //replace an incorrect end span statement
@@ -537,10 +520,7 @@ namespace MetaCompilation
 
             SyntaxNode endSpan = CreateEndOrStartSpan(document, methodDeclaration, "endDiagnosticSpan");
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(declaration, endSpan);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(declaration, endSpan, document);
         }
 
         //adds an end span statement
@@ -552,10 +532,7 @@ namespace MetaCompilation
             var newStatements = oldStatements.Add(endSpan);
             var newMethod = generator.WithStatements(declaration, newStatements);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(declaration, newMethod);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(declaration, newMethod, document);
         }
 
         //creates an end or start span statement
@@ -590,10 +567,7 @@ namespace MetaCompilation
 
             SyntaxNode span = CreateSpan(document, methodDeclaration);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(declaration, span);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(declaration, span, document);
         }
 
         //adds the diagnostic span statement
@@ -605,10 +579,7 @@ namespace MetaCompilation
             var newStatements = oldStatements.Add(span);
             var newMethod = generator.WithStatements(declaration, newStatements);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(declaration, newMethod);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(declaration, newMethod, document);
         }
 
         //creates the diagnostic span statement
@@ -643,10 +614,7 @@ namespace MetaCompilation
 
             SyntaxNode location = CreateLocation(document, methodDeclaration);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(declaration, location);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(declaration, location, document);
         }
 
         //adds the diagnostic location statement
@@ -658,10 +626,7 @@ namespace MetaCompilation
             var newStatements = oldStatements.Add(location);
             var newMethod = generator.WithStatements(declaration, newStatements);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(declaration, newMethod);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(declaration, newMethod, document);
         }
 
         //creates the diagnostic location statement
@@ -699,11 +664,7 @@ namespace MetaCompilation
             var expressionKind = SyntaxFactory.ParseExpression("\"IfSpacing\"") as ExpressionSyntax;
             var newClassDeclaration = newIdCreator(idToken, expressionKind, declaration);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(declaration, newClassDeclaration);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-
-            return newDocument;
+            return await ReplaceNode(declaration, newClassDeclaration, document);
         }
 
         private ClassDeclarationSyntax newIdCreator(SyntaxToken idToken, ExpressionSyntax expressionKind, ClassDeclarationSyntax declaration)
@@ -743,11 +704,7 @@ namespace MetaCompilation
 
             var newClassDeclaration = generator.AddMembers(declaration, initializeDeclaration);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(declaration, newClassDeclaration);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-
-            return newDocument;
+            return await ReplaceNode(declaration, newClassDeclaration, document);
         }
 
         private async Task<Document> MissingRegisterAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
@@ -757,11 +714,7 @@ namespace MetaCompilation
             var newInitBlock = SyntaxFactory.Block(registerExpression);
             var newInitDeclaration = declaration.WithBody(newInitBlock);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(declaration, newInitDeclaration);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-
-            return newDocument;
+            return await ReplaceNode(declaration, newInitDeclaration, document);
         }
 
         private async Task<Document> MultipleStatementsAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
@@ -800,11 +753,7 @@ namespace MetaCompilation
             newBlock = newBlock.WithStatements(statements);
             var newDeclaration = declaration.WithBody(newBlock);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(declaration, newDeclaration);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-
-            return newDocument;
+            return await ReplaceNode(declaration, newDeclaration, document);
         }
 
         private async Task<Document> InvalidStatementAsync(Document document, StatementSyntax declaration, CancellationToken c)
@@ -815,13 +764,8 @@ namespace MetaCompilation
             BlockSyntax newCodeBlock = initializeCodeBlock.WithStatements(initializeCodeBlock.Statements.Remove(declaration));
             MethodDeclarationSyntax newInitializeDeclaration = initializeDeclaration.WithBody(newCodeBlock);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(initializeDeclaration, newInitializeDeclaration);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-
-            return newDocument;
+            return await ReplaceNode(initializeDeclaration, newInitializeDeclaration, document);
         }
-
 
         private async Task<Document> InternalStaticAsync(Document document, FieldDeclarationSyntax declaration, CancellationToken c)
         {
@@ -831,10 +775,7 @@ namespace MetaCompilation
             var modifierList = SyntaxFactory.TokenList(internalKeyword, staticKeyword);
             var newFieldDeclaration = declaration.WithModifiers(modifierList).WithLeadingTrivia(declaration.GetLeadingTrivia()).WithTrailingTrivia(whiteSpace);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(declaration, newFieldDeclaration);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(declaration, newFieldDeclaration, document);
         }
 
         private async Task<Document> IncorrectSigAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
@@ -842,47 +783,31 @@ namespace MetaCompilation
             SemanticModel semanticModel = await document.GetSemanticModelAsync();
             var initializeDeclaration = BuildInitialize(document, semanticModel);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(declaration, initializeDeclaration);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(declaration, initializeDeclaration, document);
         }
-
 
         private async Task<Document> EnabledByDefaultAsync(Document document, LiteralExpressionSyntax literalExpression, CancellationToken c)
         {
             var newLiteralExpression = (SyntaxFactory.ParseExpression("true").WithLeadingTrivia(literalExpression.GetLeadingTrivia()).WithTrailingTrivia(literalExpression.GetTrailingTrivia())) as LiteralExpressionSyntax;
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(literalExpression, newLiteralExpression);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(literalExpression, newLiteralExpression, document);
         }
 
         private async Task<Document> IncorrectIfAsync(Document document, StatementSyntax declaration, CancellationToken c)
         {
             var ifStatement = IfHelper(document);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(declaration, ifStatement);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(declaration, ifStatement, document);
         }
-
 
         private async Task<Document> DiagnosticSeverityError(Document document, MemberAccessExpressionSyntax memberAccessExpression, CancellationToken c)
         {
             var newMemberAccessExpressionName = SyntaxFactory.ParseName("Error");
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(memberAccessExpression.Name, newMemberAccessExpressionName);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(memberAccessExpression.Name, newMemberAccessExpressionName, document);
         }
-
         #endregion
 
-        #region helper functions
         private SyntaxNode BuildInitialize(Document document, SemanticModel semanticModel)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -900,40 +825,28 @@ namespace MetaCompilation
         {
             var ifKeyword = KeywordHelper(document, declaration);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(declaration, ifKeyword);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(declaration, ifKeyword, document);
         }
 
         private async Task<Document> DiagnosticSeverityWarning(Document document, MemberAccessExpressionSyntax memberAccessExpression, CancellationToken c)
         {
             var newMemberAccessExpressionName = SyntaxFactory.ParseName("Warning");
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(memberAccessExpression.Name, newMemberAccessExpressionName);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(memberAccessExpression.Name, newMemberAccessExpressionName, document);
         }
 
         private async Task<Document> TrailingCheckIncorrectAsync(Document document, StatementSyntax declaration, CancellationToken c)
         {
             var ifStatement = TriviaCheckHelper(document, declaration);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(declaration, ifStatement);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(declaration, ifStatement, document);
         }
 
         private async Task<Document> DiagnosticSeverityHidden(Document document, MemberAccessExpressionSyntax memberAccessExpression, CancellationToken c)
         {
             var newMemberAccessExpressionName = SyntaxFactory.ParseName("Hidden");
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(memberAccessExpression.Name, newMemberAccessExpressionName);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(memberAccessExpression.Name, newMemberAccessExpressionName, document);
         }
 
         private async Task<Document> TrailingVarMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
@@ -943,21 +856,14 @@ namespace MetaCompilation
             var oldBlock = declaration.Statement as BlockSyntax;
             var newBlock = oldBlock.WithStatements(localDeclaration);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(oldBlock, newBlock);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(oldBlock, newBlock, document);
         }
-
 
         private async Task<Document> DiagnosticSeverityInfo(Document document, MemberAccessExpressionSyntax memberAccessExpression, CancellationToken c)
         {
             var newMemberAccessExpressionName = SyntaxFactory.ParseName("Info");
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(memberAccessExpression.Name, newMemberAccessExpressionName);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(memberAccessExpression.Name, newMemberAccessExpressionName, document);
         }
 
         private async Task<Document> TrailingVarIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
@@ -969,11 +875,7 @@ namespace MetaCompilation
             var newStatements = oldBlock.Statements.Replace(oldStatement, localDeclaration);
             var newBlock = oldBlock.WithStatements(newStatements);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(oldBlock, newBlock);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-
-            return newDocument;
+            return await ReplaceNode(oldBlock, newBlock, document);
         }
 
         private async Task<Document> TrailingKindCheckIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
@@ -998,12 +900,8 @@ namespace MetaCompilation
             var newStatements = oldBlock.Statements.Replace(oldStatement, newIfStatement);
             var newBlock = oldBlock.WithStatements(newStatements);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(oldBlock, newBlock);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(oldBlock, newBlock, document);
         }
-
 
         private async Task<Document> MissingIdDeclarationAsync(Document document, VariableDeclaratorSyntax ruleDeclarationField, CancellationToken c)
         {
@@ -1027,10 +925,7 @@ namespace MetaCompilation
             var expressionKind = SyntaxFactory.ParseExpression("\"DescriptiveId\"") as ExpressionSyntax;
             var newClassDeclaration = newIdCreator(idToken, expressionKind, classDeclaration);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(classDeclaration, newClassDeclaration);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(classDeclaration, newClassDeclaration, document);
         }
 
         private async Task<Document> WhitespaceCheckIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
@@ -1062,16 +957,13 @@ namespace MetaCompilation
             return newDocument;
         }
 
-
         private async Task<Document> IdDeclTypeAsync(Document document, LiteralExpressionSyntax literalExpression, CancellationToken c)
         {
             var idName = SyntaxFactory.ParseName(literalExpression.Token.Value.ToString()) as IdentifierNameSyntax;
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(literalExpression, idName);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(literalExpression, idName, document);
         }
+
         private async Task<Document> ReturnIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
             IfStatementSyntax ifStatement;
@@ -1091,11 +983,7 @@ namespace MetaCompilation
             var newStatement = oldBlock.Statements.Replace(oldBlock.Statements[0], returnStatement);
             var newBlock = oldBlock.WithStatements(newStatement);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(oldBlock, newBlock);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-
-            return newDocument;
+            return await ReplaceNode(oldBlock, newBlock, document);
         }
 
         private async Task<Document> TooManyStatementsAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
@@ -1104,15 +992,9 @@ namespace MetaCompilation
             var onlyStatement = new SyntaxList<StatementSyntax>().Add(oldBlock.Statements[0]);
             var newBlock = oldBlock.WithStatements(onlyStatement);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(oldBlock, newBlock);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(oldBlock, newBlock, document);
         }
 
-        #endregion
-
-        #region Helper functions
         private SyntaxNode IfHelper(Document document)
         {
             var generator = SyntaxGenerator.GetGenerator(document);
@@ -1210,7 +1092,6 @@ namespace MetaCompilation
 
             return newIfStatement;
         }
-        #endregion
 
     }
 }
