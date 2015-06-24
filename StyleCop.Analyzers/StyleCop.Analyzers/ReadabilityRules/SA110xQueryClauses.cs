@@ -10,27 +10,12 @@
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// The clauses within a C# query expression are not all placed on the same line, and each clause is not placed on
-    /// its own line.
+    /// This analyzer will analyze several diagnostics related to query expressions.
     /// </summary>
-    /// <remarks>
-    /// <para>A violation of this rule occurs when the query clauses are not either placed all on the same line, or each
-    /// on its own line. For example:</para>
-    /// <code language="csharp">
-    /// object x = from num in numbers
-    ///     select num;
-    /// </code>
-    /// <para>The query clauses can correctly be written as:</para>
-    /// <code language="csharp">
-    /// object x = from num in numbers select num;
-    /// </code>
-    /// <para>or:</para>
-    /// <code language="csharp">
-    /// object x =
-    ///     from num in numbers
-    ///     select num;
-    /// </code>
-    /// </remarks>
+    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1102.md">SA1102 Query clause must follow previous clause</seealso>
+    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1103.md">SA1103 Query clauses must be on separate lines or all on one line</seealso>
+    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1104.md">SA1104 Query clause must begin on new line when previous clause spans multiple lines</seealso>
+    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1105.md">SA1105 Query clauses spanning multiple lines must begin on own line</seealso>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA110xQueryClauses : DiagnosticAnalyzer
     {
@@ -40,25 +25,25 @@
         private static readonly LocalizableString SA1102Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1102Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString SA1102MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1102MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString SA1102Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1102Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
-        private static readonly string SA1102HelpLink = "http://www.stylecop.com/docs/SA1102.html";
+        private static readonly string SA1102HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1102.md";
 
         private static readonly string SA1103Identifier = "SA1103";
         private static readonly LocalizableString SA1103Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1103Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString SA1103MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1103MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString SA1103Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1103Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
-        private static readonly string SA1103HelpLink = "http://www.stylecop.com/docs/SA1103.html";
+        private static readonly string SA1103HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1103.md";
 
         private static readonly string SA1104Identifier = "SA1104";
         private static readonly LocalizableString SA1104Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1104Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString SA1104MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1104MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString SA1104Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1104Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
-        private static readonly string SA1104HelpLink = "http://www.stylecop.com/docs/SA1104.html";
+        private static readonly string SA1104HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1104.md";
 
         private static readonly string SA1105Identifier = "SA1105";
         private static readonly LocalizableString SA1105Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1105Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString SA1105MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1105MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString SA1105Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1105Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
-        private static readonly string SA1105HelpLink = "http://www.stylecop.com/docs/SA1105.html";
+        private static readonly string SA1105HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1105.md";
 
         /// <summary>
         /// Gets the diagnostic descriptor for SA1102.
@@ -106,10 +91,10 @@
             HandleQueryClause(queryExpression.FromClause, tokensToCheck);
             HandleQueryBody(queryExpression.Body, tokensToCheck);
 
-            bool isEnabledSA1102 = context.IsAnalyzerEnabled(SA1102Identifier);
-            bool isEnabledSA1103 = context.IsAnalyzerEnabled(SA1103Identifier);
-            bool isEnabledSA1104 = context.IsAnalyzerEnabled(SA1104Identifier);
-            bool isEnabledSA1105 = context.IsAnalyzerEnabled(SA1105Identifier);
+            bool isEnabledSA1102 = !context.IsAnalyzerSuppressed(SA1102Identifier);
+            bool isEnabledSA1103 = !context.IsAnalyzerSuppressed(SA1103Identifier);
+            bool isEnabledSA1104 = !context.IsAnalyzerSuppressed(SA1104Identifier);
+            bool isEnabledSA1105 = !context.IsAnalyzerSuppressed(SA1105Identifier);
 
             bool allOnSameLine = true;
             bool allOnSeparateLine = true;
