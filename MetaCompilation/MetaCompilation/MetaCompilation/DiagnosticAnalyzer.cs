@@ -38,7 +38,6 @@ namespace MetaCompilation
         }
 
         #region rule rules
-
         public const string IdDeclTypeError = "MetaAnalyzer018";
         internal static DiagnosticDescriptor IdDeclTypeErrorRule = CreateRule(IdDeclTypeError, "DiagnosticDescriptor 'id' incorrect", "The diagnostic id should be the const declared above this", "The id parameter of a DiagnosticDescriptor should be a string const declared previously. This is so that the diagnostic id is accessible from the CodeFixProvider.cs file.");
 
@@ -1753,7 +1752,7 @@ namespace MetaCompilation
                 {
                     var valueClause = returnExpression as InvocationExpressionSyntax;
                     var returnDeclaration = returnStatement as ReturnStatementSyntax;
-                    SuppDiagReturnCheck(context, valueClause, returnDeclaration.GetLocation(), ruleNames);
+                    SuppDiagReturnCheck(context, valueClause, returnDeclaration.GetLocation(), ruleNames, propertyDeclaration);
                 }
                 else if (returnExpression is IdentifierNameSyntax)
                 {
@@ -1766,7 +1765,7 @@ namespace MetaCompilation
 
                     InvocationExpressionSyntax valueClause = symbolResult[0] as InvocationExpressionSyntax;
                     VariableDeclaratorSyntax returnDeclaration = symbolResult[1] as VariableDeclaratorSyntax;
-                    SuppDiagReturnCheck(context, valueClause, returnDeclaration.GetLocation(), ruleNames);
+                    SuppDiagReturnCheck(context, valueClause, returnDeclaration.GetLocation(), ruleNames, propertyDeclaration);
                 }
                 else
                 {
@@ -1812,19 +1811,19 @@ namespace MetaCompilation
                 SyntaxList<AccessorDeclarationSyntax> accessors = accessorList.Accessors;
                 if (accessors == null || accessors.Count == 0)
                 {
-                    ReportDiagnostic(context, MissingAccessorRule, propertyDeclaration.GetLocation(), MissingAccessorRule.MessageFormat);
+                    ReportDiagnostic(context, MissingAccessorRule, propertyDeclaration.GetLocation(), propertyDeclaration.Identifier.Text);
                     return emptyResult;
                 }
                 if (accessors.Count > 1)
                 {
-                    ReportDiagnostic(context, TooManyAccessorsRule, accessorList.GetLocation(), TooManyAccessorsRule.MessageFormat);
+                    ReportDiagnostic(context, TooManyAccessorsRule, accessorList.GetLocation(), propertyDeclaration.Identifier.Text);
                     return emptyResult;
                 }
 
                 var getAccessor = accessors.First() as AccessorDeclarationSyntax;
                 if (getAccessor == null || getAccessor.Keyword.Kind() != SyntaxKind.GetKeyword)
                 {
-                    ReportDiagnostic(context, MissingAccessorRule, propertyDeclaration.GetLocation(), MissingAccessorRule.MessageFormat);
+                    ReportDiagnostic(context, MissingAccessorRule, propertyDeclaration.GetLocation(), propertyDeclaration.Identifier.Text);
                     return emptyResult;
                 }
 
@@ -1839,7 +1838,7 @@ namespace MetaCompilation
             }
 
             //checks the return value of the get accessor within SupportedDiagnostics
-            internal void SuppDiagReturnCheck(CompilationAnalysisContext context, InvocationExpressionSyntax valueClause, Location returnDeclarationLocation, List<string> ruleNames)
+            internal void SuppDiagReturnCheck(CompilationAnalysisContext context, InvocationExpressionSyntax valueClause, Location returnDeclarationLocation, List<string> ruleNames, PropertyDeclarationSyntax propertyDeclaration)
             {
                 if (valueClause == null)
                 {
@@ -1856,7 +1855,7 @@ namespace MetaCompilation
 
                 if (valueExpression.ToString() != "ImmutableArray.Create")
                 {
-                    ReportDiagnostic(context, SuppDiagReturnValueRule, returnDeclarationLocation, SuppDiagReturnValueRule.MessageFormat);
+                    ReportDiagnostic(context, SuppDiagReturnValueRule, returnDeclarationLocation, propertyDeclaration.Identifier.Text);
                     return;
                 }
 
@@ -1953,7 +1952,7 @@ namespace MetaCompilation
                     {
                         if (fieldSymbol.DeclaredAccessibility != Accessibility.Internal || !fieldSymbol.IsStatic)
                         {
-                            ReportDiagnostic(context, InternalAndStaticErrorRule, fieldSymbol.Locations[0], InternalAndStaticErrorRule.MessageFormat);
+                            ReportDiagnostic(context, InternalAndStaticErrorRule, fieldSymbol.Locations[0], fieldSymbol.Name);
                             return emptyRuleNames;
                         }
 
@@ -2115,49 +2114,42 @@ namespace MetaCompilation
                                 return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                             }
                         }
-
-                        if (statements.Count() > 1)
+                        foreach (ExpressionStatementSyntax statement in statements)
                         {
-                            foreach (ExpressionStatementSyntax statement in statements)
+                            var expression = statement.Expression as InvocationExpressionSyntax;
+                            if (expression == null)
                             {
-                                var expression = statement.Expression as InvocationExpressionSyntax;
-                                if (expression == null)
-                                {
-                                    ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
-                                    return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
-                                }
-
-                                var expressionStart = expression.Expression as MemberAccessExpressionSyntax;
-                                if (expressionStart == null || expressionStart.Name == null)
-                                {
-                                    ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
-                                    return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
-                                }
-
-                                var preExpressionStart = expressionStart.Expression as IdentifierNameSyntax;
-                                if (preExpressionStart == null || preExpressionStart.Identifier == null ||
-                                    preExpressionStart.Identifier.ValueText != "context")
-                                {
-                                    ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
-                                    return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
-                                }
-
-                                var name = expressionStart.Name.ToString();
-                                if (!_branchesDict.ContainsKey(name))
-                                {
-                                    ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
-                                    return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
-                                }
+                                ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
+                                return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                             }
 
-                            if (statements.Count() > 1)
+                            var expressionStart = expression.Expression as MemberAccessExpressionSyntax;
+                            if (expressionStart == null || expressionStart.Name == null)
                             {
-                                //too many statements inside initialize
-                                ReportDiagnostic(context, TooManyInitStatementsRule, _initializeSymbol.Locations[0], _initializeSymbol.Name.ToString());
+                                ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
+                                return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
+                            }
+
+                            var preExpressionStart = expressionStart.Expression as IdentifierNameSyntax;
+                            if (preExpressionStart == null || preExpressionStart.Identifier == null ||
+                                preExpressionStart.Identifier.ValueText != "context")
+                            {
+                                ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
+                                return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
+                            }
+
+                            var name = expressionStart.Name.ToString();
+                            if (!_branchesDict.ContainsKey(name))
+                            {
+                                ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
                                 return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                             }
                         }
+                            
+                        //too many statements inside initialize
+                        ReportDiagnostic(context, TooManyInitStatementsRule, _initializeSymbol.Locations[0], _initializeSymbol.Name.ToString());
                         return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
+
                     }
                     //only one statement inside initialize
                     else
@@ -2186,17 +2178,17 @@ namespace MetaCompilation
                         }
 
                         SeparatedSyntaxList<ArgumentSyntax> arguments = invocationExpr.ArgumentList.Arguments;
-                        if (arguments == null)
+                        if (arguments == null || arguments.Count == 0)
                         {
-                            ReportDiagnostic(context, InvalidStatementRule, memberExpr.GetLocation(), memberExpr.Name.ToString());
+                            ReportDiagnostic(context, MissingRegisterRule, memberExpr.GetLocation(), memberExpr.Name.ToString());
                             return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                         }
-                        if (arguments.Count() > 0)
+                        if (arguments.Count > 0)
                         {
                             IMethodSymbol actionSymbol = context.Compilation.GetSemanticModel(invocationExpr.SyntaxTree).GetSymbolInfo(arguments[0].Expression).Symbol as IMethodSymbol;
                             registerArgs.Add(actionSymbol);
 
-                            if (arguments.Count() > 1)
+                            if (arguments.Count > 1)
                             {
                                 IFieldSymbol kindSymbol = context.Compilation.GetSemanticModel(invocationExpr.SyntaxTree).GetSymbolInfo(arguments[1].Expression).Symbol as IFieldSymbol;
                                 if (kindSymbol == null)
@@ -2211,8 +2203,6 @@ namespace MetaCompilation
                         }
                     }
                 }
-
-
                 return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
             }
 
