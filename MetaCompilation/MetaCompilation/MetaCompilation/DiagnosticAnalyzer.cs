@@ -38,7 +38,6 @@ namespace MetaCompilation
         }
 
         #region rule rules
-
         public const string IdDeclTypeError = "MetaAnalyzer018";
         internal static DiagnosticDescriptor IdDeclTypeErrorRule = CreateRule(IdDeclTypeError, "DiagnosticDescriptor 'id' incorrect", "The diagnostic id should be the const declared above this", "The id parameter of a DiagnosticDescriptor should be a string const declared previously. This is so that the diagnostic id is accessible from the CodeFixProvider.cs file.");
 
@@ -200,6 +199,8 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor LocationIncorrectRule = CreateRule(LocationIncorrect, "Diagnostic location variable incorrect", "This statement should use Location.Create, {0}, and {1} to create the location of the diagnostic", "A location can be created by combining a span with a syntax tree. The span is applie to the given syntax tree so that the location within the syntax tree is determined");
         #endregion
 
+       
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
@@ -287,11 +288,15 @@ namespace MetaCompilation
             private List<IMethodSymbol> _analyzerMethodSymbols = new List<IMethodSymbol>();
             private List<IPropertySymbol> _analyzerPropertySymbols = new List<IPropertySymbol>();
             private List<IFieldSymbol> _analyzerFieldSymbols = new List<IFieldSymbol>();
-            private List<INamedTypeSymbol> _otherClassSymbols = new List<INamedTypeSymbol>();
+            private List<INamedTypeSymbol> _otherAnalyzerClassSymbols = new List<INamedTypeSymbol>();
             private IMethodSymbol _initializeSymbol = null;
-            private IPropertySymbol _propertySymbol = null; 
+            private IPropertySymbol _propertySymbol = null;
             private INamedTypeSymbol _analyzerClassSymbol = null;
             private Dictionary<string, string> _branchesDict = new Dictionary<string, string>();
+            private IPropertySymbol _codeFixFixableDiagnostics = null;
+            private List<IMethodSymbol> _codeFixMethodSymbols = new List<IMethodSymbol>();
+            private IMethodSymbol _registerCodeFixesAsync = null;
+            private INamedTypeSymbol _codeFixClassSymbol = null;
 
             //"main" method, performs the analysis once state has been collected
             internal void ReportCompilationEndDiagnostics(CompilationAnalysisContext context)
@@ -331,7 +336,7 @@ namespace MetaCompilation
                 IMethodSymbol analysisMethodSymbol = null;
                 if (registerArgs.Count > 0)
                 {
-                        analysisMethodSymbol = (IMethodSymbol)registerArgs[0];
+                    analysisMethodSymbol = (IMethodSymbol)registerArgs[0];
                 }
                 IFieldSymbol kind = null;
                 if (registerArgs.Count > 1)
@@ -344,7 +349,7 @@ namespace MetaCompilation
                 {
                     return;
                 }
-                
+
                 //interpret initialize info
                 if (_branchesDict.ContainsKey(registerSymbol.Name))
                 {
@@ -366,7 +371,7 @@ namespace MetaCompilation
                             if (ruleNames.Count > 0)
                             {
                                 //look for and interpret SupportedDiagnostics property
-                               bool supportedDiagnosticsCorrect = CheckSupportedDiagnostics(ruleNames, context);
+                                bool supportedDiagnosticsCorrect = CheckSupportedDiagnostics(ruleNames, context);
 
                                 if (supportedDiagnosticsCorrect)
                                 {
@@ -374,7 +379,7 @@ namespace MetaCompilation
                                     bool analysisCorrect = CheckAnalysis(_branchesDict[registerSymbol.Name], kindName, ruleNames, context, analysisMethodSymbol);
                                     if (analysisCorrect)
                                     {
-                                        //TODO: diagnostic to go to code fix once there is a tutorial for the code fix writing
+                                        bool codeFixCorrect = CodeFixProviderAnalysis(context);
                                     }
                                     else
                                     {
@@ -394,7 +399,7 @@ namespace MetaCompilation
                         }
                         else
                         {
-                           ReportDiagnostic(context, MissingIdRule, _analyzerClassSymbol.Locations[0], _analyzerClassSymbol.Name.ToString());
+                            ReportDiagnostic(context, MissingIdRule, _analyzerClassSymbol.Locations[0], _analyzerClassSymbol.Name.ToString());
                         }
                     }
                     else
@@ -407,7 +412,7 @@ namespace MetaCompilation
                     return;
                 }
             }
-            
+
             //checks the syntax tree analysis part of the user analyzer, returns a bool representing whether the check was successful or not
             internal bool CheckAnalysis(string branch, string kind, List<string> ruleNames, CompilationAnalysisContext context, IMethodSymbol analysisMethodSymbol)
             {
@@ -583,7 +588,7 @@ namespace MetaCompilation
                                 if (statementCount > 10)
                                 {
                                     ReportDiagnostic(context, TooManyStatementsRule, methodDeclaration.GetLocation(), "method", "10");
-                                    return false; 
+                                    return false;
                                 }
                             }
                             else
@@ -996,7 +1001,7 @@ namespace MetaCompilation
                         ReportDiagnostic(context, StartSpanIncorrectRule, statements[4].GetLocation(), keywordIdentifierToken);
                         return false;
                     }
-                    
+
                     if (statementCount > 5)
                     {
                         SyntaxToken endToken = EndAnalysis(context, openParenToken, statements);
@@ -1005,7 +1010,7 @@ namespace MetaCompilation
                             ReportDiagnostic(context, EndSpanIncorrectRule, statements[5].GetLocation(), openParenToken.Text);
                             return false;
                         }
-                        
+
                         if (statementCount > 6)
                         {
                             SyntaxToken spanToken = SpanAnalysis(context, startToken, endToken, statements);
@@ -1014,7 +1019,7 @@ namespace MetaCompilation
                                 ReportDiagnostic(context, SpanIncorrectRule, statements[6].GetLocation(), startToken.Text, endToken.Text);
                                 return false;
                             }
-                            
+
                             if (statementCount > 7)
                             {
                                 SyntaxToken locationToken = LocationAnalysis(context, statementIdentifierToken, spanToken, statements);
@@ -1591,6 +1596,7 @@ namespace MetaCompilation
 
                 return true;
             }
+            #endregion
 
             //extracts the equals value clause from a local declaration statement, returns null if failed
             internal EqualsValueClauseSyntax GetEqualsValueClauseFromLocalDecl(LocalDeclarationStatementSyntax statement)
@@ -1669,7 +1675,6 @@ namespace MetaCompilation
 
                 return identifier;
             }
-            #endregion
 
             //returns a list containing the method declaration, and the statements within the method, returns an empty list if failed
             internal List<object> AnalysisGetStatements(IMethodSymbol analysisMethodSymbol)
@@ -1747,7 +1752,7 @@ namespace MetaCompilation
                 {
                     var valueClause = returnExpression as InvocationExpressionSyntax;
                     var returnDeclaration = returnStatement as ReturnStatementSyntax;
-                    SuppDiagReturnCheck(context, valueClause, returnDeclaration.GetLocation(), ruleNames);
+                    SuppDiagReturnCheck(context, valueClause, returnDeclaration.GetLocation(), ruleNames, propertyDeclaration);
                 }
                 else if (returnExpression is IdentifierNameSyntax)
                 {
@@ -1760,7 +1765,7 @@ namespace MetaCompilation
 
                     InvocationExpressionSyntax valueClause = symbolResult[0] as InvocationExpressionSyntax;
                     VariableDeclaratorSyntax returnDeclaration = symbolResult[1] as VariableDeclaratorSyntax;
-                    SuppDiagReturnCheck(context, valueClause, returnDeclaration.GetLocation(), ruleNames);
+                    SuppDiagReturnCheck(context, valueClause, returnDeclaration.GetLocation(), ruleNames, propertyDeclaration);
                 }
                 else
                 {
@@ -1806,19 +1811,19 @@ namespace MetaCompilation
                 SyntaxList<AccessorDeclarationSyntax> accessors = accessorList.Accessors;
                 if (accessors == null || accessors.Count == 0)
                 {
-                    ReportDiagnostic(context, MissingAccessorRule, propertyDeclaration.GetLocation(), MissingAccessorRule.MessageFormat);
+                    ReportDiagnostic(context, MissingAccessorRule, propertyDeclaration.GetLocation(), propertyDeclaration.Identifier.Text);
                     return emptyResult;
                 }
                 if (accessors.Count > 1)
                 {
-                    ReportDiagnostic(context, TooManyAccessorsRule, accessorList.GetLocation(), TooManyAccessorsRule.MessageFormat);
+                    ReportDiagnostic(context, TooManyAccessorsRule, accessorList.GetLocation(), propertyDeclaration.Identifier.Text);
                     return emptyResult;
                 }
 
                 var getAccessor = accessors.First() as AccessorDeclarationSyntax;
                 if (getAccessor == null || getAccessor.Keyword.Kind() != SyntaxKind.GetKeyword)
                 {
-                    ReportDiagnostic(context, MissingAccessorRule, propertyDeclaration.GetLocation(), MissingAccessorRule.MessageFormat);
+                    ReportDiagnostic(context, MissingAccessorRule, propertyDeclaration.GetLocation(), propertyDeclaration.Identifier.Text);
                     return emptyResult;
                 }
 
@@ -1833,7 +1838,7 @@ namespace MetaCompilation
             }
 
             //checks the return value of the get accessor within SupportedDiagnostics
-            internal void SuppDiagReturnCheck(CompilationAnalysisContext context, InvocationExpressionSyntax valueClause, Location returnDeclarationLocation, List<string> ruleNames)
+            internal void SuppDiagReturnCheck(CompilationAnalysisContext context, InvocationExpressionSyntax valueClause, Location returnDeclarationLocation, List<string> ruleNames, PropertyDeclarationSyntax propertyDeclaration)
             {
                 if (valueClause == null)
                 {
@@ -1850,7 +1855,7 @@ namespace MetaCompilation
 
                 if (valueExpression.ToString() != "ImmutableArray.Create")
                 {
-                    ReportDiagnostic(context, SuppDiagReturnValueRule, returnDeclarationLocation, SuppDiagReturnValueRule.MessageFormat);
+                    ReportDiagnostic(context, SuppDiagReturnValueRule, returnDeclarationLocation, propertyDeclaration.Identifier.Text);
                     return;
                 }
 
@@ -1943,11 +1948,11 @@ namespace MetaCompilation
 
                 foreach (var fieldSymbol in _analyzerFieldSymbols)
                 {
-                    if (fieldSymbol.Type != null &&  fieldSymbol.Type.MetadataName == "DiagnosticDescriptor")
+                    if (fieldSymbol.Type != null && fieldSymbol.Type.MetadataName == "DiagnosticDescriptor")
                     {
                         if (fieldSymbol.DeclaredAccessibility != Accessibility.Internal || !fieldSymbol.IsStatic)
                         {
-                            ReportDiagnostic(context, InternalAndStaticErrorRule, fieldSymbol.Locations[0], InternalAndStaticErrorRule.MessageFormat);
+                            ReportDiagnostic(context, InternalAndStaticErrorRule, fieldSymbol.Locations[0], fieldSymbol.Name);
                             return emptyRuleNames;
                         }
 
@@ -2076,7 +2081,7 @@ namespace MetaCompilation
                 IMethodSymbol registerCall = null;
                 List<ISymbol> registerArgs = new List<ISymbol>();
                 InvocationExpressionSyntax invocExpr = null;
-                
+
                 if (_initializeSymbol == null)
                 {
                     //the initialize method was not found
@@ -2109,49 +2114,42 @@ namespace MetaCompilation
                                 return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                             }
                         }
-
-                        if (statements.Count() > 1)
+                        foreach (ExpressionStatementSyntax statement in statements)
                         {
-                            foreach (ExpressionStatementSyntax statement in statements)
+                            var expression = statement.Expression as InvocationExpressionSyntax;
+                            if (expression == null)
                             {
-                                var expression = statement.Expression as InvocationExpressionSyntax;
-                                if (expression == null)
-                                {
-                                    ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
-                                    return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
-                                }
-
-                                var expressionStart = expression.Expression as MemberAccessExpressionSyntax;
-                                if (expressionStart == null || expressionStart.Name == null)
-                                {
-                                    ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
-                                    return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
-                                }
-
-                                var preExpressionStart = expressionStart.Expression as IdentifierNameSyntax;
-                                if (preExpressionStart == null || preExpressionStart.Identifier == null ||
-                                    preExpressionStart.Identifier.ValueText != "context")
-                                {
-                                    ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
-                                    return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
-                                }
-
-                                var name = expressionStart.Name.ToString();
-                                if (!_branchesDict.ContainsKey(name))
-                                {
-                                    ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
-                                    return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
-                                }
+                                ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
+                                return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                             }
 
-                            if (statements.Count() > 1)
+                            var expressionStart = expression.Expression as MemberAccessExpressionSyntax;
+                            if (expressionStart == null || expressionStart.Name == null)
                             {
-                                //too many statements inside initialize
-                                ReportDiagnostic(context, TooManyInitStatementsRule, _initializeSymbol.Locations[0], _initializeSymbol.Name.ToString());
+                                ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
+                                return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
+                            }
+
+                            var preExpressionStart = expressionStart.Expression as IdentifierNameSyntax;
+                            if (preExpressionStart == null || preExpressionStart.Identifier == null ||
+                                preExpressionStart.Identifier.ValueText != "context")
+                            {
+                                ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
+                                return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
+                            }
+
+                            var name = expressionStart.Name.ToString();
+                            if (!_branchesDict.ContainsKey(name))
+                            {
+                                ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
                                 return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                             }
                         }
+                            
+                        //too many statements inside initialize
+                        ReportDiagnostic(context, TooManyInitStatementsRule, _initializeSymbol.Locations[0], _initializeSymbol.Name.ToString());
                         return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
+
                     }
                     //only one statement inside initialize
                     else
@@ -2180,17 +2178,17 @@ namespace MetaCompilation
                         }
 
                         SeparatedSyntaxList<ArgumentSyntax> arguments = invocationExpr.ArgumentList.Arguments;
-                        if (arguments == null)
+                        if (arguments == null || arguments.Count == 0)
                         {
-                            ReportDiagnostic(context, InvalidStatementRule, memberExpr.GetLocation(), memberExpr.Name.ToString());
+                            ReportDiagnostic(context, MissingRegisterRule, memberExpr.GetLocation(), memberExpr.Name.ToString());
                             return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                         }
-                        if (arguments.Count() > 0)
+                        if (arguments.Count > 0)
                         {
                             IMethodSymbol actionSymbol = context.Compilation.GetSemanticModel(invocationExpr.SyntaxTree).GetSymbolInfo(arguments[0].Expression).Symbol as IMethodSymbol;
                             registerArgs.Add(actionSymbol);
 
-                            if (arguments.Count() > 1)
+                            if (arguments.Count > 1)
                             {
                                 IFieldSymbol kindSymbol = context.Compilation.GetSemanticModel(invocationExpr.SyntaxTree).GetSymbolInfo(arguments[1].Expression).Symbol as IFieldSymbol;
                                 if (kindSymbol == null)
@@ -2205,8 +2203,6 @@ namespace MetaCompilation
                         }
                     }
                 }
-                
-
                 return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
             }
 
@@ -2215,8 +2211,8 @@ namespace MetaCompilation
             internal BlockSyntax InitializeOverview(CompilationAnalysisContext context)
             {
                 ImmutableArray<IParameterSymbol> parameters = _initializeSymbol.Parameters;
-                if (parameters.Count() != 1 || parameters[0].Type != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.AnalysisContext") 
-                    || parameters[0].Name != "context" || _initializeSymbol.DeclaredAccessibility != Accessibility.Public 
+                if (parameters.Count() != 1 || parameters[0].Type != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.AnalysisContext")
+                    || parameters[0].Name != "context" || _initializeSymbol.DeclaredAccessibility != Accessibility.Public
                     || !_initializeSymbol.IsOverride || !_initializeSymbol.ReturnsVoid)
                 {
                     ReportDiagnostic(context, IncorrectInitSigRule, _initializeSymbol.Locations[0], _initializeSymbol.Name.ToString());
@@ -2313,7 +2309,21 @@ namespace MetaCompilation
                 }
                 if (sym.ContainingType.BaseType != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer"))
                 {
-                    return;
+                    if (sym.ContainingType.BaseType != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider"))
+                    {
+                        return;
+                    }
+
+                    if (sym.Name == "RegisterCodeFixesAsync")
+                    {
+                        _registerCodeFixesAsync = sym;
+                        return;
+                    }
+                    else
+                    {
+                        _codeFixMethodSymbols.Add(sym);
+                        return;
+                    }
                 }
                 if (_analyzerMethodSymbols.Contains(sym))
                 {
@@ -2348,6 +2358,17 @@ namespace MetaCompilation
                 }
                 if (sym.ContainingType.BaseType != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer"))
                 {
+                    if (sym.ContainingType.BaseType != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider"))
+                    {
+                        return;
+                    }
+
+                    if (sym.Name == "FixableDiagnosticIds")
+                    {
+                        _codeFixFixableDiagnostics = sym;
+                        return;
+                    }
+
                     return;
                 }
                 if (_analyzerPropertySymbols.Contains(sym))
@@ -2418,25 +2439,86 @@ namespace MetaCompilation
                     }
                     if (sym.ContainingType.BaseType == context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer"))
                     {
-                        if (_otherClassSymbols.Contains(sym))
+                        if (_otherAnalyzerClassSymbols.Contains(sym))
                         {
                             return;
                         }
                         else
                         {
-                            _otherClassSymbols.Add(sym);
+                            _otherAnalyzerClassSymbols.Add(sym);
                             return;
                         }
                     }
-                    else
-                    {
-                        return;
-                    }
                 }
-
-                _analyzerClassSymbol = sym;
+                if (sym.BaseType == context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer"))
+                {
+                    _analyzerClassSymbol = sym;
+                }
+                else if (sym.BaseType == context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider"))
+                {
+                    _codeFixClassSymbol = sym;
+                }
+                else
+                {
+                    return;
+                }
+                
             }
             #endregion
+
+            //checks the CodeFixProvider.cs file
+            internal bool CodeFixProviderAnalysis(CompilationAnalysisContext context)
+            {
+                bool fixableDiagnosticIdsCorrect = CheckFixableDiagnosticIds(context);
+                if (!fixableDiagnosticIdsCorrect)
+                {
+                    return false;
+                }
+
+                List<string> registerInfo = CheckRegisterCodeFixesAsync(context);
+                if (registerInfo == null)
+                {
+                    return false;
+                }
+
+                string branch = registerInfo[0] as string;
+                if (branch == null)
+                {
+                    return false;
+                }
+
+                string methodName = registerInfo[1] as string;
+                if (methodName == null)
+                {
+                    return false;
+                }
+
+                bool fixMethodCorrect = CheckFixMethod(context, branch, methodName);
+                if (!fixMethodCorrect)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+
+            //returns a bool representing whether or not the fix method is correct
+            internal bool CheckFixMethod(CompilationAnalysisContext context, string branch, string methodName)
+            {
+                throw new NotImplementedException();
+            }
+
+            //return a list with the branch that the code fix is in, and the name of the registered method. null if failed 
+            internal List<string> CheckRegisterCodeFixesAsync(CompilationAnalysisContext context)
+            {
+                throw new NotImplementedException();
+            }
+
+            //returns a bool representing whether or not the FixableDiagnosticsIds property is correct
+            internal bool CheckFixableDiagnosticIds(CompilationAnalysisContext context)
+            {
+                throw new NotImplementedException();
+            }
 
             //clears all state
             internal void ClearState()
@@ -2445,7 +2527,7 @@ namespace MetaCompilation
                 _analyzerFieldSymbols = new List<IFieldSymbol>();
                 _analyzerMethodSymbols = new List<IMethodSymbol>();
                 _analyzerPropertySymbols = new List<IPropertySymbol>();
-                _otherClassSymbols = new List<INamedTypeSymbol>();
+                _otherAnalyzerClassSymbols = new List<INamedTypeSymbol>();
                 _initializeSymbol = null;
                 _propertySymbol = null;
                 _branchesDict = new Dictionary<string, string>();
