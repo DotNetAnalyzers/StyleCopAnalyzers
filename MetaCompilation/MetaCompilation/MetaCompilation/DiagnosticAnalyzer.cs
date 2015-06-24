@@ -2203,7 +2203,6 @@ namespace MetaCompilation
                         }
                     }
                 }
-
                 return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
             }
 
