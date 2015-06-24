@@ -59,7 +59,8 @@ namespace MetaCompilation
                                              MetaCompilationAnalyzer.DefaultSeverityError,
                                              MetaCompilationAnalyzer.MissingIdDeclaration,
                                              MetaCompilationAnalyzer.IdDeclTypeError,
-                                             MetaCompilationAnalyzer.IncorrectInitSig);
+                                             MetaCompilationAnalyzer.IncorrectInitSig,
+                                             MetaCompilationAnalyzer.TrailingTriviaCheckMissing);
             }
         }
 
@@ -161,8 +162,14 @@ namespace MetaCompilation
 
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect))
                 {
-                    StatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>().First();
+                    MethodDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("Tutorial: The third statement of the analyzer must be an if statement checking the trailing trivia of the node being analyzed", c => TrailingCheckIncorrectAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaCheckMissing))
+                {
+                    MethodDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: The third statement of the analyzer must be an if statement checking the trailing trivia of the node being analyzed", c => TrailingCheckMissingAsync(context.Document, declaration, c)), diagnostic);
                 }
 
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaVarMissing))
@@ -662,10 +669,33 @@ namespace MetaCompilation
             return await ReplaceNode(memberAccessExpression.Name, newMemberAccessExpressionName, document);
         }
 
-        private async Task<Document> TrailingCheckIncorrectAsync(Document document, StatementSyntax declaration, CancellationToken c)
+        private async Task<Document> TrailingCheckIncorrectAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-            SyntaxNode ifStatement = CodeFixNodeCreator.TriviaCheckHelper(generator, declaration);
+
+            var ifBlockStatements = new SyntaxList<StatementSyntax>();
+            if (declaration.Body.Statements[2].Kind() == SyntaxKind.IfStatement)
+            {
+                var ifDeclaration = declaration.Body.Statements[2] as IfStatementSyntax;
+                var ifBlock = ifDeclaration.Statement as BlockSyntax;
+                ifBlockStatements = ifBlock.Statements;
+            }
+            var ifStatement = CodeFixNodeCreator.TriviaCheckHelper(generator, declaration.Body, ifBlockStatements) as StatementSyntax;
+            var oldBlock = declaration.Body;
+            var newBlock = declaration.Body.WithStatements(declaration.Body.Statements.Replace(declaration.Body.Statements[2], ifStatement));
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(oldBlock, newBlock);
+            var newDocument = document.WithSyntaxRoot(newRoot);
+            return newDocument;
+        }
+
+        private async Task<Document> TrailingCheckMissingAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            var ifBlockStatements = new SyntaxList<StatementSyntax>();
+            SyntaxNode ifStatement = CodeFixNodeCreator.TriviaCheckHelper(generator, declaration.Body, ifBlockStatements);
 
             return await ReplaceNode(declaration, ifStatement, document);
         }
@@ -854,15 +884,13 @@ namespace MetaCompilation
                 return ifKeyword;
             }
 
-            internal static SyntaxNode TriviaCheckHelper(SyntaxGenerator generator, StatementSyntax declaration)
+            internal static SyntaxNode TriviaCheckHelper(SyntaxGenerator generator, BlockSyntax methodBlock, SyntaxList<StatementSyntax> ifBlockStatements)
             {
-                var methodBlock = declaration.Parent as BlockSyntax;
                 var secondStatement = methodBlock.Statements[1] as LocalDeclarationStatementSyntax;
 
                 var variableName = generator.IdentifierName(secondStatement.Declaration.Variables[0].Identifier.ValueText);
                 var conditional = generator.MemberAccessExpression(variableName, "HasTrailingTrivia");
-                var trueStatements = new SyntaxList<SyntaxNode>();
-                var ifStatement = generator.IfStatement(conditional, trueStatements);
+                var ifStatement = generator.IfStatement(conditional, ifBlockStatements);
 
                 return ifStatement;
             }
