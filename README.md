@@ -6,4 +6,27 @@
 
 This repository contains an implementation of the StyleCop rules using the .NET Compiler Platform. Where possible, code fixes are also provided to simplify the process of correcting violations.
 
+## Using StyleCop.Analyzers
+
+The preferable way to use the analyzers is to add the nuget package [StyleCop.Analyzers](http://www.nuget.org/packages/StyleCop.Analyzers/)
+to the project where you want to enforce StyleCop rules.
+
+Currently the only way to configure the rules is to change the severity for them in a ruleset file.
+
+## Installation
+
+StyleCopAnalyzers can be installed using the NuGet Package Manager in Visual Studio 2015 RC.
+
+![Install via nuget](https://cloud.githubusercontent.com/assets/1408396/8233513/491f301a-159c-11e5-8b7a-1e16a0695da6.png)
+
+## Team Considerations
+
+If you use older versions of Visual Studio in addition to Visual Studio 2015, you may still install these analyzers. They will be automatically disabled when you open the project back up in Visual Studio 2013 or earlier.
+
+## Contributing
+
+See [Contributing](CONTRIBUTING.md)
+
+## Current status
+
 An up-to-date overview of the status can be found [here](http://stylecop.pdelvo.com/).
