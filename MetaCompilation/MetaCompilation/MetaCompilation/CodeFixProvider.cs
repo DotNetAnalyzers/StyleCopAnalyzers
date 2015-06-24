@@ -697,9 +697,6 @@ namespace MetaCompilation
 
         private async Task<Document> DiagnosticSeverityWarning(Document document, MemberAccessExpressionSyntax memberAccessExpression, CancellationToken c)
         {
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-            var methodBlock = memberAccessExpression.Parent as BlockSyntax;
-            var ifKeyword = CodeFixNodeCreator.KeywordHelper(generator, methodBlock);
             var newMemberAccessExpressionName = SyntaxFactory.ParseName("Warning");
 
             return await ReplaceNode(memberAccessExpression.Name, newMemberAccessExpressionName, document);
@@ -770,11 +767,7 @@ namespace MetaCompilation
             var modifierList = SyntaxFactory.TokenList(publicKeyword, overrideKeyword);
             var newPropertyDeclaration = declaration.WithIdentifier(newIdentifier).WithModifiers(modifierList).WithLeadingTrivia(declaration.GetLeadingTrivia()).WithTrailingTrivia(whiteSpace);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(declaration, newPropertyDeclaration);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-
-            return newDocument;
+            return await ReplaceNode(declaration, newPropertyDeclaration, document);
         }
 
         private async Task<Document> MissingAccessorAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken c)
@@ -789,11 +782,7 @@ namespace MetaCompilation
 
             newPropertyDeclaration = newPropertyDeclaration.RemoveNode(newPropertyDeclaration.AccessorList.Accessors[1], 0);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(declaration, newPropertyDeclaration);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-
-            return newDocument;
+            return await ReplaceNode(declaration, newPropertyDeclaration, document);
         }
 
         private async Task<Document> TooManyAccessorsAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken c)
@@ -827,11 +816,7 @@ namespace MetaCompilation
 
             var newPropertyDeclaration = declaration.WithAccessorList(accessorList);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(declaration, newPropertyDeclaration);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-
-            return newDocument;
+            return await ReplaceNode(declaration, newPropertyDeclaration, document);
         }
 
         private async Task<Document> AccessorReturnValueAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken c)
@@ -896,11 +881,7 @@ namespace MetaCompilation
 
                 var argumentListSyntax = SyntaxFactory.ParseArgumentList("(" + argumentListString + ")");
 
-                var root = await document.GetSyntaxRootAsync();
-                var newRoot = root.ReplaceNode(oldArgumentList, argumentListSyntax);
-                var newDocument = document.WithSyntaxRoot(newRoot);
-
-                return newDocument;
+                return await ReplaceNode(oldArgumentList, argumentListSyntax, document);
             }
 
             return document;
@@ -915,9 +896,7 @@ namespace MetaCompilation
 
             return await ReplaceNode(declaration, ifKeyword, document);
         }
-
-       
-
+        
         private async Task<Document> TrailingCheckIncorrectAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -955,9 +934,7 @@ namespace MetaCompilation
 
             return await ReplaceNode(declaration, ifStatement, document);
         }
-
-       
-
+        
         private async Task<Document> TrailingVarMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -968,11 +945,7 @@ namespace MetaCompilation
 
             return await ReplaceNode(oldBlock, newBlock, document);
         }
-
-    
-
-       
-
+        
         private async Task<Document> TrailingVarIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -1013,8 +986,6 @@ namespace MetaCompilation
 
             return await ReplaceNode(oldBlock, newBlock, document);
         }
-
-
 
         private async Task<Document> TrailingKindCheckMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
@@ -1067,8 +1038,6 @@ namespace MetaCompilation
 
             return await ReplaceNode(oldBlock, newBlock, document);
         }
-        
-
 
         private async Task<Document> ReturnIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
