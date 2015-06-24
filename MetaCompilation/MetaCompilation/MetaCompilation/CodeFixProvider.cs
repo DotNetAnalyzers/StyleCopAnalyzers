@@ -147,17 +147,29 @@ namespace MetaCompilation
                     StatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("Tutorial: The first statement of the analyzer must access the node to be analyzed", c => IncorrectIfAsync(context.Document, declaration, c)), diagnostic);
                 }
-
+                
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfStatementMissing))
+                {
+                    MethodDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: The first statement of the analyzer must access the node to be analyzed", c => MissingIfAsync(context.Document, declaration, c)), diagnostic);
+                }
+                
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectInitSig))
                 {
                     MethodDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("Tutorial: The initialize method must have the correct signature to be called", c => IncorrectSigAsync(context.Document, declaration, c)), diagnostic);
                 }
-
+                
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfKeywordIncorrect))
                 {
                     StatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("Tutorial: The second statement of the analyzer must access the keyword from the node being analyzed", c => IncorrectKeywordAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfKeywordMissing))
+                {
+                    MethodDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: The second statement of the analyzer must access the keyword from the node being analyzed", c => MissingKeywordAsync(context.Document, declaration, c)), diagnostic);
                 }
 
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect))
@@ -190,6 +202,12 @@ namespace MetaCompilation
                     context.RegisterCodeFix(CodeAction.Create("Tutorial: The fifth statement of the analyzer should be a check of the kind of trivia following the if keyword", c => TrailingKindCheckIncorrectAsync(context.Document, declaration, c)), diagnostic);
                 }
 
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaKindCheckMissing))
+                {
+                    IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: The third statement of the analyzer must be an if statement checking the trailing trivia of the node being analyzed", c => TrailingKindCheckMissingAsync(context.Document, declaration, c)), diagnostic);
+                }
+                
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.WhitespaceCheckIncorrect))
                 {
                     IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
@@ -205,7 +223,19 @@ namespace MetaCompilation
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TooManyStatements))
                 {
                     IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
-                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Thre are too many statments within this if block; its only purpose is to return if the statement is formatted properly", c => TooManyStatementsAsync(context.Document, declaration, c)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: There are too many statments within this if block; its only purpose is to return if the statement is formatted properly", c => TooManyStatementsAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.ReturnStatementMissing))
+                {
+                    IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: There must be a return statement indicating that the spacing for the if statement is correct", c => ReturnMissingAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.WhitespaceCheckMissing))
+                {
+                    IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: The sixth statement of the analyzer should be a check to ensure the whitespace after the if statement keyword is correct", c => WhitespaceCheckMissingAsync(context.Document, declaration, c)), diagnostic);
                 }
 
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.LocationMissing))
@@ -652,18 +682,33 @@ namespace MetaCompilation
 
             return await ReplaceNode(memberAccessExpression.Name, newMemberAccessExpressionName, document);
         }
+
+        private async Task<Document> MissingIfAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            StatementSyntax ifStatement = CodeFixNodeCreator.IfHelper(generator) as StatementSyntax;
+
+            var oldBlock = declaration.Body as BlockSyntax;
+            var newBlock = oldBlock.AddStatements(ifStatement);
+
+            return await ReplaceNode(oldBlock, newBlock, document);
+        }
         #endregion
 
         private async Task<Document> IncorrectKeywordAsync(Document document, StatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-            var ifKeyword = CodeFixNodeCreator.KeywordHelper(generator, declaration);
+            var block = declaration.Parent as BlockSyntax;
+            var ifKeyword = CodeFixNodeCreator.KeywordHelper(generator, block);
 
             return await ReplaceNode(declaration, ifKeyword, document);
         }
 
         private async Task<Document> DiagnosticSeverityWarning(Document document, MemberAccessExpressionSyntax memberAccessExpression, CancellationToken c)
         {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            var methodBlock = memberAccessExpression.Parent as BlockSyntax;
+            var ifKeyword = CodeFixNodeCreator.KeywordHelper(generator, methodBlock);
             var newMemberAccessExpressionName = SyntaxFactory.ParseName("Warning");
 
             return await ReplaceNode(memberAccessExpression.Name, newMemberAccessExpressionName, document);
@@ -684,10 +729,17 @@ namespace MetaCompilation
             var oldBlock = declaration.Body;
             var newBlock = declaration.Body.WithStatements(declaration.Body.Statements.Replace(declaration.Body.Statements[2], ifStatement));
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(oldBlock, newBlock);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(oldBlock, newBlock, document);
+        }
+        
+        private async Task<Document> MissingKeywordAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            var methodBlock = declaration.Body as BlockSyntax;
+            var ifKeyword = CodeFixNodeCreator.KeywordHelper(generator, methodBlock) as StatementSyntax;
+            var newBlock = methodBlock.AddStatements(ifKeyword);
+
+            return await ReplaceNode(methodBlock, newBlock, document);
         }
 
         private async Task<Document> TrailingCheckMissingAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
@@ -791,6 +843,18 @@ namespace MetaCompilation
             return await ReplaceNode(classDeclaration, newClassDeclaration, document);
         }
 
+        private async Task<Document> TrailingKindCheckMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            var ifBlockStatements = new SyntaxList<SyntaxNode>();
+            var newIfStatement = new SyntaxList<SyntaxNode>().Add(CodeFixNodeCreator.TriviaKindCheckHelper(generator, declaration, ifBlockStatements) as StatementSyntax);
+
+            var oldBlock = declaration.Statement as BlockSyntax;
+            var newBlock = oldBlock.WithStatements(newIfStatement);
+
+            return await ReplaceNode(oldBlock, newBlock, document);
+        }
+
         private async Task<Document> WhitespaceCheckIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -816,12 +880,21 @@ namespace MetaCompilation
             var newStatement = oldBlock.Statements.Replace(oldStatement, newIfStatement);
             var newBlock = oldBlock.WithStatements(newStatement);
 
-            var root = await document.GetSyntaxRootAsync();
-            var newRoot = root.ReplaceNode(oldBlock, newBlock);
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+            return await ReplaceNode(oldBlock, newBlock, document);
         }
+        
+        private async Task<Document> WhitespaceCheckMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            var ifBlockStatements = new SyntaxList<SyntaxNode>();
+            var newIfStatement = new SyntaxList<SyntaxNode>().Add(CodeFixNodeCreator.WhitespaceCheckHelper(generator, declaration, ifBlockStatements) as StatementSyntax);
 
+            var oldBlock = declaration.Statement as BlockSyntax;
+            var newBlock = oldBlock.WithStatements(newIfStatement);
+
+            return await ReplaceNode(oldBlock, newBlock, document);
+        }
+        
         private async Task<Document> IdDeclTypeAsync(Document document, LiteralExpressionSyntax literalExpression, CancellationToken c)
         {
             var idName = SyntaxFactory.ParseName(literalExpression.Token.Value.ToString()) as IdentifierNameSyntax;
@@ -851,6 +924,17 @@ namespace MetaCompilation
             return await ReplaceNode(oldBlock, newBlock, document);
         }
 
+        private async Task<Document> ReturnMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        {
+            var generator = SyntaxGenerator.GetGenerator(document);
+            var returnStatement = new SyntaxList<SyntaxNode>().Add(generator.ReturnStatement() as ReturnStatementSyntax);
+
+            var oldBlock = declaration.Statement as BlockSyntax;
+            var newBlock = oldBlock.WithStatements(returnStatement);
+
+            return await ReplaceNode(oldBlock, newBlock, document);
+        }
+
         private async Task<Document> TooManyStatementsAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
             var oldBlock = declaration.Statement as BlockSyntax;
@@ -872,10 +956,9 @@ namespace MetaCompilation
 
                 return ifStatement;
             }
-
-            internal static SyntaxNode KeywordHelper(SyntaxGenerator generator, StatementSyntax declaration)
+            
+            internal static SyntaxNode KeywordHelper(SyntaxGenerator generator, BlockSyntax methodBlock)
             {
-                var methodBlock = declaration.Parent as BlockSyntax;
                 var firstStatement = methodBlock.Statements[0] as LocalDeclarationStatementSyntax;
                 var variableName = generator.IdentifierName(firstStatement.Declaration.Variables[0].Identifier.ValueText);
                 var initializer = generator.MemberAccessExpression(variableName, "IfKeyword");
