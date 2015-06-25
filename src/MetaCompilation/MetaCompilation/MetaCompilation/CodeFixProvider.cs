@@ -945,7 +945,7 @@ namespace MetaCompilation
             StatementSyntax ifStatement = CodeFixNodeCreator.TriviaCheckHelper(generator, declaration.Body, ifBlockStatements) as StatementSyntax;
 
             var oldBlock = declaration.Body;
-            var newBlock = declaration.Body.WithStatements(declaration.Body.Statements.Replace(declaration.Body.Statements[2], ifStatement));
+            var newBlock = declaration.Body.WithStatements(declaration.Body.Statements.Add(ifStatement));
             return await ReplaceNode(oldBlock, newBlock, document);
         }
         
