@@ -115,7 +115,7 @@ namespace MetaCompilation
                     context.RegisterCodeFix(CodeAction.Create("Tutorial: The Initialize method must not contain multiple actions to register (for the purpose of this tutorial)", c => MultipleStatementsAsync(context.Document, declaration, c)), diagnostic);
                 }
 
-                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.InvalidStatementRule))
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.InvalidStatement))
                 {
                     StatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("Tutorial: The Initialize method can only register actions, all other statements are invalid", c => InvalidStatementAsync(context.Document, declaration, c)), diagnostic);
