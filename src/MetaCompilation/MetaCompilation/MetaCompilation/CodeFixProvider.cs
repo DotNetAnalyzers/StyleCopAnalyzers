@@ -906,7 +906,10 @@ namespace MetaCompilation
             {
                 var ifDeclaration = declaration.Body.Statements[2] as IfStatementSyntax;
                 var ifBlock = ifDeclaration.Statement as BlockSyntax;
-                ifBlockStatements = ifBlock.Statements;
+                if (ifBlock != null)
+                {
+                    ifBlockStatements = ifBlock.Statements;
+                }
             }
             var ifStatement = CodeFixNodeCreator.TriviaCheckHelper(generator, declaration.Body, ifBlockStatements) as StatementSyntax;
             var oldBlock = declaration.Body;
@@ -974,7 +977,10 @@ namespace MetaCompilation
             {
                 ifStatement = declaration.Parent.Parent as IfStatementSyntax;
                 var ifBlock = declaration.Statement as BlockSyntax;
-                ifBlockStatements = ifBlock.Statements;
+                if (ifBlock != null)
+                {
+                    ifBlockStatements = ifBlock.Statements;
+                }
             }
 
             var newIfStatement = CodeFixNodeCreator.TriviaKindCheckHelper(generator, ifStatement, ifBlockStatements) as StatementSyntax;
@@ -1014,7 +1020,10 @@ namespace MetaCompilation
             {
                 ifStatement = declaration.Parent.Parent as IfStatementSyntax;
                 var ifBlock = declaration.Statement as BlockSyntax;
-                ifBlockStatements = ifBlock.Statements;
+                if (ifBlock != null)
+                {
+                    ifBlockStatements = ifBlock.Statements;
+                }
             }
 
             var newIfStatement = CodeFixNodeCreator.WhitespaceCheckHelper(generator, ifStatement, ifBlockStatements) as StatementSyntax;
