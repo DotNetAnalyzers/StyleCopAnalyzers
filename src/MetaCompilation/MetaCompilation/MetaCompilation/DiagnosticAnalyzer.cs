@@ -37,25 +37,6 @@ namespace MetaCompilation
             return rule;
         }
 
-        #region rule rules
-        public const string IdDeclTypeError = "MetaAnalyzer018";
-        internal static DiagnosticDescriptor IdDeclTypeErrorRule = CreateRule(IdDeclTypeError, "DiagnosticDescriptor 'id' incorrect", "The diagnostic id should be the const declared above this", "The id parameter of a DiagnosticDescriptor should be a string const declared previously. This is so that the diagnostic id is accessible from the CodeFixProvider.cs file.");
-
-        public const string MissingIdDeclaration = "MetaAnalyzer017";
-        internal static DiagnosticDescriptor MissingIdDeclarationRule = CreateRule(MissingIdDeclaration, "Diagnostic id declaration missing", "This diagnostic id has not been declared");
-
-        public const string DefaultSeverityError = "MetaAnalyzer016";
-        internal static DiagnosticDescriptor DefaultSeverityErrorRule = CreateRule(DefaultSeverityError, "defaultSeverity incorrect", "defaultSeverity must be of the form: DiagnosticSeverity.[severity]", "There are four option for the severity of the diagnostic: error, warning, hidden, and info. An error is completely not allowed and causes build errors. A warning is something that might be a problem, but is not a build error. An info diagnostic is simply information and is not actually a problem. A hidden diagnostic is raised as an issue, but is not accessible through normal means. At least in simple analyzers you will mostly use error and warning.");
-
-        public const string EnabledByDefaultError = "MetaAnalyzer015";
-        internal static DiagnosticDescriptor EnabledByDefaultErrorRule = CreateRule(EnabledByDefaultError, "isEnabledByDefault incorrect", "isEnabledByDefault should be set to true", "This determines whether or not the diagnostic is enabled by default, or the user of the analyzer has to manually enable the diagnostic. Generally it will be set to true.");
-
-        public const string InternalAndStaticError = "MetaAnalyzer014";
-        internal static DiagnosticDescriptor InternalAndStaticErrorRule = CreateRule(InternalAndStaticError, "DiagnosticDescriptor modifiers incorrect", "The {0} field should be internal and static");
-
-        public const string MissingRule = "MetaAnalyzer019";
-        internal static DiagnosticDescriptor MissingRuleRule = CreateRule(MissingRule, "Missing DiagnosticDescriptor", "You need to have at least one DiagnosticDescriptor rule", "The DiagnosticDescriptor rule is what is reported by the analyzer when it finds a problem, and so there must be at least one");
-        #endregion
 
         #region id rules
         public const string MissingId = "MetaAnalyzer001";
@@ -71,14 +52,11 @@ namespace MetaCompilation
 
         public const string TooManyInitStatements = "MetaAnalyzer004";
         internal static DiagnosticDescriptor TooManyInitStatementsRule = CreateRule(TooManyInitStatements, "The method registers multiple actions", "The '{0}' method registers multiple actions", "For this tutorial only, only one action is registered for. This is not necessarily a general rule");
-
-        public const string IncorrectInitStatement = "MetaAnalyzer005";
-        internal static DiagnosticDescriptor IncorrectInitStatementRule = CreateRule(IncorrectInitStatement, "This statement needs to register for a supported action", "This statement needs to register for a supported action", "Your register statement may not be correct for this tutorial. See the code fix for more help");
-
-        public const string IncorrectInitSig = "MetaAnalyzer006";
+        
+        public const string IncorrectInitSig = "MetaAnalyzer005";
         internal static DiagnosticDescriptor IncorrectInitSigRule = CreateRule(IncorrectInitSig, "Incorrect method signature", "The signature for the '{0}' method is incorrect", "The Initialize method shoould override the Initialize method from the DiagnosticAnalyzer abstract class from which your analyzer inherits");
 
-        public const string InvalidStatement = "MetaAnalyzer020";
+        public const string InvalidStatement = "MetaAnalyzer006";
         internal static DiagnosticDescriptor InvalidStatementRule = CreateRule(InvalidStatement, "Incorrect statement", "The Initialize method only registers actions: the statement '{0}' is invalid");
         #endregion
 
@@ -105,11 +83,105 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor SupportedRulesRule = CreateRule(SupportedRules, "ImmutableArray incorrect", "The immutable array should contain every DiagnosticDescriptor rule that was created");
         #endregion
 
+        #region rule rules
+        public const string IdDeclTypeError = "MetaAnalyzer014";
+        internal static DiagnosticDescriptor IdDeclTypeErrorRule = CreateRule(IdDeclTypeError, "DiagnosticDescriptor 'id' incorrect", "The diagnostic id should be the const declared above this", "The id parameter of a DiagnosticDescriptor should be a string const declared previously. This is so that the diagnostic id is accessible from the CodeFixProvider.cs file.");
+
+        public const string MissingIdDeclaration = "MetaAnalyzer015";
+        internal static DiagnosticDescriptor MissingIdDeclarationRule = CreateRule(MissingIdDeclaration, "Diagnostic id declaration missing", "This diagnostic id has not been declared");
+
+        public const string DefaultSeverityError = "MetaAnalyzer016";
+        internal static DiagnosticDescriptor DefaultSeverityErrorRule = CreateRule(DefaultSeverityError, "defaultSeverity incorrect", "defaultSeverity must be of the form: DiagnosticSeverity.[severity]", "There are four option for the severity of the diagnostic: error, warning, hidden, and info. An error is completely not allowed and causes build errors. A warning is something that might be a problem, but is not a build error. An info diagnostic is simply information and is not actually a problem. A hidden diagnostic is raised as an issue, but is not accessible through normal means. At least in simple analyzers you will mostly use error and warning.");
+
+        public const string EnabledByDefaultError = "MetaAnalyzer017";
+        internal static DiagnosticDescriptor EnabledByDefaultErrorRule = CreateRule(EnabledByDefaultError, "isEnabledByDefault incorrect", "isEnabledByDefault should be set to true", "This determines whether or not the diagnostic is enabled by default, or the user of the analyzer has to manually enable the diagnostic. Generally it will be set to true.");
+
+        public const string InternalAndStaticError = "MetaAnalyzer018";
+        internal static DiagnosticDescriptor InternalAndStaticErrorRule = CreateRule(InternalAndStaticError, "DiagnosticDescriptor modifiers incorrect", "The {0} field should be internal and static");
+
+        public const string MissingRule = "MetaAnalyzer019";
+        internal static DiagnosticDescriptor MissingRuleRule = CreateRule(MissingRule, "Missing DiagnosticDescriptor", "You need to have at least one DiagnosticDescriptor rule", "The DiagnosticDescriptor rule is what is reported by the analyzer when it finds a problem, and so there must be at least one");
+        #endregion
+
+        #region analysis for IfStatement rules
+        public const string IfStatementMissing = "MetaAnalyzer020";
+        internal static DiagnosticDescriptor IfStatementMissingRule = CreateRule(IfStatementMissing, "Missing 1st step", "The first step of the node analysis is to extract the if statement from {0}");
+
+        public const string IfStatementIncorrect = "MetaAnalyzer021";
+        internal static DiagnosticDescriptor IfStatementIncorrectRule = CreateRule(IfStatementIncorrect, "If statement extraction incorrect", "This statement should extract the if statement in question by casting {0}.Node to IfStatementSyntax", "The context parameter has a Node member. This Node is what the register statement from Initialize triggered on, and so should be cast to the expected syntax or symbol type");
+
+        public const string IfKeywordMissing = "MetaAnalyzer022";
+        internal static DiagnosticDescriptor IfKeywordMissingRule = CreateRule(IfKeywordMissing, "Missing 2nd step", "The second step is to extract the 'if' keyword from {0}");
+
+        public const string IfKeywordIncorrect = "MetaAnalyzer023";
+        internal static DiagnosticDescriptor IfKeywordIncorrectRule = CreateRule(IfKeywordIncorrect, "Incorrect 2nd step", "This statement should extract the 'if' keyword from {0}", "In the syntax tree, a node of type IfStatementSyntax has an IfKeyword attached to it");
+
+        public const string TrailingTriviaCheckMissing = "MetaAnalyzer024";
+        internal static DiagnosticDescriptor TrailingTriviaCheckMissingRule = CreateRule(TrailingTriviaCheckMissing, "Missing 3rd step", "The third step is to begin looking for the space between 'if' and '(' by checking if {0} has trailing trivia");
+
+        public const string TrailingTriviaCheckIncorrect = "MetaAnalyzer025";
+        internal static DiagnosticDescriptor TrailingTriviaCheckIncorrectRule = CreateRule(TrailingTriviaCheckIncorrect, "Incorrect 3rd step", "This statement should be an if statement that checks to see if {0} has trailing trivia", "Syntax trivia are all the things that aren't actually code (i.e. comments, whitespace, end of line tokens, etc). Each node has trivia attached to it, with trailing trivia being the trivia after the node)");
+
+        public const string TrailingTriviaVarMissing = "MetaAnalyzer026";
+        internal static DiagnosticDescriptor TrailingTriviaVarMissingRule = CreateRule(TrailingTriviaVarMissing, "Missing 4th step", "The fourth step is to extract the last trailing trivia of {0} into a variable");
+
+        public const string TrailingTriviaVarIncorrect = "MetaAnalyzer027";
+        internal static DiagnosticDescriptor TrailingTriviaVarIncorrectRule = CreateRule(TrailingTriviaVarIncorrect, "Incorrect 4th step", "This statement should extract the last trailing trivia of {0} into a variable", "The last trailing trivia of the 'if' keyword should be a single whitespace. Anything else signifies incorrect formatting");
+
+        public const string TrailingTriviaKindCheckMissing = "MetaAnalyzer028";
+        internal static DiagnosticDescriptor TrailingTriviaKindCheckMissingRule = CreateRule(TrailingTriviaKindCheckMissing, "Missing 5th step", "The fifth step is to check the kind of {0}");
+
+        public const string TrailingTriviaKindCheckIncorrect = "MetaAnalyzer029";
+        internal static DiagnosticDescriptor TrailingTriviaKindCheckIncorrectRule = CreateRule(TrailingTriviaKindCheckIncorrect, "Incorrect 5th step", "This statement should check to see if the kind of {0} is whitespace trivia");
+
+        public const string WhitespaceCheckMissing = "MetaAnalyzer030";
+        internal static DiagnosticDescriptor WhitespaceCheckMissingRule = CreateRule(WhitespaceCheckMissing, "Missing 6th step", "The sixth step is to make sure {0} is a single whitespace");
+
+        public const string WhitespaceCheckIncorrect = "MetaAnalyzer031";
+        internal static DiagnosticDescriptor WhitespaceCheckIncorrectRule = CreateRule(WhitespaceCheckIncorrect, "Incorrect 6th step", "This statement should check to see if {0} is a single whitespace");
+
+        public const string ReturnStatementMissing = "MetaAnalyzer032";
+        internal static DiagnosticDescriptor ReturnStatementMissingRule = CreateRule(ReturnStatementMissing, "Missing 7th step", "The seventh step is to return from {0}");
+
+        public const string ReturnStatementIncorrect = "MetaAnalyzer033";
+        internal static DiagnosticDescriptor ReturnStatementIncorrectRule = CreateRule(ReturnStatementIncorrect, "Incorrect 7th step", "This statement should return from {0}, because reaching this point in the code means that the if statement being analyzed has the correct spacing");
+
+        public const string OpenParenMissing = "MetaAnalyzer034";
+        internal static DiagnosticDescriptor OpenParenMissingRule = CreateRule(OpenParenMissing, "Missing open parenthesis variable", "The next step is to extract the open parenthesis of the if statement condition");
+
+        public const string OpenParenIncorrect = "MetaAnalyzer035";
+        internal static DiagnosticDescriptor OpenParenIncorrectRule = CreateRule(OpenParenIncorrect, "Open parenthesis variable incorrect", "This statement should extract the open parenthesis of {0} to use as the end of the diagnostic span");
+
+        public const string StartSpanMissing = "MetaAnalyzer036";
+        internal static DiagnosticDescriptor StartSpanMissingRule = CreateRule(StartSpanMissing, "Start span variable missing", "The next step is to determine the start of the span for the diagnostic that will be reported");
+
+        public const string StartSpanIncorrect = "MetaAnalyzer037";
+        internal static DiagnosticDescriptor StartSpanIncorrectRule = CreateRule(StartSpanIncorrect, "Start span variable incorrect", "This statement should extract the start of the span of {0} into a variable, to be used as the start of the diagnostic span", "Each node in the syntax tree has a span. This span represents the number of character spaces that the node takes up");
+
+        public const string EndSpanMissing = "MetaAnalyzer038";
+        internal static DiagnosticDescriptor EndSpanMissingRule = CreateRule(EndSpanMissing, "End span variable missing", "The next step is to determine the end of the span for the diagnostic that is going to be reported");
+
+        public const string EndSpanIncorrect = "MetaAnalyzer039";
+        internal static DiagnosticDescriptor EndSpanIncorrectRule = CreateRule(EndSpanIncorrect, "End span variable incorrect", "This statement should extract the start of the span of {0} into a variable, to be used as the end of the diagnostic span", "Each node in the syntax tree has a span. This span represents the number of character spaces that the node takes up");
+
+        public const string SpanMissing = "MetaAnalyzer040";
+        internal static DiagnosticDescriptor SpanMissingRule = CreateRule(SpanMissing, "Diagnostic span variable missing", "The next step is to create a variable that is the span of the diagnostic that will be reported");
+
+        public const string SpanIncorrect = "MetaAnalyzer041";
+        internal static DiagnosticDescriptor SpanIncorrectRule = CreateRule(SpanIncorrect, "Diagnostic span variable incorrect", "This statement should use TextSpan.FromBound, {0}, and {1} to create the span of the diagnostic that will be reported", "Each node in the syntax tree has a span. This span represents the number of character spaces that the node takes up. TextSpan.FromBounds(start, end) can be used to create a span to use for a diagnostic");
+
+        public const string LocationMissing = "MetaAnalyzer042";
+        internal static DiagnosticDescriptor LocationMissingRule = CreateRule(LocationMissing, "Diagnostic location variable missing", "The next step is to create a location for the diagnostic");
+
+        public const string LocationIncorrect = "MetaAnalyzer043";
+        internal static DiagnosticDescriptor LocationIncorrectRule = CreateRule(LocationIncorrect, "Diagnostic location variable incorrect", "This statement should use Location.Create, {0}, and {1} to create the location of the diagnostic", "A location can be created by combining a span with a syntax tree. The span is applie to the given syntax tree so that the location within the syntax tree is determined");
+        #endregion
+
         #region analysis rules
-        public const string MissingAnalysisMethod = "MetaAnalyzer018";
+        public const string MissingAnalysisMethod = "MetaAnalyzer044";
         internal static DiagnosticDescriptor MissingAnalysisMethodRule = CreateRule(MissingAnalysisMethod, "Missing analysis method", "You are missing the method that was registered to perform the analysis", "In Initialize, the register statement denotes an analysis method to be called when an action is triggered. This method needs to be created");
 
-        public const string TooManyStatements = "MetaAnalyzer036";
+        public const string TooManyStatements = "MetaAnalyzer045";
         internal static DiagnosticDescriptor TooManyStatementsRule = CreateRule(TooManyStatements, "Too many statements", "This {0} should only have {1} statement(s)", "For the purpose of this tutorial this method has too many statements, use the code fixes to guide you through the creation of this method");
 
         public const string DiagnosticMissing = "MetaAnalyzer046";
@@ -125,79 +197,7 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor DiagnosticReportIncorrectRule = CreateRule(DiagnosticReportIncorrect, "Diagnostic report incorrect", "This statement should use ReportDiagnostic on {0} to report {1}", "A diagnostic is reported to a context of some sort so that the diagnostic can appear in all the right places");
         #endregion
 
-        #region analysis for IfStatement rules
-        public const string IfStatementMissing = "MetaAnalyzer023";
-        internal static DiagnosticDescriptor IfStatementMissingRule = CreateRule(IfStatementMissing, "Missing 1st step", "The first step of the node analysis is to extract the if statement from {0}");
-
-        public const string IfStatementIncorrect = "MetaAnalyzer022";
-        internal static DiagnosticDescriptor IfStatementIncorrectRule = CreateRule(IfStatementIncorrect, "If statement extraction incorrect", "This statement should extract the if statement in question by casting {0}.Node to IfStatementSyntax", "The context parameter has a Node member. This Node is what the register statement from Initialize triggered on, and so should be cast to the expected syntax or symbol type");
-
-        public const string IfKeywordMissing = "MetaAnalyzer021";
-        internal static DiagnosticDescriptor IfKeywordMissingRule = CreateRule(IfKeywordMissing, "Missing 2nd step", "The second step is to extract the 'if' keyword from {0}");
-
-        public const string IfKeywordIncorrect = "MetaAnalyzer024";
-        internal static DiagnosticDescriptor IfKeywordIncorrectRule = CreateRule(IfKeywordIncorrect, "Incorrect 2nd step", "This statement should extract the 'if' keyword from {0}", "In the syntax tree, a node of type IfStatementSyntax has an IfKeyword attached to it");
-
-        public const string TrailingTriviaCheckMissing = "MetaAnalyzer025";
-        internal static DiagnosticDescriptor TrailingTriviaCheckMissingRule = CreateRule(TrailingTriviaCheckMissing, "Missing 3rd step", "The third step is to begin looking for the space between 'if' and '(' by checking if {0} has trailing trivia");
-
-        public const string TrailingTriviaCheckIncorrect = "MetaAnalyzer026";
-        internal static DiagnosticDescriptor TrailingTriviaCheckIncorrectRule = CreateRule(TrailingTriviaCheckIncorrect, "Incorrect 3rd step", "This statement should be an if statement that checks to see if {0} has trailing trivia", "Syntax trivia are all the things that aren't actually code (i.e. comments, whitespace, end of line tokens, etc). Each node has trivia attached to it, with trailing trivia being the trivia after the node)");
-
-        public const string TrailingTriviaVarMissing = "MetaAnalyzer027";
-        internal static DiagnosticDescriptor TrailingTriviaVarMissingRule = CreateRule(TrailingTriviaVarMissing, "Missing 4th step", "The fourth step is to extract the last trailing trivia of {0} into a variable");
-
-        public const string TrailingTriviaVarIncorrect = "MetaAnalyzer028";
-        internal static DiagnosticDescriptor TrailingTriviaVarIncorrectRule = CreateRule(TrailingTriviaVarIncorrect, "Incorrect 4th step", "This statement should extract the last trailing trivia of {0} into a variable", "The last trailing trivia of the 'if' keyword should be a single whitespace. Anything else signifies incorrect formatting");
-
-        public const string TrailingTriviaKindCheckMissing = "MetaAnalyzer029";
-        internal static DiagnosticDescriptor TrailingTriviaKindCheckMissingRule = CreateRule(TrailingTriviaKindCheckMissing, "Missing 5th step", "The fifth step is to check the kind of {0}");
-
-        public const string TrailingTriviaKindCheckIncorrect = "MetaAnalyzer030";
-        internal static DiagnosticDescriptor TrailingTriviaKindCheckIncorrectRule = CreateRule(TrailingTriviaKindCheckIncorrect, "Incorrect 5th step", "This statement should check to see if the kind of {0} is whitespace trivia");
-
-        public const string WhitespaceCheckMissing = "MetaAnalyzer031";
-        internal static DiagnosticDescriptor WhitespaceCheckMissingRule = CreateRule(WhitespaceCheckMissing, "Missing 6th step", "The sixth step is to make sure {0} is a single whitespace");
-
-        public const string WhitespaceCheckIncorrect = "MetaAnalyzer032";
-        internal static DiagnosticDescriptor WhitespaceCheckIncorrectRule = CreateRule(WhitespaceCheckIncorrect, "Incorrect 6th step", "This statement should check to see if {0} is a single whitespace");
-
-        public const string ReturnStatementMissing = "MetaAnalyzer033";
-        internal static DiagnosticDescriptor ReturnStatementMissingRule = CreateRule(ReturnStatementMissing, "Missing 7th step", "The seventh step is to return from {0}");
-
-        public const string ReturnStatementIncorrect = "MetaAnalyzer034";
-        internal static DiagnosticDescriptor ReturnStatementIncorrectRule = CreateRule(ReturnStatementIncorrect, "Incorrect 7th step", "This statement should return from {0}, because reaching this point in the code means that the if statement being analyzed has the correct spacing");
-
-        public const string OpenParenMissing = "MetaAnalyzer035";
-        internal static DiagnosticDescriptor OpenParenMissingRule = CreateRule(OpenParenMissing, "Missing open parenthesis variable", "The next step is to extract the open parenthesis of the if statement condition");
-
-        public const string OpenParenIncorrect = "MetaAnalyzer037";
-        internal static DiagnosticDescriptor OpenParenIncorrectRule = CreateRule(OpenParenIncorrect, "Open parenthesis variable incorrect", "This statement should extract the open parenthesis of {0} to use as the end of the diagnostic span");
-
-        public const string StartSpanMissing = "MetaAnalyzer038";
-        internal static DiagnosticDescriptor StartSpanMissingRule = CreateRule(StartSpanMissing, "Start span variable missing", "The next step is to determine the start of the span for the diagnostic that will be reported");
-
-        public const string StartSpanIncorrect = "MetaAnalyzer039";
-        internal static DiagnosticDescriptor StartSpanIncorrectRule = CreateRule(StartSpanIncorrect, "Start span variable incorrect", "This statement should extract the start of the span of {0} into a variable, to be used as the start of the diagnostic span", "Each node in the syntax tree has a span. This span represents the number of character spaces that the node takes up");
-
-        public const string EndSpanMissing = "MetaAnalyzer040";
-        internal static DiagnosticDescriptor EndSpanMissingRule = CreateRule(EndSpanMissing, "End span variable missing", "The next step is to determine the end of the span for the diagnostic that is going to be reported");
-
-        public const string EndSpanIncorrect = "MetaAnalyzer041";
-        internal static DiagnosticDescriptor EndSpanIncorrectRule = CreateRule(EndSpanIncorrect, "End span variable incorrect", "This statement should extract the start of the span of {0} into a variable, to be used as the end of the diagnostic span", "Each node in the syntax tree has a span. This span represents the number of character spaces that the node takes up");
-
-        public const string SpanMissing = "MetaAnalyzer042";
-        internal static DiagnosticDescriptor SpanMissingRule = CreateRule(SpanMissing, "Diagnostic span variable missing", "The next step is to create a variable that is the span of the diagnostic that will be reported");
-
-        public const string SpanIncorrect = "MetaAnalyzer043";
-        internal static DiagnosticDescriptor SpanIncorrectRule = CreateRule(SpanIncorrect, "Diagnostic span variable incorrect", "This statement should use TextSpan.FromBound, {0}, and {1} to create the span of the diagnostic that will be reported", "Each node in the syntax tree has a span. This span represents the number of character spaces that the node takes up. TextSpan.FromBounds(start, end) can be used to create a span to use for a diagnostic");
-
-        public const string LocationMissing = "MetaAnalyzer044";
-        internal static DiagnosticDescriptor LocationMissingRule = CreateRule(LocationMissing, "Diagnostic location variable missing", "The next step is to create a location for the diagnostic");
-
-        public const string LocationIncorrect = "MetaAnalyzer045";
-        internal static DiagnosticDescriptor LocationIncorrectRule = CreateRule(LocationIncorrect, "Diagnostic location variable incorrect", "This statement should use Location.Create, {0}, and {1} to create the location of the diagnostic", "A location can be created by combining a span with a syntax tree. The span is applie to the given syntax tree so that the location within the syntax tree is determined");
-        #endregion
+       
 
        
 
@@ -210,6 +210,7 @@ namespace MetaCompilation
                                              MissingRegisterRule, 
                                              TooManyInitStatementsRule, 
                                              IncorrectInitSigRule,
+                                             InvalidStatement,
                                              MissingSuppDiagRule,
                                              IncorrectSigSuppDiagRule,
                                              MissingAccessorRule,
@@ -217,36 +218,25 @@ namespace MetaCompilation
                                              IncorrectAccessorReturnRule,
                                              SuppDiagReturnValueRule,
                                              SupportedRulesRule,
-                                             MissingIdDeclarationRule, 
+                                             IdDeclTypeError,
+                                             MissingIdDeclarationRule,
+                                             DefaultSeverityErrorRule,
                                              EnabledByDefaultErrorRule, 
-                                             DefaultSeverityErrorRule, 
                                              InternalAndStaticErrorRule,
                                              MissingRuleRule,
                                              MissingAnalysisMethodRule,
                                              IfStatementMissingRule,
-                                             IfKeywordMissingRule,
                                              IfStatementIncorrectRule,
-                                             IdDeclTypeErrorRule,
-                                             IfStatementMissingRule,
                                              IfKeywordMissingRule,
-                                             IfStatementIncorrectRule,
                                              IfKeywordIncorrectRule,
                                              TrailingTriviaCheckMissingRule,
                                              TrailingTriviaCheckIncorrectRule,
                                              TrailingTriviaVarMissingRule,
                                              TrailingTriviaVarIncorrectRule,
-                                             InvalidStatementRule,
-                                             IdDeclTypeErrorRule,
-                                             TrailingTriviaKindCheckIncorrectRule,
-                                             TrailingTriviaKindCheckMissingRule,
                                              WhitespaceCheckMissingRule,
                                              WhitespaceCheckIncorrectRule,
                                              ReturnStatementMissingRule,
                                              ReturnStatementIncorrectRule,
-                                             DiagnosticReportIncorrectRule,
-                                             DiagnosticMissingRule,
-                                             DiagnosticIncorrectRule,
-                                             DiagnosticReportMissingRule,
                                              OpenParenIncorrectRule,
                                              OpenParenMissingRule,
                                              StartSpanIncorrectRule,
@@ -257,7 +247,12 @@ namespace MetaCompilation
                                              SpanMissingRule,
                                              LocationIncorrectRule,
                                              LocationMissingRule,
-                                             TooManyStatementsRule);
+                                             MissingAnalysisMethodRule,
+                                             TooManyStatementsRule,
+                                             DiagnosticMissingRule,
+                                             DiagnosticIncorrectRule,
+                                             DiagnosticReportIncorrectRule,
+                                             DiagnosticReportMissingRule);
             }
         }
 
