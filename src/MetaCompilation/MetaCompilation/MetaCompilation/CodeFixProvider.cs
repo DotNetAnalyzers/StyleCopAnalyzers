@@ -29,38 +29,50 @@ namespace MetaCompilation
                                              MetaCompilationAnalyzer.MissingInit,
                                              MetaCompilationAnalyzer.MissingRegisterStatement,
                                              MetaCompilationAnalyzer.TooManyInitStatements,
+                                             MetaCompilationAnalyzer.IncorrectInitSig,
                                              MetaCompilationAnalyzer.InvalidStatement,
+                                             MetaCompilationAnalyzer.MissingSuppDiag,
+                                             MetaCompilationAnalyzer.IncorrectSigSuppDiag,
+                                             MetaCompilationAnalyzer.MissingAccessor,
+                                             MetaCompilationAnalyzer.TooManyAccessors,
+                                             MetaCompilationAnalyzer.IncorrectAccessorReturn,
+                                             MetaCompilationAnalyzer.SuppDiagReturnValue,
+                                             MetaCompilationAnalyzer.SupportedRules,
+                                             MetaCompilationAnalyzer.IdDeclTypeError,
+                                             MetaCompilationAnalyzer.MissingIdDeclaration,
+                                             MetaCompilationAnalyzer.DefaultSeverityError,
+                                             MetaCompilationAnalyzer.EnabledByDefaultError,
+                                             MetaCompilationAnalyzer.InternalAndStaticError,
+                                             MetaCompilationAnalyzer.MissingRule,
+                                             MetaCompilationAnalyzer.MissingAnalysisMethod,
+                                             MetaCompilationAnalyzer.IfStatementMissing,
                                              MetaCompilationAnalyzer.IfStatementIncorrect,
+                                             MetaCompilationAnalyzer.IfKeywordMissing,
                                              MetaCompilationAnalyzer.IfKeywordIncorrect,
+                                             MetaCompilationAnalyzer.TrailingTriviaCheckMissing,
                                              MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect,
                                              MetaCompilationAnalyzer.TrailingTriviaVarMissing,
                                              MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
-                                             MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
+                                             MetaCompilationAnalyzer.WhitespaceCheckMissing,
                                              MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
+                                             MetaCompilationAnalyzer.ReturnStatementMissing,
                                              MetaCompilationAnalyzer.ReturnStatementIncorrect,
-                                             MetaCompilationAnalyzer.TooManyStatements,
-                                             MetaCompilationAnalyzer.LocationMissing,
-                                             MetaCompilationAnalyzer.LocationIncorrect,
-                                             MetaCompilationAnalyzer.SpanMissing,
-                                             MetaCompilationAnalyzer.SpanIncorrect,
-                                             MetaCompilationAnalyzer.EndSpanIncorrect,
-                                             MetaCompilationAnalyzer.EndSpanMissing,
-                                             MetaCompilationAnalyzer.StartSpanIncorrect,
-                                             MetaCompilationAnalyzer.StartSpanMissing,
                                              MetaCompilationAnalyzer.OpenParenIncorrect,
                                              MetaCompilationAnalyzer.OpenParenMissing,
+                                             MetaCompilationAnalyzer.StartSpanIncorrect,
+                                             MetaCompilationAnalyzer.StartSpanMissing,
+                                             MetaCompilationAnalyzer.EndSpanIncorrect,
+                                             MetaCompilationAnalyzer.EndSpanMissing,
+                                             MetaCompilationAnalyzer.SpanIncorrect,
+                                             MetaCompilationAnalyzer.SpanMissing,
+                                             MetaCompilationAnalyzer.LocationIncorrect,
+                                             MetaCompilationAnalyzer.LocationMissing,
                                              MetaCompilationAnalyzer.MissingAnalysisMethod,
+                                             MetaCompilationAnalyzer.TooManyStatements,
                                              MetaCompilationAnalyzer.DiagnosticMissing,
                                              MetaCompilationAnalyzer.DiagnosticIncorrect,
                                              MetaCompilationAnalyzer.DiagnosticReportIncorrect,
-                                             MetaCompilationAnalyzer.DiagnosticReportMissing,
-                                             MetaCompilationAnalyzer.InternalAndStaticError,
-                                             MetaCompilationAnalyzer.EnabledByDefaultError,
-                                             MetaCompilationAnalyzer.DefaultSeverityError,
-                                             MetaCompilationAnalyzer.MissingIdDeclaration,
-                                             MetaCompilationAnalyzer.IdDeclTypeError,
-                                             MetaCompilationAnalyzer.IncorrectInitSig,
-                                             MetaCompilationAnalyzer.TrailingTriviaCheckMissing);
+                                             MetaCompilationAnalyzer.DiagnosticReportMissing);
             }
         }
 
@@ -103,7 +115,7 @@ namespace MetaCompilation
                     context.RegisterCodeFix(CodeAction.Create("Tutorial: The Initialize method must not contain multiple actions to register (for the purpose of this tutorial)", c => MultipleStatementsAsync(context.Document, declaration, c)), diagnostic);
                 }
 
-                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.InvalidStatement))
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.InvalidStatementRule))
                 {
                     StatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("Tutorial: The Initialize method can only register actions, all other statements are invalid", c => InvalidStatementAsync(context.Document, declaration, c)), diagnostic);
@@ -908,7 +920,8 @@ namespace MetaCompilation
                 var ifBlock = ifDeclaration.Statement as BlockSyntax;
                 ifBlockStatements = ifBlock.Statements;
             }
-            var ifStatement = CodeFixNodeCreator.TriviaCheckHelper(generator, declaration.Body, ifBlockStatements) as StatementSyntax;
+            StatementSyntax ifStatement = CodeFixNodeCreator.TriviaCheckHelper(generator, declaration.Body, ifBlockStatements) as StatementSyntax;
+
             var oldBlock = declaration.Body;
             var newBlock = declaration.Body.WithStatements(declaration.Body.Statements.Replace(declaration.Body.Statements[2], ifStatement));
 
@@ -927,12 +940,13 @@ namespace MetaCompilation
 
         private async Task<Document> TrailingCheckMissingAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-
             var ifBlockStatements = new SyntaxList<StatementSyntax>();
-            SyntaxNode ifStatement = CodeFixNodeCreator.TriviaCheckHelper(generator, declaration.Body, ifBlockStatements);
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            StatementSyntax ifStatement = CodeFixNodeCreator.TriviaCheckHelper(generator, declaration.Body, ifBlockStatements) as StatementSyntax;
 
-            return await ReplaceNode(declaration, ifStatement, document);
+            var oldBlock = declaration.Body;
+            var newBlock = declaration.Body.WithStatements(declaration.Body.Statements.Replace(declaration.Body.Statements[2], ifStatement));
+            return await ReplaceNode(oldBlock, newBlock, document);
         }
         
         private async Task<Document> TrailingVarMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
@@ -1103,7 +1117,7 @@ namespace MetaCompilation
 
                 return ifKeyword;
             }
-
+            
             internal static SyntaxNode TriviaCheckHelper(SyntaxGenerator generator, BlockSyntax methodBlock, SyntaxList<StatementSyntax> ifBlockStatements)
             {
                 var secondStatement = methodBlock.Statements[1] as LocalDeclarationStatementSyntax;
