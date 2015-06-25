@@ -100,7 +100,7 @@ namespace SyntaxNodeAnalyzer
         #region MissingId
         //no id, nothing else after
         [TestMethod]
-        public void TestMethod3()
+        public void MissingId1()
         {
             var test = @"using System;
     using System.Collections.Generic;
@@ -179,7 +179,7 @@ namespace SyntaxNodeAnalyzer
 
         // no id, rules exists
         [TestMethod]
-        public void TestMethod6()
+        public void MissingId2()
         {
             var test = @"using System;
     using System.Collections.Generic;
@@ -272,7 +272,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         [TestMethod]
-        public void TestMethod7()
+        public void MissingId3()
         {
             var test = @"using System;
     using System.Collections.Generic;
@@ -351,7 +351,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         [TestMethod]
-        public void TestMethod8()
+        public void MissingId4()
         {
             var test = @"using System;
     using System.Collections.Generic;
@@ -430,7 +430,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         [TestMethod]
-        public void TestMethod9()
+        public void MissingId5()
         {
             var test = @"using System;
     using System.Collections.Generic;
@@ -509,7 +509,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         [TestMethod]
-        public void TestMethod10()
+        public void MissingId6()
         {
             var test = @"using System;
     using System.Collections.Generic;
@@ -590,7 +590,7 @@ namespace SyntaxNodeAnalyzer
 
         #region MissingInit
         [TestMethod]
-        public void TestMethod4()
+        public void MissingInit1()
         {
             var test = @"using System;
     using System.Collections.Generic;
@@ -664,7 +664,7 @@ namespace SyntaxNodeAnalyzer
 
         // slight mis-spelling
         [TestMethod]
-        public void TestMethod11()
+        public void MissingInit2()
         {
             var test = @"using System;
     using System.Collections.Generic;
@@ -711,7 +711,7 @@ namespace SyntaxNodeAnalyzer
 
         // everything except the initialize method
         [TestMethod]
-        public void TestMethod12()
+        public void MissingInit3()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -858,7 +858,7 @@ namespace SyntaxNodeAnalyzer
 
         #region MissingRegisterStatement
         [TestMethod]
-        public void TestMethod5()
+        public void MissingRegister1()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -944,7 +944,7 @@ namespace SyntaxNodeAnalyzer
 
         // register statement in comments
         [TestMethod]
-        public void TestMethod13()
+        public void MissingRegister2()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -1033,7 +1033,7 @@ namespace SyntaxNodeAnalyzer
         #region TooManyInitStatements
         // statement below, incorrect method name
         [TestMethod]
-        public void TestMethod14()
+        public void MultipleInit1()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -1111,7 +1111,7 @@ namespace SyntaxNodeAnalyzer
 
         // statement below, incorrect syntax kind
         [TestMethod]
-        public void TestMethod15()
+        public void MultipleInit2()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -1189,7 +1189,7 @@ namespace SyntaxNodeAnalyzer
 
         // incorrect statement above
         [TestMethod]
-        public void TestMethod16()
+        public void MultipleInit3()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -1267,7 +1267,7 @@ namespace SyntaxNodeAnalyzer
 
         //multiple incorrect statements below
         [TestMethod]
-        public void TestMethod17()
+        public void MultipleInit4()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -1346,7 +1346,7 @@ namespace SyntaxNodeAnalyzer
 
         // multiple incorrect statements above
         [TestMethod]
-        public void TestMethod18()
+        public void MultipleInit5()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -1425,7 +1425,7 @@ namespace SyntaxNodeAnalyzer
 
         // no correct statements, multiple incorrect
         [TestMethod]
-        public void TestMethod19()
+        public void MultipleInit6()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -1498,7 +1498,7 @@ namespace SyntaxNodeAnalyzer
         #region InvalidStatement
         // invalid throw statement
         [TestMethod]
-        public void TestMethod20()
+        public void InvalidStatement1()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -1568,7 +1568,7 @@ namespace SyntaxNodeAnalyzer
 
         // invalid break statement
         [TestMethod]
-        public void TestMethod21()
+        public void InvalidStatement2()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -1640,7 +1640,7 @@ namespace SyntaxNodeAnalyzer
 
         //invalid check statement
         [TestMethod]
-        public void TestMethod22()
+        public void InvalidStatement3()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -1712,7 +1712,7 @@ namespace SyntaxNodeAnalyzer
 
         // invalid continue statement
         [TestMethod]
-        public void TestMethod23()
+        public void InvalidStatement4()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -1784,7 +1784,7 @@ namespace SyntaxNodeAnalyzer
 
         // do while statement
         [TestMethod]
-        public void TestMethod24()
+        public void InvalidStatement5()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -1856,7 +1856,7 @@ namespace SyntaxNodeAnalyzer
 
         // invalid random expression statement
         [TestMethod]
-        public void TestMethod25()
+        public void InvalidStatement6()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -1928,7 +1928,7 @@ namespace SyntaxNodeAnalyzer
 
         // invalid foreach statement
         [TestMethod]
-        public void TestMethod26()
+        public void InvalidStatement7()
         {
             var test = @"using System;
 using System.Collections.Generic;
@@ -2000,7 +2000,7 @@ namespace SyntaxNodeAnalyzer
 
         // invalid for statement
         [TestMethod]
-        public void TestMethod27()
+        public void InvalidStatement8()
         {
             var test = @"using System;
             using System.Collections.Generic;
@@ -2072,7 +2072,7 @@ namespace SyntaxNodeAnalyzer
 
         // invalid if statement
         [TestMethod]
-        public void TestMethod28()
+        public void InvalidStatement9()
         {
             var test = @"using System;
             using System.Collections.Generic;
@@ -2144,7 +2144,7 @@ namespace SyntaxNodeAnalyzer
 
         // invalid labeled statement
         [TestMethod]
-        public void TestMethod29()
+        public void InvalidStatement10()
         {
             var test = @"using System;
             using System.Collections.Generic;
@@ -2216,7 +2216,7 @@ namespace SyntaxNodeAnalyzer
 
         // invalid local declaration statement
         [TestMethod]
-        public void TestMethod30()
+        public void InvalidStatement11()
         {
             var test = @"using System;
             using System.Collections.Generic;
@@ -2288,7 +2288,7 @@ namespace SyntaxNodeAnalyzer
 
         // invalid lock statement
         [TestMethod]
-        public void TestMethod31()
+        public void InvalidStatement12()
         {
             var test = @"using System;
             using System.Collections.Generic;
@@ -2360,7 +2360,7 @@ namespace SyntaxNodeAnalyzer
 
         // invalid return statement
         [TestMethod]
-        public void TestMethod32()
+        public void InvalidStatement13()
         {
             var test = @"using System;
             using System.Collections.Generic;
@@ -2432,7 +2432,7 @@ namespace SyntaxNodeAnalyzer
 
         // multiple invalid statements
         [TestMethod]
-        public void TestMethod33()
+        public void InvalidStatement14()
         {
             var test = @"using System;
             using System.Collections.Generic;
@@ -2506,7 +2506,7 @@ namespace SyntaxNodeAnalyzer
 
         // one invalid statement, no valid statements
         [TestMethod]
-        public void TestMethod34()
+        public void InvalidStatement15()
         {
             var test = @"using System;
             using System.Collections.Generic;
@@ -2576,7 +2576,7 @@ namespace SyntaxNodeAnalyzer
 
         // multiple invalid statements, no valid statements
         [TestMethod]
-        public void TestMethod35()
+        public void InvalidStatement16()
         {
             var test = @"using System;
             using System.Collections.Generic;
@@ -2648,7 +2648,7 @@ namespace SyntaxNodeAnalyzer
 
         // multiple valid statements, one invalid statement
         [TestMethod]
-        public void TestMethod36()
+        public void InvalidStatement17()
         {
             var test = @"using System;
             using System.Collections.Generic;
@@ -2726,7 +2726,7 @@ namespace SyntaxNodeAnalyzer
         #region IncorrectInitSig
         // more than one parameter
         [TestMethod]
-        public void TestMethod37()
+        public void InitSig1()
         {
             var test = @"using System;
     using System.Collections.Generic;
@@ -2805,7 +2805,7 @@ namespace SyntaxNodeAnalyzer
 
         // Wrong type for first parameter
         [TestMethod]
-        public void TestMethod38()
+        public void InitSig2()
         {
             var test = @"using System;
     using System.Collections.Generic;
@@ -2884,7 +2884,7 @@ namespace SyntaxNodeAnalyzer
 
         // wrong first parameter name
         [TestMethod]
-        public void TestMethod39()
+        public void InitSig3()
         {
             var test = @"using System;
     using System.Collections.Generic;
@@ -2963,7 +2963,7 @@ namespace SyntaxNodeAnalyzer
 
         // accessibility is not public
         [TestMethod]
-        public void TestMethod40()
+        public void InitSig4()
         {
             var test = @"using System;
     using System.Collections.Generic;
@@ -3042,7 +3042,7 @@ namespace SyntaxNodeAnalyzer
 
         // initialize method is not overriden
         [TestMethod]
-        public void TestMethod41()
+        public void InitSig5()
         {
             var test = @"using System;
     using System.Collections.Generic;
@@ -3121,7 +3121,7 @@ namespace SyntaxNodeAnalyzer
 
         // initialize method does not return void
         [TestMethod]
-        public void TestMethod42()
+        public void InitSig6()
         {
             var test = @"using System;
     using System.Collections.Generic;
@@ -3194,6 +3194,1300 @@ namespace SyntaxNodeAnalyzer
             throw new NotImplementedException();
         }
     }
+    }";
+            VerifyCSharpFix(test, fixtest);
+        }
+        #endregion
+
+        #region If statement incorrect
+        // No identifier for statement
+        [TestMethod]
+        public void IfStatementIncorrect1()
+        {
+            var test = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, //make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
+            category: ""Syntax"", //make the category specific
+            defaultSeverity: DiagnosticSeverity.Warning, //possible options
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                return ImmutableArray.Create(Rule);
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+        {
+            var = (IfStatementSyntax)context.Node;
+        }
+    }
+}";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.IfStatementIncorrect,
+                Message = "This statement should extract the if statement in question by casting context.Node to IfStatementSyntax",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 13) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, //make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
+            category: ""Syntax"", //make the category specific
+            defaultSeverity: DiagnosticSeverity.Warning, //possible options
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                return ImmutableArray.Create(Rule);
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+        {
+            var ifStatement = (IfStatementSyntax)context.Node;
+        }
+    }
+}";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        // ifStatement not initialized
+        [TestMethod]
+        public void IfStatementIncorrect2()
+        {
+            var test = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, //make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
+            category: ""Syntax"", //make the category specific
+            defaultSeverity: DiagnosticSeverity.Warning, //possible options
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                return ImmutableArray.Create(Rule);
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+        {
+            var ifStatement;
+        }
+    }
+}";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.IfStatementIncorrect,
+                Message = "This statement should extract the if statement in question by casting context.Node to IfStatementSyntax",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 13) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, //make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
+            category: ""Syntax"", //make the category specific
+            defaultSeverity: DiagnosticSeverity.Warning, //possible options
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                return ImmutableArray.Create(Rule);
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+        {
+            var ifStatement = (IfStatementSyntax)context.Node;
+        }
+    }
+}";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        // no cast
+        [TestMethod]
+        public void IfStatementIncorrect3()
+        {
+            var test = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.CSharp;
+            using Microsoft.CodeAnalysis.CSharp.Syntax;
+            using Microsoft.CodeAnalysis.Diagnostics;
+            using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, //make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
+            category: ""Syntax"", //make the category specific
+            defaultSeverity: DiagnosticSeverity.Warning, //possible options
+            isEnabledByDefault: true);
+
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    return ImmutableArray.Create(Rule);
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            }
+
+            private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+            {
+                var ifStatement = context.Node;
+            }
+        }
+    }";
+
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.IfStatementIncorrect,
+                Message = "This statement should extract the if statement in question by casting context.Node to IfStatementSyntax",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 17) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.CSharp;
+            using Microsoft.CodeAnalysis.CSharp.Syntax;
+            using Microsoft.CodeAnalysis.Diagnostics;
+            using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, //make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
+            category: ""Syntax"", //make the category specific
+            defaultSeverity: DiagnosticSeverity.Warning, //possible options
+            isEnabledByDefault: true);
+
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    return ImmutableArray.Create(Rule);
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            }
+
+            private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+            {
+            var ifStatement = (IfStatementSyntax)context.Node;
+        }
+        }
+    }";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        // Wrong cast type
+        [TestMethod]
+        public void IfStatementIncorrect()
+        {
+            var test = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.CSharp;
+            using Microsoft.CodeAnalysis.CSharp.Syntax;
+            using Microsoft.CodeAnalysis.Diagnostics;
+            using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, //make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
+            category: ""Syntax"", //make the category specific
+            defaultSeverity: DiagnosticSeverity.Warning, //possible options
+            isEnabledByDefault: true);
+
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    return ImmutableArray.Create(Rule);
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            }
+
+            private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+            {
+                var ifStatement = (MethodDeclarationSyntax)context.Node;
+            }
+        }
+    }";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.IfStatementIncorrect,
+                Message = "This statement should extract the if statement in question by casting context.Node to IfStatementSyntax",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 17) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.CSharp;
+            using Microsoft.CodeAnalysis.CSharp.Syntax;
+            using Microsoft.CodeAnalysis.Diagnostics;
+            using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, //make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
+            category: ""Syntax"", //make the category specific
+            defaultSeverity: DiagnosticSeverity.Warning, //possible options
+            isEnabledByDefault: true);
+
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    return ImmutableArray.Create(Rule);
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            }
+
+            private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+            {
+            var ifStatement = (IfStatementSyntax)context.Node;
+        }
+        }
+    }";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        // not a member access expression
+        [TestMethod]
+        public void IfStatementIncorrect5()
+        {
+            var test = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.CSharp;
+            using Microsoft.CodeAnalysis.CSharp.Syntax;
+            using Microsoft.CodeAnalysis.Diagnostics;
+            using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, //make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
+            category: ""Syntax"", //make the category specific
+            defaultSeverity: DiagnosticSeverity.Warning, //possible options
+            isEnabledByDefault: true);
+
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    return ImmutableArray.Create(Rule);
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            }
+
+            private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+            {
+                var ifStatement = (IfStatementSyntax)context;
+            }
+        }
+    }";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.IfStatementIncorrect,
+                Message = "This statement should extract the if statement in question by casting context.Node to IfStatementSyntax",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 17) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.CSharp;
+            using Microsoft.CodeAnalysis.CSharp.Syntax;
+            using Microsoft.CodeAnalysis.Diagnostics;
+            using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, //make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
+            category: ""Syntax"", //make the category specific
+            defaultSeverity: DiagnosticSeverity.Warning, //possible options
+            isEnabledByDefault: true);
+
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    return ImmutableArray.Create(Rule);
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            }
+
+            private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+            {
+            var ifStatement = (IfStatementSyntax)context.Node;
+        }
+        }
+    }";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        // wrong object
+        [TestMethod]
+        public void IfStatementIncorrect6()
+        {
+            var test = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.CSharp;
+            using Microsoft.CodeAnalysis.CSharp.Syntax;
+            using Microsoft.CodeAnalysis.Diagnostics;
+            using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, //make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
+            category: ""Syntax"", //make the category specific
+            defaultSeverity: DiagnosticSeverity.Warning, //possible options
+            isEnabledByDefault: true);
+
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    return ImmutableArray.Create(Rule);
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            }
+
+            private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+            {
+                var ifStatement = (IfStatementSyntax)obj.Node;
+            }
+        }
+    }";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.IfStatementIncorrect,
+                Message = "This statement should extract the if statement in question by casting context.Node to IfStatementSyntax",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 17) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.CSharp;
+            using Microsoft.CodeAnalysis.CSharp.Syntax;
+            using Microsoft.CodeAnalysis.Diagnostics;
+            using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, //make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
+            category: ""Syntax"", //make the category specific
+            defaultSeverity: DiagnosticSeverity.Warning, //possible options
+            isEnabledByDefault: true);
+
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    return ImmutableArray.Create(Rule);
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            }
+
+            private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+            {
+            var ifStatement = (IfStatementSyntax)context.Node;
+        }
+        }
+    }";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        // doesn't access node
+        [TestMethod]
+        public void IfStatementIncorrect7()
+        {
+            var test = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.CSharp;
+            using Microsoft.CodeAnalysis.CSharp.Syntax;
+            using Microsoft.CodeAnalysis.Diagnostics;
+            using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, //make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
+            category: ""Syntax"", //make the category specific
+            defaultSeverity: DiagnosticSeverity.Warning, //possible options
+            isEnabledByDefault: true);
+
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    return ImmutableArray.Create(Rule);
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            }
+
+            private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+            {
+                var ifStatement = (IfStatementSyntax)context.SemanticModel;
+            }
+        }
+    }";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.IfStatementIncorrect,
+                Message = "This statement should extract the if statement in question by casting context.Node to IfStatementSyntax",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 17) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.CSharp;
+            using Microsoft.CodeAnalysis.CSharp.Syntax;
+            using Microsoft.CodeAnalysis.Diagnostics;
+            using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, //make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
+            category: ""Syntax"", //make the category specific
+            defaultSeverity: DiagnosticSeverity.Warning, //possible options
+            isEnabledByDefault: true);
+
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    return ImmutableArray.Create(Rule);
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            }
+
+            private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+            {
+            var ifStatement = (IfStatementSyntax)context.Node;
+        }
+        }
+    }";
+            VerifyCSharpFix(test, fixtest);
+        }
+        #endregion
+
+        #region IfKeywordIncorrect
+        // not initialized
+        [TestMethod]
+        public void IfKeywordIncorrect1()
+        {
+            var test = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.CSharp;
+            using Microsoft.CodeAnalysis.CSharp.Syntax;
+            using Microsoft.CodeAnalysis.Diagnostics;
+            using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, //make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
+            category: ""Syntax"", //make the category specific
+            defaultSeverity: DiagnosticSeverity.Warning, //possible options
+            isEnabledByDefault: true);
+
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    return ImmutableArray.Create(Rule);
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            }
+
+            private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+            {
+                var ifStatement = (IfStatementSyntax)context.Node;
+                var ifKeyword;
+            }
+        }
+    }";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.IfKeywordIncorrect,
+                Message = "This statement should extract the 'if' keyword from ifStatement",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 17) }
+            };
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.CSharp;
+            using Microsoft.CodeAnalysis.CSharp.Syntax;
+            using Microsoft.CodeAnalysis.Diagnostics;
+            using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, //make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
+            category: ""Syntax"", //make the category specific
+            defaultSeverity: DiagnosticSeverity.Warning, //possible options
+            isEnabledByDefault: true);
+
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    return ImmutableArray.Create(Rule);
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            }
+
+            private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+            {
+                var ifStatement = (IfStatementSyntax)context.Node;
+            var ifKeyword = ifStatement.IfKeyword;
+        }
+        }
+    }";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        // no member access expression
+        [TestMethod]
+        public void IfKeywordIncorrect2()
+        {
+            var test = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.CSharp;
+            using Microsoft.CodeAnalysis.CSharp.Syntax;
+            using Microsoft.CodeAnalysis.Diagnostics;
+            using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, //make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
+            category: ""Syntax"", //make the category specific
+            defaultSeverity: DiagnosticSeverity.Warning, //possible options
+            isEnabledByDefault: true);
+
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    return ImmutableArray.Create(Rule);
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            }
+
+            private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+            {
+                var ifStatement = (IfStatementSyntax)context.Node;
+                var ifKeyword = ifStatement;
+            }
+        }
+    }";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.IfKeywordIncorrect,
+                Message = "This statement should extract the 'if' keyword from ifStatement",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 17) }
+            };
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.CSharp;
+            using Microsoft.CodeAnalysis.CSharp.Syntax;
+            using Microsoft.CodeAnalysis.Diagnostics;
+            using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, //make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
+            category: ""Syntax"", //make the category specific
+            defaultSeverity: DiagnosticSeverity.Warning, //possible options
+            isEnabledByDefault: true);
+
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    return ImmutableArray.Create(Rule);
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            }
+
+            private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+            {
+                var ifStatement = (IfStatementSyntax)context.Node;
+            var ifKeyword = ifStatement.IfKeyword;
+        }
+        }
+    }";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        // wrong identifier name
+        [TestMethod]
+        public void IfKeyword3()
+        {
+            var test = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.CSharp;
+            using Microsoft.CodeAnalysis.CSharp.Syntax;
+            using Microsoft.CodeAnalysis.Diagnostics;
+            using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, //make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
+            category: ""Syntax"", //make the category specific
+            defaultSeverity: DiagnosticSeverity.Warning, //possible options
+            isEnabledByDefault: true);
+
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    return ImmutableArray.Create(Rule);
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            }
+
+            private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+            {
+                var ifStatement = (IfStatementSyntax)context.Node;
+                var ifKeyword = ifState.IfKeyword;
+            }
+        }
+    }";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.IfKeywordIncorrect,
+                Message = "This statement should extract the 'if' keyword from ifStatement",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 17) }
+            };
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.CSharp;
+            using Microsoft.CodeAnalysis.CSharp.Syntax;
+            using Microsoft.CodeAnalysis.Diagnostics;
+            using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, //make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
+            category: ""Syntax"", //make the category specific
+            defaultSeverity: DiagnosticSeverity.Warning, //possible options
+            isEnabledByDefault: true);
+
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    return ImmutableArray.Create(Rule);
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            }
+
+            private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+            {
+                var ifStatement = (IfStatementSyntax)context.Node;
+            var ifKeyword = ifStatement.IfKeyword;
+        }
+        }
+    }";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+        // doesn't access IfKeyword
+        [TestMethod]
+        public void IfKeyword4()
+        {
+            var test = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.CSharp;
+            using Microsoft.CodeAnalysis.CSharp.Syntax;
+            using Microsoft.CodeAnalysis.Diagnostics;
+            using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, //make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
+            category: ""Syntax"", //make the category specific
+            defaultSeverity: DiagnosticSeverity.Warning, //possible options
+            isEnabledByDefault: true);
+
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    return ImmutableArray.Create(Rule);
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            }
+
+            private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+            {
+                var ifStatement = (IfStatementSyntax)context.Node;
+                var ifKeyword = ifStatement.Condition;
+            }
+        }
+    }";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.IfKeywordIncorrect,
+                Message = "This statement should extract the 'if' keyword from ifStatement",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 17) }
+            };
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.CSharp;
+            using Microsoft.CodeAnalysis.CSharp.Syntax;
+            using Microsoft.CodeAnalysis.Diagnostics;
+            using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, //make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
+            category: ""Syntax"", //make the category specific
+            defaultSeverity: DiagnosticSeverity.Warning, //possible options
+            isEnabledByDefault: true);
+
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    return ImmutableArray.Create(Rule);
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            }
+
+            private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+            {
+                var ifStatement = (IfStatementSyntax)context.Node;
+            var ifKeyword = ifStatement.IfKeyword;
+        }
+        }
+    }";
+            VerifyCSharpFix(test, fixtest);
+        }
+        
+        // no variable declaration 
+        [TestMethod]
+        public void IfKeywordIncorrect5()
+        {
+            var test = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.CSharp;
+            using Microsoft.CodeAnalysis.CSharp.Syntax;
+            using Microsoft.CodeAnalysis.Diagnostics;
+            using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, //make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
+            category: ""Syntax"", //make the category specific
+            defaultSeverity: DiagnosticSeverity.Warning, //possible options
+            isEnabledByDefault: true);
+
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    return ImmutableArray.Create(Rule);
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            }
+
+            private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+            {
+                var ifStatement = (IfStatementSyntax)context.Node;
+                ifStatement.IfKeyword;
+            }
+        }
+    }";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.IfKeywordIncorrect,
+                Message = "This statement should extract the 'if' keyword from ifStatement",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 17) }
+            };
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.CSharp;
+            using Microsoft.CodeAnalysis.CSharp.Syntax;
+            using Microsoft.CodeAnalysis.Diagnostics;
+            using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, //make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
+            category: ""Syntax"", //make the category specific
+            defaultSeverity: DiagnosticSeverity.Warning, //possible options
+            isEnabledByDefault: true);
+
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    return ImmutableArray.Create(Rule);
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            }
+
+            private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+            {
+                var ifStatement = (IfStatementSyntax)context.Node;
+            var ifKeyword = ifStatement.IfKeyword;
+        }
+        }
     }";
             VerifyCSharpFix(test, fixtest);
         }
