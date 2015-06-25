@@ -379,7 +379,7 @@ namespace MetaCompilation
                                     bool analysisCorrect = CheckAnalysis(_branchesDict[registerSymbol.Name], kindName, ruleNames, context, analysisMethodSymbol);
                                     if (analysisCorrect)
                                     {
-                                        bool codeFixCorrect = CodeFixProviderAnalysis(context);
+                                        //DiagnosticAnalyzer.cs is correct, display diagnostic to go to code fix?
                                     }
                                     else
                                     {
@@ -2465,60 +2465,6 @@ namespace MetaCompilation
                 
             }
             #endregion
-
-            //checks the CodeFixProvider.cs file
-            internal bool CodeFixProviderAnalysis(CompilationAnalysisContext context)
-            {
-                bool fixableDiagnosticIdsCorrect = CheckFixableDiagnosticIds(context);
-                if (!fixableDiagnosticIdsCorrect)
-                {
-                    return false;
-                }
-
-                List<string> registerInfo = CheckRegisterCodeFixesAsync(context);
-                if (registerInfo == null)
-                {
-                    return false;
-                }
-
-                string branch = registerInfo[0] as string;
-                if (branch == null)
-                {
-                    return false;
-                }
-
-                string methodName = registerInfo[1] as string;
-                if (methodName == null)
-                {
-                    return false;
-                }
-
-                bool fixMethodCorrect = CheckFixMethod(context, branch, methodName);
-                if (!fixMethodCorrect)
-                {
-                    return false;
-                }
-
-                return true;
-            }
-
-            //returns a bool representing whether or not the fix method is correct
-            internal bool CheckFixMethod(CompilationAnalysisContext context, string branch, string methodName)
-            {
-                throw new NotImplementedException();
-            }
-
-            //return a list with the branch that the code fix is in, and the name of the registered method. null if failed 
-            internal List<string> CheckRegisterCodeFixesAsync(CompilationAnalysisContext context)
-            {
-                throw new NotImplementedException();
-            }
-
-            //returns a bool representing whether or not the FixableDiagnosticsIds property is correct
-            internal bool CheckFixableDiagnosticIds(CompilationAnalysisContext context)
-            {
-                throw new NotImplementedException();
-            }
 
             //clears all state
             internal void ClearState()
