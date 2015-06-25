@@ -112,6 +112,54 @@
     <Error Condition="('$(RealSignBuild)' == 'true' OR '$(SignType)' == 'real') AND '$(BuildVersion)' == '42.42.42.42'"
            Text="Must specify a build version in order to real sign a build." />
   </Target>
+  
+  <!-- ====================================================================================
+  
+         Support for in-place modification of the compiled binary.
+         Since there may be more than one post compile modification, we must take care not
+         to break incremental builds. A timestamp file is written out when all modification
+         targets have completed.
+         Note that the targets participating in post compile modification must list the
+         sentinel file as one of their outputs, but they should not modify it.
+
+       ==================================================================================== -->
+
+  <PropertyGroup>
+    <PostCompileBinaryModificationSentinelFile>$(IntermediateOutputPath)$(TargetFileName).pcbm</PostCompileBinaryModificationSentinelFile>
+  </PropertyGroup>
+
+  <Target Name="PostCompileBinaryModification"
+          AfterTargets="CoreCompile"
+          DependsOnTargets="FakeSign"
+          Inputs="@(IntermediateAssembly)"
+          Outputs="@(IntermediateAssembly);$(PostCompileBinaryModificationSentinelFile)">
+
+    <!-- Write out a sentinel timestamp file to prevent unnecessary work in incremental builds. -->
+    <Touch AlwaysCreate="true" Files="$(PostCompileBinaryModificationSentinelFile)" />
+
+    <ItemGroup>
+      <FileWrites Include="$(PostCompileBinaryModificationSentinelFile)" />
+    </ItemGroup>
+  </Target>
+  
+  <!-- ====================================================================================
+  
+         Support for FakeSigning assemblies
+
+       ==================================================================================== -->
+
+  <PropertyGroup>
+    <ShouldSignBuild Condition="'$(SignType)' == 'real'">true</ShouldSignBuild>
+  </PropertyGroup>
+
+  <Target Name="FakeSign"
+          Condition="'$(DelaySign)' == 'true' AND '$(ShouldSignBuild)' != 'true' AND ('$(Language)' == 'C#' OR '$(Language)' == 'VB')"
+          Inputs="@(IntermediateAssembly)"
+          Outputs="@(IntermediateAssembly);$(PostCompileBinaryModificationSentinelFile)">
+    
+    <Exec Command="$(FakeSignToolPath) &quot;@(IntermediateAssembly)&quot;" />
+    
+  </Target>
 
   <!-- ====================================================================================
        
