@@ -1,0 +1,366 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="SA1100CodeFix" xml:space="preserve">
+    <value>Replace 'base.' with 'this.'</value>
+  </data>
+  <data name="SA1100Description" xml:space="preserve">
+    <value>A call to a member from an inherited class begins with 'base.', and the local class does not contain an override or implementation of the member.</value>
+  </data>
+  <data name="SA1100MessageFormat" xml:space="preserve">
+    <value>Do not prefix calls with base unless local implementation exists</value>
+  </data>
+  <data name="SA1100Title" xml:space="preserve">
+    <value>Do not prefix calls with base unless local implementation exists</value>
+  </data>
+  <data name="SA1101CodeFix" xml:space="preserve">
+    <value>Prefix reference with 'this.'</value>
+  </data>
+  <data name="SA1101Description" xml:space="preserve">
+    <value>A call to an instance member of the local class or a base class is not prefixed with 'this.', within a C# code file.</value>
+  </data>
+  <data name="SA1101MessageFormat" xml:space="preserve">
+    <value>Prefix local calls with this</value>
+  </data>
+  <data name="SA1101Title" xml:space="preserve">
+    <value>Prefix local calls with this</value>
+  </data>
+  <data name="SA1102Description" xml:space="preserve">
+    <value>A C# query clause does not begin on the same line as the previous clause, or on the next line.</value>
+  </data>
+  <data name="SA1102MessageFormat" xml:space="preserve">
+    <value>Query clause must follow previous clause.</value>
+  </data>
+  <data name="SA1102Title" xml:space="preserve">
+    <value>Query clause must follow previous clause</value>
+  </data>
+  <data name="SA1103Description" xml:space="preserve">
+    <value>The clauses within a C# query expression are not all placed on the same line, and each clause is not placed on its own line.</value>
+  </data>
+  <data name="SA1103MessageFormat" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SA1103Title" xml:space="preserve">
+    <value>Query clauses must be on separate lines or all on one line</value>
+  </data>
+  <data name="SA1104Description" xml:space="preserve">
+    <value>A clause within a C# query expression begins on the same line as the previous clause, when the previous clause spans across multiple lines.</value>
+  </data>
+  <data name="SA1104MessageFormat" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SA1104Title" xml:space="preserve">
+    <value>Query clause must begin on new line when previous clause spans multiple lines</value>
+  </data>
+  <data name="SA1105Description" xml:space="preserve">
+    <value>A clause within a C# query expression spans across multiple lines, and does not begin on its own line.</value>
+  </data>
+  <data name="SA1105MessageFormat" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SA1105Title" xml:space="preserve">
+    <value>Query clauses spanning multiple lines must begin on own line</value>
+  </data>
+  <data name="SA1106Description" xml:space="preserve">
+    <value>The C# code contains an extra semicolon.</value>
+  </data>
+  <data name="SA1106MessageFormat" xml:space="preserve">
+    <value>Code must not contain empty statements</value>
+  </data>
+  <data name="SA1106Title" xml:space="preserve">
+    <value>Code must not contain empty statements</value>
+  </data>
+  <data name="SA1107Description" xml:space="preserve">
+    <value>The C# code contains more than one statement on a single line.</value>
+  </data>
+  <data name="SA1107MessageFormat" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SA1107Title" xml:space="preserve">
+    <value>Code must not contain multiple statements on one line</value>
+  </data>
+  <data name="SA1108Description" xml:space="preserve">
+    <value>A C# statement contains a comment between the declaration of the statement and the opening curly bracket of the statement.</value>
+  </data>
+  <data name="SA1108MessageFormat" xml:space="preserve">
+    <value>Block statements must not contain embedded comments</value>
+  </data>
+  <data name="SA1108Title" xml:space="preserve">
+    <value>Block statements must not contain embedded comments</value>
+  </data>
+  <data name="SA1109Description" xml:space="preserve">
+    <value>A C# statement contains a region tag between the declaration of the statement and the opening curly bracket of the statement.</value>
+  </data>
+  <data name="SA1109MessageFormat" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SA1109Title" xml:space="preserve">
+    <value>Block statements must not contain embedded regions</value>
+  </data>
+  <data name="SA1110Description" xml:space="preserve">
+    <value>The opening parenthesis or bracket is not placed on the same line as the method/indexer/attribute/array name.</value>
+  </data>
+  <data name="SA1110MessageFormat" xml:space="preserve">
+    <value>Opening parenthesis or bracket must be on declaration line.</value>
+  </data>
+  <data name="SA1110Title" xml:space="preserve">
+    <value>Opening parenthesis or bracket must be on declaration line</value>
+  </data>
+  <data name="SA1111Description" xml:space="preserve">
+    <value>The closing parenthesis or bracket in a call to or declaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.</value>
+  </data>
+  <data name="SA1111MessageFormat" xml:space="preserve">
+    <value>Closing parenthesis must be on line of last parameter</value>
+  </data>
+  <data name="SA1111Title" xml:space="preserve">
+    <value>Closing parenthesis must be on line of last parameter</value>
+  </data>
+  <data name="SA1112Description" xml:space="preserve">
+    <value>The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the opening bracket when the element does not take any parameters.</value>
+  </data>
+  <data name="SA1112MessageFormat" xml:space="preserve">
+    <value>Closing parenthesis must be on line of opening parenthesis</value>
+  </data>
+  <data name="SA1112Title" xml:space="preserve">
+    <value>Closing parenthesis must be on line of opening parenthesis</value>
+  </data>
+  <data name="SA1113Description" xml:space="preserve">
+    <value>A comma between two parameters in a call to a C# method or indexer, or in the declaration of a method or indexer, is not placed on the same line as the previous parameter.</value>
+  </data>
+  <data name="SA1113MessageFormat" xml:space="preserve">
+    <value>Comma must be on the same line as previous parameter.</value>
+  </data>
+  <data name="SA1113Title" xml:space="preserve">
+    <value>Comma must be on the same line as previous parameter</value>
+  </data>
+  <data name="SA1114Description" xml:space="preserve">
+    <value>The start of the parameter list for a method/constructor/indexer/array/operator call or declaration does not begin on the same line as the opening bracket, or on the line after the opening bracket.</value>
+  </data>
+  <data name="SA1114MessageFormat" xml:space="preserve">
+    <value>Parameter list must follow declaration</value>
+  </data>
+  <data name="SA1114Title" xml:space="preserve">
+    <value>Parameter list must follow declaration</value>
+  </data>
+  <data name="SA1115Description" xml:space="preserve">
+    <value>A parameter within a C# method or indexer call or declaration does not begin on the same line as the previous parameter, or on the next line.</value>
+  </data>
+  <data name="SA1115MessageFormat" xml:space="preserve">
+    <value>The parameter must begin on the line after the previous parameter.</value>
+  </data>
+  <data name="SA1115Title" xml:space="preserve">
+    <value>Parameter must follow comma</value>
+  </data>
+  <data name="SA1116Description" xml:space="preserve">
+    <value>The parameters to a C# method or indexer call or declaration span across multiple lines, but the first parameter does not start on the line after the opening bracket.</value>
+  </data>
+  <data name="SA1116MessageFormat" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SA1116Title" xml:space="preserve">
+    <value>Split parameters must start on line after declaration</value>
+  </data>
+  <data name="SA1117Description" xml:space="preserve">
+    <value>The parameters to a C# method or indexer call or declaration are not all on the same line or each on a separate line.</value>
+  </data>
+  <data name="SA1117MessageFormat" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SA1117Title" xml:space="preserve">
+    <value>Parameters must be on same line or separate lines</value>
+  </data>
+  <data name="SA1118Description" xml:space="preserve">
+    <value>A parameter to a C# method/indexer/attribute/array, other than the first parameter, spans across multiple lines. If the parameter is short, place the entire parameter on a single line. Otherwise, save the contents of the parameter in a temporary variable and pass the temporary variable as a parameter.</value>
+  </data>
+  <data name="SA1118MessageFormat" xml:space="preserve">
+    <value>The parameter spans multiple lines</value>
+  </data>
+  <data name="SA1118Title" xml:space="preserve">
+    <value>Parameter must not span multiple lines</value>
+  </data>
+  <data name="SA1120Description" xml:space="preserve">
+    <value>The C# comment does not contain any comment text.</value>
+  </data>
+  <data name="SA1120MessageFormat" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SA1120Title" xml:space="preserve">
+    <value>Comments must contain text</value>
+  </data>
+  <data name="SA1121CodeFix" xml:space="preserve">
+    <value>Replace with built-in type</value>
+  </data>
+  <data name="SA1121Description" xml:space="preserve">
+    <value>The code uses one of the basic C# types, but does not use the built-in alias for the type.</value>
+  </data>
+  <data name="SA1121MessageFormat" xml:space="preserve">
+    <value>Use built-in type alias</value>
+  </data>
+  <data name="SA1121Title" xml:space="preserve">
+    <value>Use built-in type alias</value>
+  </data>
+  <data name="SA1122CodeFix" xml:space="preserve">
+    <value>Replace with string.Empty</value>
+  </data>
+  <data name="SA1122Description" xml:space="preserve">
+    <value>The C# code includes an empty string, written as "".</value>
+  </data>
+  <data name="SA1122MessageFormat" xml:space="preserve">
+    <value>Use string.Empty for empty strings</value>
+  </data>
+  <data name="SA1122Title" xml:space="preserve">
+    <value>Use string.Empty for empty strings</value>
+  </data>
+  <data name="SA1123Description" xml:space="preserve">
+    <value>The C# code contains a region within the body of a code element.</value>
+  </data>
+  <data name="SA1123MessageFormat" xml:space="preserve">
+    <value>Region must not be located within a code element.</value>
+  </data>
+  <data name="SA1123Title" xml:space="preserve">
+    <value>Do not place regions within elements</value>
+  </data>
+  <data name="SA1124Description" xml:space="preserve">
+    <value>The C# code contains a region.</value>
+  </data>
+  <data name="SA1124MessageFormat" xml:space="preserve">
+    <value>Do not use regions</value>
+  </data>
+  <data name="SA1124Title" xml:space="preserve">
+    <value>Do not use regions</value>
+  </data>
+  <data name="SA1125Description" xml:space="preserve">
+    <value>The Nullable&lt;T&gt; type has been defined not using the C# shorthand. For example, Nullable&lt;DateTime&gt; has been used instead of the preferred DateTime?</value>
+  </data>
+  <data name="SA1125MessageFormat" xml:space="preserve">
+    <value>Use shorthand for nullable types</value>
+  </data>
+  <data name="SA1125Title" xml:space="preserve">
+    <value>Use shorthand for nullable types</value>
+  </data>
+  <data name="SA1126Description" xml:space="preserve">
+    <value>A call to a member is not prefixed with the 'this.', 'base.', 'object.' or 'typename.' prefix to indicate the intended method call, within a C# code file.</value>
+  </data>
+  <data name="SA1126MessageFormat" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SA1126Title" xml:space="preserve">
+    <value>Prefix calls correctly</value>
+  </data>
+</root>

@@ -1,6 +1,7 @@
 ﻿namespace StyleCop.Analyzers.Helpers
 {
     using System;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -90,6 +91,62 @@
             location = location ?? (member as IndexerDeclarationSyntax)?.ThisKeyword.GetLocation();
             location = location ?? member.GetLocation();
             return location;
+        }
+
+        /// <summary>
+        /// Returns whether or not a member is implementing an interface member.
+        /// </summary>
+        /// <remarks>
+        /// This method does only check the interfaces the containing type is implementing directly.
+        /// If a derived class is implementing an interface and this member is required for it
+        /// this method will still return false.
+        /// </remarks>
+        /// <param name="memberSymbol">The member symbol that should be analyzed.</param>
+        /// <returns>true if the member is implementing an interface member, otherwise false.</returns>
+        internal static bool IsImplementingAnInterfaceMember(ISymbol memberSymbol)
+        {
+            if (memberSymbol.IsStatic)
+            {
+                return false;
+            }
+
+            IMethodSymbol methodSymbol;
+            IPropertySymbol propertySymbol;
+            IEventSymbol eventSymbol;
+            bool isImplementingExplicitly;
+
+            // Only methods, properties and events can implement an interface member
+            if ((methodSymbol = memberSymbol as IMethodSymbol) != null)
+            {
+                // Check if the member is implementing an interface explicitly
+                isImplementingExplicitly = methodSymbol.ExplicitInterfaceImplementations.Any();
+            }
+            else if ((propertySymbol = memberSymbol as IPropertySymbol) != null)
+            {
+                // Check if the member is implementing an interface explicitly
+                isImplementingExplicitly = propertySymbol.ExplicitInterfaceImplementations.Any();
+            }
+            else if ((eventSymbol = memberSymbol as IEventSymbol) != null)
+            {
+                // Check if the member is implementing an interface explicitly
+                isImplementingExplicitly = eventSymbol.ExplicitInterfaceImplementations.Any();
+            }
+            else
+            {
+                return false;
+            }
+
+            if (isImplementingExplicitly)
+            {
+                return true;
+            }
+
+            var typeSymbol = memberSymbol.ContainingType;
+
+            return typeSymbol != null && typeSymbol.AllInterfaces
+                .SelectMany(m => m.GetMembers(memberSymbol.Name))
+                .Select(typeSymbol.FindImplementationForInterfaceMember)
+                .Any(x => memberSymbol.Equals(x));
         }
     }
 }

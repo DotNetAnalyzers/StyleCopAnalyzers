@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.OrderingRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -11,14 +12,14 @@
     public class SA1201UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestOuterOrderCorrectOrder()
+        public async Task TestOuterOrderCorrectOrderAsync()
         {
             string testCode = @"namespace Foo { }
 public delegate void bar();
@@ -28,12 +29,12 @@ public struct FooStruct { }
 public class FooClass { }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync("namespace OuterNamespace { " + testCode + " }", EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync("namespace OuterNamespace { " + testCode + " }", EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestOuterOrderWrongOrder()
+        public async Task TestOuterOrderWrongOrderAsync()
         {
             string testCode = @"
 namespace Foo { }
@@ -49,12 +50,12 @@ public struct FooStruct { }
                 this.CSharpDiagnostic().WithLocation(7, 15).WithArguments("struct", "class"),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync("namespace OuterNamespace { " + testCode + " }", expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync("namespace OuterNamespace { " + testCode + " }", expected, CancellationToken.None).ConfigureAwait(false);
         }
-        
+
         [Fact]
-        public async Task TestTypeMemberOrderCorrectOrderClass()
+        public async Task TestTypeMemberOrderCorrectOrderClassAsync()
         {
             string testCode = @"public class OuterType
 {
@@ -75,16 +76,16 @@ public struct FooStruct { }
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestTypeMemberOrderCorrectOrderStruct()
+        public async Task TestTypeMemberOrderCorrectOrderStructAsync()
         {
             string testCode = @"public struct OuterType
 {
     public string TestField;
-    public OuterType() { TestField = ""foo""; TestProperty = """"; }
+    public OuterType(int argument) { TestField = ""foo""; TestProperty = """"; }
     public delegate void TestDelegate();
     public event TestDelegate TestEvent { add { } remove { } }
     public enum TestEnum { }
@@ -99,11 +100,11 @@ public struct FooStruct { }
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestTypeMemberOrderCorrectOrderInterface()
+        public async Task TestTypeMemberOrderCorrectOrderInterfaceAsync()
         {
             string testCode = @"public interface OuterType
 {
@@ -114,11 +115,11 @@ public struct FooStruct { }
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestTypeMemberOrderWrongOrderClass()
+        public async Task TestTypeMemberOrderWrongOrderClassAsync()
         {
             string testCode = @"public class OuterType
 {
@@ -148,16 +149,16 @@ public struct FooStruct { }
                 this.CSharpDiagnostic().WithLocation(15, 19).WithArguments("indexer", "method")
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestTypeMemberOrderWrongOrderStruct()
+        public async Task TestTypeMemberOrderWrongOrderStructAsync()
         {
             string testCode = @"public struct OuterType
 {
     public string TestField;
-    public OuterType() { TestField = ""foo""; TestProperty = ""bar""; }
+    public OuterType(int argument) { TestField = ""foo""; TestProperty = ""bar""; }
     public interface ITest { }
     public delegate void TestDelegate();
     public event TestDelegate TestEvent { add { } remove { } }
@@ -180,11 +181,11 @@ public struct FooStruct { }
                 this.CSharpDiagnostic().WithLocation(14, 19).WithArguments("indexer", "method")
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestTypeMemberOrderWrongOrderInterface()
+        public async Task TestTypeMemberOrderWrongOrderInterfaceAsync()
         {
             string testCode = @"public interface OuterType
 {
@@ -199,11 +200,11 @@ public struct FooStruct { }
                 this.CSharpDiagnostic().WithLocation(6, 12).WithArguments("indexer", "method")
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestIncompleteMember()
+        public async Task TestIncompleteMemberAsync()
         {
             // Tests that the analyzer does not crash on incomplete members
             string testCode = @"public interface OuterType
@@ -213,6 +214,7 @@ public struct FooStruct { }
     public string
 }
 ";
+
             // We don't care about the syntax errors.
             var expected = new[]
             {
@@ -232,11 +234,11 @@ public struct FooStruct { }
                  }
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestEventFields()
+        public async Task TestEventFieldsAsync()
         {
             // Tests that the analyzer handles event fields as if they were events
             string testCode = @"public class OuterType
@@ -247,12 +249,12 @@ public struct FooStruct { }
     public event System.Action TestEvent4 { add { } remove { } }
 }
 ";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1201ElementsMustAppearInTheCorrectOrder();
+            yield return new SA1201ElementsMustAppearInTheCorrectOrder();
         }
     }
 }

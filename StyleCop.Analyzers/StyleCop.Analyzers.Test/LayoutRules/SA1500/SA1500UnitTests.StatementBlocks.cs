@@ -10,7 +10,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
-    public partial class SA1500UnitTests : DiagnosticVerifier
+    public partial class SA1500UnitTests
     {
         public static IEnumerable<object[]> StatementBlocksTokenList
         {
@@ -33,14 +33,14 @@
         /// </summary>
         /// <remarks>
         /// These are valid for SA1500 only, some will report other diagnostics outside of the unit test scenario.
-        /// 
+        ///
         /// The class is marked unsafe to make testing the fixed statement possible.
         /// </remarks>
         /// <param name="token">The source code preceding the opening <c>{</c> of a statement block.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(StatementBlocksTokenList))]
-        public async Task TestStatementBlockValid(string token)
+        public async Task TestStatementBlockValidAsync(string token)
         {
             var testCode = @"public unsafe class Foo
 {
@@ -86,7 +86,7 @@
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(StatementBlocksTokenList))]
-        public async Task TestStatementBlockInvalid(string token)
+        public async Task TestStatementBlockInvalidAsync(string token)
         {
             var testCode = @"public unsafe class Foo
 {
@@ -108,21 +108,60 @@
         }
 
         // invalid #4
-        #TOKEN# 
+        #TOKEN#
         {
             this.X = 1; }
 
         // invalid #5
-        #TOKEN# 
+        #TOKEN#
         { this.X = 1;
         }
     }
 }";
 
+            var fixedTestCode = @"public unsafe class Foo
+{
+    public int X { get; set; }
+
+    public void Bar()
+    {
+        // invalid #1
+        #TOKEN#
+        {
+            this.X = 1;
+        }
+
+        // invalid #2
+        #TOKEN#
+        {
+            this.X = 1;
+        }
+
+        // invalid #3
+        #TOKEN#
+        {
+            this.X = 1;
+        }
+
+        // invalid #4
+        #TOKEN#
+        {
+            this.X = 1;
+        }
+
+        // invalid #5
+        #TOKEN#
+        {
+            this.X = 1;
+        }
+    }
+}";
+
             testCode = testCode.Replace("#TOKEN#", token);
+            fixedTestCode = fixedTestCode.Replace("#TOKEN#", token);
             var tokenLength = token.Length;
 
-            var expectedDiagnostics = new[]
+            DiagnosticResult[] expectedDiagnostics =
             {
                 // invalid #1
                 this.CSharpDiagnostic().WithLocation(8, 10 + tokenLength),
@@ -142,6 +181,8 @@
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
     }
 }

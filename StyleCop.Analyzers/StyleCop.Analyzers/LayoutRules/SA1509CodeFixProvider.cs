@@ -10,11 +10,12 @@
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1509OpeningCurlyBracketsMustNotBePrecededByBlankLine"/>.
     /// </summary>
-    [ExportCodeFixProvider(nameof(SA1509CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1509CodeFixProvider))]
     [Shared]
     public class SA1509CodeFixProvider : CodeFixProvider
     {
@@ -37,12 +38,12 @@
             {
                 context.RegisterCodeFix(
                     CodeAction.Create(
-                        "Remove blank lines preceding this curly bracket",
+                        LayoutResources.SA1509CodeFix,
                         token => this.GetTransformedDocumentAsync(context.Document, diagnostic, token)),
                     diagnostic);
             }
 
-            return Task.FromResult(true);
+            return SpecializedTasks.CompletedTask;
         }
 
         private async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)

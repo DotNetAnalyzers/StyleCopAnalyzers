@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -11,7 +12,7 @@
     public class SA1100UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestChildClassUsesBaseButNoOverride()
+        public async Task TestChildClassUsesBaseButNoOverrideAsync()
         {
             var testCode = @"
 public class Foo
@@ -54,7 +55,7 @@ public class FooChild : Foo
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseButMethodIsNotVirtual()
+        public async Task TestChildClassUsesBaseButMethodIsNotVirtualAsync()
         {
             var testCode = @"
 public class Foo
@@ -97,7 +98,7 @@ public class FooChild : Foo
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseBaseAndChildHaveMethodWithSameName()
+        public async Task TestChildClassUsesBaseBaseAndChildHaveMethodWithSameNameAsync()
         {
             var testCode = @"
 public class Foo
@@ -124,7 +125,7 @@ public class FooChild : Foo
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseMethodWithSameNameButDifferentParametersExist()
+        public async Task TestChildClassUsesBaseMethodWithSameNameButDifferentParametersExistAsync()
         {
             var testCode = @"
 public class Foo
@@ -175,7 +176,7 @@ public class FooChild : Foo
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseBaseIsVirtualChildHidesBase()
+        public async Task TestChildClassUsesBaseBaseIsVirtualChildHidesBaseAsync()
         {
             var testCode = @"
 public class Foo
@@ -202,7 +203,7 @@ public class FooChild : Foo
         }
 
         [Fact]
-        public async Task TestChildClassUsesBasePropertyButNoOverride()
+        public async Task TestChildClassUsesBasePropertyButNoOverrideAsync()
         {
             var testCode = @"
 public class Foo
@@ -245,7 +246,7 @@ public class FooChild : Foo
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseMethodMethodWithSameNameButDifferentParametersExist()
+        public async Task TestChildClassUsesBaseMethodMethodWithSameNameButDifferentParametersExistAsync()
         {
             var testCode = @"
 public class Foo
@@ -295,7 +296,7 @@ public class FooChild : Foo
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseMethodMethodWithSameNameButDifferentParameterType()
+        public async Task TestChildClassUsesBaseMethodMethodWithSameNameButDifferentParameterTypeAsync()
         {
             var testCode = @"
 public class Foo
@@ -345,7 +346,7 @@ public class FooChild : Foo
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseMethodMethodWithSameNameRefUsed()
+        public async Task TestChildClassUsesBaseMethodMethodWithSameNameRefUsedAsync()
         {
             var testCode = @"
 public class Foo
@@ -395,7 +396,7 @@ public class FooChild : Foo
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseMethodMethodWithSameNameOutUsed()
+        public async Task TestChildClassUsesBaseMethodMethodWithSameNameOutUsedAsync()
         {
             var testCode = @"
 public class Foo
@@ -445,7 +446,7 @@ public class FooChild : Foo
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseMethodOverrideWithDifferentParametersExists()
+        public async Task TestChildClassUsesBaseMethodOverrideWithDifferentParametersExistsAsync()
         {
             var testCode = @"
 public class Foo
@@ -495,7 +496,7 @@ public class FooChild : Foo
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseMethodOverrideWithRefExists()
+        public async Task TestChildClassUsesBaseMethodOverrideWithRefExistsAsync()
         {
             var testCode = @"
 public class Foo
@@ -545,7 +546,7 @@ public class FooChild : Foo
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseMethodOverrideWithOutExists()
+        public async Task TestChildClassUsesBaseMethodOverrideWithOutExistsAsync()
         {
             var testCode = @"
 public class Foo
@@ -595,7 +596,7 @@ public class FooChild : Foo
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseMethodOverrideWithDifferentParameterTypeExists()
+        public async Task TestChildClassUsesBaseMethodOverrideWithDifferentParameterTypeExistsAsync()
         {
             var testCode = @"
 public class Foo
@@ -645,7 +646,7 @@ public class FooChild : Foo
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseOverrideExists()
+        public async Task TestChildClassUsesBaseOverrideExistsAsync()
         {
             var testCode = @"
 public class Foo
@@ -669,11 +670,10 @@ public class FooChild : Foo
 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseWithFewParametersOverrideExists()
+        public async Task TestChildClassUsesBaseWithFewParametersOverrideExistsAsync()
         {
             var testCode = @"
 public class Foo
@@ -697,11 +697,10 @@ public class FooChild : Foo
 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseWithFewParametersHidingMethodExists()
+        public async Task TestChildClassUsesBaseWithFewParametersHidingMethodExistsAsync()
         {
             var testCode = @"
 public class Foo
@@ -726,11 +725,10 @@ public class FooChild : Foo
 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-
         }
 
         [Fact]
-        public async Task TestChildClassUsesBasePropertyOverrideExists()
+        public async Task TestChildClassUsesBasePropertyOverrideExistsAsync()
         {
             var testCode = @"
 public class Foo
@@ -758,7 +756,7 @@ public class FooChild : Foo
         }
 
         [Fact]
-        public async Task TestChildEventNoOverride()
+        public async Task TestChildEventNoOverrideAsync()
         {
             var testCode = @"
 using System;
@@ -799,7 +797,7 @@ public class FooChild : Foo
         }
 
         [Fact]
-        public async Task TestChildEventOverrideExists()
+        public async Task TestChildEventOverrideExistsAsync()
         {
             var testCode = @"
 using System;
@@ -823,7 +821,7 @@ public class FooChild : Foo
         }
 
         [Fact]
-        public async Task TestChildEventHidingEventExists()
+        public async Task TestChildEventHidingEventExistsAsync()
         {
             var testCode = @"
 using System;
@@ -847,7 +845,7 @@ public class FooChild : Foo
         }
 
         [Fact]
-        public async Task TestStruct()
+        public async Task TestStructAsync()
         {
             var testCode = @"
 public struct S
@@ -874,7 +872,7 @@ public struct S
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseButNoOverrideTwoIssues()
+        public async Task TestChildClassUsesBaseButNoOverrideTwoIssuesAsync()
         {
             var testCode = @"
 public class Foo
@@ -941,7 +939,7 @@ public class FooChild : Foo
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseWithExtraLinesButNoOverrideTwoIssues()
+        public async Task TestChildClassUsesBaseWithExtraLinesButNoOverrideTwoIssuesAsync()
         {
             var testCode = @"
 public class Foo
@@ -988,7 +986,7 @@ public class FooChild : Foo
         }
 
         [Fact]
-        public async Task TestChildClassUsesBaseWithPreprocessorDirectivesButNoOverrideTwoIssues()
+        public async Task TestChildClassUsesBaseWithPreprocessorDirectivesButNoOverrideTwoIssuesAsync()
         {
             var testCode = @"
 public class Foo
@@ -1024,9 +1022,9 @@ public class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists();
+            yield return new SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

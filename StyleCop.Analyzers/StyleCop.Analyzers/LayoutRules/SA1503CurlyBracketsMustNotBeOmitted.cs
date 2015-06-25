@@ -1,6 +1,8 @@
 ﻿namespace StyleCop.Analyzers.LayoutRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -61,7 +63,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1503.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -79,6 +81,7 @@
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleIfStatement, SyntaxKind.IfStatement);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDoStatement, SyntaxKind.DoStatement);
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleWhileStatement, SyntaxKind.WhileStatement);
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleForStatement, SyntaxKind.ForStatement);
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleForEachStatement, SyntaxKind.ForEachStatement);
@@ -86,19 +89,44 @@
 
         private void HandleIfStatement(SyntaxNodeAnalysisContext context)
         {
-            var ifStatement = context.Node as IfStatementSyntax;
-            if (ifStatement != null)
+            var ifStatement = (IfStatementSyntax)context.Node;
+            if (ifStatement.Parent.IsKind(SyntaxKind.ElseClause))
             {
-                this.CheckChildStatement(context, ifStatement.Statement);
+                // this will be analyzed as a clause of the outer if statement
+                return;
+            }
 
-                if (ifStatement.Else != null)
+            List<StatementSyntax> clauses = new List<StatementSyntax>();
+            for (IfStatementSyntax current = ifStatement; current != null; current = current.Else?.Statement as IfStatementSyntax)
+            {
+                clauses.Add(current.Statement);
+                if (current.Else != null && !(current.Else.Statement is IfStatementSyntax))
                 {
-                    // an 'else' directly followed by an 'if' should not trigger this diagnostic.
-                    if (!ifStatement.Else.Statement.IsKind(SyntaxKind.IfStatement))
-                    {
-                        this.CheckChildStatement(context, ifStatement.Else.Statement);
-                    }
+                    clauses.Add(current.Else.Statement);
                 }
+            }
+
+            if (context.SemanticModel.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(SA1520UseCurlyBracketsConsistently.DiagnosticId, ReportDiagnostic.Default) != ReportDiagnostic.Suppress)
+            {
+                // inconsistencies will be reported as SA1520, as long as it's not suppressed
+                if (clauses.OfType<BlockSyntax>().Any())
+                {
+                    return;
+                }
+            }
+
+            foreach (StatementSyntax clause in clauses)
+            {
+                this.CheckChildStatement(context, clause);
+            }
+        }
+
+        private void HandleDoStatement(SyntaxNodeAnalysisContext context)
+        {
+            var doStatement = context.Node as DoStatementSyntax;
+            if (doStatement != null)
+            {
+                this.CheckChildStatement(context, doStatement.Statement);
             }
         }
 
@@ -131,10 +159,23 @@
 
         private void CheckChildStatement(SyntaxNodeAnalysisContext context, StatementSyntax childStatement)
         {
-            if (!(childStatement is BlockSyntax))
+            if (childStatement is BlockSyntax)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, childStatement.GetLocation()));
+                return;
             }
+
+            if (context.SemanticModel.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(SA1519CurlyBracketsMustNotBeOmittedFromMultiLineChildStatement.DiagnosticId, ReportDiagnostic.Default) != ReportDiagnostic.Suppress)
+            {
+                // diagnostics for multi-line statements is handled by SA1519, as long as it's not suppressed
+                Location location = childStatement.GetLocation();
+                FileLinePositionSpan lineSpan = location.GetLineSpan();
+                if (lineSpan.StartLinePosition.Line != lineSpan.EndLinePosition.Line)
+                {
+                    return;
+                }
+            }
+
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, childStatement.GetLocation()));
         }
     }
 }

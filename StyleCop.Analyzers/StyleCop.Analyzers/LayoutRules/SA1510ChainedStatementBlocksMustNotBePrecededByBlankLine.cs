@@ -2,7 +2,10 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Chained C# statements are separated by a blank line.
@@ -38,13 +41,13 @@
         /// </summary>
         public const string DiagnosticId = "SA1510";
         private const string Title = "Chained statement blocks must not be preceded by blank line";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "'{0}' statement must not be preceded by a blank line";
         private const string Category = "StyleCop.CSharp.LayoutRules";
         private const string Description = "Chained C# statements are separated by a blank line.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1510.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -61,7 +64,48 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleElseStatement, SyntaxKind.ElseClause);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleCatchClause, SyntaxKind.CatchClause);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleFinallyClause, SyntaxKind.FinallyClause);
+        }
+
+        private void HandleElseStatement(SyntaxNodeAnalysisContext context)
+        {
+            var elseClause = (ElseClauseSyntax)context.Node;
+            var elseKeyword = elseClause.ElseKeyword;
+
+            if (!elseKeyword.HasLeadingBlankLines())
+            {
+                return;
+            }
+
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, elseKeyword.GetLocation(), elseKeyword.ToString()));
+        }
+
+        private void HandleCatchClause(SyntaxNodeAnalysisContext context)
+        {
+            var catchClause = (CatchClauseSyntax)context.Node;
+            var catchKeyword = catchClause.CatchKeyword;
+
+            if (!catchKeyword.HasLeadingBlankLines())
+            {
+                return;
+            }
+
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, catchKeyword.GetLocation(), catchKeyword.ToString()));
+        }
+
+        private void HandleFinallyClause(SyntaxNodeAnalysisContext context)
+        {
+            var finallyClause = (FinallyClauseSyntax)context.Node;
+            var finallyKeyword = finallyClause.FinallyKeyword;
+
+            if (!finallyKeyword.HasLeadingBlankLines())
+            {
+                return;
+            }
+
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, finallyKeyword.GetLocation(), finallyKeyword.ToString()));
         }
     }
 }

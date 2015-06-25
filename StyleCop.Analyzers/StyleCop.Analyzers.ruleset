@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <RuleSet Name="Rules for StyleCop.Analyzers" Description="Code analysis rules for StyleCop.Analyzers.csproj." ToolsVersion="14.0">
+  <Rules AnalyzerId="AsyncUsageAnalyzers" RuleNamespace="AsyncUsageAnalyzers">
+    <Rule Id="AvoidAsyncSuffix" Action="Error" />
+    <Rule Id="AvoidAsyncVoid" Action="Error" />
+    <Rule Id="UseAsyncSuffix" Action="Error" />
+    <Rule Id="UseConfigureAwait" Action="Error" />
+  </Rules>
   <Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
     <Rule Id="CA1001" Action="Warning" />
     <Rule Id="CA1009" Action="Warning" />
@@ -99,6 +105,7 @@
     <Rule Id="SA1411" Action="Error" />
     <Rule Id="SA1600" Action="None" />
     <Rule Id="SA1603" Action="Error" />
+    <Rule Id="SA1633" Action="Hidden" />
     <Rule Id="SA1642" Action="Error" />
     <Rule Id="SA1643" Action="Error" />
   </Rules>

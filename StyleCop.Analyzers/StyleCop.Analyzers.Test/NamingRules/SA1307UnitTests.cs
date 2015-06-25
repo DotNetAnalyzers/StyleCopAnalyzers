@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.NamingRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Analyzers.NamingRules;
@@ -11,7 +12,7 @@
     public class SA1307UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -30,7 +31,7 @@
         [InlineData("private readonly")]
         [InlineData("protected readonly")]
         [InlineData("protected internal readonly")]
-        public async Task TestThatDiagnosticIsNotReported(string modifiers)
+        public async Task TestThatDiagnosticIsNotReportedAsync(string modifiers)
         {
             var testCode = @"public class Foo
 {{
@@ -45,9 +46,7 @@ string Bar = """", car = """", Dar = """";
         [InlineData("public")]
         [InlineData("internal")]
         [InlineData("protected internal")]
-        [InlineData("public readonly")]
-        [InlineData("internal readonly")]
-        public async Task TestThatDiagnosticIsReported_SingleField(string modifiers)
+        public async Task TestThatDiagnosticIsReported_SingleFieldAsync(string modifiers)
         {
             var testCode = @"public class Foo
 {{
@@ -80,13 +79,11 @@ string Dar;
             await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers)).ConfigureAwait(false);
         }
 
-        [Theory(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Theory]
         [InlineData("public")]
         [InlineData("internal")]
         [InlineData("protected internal")]
-        [InlineData("public readonly")]
-        [InlineData("internal readonly")]
-        public async Task TestThatDiagnosticIsReported_MultipleFields(string modifiers)
+        public async Task TestThatDiagnosticIsReported_MultipleFieldsAsync(string modifiers)
         {
             var testCode = @"public class Foo
 {{
@@ -112,7 +109,7 @@ string Bar, Car, Dar;
         }
 
         [Fact]
-        public async Task TestFieldStartingWithAnUnderscore()
+        public async Task TestFieldStartingWithAnUnderscoreAsync()
         {
             // Makes sure SA1307 is not reported for fields starting with an underscore
             var testCode = @"public class Foo
@@ -124,7 +121,7 @@ string Bar, Car, Dar;
         }
 
         [Fact]
-        public async Task TestFieldPlacedInsideNativeMethodsClass()
+        public async Task TestFieldPlacedInsideNativeMethodsClassAsync()
         {
             var testCode = @"public class FooNativeMethods
 {
@@ -134,9 +131,9 @@ string Bar, Car, Dar;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1307AccessibleFieldsMustBeginWithUpperCaseLetter();
+            yield return new SA1307AccessibleFieldsMustBeginWithUpperCaseLetter();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

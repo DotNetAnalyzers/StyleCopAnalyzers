@@ -1,27 +1,27 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Text;
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace TestHelper
+﻿namespace TestHelper
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.Immutable;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Text;
+
     /// <summary>
     /// Class for turning strings into documents and getting the diagnostics on them.
     /// All methods are static.
     /// </summary>
     public abstract partial class DiagnosticVerifier
     {
-        private static readonly MetadataReference CorlibReference = MetadataReference.CreateFromAssembly(typeof(object).Assembly).WithAliases(ImmutableArray.Create("global", "corlib"));
-        private static readonly MetadataReference SystemReference = MetadataReference.CreateFromAssembly(typeof(System.Diagnostics.Debug).Assembly).WithAliases(ImmutableArray.Create("global", "system"));
-        private static readonly MetadataReference SystemCoreReference = MetadataReference.CreateFromAssembly(typeof(Enumerable).Assembly);
-        private static readonly MetadataReference CSharpSymbolsReference = MetadataReference.CreateFromAssembly(typeof(CSharpCompilation).Assembly);
-        private static readonly MetadataReference CodeAnalysisReference = MetadataReference.CreateFromAssembly(typeof(Compilation).Assembly);
+        private static readonly MetadataReference CorlibReference = MetadataReference.CreateFromFile(typeof(object).Assembly.Location).WithAliases(ImmutableArray.Create("global", "corlib"));
+        private static readonly MetadataReference SystemReference = MetadataReference.CreateFromFile(typeof(System.Diagnostics.Debug).Assembly.Location).WithAliases(ImmutableArray.Create("global", "system"));
+        private static readonly MetadataReference SystemCoreReference = MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location);
+        private static readonly MetadataReference CSharpSymbolsReference = MetadataReference.CreateFromFile(typeof(CSharpCompilation).Assembly.Location);
+        private static readonly MetadataReference CodeAnalysisReference = MetadataReference.CreateFromFile(typeof(Compilation).Assembly.Location);
 
         private static readonly string DefaultFilePathPrefix = "Test";
         private static readonly string CSharpDefaultFileExt = "cs";
@@ -38,25 +38,25 @@ namespace TestHelper
         /// <param name="sources">Classes in the form of strings.</param>
         /// <param name="language">The language the source classes are in. Values may be taken from the
         /// <see cref="LanguageNames"/> class.</param>
-        /// <param name="analyzer">The analyzer to be run on the sources.</param>
+        /// <param name="analyzers">The analyzers to be run on the sources.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>A collection of <see cref="Diagnostic"/>s that surfaced in the source code, sorted by
         /// <see cref="Diagnostic.Location"/>.</returns>
-        private static Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsAsync(string[] sources, string language, DiagnosticAnalyzer analyzer, CancellationToken cancellationToken)
+        private static Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsAsync(string[] sources, string language, ImmutableArray<DiagnosticAnalyzer> analyzers, CancellationToken cancellationToken)
         {
-            return GetSortedDiagnosticsFromDocumentsAsync(analyzer, GetDocuments(sources, language), cancellationToken);
+            return GetSortedDiagnosticsFromDocumentsAsync(analyzers, GetDocuments(sources, language), cancellationToken);
         }
 
         /// <summary>
         /// Given an analyzer and a collection of documents to apply it to, run the analyzer and gather an array of
         /// diagnostics found. The returned diagnostics are then ordered by location in the source documents.
         /// </summary>
-        /// <param name="analyzer">The analyzer to run on the documents.</param>
+        /// <param name="analyzers">The analyzer to run on the documents.</param>
         /// <param name="documents">The <see cref="Document"/>s that the analyzer will be run on.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>A collection of <see cref="Diagnostic"/>s that surfaced in the source code, sorted by
         /// <see cref="Diagnostic.Location"/>.</returns>
-        protected static async Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsFromDocumentsAsync(DiagnosticAnalyzer analyzer, Document[] documents, CancellationToken cancellationToken)
+        protected static async Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsFromDocumentsAsync(ImmutableArray<DiagnosticAnalyzer> analyzers, Document[] documents, CancellationToken cancellationToken)
         {
             var projects = new HashSet<Project>();
             foreach (var document in documents)
@@ -64,15 +64,35 @@ namespace TestHelper
                 projects.Add(document.Project);
             }
 
+            var supportedDiagnosticsSpecificOptions = new Dictionary<string, ReportDiagnostic>();
+            foreach (var analyzer in analyzers)
+            {
+                foreach (var diagnostic in analyzer.SupportedDiagnostics)
+                {
+                    // make sure the analyzers we are testing are enabled
+                    supportedDiagnosticsSpecificOptions[diagnostic.Id] = ReportDiagnostic.Default;
+                }
+            }
+
+            // Report exceptions during the analysis process as errors
+            supportedDiagnosticsSpecificOptions.Add("AD0001", ReportDiagnostic.Error);
+
             var diagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
             foreach (var project in projects)
             {
-                var compilation = await project.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
-                var compilationWithAnalyzers = compilation.WithAnalyzers(ImmutableArray.Create(analyzer), null, cancellationToken);
+                // update the project compilation options
+                var modifiedSpecificDiagnosticOptions = project.CompilationOptions.SpecificDiagnosticOptions.SetItems(supportedDiagnosticsSpecificOptions);
+                var modifiedCompilationOptions = project.CompilationOptions.WithSpecificDiagnosticOptions(modifiedSpecificDiagnosticOptions);
+                var processedProject = project.WithCompilationOptions(modifiedCompilationOptions);
+
+                var compilation = await processedProject.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
+                var compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, null, cancellationToken);
                 var compilerDiagnostics = compilation.GetDiagnostics(cancellationToken);
                 var compilerErrors = compilerDiagnostics.Where(i => i.Severity == DiagnosticSeverity.Error);
                 var diags = await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
-                foreach (var diag in diags.Concat(compilerErrors))
+                var allDiagnostics = await compilationWithAnalyzers.GetAllDiagnosticsAsync().ConfigureAwait(false);
+                var failureDiagnostics = allDiagnostics.Where(diagnostic => diagnostic.Id == "AD0001");
+                foreach (var diag in diags.Concat(compilerErrors).Concat(failureDiagnostics))
                 {
                     if (diag.Location == Location.None || diag.Location.IsInMetadata)
                     {
@@ -190,8 +210,8 @@ namespace TestHelper
 
         protected DiagnosticResult CSharpDiagnostic(string diagnosticId = null)
         {
-            DiagnosticAnalyzer analyzer = this.GetCSharpDiagnosticAnalyzer();
-            var supportedDiagnostics = analyzer.SupportedDiagnostics;
+            var analyzers = this.GetCSharpDiagnosticAnalyzers();
+            var supportedDiagnostics = analyzers.SelectMany(analyzer => analyzer.SupportedDiagnostics);
             if (diagnosticId == null)
             {
                 return new DiagnosticResult(supportedDiagnostics.Single());
@@ -200,6 +220,11 @@ namespace TestHelper
             {
                 return new DiagnosticResult(supportedDiagnostics.Single(i => i.Id == diagnosticId));
             }
+        }
+
+        protected DiagnosticResult CSharpDiagnostic(DiagnosticDescriptor descriptor)
+        {
+            return this.CSharpDiagnostic(descriptor.Id).WithMessageFormat(descriptor.MessageFormat);
         }
     }
 }

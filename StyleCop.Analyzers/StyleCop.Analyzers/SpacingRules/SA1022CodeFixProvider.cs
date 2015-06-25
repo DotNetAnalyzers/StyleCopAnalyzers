@@ -17,7 +17,7 @@
     /// <para>To fix a violation of this rule, ensure that the spacing around the positive sign follows the rule
     /// described in <see cref="SA1022PositiveSignsMustBeSpacedCorrectly"/>.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1022CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1022CodeFixProvider))]
     [Shared]
     public class SA1022CodeFixProvider : CodeFixProvider
     {
@@ -51,13 +51,12 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocumentAsync(context.Document, root, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1022CodeFix, t => GetTransformedDocumentAsync(context.Document, root, token)), diagnostic);
             }
         }
 
         private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxToken token)
         {
-
             bool precededBySpace;
             bool firstInLine;
             bool followsSpecialCharacter;

@@ -24,14 +24,14 @@
         /// The ID for diagnostics produced by the <see cref="SA1123DoNotPlaceRegionsWithinElements"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1123";
-        private const string Title = "Do not place regions within elements";
-        private const string MessageFormat = "Region must not be located within a code element.";
-        private const string Category = "StyleCop.CSharp.ReadabilityRules";
-        private const string Description = "The C# code contains a region within the body of a code element.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1123.html";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1123Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1123MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly string Category = "StyleCop.CSharp.ReadabilityRules";
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1123Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1123.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

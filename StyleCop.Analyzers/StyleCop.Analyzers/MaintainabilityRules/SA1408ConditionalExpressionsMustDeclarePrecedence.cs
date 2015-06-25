@@ -61,7 +61,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1408.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -91,11 +91,9 @@
                 if (binSyntax.Left is BinaryExpressionSyntax)
                 {
                     // Check if the operations are of the same kind
-
                     var left = (BinaryExpressionSyntax)binSyntax.Left;
                     if (left.OperatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken) || left.OperatorToken.IsKind(SyntaxKind.BarBarToken))
                     {
-
                         if (!this.IsSameFamily(binSyntax.OperatorToken, left.OperatorToken))
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptor, left.GetLocation()));
@@ -106,7 +104,6 @@
                 if (binSyntax.Right is BinaryExpressionSyntax)
                 {
                     // Check if the operations are of the same kind
-
                     var right = (BinaryExpressionSyntax)binSyntax.Right;
                     if (right.OperatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken) || right.OperatorToken.IsKind(SyntaxKind.BarBarToken))
                     {

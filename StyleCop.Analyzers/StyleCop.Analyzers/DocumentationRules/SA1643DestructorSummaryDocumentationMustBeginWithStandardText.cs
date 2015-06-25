@@ -58,7 +58,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1643.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -74,7 +74,7 @@
         /// followed by the second element of this array.
         /// </value>
         public static ImmutableArray<string> DestructorStandardText { get; } = ImmutableArray.Create("Finalizes an instance of the ", " class.");
-        
+
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {

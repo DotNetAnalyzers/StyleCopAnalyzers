@@ -42,6 +42,7 @@
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1119";
+
         /// <summary>
         /// The ID for the helper diagnostic used to mark the parentheses tokens surrounding the expression with
         /// <see cref="WellKnownDiagnosticTags.Unnecessary"/>.
@@ -54,10 +55,10 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1119.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly DiagnosticDescriptor ParenthesisDescriptor =
-            new DiagnosticDescriptor(ParenthesesDiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Hidden, false, Description, HelpLink, customTags: new[] { WellKnownDiagnosticTags.Unnecessary, WellKnownDiagnosticTags.NotConfigurable });
+            new DiagnosticDescriptor(ParenthesesDiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Hidden, AnalyzerConstants.EnabledByDefault, Description, HelpLink, customTags: new[] { WellKnownDiagnosticTags.Unnecessary, WellKnownDiagnosticTags.NotConfigurable });
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor, ParenthesisDescriptor);
@@ -74,7 +75,16 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleParenthesizedExpression, SyntaxKind.ParenthesizedExpression);
+            context.RegisterCompilationStartAction(startContext =>
+            {
+                // Only register the syntax node action if the diagnostic is enabled. This is important because
+                // otherwise the diagnostic for fading out the parenthesis is still active, even if the main diagnostic
+                // is disabled
+                if (startContext.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(Descriptor.Id) != Microsoft.CodeAnalysis.ReportDiagnostic.Suppress)
+                {
+                    startContext.RegisterSyntaxNodeActionHonorExclusions(this.HandleParenthesizedExpression, SyntaxKind.ParenthesizedExpression);
+                }
+            });
         }
 
         private void HandleParenthesizedExpression(SyntaxNodeAnalysisContext context)

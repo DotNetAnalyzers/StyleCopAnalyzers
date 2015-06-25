@@ -1,23 +1,24 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.Diagnostics;
-using StyleCop.Analyzers.NamingRules;
-using TestHelper;
-using Xunit;
-
-namespace StyleCop.Analyzers.Test.NamingRules
+﻿namespace StyleCop.Analyzers.Test.NamingRules
 {
+    using System.Collections.Generic;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.NamingRules;
+    using TestHelper;
+    using Xunit;
+
     public class SA1303UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestConstFieldStartingWithLowerCase()
+        public async Task TestConstFieldStartingWithLowerCaseAsync()
         {
             var testCode = @"public class Foo
 {
@@ -30,7 +31,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [Fact]
-        public async Task TestConstFieldStartingWithLowerCaseNativeMethodsExampleOne()
+        public async Task TestConstFieldStartingWithLowerCaseNativeMethodsExampleOneAsync()
         {
             var testCode = @"public class NativeMethods    
 {        
@@ -41,7 +42,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [Fact]
-        public async Task TestConstFieldStartingWithLowerCaseNativeMethodsExampleTwo()
+        public async Task TestConstFieldStartingWithLowerCaseNativeMethodsExampleTwoAsync()
         {
             var testCode = @"public class MyNativeMethods    
 {        
@@ -52,7 +53,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [Fact]
-        public async Task TestConstFieldStartingWithLowerCaseInnerClassInNativeMethods()
+        public async Task TestConstFieldStartingWithLowerCaseInnerClassInNativeMethodsAsync()
         {
             var testCode = @"public class NativeMethods    
 {        
@@ -66,7 +67,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [Fact]
-        public async Task TestConstFieldStartingWithLowerCaseInnerInnerClassInNativeMethods()
+        public async Task TestConstFieldStartingWithLowerCaseInnerInnerClassInNativeMethodsAsync()
         {
             var testCode = @"public class NativeMethods    
 {        
@@ -83,7 +84,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [Fact]
-        public async Task TestConstFieldStartingWithLowerCaseNativeMethodsIncorrectName()
+        public async Task TestConstFieldStartingWithLowerCaseNativeMethodsIncorrectNameAsync()
         {
             var testCode = @"public class MyNativeMethodsClass    
 {        
@@ -96,7 +97,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [Fact]
-        public async Task TestConstFieldStartingWithLowerCaseInnerInnerClassInNativeMethodsIncorrectName()
+        public async Task TestConstFieldStartingWithLowerCaseInnerInnerClassInNativeMethodsIncorrectNameAsync()
         {
             var testCode = @"
 namespace Test
@@ -119,7 +120,7 @@ namespace Test
         }
 
         [Fact]
-        public async Task TestConstFieldStartingWithUpperCase()
+        public async Task TestConstFieldStartingWithUpperCaseAsync()
         {
             var testCode = @"public class Foo
 {
@@ -130,7 +131,7 @@ namespace Test
         }
 
         [Fact]
-        public async Task TestConstFieldStartingWithUnderscore()
+        public async Task TestConstFieldStartingWithUnderscoreAsync()
         {
             var testCode = @"public class Foo
 {
@@ -142,7 +143,7 @@ namespace Test
         }
 
         [Fact]
-        public async Task TestFieldWhichIsNotConstStartingWithLowerCase()
+        public async Task TestFieldWhichIsNotConstStartingWithLowerCaseAsync()
         {
             var testCode = @"public class Foo
 {
@@ -152,9 +153,9 @@ namespace Test
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1303ConstFieldNamesMustBeginWithUpperCaseLetter();
+            yield return new SA1303ConstFieldNamesMustBeginWithUpperCaseLetter();
         }
     }
 }

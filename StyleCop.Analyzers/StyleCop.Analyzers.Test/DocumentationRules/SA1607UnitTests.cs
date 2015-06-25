@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.DocumentationRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -8,12 +9,12 @@
     using Xunit;
 
     /// <summary>
-    /// This class contains unit tests for <see cref="SA1607PartialElementDocumentationMustHaveSummaryText"/>-
+    /// This class contains unit tests for <see cref="SA1607PartialElementDocumentationMustHaveSummaryText"/>.
     /// </summary>
     public class SA1607UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -23,7 +24,7 @@
         [InlineData("class")]
         [InlineData("struct")]
         [InlineData("interface")]
-        public async Task TestTypeNoDocumentation(string typeName)
+        public async Task TestTypeNoDocumentationAsync(string typeName)
         {
             var testCode = @"
 partial {0} TypeName
@@ -36,7 +37,7 @@ partial {0} TypeName
         [InlineData("class")]
         [InlineData("struct")]
         [InlineData("interface")]
-        public async Task TestTypeWithSummaryDocumentation(string typeName)
+        public async Task TestTypeWithSummaryDocumentationAsync(string typeName)
         {
             var testCode = @"
 /// <summary>
@@ -52,7 +53,7 @@ partial {0} TypeName
         [InlineData("class")]
         [InlineData("struct")]
         [InlineData("interface")]
-        public async Task TestTypeWithContentDocumentation(string typeName)
+        public async Task TestTypeWithContentDocumentationAsync(string typeName)
         {
             var testCode = @"
 /// <content>
@@ -68,7 +69,7 @@ partial {0} TypeName
         [InlineData("class")]
         [InlineData("struct")]
         [InlineData("interface")]
-        public async Task TestTypeWithInheritedDocumentation(string typeName)
+        public async Task TestTypeWithInheritedDocumentationAsync(string typeName)
         {
             var testCode = @"
 /// <inheritdoc/>
@@ -82,7 +83,7 @@ partial {0} TypeName
         [InlineData("class")]
         [InlineData("struct")]
         [InlineData("interface")]
-        public async Task TestTypeWithoutSummaryDocumentation(string typeName)
+        public async Task TestTypeWithoutSummaryDocumentationAsync(string typeName)
         {
             var testCode = @"
 /// <summary>
@@ -102,7 +103,7 @@ TypeName
         [InlineData("class")]
         [InlineData("struct")]
         [InlineData("interface")]
-        public async Task TestTypeWithoutContentDocumentation(string typeName)
+        public async Task TestTypeWithoutContentDocumentationAsync(string typeName)
         {
             var testCode = @"
 /// <content>
@@ -119,7 +120,7 @@ TypeName
         }
 
         [Fact]
-        public async Task TestMethodNoDocumentation()
+        public async Task TestMethodNoDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -133,7 +134,7 @@ public partial class ClassName
         }
 
         [Fact]
-        public async Task TestMethodWithSummaryDocumentation()
+        public async Task TestMethodWithSummaryDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -150,7 +151,7 @@ public partial class ClassName
         }
 
         [Fact]
-        public async Task TestMethodWithContentDocumentation()
+        public async Task TestMethodWithContentDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -167,7 +168,7 @@ public partial class ClassName
         }
 
         [Fact]
-        public async Task TestMethodWithInheritedDocumentation()
+        public async Task TestMethodWithInheritedDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -182,7 +183,7 @@ public partial class ClassName
         }
 
         [Fact]
-        public async Task TestMethodWithoutSummaryDocumentation()
+        public async Task TestMethodWithoutSummaryDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -202,7 +203,7 @@ public partial class ClassName
         }
 
         [Fact]
-        public async Task TestMethodWithoutContentDocumentation()
+        public async Task TestMethodWithoutContentDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -221,9 +222,9 @@ public partial class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1607PartialElementDocumentationMustHaveSummaryText();
+            yield return new SA1607PartialElementDocumentationMustHaveSummaryText();
         }
     }
 }

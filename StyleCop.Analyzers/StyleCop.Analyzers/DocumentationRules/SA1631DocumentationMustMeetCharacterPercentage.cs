@@ -24,7 +24,7 @@
     /// /// &lt;summary&gt;
     /// /// @)$(*A name--------
     /// /// &lt;/summary&gt;
-    /// public class Name    
+    /// public class Name
     /// {
     ///     ...
     /// }

@@ -14,7 +14,7 @@
     /// <para>A violation of this rule occurs when a clause within a query expression does not begin on the same line as
     /// the previous clause, or on the line after the query clause. For example:</para>
     /// <code language="csharp">
-    /// object x = select a in b 
+    /// object x = select a in b
     ///     from c;
     /// </code>
     /// <para>The query clause can correctly be written as:</para>
@@ -23,9 +23,9 @@
     /// </code>
     /// <para>or:</para>
     /// <code language="csharp">
-    /// object x = 
-    ///     select a 
-    ///     in b 
+    /// object x =
+    ///     select a
+    ///     in b
     ///     from c;
     /// </code>
     /// </remarks>
@@ -36,14 +36,14 @@
         /// The ID for diagnostics produced by the <see cref="SA1102QueryClauseMustFollowPreviousClause"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1102";
-        private const string Title = "Query clause must follow previous clause";
-        private const string MessageFormat = "Query clause must follow previous clause.";
-        private const string Category = "StyleCop.CSharp.ReadabilityRules";
-        private const string Description = "A C# query clause does not begin on the same line as the previous clause, or on the next line.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1102.html";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1102Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1102MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly string Category = "StyleCop.CSharp.ReadabilityRules";
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1102Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1102.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

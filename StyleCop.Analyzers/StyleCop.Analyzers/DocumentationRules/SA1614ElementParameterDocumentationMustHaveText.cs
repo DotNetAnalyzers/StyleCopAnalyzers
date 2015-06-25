@@ -36,7 +36,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1614.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -63,7 +63,7 @@
 
             var name = emptyElement?.StartTag?.Name;
 
-            if (string.Equals(name.ToString(), XmlCommentHelper.ParamTag) && XmlCommentHelper.IsConsideredEmpty(emptyElement))
+            if (string.Equals(name.ToString(), XmlCommentHelper.ParamXmlTag) && XmlCommentHelper.IsConsideredEmpty(emptyElement))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, emptyElement.GetLocation()));
             }
@@ -73,7 +73,7 @@
         {
             XmlEmptyElementSyntax emptyElement = context.Node as XmlEmptyElementSyntax;
 
-            if (string.Equals(emptyElement?.Name.ToString(), XmlCommentHelper.ParamTag))
+            if (string.Equals(emptyElement?.Name.ToString(), XmlCommentHelper.ParamXmlTag))
             {
                 // <param .../> is empty.
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, emptyElement.GetLocation()));

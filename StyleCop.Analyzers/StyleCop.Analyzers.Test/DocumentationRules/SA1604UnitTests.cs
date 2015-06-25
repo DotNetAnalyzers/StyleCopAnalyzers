@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.DocumentationRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -8,12 +9,12 @@
     using Xunit;
 
     /// <summary>
-    /// This class contains unit tests for <see cref="SA1604ElementDocumentationMustHaveSummary"/>-
+    /// This class contains unit tests for <see cref="SA1604ElementDocumentationMustHaveSummary"/>.
     /// </summary>
     public class SA1604UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -24,7 +25,7 @@
         [InlineData("class")]
         [InlineData("struct")]
         [InlineData("interface")]
-        public async Task TestTypeNoDocumentation(string typeName)
+        public async Task TestTypeNoDocumentationAsync(string typeName)
         {
             var testCode = @"
 {0} TypeName
@@ -38,7 +39,7 @@
         [InlineData("class")]
         [InlineData("struct")]
         [InlineData("interface")]
-        public async Task TestTypeWithDocumentation(string typeName)
+        public async Task TestTypeWithDocumentationAsync(string typeName)
         {
             var testCode = @"
 /// <summary>
@@ -55,7 +56,7 @@
         [InlineData("class")]
         [InlineData("struct")]
         [InlineData("interface")]
-        public async Task TestTypeWithInheritedDocumentation(string typeName)
+        public async Task TestTypeWithInheritedDocumentationAsync(string typeName)
         {
             var testCode = @"
 /// <inheritdoc/>
@@ -70,7 +71,7 @@
         [InlineData("class")]
         [InlineData("struct")]
         [InlineData("interface")]
-        public async Task TestTypeWithoutDocumentation(string typeName)
+        public async Task TestTypeWithoutDocumentationAsync(string typeName)
         {
             var testCode = @"
 ///
@@ -85,7 +86,7 @@ TypeName
         }
 
         [Fact]
-        public async Task TestDelegateNoDocumentation()
+        public async Task TestDelegateNoDocumentationAsync()
         {
             var testCode = @"
 public delegate
@@ -94,7 +95,7 @@ void TypeName();";
         }
 
         [Fact]
-        public async Task TestDelegateWithDocumentation()
+        public async Task TestDelegateWithDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -106,7 +107,7 @@ void TypeName();";
         }
 
         [Fact]
-        public async Task TestDelegateWithInheritedDocumentation()
+        public async Task TestDelegateWithInheritedDocumentationAsync()
         {
             var testCode = @"
 /// <inheritdoc/>
@@ -116,7 +117,7 @@ void TypeName();";
         }
 
         [Fact]
-        public async Task TestDelegateWithoutDocumentation()
+        public async Task TestDelegateWithoutDocumentationAsync()
         {
             var testCode = @"
 ///
@@ -129,7 +130,7 @@ void TypeName();";
         }
 
         [Fact]
-        public async Task TestMethodNoDocumentation()
+        public async Task TestMethodNoDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -143,7 +144,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestMethodWithDocumentation()
+        public async Task TestMethodWithDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -160,7 +161,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestMethodWithInheritedDocumentation()
+        public async Task TestMethodWithInheritedDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -175,7 +176,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestMethodWithoutDocumentation()
+        public async Task TestMethodWithoutDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -193,7 +194,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestConstructorNoDocumentation()
+        public async Task TestConstructorNoDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -207,7 +208,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestConstructorWithDocumentation()
+        public async Task TestConstructorWithDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -224,7 +225,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestConstructorWithInheritedDocumentation()
+        public async Task TestConstructorWithInheritedDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -239,7 +240,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestConstructorWithoutDocumentation()
+        public async Task TestConstructorWithoutDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -257,7 +258,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestDestructorNoDocumentation()
+        public async Task TestDestructorNoDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -271,7 +272,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestDestructorWithDocumentation()
+        public async Task TestDestructorWithDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -288,7 +289,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestDestructorWithInheritedDocumentation()
+        public async Task TestDestructorWithInheritedDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -303,7 +304,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestDestructorWithoutDocumentation()
+        public async Task TestDestructorWithoutDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -321,7 +322,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestPropertyWithDocumentation()
+        public async Task TestPropertyWithDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -338,7 +339,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestPropertyWithInheritedDocumentation()
+        public async Task TestPropertyWithInheritedDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -353,7 +354,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestPropertyNoDocumentation()
+        public async Task TestPropertyNoDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -367,7 +368,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestPropertyWithoutDocumentation()
+        public async Task TestPropertyWithoutDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -385,7 +386,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestIndexerWithDocumentation()
+        public async Task TestIndexerWithDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -402,7 +403,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestIndexerWithInheritedDocumentation()
+        public async Task TestIndexerWithInheritedDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -417,7 +418,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestIndexerNoDocumentation()
+        public async Task TestIndexerNoDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -431,7 +432,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestIndexerWithoutDocumentation()
+        public async Task TestIndexerWithoutDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -449,7 +450,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestFieldWithDocumentation()
+        public async Task TestFieldWithDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -466,7 +467,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestFieldWithInheritedDocumentation()
+        public async Task TestFieldWithInheritedDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -481,7 +482,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestFieldNoDocumentation()
+        public async Task TestFieldNoDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -495,7 +496,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestFieldWithoutDocumentation()
+        public async Task TestFieldWithoutDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -513,7 +514,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestEventWithDocumentation()
+        public async Task TestEventWithDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -530,7 +531,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestEventWithInheritedDocumentation()
+        public async Task TestEventWithInheritedDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -545,7 +546,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestEventNoDocumentation()
+        public async Task TestEventNoDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -559,7 +560,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestEventWithoutDocumentation()
+        public async Task TestEventWithoutDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -577,7 +578,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestEventPropertyWithDocumentation()
+        public async Task TestEventPropertyWithDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -594,7 +595,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestEventPropertyWithInheritedDocumentation()
+        public async Task TestEventPropertyWithInheritedDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -609,7 +610,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestEventPropertyNoDocumentation()
+        public async Task TestEventPropertyNoDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -623,7 +624,7 @@ public class ClassName
         }
 
         [Fact]
-        public async Task TestEventPropertyWithoutDocumentation()
+        public async Task TestEventPropertyWithoutDocumentationAsync()
         {
             var testCode = @"
 /// <summary>
@@ -640,9 +641,9 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1604ElementDocumentationMustHaveSummary();
+            yield return new SA1604ElementDocumentationMustHaveSummary();
         }
     }
 }

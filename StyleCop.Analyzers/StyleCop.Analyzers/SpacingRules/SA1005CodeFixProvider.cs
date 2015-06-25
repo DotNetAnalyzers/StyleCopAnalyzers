@@ -16,7 +16,7 @@
     /// being used to comment out a line of code, ensure that the comment begins with four forward slashes, in which
     /// case the leading space can be omitted.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1005CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1005CodeFixProvider))]
     [Shared]
     public class SA1005CodeFixProvider : CodeFixProvider
     {
@@ -50,7 +50,7 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Fix spacing", t => GetTransformedDocumentAsync(context.Document, root, trivia)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1005CodeFix, t => GetTransformedDocumentAsync(context.Document, root, trivia)), diagnostic);
             }
         }
 

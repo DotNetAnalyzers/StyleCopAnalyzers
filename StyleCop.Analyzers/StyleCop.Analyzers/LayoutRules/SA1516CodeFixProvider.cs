@@ -13,7 +13,7 @@
     /// <summary>
     /// Implements a code fix for <see cref="SA1516ElementsMustBeSeparatedByBlankLine"/>.
     /// </summary>
-    [ExportCodeFixProvider(nameof(SA1516CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1516CodeFixProvider))]
     [Shared]
     public class SA1516CodeFixProvider : CodeFixProvider
     {
@@ -41,7 +41,7 @@
                 var leadingTrivia = node?.GetLeadingTrivia();
                 if (leadingTrivia != null)
                 {
-                    context.RegisterCodeFix(CodeAction.Create("Insert new line", token => GetTransformedDocumentAsync(context, syntaxRoot, node, (SyntaxTriviaList)leadingTrivia)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1516CodeFix, token => GetTransformedDocumentAsync(context, syntaxRoot, node, (SyntaxTriviaList)leadingTrivia)), diagnostic);
                 }
             }
         }
@@ -56,7 +56,6 @@
             var newDocument = context.Document.WithSyntaxRoot(newSyntaxRoot);
 
             return Task.FromResult(newDocument);
-
         }
 
         private SyntaxNode GetRelevantNode(SyntaxNode innerNode)

@@ -1,16 +1,17 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeActions;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Formatting;
-using Xunit;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace TestHelper
+﻿namespace TestHelper
 {
+    using System.Collections.Generic;
+    using System.Collections.Immutable;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CodeActions;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Formatting;
+    using Xunit;
+
     /// <summary>
     /// Superclass of all unit tests made for diagnostics with code fixes.
     /// Contains methods used to verify correctness of code fixes.
@@ -37,7 +38,7 @@ namespace TestHelper
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         protected Task VerifyCSharpFixAsync(string oldSource, string newSource, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return this.VerifyFixAsync(LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzer(), this.GetCSharpCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics, cancellationToken);
+            return this.VerifyFixAsync(LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), this.GetCSharpCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics, cancellationToken);
         }
 
         /// <summary>
@@ -52,7 +53,7 @@ namespace TestHelper
         /// </summary>
         /// <param name="language">The language the source classes are in. Values may be taken from the
         /// <see cref="LanguageNames"/> class.</param>
-        /// <param name="analyzer">The analyzer to be applied to the source code.</param>
+        /// <param name="analyzers">The analyzer to be applied to the source code.</param>
         /// <param name="codeFixProvider">The code fix to be applied to the code wherever the relevant
         /// <see cref="Diagnostic"/> is found.</param>
         /// <param name="oldSource">A class in the form of a string before the code fix was applied to it.</param>
@@ -62,10 +63,10 @@ namespace TestHelper
         /// fix introduces other warnings after being applied.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        private async Task VerifyFixAsync(string language, DiagnosticAnalyzer analyzer, CodeFixProvider codeFixProvider, string oldSource, string newSource, int? codeFixIndex, bool allowNewCompilerDiagnostics, CancellationToken cancellationToken)
+        private async Task VerifyFixAsync(string language, ImmutableArray<DiagnosticAnalyzer> analyzers, CodeFixProvider codeFixProvider, string oldSource, string newSource, int? codeFixIndex, bool allowNewCompilerDiagnostics, CancellationToken cancellationToken)
         {
             var document = CreateDocument(oldSource, language);
-            var analyzerDiagnostics = await GetSortedDiagnosticsFromDocumentsAsync(analyzer, new[] { document }, cancellationToken).ConfigureAwait(false);
+            var analyzerDiagnostics = await GetSortedDiagnosticsFromDocumentsAsync(analyzers, new[] { document }, cancellationToken).ConfigureAwait(false);
             var compilerDiagnostics = await GetCompilerDiagnosticsAsync(document, cancellationToken).ConfigureAwait(false);
             var attempts = analyzerDiagnostics.Length;
 
@@ -87,7 +88,7 @@ namespace TestHelper
                 }
 
                 document = await ApplyFixAsync(document, actions.ElementAt(0), cancellationToken).ConfigureAwait(false);
-                analyzerDiagnostics = await GetSortedDiagnosticsFromDocumentsAsync(analyzer, new[] { document }, cancellationToken).ConfigureAwait(false);
+                analyzerDiagnostics = await GetSortedDiagnosticsFromDocumentsAsync(analyzers, new[] { document }, cancellationToken).ConfigureAwait(false);
 
                 // check if there are analyzer diagnostics left after the code fix
                 if (!analyzerDiagnostics.Any())
@@ -105,10 +106,11 @@ namespace TestHelper
                 document = await Formatter.FormatAsync(document, Formatter.Annotation, cancellationToken: cancellationToken).ConfigureAwait(false);
                 newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, await GetCompilerDiagnosticsAsync(document, cancellationToken).ConfigureAwait(false));
 
-                Assert.True(false,
+                string message =
                     string.Format("Fix introduced new compiler diagnostics:\r\n{0}\r\n\r\nNew document:\r\n{1}\r\n",
                         string.Join("\r\n", newCompilerDiagnostics.Select(d => d.ToString())),
-                        (await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false)).ToFullString()));
+                        (await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false)).ToFullString());
+                Assert.True(false, message);
             }
 
             // after applying all of the code fixes, compare the resulting string to the inputted one

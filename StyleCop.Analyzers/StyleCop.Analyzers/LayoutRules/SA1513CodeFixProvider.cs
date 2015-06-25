@@ -9,6 +9,7 @@
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1513ClosingCurlyBracketMustBeFollowedByBlankLine"/>.
@@ -16,7 +17,7 @@
     /// <remarks>
     /// <para>To fix a violation of this rule, ensure a blank line follows closing curly brackets.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1513CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1513CodeFixProvider))]
     [Shared]
     public class SA1513CodeFixProvider : CodeFixProvider
     {
@@ -37,10 +38,10 @@
         {
             foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                context.RegisterCodeFix(CodeAction.Create("Insert blank line after curly brace", token => GetTransformedDocumentAsync(context.Document, diagnostic, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1513CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token)), diagnostic);
             }
 
-            return Task.FromResult(true);
+            return SpecializedTasks.CompletedTask;
         }
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)

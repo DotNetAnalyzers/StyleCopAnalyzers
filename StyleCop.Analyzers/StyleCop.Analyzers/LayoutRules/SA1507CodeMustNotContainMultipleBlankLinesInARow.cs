@@ -20,12 +20,12 @@
     /// <code language="csharp">
     /// public bool Enabled
     /// {
-    ///     get 
-    ///     { 
+    ///     get
+    ///     {
     ///         Console.WriteLine("Getting the enabled flag.");
-    /// 
-    /// 
-    ///         return this.enabled; 
+    ///
+    ///
+    ///         return this.enabled;
     ///     }
     /// }
     /// </code>
@@ -48,7 +48,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1507.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

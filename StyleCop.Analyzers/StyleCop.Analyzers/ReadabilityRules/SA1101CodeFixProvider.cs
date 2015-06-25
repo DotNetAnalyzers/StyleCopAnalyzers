@@ -17,7 +17,7 @@
     /// <para>To fix a violation of this rule, insert the <c>this.</c> prefix before the call to the class
     /// member.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1101CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1101CodeFixProvider))]
     [Shared]
     public class SA1101CodeFixProvider : CodeFixProvider
     {
@@ -51,7 +51,7 @@
                     return;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Prefix reference with 'this.'", token => GetTransformedDocumentAsync(context.Document, root, diagnostic, node)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(ReadabilityResources.SA1101CodeFix, token => GetTransformedDocumentAsync(context.Document, root, diagnostic, node)), diagnostic);
             }
         }
 

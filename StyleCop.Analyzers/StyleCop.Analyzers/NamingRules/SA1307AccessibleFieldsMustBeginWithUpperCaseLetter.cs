@@ -35,7 +35,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1307.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -61,14 +61,20 @@
             FieldDeclarationSyntax declaration = context.Node as FieldDeclarationSyntax;
             if (declaration != null && declaration.Declaration != null)
             {
+                if (declaration.Modifiers.Any(SyntaxKind.ConstKeyword) || declaration.Modifiers.Any(SyntaxKind.ReadOnlyKeyword))
+                {
+                    // These are reported as SA1303 or SA1304, respectively
+                    return;
+                }
+
                 if (declaration.Modifiers.Any(SyntaxKind.PublicKeyword) || declaration.Modifiers.Any(SyntaxKind.InternalKeyword))
                 {
                     foreach (VariableDeclaratorSyntax declarator in declaration.Declaration.Variables)
                     {
                         string name = declarator.Identifier.ToString();
 
-                        if (!string.IsNullOrEmpty(name) 
-                            && char.IsLower(name[0]) 
+                        if (!string.IsNullOrEmpty(name)
+                            && char.IsLower(name[0])
                             && !NamedTypeHelpers.IsContainedInNativeMethodsClass(declaration))
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptor, declarator.Identifier.GetLocation(), name));

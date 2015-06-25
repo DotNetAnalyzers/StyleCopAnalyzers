@@ -6,7 +6,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
-    
+
     /// <summary>
     /// The <c>&lt;summary&gt;</c> tag within an element's XML header documentation contains the default text generated
     /// by Visual Studio during the creation of the element.
@@ -42,7 +42,7 @@
         private const string DefaultText = "Summary description for";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -68,7 +68,7 @@
 
             if (documentationTrivia != null)
             {
-                var summaryElement = XmlCommentHelper.GetTopLevelElement(documentationTrivia, XmlCommentHelper.SummaryXmlTag) as XmlElementSyntax;
+                var summaryElement = documentationTrivia.Content.GetFirstXmlElement(XmlCommentHelper.SummaryXmlTag) as XmlElementSyntax;
 
                 if (summaryElement != null)
                 {

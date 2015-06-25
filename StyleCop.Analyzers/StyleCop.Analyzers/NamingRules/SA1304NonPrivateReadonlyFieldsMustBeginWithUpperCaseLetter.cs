@@ -39,7 +39,7 @@
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning,
-                true, Description, HelpLink);
+                AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -76,6 +76,17 @@
             {
                 // this analyzer only applies to non-private fields
                 return;
+            }
+
+            if (!syntax.Modifiers.Any(SyntaxKind.InternalKeyword))
+            {
+                // SA1307 is taken precedence here. SA1307 should be reported if the field is accessible.
+                // So if SA1307 is enabled this diagnostic will only be reported for internal fields.
+                if (context.SemanticModel.Compilation.Options.SpecificDiagnosticOptions
+                    .GetValueOrDefault(SA1307AccessibleFieldsMustBeginWithUpperCaseLetter.DiagnosticId, ReportDiagnostic.Default) != ReportDiagnostic.Suppress)
+                {
+                    return;
+                }
             }
 
             var variables = syntax.Declaration?.Variables;

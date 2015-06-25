@@ -1,6 +1,7 @@
 ﻿namespace StyleCop.Analyzers.NamingRules
 {
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -38,7 +39,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1300.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -57,7 +58,6 @@
         {
             // Note: Interfaces are handled by SA1302
             // Note: Fields are handled by SA1303 through SA1311
-
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleNamespaceDeclarationSyntax, SyntaxKind.NamespaceDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleClassDeclarationSyntax, SyntaxKind.ClassDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleEnumDeclarationSyntax, SyntaxKind.EnumDeclaration);
@@ -122,7 +122,14 @@
 
         private void HandleEventDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            this.CheckElementNameToken(context, ((EventDeclarationSyntax)context.Node).Identifier);
+            var eventDeclaration = (EventDeclarationSyntax)context.Node;
+            if (eventDeclaration.Modifiers.Any(SyntaxKind.OverrideKeyword))
+            {
+                // Don't analyze an overridden event.
+                return;
+            }
+
+            this.CheckElementNameToken(context, eventDeclaration.Identifier);
         }
 
         private void HandleEventFieldDeclarationSyntax(SyntaxNodeAnalysisContext context)
@@ -147,12 +154,26 @@
 
         private void HandleMethodDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            this.CheckElementNameToken(context, ((MethodDeclarationSyntax)context.Node).Identifier);
+            var methodDeclaration = (MethodDeclarationSyntax)context.Node;
+            if (methodDeclaration.Modifiers.Any(SyntaxKind.OverrideKeyword))
+            {
+                // Don't analyze an overridden method.
+                return;
+            }
+
+            this.CheckElementNameToken(context, methodDeclaration.Identifier);
         }
 
         private void HandlePropertyDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            this.CheckElementNameToken(context, ((PropertyDeclarationSyntax)context.Node).Identifier);
+            var propertyDeclaration = (PropertyDeclarationSyntax)context.Node;
+            if (propertyDeclaration.Modifiers.Any(SyntaxKind.OverrideKeyword))
+            {
+                // Don't analyze an overridden property.
+                return;
+            }
+
+            this.CheckElementNameToken(context, propertyDeclaration.Identifier);
         }
 
         private void CheckElementNameToken(SyntaxNodeAnalysisContext context, SyntaxToken identifier)
@@ -180,6 +201,12 @@
             }
 
             if (NamedTypeHelpers.IsContainedInNativeMethodsClass(context.Node))
+            {
+                return;
+            }
+
+            var symbolInfo = context.SemanticModel.GetDeclaredSymbol(identifier.Parent);
+            if (symbolInfo != null && NamedTypeHelpers.IsImplementingAnInterfaceMember(symbolInfo))
             {
                 return;
             }

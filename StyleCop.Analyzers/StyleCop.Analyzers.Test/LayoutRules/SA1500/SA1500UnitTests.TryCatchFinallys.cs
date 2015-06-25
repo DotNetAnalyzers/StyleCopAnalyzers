@@ -9,7 +9,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
-    public partial class SA1500UnitTests : DiagnosticVerifier
+    public partial class SA1500UnitTests
     {
         /// <summary>
         /// Verifies that no diagnostics are reported for the valid try ... catch ... finally statements defined in this test.
@@ -19,7 +19,7 @@
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestTryCatchFinallyValid()
+        public async Task TestTryCatchFinallyValidAsync()
         {
             var testCode = @"using System;
 
@@ -90,7 +90,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestTryCatchFinallyInvalid()
+        public async Task TestTryCatchFinallyInvalidAsync()
         {
             var testCode = @"using System;
 
@@ -159,16 +159,109 @@ public class Foo
     }
 }";
 
-            var expectedDiagnostics = new[]
+            var fixedTestCode = @"using System;
+
+public class Foo
+{
+    private void Bar()
+    {
+        var x = 0;
+
+        // Invalid try ... catch ... finally #1
+        try
+        {
+        }
+        catch (Exception)
+        {
+        }
+        finally
+        {
+        }
+
+        // Invalid try ... catch ... finally #2
+        try
+        {
+            x += 1;
+        }
+        catch (Exception)
+        {
+            x += 2;
+        }
+        finally
+        {
+            x += 3;
+        }
+
+        // Invalid try ... catch ... finally #3 (Valid only for SA1500)
+        try
+        {
+            x += 1;
+        }
+        catch (Exception)
+        {
+            x += 2;
+        }
+        finally
+        {
+            x += 3;
+        }
+
+        // Invalid try ... catch ... finally #4
+        try
+        {
+            x += 1;
+        }
+        catch (Exception)
+        {
+            x += 2;
+        }
+        finally
+        {
+            x += 3;
+        }
+
+        // Invalid try ... catch ... finally #5 (Valid only for SA1500)
+        try
+        {
+            x += 1;
+        }
+        catch (Exception)
+        {
+            x += 2;
+        }
+        finally
+        {
+            x += 3;
+        }
+
+        // Invalid try ... catch ... finally #6 (Valid only for SA1500)
+        try
+        {
+            x += 1;
+        }
+        catch (Exception)
+        {
+            x += 2;
+        }
+        finally
+        {
+            x += 3;
+        }
+    }
+}";
+
+            DiagnosticResult[] expectedDiagnostics =
             {
                 // Invalid try ... catch ... finally #1
                 this.CSharpDiagnostic().WithLocation(10, 13),
                 this.CSharpDiagnostic().WithLocation(12, 27),
                 this.CSharpDiagnostic().WithLocation(14, 17),
+
                 // Invalid try ... catch ... finally #2
                 this.CSharpDiagnostic().WithLocation(18, 13),
                 this.CSharpDiagnostic().WithLocation(21, 27),
                 this.CSharpDiagnostic().WithLocation(24, 17),
+
                 // Invalid try ... catch ... finally #3
                 this.CSharpDiagnostic().WithLocation(29, 13),
                 this.CSharpDiagnostic().WithLocation(30, 21),
@@ -176,14 +269,17 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(32, 21),
                 this.CSharpDiagnostic().WithLocation(33, 17),
                 this.CSharpDiagnostic().WithLocation(34, 21),
+
                 // Invalid try ... catch ... finally #4
                 this.CSharpDiagnostic().WithLocation(37, 13),
                 this.CSharpDiagnostic().WithLocation(39, 27),
                 this.CSharpDiagnostic().WithLocation(41, 17),
+
                 // Invalid try ... catch ... finally #5
                 this.CSharpDiagnostic().WithLocation(47, 21),
                 this.CSharpDiagnostic().WithLocation(50, 21),
                 this.CSharpDiagnostic().WithLocation(53, 21),
+
                 // Invalid try ... catch ... finally #6
                 this.CSharpDiagnostic().WithLocation(57, 9),
                 this.CSharpDiagnostic().WithLocation(60, 9),
@@ -191,6 +287,8 @@ public class Foo
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
     }
 }

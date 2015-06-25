@@ -34,7 +34,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1615.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -79,20 +79,20 @@
                 return;
             }
 
-            var documentationStructure = XmlCommentHelper.GetDocumentationStructure(context.Node);
+            var documentationStructure = context.Node.GetDocumentationCommentTriviaSyntax();
 
             if (documentationStructure == null)
             {
                 return;
             }
 
-            if (XmlCommentHelper.GetTopLevelElement(documentationStructure, XmlCommentHelper.InheritdocXmlTag) != null)
+            if (documentationStructure.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag) != null)
             {
                 // Don't report if the documentation is inherited.
                 return;
             }
 
-            if (XmlCommentHelper.GetTopLevelElement(documentationStructure, XmlCommentHelper.ReturnsXmlTag) == null)
+            if (documentationStructure.Content.GetFirstXmlElement(XmlCommentHelper.ReturnsXmlTag) == null)
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, returnType.GetLocation()));
             }

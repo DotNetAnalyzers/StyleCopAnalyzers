@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Analyzers.MaintainabilityRules;
@@ -13,7 +14,7 @@
         private const string Tab = "\t";
 
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -487,37 +488,37 @@
             await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "EventHandler MemberName", "{ get; set; }", containingType: "interface", warning: false).ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Fact]
         public async Task TestEventFieldDeclarationAsync()
         {
             await this.TestNestedDeclarationAsync("private", "MemberName", "event EventHandler MemberName", ", AnotherMemberName;").ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Fact]
         public async Task TestEventFieldDeclarationWithAttributesAsync()
         {
             await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "event EventHandler MemberName", ", AnotherMemberName;").ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Fact]
         public async Task TestEventFieldDeclarationWithDirectivesAsync()
         {
             await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "event EventHandler MemberName", ", AnotherMemberName;").ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Fact]
         public async Task TestStaticEventFieldDeclarationAsync()
         {
             await this.TestNestedDeclarationAsync("private", "MemberName", "static event EventHandler MemberName", ", AnotherMemberName;").ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Fact]
         public async Task TestStaticEventFieldDeclarationWithAttributesAsync()
         {
             await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "static event EventHandler MemberName", ", AnotherMemberName;").ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Fact]
         public async Task TestStaticEventFieldDeclarationWithDirectivesAsync()
         {
             await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "static event EventHandler MemberName", ", AnotherMemberName;").ConfigureAwait(false);
@@ -541,76 +542,40 @@
             await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "event EventHandler MemberName", ", AnotherMemberName;", containingType: "interface", warning: false).ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Fact]
         public async Task TestFieldDeclarationAsync()
         {
             await this.TestNestedDeclarationAsync("private", "MemberName", "System.EventHandler MemberName", ", AnotherMemberName;").ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Fact]
         public async Task TestFieldDeclarationWithAttributesAsync()
         {
             await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "System.EventHandler MemberName", ", AnotherMemberName;").ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Fact]
         public async Task TestFieldDeclarationWithDirectivesAsync()
         {
             await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "System.EventHandler MemberName", ", AnotherMemberName;").ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Fact]
         public async Task TestStaticFieldDeclarationAsync()
         {
             await this.TestNestedDeclarationAsync("private", "MemberName", "static System.EventHandler MemberName", ", AnotherMemberName;").ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Fact]
         public async Task TestStaticFieldDeclarationWithAttributesAsync()
         {
             await this.TestNestedDeclarationWithAttributesAsync("private", "MemberName", "static System.EventHandler MemberName", ", AnotherMemberName;").ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/496")]
+        [Fact]
         public async Task TestStaticFieldDeclarationWithDirectivesAsync()
         {
             await this.TestNestedDeclarationWithDirectivesAsync("private", "MemberName", "static System.EventHandler MemberName", ", AnotherMemberName;").ConfigureAwait(false);
-        }
-
-        [Fact(Skip = "Access modified is compiler-enforced")]
-        public async Task TestOperatorDeclarationAsync()
-        {
-            await this.TestNestedDeclarationAsync("public", "+", "static OuterTypeName operator +", "  ( OuterTypeName x,OuterTypeName  y ) { throw new System.Exception(); }", elementName: "op_Addition").ConfigureAwait(false);
-        }
-
-        [Fact(Skip = "Access modified is compiler-enforced")]
-        public async Task TestOperatorDeclarationWithAttributesAsync()
-        {
-            await this.TestNestedDeclarationWithAttributesAsync("public", "+", "static OuterTypeName operator +", "  ( OuterTypeName x,OuterTypeName  y ) { throw new System.Exception(); }", elementName: "op_Addition").ConfigureAwait(false);
-        }
-
-        [Fact(Skip = "Access modified is compiler-enforced")]
-        public async Task TestOperatorDeclarationWithDirectivesAsync()
-        {
-            await this.TestNestedDeclarationWithDirectivesAsync("public", "+", "static OuterTypeName operator +", "  ( OuterTypeName x,OuterTypeName  y ) { throw new System.Exception(); }", elementName: "op_Addition").ConfigureAwait(false);
-        }
-
-        [Fact(Skip = "Access modified is compiler-enforced")]
-        public async Task TestConversionOperatorDeclarationAsync()
-        {
-            await this.TestNestedDeclarationAsync("public", "bool", "static explicit operator bool", "  ( OuterTypeName x ) { throw new System.Exception(); }", elementName: "op_Explicit").ConfigureAwait(false);
-        }
-
-        [Fact(Skip = "Access modified is compiler-enforced")]
-        public async Task TestConversionOperatorDeclarationWithAttributesAsync()
-        {
-            await this.TestNestedDeclarationWithAttributesAsync("public", "bool", "static explicit operator bool", "  ( OuterTypeName x ) { throw new System.Exception(); }", elementName: "op_Explicit").ConfigureAwait(false);
-        }
-
-        [Fact(Skip = "Access modified is compiler-enforced")]
-        public async Task TestConversionOperatorDeclarationWithDirectivesAsync()
-        {
-            await this.TestNestedDeclarationWithDirectivesAsync("public", "bool", "static explicit operator bool", "  ( OuterTypeName x ) { throw new System.Exception(); }", elementName: "op_Explicit").ConfigureAwait(false);
         }
 
         [Fact]
@@ -883,9 +848,9 @@ public {containingType} OuterTypeName {baseTypeList} {{
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1400AccessModifierMustBeDeclared();
+            yield return new SA1400AccessModifierMustBeDeclared();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

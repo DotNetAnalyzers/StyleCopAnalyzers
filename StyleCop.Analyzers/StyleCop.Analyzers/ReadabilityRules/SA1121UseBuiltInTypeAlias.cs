@@ -120,14 +120,14 @@
         /// The ID for diagnostics produced by the <see cref="SA1121UseBuiltInTypeAlias"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1121";
-        private const string Title = "Use built-in type alias";
-        private const string MessageFormat = "Use built-in type alias";
-        private const string Category = "StyleCop.CSharp.ReadabilityRules";
-        private const string Description = "The code uses one of the basic C# types, but does not use the built-in alias for the type.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1121.html";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1121Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1121MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly string Category = "StyleCop.CSharp.ReadabilityRules";
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1121Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1121.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -243,7 +243,6 @@
         {
             // The only time a type name can appear as an argument is for the invocation expression created for the
             // nameof keyword. This assumption is the foundation of the following simple analysis algorithm.
-
             if (identifierNameSyntax.Parent == null)
             {
                 return false;

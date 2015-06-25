@@ -2,10 +2,12 @@
 {
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation"/>.
@@ -14,7 +16,7 @@
     /// <para>To fix a violation of this rule, remove any whitespace between the new keyword and the opening array
     /// bracket.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1026CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1026CodeFixProvider))]
     [Shared]
     public class SA1026CodeFixProvider : CodeFixProvider
     {
@@ -31,10 +33,8 @@
         }
 
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation.DiagnosticId))
@@ -42,22 +42,23 @@
                     continue;
                 }
 
-                SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (token.IsMissing)
-                {
-                    continue;
-                }
-
-                context.RegisterCodeFix(CodeAction.Create("Remove space", t => GetTransformedDocumentAsync(context.Document, root, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(
+                    SpacingResources.SA1026CodeFix,
+                    token => GetTransformedDocumentAsync(context.Document, diagnostic, token)),
+                    diagnostic);
             }
+
+            return SpecializedTasks.CompletedTask;
         }
 
-        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxToken token)
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
-            SyntaxToken corrected = token.WithoutTrailingWhitespace().WithoutFormatting();
+            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
+            SyntaxToken corrected = token.WithoutTrailingWhitespace(removeEndOfLineTrivia: true).WithoutFormatting();
             Document updatedDocument = document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
 
-            return Task.FromResult(updatedDocument);
+            return updatedDocument;
         }
     }
 }

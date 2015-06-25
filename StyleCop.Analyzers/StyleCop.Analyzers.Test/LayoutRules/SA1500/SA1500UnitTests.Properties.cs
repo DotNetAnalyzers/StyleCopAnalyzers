@@ -9,7 +9,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
-    public partial class SA1500UnitTests : DiagnosticVerifier
+    public partial class SA1500UnitTests
     {
         /// <summary>
         /// Verifies that no diagnostics are reported for the valid properties defined in this test.
@@ -19,7 +19,7 @@
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestPropertyValid()
+        public async Task TestPropertyValidAsync()
         {
             var testCode = @"using System;
 using System.Collections.Generic;
@@ -101,7 +101,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestPropertyInvalid()
+        public async Task TestPropertyInvalidAsync()
         {
             var testCode = @"using System;
 
@@ -112,66 +112,66 @@ public class Foo
     // Invalid property #1
     public bool Property1
     {
-        get { 
-            return this.test; 
+        get {
+            return this.test;
         }
 
-        set { 
-            this.test = value; 
+        set {
+            this.test = value;
         }
     }
 
     // Invalid property #2
     public bool Property2
     {
-        get { 
+        get {
             return this.test; }
 
-        set { 
+        set {
             this.test = value; }
     }
 
     // Invalid property #3
     public bool Property3
     {
-        get { return this.test; 
+        get { return this.test;
         }
 
-        set { this.test = value; 
+        set { this.test = value;
         }
     }
 
     // Invalid property #4
     public bool Property4
     {
-        get 
-        { 
+        get
+        {
             return this.test; }
 
-        set 
-        { 
+        set
+        {
             this.test = value; }
     }
 
     // Invalid property #5
     public bool Property5
     {
-        get 
-        { return this.test; 
+        get
+        { return this.test;
         }
 
-        set 
-        { this.test = value; 
+        set
+        { this.test = value;
         }
     }
 
     // Invalid property #6
     public bool Property6
     {
-        get 
+        get
         { return this.test; }
 
-        set 
+        set
         { this.test = value; }
     }
 
@@ -190,19 +190,19 @@ public class Foo
         get { return this.test; } }
 
     // Invalid property #10
-    public bool Property10 { get { return this.test; } 
+    public bool Property10 { get { return this.test; }
     }
 
     // Invalid property #11
     public bool Property11
-    { get { return this.test; } 
+    { get { return this.test; }
     }
 
     // Invalid property #12
-    public int[] Property12 { get; set; } = 
-    { 
-        0, 
-        1, 
+    public int[] Property12 { get; set; } =
+    {
+        0,
+        1,
         2 };
 
     // Invalid property #13
@@ -213,51 +213,204 @@ public class Foo
     };
 
     // Invalid property #14
-    public int[] Property14 { get; set; } = { 0, 1, 2 
+    public int[] Property14 { get; set; } = { 0, 1, 2
     };
 }";
-            var expectedDiagnostics = new[]
+
+            var fixedTestCode = @"using System;
+
+public class Foo
+{
+    private bool test;
+
+    // Invalid property #1
+    public bool Property1
+    {
+        get
+        {
+            return this.test;
+        }
+
+        set
+        {
+            this.test = value;
+        }
+    }
+
+    // Invalid property #2
+    public bool Property2
+    {
+        get
+        {
+            return this.test;
+        }
+
+        set
+        {
+            this.test = value;
+        }
+    }
+
+    // Invalid property #3
+    public bool Property3
+    {
+        get
+        {
+            return this.test;
+        }
+
+        set
+        {
+            this.test = value;
+        }
+    }
+
+    // Invalid property #4
+    public bool Property4
+    {
+        get
+        {
+            return this.test;
+        }
+
+        set
+        {
+            this.test = value;
+        }
+    }
+
+    // Invalid property #5
+    public bool Property5
+    {
+        get
+        {
+            return this.test;
+        }
+
+        set
+        {
+            this.test = value;
+        }
+    }
+
+    // Invalid property #6
+    public bool Property6
+    {
+        get { return this.test; }
+
+        set { this.test = value; }
+    }
+
+    // Invalid property #7
+    public bool Property7
+    {
+        get { return this.test; }
+    }
+
+    // Invalid property #8
+    public bool Property8
+    {
+        get { return this.test; } 
+    }
+
+    // Invalid property #9
+    public bool Property9
+    {
+        get { return this.test; }
+    }
+
+    // Invalid property #10
+    public bool Property10
+    {
+        get { return this.test; }
+    }
+
+    // Invalid property #11
+    public bool Property11
+    {
+        get { return this.test; }
+    }
+
+    // Invalid property #12
+    public int[] Property12 { get; set; } =
+    {
+        0,
+        1,
+        2
+    };
+
+    // Invalid property #13
+    public int[] Property13 { get; set; } =
+    {
+        0,
+        1,
+        2
+    };
+
+    // Invalid property #14
+    public int[] Property14 { get; set; } =
+    {
+        0, 1, 2
+    };
+}";
+
+            DiagnosticResult[] expectedDiagnostics =
             {
                 // Invalid property #1
                 this.CSharpDiagnostic().WithLocation(10, 13),
                 this.CSharpDiagnostic().WithLocation(14, 13),
+
                 // Invalid property #2
                 this.CSharpDiagnostic().WithLocation(22, 13),
                 this.CSharpDiagnostic().WithLocation(23, 31),
                 this.CSharpDiagnostic().WithLocation(25, 13),
                 this.CSharpDiagnostic().WithLocation(26, 32),
+
                 // Invalid property #3
                 this.CSharpDiagnostic().WithLocation(32, 13),
                 this.CSharpDiagnostic().WithLocation(35, 13),
+
                 // Invalid property #4
                 this.CSharpDiagnostic().WithLocation(44, 31),
                 this.CSharpDiagnostic().WithLocation(48, 32),
+
                 // Invalid property #5
                 this.CSharpDiagnostic().WithLocation(55, 9),
                 this.CSharpDiagnostic().WithLocation(59, 9),
+
                 // Invalid property #6 (Only report once for accessor statements on a single line)
                 this.CSharpDiagnostic().WithLocation(67, 9),
                 this.CSharpDiagnostic().WithLocation(70, 9),
+
                 // Invalid property #7
                 this.CSharpDiagnostic().WithLocation(76, 35),
+
                 // Invalid property #8
                 this.CSharpDiagnostic().WithLocation(79, 27),
+
                 // Invalid property #9
                 this.CSharpDiagnostic().WithLocation(84, 27),
                 this.CSharpDiagnostic().WithLocation(85, 35),
+
                 // Invalid property #10
                 this.CSharpDiagnostic().WithLocation(88, 28),
+
                 // Invalid property #11
                 this.CSharpDiagnostic().WithLocation(93, 5),
+
                 // Invalid property #12
                 this.CSharpDiagnostic().WithLocation(101, 11),
+
                 // Invalid property #13
                 this.CSharpDiagnostic().WithLocation(104, 45),
+
                 // Invalid property #14
                 this.CSharpDiagnostic().WithLocation(111, 45)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
     }
 }

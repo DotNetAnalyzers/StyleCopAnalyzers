@@ -3,7 +3,6 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using TestHelper;
     using Xunit;
 
@@ -15,14 +14,14 @@
         }
 
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestPrefixUnaryOperatorAtEndOfLine()
+        public async Task TestPrefixUnaryOperatorAtEndOfLineAsync()
         {
             string testCode = @"namespace Namespace
 {
@@ -56,7 +55,7 @@
         }
 
         [Fact]
-        public async Task TestPrefixUnaryOperatorAtBeginningOfLine_LeadingTrivia()
+        public async Task TestPrefixUnaryOperatorAtBeginningOfLine_LeadingTriviaAsync()
         {
             string testFormat = @"namespace Namespace
 {{
@@ -99,7 +98,7 @@
         }
 
         [Fact]
-        public async Task TestPrefixUnaryOperatorAtBeginningOfLine_NoLeadingTrivia()
+        public async Task TestPrefixUnaryOperatorAtBeginningOfLine_NoLeadingTriviaAsync()
         {
             string testFormat = @"namespace Namespace
 {{
@@ -142,7 +141,7 @@
         }
 
         [Fact]
-        public async Task TestPrefixUnaryOperatorAfterEquals()
+        public async Task TestPrefixUnaryOperatorAfterEqualsAsync()
         {
             string testFormat = @"namespace Namespace
 {{
@@ -207,7 +206,7 @@
         }
 
         [Fact]
-        public async Task TestPrefixUnaryOperatorAfterBinaryOperator()
+        public async Task TestPrefixUnaryOperatorAfterBinaryOperatorAsync()
         {
             string testFormat = @"namespace Namespace
 {{
@@ -248,7 +247,7 @@
         }
 
         [Fact]
-        public async Task TestPrefixUnaryOperatorAfterCast()
+        public async Task TestPrefixUnaryOperatorAfterCastAsync()
         {
             string testFormat = @"namespace Namespace
 {{
@@ -310,7 +309,7 @@
         }
 
         [Fact]
-        public async Task TestPrefixUnaryOperatorInParentheses()
+        public async Task TestPrefixUnaryOperatorInParenthesesAsync()
         {
             string testFormat = @"namespace Namespace
 {{
@@ -372,7 +371,7 @@
         }
 
         [Fact]
-        public async Task TestPrefixUnaryOperatorInBrackets()
+        public async Task TestPrefixUnaryOperatorInBracketsAsync()
         {
             string testFormat = @"namespace Namespace
 {{
@@ -434,7 +433,5 @@
         }
 
         protected override abstract CodeFixProvider GetCSharpCodeFixProvider();
-
-        protected override abstract DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer();
     }
 }

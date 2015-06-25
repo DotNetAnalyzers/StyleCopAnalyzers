@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.SpacingRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -15,7 +16,7 @@
     public class SA1007UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestOperatorKeywordCases()
+        public async Task TestOperatorKeywordCasesAsync()
         {
             string testCode = @"
 using System;
@@ -44,14 +45,14 @@ class ClassName
                 this.CSharpDiagnostic().WithLocation(7, 28),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1007OperatorKeywordMustBeFollowedBySpace();
+            yield return new SA1007OperatorKeywordMustBeFollowedBySpace();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

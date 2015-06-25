@@ -35,7 +35,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1617.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -70,7 +70,7 @@
 
         private static void HandleMember(SyntaxNodeAnalysisContext context, TypeSyntax returnValue)
         {
-            var documentation = XmlCommentHelper.GetDocumentationStructure(context.Node);
+            var documentation = context.Node.GetDocumentationCommentTriviaSyntax();
 
             if (context.Node != null && documentation != null)
             {
@@ -80,7 +80,7 @@
                 if (returnType != null && returnType.Keyword.IsKind(SyntaxKind.VoidKeyword))
                 {
                     // Check if the return value is documented
-                    var returnsElement = XmlCommentHelper.GetTopLevelElement(documentation, XmlCommentHelper.ReturnsXmlTag);
+                    var returnsElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.ReturnsXmlTag);
 
                     if (returnsElement != null)
                     {

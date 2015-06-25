@@ -15,7 +15,7 @@
     /// <para>To fix a violation of this rule, change the name of the field so that it begins with an upper-case letter,
     /// or place the item within a <c>NativeMethods</c> class if appropriate.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1307CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1307CodeFixProvider))]
     [Shared]
     public class SA1307CodeFixProvider : CodeFixProvider
     {
@@ -52,7 +52,7 @@
                 if (!string.IsNullOrEmpty(token.ValueText))
                 {
                     var newName = char.ToUpper(token.ValueText[0]) + token.ValueText.Substring(1);
-                    context.RegisterCodeFix(CodeAction.Create($"Rename field to '{newName}'", cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.SA1307CodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken)), diagnostic);
                 }
             }
         }

@@ -17,12 +17,12 @@
     /// <remarks>
     /// <para>To fix a violation of this rule, the violating statement will be converted to a block statement.</para>
     /// </remarks>
-    [ExportCodeFixProvider(nameof(SA1503CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1503CodeFixProvider))]
     [Shared]
     public class SA1503CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1503CurlyBracketsMustNotBeOmitted.DiagnosticId);
+            ImmutableArray.Create(SA1503CurlyBracketsMustNotBeOmitted.DiagnosticId, SA1519CurlyBracketsMustNotBeOmittedFromMultiLineChildStatement.DiagnosticId, SA1520UseCurlyBracketsConsistently.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds
@@ -58,7 +58,7 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Wrap with curly brackets", token => GetTransformedDocumentAsync(context.Document, syntaxRoot, node, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1503CodeFix, token => GetTransformedDocumentAsync(context.Document, syntaxRoot, node, token)), diagnostic);
             }
         }
 

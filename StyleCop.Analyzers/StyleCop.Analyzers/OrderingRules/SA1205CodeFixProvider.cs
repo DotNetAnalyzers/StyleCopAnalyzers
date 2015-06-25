@@ -10,11 +10,12 @@
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements code fixes for <see cref="SA1205PartialElementsMustDeclareAccess"/>.
     /// </summary>
-    [ExportCodeFixProvider(nameof(SA1205CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1205CodeFixProvider))]
     [Shared]
     public class SA1205CodeFixProvider : CodeFixProvider
     {
@@ -35,10 +36,10 @@
         {
             foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                context.RegisterCodeFix(CodeAction.Create("Add access modifier", token => GetTransformedDocumentAsync(context.Document, diagnostic, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(OrderingResources.SA1205CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token)), diagnostic);
             }
 
-            return Task.FromResult(true);
+            return SpecializedTasks.CompletedTask;
         }
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)

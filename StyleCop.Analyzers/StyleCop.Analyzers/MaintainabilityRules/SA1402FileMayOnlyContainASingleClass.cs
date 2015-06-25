@@ -34,7 +34,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1402.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -51,12 +51,12 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTreeAsync);
+            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
         }
 
-        private async void HandleSyntaxTreeAsync(SyntaxTreeAnalysisContext context)
+        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
-            var syntaxRoot = await context.Tree.GetRootAsync(context.CancellationToken).ConfigureAwait(false);
+            var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
 
             var descentNodes = syntaxRoot.DescendantNodes(descendIntoChildren: node => node != null && !node.IsKind(SyntaxKind.ClassDeclaration));
 

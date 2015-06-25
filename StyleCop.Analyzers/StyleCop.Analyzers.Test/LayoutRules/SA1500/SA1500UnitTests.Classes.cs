@@ -9,7 +9,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
-    public partial class SA1500UnitTests : DiagnosticVerifier
+    public partial class SA1500UnitTests
     {
         /// <summary>
         /// Verifies that no diagnostics are reported for the valid classes defined in this test.
@@ -19,7 +19,7 @@
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestClassValid()
+        public async Task TestClassValidAsync()
         {
             var testCode = @"public class Foo
 {
@@ -44,14 +44,14 @@
         }
 
         /// <summary>
-        /// Verifies that diagnostics will be reported for all invalid class definitions.
+        /// Verifies diagnostics and codefixes for all invalid class definitions.
         /// </summary>
         /// <remarks>
         /// These will normally also report SA1401, but not in the unit test.
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestClassInvalid()
+        public async Task TestClassInvalidAsync()
         {
             var testCode = @"public class Foo
 {
@@ -59,42 +59,81 @@
     }
 
     public class InvalidClass2 {
-        public int Field; 
+        public int Field;
     }
 
     public class InvalidClass3 {
         public int Field; }
 
-    public class InvalidClass4 { public int Field; 
+    public class InvalidClass4 { public int Field;
     }
 
     public class InvalidClass5
-    { 
+    {
         public int Field; }
 
     public class InvalidClass6
-    { public int Field; 
+    { public int Field;
     }
 }";
 
-            var expectedDiagnostics = new[]
+            var fixedTestCode = @"public class Foo
+{
+    public class InvalidClass1
+    {
+    }
+
+    public class InvalidClass2
+    {
+        public int Field;
+    }
+
+    public class InvalidClass3
+    {
+        public int Field;
+    }
+
+    public class InvalidClass4
+    {
+        public int Field;
+    }
+
+    public class InvalidClass5
+    {
+        public int Field;
+    }
+
+    public class InvalidClass6
+    {
+        public int Field;
+    }
+}";
+
+            DiagnosticResult[] expectedDiagnostics =
             {
                 // InvalidClass1
                 this.CSharpDiagnostic().WithLocation(3, 32),
+
                 // InvalidClass2
                 this.CSharpDiagnostic().WithLocation(6, 32),
+
                 // InvalidClass3
                 this.CSharpDiagnostic().WithLocation(10, 32),
                 this.CSharpDiagnostic().WithLocation(11, 27),
+
                 // InvalidClass4
                 this.CSharpDiagnostic().WithLocation(13, 32),
+
                 // InvalidClass5
                 this.CSharpDiagnostic().WithLocation(18, 27),
+
                 // InvalidClass6
                 this.CSharpDiagnostic().WithLocation(21, 5)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
     }
 }

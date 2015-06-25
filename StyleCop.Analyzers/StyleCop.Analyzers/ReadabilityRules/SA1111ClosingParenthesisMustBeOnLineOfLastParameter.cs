@@ -18,7 +18,7 @@
     /// public string JoinName(string first, string last)
     /// {
     ///     string name = JoinStrings(
-    ///         first, 
+    ///         first,
     ///         last);
     /// }
     ///
@@ -36,14 +36,14 @@
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1111";
-        private const string Title = "Closing parenthesis must be on line of last parameter";
-        private const string MessageFormat = "Closing parenthesis must be on line of last parameter";
-        private const string Category = "StyleCop.CSharp.ReadabilityRules";
-        private const string Description = "The closing parenthesis or bracket in a call to or declaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1111.html";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1111Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1111MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly string Category = "StyleCop.CSharp.ReadabilityRules";
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1111Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
+        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1111.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -105,8 +105,8 @@
         {
             var lambdaExpressionSyntax = (ParenthesizedLambdaExpressionSyntax)context.Node;
 
-            if (lambdaExpressionSyntax.ParameterList == null || 
-                lambdaExpressionSyntax.ParameterList.IsMissing || 
+            if (lambdaExpressionSyntax.ParameterList == null ||
+                lambdaExpressionSyntax.ParameterList.IsMissing ||
                 !lambdaExpressionSyntax.ParameterList.Parameters.Any())
             {
                 return;
@@ -146,8 +146,8 @@
         {
             var anonymousMethod = (AnonymousMethodExpressionSyntax) context.Node;
 
-            if (anonymousMethod.ParameterList == null || 
-                anonymousMethod.ParameterList.IsMissing || 
+            if (anonymousMethod.ParameterList == null ||
+                anonymousMethod.ParameterList.IsMissing ||
                 !anonymousMethod.ParameterList.Parameters.Any())
             {
                 return;
@@ -168,8 +168,8 @@
         {
             var attribute = (AttributeSyntax) context.Node;
 
-            if (attribute.ArgumentList == null || 
-                attribute.ArgumentList.IsMissing || 
+            if (attribute.ArgumentList == null ||
+                attribute.ArgumentList.IsMissing ||
                 !attribute.ArgumentList.Arguments.Any())
             {
                 return;
@@ -190,8 +190,8 @@
         {
             var delegateDeclaration = (DelegateDeclarationSyntax) context.Node;
 
-            if (delegateDeclaration.ParameterList == null || 
-                delegateDeclaration.ParameterList.IsMissing || 
+            if (delegateDeclaration.ParameterList == null ||
+                delegateDeclaration.ParameterList.IsMissing ||
                 !delegateDeclaration.ParameterList.Parameters.Any())
             {
                 return;
@@ -286,15 +286,14 @@
                 CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(context, lastArgument,
                     objectCreation.ArgumentList.CloseParenToken);
             }
-
         }
 
         private void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)
         {
             var indexerDeclaration = (IndexerDeclarationSyntax)context.Node;
 
-            if (indexerDeclaration.ParameterList == null || 
-                indexerDeclaration.ParameterList.IsMissing || 
+            if (indexerDeclaration.ParameterList == null ||
+                indexerDeclaration.ParameterList.IsMissing ||
                 !indexerDeclaration.ParameterList.Parameters.Any())
             {
                 return;

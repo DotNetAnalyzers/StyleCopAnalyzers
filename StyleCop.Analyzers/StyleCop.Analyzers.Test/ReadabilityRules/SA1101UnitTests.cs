@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -243,7 +244,7 @@
         ";
 
         [Fact]
-        public async Task TestPrefixLocalCallsWithThisDiagnostics()
+        public async Task TestPrefixLocalCallsWithThisDiagnosticsAsync()
         {
             var expected = new[]
             {
@@ -260,14 +261,14 @@
         }
 
         [Fact]
-        public async Task TestPrefixLocalCallsWithThisCodeFix()
+        public async Task TestPrefixLocalCallsWithThisCodeFixAsync()
         {
             await this.VerifyCSharpFixAsync(ReferenceCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1101PrefixLocalCallsWithThis();
+            yield return new SA1101PrefixLocalCallsWithThis();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

@@ -9,7 +9,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
-    public partial class SA1500UnitTests : DiagnosticVerifier
+    public partial class SA1500UnitTests
     {
         /// <summary>
         /// Verifies that no diagnostics are reported for the valid structs defined in this test.
@@ -19,7 +19,7 @@
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestStructValid()
+        public async Task TestStructValidAsync()
         {
             var testCode = @"public class Foo
 {
@@ -51,7 +51,7 @@
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestStructInvalid()
+        public async Task TestStructInvalidAsync()
         {
             var testCode = @"public class Foo
 {
@@ -59,42 +59,81 @@
     }
 
     public struct InvalidStruct2 {
-        public int Field; 
+        public int Field;
     }
 
     public struct InvalidStruct3 {
         public int Field; }
 
-    public struct InvalidStruct4 { public int Field; 
+    public struct InvalidStruct4 { public int Field;
     }
 
     public struct InvalidStruct5
-    { 
+    {
         public int Field; }
 
     public struct InvalidStruct6
-    { public int Field; 
+    { public int Field;
     }
 }";
 
-            var expectedDiagnostics = new[]
+            var fixedTestCode = @"public class Foo
+{
+    public struct InvalidStruct1
+    {
+    }
+
+    public struct InvalidStruct2
+    {
+        public int Field;
+    }
+
+    public struct InvalidStruct3
+    {
+        public int Field;
+    }
+
+    public struct InvalidStruct4
+    {
+        public int Field;
+    }
+
+    public struct InvalidStruct5
+    {
+        public int Field;
+    }
+
+    public struct InvalidStruct6
+    {
+        public int Field;
+    }
+}";
+
+            DiagnosticResult[] expectedDiagnostics =
             {
                 // InvalidStruct1
                 this.CSharpDiagnostic().WithLocation(3, 34),
+
                 // InvalidStruct2
                 this.CSharpDiagnostic().WithLocation(6, 34),
+
                 // InvalidStruct3
                 this.CSharpDiagnostic().WithLocation(10, 34),
                 this.CSharpDiagnostic().WithLocation(11, 27),
+
                 // InvalidStruct4
                 this.CSharpDiagnostic().WithLocation(13, 34),
+
                 // InvalidStruct5
                 this.CSharpDiagnostic().WithLocation(18, 27),
+
                 // InvalidStruct6
                 this.CSharpDiagnostic().WithLocation(21, 5)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
     }
 }

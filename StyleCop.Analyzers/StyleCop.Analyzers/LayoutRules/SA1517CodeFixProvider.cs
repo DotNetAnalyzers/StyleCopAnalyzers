@@ -14,7 +14,7 @@
     /// <summary>
     /// Implements a code fix for <see cref="SA1517CodeMustNotContainBlankLinesAtStartOfFile"/>.
     /// </summary>
-    [ExportCodeFixProvider(nameof(SA1517CodeFixProvider), LanguageNames.CSharp)]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1517CodeFixProvider))]
     [Shared]
     public class SA1517CodeFixProvider : CodeFixProvider
     {
@@ -35,10 +35,10 @@
         {
             foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                context.RegisterCodeFix(CodeAction.Create("Remove blank lines at the start of the file", token => GetTransformedDocumentAsync(context.Document, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1517CodeFix, token => GetTransformedDocumentAsync(context.Document, token)), diagnostic);
             }
 
-            return Task.FromResult(true);
+            return SpecializedTasks.CompletedTask;
         }
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, CancellationToken token)
