@@ -1857,12 +1857,20 @@ namespace MetaCompilation
                 var valueArguments = valueClause.ArgumentList as ArgumentListSyntax;
                 if (valueArguments == null)
                 {
+                    ReportDiagnostic(context, SupportedRulesRule, valueExpression.GetLocation(), SupportedRulesRule.MessageFormat);
                     return;
                 }
 
                 SeparatedSyntaxList<ArgumentSyntax> valueArgs = valueArguments.Arguments;
-                if (valueArgs == null)
+                if (valueArgs.Count == 0)
                 {
+                    ReportDiagnostic(context, SupportedRulesRule, valueExpression.GetLocation(), SupportedRulesRule.MessageFormat);
+                    return;
+                }
+
+                if (ruleNames.Count != valueArgs.Count)
+                {
+                    ReportDiagnostic(context, SupportedRulesRule, valueExpression.GetLocation(), SupportedRulesRule.MessageFormat);
                     return;
                 }
 
@@ -1874,14 +1882,19 @@ namespace MetaCompilation
 
                 foreach (ArgumentSyntax arg in valueArgs)
                 {
-                    if (newRuleNames.Count == 0)
+
+                    bool foundRule = false;
+                    foreach (string ruleName in ruleNames)
+                    {
+                        if (arg.ToString() == ruleName)
+                        {
+                            foundRule = true;
+                        }
+                    }
+                    if (!foundRule)
                     {
                         ReportDiagnostic(context, SupportedRulesRule, valueExpression.GetLocation(), SupportedRulesRule.MessageFormat);
                         return;
-                    }
-                    if (newRuleNames.Contains(arg.ToString()))
-                    {
-                        newRuleNames.Remove(arg.ToString());
                     }
                 }
             }
@@ -1965,7 +1978,8 @@ namespace MetaCompilation
 
                         var ruleArgumentList = objectCreationSyntax.ArgumentList;
 
-                        for (int i = 0; i < ruleArgumentList.Arguments.Count; i++)
+                        int i;
+                        for (i = 0; i < ruleArgumentList.Arguments.Count; i++)
                         {
                             var currentArg = ruleArgumentList.Arguments[i];
                             if (currentArg == null)
@@ -1974,7 +1988,7 @@ namespace MetaCompilation
                             }
 
                             var currentArgExpr = currentArg.Expression;
-                            if (currentArgExpr == null)
+                            if (currentArgExpr.ToString() == "")
                             {
                                 return emptyRuleNames;
                             }
@@ -1993,6 +2007,7 @@ namespace MetaCompilation
                                     var memberAccessExpr = currentArgExpr as MemberAccessExpressionSyntax;
                                     if (memberAccessExpr == null)
                                     {
+                                        ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation(), DefaultSeverityErrorRule.MessageFormat);
                                         return emptyRuleNames;
                                     }
 
@@ -2009,6 +2024,7 @@ namespace MetaCompilation
                                     }
                                     else
                                     {
+                                        ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation(), DefaultSeverityErrorRule.MessageFormat);
                                         return emptyRuleNames;
                                     }
                                 }
@@ -2045,6 +2061,10 @@ namespace MetaCompilation
                                     }
                                 }
                             }
+                        }
+                        if (ruleArgumentList.Arguments.Count != 6)
+                        {
+                            return emptyRuleNames;
                         }
                     }
                 }

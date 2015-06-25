@@ -72,7 +72,20 @@ namespace MetaCompilation
                                              MetaCompilationAnalyzer.DiagnosticMissing,
                                              MetaCompilationAnalyzer.DiagnosticIncorrect,
                                              MetaCompilationAnalyzer.DiagnosticReportIncorrect,
-                                             MetaCompilationAnalyzer.DiagnosticReportMissing);
+                                             MetaCompilationAnalyzer.DiagnosticReportMissing,
+                                             MetaCompilationAnalyzer.InternalAndStaticError,
+                                             MetaCompilationAnalyzer.EnabledByDefaultError,
+                                             MetaCompilationAnalyzer.DefaultSeverityError,
+                                             MetaCompilationAnalyzer.MissingIdDeclaration,
+                                             MetaCompilationAnalyzer.IdDeclTypeError,
+                                             MetaCompilationAnalyzer.IncorrectInitSig,
+                                             MetaCompilationAnalyzer.TrailingTriviaCheckMissing,
+                                             MetaCompilationAnalyzer.IncorrectSigSuppDiag,
+                                             MetaCompilationAnalyzer.MissingAccessor,
+                                             MetaCompilationAnalyzer.IncorrectAccessorReturn,
+                                             MetaCompilationAnalyzer.SuppDiagReturnValue,
+                                             MetaCompilationAnalyzer.TooManyAccessors,
+                                             MetaCompilationAnalyzer.SupportedRules);
             }
         }
 
@@ -88,7 +101,7 @@ namespace MetaCompilation
             foreach (Diagnostic diagnostic in context.Diagnostics)
             {
                 TextSpan diagnosticSpan = diagnostic.Location.SourceSpan;
-                
+
                 //TODO: change this to else if once we are done (creates less merge conflicts without else if)
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingId))
                 {
@@ -129,8 +142,8 @@ namespace MetaCompilation
 
                 if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.EnabledByDefaultError))
                 {
-                    LiteralExpressionSyntax literalExpression = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<LiteralExpressionSyntax>().First();
-                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Rules should be enabled by default.", c => EnabledByDefaultAsync(context.Document, literalExpression, c)), diagnostic);
+                    ArgumentSyntax argument = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ArgumentSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Rules should be enabled by default.", c => EnabledByDefaultAsync(context.Document, argument, c)), diagnostic);
                 }
 
                 if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.DefaultSeverityError))
@@ -150,28 +163,28 @@ namespace MetaCompilation
 
                 if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.IdDeclTypeError))
                 {
-                    LiteralExpressionSyntax literalExpression = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<LiteralExpressionSyntax>().First();
-                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Rule ids should not be string literals.", c => IdDeclTypeAsync(context.Document, literalExpression, c)), diagnostic);
+                    FieldDeclarationSyntax ruleDeclaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<FieldDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Rule ids should not be string literals.", c => IdDeclTypeAsync(context.Document, ruleDeclaration, c)), diagnostic);
                 }
-           
+
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfStatementIncorrect))
                 {
                     StatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("Tutorial: The first statement of the analyzer must access the node to be analyzed", c => IncorrectIfAsync(context.Document, declaration, c)), diagnostic);
                 }
-                
+
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfStatementMissing))
                 {
                     MethodDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("Tutorial: The first statement of the analyzer must access the node to be analyzed", c => MissingIfAsync(context.Document, declaration, c)), diagnostic);
                 }
-                
+
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectInitSig))
                 {
                     MethodDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("Tutorial: The initialize method must have the correct signature to be called", c => IncorrectSigAsync(context.Document, declaration, c)), diagnostic);
                 }
-                
+
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfKeywordIncorrect))
                 {
                     StatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>().First();
@@ -219,7 +232,7 @@ namespace MetaCompilation
                     IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("Tutorial: The third statement of the analyzer must be an if statement checking the trailing trivia of the node being analyzed", c => TrailingKindCheckMissingAsync(context.Document, declaration, c)), diagnostic);
                 }
-                
+
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.WhitespaceCheckIncorrect))
                 {
                     IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
@@ -361,6 +374,37 @@ namespace MetaCompilation
                         context.RegisterCodeFix(CodeAction.Create("Tutorial: Report the diagnostic to the context of the if statement in question", c => ReplaceDiagnosticReportAsync(context.Document, declaration, c)), diagnostic);
                     }
                 }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectSigSuppDiag))
+                {
+                    PropertyDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<PropertyDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Change SupportedDiagnostics method signature to public override.", c => IncorrectSigSuppDiagAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingAccessor))
+                {
+                    PropertyDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<PropertyDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Insert an accessor declaration.", c => MissingAccessorAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectAccessorReturn) || diagnostic.Id.Equals(MetaCompilationAnalyzer.SuppDiagReturnValue))
+                {
+                    PropertyDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<PropertyDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Insert a correct return statement for the get accessor.", c => AccessorReturnValueAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TooManyAccessors))
+                {
+                    PropertyDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<PropertyDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Remove excess accesors.", c => TooManyAccessorsAsync(context.Document, declaration, c)), diagnostic);
+                }
+
+                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.SupportedRules))
+                {
+                    ClassDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Include all rules in the immutable array.", c => SupportedRulesAsync(context.Document, declaration, c)), diagnostic);
+                }
+
             }
         }
 
@@ -700,9 +744,14 @@ namespace MetaCompilation
             return await ReplaceNode(declaration, newFieldDeclaration, document);
         }
 
-        private async Task<Document> EnabledByDefaultAsync(Document document, LiteralExpressionSyntax literalExpression, CancellationToken c)
+        private async Task<Document> EnabledByDefaultAsync(Document document, ArgumentSyntax argument, CancellationToken c)
         {
-            var newLiteralExpression = (SyntaxFactory.ParseExpression("true").WithLeadingTrivia(literalExpression.GetLeadingTrivia()).WithTrailingTrivia(literalExpression.GetTrailingTrivia())) as LiteralExpressionSyntax;
+            var literalExpression = argument.Expression;
+            if (literalExpression == null)
+            {
+                return document;
+            }
+            var newLiteralExpression = (SyntaxFactory.ParseExpression("true").WithTrailingTrivia(literalExpression.GetTrailingTrivia())) as LiteralExpressionSyntax;
 
             return await ReplaceNode(literalExpression, newLiteralExpression, document);
         }
@@ -760,11 +809,14 @@ namespace MetaCompilation
             return await ReplaceNode(classDeclaration, newClassDeclaration, document);
         }
 
-        private async Task<Document> IdDeclTypeAsync(Document document, LiteralExpressionSyntax literalExpression, CancellationToken c)
+        private async Task<Document> IdDeclTypeAsync(Document document, FieldDeclarationSyntax ruleDeclaration, CancellationToken c)
         {
-            var idName = SyntaxFactory.ParseName(literalExpression.Token.Value.ToString()) as IdentifierNameSyntax;
+            var declaratorSyntax = ruleDeclaration.Declaration.Variables;
+     
 
-            return await ReplaceNode(literalExpression, idName, document);
+            //var idName = SyntaxFactory.ParseName(ruleDeclaration.Token.Value.ToString()) as IdentifierNameSyntax;
+
+            return await ReplaceNode(ruleDeclaration, ruleDeclaration, document);
         }
 
         #endregion
@@ -896,7 +948,7 @@ namespace MetaCompilation
                 return await ReplaceNode(oldArgumentList, argumentListSyntax, document);
             }
 
-            return document;
+           return document;
         }
         #endregion
 
@@ -908,7 +960,7 @@ namespace MetaCompilation
 
             return await ReplaceNode(declaration, ifKeyword, document);
         }
-        
+
         private async Task<Document> TrailingCheckIncorrectAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -927,7 +979,7 @@ namespace MetaCompilation
 
             return await ReplaceNode(oldBlock, newBlock, document);
         }
-        
+
         private async Task<Document> MissingKeywordAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -948,7 +1000,7 @@ namespace MetaCompilation
             var newBlock = declaration.Body.WithStatements(declaration.Body.Statements.Replace(declaration.Body.Statements[2], ifStatement));
             return await ReplaceNode(oldBlock, newBlock, document);
         }
-        
+
         private async Task<Document> TrailingVarMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -959,7 +1011,7 @@ namespace MetaCompilation
 
             return await ReplaceNode(oldBlock, newBlock, document);
         }
-        
+
         private async Task<Document> TrailingVarIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -1040,7 +1092,7 @@ namespace MetaCompilation
 
             return await ReplaceNode(oldBlock, newBlock, document);
         }
-        
+
         private async Task<Document> WhitespaceCheckMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -1107,7 +1159,7 @@ namespace MetaCompilation
 
                 return ifStatement;
             }
-            
+
             internal static SyntaxNode KeywordHelper(SyntaxGenerator generator, BlockSyntax methodBlock)
             {
                 var firstStatement = methodBlock.Statements[0] as LocalDeclarationStatementSyntax;
