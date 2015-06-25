@@ -1,0 +1,54 @@
+<Project
+  xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
+  DefaultTargets="BuildAndTest"
+  ToolsVersion="14.0">
+  
+  <PropertyGroup>
+    <SolutionFile>$(MSBuildThisFileDirectory)\src\MetaCompilation\MetaCompilation.sln</SolutionFile>
+    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+    <IncludePattern Condition="'$(IncludePattern)' == ''">*.Test*.dll</IncludePattern>
+
+    <!-- Emit XML in a CIBuild in order to get structured test results -->
+    <RunTestArgs>$(RunTestArgs) /noisolation</RunTestArgs>
+    <RunTestArgs Condition="'$(CIBuild)' == 'true'">$(RunTestArgs) /resultsfile:TestResults.trx</RunTestArgs>
+  </PropertyGroup>
+
+  <Target Name="RestorePackages">
+    <Exec Command="&quot;$(MSBuildThisFileDirectory)\Src\.nuget\Nuget.exe&quot; restore &quot;$(SolutionFile)&quot;" />
+  </Target>
+
+  <Target Name="Build" DependsOnTargets="RestorePackages">
+    <MSBuild BuildInParallel="true"
+             Projects="$(SolutionFile)"
+             Properties="RestorePackages=false"
+             Targets="Build"/>
+  </Target>
+
+  <Target Name="Clean">
+    <MSBuild BuildInParallel="true"
+             Projects="$(SolutionFile)"
+             Properties="RestorePackages=false"
+             Targets="Clean"/>
+  </Target>
+
+  <Target Name="Rebuild">
+    <MSBuild BuildInParallel="true"
+             Projects="$(SolutionFile)"
+             Properties="RestorePackages=false"
+             Targets="Rebuild"/>
+  </Target>
+
+  <Target Name="Test">
+    
+    <ItemGroup>
+      <TestAssemblies Include="Binaries\$(Configuration)\MetaCompilation.Test.dll" />
+    </ItemGroup>
+
+    <Exec Command="mstest.exe $(RunTestArgs) @(TestAssemblies->'/testcontainer:%(FullPath)', ' ')" />
+
+  </Target>
+
+  <Target Name="BuildAndTest"
+          DependsOnTargets="Build;Test" />
+
+</Project>
