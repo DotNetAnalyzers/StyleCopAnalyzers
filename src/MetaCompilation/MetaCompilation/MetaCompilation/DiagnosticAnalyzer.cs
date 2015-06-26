@@ -386,11 +386,6 @@ namespace MetaCompilation
                                     return;
                                 }
                             }
-                            else
-                            {
-                                var analyzerClass = _analyzerClassSymbol.DeclaringSyntaxReferences[0].GetSyntax() as ClassDeclarationSyntax;
-                                ReportDiagnostic(context, MissingRuleRule, analyzerClass.Identifier.GetLocation(), MissingRuleRule.MessageFormat);
-                            }
                         }
                         else
                         {
@@ -1953,11 +1948,13 @@ namespace MetaCompilation
             {
                 List<string> ruleNames = new List<string>();
                 List<string> emptyRuleNames = new List<string>();
+                bool foundARule = false;
 
                 foreach (var fieldSymbol in _analyzerFieldSymbols)
                 {
                     if (fieldSymbol.Type != null && fieldSymbol.Type.MetadataName == "DiagnosticDescriptor")
                     {
+                        foundARule = true;
                         if (fieldSymbol.DeclaredAccessibility != Accessibility.Internal || !fieldSymbol.IsStatic)
                         {
                             ReportDiagnostic(context, InternalAndStaticErrorRule, fieldSymbol.Locations[0], fieldSymbol.Name);
@@ -1978,8 +1975,7 @@ namespace MetaCompilation
 
                         var ruleArgumentList = objectCreationSyntax.ArgumentList;
 
-                        int i;
-                        for (i = 0; i < ruleArgumentList.Arguments.Count; i++)
+                        for (int i = 0; i < ruleArgumentList.Arguments.Count; i++)
                         {
                             var currentArg = ruleArgumentList.Arguments[i];
                             if (currentArg == null)
@@ -2016,7 +2012,13 @@ namespace MetaCompilation
                                         string identifierExpr = memberAccessExpr.Expression.ToString();
                                         string identifierName = memberAccessExpr.Name.Identifier.Text;
                                         List<string> severities = new List<string> { "Warning", "Error", "Hidden", "Info" };
+
                                         if (identifierExpr == "DiagnosticSeverity" && !severities.Contains(identifierName))
+                                        {
+                                            ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation(), DefaultSeverityErrorRule.MessageFormat);
+                                            return emptyRuleNames;
+                                        }
+                                        else
                                         {
                                             ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation(), DefaultSeverityErrorRule.MessageFormat);
                                             return emptyRuleNames;
@@ -2068,7 +2070,16 @@ namespace MetaCompilation
                         }
                     }
                 }
-                return ruleNames;
+                if (foundARule)
+                {
+                    return ruleNames;
+                }
+                else
+                {
+                    var analyzerClass = _analyzerClassSymbol.DeclaringSyntaxReferences[0].GetSyntax() as ClassDeclarationSyntax;
+                    ReportDiagnostic(context, MissingRuleRule, analyzerClass.Identifier.GetLocation(), MissingRuleRule.MessageFormat);
+                    return emptyRuleNames;
+                }
             }
 
             //returns a list of id names, empty if none found

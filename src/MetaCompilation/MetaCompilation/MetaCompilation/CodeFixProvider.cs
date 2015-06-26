@@ -77,15 +77,8 @@ namespace MetaCompilation
                                              MetaCompilationAnalyzer.EnabledByDefaultError,
                                              MetaCompilationAnalyzer.DefaultSeverityError,
                                              MetaCompilationAnalyzer.MissingIdDeclaration,
-                                             MetaCompilationAnalyzer.IdDeclTypeError,
                                              MetaCompilationAnalyzer.IncorrectInitSig,
-                                             MetaCompilationAnalyzer.TrailingTriviaCheckMissing,
-                                             MetaCompilationAnalyzer.IncorrectSigSuppDiag,
-                                             MetaCompilationAnalyzer.MissingAccessor,
-                                             MetaCompilationAnalyzer.IncorrectAccessorReturn,
-                                             MetaCompilationAnalyzer.SuppDiagReturnValue,
-                                             MetaCompilationAnalyzer.TooManyAccessors,
-                                             MetaCompilationAnalyzer.SupportedRules);
+                                             MetaCompilationAnalyzer.TrailingTriviaCheckMissing);
             }
         }
 
@@ -163,8 +156,8 @@ namespace MetaCompilation
 
                 if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.IdDeclTypeError))
                 {
-                    FieldDeclarationSyntax ruleDeclaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<FieldDeclarationSyntax>().First();
-                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Rule ids should not be string literals.", c => IdDeclTypeAsync(context.Document, ruleDeclaration, c)), diagnostic);
+                    ClassDeclarationSyntax classDeclaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>().First();
+                    context.RegisterCodeFix(CodeAction.Create("Tutorial: Rule ids should not be string literals.", c => IdDeclTypeAsync(context.Document, classDeclaration, c)), diagnostic);
                 }
 
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfStatementIncorrect))
@@ -809,15 +802,82 @@ namespace MetaCompilation
             return await ReplaceNode(classDeclaration, newClassDeclaration, document);
         }
 
-        private async Task<Document> IdDeclTypeAsync(Document document, FieldDeclarationSyntax ruleDeclaration, CancellationToken c)
+        private async Task<Document> IdDeclTypeAsync(Document document, ClassDeclarationSyntax classDeclaration, CancellationToken c)
         {
-            var declaratorSyntax = ruleDeclaration.Declaration.Variables;
-     
+            var generator = SyntaxGenerator.GetGenerator(document);
+            ////var classSymbol = classDeclaration.GetSym
+            //SemanticModel semanticModel = await document.GetSemanticModelAsync();
+            ////INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException");
 
+
+            //var classSymbol = semanticModel.Compilation.GetTypeByMetadataName("SyntaxNodeAnalyzerAnalyzer");
+
+            var members = classDeclaration.Members; //DescendantNodes().OfType<IFieldSymbol>(); //classSymbol.DeclaringSyntaxReferences.OfType<IFieldSymbol>();
+
+            //var ruleId = 
+
+            ExpressionSyntax oldIdName = null;
+            IdentifierNameSyntax newIdName = null;
+
+            foreach (MemberDeclarationSyntax memberSyntax in members)
+            {
+                var fieldDeclaration = memberSyntax as FieldDeclarationSyntax;
+                if (fieldDeclaration == null)
+                {
+                    continue;
+                }
+                if (fieldDeclaration.Declaration.Type != null && fieldDeclaration.Declaration.Type.ToString() == "DiagnosticDescriptor")
+                {
+                    //var diagnosticDescriptorSymbol = fieldDeclaration;
+                    var declaratorSyntax = fieldDeclaration.Declaration.Variables[0] as VariableDeclaratorSyntax;
+                    var objectCreationSyntax = declaratorSyntax.Initializer.Value as ObjectCreationExpressionSyntax;
+                    var ruleArgumentList = objectCreationSyntax.ArgumentList;
+
+                    for (int i = 0; i < ruleArgumentList.Arguments.Count; i++)
+                    {
+                        var currentArg = ruleArgumentList.Arguments[i];
+                        string currentArgName = currentArg.NameColon.Name.Identifier.Text;
+                        if (currentArgName == "id")
+                        {
+                            oldIdName = currentArg.Expression;
+                            break;
+                        }
+                    }
+                    continue;
+                }
+                var modifiers = fieldDeclaration.Modifiers;
+                if (modifiers == null)
+                {
+                    continue;
+                }
+                bool isPublic = false;
+                bool isConst = false;
+
+                foreach (var modifier in modifiers)
+                {
+                    if (modifier.Text == "public")
+                    {
+                        isPublic = true;
+                    }
+                    if (modifier.Text == "const")
+                    {
+                        isConst = true;
+                    }
+                }
+                if (isPublic && isConst)
+                {
+                    var ruleIdSymbol = fieldDeclaration;
+                    var ruleIdSyntax = ruleIdSymbol.Declaration.Variables[0] as VariableDeclaratorSyntax;
+                    var newIdIdentifier = ruleIdSyntax.Identifier.ToString();
+                    newIdName = generator.IdentifierName(newIdIdentifier) as IdentifierNameSyntax;
+                }
+            }
             //var idName = SyntaxFactory.ParseName(ruleDeclaration.Token.Value.ToString()) as IdentifierNameSyntax;
 
-            return await ReplaceNode(ruleDeclaration, ruleDeclaration, document);
+            return await ReplaceNode(oldIdName, newIdName, document);
         }
+
+       
 
         #endregion
 
