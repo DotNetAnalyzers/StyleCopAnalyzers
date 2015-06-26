@@ -233,6 +233,8 @@ namespace MetaCompilation
                                              TrailingTriviaCheckIncorrectRule,
                                              TrailingTriviaVarMissingRule,
                                              TrailingTriviaVarIncorrectRule,
+                                             TrailingTriviaKindCheckIncorrectRule,
+                                             TrailingTriviaKindCheckMissingRule,
                                              WhitespaceCheckMissingRule,
                                              WhitespaceCheckIncorrectRule,
                                              ReturnStatementMissingRule,
@@ -2013,12 +2015,12 @@ namespace MetaCompilation
                                         string identifierName = memberAccessExpr.Name.Identifier.Text;
                                         List<string> severities = new List<string> { "Warning", "Error", "Hidden", "Info" };
 
-                                        if (identifierExpr == "DiagnosticSeverity" && !severities.Contains(identifierName))
+                                        if (identifierExpr != "DiagnosticSeverity")
                                         {
                                             ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation(), DefaultSeverityErrorRule.MessageFormat);
                                             return emptyRuleNames;
                                         }
-                                        else
+                                        if (identifierExpr == "DiagnosticSeverity" && !severities.Contains(identifierName))
                                         {
                                             ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation(), DefaultSeverityErrorRule.MessageFormat);
                                             return emptyRuleNames;
