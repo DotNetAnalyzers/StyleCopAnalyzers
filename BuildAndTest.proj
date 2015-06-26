@@ -10,7 +10,7 @@
 
     <!-- Emit XML in a CIBuild in order to get structured test results -->
     <RunTestArgs>$(RunTestArgs) /noisolation</RunTestArgs>
-    <RunTestArgs Condition="'$(CIBuild)' == 'true'">$(RunTestArgs) /resultsfile:TestResults.trx</RunTestArgs>
+    <RunTestArgs Condition="'$(CIBuild)' == 'true'">$(RunTestArgs) /resultsfile:TestResults.trx /detail:errormessage /detail:errorstacktrace</RunTestArgs>
   </PropertyGroup>
 
   <Target Name="RestorePackages">
