@@ -27,10 +27,27 @@
     <ProjectLanguage Condition="'$(MSBuildProjectExtension)' == '.vcxproj' OR '$(Language)' == 'C++'">C++</ProjectLanguage>
   </PropertyGroup>
   
+  <!-- Import the global NuGet packages -->
+  <PropertyGroup>
+    <ToolsetCompilerPackageName>Microsoft.Net.Compilers</ToolsetCompilerPackageName>
+    <ToolsetCompilerPropsFilePath>$(NuGetPackagesPath)\Microsoft.Net.Compilers.1.0.0-rc2\build\Microsoft.Net.Compilers.props</ToolsetCompilerPropsFilePath>
+  </PropertyGroup>
+  
   <!-- Use the compiler server -->
   <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
     <UseSharedCompilation>true</UseSharedCompilation>
   </PropertyGroup>
+  
+  <!-- Import the props file from the toolset NuGet package -->
+  <ImportGroup Label="GlobalNuGets">
+    <Import Project="$(ToolsetCompilerPropsFilePath)"
+            Condition="Exists('$(ToolsetCompilerPropsFilePath)')" />
+  </ImportGroup>
+
+  <Target Name="EnsureGlobalNuGets" Condition="'$(BootstrapBuildPath)' == ''">
+    <Error Condition="!Exists('$(ToolsetCompilerPropsFilePath)')"
+           Text="This project requires the $(ToolsetCompilerPackageName) NuGet package to build. Use NuGet Package Restore to download the required files (&quot;powershell .nuget\NuGetRestore.ps1&quot;). The missing file is &quot;$(ToolsetCompilerPropsFilePath)&quot;." />
+  </Target>
   
   <!-- Common project settings -->
   <PropertyGroup>
