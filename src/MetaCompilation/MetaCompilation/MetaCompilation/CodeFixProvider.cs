@@ -71,7 +71,8 @@ namespace MetaCompilation
                                              MetaCompilationAnalyzer.DiagnosticReportIncorrect,
                                              MetaCompilationAnalyzer.DiagnosticReportMissing,
                                              MetaCompilationAnalyzer.TrailingTriviaKindCheckMissing,
-                                             MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect);
+                                             MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
+                                             MetaCompilationAnalyzer.MissingRule);
             }
         }
 
@@ -498,6 +499,56 @@ namespace MetaCompilation
                         context.RegisterCodeFix(CodeAction.Create("Tutorial: Return all rules from SupportedDiagnostics", c => SupportedRulesAsync(context.Document, declaration, c)), diagnostic);
                     }
                 }
+                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingRule))
+                {
+                    IEnumerable<ClassDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>();
+                    if (declarations.Count() != 0)
+                    {
+                        ClassDeclarationSyntax declaration = declarations.First();
+                        context.RegisterCodeFix(CodeAction.Create("Tutorial: Insert the beginning of a DiagnosticDescriptor", c => AddRuleAsync(context.Document, declaration, c)), diagnostic);
+                    }
+                }
+            }
+        }
+
+        private async Task<Document> AddRuleAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxList<MemberDeclarationSyntax> members = declaration.Members;
+            PropertyDeclarationSyntax insertPoint = null;
+            foreach (MemberDeclarationSyntax member in members)
+            {
+                insertPoint = member as PropertyDeclarationSyntax;
+                if (insertPoint == null || insertPoint.Identifier.Text != "SupportedDiagnostics")
+                {
+                    insertPoint = null;
+                    continue;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            SyntaxNode insertPointNode = insertPoint as SyntaxNode;
+
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            FieldDeclarationSyntax fieldDeclaration = CodeFixNodeCreator.CreateEmptyRule(generator);
+
+            var newNode = new SyntaxList<SyntaxNode>();
+            newNode = newNode.Add(fieldDeclaration);
+
+            var root = await document.GetSyntaxRootAsync();
+            if (insertPointNode != null)
+            {
+                var newRoot = root.InsertNodesBefore(insertPointNode, newNode);
+                var newDocument = document.WithSyntaxRoot(newRoot);
+                return newDocument;
+            }
+            else
+            {
+                var newRoot = root.ReplaceNode(declaration, declaration.AddMembers(fieldDeclaration));
+                var newDocument = document.WithSyntaxRoot(newRoot);
+                return newDocument;
             }
         }
 
@@ -1507,6 +1558,42 @@ namespace MetaCompilation
 
                 SyntaxNode expressionStatement = generator.ExpressionStatement(expression);
                 return expressionStatement;
+            }
+
+            internal static FieldDeclarationSyntax CreateEmptyRule(SyntaxGenerator generator)
+            {
+                var type = SyntaxFactory.ParseTypeName("DiagnosticDescriptor");
+
+                var arguments = new SyntaxNode[6];
+
+                var id = generator.IdentifierName("");
+                var idArg = generator.Argument("id", RefKind.None, id);
+                arguments[0] = idArg;
+
+                var title = generator.IdentifierName("");
+                var titleArg = generator.Argument("title", RefKind.None, title);
+                arguments[1] = titleArg;
+
+                var message = generator.IdentifierName("");
+                var messageArg = generator.Argument("messageFormat", RefKind.None, message);
+                arguments[2] = messageArg;
+
+                var category = generator.IdentifierName("");
+                var categoryArg = generator.Argument("category", RefKind.None, category);
+                arguments[3] = categoryArg;
+
+                var defaultSeverity = generator.IdentifierName("");
+                var defaultSeverityArg = generator.Argument("defaultSeverity", RefKind.None, defaultSeverity);
+                arguments[4] = defaultSeverityArg;
+
+                var enabled = generator.IdentifierName("");
+                var enabledArg = generator.Argument("enabledByDefault", RefKind.None, enabled);
+                arguments[5] = enabledArg;
+
+                var initializer = generator.ObjectCreationExpression(type, arguments);
+
+                var rule = generator.FieldDeclaration("spacingRule", type, accessibility: Accessibility.Internal, modifiers: DeclarationModifiers.Static, initializer: initializer) as FieldDeclarationSyntax;
+                return rule;
             }
         }
     }
