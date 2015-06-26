@@ -65,13 +65,13 @@ namespace MetaCompilation
                                              MetaCompilationAnalyzer.SpanMissing,
                                              MetaCompilationAnalyzer.LocationIncorrect,
                                              MetaCompilationAnalyzer.LocationMissing,
-                                             MetaCompilationAnalyzer.TooManyStatements,
                                              MetaCompilationAnalyzer.DiagnosticMissing,
                                              MetaCompilationAnalyzer.DiagnosticIncorrect,
                                              MetaCompilationAnalyzer.DiagnosticReportIncorrect,
                                              MetaCompilationAnalyzer.DiagnosticReportMissing,
                                              MetaCompilationAnalyzer.TrailingTriviaKindCheckMissing,
-                                             MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect);
+                                             MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
+                                             MetaCompilationAnalyzer.MissingSuppDiag);
             }
         }
 
@@ -498,6 +498,57 @@ namespace MetaCompilation
                         context.RegisterCodeFix(CodeAction.Create("Tutorial: Return all rules from SupportedDiagnostics", c => SupportedRulesAsync(context.Document, declaration, c)), diagnostic);
                     }
                 }
+                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingSuppDiag))
+                {
+                    IEnumerable<ClassDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>();
+                    if (declarations.Count() != 0)
+                    {
+                        ClassDeclarationSyntax declaration = declarations.First();
+                        context.RegisterCodeFix(CodeAction.Create("Tutorial: Add a SupportedDiagnostics property", c => AddSuppDiagAsync(context.Document, declaration, c)), diagnostic);
+                    }
+                }
+            }
+        }
+
+        private async Task<Document> AddSuppDiagAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxList<MemberDeclarationSyntax> members = declaration.Members;
+            MethodDeclarationSyntax insertPoint = null;
+            foreach (MemberDeclarationSyntax member in members)
+            {
+                insertPoint = member as MethodDeclarationSyntax;
+                if (insertPoint == null || insertPoint.Identifier.Text != "Initialize")
+                {
+                    continue;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            SyntaxNode insertPointNode = insertPoint as SyntaxNode;
+
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            var semanticModel = await document.GetSemanticModelAsync();
+            INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException");
+            PropertyDeclarationSyntax propertyDeclaration = CodeFixNodeCreator.CreateSupportedDiagnostics(generator, notImplementedException);
+
+            var newNodes = new SyntaxList<SyntaxNode>();
+            newNodes = newNodes.Add(propertyDeclaration);
+
+            var root = await document.GetSyntaxRootAsync();
+            if (insertPoint != null)
+            {
+                var newRoot = root.InsertNodesBefore(insertPointNode, newNodes);
+                var newDocument = document.WithSyntaxRoot(newRoot);
+                return newDocument;
+            }
+            else
+            {
+                var newRoot = root.ReplaceNode(declaration, declaration.AddMembers(propertyDeclaration));
+                var newDocument = document.WithSyntaxRoot(newRoot);
+                return newDocument;
             }
         }
 
@@ -1507,6 +1558,21 @@ namespace MetaCompilation
 
                 SyntaxNode expressionStatement = generator.ExpressionStatement(expression);
                 return expressionStatement;
+            }
+
+            internal static PropertyDeclarationSyntax CreateSupportedDiagnostics(SyntaxGenerator generator, INamedTypeSymbol notImplementedException)
+            {
+                var type = SyntaxFactory.ParseTypeName("ImmutableArray<DiagnosticDescriptor>");
+                var modifiers = DeclarationModifiers.Override;
+
+                SyntaxList<SyntaxNode> getAccessorStatements = new SyntaxList<SyntaxNode>();
+
+                SyntaxNode throwStatement = generator.ThrowStatement(generator.ObjectCreationExpression(notImplementedException));
+                getAccessorStatements = getAccessorStatements.Add(throwStatement);
+
+                var propertyDeclaration = generator.PropertyDeclaration("SupportedDiagnostics", type, accessibility: Accessibility.Public, modifiers: modifiers, getAccessorStatements: getAccessorStatements) as PropertyDeclarationSyntax;
+                propertyDeclaration = propertyDeclaration.RemoveNode(propertyDeclaration.AccessorList.Accessors[1], 0);
+                return propertyDeclaration;
             }
         }
     }
