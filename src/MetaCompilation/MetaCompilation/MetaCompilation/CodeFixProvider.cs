@@ -202,7 +202,7 @@ namespace MetaCompilation
 
                 if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaVarIncorrect))
                 {
-                    IfStatementSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>().First();
+                    MethodDeclarationSyntax declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
                     context.RegisterCodeFix(CodeAction.Create("Tutorial: The fourth statement of the analyzer should store the last trailing trivia of the if keyword", c => TrailingVarIncorrectAsync(context.Document, declaration, c)), diagnostic);
                 }
 
@@ -961,13 +961,14 @@ namespace MetaCompilation
             return await ReplaceNode(oldBlock, newBlock, document);
         }
         
-        private async Task<Document> TrailingVarIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        private async Task<Document> TrailingVarIncorrectAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            var localDeclaration = CodeFixNodeCreator.TriviaVarMissingHelper(generator, declaration) as LocalDeclarationStatementSyntax;
+            var ifStatement = declaration.Body.Statements[2] as IfStatementSyntax;
+            var localDeclaration = CodeFixNodeCreator.TriviaVarMissingHelper(generator, ifStatement) as LocalDeclarationStatementSyntax;
 
-            var oldBlock = declaration.Statement as BlockSyntax;
+            var oldBlock = ifStatement.Statement as BlockSyntax;
             var oldStatement = oldBlock.Statements[0];
             var newStatements = oldBlock.Statements.Replace(oldStatement, localDeclaration);
             var newBlock = oldBlock.WithStatements(newStatements);
@@ -1138,7 +1139,8 @@ namespace MetaCompilation
 
             internal static SyntaxNode TriviaVarMissingHelper(SyntaxGenerator generator, IfStatementSyntax declaration)
             {
-                var methodBlock = declaration.Parent as BlockSyntax;
+                var methodDecl = declaration.Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
+                var methodBlock = methodDecl.Body as BlockSyntax;
                 var secondStatement = methodBlock.Statements[1] as LocalDeclarationStatementSyntax;
 
                 var variableName = generator.IdentifierName(secondStatement.Declaration.Variables[0].Identifier.ValueText);
