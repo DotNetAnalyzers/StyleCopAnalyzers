@@ -233,6 +233,8 @@ namespace MetaCompilation
                                              TrailingTriviaCheckIncorrectRule,
                                              TrailingTriviaVarMissingRule,
                                              TrailingTriviaVarIncorrectRule,
+                                             TrailingTriviaKindCheckIncorrectRule,
+                                             TrailingTriviaKindCheckMissingRule,
                                              WhitespaceCheckMissingRule,
                                              WhitespaceCheckIncorrectRule,
                                              ReturnStatementMissingRule,
