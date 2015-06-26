@@ -14,7 +14,8 @@
   </PropertyGroup>
 
   <Target Name="RestorePackages">
-    <Exec Command="&quot;$(MSBuildThisFileDirectory)\Src\.nuget\Nuget.exe&quot; restore &quot;$(SolutionFile)&quot;" />
+    <Exec Command="&quot;$(MSBuildThisFileDirectory)\Src\.nuget\Nuget.exe&quot; restore &quot;$(MSBuildThisFileDirectory)\Src\.nuget\packages.config&quot; -PackagesDirectory &quot;$(MSBuildThisFileDirectory)\packages&quot;" />
+    <Exec Command="&quot;$(MSBuildThisFileDirectory)\Src\.nuget\Nuget.exe&quot; restore &quot;$(SolutionFile)&quot; -PackagesDirectory &quot;$(MSBuildThisFileDirectory)\packages&quot;" />
   </Target>
 
   <Target Name="Build" DependsOnTargets="RestorePackages">
