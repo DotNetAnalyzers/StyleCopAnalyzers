@@ -1,7 +1,10 @@
 ﻿namespace StyleCop.Analyzers.ReadabilityRules
 {
+    using System;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -26,7 +29,7 @@
         private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1107.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -43,7 +46,27 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleBlock, SyntaxKind.Block);
+        }
+
+        private void HandleBlock(SyntaxNodeAnalysisContext context)
+        {
+            BlockSyntax block = context.Node as BlockSyntax;
+
+            if (block != null)
+            {
+                for (int i = 1; i < block.Statements.Count; i++)
+                {
+                    StatementSyntax previousStatement = block.Statements[i - 1];
+                    StatementSyntax currentStatement = block.Statements[i];
+
+                    if (previousStatement.GetLocation().GetLineSpan().EndLinePosition.Line
+                        == currentStatement.GetLocation().GetLineSpan().StartLinePosition.Line)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentStatement.GetLocation()));
+                    }
+                }
+            }
         }
     }
 }
