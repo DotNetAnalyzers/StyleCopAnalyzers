@@ -1,10 +1,14 @@
 ﻿namespace StyleCop.Analyzers.SpacingRules
 {
+    using System;
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
+
 
     /// <summary>
     /// The spacing around an operator symbol is incorrect, within a C# code file.
@@ -45,127 +49,284 @@
         public const string DiagnosticId = "SA1003";
         private const string Title = "Symbols must be spaced correctly";
         private const string MessageFormat = "Operator '{0}' must {1}.";
+        private const string MessageFormatNotFollowedByComment = "Operator '{0}' must not be followed by a comment.";
+        private const string MessageFormatPrecededByWhitespace = "Operator '{0}' must be preceded by whitespace.";
+        private const string MessageFormatNotPrecededByWhitespace = "Operator '{0}' must not be preceded by whitespace.";
+        private const string MessageFormatFollowedByWhitespace = "Operator '{0}' must be followed by whitespace.";
+        private const string MessageFormatNotFollowedByWhitespace = "Operator '{0}' must not be followed by whitespace.";
+        private const string MessageFormatNotAtEndOfLine = "Operator '{0}' must not appear at the end of a line.";
         private const string Category = "StyleCop.CSharp.SpacingRules";
         private const string Description = "The spacing around an operator symbol is incorrect, within a C# code file.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1003.html";
 
-        private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+        internal const string CodeFixAction = "Action";
+        internal const string InsertBeforeTag = "InsertBefore";
+        internal const string RemoveBeforeTag = "RemoveBefore";
+        internal const string InsertAfterTag = "InsertAfter";
+        internal const string RemoveAfterTag = "RemoveAfter";
+        internal const string RemoveEndOfLineTag = "RemoveEndOfLine";
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
-            ImmutableArray.Create(Descriptor);
+        /// <summary>
+        /// Gets the descriptor for prefix unary expression that may not be followed by a comment.
+        /// </summary>
+        /// <value>
+        /// A diagnostic descriptor.
+        /// </value>
+        public static DiagnosticDescriptor DescriptorNotFollowedByComment { get; } =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatNotFollowedByComment, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+
+        /// <summary>
+        /// Gets the descriptor indicating that an operator must be preceded by whitespace.
+        /// </summary>
+        /// <value>
+        /// A diagnostic descriptor.
+        /// </value>
+        public static DiagnosticDescriptor DescriptorPrecededByWhitespace { get; } =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatPrecededByWhitespace, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+
+        /// <summary>
+        /// Gets the descriptor indicating that an operator must be preceded by whitespace.
+        /// </summary>
+        /// <value>
+        /// A diagnostic descriptor.
+        /// </value>
+        public static DiagnosticDescriptor DescriptorNotPrecededByWhitespace { get; } =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatNotPrecededByWhitespace, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+
+        /// <summary>
+        /// Gets the descriptor indicating that an operator must be followed by whitespace.
+        /// </summary>
+        /// <value>
+        /// A diagnostic descriptor.
+        /// </value>
+        public static DiagnosticDescriptor DescriptorFollowedByWhitespace { get; } =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatFollowedByWhitespace, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+
+        /// <summary>
+        /// Gets the descriptor indicating that an operator must be preceded by whitespace.
+        /// </summary>
+        /// <value>
+        /// A diagnostic descriptor.
+        /// </value>
+        public static DiagnosticDescriptor DescriptorNotFollowedByWhitespace { get; } =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatNotFollowedByWhitespace, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+
+        /// <summary>
+        /// Gets the descriptor indicating that an operator must be appear at the end of a text line.
+        /// </summary>
+        /// <value>
+        /// A diagnostic descriptor.
+        /// </value>
+        public static DiagnosticDescriptor DescriptorNotAtEndOfLine { get; } =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatNotAtEndOfLine, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        {
-            get
-            {
-                return SupportedDiagnosticsValue;
-            }
-        }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+            ImmutableArray.Create(DescriptorPrecededByWhitespace);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleConditionalExpression, SyntaxKind.ConditionalExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeParameterConstraint, SyntaxKind.TypeParameterConstraintClause);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleBinaryExpression, SyntaxKind.CoalesceExpression, SyntaxKind.IsExpression, SyntaxKind.AsExpression, SyntaxKind.BitwiseOrExpression, SyntaxKind.ExclusiveOrExpression, SyntaxKind.BitwiseAndExpression, SyntaxKind.EqualsExpression, SyntaxKind.NotEqualsExpression, SyntaxKind.LessThanExpression, SyntaxKind.LessThanOrEqualExpression, SyntaxKind.GreaterThanExpression, SyntaxKind.GreaterThanOrEqualExpression, SyntaxKind.LeftShiftExpression, SyntaxKind.RightShiftExpression, SyntaxKind.AddExpression, SyntaxKind.SubtractExpression, SyntaxKind.MultiplyExpression, SyntaxKind.DivideExpression, SyntaxKind.ModuloExpression, SyntaxKind.LogicalAndExpression, SyntaxKind.LogicalOrExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandlePrefixUnaryExpression, SyntaxKind.UnaryPlusExpression, SyntaxKind.UnaryMinusExpression, SyntaxKind.BitwiseNotExpression, SyntaxKind.LogicalNotExpression, SyntaxKind.PreIncrementExpression, SyntaxKind.PreDecrementExpression, SyntaxKind.AddressOfExpression, SyntaxKind.PointerIndirectionExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandlePostfixUnaryExpression, SyntaxKind.PostIncrementExpression, SyntaxKind.PostIncrementExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleAssignmentExpression, SyntaxKind.OrAssignmentExpression, SyntaxKind.AndAssignmentExpression, SyntaxKind.ExclusiveOrAssignmentExpression, SyntaxKind.LeftShiftAssignmentExpression, SyntaxKind.RightShiftAssignmentExpression, SyntaxKind.AddAssignmentExpression, SyntaxKind.SubtractAssignmentExpression, SyntaxKind.MultiplyAssignmentExpression, SyntaxKind.DivideAssignmentExpression, SyntaxKind.ModuloAssignmentExpression, SyntaxKind.SimpleAssignmentExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleCastExpression, SyntaxKind.CastExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleEqualsValueClause, SyntaxKind.EqualsValueClause);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleLambdaExpression, SyntaxKind.ParenthesizedLambdaExpression, SyntaxKind.SimpleLambdaExpression);
         }
 
-        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
         {
-            SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
-            foreach (var token in root.DescendantTokens())
+            var constructorDeclaration = (ConstructorDeclarationSyntax)context.Node;
+            if (constructorDeclaration.Initializer == null)
             {
-                if (SyntaxFacts.IsBinaryExpressionOperatorToken(token.Kind()) && token.Parent is BinaryExpressionSyntax)
-                {
-                    this.HandleBinaryExpressionOperatorToken(context, token);
-                }
-                else if (SyntaxFacts.IsPrefixUnaryExpressionOperatorToken(token.Kind()) && token.Parent is PrefixUnaryExpressionSyntax)
-                {
-                    this.HandlePrefixUnaryExpressionOperatorToken(context, token);
-                }
+                return;
             }
+
+            CheckToken(context, constructorDeclaration.Initializer.ColonToken, true, false, true);
         }
 
-        private void HandleBinaryExpressionOperatorToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private static void HandleConditionalExpression(SyntaxNodeAnalysisContext context)
         {
-            this.HandleOperatorToken(context, token, true);
+            var conditionalExpression = (ConditionalExpressionSyntax)context.Node;
+
+            CheckToken(context, conditionalExpression.QuestionToken, true, true, true);
+            CheckToken(context, conditionalExpression.ColonToken, true, true, true);
         }
 
-        private void HandlePrefixUnaryExpressionOperatorToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private static void HandleTypeParameterConstraint(SyntaxNodeAnalysisContext context)
         {
+            var typeParameterConstraint = (TypeParameterConstraintClauseSyntax)context.Node;
+
+            CheckToken(context, typeParameterConstraint.ColonToken, true, true, true);
+        }
+
+        private static void HandleBinaryExpression(SyntaxNodeAnalysisContext context)
+        {
+            var binaryExpression = (BinaryExpressionSyntax)context.Node;
+
+            CheckToken(context, binaryExpression.OperatorToken, true, true, true);
+        }
+
+        private static void HandlePrefixUnaryExpression(SyntaxNodeAnalysisContext context)
+        {
+            var unaryExpression = (PrefixUnaryExpressionSyntax)context.Node;
+            var precedingToken = unaryExpression.OperatorToken.GetPreviousToken();
+            var followingToken = unaryExpression.OperatorToken.GetNextToken();
+            var followingTrivia = unaryExpression.OperatorToken.TrailingTrivia.AddRange(followingToken.LeadingTrivia);
+
             /* let the outer operator handle things like the following, so no error is reported for '++':
              *   c ^= *++buf4;
+             *
+             * if the unary expression is inside parenthesis or an indexer, there should be no leading space
              */
-            if (token.Parent?.Parent is PrefixUnaryExpressionSyntax)
+            var mustHaveLeadingWhitespace = !(unaryExpression.Parent is PrefixUnaryExpressionSyntax)
+                && !(unaryExpression.Parent is CastExpressionSyntax)
+                && !precedingToken.IsKind(SyntaxKind.OpenParenToken)
+                && !precedingToken.IsKind(SyntaxKind.OpenBracketToken);
+
+            bool analyze;
+            switch (unaryExpression.OperatorToken.Kind())
             {
-                return;
+                case SyntaxKind.PlusToken:
+                    analyze = context.IsAnalyzerSuppressed(SA1022PositiveSignsMustBeSpacedCorrectly.DiagnosticId);
+                    break;
+                case SyntaxKind.MinusToken:
+                    analyze = context.IsAnalyzerSuppressed(SA1021NegativeSignsMustBeSpacedCorrectly.DiagnosticId);
+                    break;
+                case SyntaxKind.PlusPlusToken:
+                case SyntaxKind.MinusMinusToken:
+                    analyze = context.IsAnalyzerSuppressed(SA1020IncrementDecrementSymbolsMustBeSpacedCorrectly.DiagnosticId);
+                    break;
+                default:
+                    analyze = true;
+                    break;
             }
 
-            this.HandleOperatorToken(context, token, false);
+            if (analyze)
+            {
+                if (followingTrivia.Any(SyntaxKind.SingleLineCommentTrivia) || followingTrivia.Any(SyntaxKind.MultiLineCommentTrivia))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(DescriptorNotFollowedByComment, unaryExpression.OperatorToken.GetLocation(), unaryExpression.OperatorToken.Text));
+                }
+                else
+                {
+                    CheckToken(context, unaryExpression.OperatorToken, mustHaveLeadingWhitespace, false, false);
+                }
+            }
         }
 
-        private void HandleOperatorToken(SyntaxTreeAnalysisContext context, SyntaxToken token, bool isBinaryExpressionOperator)
+        private static void HandlePostfixUnaryExpression(SyntaxNodeAnalysisContext context)
         {
-            if (token.IsMissing)
+            var unaryExpression = (PostfixUnaryExpressionSyntax)context.Node;
+            var followingToken = unaryExpression.OperatorToken.GetNextToken();
+
+            var mustHaveTrailingWhitespace = !followingToken.IsKind(SyntaxKind.CloseParenToken)
+                && !followingToken.IsKind(SyntaxKind.CloseBracketToken);
+
+            CheckToken(context, unaryExpression.OperatorToken, false, false, true);
+        }
+
+        private static void HandleAssignmentExpression(SyntaxNodeAnalysisContext context)
+        {
+            var assignmentExpression = (AssignmentExpressionSyntax)context.Node;
+
+            CheckToken(context, assignmentExpression.OperatorToken, true, true, true);
+        }
+
+        private static void HandleCastExpression(SyntaxNodeAnalysisContext context)
+        {
+            var castExpression = (CastExpressionSyntax)context.Node;
+            var precedingToken = castExpression.OpenParenToken.GetPreviousToken();
+
+            var mustHaveLeadingWhitespace = !(castExpression.Parent is PrefixUnaryExpressionSyntax)
+                && !(castExpression.Parent is CastExpressionSyntax)
+                && !precedingToken.IsKind(SyntaxKind.OpenParenToken)
+                && !precedingToken.IsKind(SyntaxKind.OpenBracketToken);
+
+            var tokenString = castExpression.OpenParenToken.ToString() + castExpression.Type.ToString() + castExpression.CloseParenToken.ToString();
+            CheckToken(context, castExpression.OpenParenToken, mustHaveLeadingWhitespace, false, false, tokenString);
+            CheckToken(context, castExpression.CloseParenToken, false, false, false, tokenString);
+        }
+
+        private static void HandleEqualsValueClause(SyntaxNodeAnalysisContext context)
+        {
+            var equalsValueClause = (EqualsValueClauseSyntax)context.Node;
+
+            CheckToken(context, equalsValueClause.EqualsToken, true, true, true);
+        }
+
+        private static void HandleLambdaExpression(SyntaxNodeAnalysisContext context)
+        {
+            var lambdaExpression = (LambdaExpressionSyntax)context.Node;
+
+            CheckToken(context, lambdaExpression.ArrowToken, true, true, true);
+        }
+
+        private static void CheckToken(SyntaxNodeAnalysisContext context, SyntaxToken token, bool withLeadingWhitespace, bool allowAtEndOfLine, bool withTrailingWhitespace, string tokenText = null)
+        {
+            var precedingToken = token.GetPreviousToken();
+            var precedingTriviaList = precedingToken.TrailingTrivia.AddRange(token.LeadingTrivia);
+
+            var followingToken = token.GetNextToken();
+            var followingTriviaList = token.TrailingTrivia.AddRange(followingToken.LeadingTrivia);
+
+            if (withLeadingWhitespace)
             {
-                return;
-            }
-
-            bool allowAtLineEnd = isBinaryExpressionOperator;
-            bool allowTrailingSpace = isBinaryExpressionOperator;
-            bool allowTrailingNoSpace = !isBinaryExpressionOperator;
-
-            bool precededBySpace;
-            bool firstInLine;
-
-            firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
-            if (firstInLine)
-            {
-                precededBySpace = true;
+                // Don't report missing leading whitespace when the token is the first token on a text line.
+                if ((IndentationHelper.GetFirstTokenOnTextLine(token) != token)
+                     && ((precedingTriviaList.Count == 0) || !precedingTriviaList.Last().IsKind(SyntaxKind.WhitespaceTrivia)))
+                {
+                    var properties = ImmutableDictionary.Create<string, string>()
+                        .Add(CodeFixAction, InsertBeforeTag);
+                    context.ReportDiagnostic(Diagnostic.Create(DescriptorPrecededByWhitespace, token.GetLocation(), properties, tokenText ?? token.Text));
+                }
             }
             else
             {
-                SyntaxToken precedingToken = token.GetPreviousToken();
-                switch (precedingToken.Kind())
+                if ((precedingTriviaList.Count > 0) && precedingTriviaList.Last().IsKind(SyntaxKind.WhitespaceTrivia))
                 {
-                case SyntaxKind.OpenParenToken:
-                case SyntaxKind.CloseParenToken:
-                case SyntaxKind.OpenBracketToken:
-                case SyntaxKind.CloseBracketToken:
-                    // force this to true to suppress the warning for things like (!value)
-                    precededBySpace = true;
-                    break;
-
-                default:
-                    precededBySpace = precedingToken.HasTrailingTrivia;
-                    break;
+                    var properties = ImmutableDictionary.Create<string, string>()
+                        .Add(CodeFixAction, RemoveBeforeTag);
+                    context.ReportDiagnostic(Diagnostic.Create(DescriptorNotPrecededByWhitespace, token.GetLocation(), properties, tokenText ?? token.Text));
                 }
             }
 
-            bool followedBySpace = token.HasTrailingTrivia;
-            bool lastInLine = followedBySpace && token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia);
-
-            if (!allowAtLineEnd && lastInLine)
+            if (!allowAtEndOfLine && token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia))
             {
-                // Operator '{operator}' must {not appear at the end of a line}.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), token.Text, "not appear at the end of a line"));
+                var properties = ImmutableDictionary.Create<string, string>();
+
+                // Do not register a codefix action if there are non whitespace or end of line tokens present.
+                if (followingTriviaList.All(t => t.IsKind(SyntaxKind.WhitespaceTrivia) || t.IsKind(SyntaxKind.EndOfLineTrivia)))
+                {
+                    properties = properties.Add(CodeFixAction, RemoveEndOfLineTag);
+                }
+
+                context.ReportDiagnostic(Diagnostic.Create(DescriptorNotAtEndOfLine, token.GetLocation(), properties, tokenText ?? token.Text));
+                return;
             }
 
-            if (!precededBySpace)
+            if (withTrailingWhitespace)
             {
-                // Operator '{operator}' must {be preceded by a space}.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), token.Text, "be preceded by a space"));
+                if ((followingTriviaList.Count == 0) || !(followingTriviaList.First().IsKind(SyntaxKind.WhitespaceTrivia) || followingTriviaList.First().IsKind(SyntaxKind.EndOfLineTrivia)))
+                {
+                    var properties = ImmutableDictionary.Create<string, string>()
+                        .Add(CodeFixAction, InsertAfterTag);
+                    context.ReportDiagnostic(Diagnostic.Create(DescriptorFollowedByWhitespace, token.GetLocation(), properties, tokenText ?? token.Text));
+                }
             }
-
-            if (!allowTrailingSpace && followedBySpace)
+            else
             {
-                // Operator '{operator}' must {not be followed by a space}.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), token.Text, "not be followed by a space"));
-            }
-            else if (!allowTrailingNoSpace && !followedBySpace)
-            {
-                // Operator '{operator}' must {be followed by a space}.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), token.Text, "be followed by a space"));
+                if ((followingTriviaList.Count > 0) && followingTriviaList.First().IsKind(SyntaxKind.WhitespaceTrivia))
+                {
+                    var properties = ImmutableDictionary.Create<string, string>()
+                        .Add(CodeFixAction, RemoveAfterTag);
+                    context.ReportDiagnostic(Diagnostic.Create(DescriptorNotFollowedByWhitespace, token.GetLocation(), properties, tokenText ?? token.Text));
+                }
             }
         }
     }

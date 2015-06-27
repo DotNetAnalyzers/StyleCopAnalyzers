@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.SpacingRules
 {
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -10,27 +11,22 @@
     using TestHelper;
     using Xunit;
 
+    using static StyleCop.Analyzers.SpacingRules.SA1003SymbolsMustBeSpacedCorrectly;
+
     /// <summary>
     /// Unit tests for <see cref="SA1003SymbolsMustBeSpacedCorrectly"/>
     /// </summary>
     public class SA1003UnitTests : CodeFixVerifier
     {
-        private const string BePrecededBySpace = "be preceded by a space";
-        private const string BeFollowedBySpace = "be followed by a space";
-        private const string NotFollowedBySpace = "not be followed by a space";
-        private const string NotFollowedByComment = "not be followed by a comment";
-        private const string NotAppearAtLineEnd = "not appear at the end of a line";
-        private const string NotBePrecededBySpace = "not be preceded by a space";
-
         /// <summary>
         /// Verifies that the analyzer will properly handle an empty source.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestEmptySource()
+        public async Task TestEmptySourceAsync()
         {
             var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -38,7 +34,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestValidUnaryExpressions()
+        public async Task TestValidUnaryExpressionsAsync()
         {
             var testCode = @"public class Foo
 {
@@ -64,7 +60,7 @@
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -72,13 +68,13 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestInvalidUnaryExpressions()
+        public async Task TestInvalidUnaryExpressionsAsync()
         {
             var testCode = @"public class Foo
 {
     public void Bar()
     {
-        for (var i = 0; i < 2;++i)
+        for (var i = 0; i < 2; ++i)
         {
         }
 
@@ -119,18 +115,23 @@ v1;
 ";
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(5, 31).WithArguments("++", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(10, 18).WithArguments("~", NotFollowedBySpace),
-                this.CSharpDiagnostic().WithLocation(11, 18).WithArguments("~", NotAppearAtLineEnd),
-                this.CSharpDiagnostic().WithLocation(13, 18).WithArguments("~", NotFollowedByComment),
-                this.CSharpDiagnostic().WithLocation(15, 18).WithArguments("~", NotFollowedByComment),
-                this.CSharpDiagnostic().WithLocation(17, 20).WithArguments("(byte)", NotBePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(18, 22).WithArguments("~", NotBePrecededBySpace)
+                this.CSharpDiagnostic(DescriptorNotFollowedByWhitespace).WithLocation(10, 18).WithArguments("~"),
+                this.CSharpDiagnostic(DescriptorNotAtEndOfLine).WithLocation(11, 18).WithArguments("~"),
+                this.CSharpDiagnostic(DescriptorNotFollowedByComment).WithLocation(13, 18).WithArguments("~"),
+                this.CSharpDiagnostic(DescriptorNotFollowedByComment).WithLocation(15, 18).WithArguments("~"),
+                this.CSharpDiagnostic(DescriptorNotPrecededByWhitespace).WithLocation(17, 20).WithArguments("(byte)"),
+                this.CSharpDiagnostic(DescriptorNotPrecededByWhitespace).WithLocation(18, 22).WithArguments("~")
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            DiagnosticResult[] fixedExpected =
+            {
+                this.CSharpDiagnostic(DescriptorNotFollowedByComment).WithLocation(12, 18).WithArguments("~"),
+                this.CSharpDiagnostic(DescriptorNotFollowedByComment).WithLocation(14, 18).WithArguments("~")
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, fixedExpected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -138,7 +139,7 @@ v1;
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestValidBinaryExpressions()
+        public async Task TestValidBinaryExpressionsAsync()
         {
             var testCode = @"using System;
 
@@ -156,7 +157,7 @@ public class Foo
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -164,7 +165,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestInvalidBinaryExpressions()
+        public async Task TestInvalidBinaryExpressionsAsync()
         {
             var testCode = @"using System;
 
@@ -216,25 +217,27 @@ public class Foo
             DiagnosticResult[] expected =
             {
                 // invalid assignment
-                this.CSharpDiagnostic().WithLocation(8, 15).WithArguments("=", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(9, 16).WithArguments("=", BeFollowedBySpace),
-                this.CSharpDiagnostic().WithLocation(10, 15).WithArguments("=", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(10, 15).WithArguments("=", BeFollowedBySpace),
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(8, 15).WithArguments("="),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(9, 16).WithArguments("="),
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(10, 15).WithArguments("="),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(10, 15).WithArguments("="),
+
                 // invalid operators
-                this.CSharpDiagnostic().WithLocation(13, 20).WithArguments("+", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(14, 21).WithArguments("|", BeFollowedBySpace),
-                this.CSharpDiagnostic().WithLocation(15, 20).WithArguments(">", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(15, 20).WithArguments(">", BeFollowedBySpace),
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(13, 20).WithArguments("+"),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(14, 21).WithArguments("|"),
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(15, 20).WithArguments(">"),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(15, 20).WithArguments(">"),
+
                 // invalid lambda expressions
-                this.CSharpDiagnostic().WithLocation(18, 23).WithArguments("=>", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(19, 24).WithArguments("=>", BeFollowedBySpace),
-                this.CSharpDiagnostic().WithLocation(20, 23).WithArguments("=>", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(20, 23).WithArguments("=>", BeFollowedBySpace),
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(18, 23).WithArguments("=>"),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(19, 24).WithArguments("=>"),
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(20, 23).WithArguments("=>"),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(20, 23).WithArguments("=>"),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -242,7 +245,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestValidTernaryExpressions()
+        public async Task TestValidTernaryExpressionsAsync()
         {
             var testCode = @"using System;
 
@@ -256,7 +259,7 @@ public class Foo
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -264,7 +267,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestInvalidTernaryExpressions()
+        public async Task TestInvalidTernaryExpressionsAsync()
         {
             var testCode = @"using System;
 
@@ -316,31 +319,31 @@ public class Foo
             DiagnosticResult[] expected =
             {
                 // invalid conditionals
-                this.CSharpDiagnostic().WithLocation(8, 20).WithArguments("?", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(9, 21).WithArguments("?", BeFollowedBySpace),
-                this.CSharpDiagnostic().WithLocation(10, 20).WithArguments("?", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(10, 20).WithArguments("?", BeFollowedBySpace),
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(8, 20).WithArguments("?"),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(9, 21).WithArguments("?"),
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(10, 20).WithArguments("?"),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(10, 20).WithArguments("?"),
 
-                this.CSharpDiagnostic().WithLocation(12, 24).WithArguments(":", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(13, 25).WithArguments(":", BeFollowedBySpace),
-                this.CSharpDiagnostic().WithLocation(14, 24).WithArguments(":", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(14, 24).WithArguments(":", BeFollowedBySpace),
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(12, 24).WithArguments(":"),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(13, 25).WithArguments(":"),
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(14, 24).WithArguments(":"),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(14, 24).WithArguments(":"),
 
-                this.CSharpDiagnostic().WithLocation(16, 20).WithArguments("?", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(16, 23).WithArguments(":", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(17, 21).WithArguments("?", BeFollowedBySpace),
-                this.CSharpDiagnostic().WithLocation(17, 24).WithArguments(":", BeFollowedBySpace),
-                this.CSharpDiagnostic().WithLocation(18, 20).WithArguments("?", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(18, 20).WithArguments("?", BeFollowedBySpace),
-                this.CSharpDiagnostic().WithLocation(18, 22).WithArguments(":", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(18, 22).WithArguments(":", BeFollowedBySpace),
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(16, 20).WithArguments("?"),
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(16, 23).WithArguments(":"),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(17, 21).WithArguments("?"),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(17, 24).WithArguments(":"),
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(18, 20).WithArguments("?"),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(18, 20).WithArguments("?"),
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(18, 22).WithArguments(":"),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(18, 22).WithArguments(":"),
 
-                this.CSharpDiagnostic().WithLocation(20, 27).WithArguments(":", BePrecededBySpace)
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(20, 27).WithArguments(":")
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -348,7 +351,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestValidTypeConstraints()
+        public async Task TestValidTypeConstraintsAsync()
         {
             var testCode = @"public class Foo
 {
@@ -359,7 +362,7 @@ public class Foo
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -367,7 +370,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestInvalidTypeConstraints()
+        public async Task TestInvalidTypeConstraintsAsync()
         {
             var testCode = @"public class Foo
 {
@@ -409,15 +412,15 @@ public class Foo
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(3, 31).WithArguments(":", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(8, 32).WithArguments(":", BeFollowedBySpace),
-                this.CSharpDiagnostic().WithLocation(13, 31).WithArguments(":", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(13, 31).WithArguments(":", BeFollowedBySpace)
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(3, 31).WithArguments(":"),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(8, 32).WithArguments(":"),
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(13, 31).WithArguments(":"),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(13, 31).WithArguments(":")
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -425,7 +428,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestValidBaseCall()
+        public async Task TestValidBaseCallAsync()
         {
             var testCode = @"using System;
 
@@ -442,7 +445,7 @@ public class Foo : Exception
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -450,7 +453,7 @@ public class Foo : Exception
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestInvalidBaseCall()
+        public async Task TestInvalidBaseCallAsync()
         {
             var testCode = @"using System;
 
@@ -474,6 +477,12 @@ public class Foo : Exception
     }
 
     public Foo(int value) :
+        base(value.ToString())
+    {
+    }
+
+    public Foo(float value) :
+        // A code fix should not be offered
         base(value.ToString())
     {
     }
@@ -504,22 +513,34 @@ public class Foo : Exception
     public Foo(int value) : base(value.ToString())
     {
     }
+
+    public Foo(float value) :
+        // A code fix should not be offered
+        base(value.ToString())
+    {
+    }
 }
 ";
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(5, 27).WithArguments(":", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(9, 29).WithArguments(":", BeFollowedBySpace),
-                this.CSharpDiagnostic().WithLocation(13, 28).WithArguments(":", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(13, 28).WithArguments(":", BeFollowedBySpace),
-                this.CSharpDiagnostic().WithLocation(18, 9).WithArguments(":", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(22, 27).WithArguments(":", NotAppearAtLineEnd)
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(5, 27).WithArguments(":"),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(9, 29).WithArguments(":"),
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(13, 28).WithArguments(":"),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(13, 28).WithArguments(":"),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(18, 9).WithArguments(":"),
+                this.CSharpDiagnostic(DescriptorNotAtEndOfLine).WithLocation(22, 27).WithArguments(":"),
+                this.CSharpDiagnostic(DescriptorNotAtEndOfLine).WithLocation(27, 29).WithArguments(":")
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            DiagnosticResult[] fixedExpected =
+            {
+                this.CSharpDiagnostic(DescriptorNotAtEndOfLine).WithLocation(26, 29).WithArguments(":")
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, fixedExpected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -527,7 +548,7 @@ public class Foo : Exception
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestValidAutoPropertyInitializers()
+        public async Task TestValidAutoPropertyInitializersAsync()
         {
             var testCode = @"public class Foo
 {
@@ -535,7 +556,7 @@ public class Foo : Exception
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -543,7 +564,7 @@ public class Foo : Exception
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestInvalidAutoPropertyInitializers()
+        public async Task TestInvalidAutoPropertyInitializersAsync()
         {
             var testCode = @"public class Foo
 {
@@ -567,15 +588,15 @@ public class Foo : Exception
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(3, 28).WithArguments("=", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(5, 29).WithArguments("=", BeFollowedBySpace),
-                this.CSharpDiagnostic().WithLocation(7, 28).WithArguments(":", BePrecededBySpace),
-                this.CSharpDiagnostic().WithLocation(7, 28).WithArguments(":", BeFollowedBySpace)
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(3, 28).WithArguments("="),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(5, 29).WithArguments("="),
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(7, 28).WithArguments("="),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(7, 28).WithArguments("=")
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -583,7 +604,7 @@ public class Foo : Exception
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestValidSwitchStatement()
+        public async Task TestValidSwitchStatementAsync()
         {
             var testCode = @"public class Foo
 {
@@ -602,13 +623,13 @@ public class Foo : Exception
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            return new SA1003SymbolsMustBeSpacedCorrectly();
+            yield return new SA1003SymbolsMustBeSpacedCorrectly();
         }
 
         /// <inheritdoc/>

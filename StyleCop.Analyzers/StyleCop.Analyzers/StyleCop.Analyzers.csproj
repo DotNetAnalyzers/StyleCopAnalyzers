@@ -113,12 +113,14 @@
     <Compile Include="DocumentationRules\SA1651DoNotUsePlaceholderElements.cs" />
     <Compile Include="DocumentationRules\StandardTextDiagnosticBase.cs" />
     <Compile Include="GeneratedCodeAnalysisExtensions.cs" />
+    <Compile Include="Helpers\DiagnosticOptionsHelper.cs" />
     <Compile Include="Helpers\DocumentationCommentExtensions.cs" />
     <Compile Include="Helpers\EnumerableHelpers.cs" />
     <Compile Include="Helpers\FileHeader.cs" />
     <Compile Include="Helpers\FileHeaderHelpers.cs" />
     <Compile Include="Helpers\IndentationHelper.cs" />
     <Compile Include="Helpers\IndentationOptions.cs" />
+    <Compile Include="Helpers\LocationHelpers.cs" />
     <Compile Include="Helpers\NamedTypeHelpers.cs" />
     <Compile Include="Helpers\NameSyntaxHelpers.cs" />
     <Compile Include="Helpers\RenameHelper.cs" />
