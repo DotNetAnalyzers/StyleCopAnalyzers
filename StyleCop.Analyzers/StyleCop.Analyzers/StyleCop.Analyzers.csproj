@@ -264,6 +264,7 @@
     <Compile Include="ReadabilityRules\SA1105QueryClausesSpanningMultipleLinesMustBeginOnOwnLine.cs" />
     <Compile Include="ReadabilityRules\SA1106CodeMustNotContainEmptyStatements.cs" />
     <Compile Include="ReadabilityRules\SA1107CodeMustNotContainMultipleStatementsOnOneLine.cs" />
+    <Compile Include="ReadabilityRules\SA1107FixAllProvider.cs" />
     <Compile Include="ReadabilityRules\SA1108BlockStatementsMustNotContainEmbeddedComments.cs" />
     <Compile Include="ReadabilityRules\SA1109BlockStatementsMustNotContainEmbeddedRegions.cs" />
     <Compile Include="ReadabilityRules\SA1110OpeningParenthesisMustBeOnDeclarationLine.cs" />
@@ -278,6 +279,7 @@
     <Compile Include="ReadabilityRules\SA1120CommentsMustContainText.cs" />
     <Compile Include="ReadabilityRules\SA1121CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1121UseBuiltInTypeAlias.cs" />
+    <Compile Include="ReadabilityRules\SA1107CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1122CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1122UseStringEmptyForEmptyStrings.cs" />
     <Compile Include="ReadabilityRules\SA1123DoNotPlaceRegionsWithinElements.cs" />
