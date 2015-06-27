@@ -240,8 +240,10 @@
     <Compile Include="OrderingRules\SA1200UnitTests.cs" />
     <Compile Include="OrderingRules\SA1201UnitTests.cs" />
     <Compile Include="OrderingRules\SA1205UnitTests.cs" />
+    <Compile Include="OrderingRules\SA1206UnitTests.cs" />
     <Compile Include="OrderingRules\SA1208UnitTests.cs" />
     <Compile Include="OrderingRules\SA1209UnitTests.cs" />
+    <Compile Include="OrderingRules\SA1210UnitTests.cs" />
     <Compile Include="OrderingRules\SA1211UnitTests.cs" />
     <Compile Include="OrderingRules\SA1212UnitTests.cs" />
     <Compile Include="OrderingRules\SA1213UnitTests.cs" />
@@ -262,6 +264,7 @@
     <Compile Include="ReadabilityRules\SA1112UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1113UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1114UnitTests.cs" />
+    <Compile Include="ReadabilityRules\SA1115UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1118UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1121UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1122UnitTests.cs" />
@@ -276,6 +279,7 @@
     <Compile Include="SpacingRules\SA1006UnitTests.cs" />
     <Compile Include="SpacingRules\SA1007UnitTests.cs" />
     <Compile Include="SpacingRules\SA1008UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1018UnitTests.cs" />
     <Compile Include="SpacingRules\SA1021UnitTests.cs" />
     <Compile Include="SpacingRules\SA1022UnitTests.cs" />
     <Compile Include="SpacingRules\SA1024UnitTests.cs" />
@@ -298,7 +302,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Analyzer Include="..\..\packages\AsyncUsageAnalyzers.1.0.0-alpha001\tools\analyzers\AsyncUsageAnalyzers.dll" />
+    <Analyzer Include="..\..\packages\AsyncUsageAnalyzers.1.0.0-alpha002\tools\analyzers\AsyncUsageAnalyzers.dll" />
     <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0-rc2\tools\analyzers\C#\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0-rc2\tools\analyzers\C#\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
     <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0-alpha010\tools\analyzers\C#\StyleCop.Analyzers.dll" />

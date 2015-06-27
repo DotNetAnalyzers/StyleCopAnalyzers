@@ -53,7 +53,7 @@
                 context.RegisterCodeFix(CodeAction.Create(description, cancellationToken => this.GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken)), diagnostic);
             }
 
-            return Task.FromResult(true);
+            return SpecializedTasks.CompletedTask;
         }
 
         private async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)

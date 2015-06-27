@@ -12,3 +12,8 @@ TestResults/
 .nuget/NuGet.exe
 build/nuget/
 *.log
+
+# Visual Studio performance tools
+*.psess
+*.vsp
+*.vspx

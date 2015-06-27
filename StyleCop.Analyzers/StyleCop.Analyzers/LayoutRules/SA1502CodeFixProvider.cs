@@ -40,7 +40,7 @@
                 context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1502CodeFix, token => this.GetTransformedDocumentAsync(context.Document, diagnostic, token)), diagnostic);
             }
 
-            return Task.FromResult(true);
+            return SpecializedTasks.CompletedTask;
         }
 
         private async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken token)

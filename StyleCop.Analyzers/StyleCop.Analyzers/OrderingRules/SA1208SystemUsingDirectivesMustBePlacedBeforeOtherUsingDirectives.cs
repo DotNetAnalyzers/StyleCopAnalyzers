@@ -1,8 +1,6 @@
 ﻿namespace StyleCop.Analyzers.OrderingRules
 {
-    using System;
     using System.Collections.Immutable;
-    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -85,8 +83,7 @@
                     continue;
                 }
 
-                var firstIdentifierInUsingDirective = GetFirstIdentifierInUsingDirective(usingDirective);
-                if (string.Equals(nameof(System), firstIdentifierInUsingDirective?.Text, StringComparison.Ordinal))
+                if (usingDirective.IsSystemUsingDirective())
                 {
                     if (systemUsingDirectivesShouldBeBeforeThisName != null)
                     {
@@ -95,22 +92,14 @@
                     }
 
                     var previousUsing = usings[i - 1];
-                    var firstIdentifierInPreviousUsingDirective = GetFirstIdentifierInUsingDirective(previousUsing);
 
-                    if (!string.Equals(nameof(System), firstIdentifierInPreviousUsingDirective?.Text, StringComparison.Ordinal) || previousUsing.StaticKeyword.Kind() != SyntaxKind.None)
+                    if (!previousUsing.IsSystemUsingDirective() || previousUsing.StaticKeyword.Kind() != SyntaxKind.None)
                     {
                         systemUsingDirectivesShouldBeBeforeThisName = previousUsing.Name.ToUnaliasedString();
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, usingDirective.GetLocation(), usingDirective.Name.ToUnaliasedString(), systemUsingDirectivesShouldBeBeforeThisName));
                     }
                 }
             }
-        }
-
-        private static bool ExcludeGlobalKeyword(IdentifierNameSyntax token) => !token.Identifier.IsKind(SyntaxKind.GlobalKeyword);
-
-        private static SyntaxToken? GetFirstIdentifierInUsingDirective(UsingDirectiveSyntax usingDirective)
-        {
-            return usingDirective.DescendantNodes().OfType<IdentifierNameSyntax>().FirstOrDefault(ExcludeGlobalKeyword)?.Identifier;
         }
     }
 }
