@@ -80,7 +80,7 @@
                 return document;
             }
 
-            var transformed = root.ReplaceTokens(replacements, (maybeRewritten, _) => maybeRewritten.WithoutTrailingWhitespace().WithoutFormatting());
+            var transformed = root.ReplaceTokens(replacements, (original, maybeRewritten) => maybeRewritten.WithoutTrailingWhitespace().WithoutFormatting());
             Document updatedDocument = document.WithSyntaxRoot(transformed);
 
             return updatedDocument;
