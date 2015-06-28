@@ -134,6 +134,15 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Remove separating lines.
+        /// </summary>
+        internal static string SA1102CodeFix {
+            get {
+                return ResourceManager.GetString("SA1102CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A C# query clause does not begin on the same line as the previous clause, or on the next line..
         /// </summary>
         internal static string SA1102Description {
@@ -161,6 +170,24 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Place on multiple lines.
+        /// </summary>
+        internal static string SA1103CodeFixMultipleLines {
+            get {
+                return ResourceManager.GetString("SA1103CodeFixMultipleLines", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Place on single line.
+        /// </summary>
+        internal static string SA1103CodeFixSingleLine {
+            get {
+                return ResourceManager.GetString("SA1103CodeFixSingleLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The clauses within a C# query expression are not all placed on the same line, and each clause is not placed on its own line..
         /// </summary>
         internal static string SA1103Description {
@@ -170,7 +197,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Query clauses must be on separate lines or all on one line.
         /// </summary>
         internal static string SA1103MessageFormat {
             get {
@@ -197,11 +224,20 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Query clause must begin on new line when previous clause spans multiple lines.
         /// </summary>
         internal static string SA1104MessageFormat {
             get {
                 return ResourceManager.GetString("SA1104MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert new line.
+        /// </summary>
+        internal static string SA1104SA1105CodeFix {
+            get {
+                return ResourceManager.GetString("SA1104SA1105CodeFix", resourceCulture);
             }
         }
         
@@ -224,7 +260,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Query clauses spanning multiple lines must begin on own line.
         /// </summary>
         internal static string SA1105MessageFormat {
             get {

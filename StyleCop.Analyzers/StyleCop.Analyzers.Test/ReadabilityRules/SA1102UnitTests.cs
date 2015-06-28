@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.ReadabilityRules;
     using TestHelper;
@@ -28,21 +29,15 @@ public class Foo4
     {
         var source = new int[0];
 
-        var query = from m in source
-                    where m > 0
+        var query = 
+            from m in source
+            where m > 0
 
-                    select m;
+            select m;
     }
 }";
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(12, 21);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestWhereSelectOnSameLineAsync()
-        {
-            var testCode = @"
+            var fixedTestCode = @"
 using System.Linq;
 public class Foo4
 {
@@ -50,32 +45,18 @@ public class Foo4
     {
         var source = new int[0];
 
-        var query = from m in source
-                    where m > 0 select m;
+        var query = 
+            from m in source
+            where m > 0
+            select m;
     }
 }";
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 33);
+
+            DiagnosticResult expected = this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(13, 13);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestWhereOnTheSameLineAsFromAsync()
-        {
-            var testCode = @"
-using System.Linq;
-public class Foo4
-{
-    public void Bar()
-    {
-        var source = new int[0];
-        var query = from m in source where m > 0
-                    select m;
-    }
-}";
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 38);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -90,31 +71,56 @@ public class Foo4
         var source = new int[0];
         var source2 = new int[0];
 
-        var query = from m in source
+        var query = 
+            from m in source
 
-                    let z  = source.Take(10)
+            let z  = source.Take(10)
 
-                    join f in source2  
-                    on m equals f
+            join f in source2  
+            on m equals f
 
-                    where m > 0 && 
-                    m < 1
+            where m > 0 && 
+            m < 1
 
-                    group m by m into g
+            group m by m into g
 
-                    select new {g.Key, Sum = g.Sum()};
+            select new {g.Key, Sum = g.Sum()};
     }
 }";
+
+            var fixedTestCode = @"
+using System.Linq;
+public class Foo4
+{
+    public void Bar()
+    {
+        var source = new int[0];
+        var source2 = new int[0];
+
+        var query = 
+            from m in source
+            let z  = source.Take(10)
+            join f in source2  
+            on m equals f
+            where m > 0 && 
+            m < 1
+            group m by m into g
+            select new {g.Key, Sum = g.Sum()};
+    }
+}";
+
             DiagnosticResult[] expected =
                 {
-                    this.CSharpDiagnostic().WithLocation(12, 21),
-                    this.CSharpDiagnostic().WithLocation(14, 21),
-                    this.CSharpDiagnostic().WithLocation(17, 21),
-                    this.CSharpDiagnostic().WithLocation(20, 21),
-                    this.CSharpDiagnostic().WithLocation(22, 21),
+                    this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(13, 13),
+                    this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(15, 13),
+                    this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(18, 13),
+                    this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(21, 13),
+                    this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(23, 13)
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -145,65 +151,59 @@ public class Foo4
 {
     public void Bar()
     {
-                var query = from m in (from s in Enumerable.Empty<int>()
-                where s > 0 select s)
+        var query = from m in
+            (from s in Enumerable.Empty<int>()
 
-                where m > 0
+            where s > 0
 
-                orderby m descending 
-                select m;
+            select s)
+
+            where m > 0
+
+            orderby m descending 
+            select m;
     }
 }";
 
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(8, 29),
-                    this.CSharpDiagnostic().WithLocation(10, 17),
-                    this.CSharpDiagnostic().WithLocation(12, 17),
-                };
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task QueryInsideQueryComplexAsync()
-        {
-            var testCode = @"
+            var fixedTestCode = @"
 using System.Linq;
 public class Foo4
 {
     public void Bar()
     {
-                var query = from m in (from s in Enumerable.Empty<int>()
-                where s > 0 select s)
-
-                where m > 0 && (from zz in Enumerable.Empty<int>()
-
-
-                    select zz).Max() > m
-
-                orderby m descending
-                select (from pp in new[] {m}
-
-                    select pp);
+        var query = from m in
+            (from s in Enumerable.Empty<int>()
+            where s > 0
+            select s)
+            where m > 0
+            orderby m descending 
+            select m;
     }
 }";
 
             DiagnosticResult[] expected =
                 {
-                    this.CSharpDiagnostic().WithLocation(8, 29),
-                    this.CSharpDiagnostic().WithLocation(10, 17),
-                    this.CSharpDiagnostic().WithLocation(13, 21),
-                    this.CSharpDiagnostic().WithLocation(15, 17),
-                    this.CSharpDiagnostic().WithLocation(18, 21),
+                    this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(10, 13),
+                    this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(12, 13),
+                    this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(14, 13),
+                    this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(16, 13)
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1102QueryClauseMustFollowPreviousClause();
+            yield return new SA110xQueryClauses();
+        }
+
+        /// <inheritdoc/>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1102CodeFixProvider();
         }
     }
 }
