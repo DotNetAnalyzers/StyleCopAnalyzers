@@ -85,12 +85,12 @@
             bool firstInLine = token.IsFirstInLine();
             bool followsSpecialCharacter = false;
 
-            bool followedBySpace = token.IsFollowedBySpace();
+            bool followedBySpace = token.IsFollowedByWhitespace();
             bool lastInLine = token.IsLastInLine();
 
             if (!firstInLine)
             {
-                precededBySpace = token.IsPrecededBySpace();
+                precededBySpace = token.IsPrecededByWhitespace();
                 SyntaxToken precedingToken = token.GetPreviousToken();
 
                 followsSpecialCharacter =

@@ -89,8 +89,8 @@
 
             bool firstInLine = token.IsFirstInLine();
             bool lastInLine = token.IsLastInLine();
-            bool precededBySpace = firstInLine ? true : token.IsPrecededBySpace();
-            bool followedBySpace = token.IsFollowedBySpace();
+            bool precededBySpace = firstInLine || token.IsPrecededByWhitespace();
+            bool followedBySpace = token.IsFollowedByWhitespace();
             bool allowTrailingNoSpace;
             bool allowTrailingSpace;
 

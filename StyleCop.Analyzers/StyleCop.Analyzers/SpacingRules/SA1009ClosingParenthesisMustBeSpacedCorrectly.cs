@@ -79,8 +79,8 @@
                 return;
             }
 
-            bool precededBySpace = token.IsFirstInLine() ? true : token.IsPrecededBySpace();
-            bool followedBySpace = token.IsFollowedBySpace();
+            bool precededBySpace = token.IsFirstInLine() || token.IsPrecededByWhitespace();
+            bool followedBySpace = token.IsFollowedByWhitespace();
             bool lastInLine = token.IsLastInLine();
             bool precedesStickyCharacter;
             bool allowEndOfLine = false;

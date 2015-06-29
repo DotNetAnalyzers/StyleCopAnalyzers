@@ -141,7 +141,7 @@
                 }
             }
 
-            bool followedBySpace = token.IsFollowedBySpace();
+            bool followedBySpace = token.IsFollowedByWhitespace();
             bool lastInLine = token.IsLastInLine();
 
             if (!allowAtLineEnd && lastInLine)

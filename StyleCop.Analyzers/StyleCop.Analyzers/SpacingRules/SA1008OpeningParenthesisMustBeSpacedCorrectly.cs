@@ -214,7 +214,7 @@
                 }
             }
 
-            if (token.IsFollowedBySpace())
+            if (token.IsFollowedByWhitespace())
             {
                 var properties = ImmutableDictionary.Create<string, string>()
                     .Add(LocationKey, LocationFollowing)

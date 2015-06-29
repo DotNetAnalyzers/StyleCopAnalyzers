@@ -99,7 +99,7 @@
             bool hasPrecedingSpace = false;
             if (!token.IsFirstInLine())
             {
-                hasPrecedingSpace = token.IsPrecededBySpace();
+                hasPrecedingSpace = token.IsPrecededByWhitespace();
             }
 
             if (missingFollowingSpace)

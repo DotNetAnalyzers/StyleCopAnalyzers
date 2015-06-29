@@ -85,21 +85,9 @@
                 return;
             }
 
-            bool precededBySpace;
             bool firstInLine = token.IsFirstInLine();
-
-            bool followedBySpace;
-
-            if (firstInLine)
-            {
-                precededBySpace = true;
-            }
-            else
-            {
-                precededBySpace = token.IsPrecededBySpace();
-            }
-
-            followedBySpace = token.HasTrailingTrivia;
+            bool precededBySpace = firstInLine || token.IsPrecededByWhitespace();
+            bool followedBySpace = token.IsFollowedByWhitespace();
 
             if (!firstInLine && precededBySpace)
             {

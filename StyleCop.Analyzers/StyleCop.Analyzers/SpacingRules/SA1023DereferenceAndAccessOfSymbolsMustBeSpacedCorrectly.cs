@@ -123,8 +123,8 @@
             }
 
             bool firstInLine = token.IsFirstInLine();
-            bool precededBySpace = firstInLine ? true : token.IsPrecededBySpace();
-            bool followedBySpace = token.IsFollowedBySpace();
+            bool precededBySpace = firstInLine || token.IsPrecededByWhitespace();
+            bool followedBySpace = token.IsFollowedByWhitespace();
             bool lastInLine = token.IsLastInLine();
 
             if (!allowAtLineStart && firstInLine)

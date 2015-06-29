@@ -76,13 +76,13 @@
 
             if (!firstInLine)
             {
-                precededBySpace = token.IsPrecededBySpace();
+                precededBySpace = token.IsPrecededByWhitespace();
 
                 // ignore if handled by SA1026
                 ignorePrecedingSpaceProblem = precededBySpace && token.GetPreviousToken().IsKind(SyntaxKind.NewKeyword);
             }
 
-            bool followedBySpace = token.IsFollowedBySpace();
+            bool followedBySpace = token.IsFollowedByWhitespace();
             bool lastInLine = token.IsLastInLine();
 
             if (!firstInLine && precededBySpace && !ignorePrecedingSpaceProblem && !lastInLine && followedBySpace)
