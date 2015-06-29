@@ -65,14 +65,14 @@ namespace MetaCompilation
                                              MetaCompilationAnalyzer.SpanMissing,
                                              MetaCompilationAnalyzer.LocationIncorrect,
                                              MetaCompilationAnalyzer.LocationMissing,
-                                             MetaCompilationAnalyzer.TooManyStatements,
                                              MetaCompilationAnalyzer.DiagnosticMissing,
                                              MetaCompilationAnalyzer.DiagnosticIncorrect,
                                              MetaCompilationAnalyzer.DiagnosticReportIncorrect,
                                              MetaCompilationAnalyzer.DiagnosticReportMissing,
                                              MetaCompilationAnalyzer.TrailingTriviaKindCheckMissing,
                                              MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                                             MetaCompilationAnalyzer.MissingRule);
+                                             MetaCompilationAnalyzer.MissingRule,
+                                             MetaCompilationAnalyzer.MissingSuppDiag);
             }
         }
 
@@ -146,10 +146,10 @@ namespace MetaCompilation
                 }
                 else if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.EnabledByDefaultError))
                 {
-                    IEnumerable<ExpressionSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ExpressionSyntax>();
+                    IEnumerable<ArgumentSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ArgumentSyntax>();
                     if (declarations.Count() != 0)
                     {
-                        ExpressionSyntax declaration = declarations.First();
+                        ArgumentSyntax declaration = declarations.First();
                         context.RegisterCodeFix(CodeAction.Create("Tutorial: Rules should be enabled by default.", c => EnabledByDefaultAsync(context.Document, declaration, c)), diagnostic);
                     }
                 }
@@ -186,11 +186,11 @@ namespace MetaCompilation
                 }
                 else if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.IdDeclTypeError))
                 {
-                    IEnumerable<LiteralExpressionSyntax> expressions = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<LiteralExpressionSyntax>();
-                    if (expressions.Count() != 0)
+                IEnumerable<ClassDeclarationSyntax> classDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>();
+                    if (classDeclarations.Count() != 0)
                     {
-                        LiteralExpressionSyntax expression = expressions.First();
-                        context.RegisterCodeFix(CodeAction.Create("Tutorial: Rule ids should not be string literals.", c => IdDeclTypeAsync(context.Document, expression, c)), diagnostic);
+                    ClassDeclarationSyntax classDeclaration = classDeclarations.First();
+                        context.RegisterCodeFix(CodeAction.Create("Tutorial: Rule ids should not be string literals.", c => IdDeclTypeAsync(context.Document, classDeclaration, c)), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfStatementIncorrect))
@@ -499,6 +499,15 @@ namespace MetaCompilation
                         context.RegisterCodeFix(CodeAction.Create("Tutorial: Return all rules from SupportedDiagnostics", c => SupportedRulesAsync(context.Document, declaration, c)), diagnostic);
                     }
                 }
+                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingSuppDiag))
+                {
+                    IEnumerable<ClassDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>();
+                    if (declarations.Count() != 0)
+                    {
+                        ClassDeclarationSyntax declaration = declarations.First();
+                        context.RegisterCodeFix(CodeAction.Create("Tutorial: Add a SupportedDiagnostics property", c => AddSuppDiagAsync(context.Document, declaration, c)), diagnostic);
+                    }
+                }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingRule))
                 {
                     IEnumerable<ClassDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>();
@@ -552,6 +561,47 @@ namespace MetaCompilation
             }
         }
 
+        private async Task<Document> AddSuppDiagAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxList<MemberDeclarationSyntax> members = declaration.Members;
+            MethodDeclarationSyntax insertPoint = null;
+            foreach (MemberDeclarationSyntax member in members)
+            {
+                insertPoint = member as MethodDeclarationSyntax;
+                if (insertPoint == null || insertPoint.Identifier.Text != "Initialize")
+                {
+                    continue;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            SyntaxNode insertPointNode = insertPoint as SyntaxNode;
+
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            var semanticModel = await document.GetSemanticModelAsync();
+            INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException");
+            PropertyDeclarationSyntax propertyDeclaration = CodeFixNodeCreator.CreateSupportedDiagnostics(generator, notImplementedException);
+
+            var newNodes = new SyntaxList<SyntaxNode>();
+            newNodes = newNodes.Add(propertyDeclaration);
+
+            var root = await document.GetSyntaxRootAsync();
+            if (insertPoint != null)
+            {
+                var newRoot = root.InsertNodesBefore(insertPointNode, newNodes);
+                var newDocument = document.WithSyntaxRoot(newRoot);
+                return newDocument;
+            }
+            else
+            {
+                var newRoot = root.ReplaceNode(declaration, declaration.AddMembers(propertyDeclaration));
+                var newDocument = document.WithSyntaxRoot(newRoot);
+                return newDocument;
+            }
+        }
         private async Task<Document> ReplaceNode(SyntaxNode oldNode, SyntaxNode newNode, Document document)
         {
             var root = await document.GetSyntaxRootAsync();
@@ -882,9 +932,14 @@ namespace MetaCompilation
             return await ReplaceNode(declaration, newFieldDeclaration, document);
         }
 
-        private async Task<Document> EnabledByDefaultAsync(Document document, ExpressionSyntax literalExpression, CancellationToken c)
+        private async Task<Document> EnabledByDefaultAsync(Document document, ArgumentSyntax argument, CancellationToken c)
         {
-            var newLiteralExpression = (SyntaxFactory.ParseExpression("true").WithLeadingTrivia(literalExpression.GetLeadingTrivia()).WithTrailingTrivia(literalExpression.GetTrailingTrivia())) as LiteralExpressionSyntax;
+            var literalExpression = argument.Expression;
+            if (literalExpression == null)
+            {
+                return document;
+            }
+            var newLiteralExpression = (SyntaxFactory.ParseExpression("true").WithTrailingTrivia(literalExpression.GetTrailingTrivia())) as LiteralExpressionSyntax;
 
             return await ReplaceNode(literalExpression, newLiteralExpression, document);
         }
@@ -950,12 +1005,69 @@ namespace MetaCompilation
             return await ReplaceNode(classDeclaration, newClassDeclaration, document);
         }
 
-        private async Task<Document> IdDeclTypeAsync(Document document, LiteralExpressionSyntax literalExpression, CancellationToken c)
+        private async Task<Document> IdDeclTypeAsync(Document document, ClassDeclarationSyntax classDeclaration, CancellationToken c)
         {
-            var idName = SyntaxFactory.ParseName(literalExpression.Token.Value.ToString()) as IdentifierNameSyntax;
+            var generator = SyntaxGenerator.GetGenerator(document);
+            var members = classDeclaration.Members;
+            ExpressionSyntax oldIdName = null;
+            IdentifierNameSyntax newIdName = null;
 
-            return await ReplaceNode(literalExpression, idName, document);
+            foreach (MemberDeclarationSyntax memberSyntax in members)
+            {
+                var fieldDeclaration = memberSyntax as FieldDeclarationSyntax;
+                if (fieldDeclaration == null)
+                {
+                    continue;
+                }
+                if (fieldDeclaration.Declaration.Type != null && fieldDeclaration.Declaration.Type.ToString() == "DiagnosticDescriptor")
+                {
+                    var declaratorSyntax = fieldDeclaration.Declaration.Variables[0] as VariableDeclaratorSyntax;
+                    var objectCreationSyntax = declaratorSyntax.Initializer.Value as ObjectCreationExpressionSyntax;
+                    var ruleArgumentList = objectCreationSyntax.ArgumentList;
+
+                    for (int i = 0; i < ruleArgumentList.Arguments.Count; i++)
+                    {
+                        var currentArg = ruleArgumentList.Arguments[i];
+                        string currentArgName = currentArg.NameColon.Name.Identifier.Text;
+                        if (currentArgName == "id")
+                        {
+                            oldIdName = currentArg.Expression;
+                            break;
+                        }
+                    }
+                    continue;
+                }
+                var modifiers = fieldDeclaration.Modifiers;
+                if (modifiers == null)
+                {
+                    continue;
+                }
+                bool isPublic = false;
+                bool isConst = false;
+
+                foreach (var modifier in modifiers)
+                {
+                    if (modifier.Text == "public")
+                    {
+                        isPublic = true;
+                    }
+                    if (modifier.Text == "const")
+                    {
+                        isConst = true;
+                    }
+                }
+                if (isPublic && isConst)
+                {
+                    var ruleIdSymbol = fieldDeclaration;
+                    var ruleIdSyntax = ruleIdSymbol.Declaration.Variables[0] as VariableDeclaratorSyntax;
+                    var newIdIdentifier = ruleIdSyntax.Identifier.ToString();
+                    newIdName = generator.IdentifierName(newIdIdentifier) as IdentifierNameSyntax;
+                }
+            }
+            return await ReplaceNode(oldIdName, newIdName, document);
         }
+
+       
 
         #endregion
 
@@ -1086,7 +1198,7 @@ namespace MetaCompilation
                 return await ReplaceNode(oldArgumentList, argumentListSyntax, document);
             }
 
-            return document;
+           return document;
         }
         #endregion
 
@@ -1098,7 +1210,7 @@ namespace MetaCompilation
 
             return await ReplaceNode(declaration, ifKeyword, document);
         }
-        
+
         private async Task<Document> TrailingCheckIncorrectAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -1120,7 +1232,7 @@ namespace MetaCompilation
 
             return await ReplaceNode(oldBlock, newBlock, document);
         }
-        
+
         private async Task<Document> MissingKeywordAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -1141,7 +1253,7 @@ namespace MetaCompilation
             var newBlock = declaration.Body.WithStatements(declaration.Body.Statements.Replace(declaration.Body.Statements[2], ifStatement));
             return await ReplaceNode(oldBlock, newBlock, document);
         }
-        
+
         private async Task<Document> TrailingVarMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -1152,7 +1264,7 @@ namespace MetaCompilation
 
             return await ReplaceNode(oldBlock, newBlock, document);
         }
-        
+
         private async Task<Document> TrailingVarIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -1239,7 +1351,7 @@ namespace MetaCompilation
 
             return await ReplaceNode(oldBlock, newBlock, document);
         }
-        
+
         private async Task<Document> WhitespaceCheckMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -1297,7 +1409,7 @@ namespace MetaCompilation
 
                 return ifStatement;
             }
-            
+
             internal static SyntaxNode KeywordHelper(SyntaxGenerator generator, BlockSyntax methodBlock)
             {
                 var firstStatement = methodBlock.Statements[0] as LocalDeclarationStatementSyntax;
@@ -1587,13 +1699,28 @@ namespace MetaCompilation
                 arguments[4] = defaultSeverityArg;
 
                 var enabled = generator.IdentifierName("");
-                var enabledArg = generator.Argument("enabledByDefault", RefKind.None, enabled);
+                var enabledArg = generator.Argument("isEnabledByDefault", RefKind.None, enabled);
                 arguments[5] = enabledArg;
 
                 var initializer = generator.ObjectCreationExpression(type, arguments);
 
                 var rule = generator.FieldDeclaration("spacingRule", type, accessibility: Accessibility.Internal, modifiers: DeclarationModifiers.Static, initializer: initializer) as FieldDeclarationSyntax;
                 return rule;
+            }
+
+            internal static PropertyDeclarationSyntax CreateSupportedDiagnostics(SyntaxGenerator generator, INamedTypeSymbol notImplementedException)
+            {
+                var type = SyntaxFactory.ParseTypeName("ImmutableArray<DiagnosticDescriptor>");
+                var modifiers = DeclarationModifiers.Override;
+
+                SyntaxList<SyntaxNode> getAccessorStatements = new SyntaxList<SyntaxNode>();
+
+                SyntaxNode throwStatement = generator.ThrowStatement(generator.ObjectCreationExpression(notImplementedException));
+                getAccessorStatements = getAccessorStatements.Add(throwStatement);
+
+                var propertyDeclaration = generator.PropertyDeclaration("SupportedDiagnostics", type, accessibility: Accessibility.Public, modifiers: modifiers, getAccessorStatements: getAccessorStatements) as PropertyDeclarationSyntax;
+                propertyDeclaration = propertyDeclaration.RemoveNode(propertyDeclaration.AccessorList.Accessors[1], 0);
+                return propertyDeclaration;
             }
         }
     }
