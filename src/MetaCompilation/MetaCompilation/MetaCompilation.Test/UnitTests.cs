@@ -3950,7 +3950,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // check that statements below are retained
-        [TestMethod]
+        [Fact]
         public void IfStatementIncorrect8()
         {
             var test = @"using System;
@@ -4277,13 +4277,8 @@ namespace SyntaxNodeAnalyzer
         }
 
         // wrong identifier name
-<<<<<<< HEAD
-        [TestMethod]
-        public void IfKeywordIncorrect3()
-=======
         [Fact]
         public void IfKeyword3()
->>>>>>> dotnet/master
         {
             var test = @"using System;
             using System.Collections.Generic;
@@ -4390,13 +4385,8 @@ namespace SyntaxNodeAnalyzer
         }
 
         // doesn't access IfKeyword
-<<<<<<< HEAD
-        [TestMethod]
-        public void IfKeywordIncorrect4()
-=======
         [Fact]
         public void IfKeyword4()
->>>>>>> dotnet/master
         {
             var test = @"using System;
             using System.Collections.Generic;
@@ -4611,7 +4601,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // statements below are retained
-        [TestMethod]
+        [Fact]
         public void IfKeywordIncorrect6()
         {
             var test = @"using System;
@@ -4728,7 +4718,7 @@ namespace SyntaxNodeAnalyzer
 
         #region IfStatementMissing
         // no statements in analyze method
-        [TestMethod]
+        [Fact]
         public void IfStatementMissing1()
         {
             var test = @"using System;
@@ -4834,7 +4824,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // check comments aren't counted as statements
-        [TestMethod]
+        [Fact]
         public void IfStatementMissing2()
         {
             var test = @"using System;
@@ -4944,7 +4934,7 @@ namespace SyntaxNodeAnalyzer
 
         #region IfKeywordMissing
         // no 2nd statement
-        [TestMethod]
+        [Fact]
         public void IfKeywordMissing1()
         {
             var test = @"using System;
@@ -5052,7 +5042,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // second statement is in the comments
-        [TestMethod]
+        [Fact]
         public void IfKeywordMissing2()
         {
             var test = @"using System;
@@ -5164,7 +5154,7 @@ namespace SyntaxNodeAnalyzer
 
         #region TrailingTriviaCheckMissing
         // no 3rd statement
-        [TestMethod]
+        [Fact]
         public void TrailingCheckMissing1()
         {
             var test = @"using System;
@@ -5276,7 +5266,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // 3rd statement commented
-        [TestMethod]
+        [Fact]
         public void TrailingCheckMissing2()
         {
             var test = @"using System;
@@ -5395,7 +5385,7 @@ namespace SyntaxNodeAnalyzer
 
         #region TrailingTriviaCheckIncorrect
         // no if statement
-        [TestMethod]
+        [Fact]
         public void TrailingCheckIncorrect1()
         {
             var test = @"using System;
@@ -5513,7 +5503,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // misslabeled accessor
-        [TestMethod]
+        [Fact]
         public void TrailingCheckIncorrect2()
         {
             var test = @"using System;
@@ -5628,7 +5618,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // Doesnt access HasTrailingTrivia
-        [TestMethod]
+        [Fact]
         public void TrailingCheckIncorrect3()
         {
             var test = @"using System;
@@ -5743,7 +5733,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // throw statement
-        [TestMethod]
+        [Fact]
         public void TrailingCheckIncorrec4()
         {
             var test = @"using System.Collections.Immutable;
@@ -5846,7 +5836,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // statements below incorrect statement
-        [TestMethod]
+        [Fact]
         public void TrailingCheckIncorrect5()
         {
             var test = @"using System.Collections.Immutable;
@@ -5954,7 +5944,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // statements within if block
-        [TestMethod]
+        [Fact]
         public void TrailingCheckIncorrect6()
         {
             var test = @"using System.Collections.Immutable;
@@ -6061,7 +6051,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // incorrect statement is next if statement
-        [TestMethod]
+        [Fact]
         public void TrailingCheckIncorrect7()
         {
             var test = @"using System.Collections.Immutable;
@@ -6168,7 +6158,7 @@ namespace SyntaxNodeAnalyzer
 
         #region TrailingTriviaVarMissing
         // no variable declaration
-        [TestMethod]
+        [Fact]
         public void TrailingVarMissing1()
         {
             var test = @"using System.Collections.Immutable;
@@ -6274,7 +6264,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // statement below if block
-        [TestMethod]
+        [Fact]
         public void TrailingVarMissing2()
         {
             var test = @"using System.Collections.Immutable;
@@ -6382,7 +6372,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // declaration in comments
-        [TestMethod]
+        [Fact]
         public void TrailingVarMissing3()
         {
             var test = @"using System.Collections.Immutable;
@@ -6492,7 +6482,7 @@ namespace SyntaxNodeAnalyzer
 
         #region TrailingTriviaVarIncorrect
         // not initialized
-        [TestMethod]
+        [Fact]
         public void TrailingVarIncorrect1()
         {
             var test = @"using System.Collections.Immutable;
@@ -6599,7 +6589,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // no member access expressions
-        [TestMethod]
+        [Fact]
         public void TrailingVarIncorrect2()
         {
             var test = @"using System.Collections.Immutable;
@@ -6706,7 +6696,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         //only one member access expression
-        [TestMethod]
+        [Fact]
         public void TrailingVarIncorrect3()
         {
             var test = @"using System.Collections.Immutable;
@@ -6812,7 +6802,7 @@ namespace SyntaxNodeAnalyzer
             VerifyCSharpFix(test, fixtest);
         }
         // member access expression order switched
-        [TestMethod]
+        [Fact]
         public void TrailingVarIncorrect4()
         {
             var test = @"using System.Collections.Immutable;
@@ -6919,7 +6909,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // throw statement
-        [TestMethod]
+        [Fact]
         public void TrailingVarIncorrect5()
         {
             var test = @"using System.Collections.Immutable;
@@ -7026,7 +7016,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // wrong accessor
-        [TestMethod]
+        [Fact]
         public void TrailingVarIncorrect6()
         {
             var test = @"using System.Collections.Immutable;
@@ -7133,7 +7123,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // statements below if block
-        [TestMethod]
+        [Fact]
         public void TrailingVarIncorrect7()
         {
             var test = @"using System.Collections.Immutable;
@@ -7242,7 +7232,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // statements within if block
-        [TestMethod]
+        [Fact]
         public void TrailingVarIncorrect8()
         {
             var test = @"using System.Collections.Immutable;
@@ -7355,7 +7345,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         //incorrect statement is the next statement
-        [TestMethod]
+        [Fact]
         public void TrailingVarIncorrect9()
         {
             var test = @"using System.Collections.Immutable;

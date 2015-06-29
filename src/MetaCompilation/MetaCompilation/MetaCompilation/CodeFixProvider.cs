@@ -1253,13 +1253,8 @@ namespace MetaCompilation
             var newBlock = declaration.Body.WithStatements(declaration.Body.Statements.Add(ifStatement));
             return await ReplaceNode(oldBlock, newBlock, document);
         }
-<<<<<<< HEAD
         
         private async Task<Document> TrailingVarMissingAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
-=======
-
-        private async Task<Document> TrailingVarMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
->>>>>>> dotnet/master
         {
             var ifStatement = declaration.Body.Statements[2] as IfStatementSyntax;
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -1270,13 +1265,8 @@ namespace MetaCompilation
 
             return await ReplaceNode(oldBlock, newBlock, document);
         }
-<<<<<<< HEAD
         
         private async Task<Document> TrailingVarIncorrectAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
-=======
-
-        private async Task<Document> TrailingVarIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
->>>>>>> dotnet/master
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
