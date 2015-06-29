@@ -258,19 +258,19 @@ namespace MetaCompilation
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaVarMissing))
                 {
-                    IEnumerable<IfStatementSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>();
+                    IEnumerable<MethodDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
                     if (declarations.Count() != 0)
                     {
-                        IfStatementSyntax declaration = declarations.First();
+                        MethodDeclarationSyntax declaration = declarations.First();
                         context.RegisterCodeFix(CodeAction.Create("Tutorial: The fourth statement of the analyzer should store the last trailing trivia of the if keyword", c => TrailingVarMissingAsync(context.Document, declaration, c)), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaVarIncorrect))
                 {
-                    IEnumerable<IfStatementSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>();
+                    IEnumerable<MethodDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
                     if (declarations.Count() != 0)
                     {
-                        IfStatementSyntax declaration = declarations.First();
+                        MethodDeclarationSyntax declaration = declarations.First();
                         context.RegisterCodeFix(CodeAction.Create("Tutorial: The fourth statement of the analyzer should store the last trailing trivia of the if keyword", c => TrailingVarIncorrectAsync(context.Document, declaration, c)), diagnostic);
                     }
                 }
@@ -1250,28 +1250,30 @@ namespace MetaCompilation
             StatementSyntax ifStatement = CodeFixNodeCreator.TriviaCheckHelper(generator, declaration.Body, ifBlockStatements) as StatementSyntax;
 
             var oldBlock = declaration.Body;
-            var newBlock = declaration.Body.WithStatements(declaration.Body.Statements.Replace(declaration.Body.Statements[2], ifStatement));
+            var newBlock = declaration.Body.WithStatements(declaration.Body.Statements.Add(ifStatement));
             return await ReplaceNode(oldBlock, newBlock, document);
         }
-
-        private async Task<Document> TrailingVarMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        
+        private async Task<Document> TrailingVarMissingAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
+            var ifStatement = declaration.Body.Statements[2] as IfStatementSyntax;
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-            var localDeclaration = new SyntaxList<SyntaxNode>().Add(CodeFixNodeCreator.TriviaVarMissingHelper(generator, declaration));
+            var localDeclaration = new SyntaxList<SyntaxNode>().Add(CodeFixNodeCreator.TriviaVarMissingHelper(generator, ifStatement));
 
-            var oldBlock = declaration.Statement as BlockSyntax;
+            var oldBlock = ifStatement.Statement as BlockSyntax;
             var newBlock = oldBlock.WithStatements(localDeclaration);
 
             return await ReplaceNode(oldBlock, newBlock, document);
         }
-
-        private async Task<Document> TrailingVarIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        
+        private async Task<Document> TrailingVarIncorrectAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            var localDeclaration = CodeFixNodeCreator.TriviaVarMissingHelper(generator, declaration) as LocalDeclarationStatementSyntax;
+            var ifStatement = declaration.Body.Statements[2] as IfStatementSyntax;
+            var localDeclaration = CodeFixNodeCreator.TriviaVarMissingHelper(generator, ifStatement) as LocalDeclarationStatementSyntax;
 
-            var oldBlock = declaration.Statement as BlockSyntax;
+            var oldBlock = ifStatement.Statement as BlockSyntax;
             var oldStatement = oldBlock.Statements[0];
             var newStatements = oldBlock.Statements.Replace(oldStatement, localDeclaration);
             var newBlock = oldBlock.WithStatements(newStatements);
@@ -1433,7 +1435,8 @@ namespace MetaCompilation
 
             internal static SyntaxNode TriviaVarMissingHelper(SyntaxGenerator generator, IfStatementSyntax declaration)
             {
-                var methodBlock = declaration.Parent as BlockSyntax;
+                var methodDecl = declaration.Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
+                var methodBlock = methodDecl.Body as BlockSyntax;
                 var secondStatement = methodBlock.Statements[1] as LocalDeclarationStatementSyntax;
 
                 var variableName = generator.IdentifierName(secondStatement.Declaration.Variables[0].Identifier.ValueText);
