@@ -906,17 +906,7 @@ namespace MetaCompilation
         private async Task<Document> IdDeclTypeAsync(Document document, ClassDeclarationSyntax classDeclaration, CancellationToken c)
         {
             var generator = SyntaxGenerator.GetGenerator(document);
-            ////var classSymbol = classDeclaration.GetSym
-            //SemanticModel semanticModel = await document.GetSemanticModelAsync();
-            ////INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException");
-
-
-            //var classSymbol = semanticModel.Compilation.GetTypeByMetadataName("SyntaxNodeAnalyzerAnalyzer");
-
-            var members = classDeclaration.Members; //DescendantNodes().OfType<IFieldSymbol>(); //classSymbol.DeclaringSyntaxReferences.OfType<IFieldSymbol>();
-
-            //var ruleId = 
-
+            var members = classDeclaration.Members;
             ExpressionSyntax oldIdName = null;
             IdentifierNameSyntax newIdName = null;
 
@@ -929,7 +919,6 @@ namespace MetaCompilation
                 }
                 if (fieldDeclaration.Declaration.Type != null && fieldDeclaration.Declaration.Type.ToString() == "DiagnosticDescriptor")
                 {
-                    //var diagnosticDescriptorSymbol = fieldDeclaration;
                     var declaratorSyntax = fieldDeclaration.Declaration.Variables[0] as VariableDeclaratorSyntax;
                     var objectCreationSyntax = declaratorSyntax.Initializer.Value as ObjectCreationExpressionSyntax;
                     var ruleArgumentList = objectCreationSyntax.ArgumentList;
@@ -973,8 +962,6 @@ namespace MetaCompilation
                     newIdName = generator.IdentifierName(newIdIdentifier) as IdentifierNameSyntax;
                 }
             }
-            //var idName = SyntaxFactory.ParseName(ruleDeclaration.Token.Value.ToString()) as IdentifierNameSyntax;
-
             return await ReplaceNode(oldIdName, newIdName, document);
         }
 
