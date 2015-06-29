@@ -10,11 +10,12 @@
 
     <!-- Emit XML in a CIBuild in order to get structured test results -->
     <RunTestArgs>$(RunTestArgs) /noisolation</RunTestArgs>
-    <RunTestArgs Condition="'$(CIBuild)' == 'true'">$(RunTestArgs) /resultsfile:TestResults.trx</RunTestArgs>
+    <RunTestArgs Condition="'$(CIBuild)' == 'true'">$(RunTestArgs) /resultsfile:TestResults.trx /detail:errormessage /detail:errorstacktrace</RunTestArgs>
   </PropertyGroup>
 
   <Target Name="RestorePackages">
-    <Exec Command="&quot;$(MSBuildThisFileDirectory)\Src\.nuget\Nuget.exe&quot; restore &quot;$(SolutionFile)&quot;" />
+    <Exec Command="&quot;$(MSBuildThisFileDirectory)\Src\.nuget\Nuget.exe&quot; restore &quot;$(MSBuildThisFileDirectory)\Src\.nuget\packages.config&quot; -PackagesDirectory &quot;$(MSBuildThisFileDirectory)\packages&quot;" />
+    <Exec Command="&quot;$(MSBuildThisFileDirectory)\Src\.nuget\Nuget.exe&quot; restore &quot;$(SolutionFile)&quot; -PackagesDirectory &quot;$(MSBuildThisFileDirectory)\packages&quot;" />
   </Target>
 
   <Target Name="Build" DependsOnTargets="RestorePackages">
