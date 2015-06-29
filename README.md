@@ -1,3 +1,10 @@
+Projects
+========
+
+MetaCompilation
+---------------
+*A description of this project should go here.*
+
 Getting Started
 ===============
 
