@@ -1415,7 +1415,7 @@ namespace SyntaxNodeAnalyzer
 
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            context.RegisterSyntaxNodeAction(Practice, SyntaxKind.IfStatement);
         }
     }
 }";
@@ -1487,6 +1487,7 @@ namespace SyntaxNodeAnalyzer
 
         public override void Initialize(AnalysisContext context)
         {
+            context.RegisterSyntaxNodeAction(Practice, SyntaxKind.IfStatement);
         }
     }
 }";
