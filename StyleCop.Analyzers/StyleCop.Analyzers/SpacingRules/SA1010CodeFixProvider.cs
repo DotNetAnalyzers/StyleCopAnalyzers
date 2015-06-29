@@ -3,11 +3,13 @@
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1010OpeningSquareBracketsMustBeSpacedCorrectly"/>.
@@ -33,10 +35,8 @@
         }
 
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1010OpeningSquareBracketsMustBeSpacedCorrectly.DiagnosticId))
@@ -44,19 +44,20 @@
                     continue;
                 }
 
-                SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (!token.IsKind(SyntaxKind.OpenBracketToken))
-                {
-                    continue;
-                }
-
-                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1010CodeFix, t => GetTransformedDocumentAsync(context.Document, root, token)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(SpacingResources.SA1010CodeFix,
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken)),
+                        diagnostic);
             }
+
+            return SpecializedTasks.CompletedTask;
         }
 
-        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxToken token)
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
-            Dictionary<SyntaxToken, SyntaxToken> replacements = new Dictionary<SyntaxToken, SyntaxToken>();
+            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
+            var replacements = new List<SyntaxToken>(2);
 
             bool firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
             if (!firstInLine)
@@ -64,26 +65,25 @@
                 SyntaxToken precedingToken = token.GetPreviousToken();
                 if (precedingToken.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
                 {
-                    SyntaxToken corrected = precedingToken.WithoutTrailingWhitespace().WithoutFormatting();
-                    replacements[precedingToken] = corrected;
+                    replacements.Add(precedingToken);
                 }
             }
 
-            if (!token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia) && token.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
+            SyntaxTriviaList trailingTrivia = token.TrailingTrivia;
+            if (!trailingTrivia.Any(SyntaxKind.EndOfLineTrivia) && trailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
             {
-                SyntaxToken corrected = token.WithoutTrailingWhitespace().WithoutFormatting();
-                replacements[token] = corrected;
+                replacements.Add(token);
             }
 
             if (replacements.Count == 0)
             {
-                return Task.FromResult(document);
+                return document;
             }
 
-            var transformed = root.ReplaceTokens(replacements.Keys, (original, maybeRewritten) => replacements[original]);
+            var transformed = root.ReplaceTokens(replacements, (original, maybeRewritten) => maybeRewritten.WithoutTrailingWhitespace().WithoutFormatting());
             Document updatedDocument = document.WithSyntaxRoot(transformed);
 
-            return Task.FromResult(updatedDocument);
+            return updatedDocument;
         }
     }
 }
