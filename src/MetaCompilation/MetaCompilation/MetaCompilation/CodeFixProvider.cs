@@ -1682,15 +1682,15 @@ namespace MetaCompilation
                 var idArg = generator.Argument("id", RefKind.None, id);
                 arguments[0] = idArg;
 
-                var title = generator.IdentifierName("");
+                var title = generator.LiteralExpression("Enter a title for this diagnostic");
                 var titleArg = generator.Argument("title", RefKind.None, title);
                 arguments[1] = titleArg;
 
-                var message = generator.IdentifierName("");
+                var message = generator.LiteralExpression("Enter a message to be displayed with this diagnostic");
                 var messageArg = generator.Argument("messageFormat", RefKind.None, message);
                 arguments[2] = messageArg;
 
-                var category = generator.IdentifierName("");
+                var category = generator.LiteralExpression("Enter a category for this diagnostic");
                 var categoryArg = generator.Argument("category", RefKind.None, category);
                 arguments[3] = categoryArg;
 
