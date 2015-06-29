@@ -3,18 +3,17 @@ using System;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestHelper;
 using MetaCompilation;
+using Xunit;
 
 namespace MetaCompilation.Test
 {
-    [TestClass]
     public class UnitTest : CodeFixVerifier
     {
         #region default no diagnostics tests
         //no diagnostics
-        [TestMethod]
+        [Fact]
         public void TestMethod1()
         {
             var test = @"";
@@ -23,7 +22,7 @@ namespace MetaCompilation.Test
         }
 
         //no diagnostics
-        [TestMethod]
+        [Fact]
         public void TestMethod2()
         {
             var test = @"using System;
@@ -99,7 +98,7 @@ namespace SyntaxNodeAnalyzer
 
         #region MissingId
         //no id, nothing else after
-        [TestMethod]
+        [Fact]
         public void MissingId1()
         {
             var test = @"using System;
@@ -178,7 +177,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // no id, rules exists
-        [TestMethod]
+        [Fact]
         public void MissingId2()
         {
             var test = @"using System;
@@ -271,7 +270,7 @@ namespace SyntaxNodeAnalyzer
             VerifyCSharpFix(test, fixtest);
         }
 
-        [TestMethod]
+        [Fact]
         public void MissingId3()
         {
             var test = @"using System;
@@ -350,7 +349,7 @@ namespace SyntaxNodeAnalyzer
             VerifyCSharpFix(test, fixtest);
         }
 
-        [TestMethod]
+        [Fact]
         public void MissingId4()
         {
             var test = @"using System;
@@ -429,7 +428,7 @@ namespace SyntaxNodeAnalyzer
             VerifyCSharpFix(test, fixTest);
         }
 
-        [TestMethod]
+        [Fact]
         public void MissingId5()
         {
             var test = @"using System;
@@ -508,7 +507,7 @@ namespace SyntaxNodeAnalyzer
             VerifyCSharpFix(test, fixtest);
         }
 
-        [TestMethod]
+        [Fact]
         public void MissingId6()
         {
             var test = @"using System;
@@ -589,7 +588,7 @@ namespace SyntaxNodeAnalyzer
         #endregion
 
         #region MissingInit
-        [TestMethod]
+        [Fact]
         public void MissingInit1()
         {
             var test = @"using System;
@@ -663,7 +662,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // slight mis-spelling
-        [TestMethod]
+        [Fact]
         public void MissingInit2()
         {
             var test = @"using System;
@@ -710,7 +709,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // everything except the initialize method
-        [TestMethod]
+        [Fact]
         public void MissingInit3()
         {
             var test = @"using System;
@@ -857,7 +856,7 @@ namespace SyntaxNodeAnalyzer
         #endregion
 
         #region MissingRegisterStatement
-        [TestMethod]
+        [Fact]
         public void MissingRegister1()
         {
             var test = @"using System;
@@ -943,7 +942,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // register statement in comments
-        [TestMethod]
+        [Fact]
         public void MissingRegister2()
         {
             var test = @"using System;
@@ -1032,7 +1031,7 @@ namespace SyntaxNodeAnalyzer
 
         #region TooManyInitStatements
         // statement below, incorrect method name
-        [TestMethod]
+        [Fact]
         public void MultipleInit1()
         {
             var test = @"using System;
@@ -1110,7 +1109,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // statement below, incorrect syntax kind
-        [TestMethod]
+        [Fact]
         public void MultipleInit2()
         {
             var test = @"using System;
@@ -1188,7 +1187,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // incorrect statement above
-        [TestMethod]
+        [Fact]
         public void MultipleInit3()
         {
             var test = @"using System;
@@ -1266,7 +1265,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         //multiple incorrect statements below
-        [TestMethod]
+        [Fact]
         public void MultipleInit4()
         {
             var test = @"using System;
@@ -1345,7 +1344,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // multiple incorrect statements above
-        [TestMethod]
+        [Fact]
         public void MultipleInit5()
         {
             var test = @"using System;
@@ -1424,7 +1423,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // no correct statements, multiple incorrect
-        [TestMethod]
+        [Fact]
         public void MultipleInit6()
         {
             var test = @"using System;
@@ -1497,7 +1496,7 @@ namespace SyntaxNodeAnalyzer
 
         #region InvalidStatement
         // invalid throw statement
-        [TestMethod]
+        [Fact]
         public void InvalidStatement1()
         {
             var test = @"using System;
@@ -1567,7 +1566,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // invalid break statement
-        [TestMethod]
+        [Fact]
         public void InvalidStatement2()
         {
             var test = @"using System;
@@ -1639,7 +1638,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         //invalid check statement
-        [TestMethod]
+        [Fact]
         public void InvalidStatement3()
         {
             var test = @"using System;
@@ -1711,7 +1710,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // invalid continue statement
-        [TestMethod]
+        [Fact]
         public void InvalidStatement4()
         {
             var test = @"using System;
@@ -1783,7 +1782,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // do while statement
-        [TestMethod]
+        [Fact]
         public void InvalidStatement5()
         {
             var test = @"using System;
@@ -1855,7 +1854,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // invalid random expression statement
-        [TestMethod]
+        [Fact]
         public void InvalidStatement6()
         {
             var test = @"using System;
@@ -1927,7 +1926,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // invalid foreach statement
-        [TestMethod]
+        [Fact]
         public void InvalidStatement7()
         {
             var test = @"using System;
@@ -1999,7 +1998,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // invalid for statement
-        [TestMethod]
+        [Fact]
         public void InvalidStatement8()
         {
             var test = @"using System;
@@ -2071,7 +2070,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // invalid if statement
-        [TestMethod]
+        [Fact]
         public void InvalidStatement9()
         {
             var test = @"using System;
@@ -2143,7 +2142,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // invalid labeled statement
-        [TestMethod]
+        [Fact]
         public void InvalidStatement10()
         {
             var test = @"using System;
@@ -2215,7 +2214,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // invalid local declaration statement
-        [TestMethod]
+        [Fact]
         public void InvalidStatement11()
         {
             var test = @"using System;
@@ -2287,7 +2286,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // invalid lock statement
-        [TestMethod]
+        [Fact]
         public void InvalidStatement12()
         {
             var test = @"using System;
@@ -2359,7 +2358,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // invalid return statement
-        [TestMethod]
+        [Fact]
         public void InvalidStatement13()
         {
             var test = @"using System;
@@ -2431,7 +2430,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // multiple invalid statements
-        [TestMethod]
+        [Fact]
         public void InvalidStatement14()
         {
             var test = @"using System;
@@ -2505,7 +2504,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // one invalid statement, no valid statements
-        [TestMethod]
+        [Fact]
         public void InvalidStatement15()
         {
             var test = @"using System;
@@ -2575,7 +2574,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // multiple invalid statements, no valid statements
-        [TestMethod]
+        [Fact]
         public void InvalidStatement16()
         {
             var test = @"using System;
@@ -2647,7 +2646,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // multiple valid statements, one invalid statement
-        [TestMethod]
+        [Fact]
         public void InvalidStatement17()
         {
             var test = @"using System;
@@ -2725,7 +2724,7 @@ namespace SyntaxNodeAnalyzer
 
         #region IncorrectInitSig
         // more than one parameter
-        [TestMethod]
+        [Fact]
         public void InitSig1()
         {
             var test = @"using System;
@@ -2804,7 +2803,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // Wrong type for first parameter
-        [TestMethod]
+        [Fact]
         public void InitSig2()
         {
             var test = @"using System;
@@ -2883,7 +2882,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // wrong first parameter name
-        [TestMethod]
+        [Fact]
         public void InitSig3()
         {
             var test = @"using System;
@@ -2962,7 +2961,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // accessibility is not public
-        [TestMethod]
+        [Fact]
         public void InitSig4()
         {
             var test = @"using System;
@@ -3041,7 +3040,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // initialize method is not overriden
-        [TestMethod]
+        [Fact]
         public void InitSig5()
         {
             var test = @"using System;
@@ -3120,7 +3119,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // initialize method does not return void
-        [TestMethod]
+        [Fact]
         public void InitSig6()
         {
             var test = @"using System;
@@ -3201,7 +3200,7 @@ namespace SyntaxNodeAnalyzer
 
         #region IfStatementIncorrect
         // No identifier for statement
-        [TestMethod]
+        [Fact]
         public void IfStatementIncorrect1()
         {
             var test = @"using System;
@@ -3308,7 +3307,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // ifStatement not initialized
-        [TestMethod]
+        [Fact]
         public void IfStatementIncorrect2()
         {
             var test = @"using System;
@@ -3415,7 +3414,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // no cast
-        [TestMethod]
+        [Fact]
         public void IfStatementIncorrect3()
         {
             var test = @"using System;
@@ -3523,7 +3522,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // Wrong cast type
-        [TestMethod]
+        [Fact]
         public void IfStatementIncorrect()
         {
             var test = @"using System;
@@ -3630,7 +3629,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // not a member access expression
-        [TestMethod]
+        [Fact]
         public void IfStatementIncorrect5()
         {
             var test = @"using System;
@@ -3737,7 +3736,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // wrong object
-        [TestMethod]
+        [Fact]
         public void IfStatementIncorrect6()
         {
             var test = @"using System;
@@ -3844,7 +3843,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // doesn't access node
-        [TestMethod]
+        [Fact]
         public void IfStatementIncorrect7()
         {
             var test = @"using System;
@@ -4062,7 +4061,7 @@ namespace SyntaxNodeAnalyzer
 
         #region IfKeywordIncorrect
         // not initialized
-        [TestMethod]
+        [Fact]
         public void IfKeywordIncorrect1()
         {
             var test = @"using System;
@@ -4170,7 +4169,7 @@ namespace SyntaxNodeAnalyzer
         }
 
         // no member access expression
-        [TestMethod]
+        [Fact]
         public void IfKeywordIncorrect2()
         {
             var test = @"using System;
@@ -4278,8 +4277,13 @@ namespace SyntaxNodeAnalyzer
         }
 
         // wrong identifier name
+<<<<<<< HEAD
         [TestMethod]
         public void IfKeywordIncorrect3()
+=======
+        [Fact]
+        public void IfKeyword3()
+>>>>>>> dotnet/master
         {
             var test = @"using System;
             using System.Collections.Generic;
@@ -4386,8 +4390,13 @@ namespace SyntaxNodeAnalyzer
         }
 
         // doesn't access IfKeyword
+<<<<<<< HEAD
         [TestMethod]
         public void IfKeywordIncorrect4()
+=======
+        [Fact]
+        public void IfKeyword4()
+>>>>>>> dotnet/master
         {
             var test = @"using System;
             using System.Collections.Generic;
@@ -4494,7 +4503,7 @@ namespace SyntaxNodeAnalyzer
         }
         
         // no variable declaration 
-        [TestMethod]
+        [Fact]
         public void IfKeywordIncorrect5()
         {
             var test = @"using System;
