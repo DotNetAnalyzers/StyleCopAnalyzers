@@ -10,6 +10,7 @@
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Formatting;
+    using Microsoft.CodeAnalysis.Text;
     using Xunit;
 
     /// <summary>
@@ -66,36 +67,39 @@
         private async Task VerifyFixAsync(string language, ImmutableArray<DiagnosticAnalyzer> analyzers, CodeFixProvider codeFixProvider, string oldSource, string newSource, int? codeFixIndex, bool allowNewCompilerDiagnostics, CancellationToken cancellationToken)
         {
             var document = CreateDocument(oldSource, language);
-            var analyzerDiagnostics = await GetSortedDiagnosticsFromDocumentsAsync(analyzers, new[] { document }, cancellationToken).ConfigureAwait(false);
             var compilerDiagnostics = await GetCompilerDiagnosticsAsync(document, cancellationToken).ConfigureAwait(false);
-            var attempts = analyzerDiagnostics.Length;
 
-            for (int i = 0; i < attempts; ++i)
+            var previousDiagnostics = ImmutableArray.Create<Diagnostic>();
+
+            bool done;
+            do
             {
-                var actions = new List<CodeAction>();
-                var context = new CodeFixContext(document, analyzerDiagnostics[0], (a, d) => actions.Add(a), cancellationToken);
-                await codeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
-
-                if (!actions.Any())
+                var analyzerDiagnostics = await GetSortedDiagnosticsFromDocumentsAsync(analyzers, new[] { document }, cancellationToken).ConfigureAwait(false);
+                if (analyzerDiagnostics.Length == 0)
                 {
                     break;
                 }
 
-                if (codeFixIndex != null)
-                {
-                    document = await ApplyFixAsync(document, actions.ElementAt((int)codeFixIndex), cancellationToken).ConfigureAwait(false);
-                    break;
-                }
+                Assert.True(AreDiagnosticsDifferent(analyzerDiagnostics, previousDiagnostics), "Unmodified diagnostics detected!");
+                previousDiagnostics = analyzerDiagnostics;
 
-                document = await ApplyFixAsync(document, actions.ElementAt(0), cancellationToken).ConfigureAwait(false);
-                analyzerDiagnostics = await GetSortedDiagnosticsFromDocumentsAsync(analyzers, new[] { document }, cancellationToken).ConfigureAwait(false);
-
-                // check if there are analyzer diagnostics left after the code fix
-                if (!analyzerDiagnostics.Any())
+                done = true;
+                for (var i = 0; i < analyzerDiagnostics.Length; i++)
                 {
-                    break;
+                    var actions = new List<CodeAction>();
+                    var context = new CodeFixContext(document, analyzerDiagnostics[i], (a, d) => actions.Add(a), cancellationToken);
+                    await codeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
+
+                    if (actions.Count > 0)
+                    {
+                        SourceText oldText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+                        document = await ApplyFixAsync(document, actions.ElementAt(codeFixIndex.GetValueOrDefault(0)), cancellationToken).ConfigureAwait(false);
+                        done = oldText.ContentEquals(await document.GetTextAsync(cancellationToken).ConfigureAwait(false));
+                        break;
+                    }
                 }
             }
+            while (!done);
 
             var newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, await GetCompilerDiagnosticsAsync(document, cancellationToken).ConfigureAwait(false));
 
@@ -116,6 +120,24 @@
             // after applying all of the code fixes, compare the resulting string to the inputted one
             var actual = await GetStringFromDocumentAsync(document, cancellationToken).ConfigureAwait(false);
             Assert.Equal(newSource, actual);
+        }
+
+        private static bool AreDiagnosticsDifferent(ImmutableArray<Diagnostic> analyzerDiagnostics, ImmutableArray<Diagnostic> previousDiagnostics)
+        {
+            if (analyzerDiagnostics.Length != previousDiagnostics.Length)
+            {
+                return true;
+            }
+
+            for (var i = 0; i < analyzerDiagnostics.Length; i++)
+            {
+                if (analyzerDiagnostics[i].Id != previousDiagnostics[i].Id)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
