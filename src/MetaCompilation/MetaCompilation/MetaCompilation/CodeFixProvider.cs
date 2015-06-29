@@ -903,7 +903,9 @@ namespace MetaCompilation
         private async Task<Document> IncorrectIfAsync(Document document, StatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-            var ifStatement = CodeFixNodeCreator.IfHelper(generator);
+            MethodDeclarationSyntax methodDeclaration = declaration.Parent.Parent as MethodDeclarationSyntax;
+            string name = methodDeclaration.ParameterList.Parameters[0].Identifier.ValueText as string;
+            var ifStatement = CodeFixNodeCreator.IfHelper(generator, name);
 
             return await ReplaceNode(declaration, ifStatement, document);
         }
@@ -911,7 +913,9 @@ namespace MetaCompilation
         private async Task<Document> MissingIfAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-            StatementSyntax ifStatement = CodeFixNodeCreator.IfHelper(generator) as StatementSyntax;
+            MethodDeclarationSyntax methodDeclaration = declaration.Parent.Parent as MethodDeclarationSyntax;
+            string name = methodDeclaration.ParameterList.Parameters[0].Identifier.ValueText as string;
+            StatementSyntax ifStatement = CodeFixNodeCreator.IfHelper(generator, name) as StatementSyntax;
 
             var oldBlock = declaration.Body as BlockSyntax;
             var newBlock = oldBlock.AddStatements(ifStatement);
@@ -1401,10 +1405,10 @@ namespace MetaCompilation
 
         class CodeFixNodeCreator
         {
-            internal static SyntaxNode IfHelper(SyntaxGenerator generator)
+            internal static SyntaxNode IfHelper(SyntaxGenerator generator, string name)
             {
                 var type = SyntaxFactory.ParseTypeName("IfStatementSyntax");
-                var expression = generator.IdentifierName("context");
+                var expression = generator.IdentifierName(name);
                 var memberAccessExpression = generator.MemberAccessExpression(expression, "Node");
                 var initializer = generator.CastExpression(type, memberAccessExpression);
                 var ifStatement = generator.LocalDeclarationStatement("ifStatement", initializer);
