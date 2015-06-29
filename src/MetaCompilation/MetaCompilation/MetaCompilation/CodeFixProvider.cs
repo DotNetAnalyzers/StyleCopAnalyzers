@@ -289,7 +289,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         IfStatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create("Tutorial: The third statement of the analyzer must be an if statement checking the trailing trivia of the node being analyzed", c => TrailingKindCheckMissingAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create("Tutorial:The fifth statement of the analyzer should be a check of the kind of trivia following the if keywor", c => TrailingKindCheckMissingAsync(context.Document, declaration, c)), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.WhitespaceCheckIncorrect))
@@ -1315,10 +1315,10 @@ namespace MetaCompilation
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
             var ifBlockStatements = new SyntaxList<SyntaxNode>();
-            var newIfStatement = new SyntaxList<SyntaxNode>().Add(CodeFixNodeCreator.TriviaKindCheckHelper(generator, declaration, ifBlockStatements) as StatementSyntax);
+            var newIfStatement = CodeFixNodeCreator.TriviaKindCheckHelper(generator, declaration, ifBlockStatements) as StatementSyntax;
 
             var oldBlock = declaration.Statement as BlockSyntax;
-            var newBlock = oldBlock.WithStatements(newIfStatement);
+            var newBlock = oldBlock.AddStatements(newIfStatement);
 
             return await ReplaceNode(oldBlock, newBlock, document);
         }
