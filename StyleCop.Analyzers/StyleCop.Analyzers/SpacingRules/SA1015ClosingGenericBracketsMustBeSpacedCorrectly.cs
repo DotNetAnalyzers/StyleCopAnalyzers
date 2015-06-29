@@ -4,6 +4,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A closing generic bracket within a C# element is not spaced correctly.
@@ -86,27 +87,13 @@
                 return;
             }
 
-            bool precededBySpace;
-            bool firstInLine;
-
-            bool followedBySpace;
-            bool lastInLine;
+            bool firstInLine = token.IsFirstInLine();
+            bool lastInLine = token.IsLastInLine();
+            bool precededBySpace = firstInLine ? true : token.IsPrecededBySpace();
+            bool followedBySpace = token.IsFollowedBySpace();
             bool allowTrailingNoSpace;
             bool allowTrailingSpace;
 
-            firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
-            if (firstInLine)
-            {
-                precededBySpace = true;
-            }
-            else
-            {
-                SyntaxToken precedingToken = token.GetPreviousToken();
-                precededBySpace = precedingToken.HasTrailingTrivia;
-            }
-
-            followedBySpace = token.HasTrailingTrivia;
-            lastInLine = followedBySpace && token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia);
             if (!lastInLine)
             {
                 SyntaxToken nextToken = token.GetNextToken();

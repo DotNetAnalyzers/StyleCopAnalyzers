@@ -5,6 +5,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// An opening curly bracket within a C# element is not spaced correctly.
@@ -79,14 +80,13 @@
             }
 
             bool precededBySpace;
-            bool firstInLine;
+            bool firstInLine = token.IsFirstInLine();
             bool allowLeadingSpace;
             bool allowLeadingNoSpace;
 
-            bool followedBySpace;
-            bool lastInLine;
+            bool followedBySpace = token.IsFollowedBySpace();
+            bool lastInLine = token.IsLastInLine();
 
-            firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
             if (firstInLine)
             {
                 precededBySpace = true;
@@ -110,9 +110,6 @@
                     break;
                 }
             }
-
-            followedBySpace = token.HasTrailingTrivia;
-            lastInLine = followedBySpace && token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia);
 
             if (token.Parent is InterpolationSyntax)
             {

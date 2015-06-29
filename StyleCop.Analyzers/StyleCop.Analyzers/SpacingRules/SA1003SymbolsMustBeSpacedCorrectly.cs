@@ -5,6 +5,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The spacing around an operator symbol is incorrect, within a C# code file.
@@ -116,10 +117,8 @@
             bool allowTrailingNoSpace = !isBinaryExpressionOperator;
 
             bool precededBySpace;
-            bool firstInLine;
 
-            firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
-            if (firstInLine)
+            if (token.IsFirstInLine())
             {
                 precededBySpace = true;
             }
@@ -142,8 +141,8 @@
                 }
             }
 
-            bool followedBySpace = token.HasTrailingTrivia;
-            bool lastInLine = followedBySpace && token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia);
+            bool followedBySpace = token.IsFollowedBySpace();
+            bool lastInLine = token.IsLastInLine();
 
             if (!allowAtLineEnd && lastInLine)
             {

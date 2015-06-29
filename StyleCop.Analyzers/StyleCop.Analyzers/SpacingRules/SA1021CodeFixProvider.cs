@@ -9,6 +9,7 @@
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1021NegativeSignsMustBeSpacedCorrectly"/>.
@@ -58,13 +59,11 @@
         private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxToken token)
         {
             bool precededBySpace;
-            bool firstInLine;
             bool followsSpecialCharacter;
 
             Dictionary<SyntaxToken, SyntaxToken> replacements = new Dictionary<SyntaxToken, SyntaxToken>();
 
-            firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
-            if (!firstInLine)
+            if (!token.IsFirstInLine())
             {
                 SyntaxToken precedingToken = token.GetPreviousToken();
                 precededBySpace = precedingToken.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia);

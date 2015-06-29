@@ -10,6 +10,7 @@
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1003SymbolsMustBeSpacedCorrectly"/>.
@@ -61,8 +62,7 @@
             Dictionary<SyntaxToken, SyntaxToken> replacements = new Dictionary<SyntaxToken, SyntaxToken>();
 
             // always a space before unless at the beginning of a line or after certain tokens
-            bool firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
-            if (!firstInLine)
+            if (!token.IsFirstInLine())
             {
                 SyntaxToken precedingToken = token.GetPreviousToken();
                 SyntaxToken correctedPrecedingNoSpace = precedingToken.WithoutTrailingWhitespace();

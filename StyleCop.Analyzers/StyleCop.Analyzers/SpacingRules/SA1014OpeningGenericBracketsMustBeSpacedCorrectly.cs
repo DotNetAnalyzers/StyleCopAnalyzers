@@ -4,6 +4,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// An opening generic bracket within a C# element is not spaced correctly.
@@ -85,19 +86,17 @@
             }
 
             bool precededBySpace;
-            bool firstInLine;
+            bool firstInLine = token.IsFirstInLine();
 
             bool followedBySpace;
 
-            firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
             if (firstInLine)
             {
                 precededBySpace = true;
             }
             else
             {
-                SyntaxToken precedingToken = token.GetPreviousToken();
-                precededBySpace = precedingToken.HasTrailingTrivia;
+                precededBySpace = token.IsPrecededBySpace();
             }
 
             followedBySpace = token.HasTrailingTrivia;

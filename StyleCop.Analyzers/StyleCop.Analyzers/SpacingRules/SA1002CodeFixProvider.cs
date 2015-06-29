@@ -75,8 +75,7 @@
                 }
             }
 
-            bool firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
-            if (!firstInLine)
+            if (!token.IsFirstInLine())
             {
                 SyntaxToken precedingToken = token.GetPreviousToken();
                 if (precedingToken.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
