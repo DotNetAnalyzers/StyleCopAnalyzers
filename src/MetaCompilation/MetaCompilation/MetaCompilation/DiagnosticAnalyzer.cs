@@ -71,7 +71,7 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor MissingAccessorRule = CreateRule(MissingAccessor, "Missing get accessor", "The {0} property is missing a get accessor", "The SupportedDiagnostics property needs to have a get accessor, because that is how the ImmutableArray of DiagnosticDescriptors is made accessible");
 
         public const string TooManyAccessors = "MetaAnalyzer010";
-        internal static DiagnosticDescriptor TooManyAccessorsRule = CreateRule(TooManyAccessors, "You only need a get accessor for this property", "The {0} property only needs a get accessor, no set accessor is needed");
+        internal static DiagnosticDescriptor TooManyAccessorsRule = CreateRule(TooManyAccessors, "You only need a single get accessor for this property", "The {0} property only needs a get accessor, no set accessor is needed");
 
         public const string IncorrectAccessorReturn = "MetaAnalyzer011";
         internal static DiagnosticDescriptor IncorrectAccessorReturnRule = CreateRule(IncorrectAccessorReturn, "Get accessor return value incorrect", "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules");
@@ -1709,9 +1709,14 @@ namespace MetaCompilation
                     return false;
                 }
 
-                SyntaxList<StatementSyntax> statements = SuppDiagAccessor(context, propertyDeclaration);
+                BlockSyntax body = SuppDiagAccessor(context, propertyDeclaration);
+                if (body == null)
+                {
+                    return false;
+                }
 
-                if (statements.Count == 0)
+                SyntaxList<StatementSyntax> statements = body.Statements;
+                if (statements == null || statements.Count == 0)
                 {
                     ReportDiagnostic(context, IncorrectAccessorReturnRule, propertyDeclaration.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
                     return false;
@@ -1790,26 +1795,25 @@ namespace MetaCompilation
             }
 
             //returns the statements of the get accessor, empty list if get accessor not found/incorrect
-            internal SyntaxList<StatementSyntax> SuppDiagAccessor(CompilationAnalysisContext context, PropertyDeclarationSyntax propertyDeclaration)
+            internal BlockSyntax SuppDiagAccessor(CompilationAnalysisContext context, PropertyDeclarationSyntax propertyDeclaration)
             {
-                SyntaxList<StatementSyntax> emptyResult = new SyntaxList<StatementSyntax>();
-
                 AccessorListSyntax accessorList = propertyDeclaration.AccessorList;
                 if (accessorList == null)
                 {
-                    return emptyResult;
+                    return null;
                 }
 
                 SyntaxList<AccessorDeclarationSyntax> accessors = accessorList.Accessors;
                 if (accessors == null || accessors.Count == 0)
                 {
                     ReportDiagnostic(context, MissingAccessorRule, propertyDeclaration.GetLocation(), propertyDeclaration.Identifier.Text);
-                    return emptyResult;
+                    return null;
                 }
 
                 if (accessors.Count > 1)
                 {
                     ReportDiagnostic(context, TooManyAccessorsRule, accessorList.GetLocation(), propertyDeclaration.Identifier.Text);
+                    return null;
                 }
 
                 AccessorDeclarationSyntax getAccessor = null;
@@ -1825,17 +1829,17 @@ namespace MetaCompilation
                 if (getAccessor == null || getAccessor.Keyword.Kind() != SyntaxKind.GetKeyword)
                 {
                     ReportDiagnostic(context, MissingAccessorRule, propertyDeclaration.GetLocation(), propertyDeclaration.Identifier.Text);
-                    return emptyResult;
+                    return null;
                 }
 
                 var accessorBody = getAccessor.Body as BlockSyntax;
                 if (accessorBody == null)
                 {
                     ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessor.Keyword.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
-                    return emptyResult;
+                    return null;
                 }
 
-                return accessorBody.Statements;
+                return accessorBody;
             }
 
             //checks the return value of the get accessor within SupportedDiagnostics

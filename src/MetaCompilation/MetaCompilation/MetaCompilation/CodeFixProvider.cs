@@ -1126,9 +1126,10 @@ namespace MetaCompilation
                 }
             }
 
+            var block = SyntaxFactory.Block(new StatementSyntax[0]);
             if (accessorToKeep == null)
             {
-                accessorToKeep = SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration);
+                accessorToKeep = SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration, block);
             }
             
             SyntaxList<SyntaxNode> accessorsToAdd = new SyntaxList<SyntaxNode>();
@@ -1148,7 +1149,16 @@ namespace MetaCompilation
             var invocationExpression = generator.InvocationExpression(expression);
             var returnStatement = generator.ReturnStatement(invocationExpression) as ReturnStatementSyntax;
 
+            SyntaxList<AccessorDeclarationSyntax> accessors = declaration.AccessorList.Accessors;
+            if (accessors == null || accessors.Count == 0)
+            {
+                return document;
+            }
             var firstAccessor = declaration.AccessorList.Accessors.First();
+            if (firstAccessor == null || !firstAccessor.Keyword.IsKind(SyntaxKind.GetKeyword))
+            {
+                return document;
+            }
             var oldBody = firstAccessor.Body as BlockSyntax;
             var oldReturnStatement = oldBody.Statements.First();
 
