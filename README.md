@@ -10,8 +10,8 @@ Projects
 MetaCompilation
 ---------------
 The MetaCompilation Analyzer is an analyzer that functions as a tutorial to teach users how to write an analyzer. It uses diagnostics and code 
-fixes to prompt the user to input the various parts of an analyzer. It is designed for a novice analyzer programmer with a previous programming
-background who is seeking to discover how to write a simple, SyntaxNode analyzer.
+fixes to guide the user through the various steps required to create a simple analyzer. It is designed for a novice analyzer programmer with some previous programming
+experience who is seeking to discover how to write a simple, SyntaxNode analyzer.
 
 Getting Started
 ===============
