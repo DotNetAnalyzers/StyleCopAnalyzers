@@ -92,9 +92,14 @@
 
                     if (actions.Count > 0)
                     {
-                        SourceText oldText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
-                        document = await ApplyFixAsync(document, actions.ElementAt(codeFixIndex.GetValueOrDefault(0)), cancellationToken).ConfigureAwait(false);
-                        done = oldText.ContentEquals(await document.GetTextAsync(cancellationToken).ConfigureAwait(false));
+                        var fixedDocument = await ApplyFixAsync(document, actions.ElementAt(codeFixIndex.GetValueOrDefault(0)), cancellationToken).ConfigureAwait(false);
+
+                        var oldText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+                        var newText = await fixedDocument.GetTextAsync(cancellationToken).ConfigureAwait(false);
+                        done = oldText.ContentEquals(newText);
+
+                        // workaround for issue #936 - force reparsing to get the same sort of syntax tree as the original document.
+                        document = CreateDocument(newText.ToString(), language);
                         break;
                     }
                 }
