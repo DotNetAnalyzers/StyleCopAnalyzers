@@ -2240,8 +2240,7 @@ namespace MetaCompilation
             {
                 ImmutableArray<IParameterSymbol> parameters = _initializeSymbol.Parameters;
                 if (parameters.Count() != 1 || parameters[0].Type != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.AnalysisContext")
-                    || parameters[0].Name != "context" || _initializeSymbol.DeclaredAccessibility != Accessibility.Public
-                    || !_initializeSymbol.IsOverride || !_initializeSymbol.ReturnsVoid)
+                    || _initializeSymbol.DeclaredAccessibility != Accessibility.Public || !_initializeSymbol.IsOverride || !_initializeSymbol.ReturnsVoid)
                 {
                     ReportDiagnostic(context, IncorrectInitSigRule, _initializeSymbol.Locations[0], _initializeSymbol.Name.ToString());
                     return null;
@@ -2294,7 +2293,9 @@ namespace MetaCompilation
                     return null;
                 }
 
-                if (memberExprContext.Identifier.Text != "context")
+                MethodDeclarationSyntax methodDeclaration = statement.Parent.Parent as MethodDeclarationSyntax;
+                ParameterSyntax parameter = methodDeclaration.ParameterList.Parameters[0] as ParameterSyntax;
+                if (memberExprContext.Identifier.Text != parameter.Identifier.ValueText)
                 {
                     ReportDiagnostic(context, InvalidStatementRule, statements[0].GetLocation(), statements[0]);
                     return null;
