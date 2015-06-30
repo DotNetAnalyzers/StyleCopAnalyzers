@@ -864,16 +864,17 @@ namespace MetaCompilation
                 var argumentMethod = expression.ArgumentList.Arguments[0].Expression as IdentifierNameSyntax;
                 var argumentKind = expression.ArgumentList.Arguments[1].Expression as MemberAccessExpressionSyntax;
                 var preArgumentKind = argumentKind.Expression as IdentifierNameSyntax;
-                if (argumentMethod.Identifier == null || argumentKind.Name == null || preArgumentKind.Identifier == null ||
-                    argumentMethod.Identifier.ValueText != "AnalyzeIfStatement" || argumentKind.Name.ToString() != "IfStatement" ||
+                if (argumentMethod.Identifier == null || argumentKind.Name == null || preArgumentKind.Identifier == null || argumentKind.Name.Identifier.Text != "IfStatement" ||
                     preArgumentKind.Identifier.ValueText != "SyntaxKind")
                 {
                     continue;
                 }
                 statements = statements.Add(statement);
             }
+            SyntaxList<StatementSyntax> statementsToAdd = new SyntaxList<StatementSyntax>();
+            statementsToAdd = statementsToAdd.Add(statements[0]);
 
-            newBlock = newBlock.WithStatements(statements);
+            newBlock = newBlock.WithStatements(statementsToAdd);
             var newDeclaration = declaration.WithBody(newBlock);
 
             return await ReplaceNode(declaration, newDeclaration, document);
