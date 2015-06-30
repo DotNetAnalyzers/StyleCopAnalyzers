@@ -111,6 +111,21 @@ class ClassName
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestThatAnalyzerDoesntCrashOnEmptyBlockAsync()
+        {
+            string testCode = @"
+using System;
+class ClassName
+{
+    public static void Foo(string a, string b)
+    {
+    }
+}
+";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1107CodeMustNotContainMultipleStatementsOnOneLine();

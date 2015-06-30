@@ -53,7 +53,7 @@
         {
             BlockSyntax block = context.Node as BlockSyntax;
 
-            if (block != null)
+            if (block != null && block.Statements.Any())
             {
                 Location previousStatementLocation = block.Statements[0].GetLocation();
                 Location currentStatementLocation;
