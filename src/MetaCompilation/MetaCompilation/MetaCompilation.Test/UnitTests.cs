@@ -2881,88 +2881,9 @@ namespace SyntaxNodeAnalyzer
             VerifyCSharpFix(test, fixtest);
         }
 
-        // wrong first parameter name
-        [Fact]
-        public void InitSig3()
-        {
-            var test = @"using System;
-    using System.Collections.Generic;
-    using System.Collections;
-    using System.Collections.Immutable;
-    using System.Linq;
-    using System.Threading;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.CodeAnalysis.Text;
-
-    namespace SyntaxNodeAnalyzer
-    {
-        [DiagnosticAnalyzer(LanguageNames.CSharp)]
-        public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
-        {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-            {
-                get
-                {
-                    throw new NotImplementedException();
-                }
-            }
-
-        public override void Initialize(AnalysisContext practice)
-        {
-            throw new NotImplementedException();
-        }
-    }
-    }";
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.IncorrectInitSig,
-                Message = "The signature for the 'Initialize' method is incorrect",
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 30) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
-            var fixtest = @"using System;
-    using System.Collections.Generic;
-    using System.Collections;
-    using System.Collections.Immutable;
-    using System.Linq;
-    using System.Threading;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.CodeAnalysis.Text;
-
-    namespace SyntaxNodeAnalyzer
-    {
-        [DiagnosticAnalyzer(LanguageNames.CSharp)]
-        public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
-        {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-            {
-                get
-                {
-                    throw new NotImplementedException();
-                }
-            }
-
-        public override void Initialize(AnalysisContext context)
-        {
-            throw new NotImplementedException();
-        }
-    }
-    }";
-            VerifyCSharpFix(test, fixtest);
-        }
-
         // accessibility is not public
         [Fact]
-        public void InitSig4()
+        public void InitSig3()
         {
             var test = @"using System;
     using System.Collections.Generic;
@@ -3041,7 +2962,7 @@ namespace SyntaxNodeAnalyzer
 
         // initialize method is not overriden
         [Fact]
-        public void InitSig5()
+        public void InitSig4()
         {
             var test = @"using System;
     using System.Collections.Generic;
@@ -3120,7 +3041,7 @@ namespace SyntaxNodeAnalyzer
 
         // initialize method does not return void
         [Fact]
-        public void InitSig6()
+        public void InitSig5()
         {
             var test = @"using System;
     using System.Collections.Generic;
