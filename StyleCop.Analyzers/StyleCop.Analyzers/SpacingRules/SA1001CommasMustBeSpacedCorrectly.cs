@@ -4,6 +4,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The spacing around a comma is incorrect, within a C# code file.
@@ -96,13 +97,9 @@
             }
 
             bool hasPrecedingSpace = false;
-            if (!token.IsFirstTokenOnLine(context.CancellationToken))
+            if (!token.IsFirstInLine())
             {
-                SyntaxToken precedingToken = token.GetPreviousToken();
-                if (precedingToken.HasTrailingTrivia)
-                {
-                    hasPrecedingSpace = true;
-                }
+                hasPrecedingSpace = token.IsPrecededByWhitespace();
             }
 
             if (missingFollowingSpace)

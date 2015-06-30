@@ -6,6 +6,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// An opening parenthesis within a C# statement is not spaced correctly.
@@ -104,7 +105,7 @@
                 return;
             }
 
-            if (token.HasTrailingTrivia && token.TrailingTrivia[0].IsKind(SyntaxKind.EndOfLineTrivia))
+            if (token.IsLastInLine())
             {
                 // ignore open parenthesis when last on line.
                 return;
@@ -213,7 +214,7 @@
                 }
             }
 
-            if (HasTrailingSpace(token))
+            if (token.IsFollowedByWhitespace())
             {
                 var properties = ImmutableDictionary.Create<string, string>()
                     .Add(LocationKey, LocationFollowing)
@@ -221,14 +222,6 @@
 
                 context.ReportDiagnostic(Diagnostic.Create(DescriptorNotFollowed, token.GetLocation(), properties.ToImmutableDictionary()));
             }
-        }
-
-        private static bool HasTrailingSpace(SyntaxToken token)
-        {
-            var nextToken = token.GetNextToken();
-            var triviaList = token.TrailingTrivia.AddRange(nextToken.LeadingTrivia);
-
-            return (triviaList.Count > 0) && triviaList.First().IsKind(SyntaxKind.WhitespaceTrivia);
         }
     }
 }

@@ -4,6 +4,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A closing parenthesis within a C# statement is not spaced correctly.
@@ -78,26 +79,12 @@
                 return;
             }
 
-            bool precededBySpace;
-
-            bool followedBySpace;
-            bool lastInLine;
+            bool precededBySpace = token.IsFirstInLine() || token.IsPrecededByWhitespace();
+            bool followedBySpace = token.IsFollowedByWhitespace();
+            bool lastInLine = token.IsLastInLine();
             bool precedesStickyCharacter;
             bool allowEndOfLine = false;
 
-            bool firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
-            if (firstInLine)
-            {
-                precededBySpace = true;
-            }
-            else
-            {
-                SyntaxToken precedingToken = token.GetPreviousToken();
-                precededBySpace = precedingToken.HasTrailingTrivia;
-            }
-
-            followedBySpace = token.HasTrailingTrivia;
-            lastInLine = followedBySpace && token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia);
             bool suppressFollowingSpaceError = false;
 
             SyntaxToken nextToken = token.GetNextToken();

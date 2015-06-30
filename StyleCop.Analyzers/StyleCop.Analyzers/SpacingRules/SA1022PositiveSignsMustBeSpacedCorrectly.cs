@@ -4,6 +4,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A positive sign within a C# element is not spaced correctly.
@@ -80,32 +81,23 @@
                 return;
             }
 
-            bool precededBySpace;
-            bool firstInLine;
-            bool followsSpecialCharacter;
+            bool precededBySpace = true;
+            bool firstInLine = token.IsFirstInLine();
+            bool followsSpecialCharacter = false;
 
-            bool followedBySpace;
-            bool lastInLine;
+            bool followedBySpace = token.IsFollowedByWhitespace();
+            bool lastInLine = token.IsLastInLine();
 
-            firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
-            if (firstInLine)
+            if (!firstInLine)
             {
-                precededBySpace = true;
-                followsSpecialCharacter = false;
-            }
-            else
-            {
+                precededBySpace = token.IsPrecededByWhitespace();
                 SyntaxToken precedingToken = token.GetPreviousToken();
-                precededBySpace = precedingToken.HasTrailingTrivia;
 
                 followsSpecialCharacter =
                     precedingToken.IsKind(SyntaxKind.OpenBracketToken)
                     || precedingToken.IsKind(SyntaxKind.OpenParenToken)
                     || precedingToken.IsKind(SyntaxKind.CloseParenToken);
             }
-
-            followedBySpace = token.HasTrailingTrivia;
-            lastInLine = token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia);
 
             if (!firstInLine)
             {

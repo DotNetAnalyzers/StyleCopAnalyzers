@@ -4,6 +4,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A dereference symbol or an access-of symbol within a C# element is not spaced correctly.
@@ -121,22 +122,10 @@
                 return;
             }
 
-            bool precededBySpace;
-            bool firstInLine;
-
-            firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
-            if (firstInLine)
-            {
-                precededBySpace = true;
-            }
-            else
-            {
-                SyntaxToken precedingToken = token.GetPreviousToken();
-                precededBySpace = precedingToken.HasTrailingTrivia;
-            }
-
-            bool followedBySpace = token.HasTrailingTrivia;
-            bool lastInLine = followedBySpace && token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia);
+            bool firstInLine = token.IsFirstInLine();
+            bool precededBySpace = firstInLine || token.IsPrecededByWhitespace();
+            bool followedBySpace = token.IsFollowedByWhitespace();
+            bool lastInLine = token.IsLastInLine();
 
             if (!allowAtLineStart && firstInLine)
             {

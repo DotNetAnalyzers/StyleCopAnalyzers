@@ -4,6 +4,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The spacing around a member access symbol is incorrect, within a C# code file.
@@ -96,23 +97,9 @@
 
         private void HandleMemberAccessSymbol(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
-            bool precededBySpace;
-            bool firstInLine;
-
-            bool followedBySpace;
-
-            firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
-            if (firstInLine)
-            {
-                precededBySpace = true;
-            }
-            else
-            {
-                SyntaxToken precedingToken = token.GetPreviousToken();
-                precededBySpace = precedingToken.HasTrailingTrivia;
-            }
-
-            followedBySpace = token.HasTrailingTrivia;
+            bool firstInLine = token.IsFirstInLine();
+            bool precededBySpace = firstInLine || token.IsPrecededByWhitespace();
+            bool followedBySpace = token.IsFollowedByWhitespace();
 
             if (!firstInLine && precededBySpace)
             {

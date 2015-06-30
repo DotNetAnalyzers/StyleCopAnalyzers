@@ -4,6 +4,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// An opening square bracket within a C# statement is not spaced correctly.
@@ -69,26 +70,20 @@
 
         private static void HandleOpenBracketToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
-            bool precededBySpace;
-            bool firstInLine;
+            bool firstInLine = token.IsFirstInLine();
+            bool precededBySpace = true;
             bool ignorePrecedingSpaceProblem = false;
 
-            firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
-            if (firstInLine)
+            if (!firstInLine)
             {
-                precededBySpace = true;
-            }
-            else
-            {
-                SyntaxToken precedingToken = token.GetPreviousToken();
-                precededBySpace = precedingToken.HasTrailingTrivia;
+                precededBySpace = token.IsPrecededByWhitespace();
 
                 // ignore if handled by SA1026
-                ignorePrecedingSpaceProblem = precededBySpace && precedingToken.IsKind(SyntaxKind.NewKeyword);
+                ignorePrecedingSpaceProblem = precededBySpace && token.GetPreviousToken().IsKind(SyntaxKind.NewKeyword);
             }
 
-            bool followedBySpace = token.HasTrailingTrivia;
-            bool lastInLine = followedBySpace && token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia);
+            bool followedBySpace = token.IsFollowedByWhitespace();
+            bool lastInLine = token.IsLastInLine();
 
             if (!firstInLine && precededBySpace && !ignorePrecedingSpaceProblem && !lastInLine && followedBySpace)
             {
