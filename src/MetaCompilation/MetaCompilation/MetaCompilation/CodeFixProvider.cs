@@ -1109,6 +1109,8 @@ namespace MetaCompilation
 
         private async Task<Document> TooManyAccessorsAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken c)
         {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
             var allAccessors = declaration.AccessorList.Accessors.OfType<AccessorDeclarationSyntax>();
             bool foundGetAccessor = false;
             AccessorDeclarationSyntax accessorToKeep = null;
@@ -1116,8 +1118,8 @@ namespace MetaCompilation
 
             foreach (AccessorDeclarationSyntax accessor in allAccessors)
             {
-                var keyword = accessor.Keyword.ValueText;
-                if (keyword == "get" && !foundGetAccessor)
+                var keyword = accessor.Keyword;
+                if (keyword.IsKind(SyntaxKind.GetKeyword) && !foundGetAccessor)
                 {
                     accessorToKeep = accessor;
                     foundGetAccessor = true;
@@ -1128,15 +1130,16 @@ namespace MetaCompilation
                 }
             }
 
-            if (!foundGetAccessor)
+            var block = SyntaxFactory.Block(new StatementSyntax[0]);
+            if (accessorToKeep == null)
             {
-                var newStatements = SyntaxFactory.ParseStatement("");
-                var newBody = SyntaxFactory.Block(newStatements);
-                accessorToKeep = SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration, newBody);
-                accessorList = accessorList.AddAccessors(accessorToKeep);
+                accessorToKeep = SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration, block);
             }
-
-            var newPropertyDeclaration = declaration.WithAccessorList(accessorList);
+            
+            SyntaxList<SyntaxNode> accessorsToAdd = new SyntaxList<SyntaxNode>();
+            accessorsToAdd = accessorsToAdd.Add(accessorToKeep);
+            var newPropertyDeclaration = declaration.WithAccessorList(null);
+            newPropertyDeclaration = generator.AddAccessors(newPropertyDeclaration, accessorsToAdd) as PropertyDeclarationSyntax;
 
             return await ReplaceNode(declaration, newPropertyDeclaration, document);
         }
@@ -1148,9 +1151,18 @@ namespace MetaCompilation
             var identifierString = generator.IdentifierName("Create");
             var expression = generator.MemberAccessExpression(expressionString, identifierString);
             var invocationExpression = generator.InvocationExpression(expression);
-            var returnStatement = generator.ReturnStatement(invocationExpression) as ReturnStatementSyntax; //SyntaxFactory.ParseStatement("return ImmutableArray.Create();") as ReturnStatementSyntax;
+            var returnStatement = generator.ReturnStatement(invocationExpression) as ReturnStatementSyntax;
 
+            SyntaxList<AccessorDeclarationSyntax> accessors = declaration.AccessorList.Accessors;
+            if (accessors == null || accessors.Count == 0)
+            {
+                return document;
+            }
             var firstAccessor = declaration.AccessorList.Accessors.First();
+            if (firstAccessor == null || !firstAccessor.Keyword.IsKind(SyntaxKind.GetKeyword))
+            {
+                return document;
+            }
             var oldBody = firstAccessor.Body as BlockSyntax;
             var oldReturnStatement = oldBody.Statements.First();
 
