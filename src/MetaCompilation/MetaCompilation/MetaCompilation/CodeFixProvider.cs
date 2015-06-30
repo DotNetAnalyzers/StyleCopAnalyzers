@@ -913,8 +913,7 @@ namespace MetaCompilation
         private async Task<Document> MissingIfAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-            MethodDeclarationSyntax methodDeclaration = declaration.Parent.Parent as MethodDeclarationSyntax;
-            string name = methodDeclaration.ParameterList.Parameters[0].Identifier.ValueText as string;
+            string name = declaration.ParameterList.Parameters[0].Identifier.ValueText as string;
             StatementSyntax ifStatement = CodeFixNodeCreator.IfHelper(generator, name) as StatementSyntax;
 
             var oldBlock = declaration.Body as BlockSyntax;
