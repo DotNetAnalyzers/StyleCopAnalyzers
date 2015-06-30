@@ -898,18 +898,8 @@ namespace MetaCompilation
             SyntaxNode initializeDeclaration = null;
             SyntaxList<StatementSyntax> statements = new SyntaxList<StatementSyntax>();
             string name = declaration.ParameterList.Parameters[0].Identifier.ValueText;
-
-            if (declaration.Body.Statements.Count() == 0)
-            {
-                SemanticModel semanticModel = await document.GetSemanticModelAsync();
-                INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException");
-                initializeDeclaration = CodeFixNodeCreator.BuildInitialize(generator, notImplementedException, statements, name);
-            }
-            else
-            {
-                statements = declaration.Body.Statements;
-                initializeDeclaration = CodeFixNodeCreator.BuildInitialize(generator, null, statements, name);
-            }
+            statements = declaration.Body.Statements;
+            initializeDeclaration = CodeFixNodeCreator.BuildInitialize(generator, null, statements, name);
 
             return await ReplaceNode(declaration, initializeDeclaration, document);
         }
