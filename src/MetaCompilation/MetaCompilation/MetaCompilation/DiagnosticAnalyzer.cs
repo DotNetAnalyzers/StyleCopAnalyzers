@@ -1806,13 +1806,22 @@ namespace MetaCompilation
                     ReportDiagnostic(context, MissingAccessorRule, propertyDeclaration.GetLocation(), propertyDeclaration.Identifier.Text);
                     return emptyResult;
                 }
+
                 if (accessors.Count > 1)
                 {
                     ReportDiagnostic(context, TooManyAccessorsRule, accessorList.GetLocation(), propertyDeclaration.Identifier.Text);
-                    return emptyResult;
                 }
 
-                var getAccessor = accessors.First() as AccessorDeclarationSyntax;
+                AccessorDeclarationSyntax getAccessor = null;
+                foreach (AccessorDeclarationSyntax accessor in accessors)
+                {
+                    if (accessor.Keyword.IsKind(SyntaxKind.GetKeyword))
+                    {
+                        getAccessor = accessor;
+                        break;
+                    }
+                }
+
                 if (getAccessor == null || getAccessor.Keyword.Kind() != SyntaxKind.GetKeyword)
                 {
                     ReportDiagnostic(context, MissingAccessorRule, propertyDeclaration.GetLocation(), propertyDeclaration.Identifier.Text);
