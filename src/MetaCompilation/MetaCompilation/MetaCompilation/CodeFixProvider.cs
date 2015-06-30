@@ -179,7 +179,7 @@ namespace MetaCompilation
                 IEnumerable<ClassDeclarationSyntax> classDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>();
                     if (classDeclarations.Count() != 0)
                     {
-                    ClassDeclarationSyntax classDeclaration = classDeclarations.First();
+                        ClassDeclarationSyntax classDeclaration = classDeclarations.First();
                         context.RegisterCodeFix(CodeAction.Create("Tutorial: Add a rule id of type IdentifierNameSyntax.", c => IdDeclTypeAsync(context.Document, classDeclaration, c)), diagnostic);
                     }
                 }
