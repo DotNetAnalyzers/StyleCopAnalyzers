@@ -190,7 +190,7 @@ namespace MetaCompilation
                     if (classDeclarations.Count() != 0)
                     {
                     ClassDeclarationSyntax classDeclaration = classDeclarations.First();
-                        context.RegisterCodeFix(CodeAction.Create("Tutorial: Rule ids should not be string literals.", c => IdDeclTypeAsync(context.Document, classDeclaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create("Tutorial: Rule ids should be of type IdentifierNameSyntax.", c => IdDeclTypeAsync(context.Document, classDeclaration, c)), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfStatementIncorrect))
@@ -935,10 +935,6 @@ namespace MetaCompilation
         private async Task<Document> EnabledByDefaultAsync(Document document, ArgumentSyntax argument, CancellationToken c)
         {
             var literalExpression = argument.Expression;
-            if (literalExpression == null)
-            {
-                return document;
-            }
             var newLiteralExpression = (SyntaxFactory.ParseExpression("true").WithTrailingTrivia(literalExpression.GetTrailingTrivia())) as LiteralExpressionSyntax;
 
             return await ReplaceNode(literalExpression, newLiteralExpression, document);

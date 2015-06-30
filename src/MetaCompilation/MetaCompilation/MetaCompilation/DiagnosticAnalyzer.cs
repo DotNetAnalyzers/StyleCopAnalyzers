@@ -1985,23 +1985,37 @@ namespace MetaCompilation
                                 return emptyRuleNames;
                             }
 
-                            var currentArgExpr = currentArg.Expression;
-                            if (currentArgExpr.ToString() == "")
-                            {
-                                return emptyRuleNames;
-                            }
+                            //var currentArgExpr = currentArg.Expression;
+                            //if (currentArgExpr.ToString() == "")
+                            //{
+                            //    return emptyRuleNames;
+                            //}
 
                             if (currentArg.NameColon != null)
                             {
                                 string currentArgName = currentArg.NameColon.Name.Identifier.Text;
+                                var currentArgExpr = currentArg.Expression;
 
-                                if (currentArgName == "isEnabledByDefault" && !currentArgExpr.IsKind(SyntaxKind.TrueLiteralExpression))
+                                if (currentArgName == "isEnabledByDefault")
                                 {
-                                    ReportDiagnostic(context, EnabledByDefaultErrorRule, currentArgExpr.GetLocation(), EnabledByDefaultErrorRule.MessageFormat);
-                                    return emptyRuleNames;
+                                    if (currentArgExpr.ToString() == "")
+                                    {
+                                        ReportDiagnostic(context, EnabledByDefaultErrorRule, currentArg.GetLocation(), EnabledByDefaultErrorRule.MessageFormat);
+                                        return emptyRuleNames;
+                                    }
+                                    else if (!currentArgExpr.IsKind(SyntaxKind.TrueLiteralExpression))
+                                    {
+                                        ReportDiagnostic(context, EnabledByDefaultErrorRule, currentArgExpr.GetLocation(), EnabledByDefaultErrorRule.MessageFormat);
+                                        return emptyRuleNames;
+                                    }
                                 }
                                 else if (currentArgName == "defaultSeverity")
                                 {
+                                    if (currentArgExpr.ToString() == "")
+                                    {
+                                        ReportDiagnostic(context, DefaultSeverityErrorRule, currentArg.GetLocation(), DefaultSeverityErrorRule.MessageFormat);
+                                        return emptyRuleNames;
+                                    }
                                     var memberAccessExpr = currentArgExpr as MemberAccessExpressionSyntax;
                                     if (memberAccessExpr == null)
                                     {
@@ -2034,7 +2048,7 @@ namespace MetaCompilation
                                 }
                                 else if (currentArgName == "id")
                                 {
-                                    if (currentArgExpr.IsKind(SyntaxKind.StringLiteralExpression))
+                                    if (!currentArgExpr.IsKind(SyntaxKind.IdentifierName))
                                     {
                                         ReportDiagnostic(context, IdDeclTypeErrorRule, currentArgExpr.GetLocation(), IdDeclTypeErrorRule.MessageFormat);
                                         return emptyRuleNames;
