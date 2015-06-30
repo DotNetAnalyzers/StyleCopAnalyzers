@@ -1985,12 +1985,6 @@ namespace MetaCompilation
                                 return emptyRuleNames;
                             }
 
-                            //var currentArgExpr = currentArg.Expression;
-                            //if (currentArgExpr.ToString() == "")
-                            //{
-                            //    return emptyRuleNames;
-                            //}
-
                             if (currentArg.NameColon != null)
                             {
                                 string currentArgName = currentArg.NameColon.Name.Identifier.Text;
@@ -2022,8 +2016,7 @@ namespace MetaCompilation
                                         ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation(), DefaultSeverityErrorRule.MessageFormat);
                                         return emptyRuleNames;
                                     }
-
-                                    if (memberAccessExpr.Expression != null && memberAccessExpr.Name != null)
+                                    else if (memberAccessExpr.Expression != null && memberAccessExpr.Name != null)
                                     {
                                         string identifierExpr = memberAccessExpr.Expression.ToString();
                                         string identifierName = memberAccessExpr.Name.Identifier.Text;
@@ -2034,7 +2027,7 @@ namespace MetaCompilation
                                             ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation(), DefaultSeverityErrorRule.MessageFormat);
                                             return emptyRuleNames;
                                         }
-                                        if (identifierExpr == "DiagnosticSeverity" && !severities.Contains(identifierName))
+                                        else if (identifierExpr == "DiagnosticSeverity" && !severities.Contains(identifierName))
                                         {
                                             ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation(), DefaultSeverityErrorRule.MessageFormat);
                                             return emptyRuleNames;
