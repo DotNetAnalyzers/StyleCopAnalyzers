@@ -823,7 +823,9 @@ namespace MetaCompilation
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
             SemanticModel semanticModel = await document.GetSemanticModelAsync();
             INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException");
-            var initializeDeclaration = CodeFixNodeCreator.BuildInitialize(generator, notImplementedException);
+            SyntaxList<StatementSyntax> statements = new SyntaxList<StatementSyntax>();
+            string name = "context";
+            var initializeDeclaration = CodeFixNodeCreator.BuildInitialize(generator, notImplementedException, statements, name);
 
             var newClassDeclaration = generator.AddMembers(declaration, initializeDeclaration);
 
@@ -894,9 +896,11 @@ namespace MetaCompilation
         private async Task<Document> IncorrectSigAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-            SemanticModel semanticModel = await document.GetSemanticModelAsync();
-            INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException");
-            var initializeDeclaration = CodeFixNodeCreator.BuildInitialize(generator, notImplementedException);
+            SyntaxNode initializeDeclaration = null;
+            SyntaxList<StatementSyntax> statements = new SyntaxList<StatementSyntax>();
+            string name = declaration.ParameterList.Parameters[0].Identifier.ValueText;
+            statements = declaration.Body.Statements;
+            initializeDeclaration = CodeFixNodeCreator.BuildInitialize(generator, null, statements, name);
 
             return await ReplaceNode(declaration, initializeDeclaration, document);
         }
@@ -1491,12 +1495,15 @@ namespace MetaCompilation
                 return newIfStatement;
             }
 
-            internal static SyntaxNode BuildInitialize(SyntaxGenerator generator, INamedTypeSymbol notImplementedException)
+            internal static SyntaxNode BuildInitialize(SyntaxGenerator generator, INamedTypeSymbol notImplementedException, SyntaxList<StatementSyntax> statements, string name)
             {
                 var type = SyntaxFactory.ParseTypeName("AnalysisContext");
-                var parameters = new[] { generator.ParameterDeclaration("context", type) };
+                var parameters = new[] { generator.ParameterDeclaration(name, type) };
 
-                var statements = new[] { generator.ThrowStatement(generator.ObjectCreationExpression(notImplementedException)) };
+                if (notImplementedException != null)
+                {
+                    statements = statements.Add(generator.ThrowStatement(generator.ObjectCreationExpression(notImplementedException)) as StatementSyntax);
+                }
                 var initializeDeclaration = generator.MethodDeclaration("Initialize", parameters: parameters, accessibility: Accessibility.Public, modifiers: DeclarationModifiers.Override, statements: statements);
 
                 return initializeDeclaration;
