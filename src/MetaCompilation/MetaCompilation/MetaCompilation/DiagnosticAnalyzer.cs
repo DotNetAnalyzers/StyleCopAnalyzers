@@ -2048,6 +2048,11 @@ namespace MetaCompilation
                                 }
                                 else if (currentArgName == "id")
                                 {
+                                    if (currentArgExpr.ToString() == "")
+                                    {
+                                        ReportDiagnostic(context, IdDeclTypeErrorRule, currentArg.GetLocation(), IdDeclTypeErrorRule.MessageFormat);
+                                        return emptyRuleNames;
+                                    }
                                     if (!currentArgExpr.IsKind(SyntaxKind.IdentifierName))
                                     {
                                         ReportDiagnostic(context, IdDeclTypeErrorRule, currentArgExpr.GetLocation(), IdDeclTypeErrorRule.MessageFormat);

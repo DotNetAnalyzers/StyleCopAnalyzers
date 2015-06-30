@@ -155,20 +155,10 @@ namespace MetaCompilation
                 }
                 else if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.DefaultSeverityError))
                 {
-                    IEnumerable<ExpressionSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ExpressionSyntax>();
-                    IEnumerable<MemberAccessExpressionSyntax> memberExpression = declarations.OfType<MemberAccessExpressionSyntax>();
-                    if (memberExpression.Count() != 0)
+                    IEnumerable<ArgumentSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ArgumentSyntax>();
+                    if (declarations.Count() != 0)
                     {
-                        MemberAccessExpressionSyntax declaration = memberExpression.First();
-                        context.RegisterCodeFix(CodeAction.Create("Tutorial: defaultSeverity should be set to \"Error\" if something is not allowed by the language authorities.", c => DiagnosticSeverityError(context.Document, declaration, c)), diagnostic);
-                        context.RegisterCodeFix(CodeAction.Create("Tutorial: defaultSeverity should be set to \"Warning\" if something is suspicious but allowed.", c => DiagnosticSeverityWarning(context.Document, declaration, c)), diagnostic);
-                        context.RegisterCodeFix(CodeAction.Create("Tutorial: defaultSeverity should be set to \"Hidden\" if something is an issue, but is not surfaced by normal means.", c => DiagnosticSeverityHidden(context.Document, declaration, c)), diagnostic);
-                        context.RegisterCodeFix(CodeAction.Create("Tutorial: defaultSeverity should be set to \"Info\" for information that does not indicate a problem.", c => DiagnosticSeverityInfo(context.Document, declaration, c)), diagnostic);
-
-                    }
-                    else if (declarations.Count() != 0)
-                    {
-                        ExpressionSyntax declaration = declarations.First();
+                        ArgumentSyntax declaration = declarations.First();
                         context.RegisterCodeFix(CodeAction.Create("Tutorial: defaultSeverity should be set to \"Error\" if something is not allowed by the language authorities.", c => DiagnosticSeverityError(context.Document, declaration, c)), diagnostic);
                         context.RegisterCodeFix(CodeAction.Create("Tutorial: defaultSeverity should be set to \"Warning\" if something is suspicious but allowed.", c => DiagnosticSeverityWarning(context.Document, declaration, c)), diagnostic);
                         context.RegisterCodeFix(CodeAction.Create("Tutorial: defaultSeverity should be set to \"Hidden\" if something is an issue, but is not surfaced by normal means.", c => DiagnosticSeverityHidden(context.Document, declaration, c)), diagnostic);
@@ -190,7 +180,7 @@ namespace MetaCompilation
                     if (classDeclarations.Count() != 0)
                     {
                     ClassDeclarationSyntax classDeclaration = classDeclarations.First();
-                        context.RegisterCodeFix(CodeAction.Create("Tutorial: Rule ids should be of type IdentifierNameSyntax.", c => IdDeclTypeAsync(context.Document, classDeclaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create("Tutorial: Add a rule id of type IdentifierNameSyntax.", c => IdDeclTypeAsync(context.Document, classDeclaration, c)), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfStatementIncorrect))
@@ -940,40 +930,44 @@ namespace MetaCompilation
             return await ReplaceNode(literalExpression, newLiteralExpression, document);
         }
 
-        private async Task<Document> DiagnosticSeverityWarning(Document document, ExpressionSyntax memberAccessExpression, CancellationToken c)
+        private async Task<Document> DiagnosticSeverityWarning(Document document, ArgumentSyntax argument, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
             SyntaxNode expression = generator.IdentifierName("DiagnosticSeverity");
             SyntaxNode newExpression = generator.MemberAccessExpression(expression, "Warning");
 
-            return await ReplaceNode(memberAccessExpression, newExpression, document);
+            var argExpr = argument.Expression;
+            return await ReplaceNode(argExpr, newExpression, document);
         }
 
-        private async Task<Document> DiagnosticSeverityHidden(Document document, ExpressionSyntax memberAccessExpression, CancellationToken c)
+        private async Task<Document> DiagnosticSeverityHidden(Document document, ArgumentSyntax argument, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
             SyntaxNode expression = generator.IdentifierName("DiagnosticSeverity");
             SyntaxNode newExpression = generator.MemberAccessExpression(expression, "Hidden");
 
-            return await ReplaceNode(memberAccessExpression, newExpression, document);
+            var argExpr = argument.Expression;
+            return await ReplaceNode(argExpr, newExpression, document);
         }
 
-        private async Task<Document> DiagnosticSeverityInfo(Document document, ExpressionSyntax memberAccessExpression, CancellationToken c)
+        private async Task<Document> DiagnosticSeverityInfo(Document document, ArgumentSyntax argument, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
             SyntaxNode expression = generator.IdentifierName("DiagnosticSeverity");
             SyntaxNode newExpression = generator.MemberAccessExpression(expression, "Info");
 
-            return await ReplaceNode(memberAccessExpression, newExpression, document);
+            var argExpr = argument.Expression;
+            return await ReplaceNode(argExpr, newExpression, document);
         }
 
-        private async Task<Document> DiagnosticSeverityError(Document document, ExpressionSyntax memberAccessExpression, CancellationToken c)
+        private async Task<Document> DiagnosticSeverityError(Document document, ArgumentSyntax argument, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
             SyntaxNode expression = generator.IdentifierName("DiagnosticSeverity");
             SyntaxNode newExpression = generator.MemberAccessExpression(expression, "Error");
 
-            return await ReplaceNode(memberAccessExpression, newExpression, document);
+            var argExpr = argument.Expression;
+            return await ReplaceNode(argExpr, newExpression, document);
         }
 
         private async Task<Document> MissingIdDeclarationAsync(Document document, VariableDeclaratorSyntax ruleDeclarationField, CancellationToken c)
