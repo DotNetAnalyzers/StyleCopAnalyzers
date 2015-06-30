@@ -46,25 +46,29 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleBlock, SyntaxKind.Block);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleBlock, SyntaxKind.Block);
         }
 
-        private void HandleBlock(SyntaxNodeAnalysisContext context)
+        private static void HandleBlock(SyntaxNodeAnalysisContext context)
         {
             BlockSyntax block = context.Node as BlockSyntax;
 
             if (block != null)
             {
+                Location previousStatementLocation = block.Statements[0].GetLocation();
+                Location currentStatementLocation;
+
                 for (int i = 1; i < block.Statements.Count; i++)
                 {
-                    StatementSyntax previousStatement = block.Statements[i - 1];
-                    StatementSyntax currentStatement = block.Statements[i];
+                    currentStatementLocation = block.Statements[i].GetLocation();
 
-                    if (previousStatement.GetLocation().GetLineSpan().EndLinePosition.Line
-                        == currentStatement.GetLocation().GetLineSpan().StartLinePosition.Line)
+                    if (previousStatementLocation.GetLineSpan().EndLinePosition.Line
+                        == currentStatementLocation.GetLineSpan().StartLinePosition.Line)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentStatement.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentStatementLocation));
                     }
+
+                    previousStatementLocation = currentStatementLocation;
                 }
             }
         }
