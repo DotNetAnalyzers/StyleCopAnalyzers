@@ -101,7 +101,7 @@
                 replacements[token] = corrected;
             }
 
-            var transformed = root.ReplaceTokens(replacements.Keys, (original, maybeRewritten) => replacements[original]);
+            var transformed = root.ReplaceTokens(replacements.Keys, replacements.GetReplacementToken);
             return Task.FromResult(document.WithSyntaxRoot(transformed));
         }
     }

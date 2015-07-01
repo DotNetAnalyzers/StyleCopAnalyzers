@@ -94,7 +94,7 @@
                 replacements[token] = corrected;
             }
 
-            var transformed = root.ReplaceTokens(replacements.Keys, (original, maybeRewritten) => replacements[original]);
+            var transformed = root.ReplaceTokens(replacements.Keys, replacements.GetReplacementToken);
             Document updatedDocument = document.WithSyntaxRoot(transformed);
 
             return updatedDocument;

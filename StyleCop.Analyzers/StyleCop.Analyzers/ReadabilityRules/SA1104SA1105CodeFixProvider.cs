@@ -61,7 +61,7 @@
                 [token] = token.WithLeadingTrivia(indentationTrivia)
             };
 
-            var newSyntaxRoot = syntaxRoot.ReplaceTokens(replaceMap.Keys, (t1, t2) => replaceMap[t1]).WithoutFormatting();
+            var newSyntaxRoot = syntaxRoot.ReplaceTokens(replaceMap.Keys, replaceMap.GetReplacementToken).WithoutFormatting();
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
     }

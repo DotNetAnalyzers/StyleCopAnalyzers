@@ -110,7 +110,7 @@
                 return document;
             }
 
-            var newSyntaxRoot = syntaxRoot.ReplaceTokens(replaceMap.Keys, (t1, t2) => replaceMap[t1]);
+            var newSyntaxRoot = syntaxRoot.ReplaceTokens(replaceMap.Keys, replaceMap.GetReplacementToken);
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
     }
