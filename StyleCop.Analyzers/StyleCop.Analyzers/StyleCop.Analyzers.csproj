@@ -126,7 +126,7 @@
     <Compile Include="Helpers\RenameHelper.cs" />
     <Compile Include="Helpers\SpecializedTasks.cs" />
     <Compile Include="Helpers\TokenHelpers.cs" />
-    <Compile Include="Helpers\TypeDeclarationSyntaxHelper.cs" />
+    <Compile Include="Helpers\DeclarationModifiersHelper.cs" />
     <Compile Include="Helpers\TriviaHelper.cs" />
     <Compile Include="Helpers\UsingDirectiveSyntaxHelpers.cs" />
     <Compile Include="Helpers\XmlCommentHelper.cs" />

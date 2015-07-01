@@ -58,7 +58,7 @@
 
             var keywordToken = typeDeclarationNode.Keyword;
 
-            var replacementModifiers = TypeDeclarationSyntaxHelper.AddModifier(typeDeclarationNode.Modifiers, ref keywordToken, accessModifierKind);
+            var replacementModifiers = DeclarationModifiersHelper.AddModifier(typeDeclarationNode.Modifiers, ref keywordToken, accessModifierKind);
             var replacementNode = ReplaceModifiers(typeDeclarationNode, replacementModifiers);
             replacementNode = ReplaceKeyword(replacementNode, keywordToken);
             var newSyntaxRoot = syntaxRoot.ReplaceNode(typeDeclarationNode, replacementNode);

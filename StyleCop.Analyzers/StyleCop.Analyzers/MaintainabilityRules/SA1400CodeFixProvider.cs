@@ -139,7 +139,7 @@
             }
 
             SyntaxKind defaultVisibility = IsNestedType(node) ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword;
-            SyntaxTokenList modifiers = TypeDeclarationSyntaxHelper.AddModifier(node.Modifiers, ref triviaToken, defaultVisibility);
+            SyntaxTokenList modifiers = DeclarationModifiersHelper.AddModifier(node.Modifiers, ref triviaToken, defaultVisibility);
             return node
                 .WithKeyword(triviaToken)
                 .WithModifiers(modifiers)
@@ -155,7 +155,7 @@
             }
 
             SyntaxKind defaultVisibility = IsNestedType(node) ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword;
-            SyntaxTokenList modifiers = TypeDeclarationSyntaxHelper.AddModifier(node.Modifiers, ref triviaToken, defaultVisibility);
+            SyntaxTokenList modifiers = DeclarationModifiersHelper.AddModifier(node.Modifiers, ref triviaToken, defaultVisibility);
             return node
                 .WithKeyword(triviaToken)
                 .WithModifiers(modifiers)
@@ -171,7 +171,7 @@
             }
 
             SyntaxKind defaultVisibility = IsNestedType(node) ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword;
-            SyntaxTokenList modifiers = TypeDeclarationSyntaxHelper.AddModifier(node.Modifiers, ref triviaToken, defaultVisibility);
+            SyntaxTokenList modifiers = DeclarationModifiersHelper.AddModifier(node.Modifiers, ref triviaToken, defaultVisibility);
             return node
                 .WithEnumKeyword(triviaToken)
                 .WithModifiers(modifiers)
@@ -187,7 +187,7 @@
             }
 
             SyntaxKind defaultVisibility = IsNestedType(node) ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword;
-            SyntaxTokenList modifiers = TypeDeclarationSyntaxHelper.AddModifier(node.Modifiers, ref triviaToken, defaultVisibility);
+            SyntaxTokenList modifiers = DeclarationModifiersHelper.AddModifier(node.Modifiers, ref triviaToken, defaultVisibility);
             return node
                 .WithKeyword(triviaToken)
                 .WithModifiers(modifiers)
@@ -203,7 +203,7 @@
             }
 
             SyntaxKind defaultVisibility = IsNestedType(node) ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword;
-            SyntaxTokenList modifiers = TypeDeclarationSyntaxHelper.AddModifier(node.Modifiers, ref triviaToken, defaultVisibility);
+            SyntaxTokenList modifiers = DeclarationModifiersHelper.AddModifier(node.Modifiers, ref triviaToken, defaultVisibility);
             return node
                 .WithDelegateKeyword(triviaToken)
                 .WithModifiers(modifiers)
@@ -218,7 +218,7 @@
                 return null;
             }
 
-            SyntaxTokenList modifiers = TypeDeclarationSyntaxHelper.AddModifier(node.Modifiers, ref triviaToken, SyntaxKind.PrivateKeyword);
+            SyntaxTokenList modifiers = DeclarationModifiersHelper.AddModifier(node.Modifiers, ref triviaToken, SyntaxKind.PrivateKeyword);
             return node
                 .WithEventKeyword(triviaToken)
                 .WithModifiers(modifiers)
@@ -233,7 +233,7 @@
                 return null;
             }
 
-            SyntaxTokenList modifiers = TypeDeclarationSyntaxHelper.AddModifier(node.Modifiers, ref triviaToken, SyntaxKind.PrivateKeyword);
+            SyntaxTokenList modifiers = DeclarationModifiersHelper.AddModifier(node.Modifiers, ref triviaToken, SyntaxKind.PrivateKeyword);
             return node
                 .WithEventKeyword(triviaToken)
                 .WithModifiers(modifiers)
@@ -248,7 +248,7 @@
                 return null;
             }
 
-            SyntaxTokenList modifiers = TypeDeclarationSyntaxHelper.AddModifier(node.Modifiers, ref type, SyntaxKind.PrivateKeyword);
+            SyntaxTokenList modifiers = DeclarationModifiersHelper.AddModifier(node.Modifiers, ref type, SyntaxKind.PrivateKeyword);
             return node
                 .WithReturnType(type)
                 .WithModifiers(modifiers)
@@ -263,7 +263,7 @@
                 return null;
             }
 
-            SyntaxTokenList modifiers = TypeDeclarationSyntaxHelper.AddModifier(node.Modifiers, ref type, SyntaxKind.PrivateKeyword);
+            SyntaxTokenList modifiers = DeclarationModifiersHelper.AddModifier(node.Modifiers, ref type, SyntaxKind.PrivateKeyword);
             return node
                 .WithType(type)
                 .WithModifiers(modifiers)
@@ -278,7 +278,7 @@
                 return null;
             }
 
-            SyntaxTokenList modifiers = TypeDeclarationSyntaxHelper.AddModifier(node.Modifiers, ref declaration, SyntaxKind.PrivateKeyword);
+            SyntaxTokenList modifiers = DeclarationModifiersHelper.AddModifier(node.Modifiers, ref declaration, SyntaxKind.PrivateKeyword);
             return node
                 .WithDeclaration(declaration)
                 .WithModifiers(modifiers)
@@ -293,7 +293,7 @@
                 return null;
             }
 
-            SyntaxTokenList modifiers = TypeDeclarationSyntaxHelper.AddModifier(node.Modifiers, ref type, SyntaxKind.PublicKeyword);
+            SyntaxTokenList modifiers = DeclarationModifiersHelper.AddModifier(node.Modifiers, ref type, SyntaxKind.PublicKeyword);
             return node
                 .WithReturnType(type)
                 .WithModifiers(modifiers)
@@ -308,7 +308,7 @@
                 return null;
             }
 
-            SyntaxTokenList modifiers = TypeDeclarationSyntaxHelper.AddModifier(node.Modifiers, ref triviaToken, SyntaxKind.PublicKeyword);
+            SyntaxTokenList modifiers = DeclarationModifiersHelper.AddModifier(node.Modifiers, ref triviaToken, SyntaxKind.PublicKeyword);
             return node
                 .WithImplicitOrExplicitKeyword(triviaToken)
                 .WithModifiers(modifiers)
@@ -323,7 +323,7 @@
                 return null;
             }
 
-            SyntaxTokenList modifiers = TypeDeclarationSyntaxHelper.AddModifier(node.Modifiers, ref type, SyntaxKind.PrivateKeyword);
+            SyntaxTokenList modifiers = DeclarationModifiersHelper.AddModifier(node.Modifiers, ref type, SyntaxKind.PrivateKeyword);
             return node
                 .WithType(type)
                 .WithModifiers(modifiers)
@@ -338,7 +338,7 @@
                 return null;
             }
 
-            SyntaxTokenList modifiers = TypeDeclarationSyntaxHelper.AddModifier(node.Modifiers, ref triviaToken, SyntaxKind.PrivateKeyword);
+            SyntaxTokenList modifiers = DeclarationModifiersHelper.AddModifier(node.Modifiers, ref triviaToken, SyntaxKind.PrivateKeyword);
             return node
                 .WithIdentifier(triviaToken)
                 .WithModifiers(modifiers)

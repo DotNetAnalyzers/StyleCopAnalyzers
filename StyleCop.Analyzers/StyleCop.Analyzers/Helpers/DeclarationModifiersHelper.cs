@@ -4,7 +4,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
 
-    internal class TypeDeclarationSyntaxHelper
+    internal static class DeclarationModifiersHelper
     {
         /// <summary>
         /// Adds a modifier token for <paramref name="modifierKeyword"/> to the beginning of
