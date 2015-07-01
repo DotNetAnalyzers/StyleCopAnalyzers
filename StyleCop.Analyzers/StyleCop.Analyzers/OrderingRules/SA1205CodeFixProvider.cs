@@ -60,7 +60,7 @@
 
             var replacementModifiers = TypeDeclarationSyntaxHelper.AddModifier(typeDeclarationNode.Modifiers, ref keywordToken, accessModifierKind);
             var replacementNode = ReplaceModifiers(typeDeclarationNode, replacementModifiers);
-            replacementNode = ReplaceKeywords(replacementNode, keywordToken);
+            replacementNode = ReplaceKeyword(replacementNode, keywordToken);
             var newSyntaxRoot = syntaxRoot.ReplaceNode(typeDeclarationNode, replacementNode);
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
@@ -82,7 +82,7 @@
         }
 
         // This code was copied from the Roslyn codebase (and slightly modified). It can be removed if TypeDeclarationSyntaxExtensions.WithModifiers is made public (roslyn issue #2186)
-        private static TypeDeclarationSyntax ReplaceKeywords(TypeDeclarationSyntax node, SyntaxToken keyword)
+        private static TypeDeclarationSyntax ReplaceKeyword(TypeDeclarationSyntax node, SyntaxToken keyword)
         {
             switch (node.Kind())
             {
