@@ -9246,6 +9246,101 @@ namespace SyntaxNodeAnalyzer
         }
         #endregion
 
+        #region MissingRule
+        [Fact]
+        public void MissingRule1() //isEnabledByDefault with argument missing
+        {
+            var test = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzerAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public const string spacingRuleId = ""IfSpacing"";
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.MissingRule,
+                Message = "You need to have at least one DiagnosticDescriptor rule",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 18) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzerAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor spacingRule = new DiagnosticDescriptor(id: , title: ""Enter a title for this diagnostic"", messageFormat: ""Enter a message to be displayed with this diagnostic"", category: ""Enter a category for this diagnostic"", defaultSeverity: , isEnabledByDefault: );
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+            VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
+        }
+
+
+        #endregion
+
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new MetaCompilationCodeFixProvider();
