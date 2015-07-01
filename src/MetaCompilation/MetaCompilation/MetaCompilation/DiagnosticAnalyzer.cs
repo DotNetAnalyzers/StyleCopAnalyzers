@@ -2191,7 +2191,7 @@ namespace MetaCompilation
 
                             var preExpressionStart = expressionStart.Expression as IdentifierNameSyntax;
                             if (preExpressionStart == null || preExpressionStart.Identifier == null ||
-                                preExpressionStart.Identifier.ValueText != "context")
+                                preExpressionStart.Identifier.ValueText != _initializeSymbol.Parameters.First().Name.ToString())
                             {
                                 ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
                                 return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
