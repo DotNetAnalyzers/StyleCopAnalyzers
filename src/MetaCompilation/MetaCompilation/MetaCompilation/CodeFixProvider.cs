@@ -1154,19 +1154,24 @@ namespace MetaCompilation
                 return document;
             }
             var oldBody = firstAccessor.Body as BlockSyntax;
-            var oldReturnStatement = oldBody.Statements.First();
+            SyntaxList<StatementSyntax> oldStatements = oldBody.Statements;
+            StatementSyntax oldStatement = null;
+            if (oldStatements.Count != 0)
+            {
+                oldStatement = oldStatements.First();
+            }
 
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root;
 
-            if (oldReturnStatement == null)
+            if (oldStatement == null)
             {
                 var newAccessorDeclaration = firstAccessor.AddBodyStatements(returnStatement);
                 newRoot = root.ReplaceNode(firstAccessor, newAccessorDeclaration);
             }
             else
             {
-                newRoot = root.ReplaceNode(oldReturnStatement, returnStatement);
+                newRoot = root.ReplaceNode(oldStatement, returnStatement);
             }
             var newDocument = document.WithSyntaxRoot(newRoot);
             return newDocument;
