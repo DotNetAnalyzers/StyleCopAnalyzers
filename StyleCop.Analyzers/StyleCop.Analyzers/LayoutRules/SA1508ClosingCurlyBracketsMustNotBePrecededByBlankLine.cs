@@ -122,7 +122,7 @@
 
             // skip all leading whitespace for the close brace
             var index = separatingTrivia.Count - 1;
-            while (separatingTrivia[index].IsKind(SyntaxKind.WhitespaceTrivia))
+            while (index >= 0 && separatingTrivia[index].IsKind(SyntaxKind.WhitespaceTrivia))
             {
                 index--;
             }
