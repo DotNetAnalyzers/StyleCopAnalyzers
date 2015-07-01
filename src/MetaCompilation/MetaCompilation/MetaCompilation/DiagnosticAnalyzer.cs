@@ -1722,6 +1722,12 @@ namespace MetaCompilation
                     return false;
                 }
 
+                if (statements.Count > 2)
+                {
+                    ReportDiagnostic(context, TooManyStatementsRule, body.GetLocation(), "get accessor", "1 or 2");
+                    return false;
+                }
+
                 var getAccessorKeywordLocation = propertyDeclaration.AccessorList.Accessors.First().GetLocation();
 
                 IEnumerable<ReturnStatementSyntax> returnStatements = statements.OfType<ReturnStatementSyntax>();
@@ -1930,7 +1936,7 @@ namespace MetaCompilation
                     return result;
                 }
 
-                if (returnSymbol.Type.Name != "System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor>")
+                if (returnSymbol.Type.Name != "System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor>" && returnSymbol.Type.Kind.ToString() != "ErrorType")
                 {
                     ReportDiagnostic(context, IncorrectAccessorReturnRule, returnSymbol.Locations[0], IncorrectAccessorReturnRule.MessageFormat);
                     return result;

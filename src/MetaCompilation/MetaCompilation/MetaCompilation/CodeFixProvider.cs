@@ -1194,18 +1194,40 @@ namespace MetaCompilation
             var propertyMembers = declaration.Members.OfType<PropertyDeclarationSyntax>();
             foreach (PropertyDeclarationSyntax propertySyntax in propertyMembers)
             {
-                if (propertySyntax.Identifier.Text != "SupportedDiagnostics") continue;
-
+                if (propertySyntax.Identifier.Text != "SupportedDiagnostics")
+                {
+                    continue;
+                }
                 AccessorDeclarationSyntax getAccessor = propertySyntax.AccessorList.Accessors.First();
                 var returnStatement = getAccessor.Body.Statements.First() as ReturnStatementSyntax;
-                var invocationExpression = returnStatement.Expression as InvocationExpressionSyntax;
+                InvocationExpressionSyntax invocationExpression = null;
+                if (returnStatement == null)
+                {
+                    var declarationStatement = getAccessor.Body.Statements.First() as LocalDeclarationStatementSyntax;
+                    if (declarationStatement == null)
+                    {
+                        return document;
+                    }
+
+                    invocationExpression = declarationStatement.Declaration.Variables[0].Initializer.Value as InvocationExpressionSyntax;
+                }
+                else
+                {
+                    invocationExpression = returnStatement.Expression as InvocationExpressionSyntax;
+                }
                 var oldArgumentList = invocationExpression.ArgumentList as ArgumentListSyntax;
 
                 string argumentListString = "";
                 foreach (string ruleName in ruleNames)
                 {
-                    if (ruleName == ruleNames.First()) argumentListString += ruleName;
-                    else argumentListString += ", " + ruleName;
+                    if (ruleName == ruleNames.First())
+                    {
+                        argumentListString += ruleName;
+                    }
+                    else
+                    {
+                        argumentListString += ", " + ruleName;
+                    }
                 }
 
                 var argumentListSyntax = SyntaxFactory.ParseArgumentList("(" + argumentListString + ")");
