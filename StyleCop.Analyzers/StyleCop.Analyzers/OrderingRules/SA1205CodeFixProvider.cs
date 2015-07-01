@@ -70,12 +70,12 @@
         {
             switch (node.Kind())
             {
-                case SyntaxKind.ClassDeclaration:
-                    return ((ClassDeclarationSyntax)node).WithModifiers(modifiers);
-                case SyntaxKind.InterfaceDeclaration:
-                    return ((InterfaceDeclarationSyntax)node).WithModifiers(modifiers);
-                case SyntaxKind.StructDeclaration:
-                    return ((StructDeclarationSyntax)node).WithModifiers(modifiers);
+            case SyntaxKind.ClassDeclaration:
+                return ((ClassDeclarationSyntax)node).WithModifiers(modifiers);
+            case SyntaxKind.InterfaceDeclaration:
+                return ((InterfaceDeclarationSyntax)node).WithModifiers(modifiers);
+            case SyntaxKind.StructDeclaration:
+                return ((StructDeclarationSyntax)node).WithModifiers(modifiers);
             }
 
             return node;
@@ -86,12 +86,12 @@
         {
             switch (node.Kind())
             {
-                case SyntaxKind.ClassDeclaration:
-                    return ((ClassDeclarationSyntax)node).WithKeyword(keyword);
-                case SyntaxKind.InterfaceDeclaration:
-                    return ((InterfaceDeclarationSyntax)node).WithKeyword(keyword);
-                case SyntaxKind.StructDeclaration:
-                    return ((StructDeclarationSyntax)node).WithKeyword(keyword);
+            case SyntaxKind.ClassDeclaration:
+                return ((ClassDeclarationSyntax)node).WithKeyword(keyword);
+            case SyntaxKind.InterfaceDeclaration:
+                return ((InterfaceDeclarationSyntax)node).WithKeyword(keyword);
+            case SyntaxKind.StructDeclaration:
+                return ((StructDeclarationSyntax)node).WithKeyword(keyword);
             }
 
             return node;
