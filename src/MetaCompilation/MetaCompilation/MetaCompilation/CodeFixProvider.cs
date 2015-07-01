@@ -823,12 +823,19 @@ namespace MetaCompilation
 
         private async Task<Document> MissingRegisterAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
-            var registerExpression = SyntaxFactory.ExpressionStatement(SyntaxFactory.ParseExpression("context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement)"));
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            SyntaxNode argument1 = generator.IdentifierName("AnalyzeIfStatement");
+            SyntaxNode argument2 = generator.MemberAccessExpression(generator.IdentifierName("SyntaxKind"), "IfStatement");
+            SyntaxList<SyntaxNode> arguments = new SyntaxList<SyntaxNode>().Add(argument1).Add(argument2);
 
-            var newInitBlock = SyntaxFactory.Block(registerExpression);
-            var newInitDeclaration = declaration.WithBody(newInitBlock);
+            SyntaxNode expression = generator.IdentifierName(declaration.ParameterList.Parameters[0].Identifier.ValueText)as SyntaxNode;
+            SyntaxNode memberAccessExpression = generator.MemberAccessExpression(expression, "RegisterSyntaxNodeAction") as SyntaxNode;
+            SyntaxNode invocationExpression = generator.InvocationExpression(memberAccessExpression, arguments) as SyntaxNode;
+            SyntaxList<SyntaxNode> statements = new SyntaxList<SyntaxNode>().Add(invocationExpression);
+            
+            SyntaxNode newMethod = generator.MethodDeclaration("Initialize", declaration.ParameterList.Parameters, accessibility: Accessibility.Public, modifiers: DeclarationModifiers.Override, statements: statements);
 
-            return await ReplaceNode(declaration, newInitDeclaration, document);
+            return await ReplaceNode(declaration, newMethod, document);
         }
 
         private async Task<Document> MultipleStatementsAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
@@ -1153,19 +1160,24 @@ namespace MetaCompilation
                 return document;
             }
             var oldBody = firstAccessor.Body as BlockSyntax;
-            var oldReturnStatement = oldBody.Statements.First();
+            SyntaxList<StatementSyntax> oldStatements = oldBody.Statements;
+            StatementSyntax oldStatement = null;
+            if (oldStatements.Count != 0)
+            {
+                oldStatement = oldStatements.First();
+            }
 
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root;
 
-            if (oldReturnStatement == null)
+            if (oldStatement == null)
             {
                 var newAccessorDeclaration = firstAccessor.AddBodyStatements(returnStatement);
                 newRoot = root.ReplaceNode(firstAccessor, newAccessorDeclaration);
             }
             else
             {
-                newRoot = root.ReplaceNode(oldReturnStatement, returnStatement);
+                newRoot = root.ReplaceNode(oldStatement, returnStatement);
             }
             var newDocument = document.WithSyntaxRoot(newRoot);
             return newDocument;
@@ -1188,18 +1200,40 @@ namespace MetaCompilation
             var propertyMembers = declaration.Members.OfType<PropertyDeclarationSyntax>();
             foreach (PropertyDeclarationSyntax propertySyntax in propertyMembers)
             {
-                if (propertySyntax.Identifier.Text != "SupportedDiagnostics") continue;
-
+                if (propertySyntax.Identifier.Text != "SupportedDiagnostics")
+                {
+                    continue;
+                }
                 AccessorDeclarationSyntax getAccessor = propertySyntax.AccessorList.Accessors.First();
                 var returnStatement = getAccessor.Body.Statements.First() as ReturnStatementSyntax;
-                var invocationExpression = returnStatement.Expression as InvocationExpressionSyntax;
+                InvocationExpressionSyntax invocationExpression = null;
+                if (returnStatement == null)
+                {
+                    var declarationStatement = getAccessor.Body.Statements.First() as LocalDeclarationStatementSyntax;
+                    if (declarationStatement == null)
+                    {
+                        return document;
+                    }
+
+                    invocationExpression = declarationStatement.Declaration.Variables[0].Initializer.Value as InvocationExpressionSyntax;
+                }
+                else
+                {
+                    invocationExpression = returnStatement.Expression as InvocationExpressionSyntax;
+                }
                 var oldArgumentList = invocationExpression.ArgumentList as ArgumentListSyntax;
 
                 string argumentListString = "";
                 foreach (string ruleName in ruleNames)
                 {
-                    if (ruleName == ruleNames.First()) argumentListString += ruleName;
-                    else argumentListString += ", " + ruleName;
+                    if (ruleName == ruleNames.First())
+                    {
+                        argumentListString += ruleName;
+                    }
+                    else
+                    {
+                        argumentListString += ", " + ruleName;
+                    }
                 }
 
                 var argumentListSyntax = SyntaxFactory.ParseArgumentList("(" + argumentListString + ")");

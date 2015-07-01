@@ -1722,6 +1722,12 @@ namespace MetaCompilation
                     return false;
                 }
 
+                if (statements.Count > 2)
+                {
+                    ReportDiagnostic(context, TooManyStatementsRule, body.GetLocation(), "get accessor", "1 or 2");
+                    return false;
+                }
+
                 var getAccessorKeywordLocation = propertyDeclaration.AccessorList.Accessors.First().GetLocation();
 
                 IEnumerable<ReturnStatementSyntax> returnStatements = statements.OfType<ReturnStatementSyntax>();
@@ -1930,7 +1936,7 @@ namespace MetaCompilation
                     return result;
                 }
 
-                if (returnSymbol.Type.Name != "System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor>")
+                if (returnSymbol.Type.Name != "System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor>" && returnSymbol.Type.Kind.ToString() != "ErrorType")
                 {
                     ReportDiagnostic(context, IncorrectAccessorReturnRule, returnSymbol.Locations[0], IncorrectAccessorReturnRule.MessageFormat);
                     return result;
@@ -2185,7 +2191,7 @@ namespace MetaCompilation
 
                             var preExpressionStart = expressionStart.Expression as IdentifierNameSyntax;
                             if (preExpressionStart == null || preExpressionStart.Identifier == null ||
-                                preExpressionStart.Identifier.ValueText != "context")
+                                preExpressionStart.Identifier.ValueText != _initializeSymbol.Parameters.First().Name.ToString())
                             {
                                 ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
                                 return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
