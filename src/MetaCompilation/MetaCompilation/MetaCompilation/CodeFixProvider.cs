@@ -71,7 +71,6 @@ namespace MetaCompilation
                                              MetaCompilationAnalyzer.DiagnosticReportMissing,
                                              MetaCompilationAnalyzer.TrailingTriviaKindCheckMissing,
                                              MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                                             MetaCompilationAnalyzer.MissingRule,
                                              MetaCompilationAnalyzer.MissingSuppDiag);
             }
         }
