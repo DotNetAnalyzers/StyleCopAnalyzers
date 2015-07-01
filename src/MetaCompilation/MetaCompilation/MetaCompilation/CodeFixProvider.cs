@@ -71,7 +71,6 @@ namespace MetaCompilation
                                              MetaCompilationAnalyzer.DiagnosticReportMissing,
                                              MetaCompilationAnalyzer.TrailingTriviaKindCheckMissing,
                                              MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                                             MetaCompilationAnalyzer.MissingRule,
                                              MetaCompilationAnalyzer.MissingSuppDiag);
             }
         }
@@ -824,12 +823,19 @@ namespace MetaCompilation
 
         private async Task<Document> MissingRegisterAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
-            var registerExpression = SyntaxFactory.ExpressionStatement(SyntaxFactory.ParseExpression("context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement)"));
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            SyntaxNode argument1 = generator.IdentifierName("AnalyzeIfStatement");
+            SyntaxNode argument2 = generator.MemberAccessExpression(generator.IdentifierName("SyntaxKind"), "IfStatement");
+            SyntaxList<SyntaxNode> arguments = new SyntaxList<SyntaxNode>().Add(argument1).Add(argument2);
 
-            var newInitBlock = SyntaxFactory.Block(registerExpression);
-            var newInitDeclaration = declaration.WithBody(newInitBlock);
+            SyntaxNode expression = generator.IdentifierName(declaration.ParameterList.Parameters[0].Identifier.ValueText)as SyntaxNode;
+            SyntaxNode memberAccessExpression = generator.MemberAccessExpression(expression, "RegisterSyntaxNodeAction") as SyntaxNode;
+            SyntaxNode invocationExpression = generator.InvocationExpression(memberAccessExpression, arguments) as SyntaxNode;
+            SyntaxList<SyntaxNode> statements = new SyntaxList<SyntaxNode>().Add(invocationExpression);
+            
+            SyntaxNode newMethod = generator.MethodDeclaration("Initialize", declaration.ParameterList.Parameters, accessibility: Accessibility.Public, modifiers: DeclarationModifiers.Override, statements: statements);
 
-            return await ReplaceNode(declaration, newInitDeclaration, document);
+            return await ReplaceNode(declaration, newMethod, document);
         }
 
         private async Task<Document> MultipleStatementsAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
