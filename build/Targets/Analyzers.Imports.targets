@@ -7,20 +7,12 @@
   <PropertyGroup>
     <AssemblyVersion>$(SemanticVersion).0</AssemblyVersion>
   </PropertyGroup>
-  
+
   <Choose>
     <When Condition="('$(BuildNumber)' != '') and ($(BuildNumber.Split('.').Length) == 2)">
       <!-- The user specified a build number, so we should use that. -->
       <PropertyGroup>
         <BuildVersion>$(SemanticVersion).$(BuildNumber.Split('.')[0])</BuildVersion>
-      </PropertyGroup>
-    </When>
-
-    <When Condition="'$(RealSignBuild)' == 'true' OR '$(SignType)' == 'real'">
-      <!-- We're real-signing the build, but don't have a build number. Just use the SemanticVersion.
-           This happens if the build template does not pass BuildNumber down to MSBuild. -->
-      <PropertyGroup>
-        <BuildVersion>$(SemanticVersion).0</BuildVersion>
       </PropertyGroup>
     </When>
 
@@ -30,11 +22,11 @@
            have a build with an actual number installed, but then build and F5 a build with 
            this number.  -->
       <PropertyGroup>
-        <BuildVersion>42.42.42.42</BuildVersion>
+        <BuildVersion>$(SemanticVersion).0</BuildVersion>
       </PropertyGroup>
     </Otherwise>
   </Choose>
-
+  
   <!-- NuGet version -->
   <PropertyGroup>
     <BuildNumberSuffix Condition="('$(TF_BUILD_BUILDNUMBER)' != '')
@@ -46,7 +38,7 @@
       $(BuildNumberSuffix.Split('.')[1].PadLeft(2,'0'))
     </BuildNumberPart2>
 
-    <NuGetReleaseVersion>$(BuildVersion)</NuGetReleaseVersion>
+    <NuGetReleaseVersion>$(SemanticVersion)</NuGetReleaseVersion>
     <NuGetPreReleaseVersion>$(NuGetReleaseVersion)-$(PreReleaseVersion)</NuGetPreReleaseVersion>
     <NuGetPerBuildPreReleaseVersion Condition="'$(BuildNumberSuffix)' != ''">$(NuGetPreReleaseVersion)-$(BuildNumberPart1.Trim())-$(BuildNumberPart2.Trim())</NuGetPerBuildPreReleaseVersion>
   </PropertyGroup>
@@ -109,8 +101,6 @@
            Text="Projects must specify a SemanticVersion" />
     <Error Condition="'$(PreReleaseVersion)' == ''"
            Text="Projects must specify a PreReleaseVersion" />
-    <Error Condition="('$(RealSignBuild)' == 'true' OR '$(SignType)' == 'real') AND '$(BuildVersion)' == '42.42.42.42'"
-           Text="Must specify a build version in order to real sign a build." />
   </Target>
   
   <!-- ====================================================================================
