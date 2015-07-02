@@ -144,23 +144,26 @@
 
                 codeFixStatus = this.HasCodeFix(id, classSymbol, out noCodeFixReason);
 
-                DiagnosticDescriptor descriptorInfo = this.GetDescriptor(classSymbol);
+                IEnumerable<DiagnosticDescriptor> descriptorInfos = this.GetDescriptor(classSymbol);
 
-                string status = this.GetStatus(classSymbol, syntaxRoot, semanticModel);
-
-                var diagnostic = new StyleCopDiagnostic
+                foreach (var descriptorInfo in descriptorInfos)
                 {
-                    Id = descriptorInfo.Id,
-                    Category = descriptorInfo.Category,
-                    HasImplementation = hasImplementation,
-                    Status = status,
-                    Name = shortName,
-                    Title = descriptorInfo.Title.ToString(),
-                    HelpLink = descriptorInfo.HelpLinkUri,
-                    CodeFixStatus = codeFixStatus,
-                    NoCodeFixReason = noCodeFixReason
-                };
-                diagnostics.Add(diagnostic);
+                    string status = this.GetStatus(classSymbol, syntaxRoot, semanticModel, descriptorInfo);
+
+                    var diagnostic = new StyleCopDiagnostic
+                    {
+                        Id = descriptorInfo.Id,
+                        Category = descriptorInfo.Category,
+                        HasImplementation = hasImplementation,
+                        Status = status,
+                        Name = shortName,
+                        Title = descriptorInfo.Title.ToString(),
+                        HelpLink = descriptorInfo.HelpLinkUri,
+                        CodeFixStatus = codeFixStatus,
+                        NoCodeFixReason = noCodeFixReason
+                    };
+                    diagnostics.Add(diagnostic);
+                }
             }
 
             return diagnostics.ToImmutable();
@@ -183,43 +186,57 @@
             return hasImplementation;
         }
 
-        private string GetStatus(INamedTypeSymbol classSymbol, SyntaxNode root, SemanticModel model)
+        private string GetStatus(INamedTypeSymbol classSymbol, SyntaxNode root, SemanticModel model, DiagnosticDescriptor descriptor)
         {
             // Some analyzers use multiple descriptors. We analyze the first one and hope that
             // thats enough.
-            var members = classSymbol.GetMembers().FirstOrDefault(x => x.Name.Contains("Descriptor"));
+            var members = classSymbol.GetMembers().Where(x => x.Name.Contains("Descriptor")).ToArray();
 
-            VariableDeclaratorSyntax node = root.FindNode(members.Locations.FirstOrDefault().SourceSpan) as VariableDeclaratorSyntax;
-
-            if (node == null)
+            foreach (var member in members)
             {
-                return "Unknown";
+                VariableDeclaratorSyntax node = root.FindNode(member.Locations.FirstOrDefault().SourceSpan) as VariableDeclaratorSyntax;
+
+                if (node == null)
+                {
+                    continue;
+                }
+
+                ObjectCreationExpressionSyntax initializer = node.Initializer.Value as ObjectCreationExpressionSyntax;
+
+                var firstArgument = initializer.ArgumentList.Arguments[0];
+
+                string constantValue = (string)model.GetConstantValue(firstArgument.Expression).Value;
+
+                if (constantValue != descriptor.Id)
+                {
+                    continue;
+                }
+
+                // We use the fact that the only parameter that returns a boolean is the one we are interested in
+                var enabledByDefaultParameter = from argument in initializer.ArgumentList.Arguments
+                                                where model.GetTypeInfo(argument.Expression).Type == this.booleanType
+                                                select argument.Expression;
+                var parameter = enabledByDefaultParameter.FirstOrDefault();
+                string parameterString = parameter.ToString();
+                var analyzerConstantLength = "AnalyzerConstants.".Length;
+
+                if (parameterString.Length < analyzerConstantLength)
+                {
+                    return parameterString;
+                }
+
+                return parameter.ToString().Substring(analyzerConstantLength);
             }
 
-            ObjectCreationExpressionSyntax initializer = node.Initializer.Value as ObjectCreationExpressionSyntax;
-
-            // We use the fact that the only parameter that returns a boolean is the one we are interested in
-            var enabledByDefaultParameter = from argument in initializer.ArgumentList.Arguments
-                                            where model.GetTypeInfo(argument.Expression).Type == this.booleanType
-                                            select argument.Expression;
-            var parameter = enabledByDefaultParameter.FirstOrDefault();
-            string parameterString = parameter.ToString();
-            var analyzerConstantLength = "AnalyzerConstants.".Length;
-
-            if (parameterString.Length < analyzerConstantLength)
-            {
-                return parameterString;
-            }
-
-            return parameter.ToString().Substring(analyzerConstantLength);
+            return "Unknown";
         }
 
-        private DiagnosticDescriptor GetDescriptor(INamedTypeSymbol classSymbol)
+        private IEnumerable<DiagnosticDescriptor> GetDescriptor(INamedTypeSymbol classSymbol)
         {
             var analyzer = (DiagnosticAnalyzer)Activator.CreateInstance(this.assembly.GetType(classSymbol.ToString()));
 
             // This currently only supports one diagnostic for each analyzer.
-            return analyzer.SupportedDiagnostics.FirstOrDefault();
+            return analyzer.SupportedDiagnostics;
         }
 
         private CodeFixStatus HasCodeFix(string diagnosticId, INamedTypeSymbol classSymbol, out string noCodeFixReason)
