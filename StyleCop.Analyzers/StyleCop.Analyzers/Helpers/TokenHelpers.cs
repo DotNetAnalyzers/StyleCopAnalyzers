@@ -37,7 +37,13 @@
         /// <returns>true if token is preceded by a whitespace, otherwise false.</returns>
         internal static bool IsPrecededByWhitespace(this SyntaxToken token)
         {
-            SyntaxTriviaList triviaList = token.GetPreviousToken().TrailingTrivia.AddRange(token.LeadingTrivia);
+            SyntaxTriviaList triviaList = token.LeadingTrivia;
+            if (triviaList.Count > 0)
+            {
+                return triviaList.Last().IsKind(SyntaxKind.WhitespaceTrivia);
+            }
+
+            triviaList = token.GetPreviousToken().TrailingTrivia;
             return triviaList.Count > 0 && triviaList.Last().IsKind(SyntaxKind.WhitespaceTrivia);
         }
 
@@ -48,7 +54,13 @@
         /// <returns>true if token is followed by a whitespace, otherwise false.</returns>
         internal static bool IsFollowedByWhitespace(this SyntaxToken token)
         {
-            SyntaxTriviaList triviaList = token.TrailingTrivia.AddRange(token.GetNextToken().LeadingTrivia);
+            SyntaxTriviaList triviaList = token.TrailingTrivia;
+            if (triviaList.Count > 0)
+            {
+                return triviaList.First().IsKind(SyntaxKind.WhitespaceTrivia);
+            }
+
+            triviaList = token.GetNextToken().LeadingTrivia;
             return triviaList.Count > 0 && triviaList.First().IsKind(SyntaxKind.WhitespaceTrivia);
         }
     }
