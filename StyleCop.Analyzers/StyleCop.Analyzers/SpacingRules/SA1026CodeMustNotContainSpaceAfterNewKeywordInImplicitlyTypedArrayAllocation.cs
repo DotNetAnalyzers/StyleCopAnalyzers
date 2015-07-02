@@ -4,6 +4,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// An implicitly typed new array allocation within a C# code file is not spaced correctly.
@@ -67,9 +68,7 @@
                     continue;
                 }
 
-                SyntaxTriviaList trailingTriviaList = token.TrailingTrivia;
-                if (trailingTriviaList.Count > 0 &&
-                    (trailingTriviaList[0].IsKind(SyntaxKind.WhitespaceTrivia) || trailingTriviaList[0].IsKind(SyntaxKind.EndOfLineTrivia)))
+                if (token.IsFollowedByWhitespace() || token.IsLastInLine())
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));
                 }

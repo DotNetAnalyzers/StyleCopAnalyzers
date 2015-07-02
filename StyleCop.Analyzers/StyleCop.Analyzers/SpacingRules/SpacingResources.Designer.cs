@@ -440,7 +440,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The keyword &apos;new&apos; must not be followed by a space..
+        ///   Looks up a localized string similar to The keyword &apos;new&apos; must not be followed by a space or a blank line..
         /// </summary>
         internal static string SA1026MessageFormat {
             get {

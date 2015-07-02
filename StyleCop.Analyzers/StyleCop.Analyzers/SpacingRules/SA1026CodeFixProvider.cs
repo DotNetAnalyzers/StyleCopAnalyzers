@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.SpacingRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading;
@@ -44,7 +45,7 @@
 
                 context.RegisterCodeFix(CodeAction.Create(
                     SpacingResources.SA1026CodeFix,
-                    token => GetTransformedDocumentAsync(context.Document, diagnostic, token)),
+                    cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken)),
                     diagnostic);
             }
 
@@ -54,9 +55,16 @@
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
-            SyntaxToken corrected = token.WithoutTrailingWhitespace(removeEndOfLineTrivia: true).WithoutFormatting();
-            Document updatedDocument = document.WithSyntaxRoot(root.ReplaceToken(token, corrected));
+            SyntaxToken newKeywordToken = root.FindToken(diagnostic.Location.SourceSpan.Start);
+            SyntaxToken openBracketToken = newKeywordToken.GetNextToken();
+            var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>()
+            {
+                [newKeywordToken] = newKeywordToken.WithoutTrailingWhitespace(removeEndOfLineTrivia: true).WithoutFormatting(),
+                [openBracketToken] = openBracketToken.WithoutLeadingWhitespace(removeEndOfLineTrivia: true).WithoutFormatting()
+            };
+
+            Document updatedDocument = document.WithSyntaxRoot(
+                root.ReplaceTokens(replaceMap.Keys, (origin, maybeRewritten) => replaceMap[origin]));
 
             return updatedDocument;
         }
