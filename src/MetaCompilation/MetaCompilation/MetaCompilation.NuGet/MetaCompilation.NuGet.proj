@@ -9,7 +9,7 @@
     <NuGetAuthors>Microsoft</NuGetAuthors>
     <NuGetLicenseURL>http://go.microsoft.com/fwlink/?LinkId=529444</NuGetLicenseURL>
     <NuGetProjectURL>http://msdn.com/roslyn</NuGetProjectURL>
-    <SharedNuGetArguments>-NoPackageAnalysis -BasePath $(OutDir) -prop binaries=$(OutDir) -prop authors=$(NuGetAuthors) -prop projectURL=$(NuGetProjectURL) -prop releaseNotes="$(NuGetReleaseNotes)" -prop tags="$(NuGetTags)" -prop licenseURL=$(NuGetLicenseURL) -prop buildName=$(TF_BUILD_BUILDDEFINITIONNAME)</SharedNuGetArguments>
+    <SharedNuGetArguments>-NoPackageAnalysis -prop binaries=$(OutDir) -prop authors=$(NuGetAuthors) -prop projectURL=$(NuGetProjectURL) -prop releaseNotes="$(NuGetReleaseNotes)" -prop tags="$(NuGetTags)" -prop licenseURL=$(NuGetLicenseURL) -prop buildName=$(TF_BUILD_BUILDDEFINITIONNAME)</SharedNuGetArguments>
   </PropertyGroup>
   <ItemGroup>
     <NuSpec Include="..\MetaCompilation\Diagnostic.nuspec" />
