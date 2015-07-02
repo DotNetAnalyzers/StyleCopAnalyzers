@@ -2,6 +2,7 @@
 {
     using System;
     using System.IO;
+    using System.Linq;
     using LibGit2Sharp;
     using Newtonsoft.Json;
 
@@ -26,20 +27,29 @@
 
             var diagnostics = reader.GetDiagnosticsAsync().Result;
 
+            Commit commit;
             string commitId;
 
             using (Repository repository = new Repository(Path.GetDirectoryName(args[0])))
             {
                 commitId = repository.Head.Tip.Sha;
+                commit = repository.Head.Tip;
+
+                var output = new
+                {
+                    diagnostics,
+                    git = new
+                    {
+                        commit.Sha,
+                        commit.Message,
+                        commit.Author,
+                        commit.Committer,
+                        Parents = commit.Parents.Select(x => x.Sha)
+                    }
+                };
+
+                Console.WriteLine(JsonConvert.SerializeObject(output));
             }
-
-            var output = new
-            {
-                diagnostics,
-                commitId
-            };
-
-            Console.WriteLine(JsonConvert.SerializeObject(output));
         }
     }
 }
