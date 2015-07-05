@@ -266,6 +266,7 @@
     <Compile Include="ReadabilityRules\SA1114UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1115UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1118UnitTests.cs" />
+    <Compile Include="ReadabilityRules\SA1120UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1121UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1122UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1123UnitTests.cs" />

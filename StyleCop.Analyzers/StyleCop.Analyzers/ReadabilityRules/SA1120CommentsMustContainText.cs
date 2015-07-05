@@ -1,8 +1,12 @@
 ﻿namespace StyleCop.Analyzers.ReadabilityRules
 {
+    using System;
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The C# comment does not contain any comment text.
@@ -25,7 +29,7 @@
         private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1120.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -42,7 +46,67 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
+        }
+
+        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        {
+            SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
+            foreach (var node in root.DescendantTrivia(descendIntoTrivia: true))
+            {
+                switch (node.Kind())
+                {
+                    case SyntaxKind.SingleLineCommentTrivia:
+                        HandleSingleLineComment(context, node);
+                        break;
+                    case SyntaxKind.MultiLineCommentTrivia:
+                        HandleMultiLineComment(context, node);
+                        break;
+                }
+            }
+        }
+
+        private static void HandleMultiLineComment(SyntaxTreeAnalysisContext context, SyntaxTrivia multiLineComment)
+        {
+            var nodeText = multiLineComment.ToString();
+
+            // We remove the /* and the */ and determine if the comment has any content.
+            var commentText = nodeText.Substring(2, nodeText.Length - 4);
+
+            if (string.IsNullOrWhiteSpace(commentText))
+            {
+                var diagnostic = Diagnostic.Create(Descriptor, multiLineComment.GetLocation());
+                context.ReportDiagnostic(diagnostic);
+            }
+        }
+
+        private static void HandleSingleLineComment(SyntaxTreeAnalysisContext context, SyntaxTrivia singleLineComment)
+        {
+            // Remove the leading // from the comment
+            var commentText = singleLineComment.ToString().Substring(2);
+            int index = 0;
+
+            var list = TriviaHelper.GetContainingTriviaList(singleLineComment, out index);
+            var firstNonWhiteSpace = TriviaHelper.IndexOfFirstNonWhitespaceTrivia(list);
+
+            // This is -2 because we need to go back past the end of line trivia as well.
+            var lastNonWhiteSpace = TriviaHelper.IndexOfTrailingWhitespace(list) - 2;
+
+            // When we enounter a block of single line comments, we only want to raise this diagnostic
+            // on the first or last line.  This ensures that whitespace in code commented out using
+            // the Comment Selection option in Visual Studio will not raise the diagnostic for every
+            // blank line in the code which is commented out.
+            bool isFirstOrLast = false;
+            if (index == firstNonWhiteSpace || index == lastNonWhiteSpace)
+            {
+                isFirstOrLast = true;
+            }
+
+            if (string.IsNullOrWhiteSpace(commentText) && isFirstOrLast)
+            {
+                var diagnostic = Diagnostic.Create(Descriptor, singleLineComment.GetLocation());
+                context.ReportDiagnostic(diagnostic);
+            }
         }
     }
 }
