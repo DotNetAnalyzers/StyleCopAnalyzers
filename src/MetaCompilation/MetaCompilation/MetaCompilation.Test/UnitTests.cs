@@ -9691,7 +9691,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.MissingAccessor,
                 Message = "The SupportedDiagnostics property is missing a get accessor",
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 9) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 62) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -9795,7 +9795,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.MissingAccessor,
                 Message = "The SupportedDiagnostics property is missing a get accessor",
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 9) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 62) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -9830,6 +9830,335 @@ namespace SyntaxNodeAnalyzer
             get
             {
                 throw new NotImplementedException();
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+            VerifyCSharpFix(test, fixtest);
+        }
+        #endregion
+
+        #region TooManyAccessors
+
+        [Fact]
+        public void TooManyAccessors1() //SupportedDiagnostics property with get and then set accessors
+        {
+            var test = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+            set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.TooManyAccessors,
+                Message = "The SupportedDiagnostics property only needs one get accessor, no additional get accessors or any set accessors are needed",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 32, 13) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+
+        [Fact]
+        public void TooManyAccessors2() //SupportedDiagnostics property with set and then get accessors
+        {
+            var test = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            set
+            {
+                throw new NotImplementedException();
+            }
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.TooManyAccessors,
+                Message = "The SupportedDiagnostics property only needs one get accessor, no additional get accessors or any set accessors are needed",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 32, 13) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+            VerifyCSharpFix(test, fixtest);
+        }
+
+
+        [Fact]
+        public void TooManyAccessors3() //SupportedDiagnostics property with two get accessors
+        {
+            var test = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                return ImmutableArray.Create();
+            }
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.TooManyAccessors,
+                Message = "The SupportedDiagnostics property only needs one get accessor, no additional get accessors or any set accessors are needed",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 32, 13) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                return ImmutableArray.Create();
             }
         }
 
@@ -9961,7 +10290,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.IncorrectAccessorReturn,
                 Message = "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules",
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 9) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 62) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -10169,7 +10498,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.IncorrectAccessorReturn,
                 Message = "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules",
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 28, 13) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 17) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -10273,7 +10602,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.IncorrectAccessorReturn,
                 Message = "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules",
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 28, 13) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 17) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
