@@ -12459,7 +12459,7 @@ namespace SyntaxNodeAnalyzer
             };
             VerifyCSharpDiagnostic(test, expected);
 
-            var fixtest = @"sing System.Collections.Immutable;
+            var fixtest = @"using System.Collections.Immutable;
             using Microsoft.CodeAnalysis;
             using Microsoft.CodeAnalysis.CSharp;
             using Microsoft.CodeAnalysis.CSharp.Syntax;
