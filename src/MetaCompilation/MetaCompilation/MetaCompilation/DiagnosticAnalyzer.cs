@@ -195,11 +195,7 @@ namespace MetaCompilation
         public const string DiagnosticReportIncorrect = "MetaAnalyzer049";
         internal static DiagnosticDescriptor DiagnosticReportIncorrectRule = CreateRule(DiagnosticReportIncorrect, "Diagnostic report incorrect", "This statement should use ReportDiagnostic on {0} to report {1}", "A diagnostic is reported to a context of some sort so that the diagnostic can appear in all the right places");
         #endregion
-<<<<<<< Updated upstream
-  
-=======
 
->>>>>>> Stashed changes
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
