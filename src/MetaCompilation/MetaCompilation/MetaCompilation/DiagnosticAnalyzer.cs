@@ -37,7 +37,6 @@ namespace MetaCompilation
             return rule;
         }
 
-
         #region id rules
         public const string MissingId = "MetaAnalyzer001";
         internal static DiagnosticDescriptor MissingIdRule = CreateRule(MissingId, "Missing diagnostic id", "The analyzer '{0}' is missing a diagnostic id", "The diagnostic id identifies a particular diagnostic so that the diagnotic can be fixed in CodeFixProvider.cs");
@@ -196,7 +195,7 @@ namespace MetaCompilation
         public const string DiagnosticReportIncorrect = "MetaAnalyzer049";
         internal static DiagnosticDescriptor DiagnosticReportIncorrectRule = CreateRule(DiagnosticReportIncorrect, "Diagnostic report incorrect", "This statement should use ReportDiagnostic on {0} to report {1}", "A diagnostic is reported to a context of some sort so that the diagnostic can appear in all the right places");
         #endregion
-  
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
@@ -312,25 +311,30 @@ namespace MetaCompilation
                 {
                     return;
                 }
+
                 var registerSymbol = (IMethodSymbol)registerInfo[0];
                 if (registerSymbol == null)
                 {
                     return;
                 }
+
                 var registerArgs = (List<ISymbol>)registerInfo[1];
                 if (registerArgs == null)
                 {
                     return;
                 }
+
                 if (registerArgs.Count == 0)
                 {
                     return;
                 }
+
                 IMethodSymbol analysisMethodSymbol = null;
                 if (registerArgs.Count > 0)
                 {
                     analysisMethodSymbol = (IMethodSymbol)registerArgs[0];
                 }
+
                 IFieldSymbol kind = null;
                 if (registerArgs.Count > 1)
                 {
@@ -356,6 +360,7 @@ namespace MetaCompilation
                     {
                         //look for and interpret id fields
                         List<string> idNames = CheckIds(_branchesDict[registerSymbol.Name], kindName, context);
+
                         if (idNames.Count > 0)
                         {
                             //look for and interpret rule fields
@@ -370,6 +375,7 @@ namespace MetaCompilation
                                 {
                                     //check the SyntaxNode, Symbol, Compilation, CodeBlock, etc analysis method(s)
                                     bool analysisCorrect = CheckAnalysis(_branchesDict[registerSymbol.Name], kindName, ruleNames, context, analysisMethodSymbol);
+
                                     if (analysisCorrect)
                                     {
                                         //DiagnosticAnalyzer.cs is correct, display diagnostic to go to code fix?
@@ -526,6 +532,7 @@ namespace MetaCompilation
                                                 ReportDiagnostic(context, TooManyStatementsRule, triviaCheckBlock.GetLocation(), "if block", "1");
                                                 return false;
                                             }
+                                            
                                             //successfully through if statement checks
                                         }
                                         else
@@ -610,6 +617,7 @@ namespace MetaCompilation
             internal SyntaxToken IfStatementAnalysis1(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, ParameterSyntax contextParameter)
             {
                 var emptyResult = SyntaxFactory.Identifier("");
+
                 var ifStatement = statements[0] as LocalDeclarationStatementSyntax;
                 if (ifStatement == null)
                 {
@@ -666,6 +674,7 @@ namespace MetaCompilation
             internal SyntaxToken IfStatementAnalysis2(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, SyntaxToken statementIdentifierToken)
             {
                 var emptyResult = SyntaxFactory.Identifier("");
+
                 var statement = statements[1] as LocalDeclarationStatementSyntax;
                 if (statement == null)
                 {
@@ -747,6 +756,7 @@ namespace MetaCompilation
             internal SyntaxToken IfStatementAnalysis4(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, SyntaxToken keywordIdentifierToken)
             {
                 var emptyResult = SyntaxFactory.Identifier("");
+
                 var statement = statements[0] as LocalDeclarationStatementSyntax;
                 if (statement == null)
                 {
@@ -1064,7 +1074,6 @@ namespace MetaCompilation
                         ReportDiagnostic(context, EndSpanMissingRule, statements[4].GetLocation(), openParenToken.Text);
                         return false;
                     }
-
                 }
                 else
                 {
@@ -1590,6 +1599,7 @@ namespace MetaCompilation
             internal EqualsValueClauseSyntax GetEqualsValueClauseFromLocalDecl(LocalDeclarationStatementSyntax statement)
             {
                 EqualsValueClauseSyntax emptyResult = null;
+
                 if (statement == null)
                 {
                     return emptyResult;
@@ -1632,6 +1642,7 @@ namespace MetaCompilation
             internal SyntaxToken GetIdentifierTokenFromLocalDecl(LocalDeclarationStatementSyntax statement)
             {
                 var emptyResult = SyntaxFactory.Identifier("");
+
                 if (statement == null)
                 {
                     return emptyResult;
@@ -1668,6 +1679,7 @@ namespace MetaCompilation
             internal List<object> AnalysisGetStatements(IMethodSymbol analysisMethodSymbol)
             {
                 List<object> result = new List<object>();
+
                 if (analysisMethodSymbol == null)
                 {
                     return result;
@@ -1693,6 +1705,7 @@ namespace MetaCompilation
 
                 result.Add(methodDeclaration);
                 result.Add(statements);
+
                 return result;
             }
 
@@ -1757,6 +1770,7 @@ namespace MetaCompilation
                 {
                     SymbolInfo returnSymbolInfo = context.Compilation.GetSemanticModel(returnStatement.SyntaxTree).GetSymbolInfo(returnExpression as IdentifierNameSyntax);
                     List<object> symbolResult = SuppDiagReturnSymbol(context, returnSymbolInfo, getAccessorKeywordLocation);
+
                     if (symbolResult.Count == 0)
                     {
                         return false;
@@ -1786,8 +1800,7 @@ namespace MetaCompilation
                     return null;
                 }
 
-                if (_propertySymbol.Name != "SupportedDiagnostics" || _propertySymbol.DeclaredAccessibility != Accessibility.Public ||
-                    !_propertySymbol.IsOverride)
+                if (_propertySymbol.Name != "SupportedDiagnostics" || _propertySymbol.DeclaredAccessibility != Accessibility.Public || !_propertySymbol.IsOverride)
                 {
                     ReportDiagnostic(context, IncorrectSigSuppDiagRule, _propertySymbol.Locations[0], IncorrectSigSuppDiagRule.MessageFormat);
                     return null;
@@ -1953,9 +1966,15 @@ namespace MetaCompilation
                 }
 
                 var valueClause = equalsValueClause.Value as InvocationExpressionSyntax;
+                if (valueClause == null)
+                {
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, returnDeclaration.GetLocation());
+                    return result;
+                }
 
                 result.Add(valueClause);
                 result.Add(returnDeclaration);
+
                 return result;
             }
             #endregion
@@ -2025,6 +2044,7 @@ namespace MetaCompilation
                                         ReportDiagnostic(context, DefaultSeverityErrorRule, currentArg.GetLocation(), DefaultSeverityErrorRule.MessageFormat);
                                         return emptyRuleNames;
                                     }
+
                                     var memberAccessExpr = currentArgExpr as MemberAccessExpressionSyntax;
                                     if (memberAccessExpr == null)
                                     {
@@ -2061,6 +2081,7 @@ namespace MetaCompilation
                                         ReportDiagnostic(context, IdDeclTypeErrorRule, currentArg.GetLocation(), IdDeclTypeErrorRule.MessageFormat);
                                         return emptyRuleNames;
                                     }
+
                                     if (!currentArgExpr.IsKind(SyntaxKind.IdentifierName))
                                     {
                                         ReportDiagnostic(context, IdDeclTypeErrorRule, currentArgExpr.GetLocation(), IdDeclTypeErrorRule.MessageFormat);
@@ -2123,9 +2144,11 @@ namespace MetaCompilation
                         {
                             continue;
                         }
+
                         idNames.Add(field.Name);
                     }
                 }
+
                 return idNames;
             }
 
@@ -2186,8 +2209,7 @@ namespace MetaCompilation
                             }
 
                             var preExpressionStart = expressionStart.Expression as IdentifierNameSyntax;
-                            if (preExpressionStart == null || preExpressionStart.Identifier == null ||
-                                preExpressionStart.Identifier.ValueText != _initializeSymbol.Parameters.First().Name.ToString())
+                            if (preExpressionStart == null || preExpressionStart.Identifier == null || preExpressionStart.Identifier.ValueText != _initializeSymbol.Parameters.First().Name.ToString())
                             {
                                 ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
                                 return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
@@ -2204,7 +2226,6 @@ namespace MetaCompilation
                         //too many statements inside initialize
                         ReportDiagnostic(context, TooManyInitStatementsRule, _initializeSymbol.Locations[0], _initializeSymbol.Name.ToString());
                         return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
-
                     }
                     //only one statement inside initialize
                     else
@@ -2214,6 +2235,7 @@ namespace MetaCompilation
                         {
                             return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                         }
+
                         var invocationExpr = bodyResults[0] as InvocationExpressionSyntax;
                         var memberExpr = bodyResults[1] as MemberAccessExpressionSyntax;
                         invocExpr = invocationExpr;
@@ -2238,6 +2260,7 @@ namespace MetaCompilation
                             ReportDiagnostic(context, MissingRegisterRule, memberExpr.GetLocation(), memberExpr.Name.ToString());
                             return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                         }
+
                         if (arguments.Count > 0)
                         {
                             IMethodSymbol actionSymbol = context.Compilation.GetSemanticModel(invocationExpr.SyntaxTree).GetSymbolInfo(arguments[0].Expression).Symbol as IMethodSymbol;
@@ -2258,6 +2281,7 @@ namespace MetaCompilation
                         }
                     }
                 }
+
                 return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
             }
 
@@ -2355,14 +2379,17 @@ namespace MetaCompilation
                 {
                     return;
                 }
+
                 if (sym.ContainingType == null)
                 {
                     return;
                 }
+
                 if (sym.ContainingType.BaseType == null)
                 {
                     return;
                 }
+
                 if (sym.ContainingType.BaseType != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer"))
                 {
                     if (sym.ContainingType.BaseType != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider"))
@@ -2381,6 +2408,7 @@ namespace MetaCompilation
                         return;
                     }
                 }
+
                 if (_analyzerMethodSymbols.Contains(sym))
                 {
                     return;
@@ -2404,14 +2432,17 @@ namespace MetaCompilation
                 {
                     return;
                 }
+
                 if (sym.ContainingType == null)
                 {
                     return;
                 }
+
                 if (sym.ContainingType.BaseType == null)
                 {
                     return;
                 }
+
                 if (sym.ContainingType.BaseType != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer"))
                 {
                     if (sym.ContainingType.BaseType != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.CodeFixes.CodeFixProvider"))
@@ -2427,6 +2458,7 @@ namespace MetaCompilation
 
                     return;
                 }
+
                 if (_analyzerPropertySymbols.Contains(sym))
                 {
                     return;
@@ -2450,18 +2482,22 @@ namespace MetaCompilation
                 {
                     return;
                 }
+
                 if (sym.ContainingType == null)
                 {
                     return;
                 }
+
                 if (sym.ContainingType.BaseType == null)
                 {
                     return;
                 }
+
                 if (sym.ContainingType.BaseType != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer"))
                 {
                     return;
                 }
+
                 if (_analyzerFieldSymbols.Contains(sym))
                 {
                     return;
@@ -2479,20 +2515,24 @@ namespace MetaCompilation
                 {
                     return;
                 }
+
                 if (sym.BaseType == null)
                 {
                     return;
                 }
+
                 if (sym.BaseType != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer"))
                 {
                     if (sym.ContainingType == null)
                     {
                         return;
                     }
+
                     if (sym.ContainingType.BaseType == null)
                     {
                         return;
                     }
+
                     if (sym.ContainingType.BaseType == context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer"))
                     {
                         if (_otherAnalyzerClassSymbols.Contains(sym))
@@ -2506,6 +2546,7 @@ namespace MetaCompilation
                         }
                     }
                 }
+
                 if (sym.BaseType == context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.DiagnosticAnalyzer"))
                 {
                     _analyzerClassSymbol = sym;
@@ -2533,7 +2574,7 @@ namespace MetaCompilation
                 _initializeSymbol = null;
                 _propertySymbol = null;
                 _branchesDict = new Dictionary<string, string>();
-        }
+            }
 
             //reports a diagnostics
             public static void ReportDiagnostic(CompilationAnalysisContext context, DiagnosticDescriptor rule, Location location, params object[] messageArgs)
