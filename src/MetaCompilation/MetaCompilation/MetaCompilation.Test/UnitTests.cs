@@ -12453,7 +12453,7 @@ namespace SyntaxNodeAnalyzerAnalyzer
                 Id = MetaCompilationAnalyzer.MissingRule,
                 Message = "You need to have at least one DiagnosticDescriptor rule",
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 18) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 17, 29) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
