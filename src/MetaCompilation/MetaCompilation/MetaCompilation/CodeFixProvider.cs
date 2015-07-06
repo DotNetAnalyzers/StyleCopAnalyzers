@@ -804,11 +804,15 @@ namespace MetaCompilation
         #region id code fix
         private async Task<Document> MissingIdAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
         {
-            var idToken = SyntaxFactory.ParseToken("spacingRuleId");
             var expressionKind = SyntaxFactory.ParseExpression("\"IfSpacing\"") as ExpressionSyntax;
-            var newClassDeclaration = CodeFixNodeCreator.NewIdCreator(idToken, expressionKind, declaration);
 
-            return await ReplaceNode(declaration, newClassDeclaration, document);
+            var editor = await DocumentEditor.CreateAsync(document, c).ConfigureAwait(false);
+
+            var newField = CodeFixNodeCreator.NewIdCreator(editor.Generator, "spacingRuleId", expressionKind);
+
+            editor.InsertMembers(declaration, 0, new[] { newField });
+
+            return editor.GetChangedDocument();
         }
         #endregion
 
@@ -1020,11 +1024,15 @@ namespace MetaCompilation
                 }
             }
 
-            var idToken = SyntaxFactory.ParseToken(currentRuleId);
             var expressionKind = SyntaxFactory.ParseExpression("\"DescriptiveId\"") as ExpressionSyntax;
-            var newClassDeclaration = CodeFixNodeCreator.NewIdCreator(idToken, expressionKind, classDeclaration);
 
-            return await ReplaceNode(classDeclaration, newClassDeclaration, document);
+            var editor = await DocumentEditor.CreateAsync(document, c).ConfigureAwait(false);
+
+            var newField = CodeFixNodeCreator.NewIdCreator(editor.Generator, currentRuleId, expressionKind);
+
+            editor.InsertMembers(classDeclaration, 0, new[] { newField });
+
+            return editor.GetChangedDocument();
         }
 
         private async Task<Document> IdDeclTypeAsync(Document document, ClassDeclarationSyntax classDeclaration, CancellationToken c)
@@ -1583,31 +1591,16 @@ namespace MetaCompilation
                 return initializeDeclaration;
             }
 
-            internal static ClassDeclarationSyntax NewIdCreator(SyntaxToken idToken, ExpressionSyntax expressionKind, ClassDeclarationSyntax declaration)
+            internal static SyntaxNode NewIdCreator(SyntaxGenerator generator, string fieldName, SyntaxNode initializer)
             {
-                var equalsValueClause = SyntaxFactory.EqualsValueClause(expressionKind);
-                var idDeclarator = SyntaxFactory.VariableDeclarator(idToken, null, equalsValueClause);
-                var type = SyntaxFactory.ParseTypeName("string");
+                SyntaxNode newField = generator.FieldDeclaration(
+                    fieldName,
+                    generator.TypeExpression(SpecialType.System_String),
+                    Accessibility.Public,
+                    DeclarationModifiers.Const,
+                    initializer);
 
-                var idDeclaratorList = new SeparatedSyntaxList<VariableDeclaratorSyntax>().Add(idDeclarator);
-                var idDeclaration = SyntaxFactory.VariableDeclaration(type, idDeclaratorList);
-
-                var whiteSpace = SyntaxFactory.Whitespace("");
-                var publicModifier = SyntaxFactory.ParseToken("public").WithLeadingTrivia(whiteSpace).WithTrailingTrivia(whiteSpace);
-                var constModifier = SyntaxFactory.ParseToken("const").WithLeadingTrivia(whiteSpace).WithTrailingTrivia(whiteSpace);
-                var modifierList = SyntaxFactory.TokenList(publicModifier, constModifier);
-
-                var attributeList = new SyntaxList<AttributeListSyntax>();
-                var fieldDeclaration = SyntaxFactory.FieldDeclaration(attributeList, modifierList, idDeclaration);
-                var memberList = new SyntaxList<MemberDeclarationSyntax>().Add(fieldDeclaration);
-
-                var newClassDeclaration = declaration.WithMembers(memberList);
-                foreach (MemberDeclarationSyntax member in declaration.Members)
-                {
-                    newClassDeclaration = newClassDeclaration.AddMembers(member);
-                }
-
-                return newClassDeclaration;
+                return newField;
             }
 
             //creates the diagnostic location statement
