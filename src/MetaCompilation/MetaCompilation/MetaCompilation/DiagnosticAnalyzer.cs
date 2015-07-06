@@ -2127,7 +2127,18 @@ namespace MetaCompilation
                 else
                 {
                     var analyzerClass = _analyzerClassSymbol.DeclaringSyntaxReferences[0].GetSyntax() as ClassDeclarationSyntax;
-                    ReportDiagnostic(context, MissingRuleRule, analyzerClass.Identifier.GetLocation(), MissingRuleRule.MessageFormat);
+                    var idLocation = analyzerClass.Identifier.GetLocation();
+                    foreach (IFieldSymbol field in _analyzerFieldSymbols)
+                    {
+                        if (idNames.Contains(field.Name.ToString()))
+                        {
+                            var idField = field.DeclaringSyntaxReferences[0].GetSyntax() as VariableDeclaratorSyntax;
+                            idLocation = idField.Identifier.GetLocation();
+                            break;
+                        }
+                    }
+
+                    ReportDiagnostic(context, MissingRuleRule, idLocation, MissingRuleRule.MessageFormat);
                     return emptyRuleNames;
                 }
             }
