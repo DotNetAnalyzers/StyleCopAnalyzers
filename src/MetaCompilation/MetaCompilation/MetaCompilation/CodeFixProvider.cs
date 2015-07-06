@@ -931,7 +931,7 @@ namespace MetaCompilation
             var internalKeyword = SyntaxFactory.ParseToken("internal").WithTrailingTrivia(whiteSpace);
             var staticKeyword = SyntaxFactory.ParseToken("static").WithTrailingTrivia(whiteSpace);
             var modifierList = SyntaxFactory.TokenList(internalKeyword, staticKeyword);
-            var newFieldDeclaration = declaration.WithModifiers(modifierList).WithLeadingTrivia(declaration.GetLeadingTrivia()).WithTrailingTrivia(whiteSpace);
+            var newFieldDeclaration = declaration.WithModifiers(modifierList).WithLeadingTrivia(declaration.GetLeadingTrivia()).WithTrailingTrivia(declaration.GetTrailingTrivia());
 
             return await ReplaceNode(declaration, newFieldDeclaration, document);
         }
