@@ -945,11 +945,15 @@ namespace MetaCompilation
         #region rule code fix
         private async Task<Document> InternalStaticAsync(Document document, FieldDeclarationSyntax declaration, CancellationToken c)
         {
-            var whiteSpace = SyntaxFactory.Whitespace(" ");
-            var internalKeyword = SyntaxFactory.ParseToken("internal").WithTrailingTrivia(whiteSpace);
-            var staticKeyword = SyntaxFactory.ParseToken("static").WithTrailingTrivia(whiteSpace);
-            var modifierList = SyntaxFactory.TokenList(internalKeyword, staticKeyword);
-            var newFieldDeclaration = declaration.WithModifiers(modifierList).WithLeadingTrivia(declaration.GetLeadingTrivia()).WithTrailingTrivia(declaration.GetTrailingTrivia());
+            var list =
+                SyntaxFactory.TokenList(
+                    SyntaxFactory.Token(SyntaxKind.InternalKeyword),
+                    SyntaxFactory.Token(SyntaxKind.StaticKeyword));
+
+            var newFieldDeclaration =
+                declaration.WithModifiers(list)
+                           .WithLeadingTrivia(declaration.GetLeadingTrivia())
+                           .WithTrailingTrivia(declaration.GetTrailingTrivia());
 
             return await ReplaceNode(declaration, newFieldDeclaration, document);
         }
