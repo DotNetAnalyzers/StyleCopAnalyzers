@@ -2116,6 +2116,7 @@ namespace MetaCompilation
                             break;
                         }
                     }
+
                     ReportDiagnostic(context, MissingRuleRule, idLocation, MissingRuleRule.MessageFormat);
                     return emptyRuleNames;
                 }
