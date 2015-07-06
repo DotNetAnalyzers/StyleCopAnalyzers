@@ -12697,6 +12697,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckMissing,
@@ -12757,6 +12758,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             VerifyCSharpFix(test, fixtest);
         }
         #endregion
@@ -12815,6 +12817,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
@@ -12873,6 +12876,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             VerifyCSharpFix(test, fixtest);
         }
 
@@ -12931,6 +12935,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
@@ -12990,6 +12995,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
         }
 
@@ -13108,6 +13114,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             VerifyCSharpFix(test, fixtest);
         }
 
@@ -13166,6 +13173,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
@@ -13225,6 +13233,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             VerifyCSharpFix(test, fixtest);
         }
 
@@ -13343,6 +13352,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             VerifyCSharpFix(test, fixtest);
         }
 
@@ -13460,6 +13470,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             VerifyCSharpFix(test, fixtest);
         }
 
@@ -13578,6 +13589,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             VerifyCSharpFix(test, fixtest);
         }
 
@@ -13636,6 +13648,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
@@ -13695,6 +13708,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             VerifyCSharpFix(test, fixtest);
         }
 
@@ -13811,6 +13825,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             VerifyCSharpFix(test, fixtest);
         }
 
@@ -13870,6 +13885,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
@@ -13930,6 +13946,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             VerifyCSharpFix(test, fixtest);
         }
         #endregion
@@ -14085,6 +14102,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.ReturnStatementMissing,
@@ -14146,6 +14164,7 @@ namespace SyntaxNodeAnalyzer
             }
         }
     }";
+
             VerifyCSharpFix(test, fixtest);
         }
         #endregion
