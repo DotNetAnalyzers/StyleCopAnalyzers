@@ -20,8 +20,7 @@ trivia, and decide whether or not to surface a diagnostic.
 
 You can explore syntax trees with the Roslyn Syntax Visualizer. An example diagram of the syntax tree of
 an if statement can be found below.
- 
-
+![If Statement Syntax Tree](https://github.com/dotnet/roslyn-analyzers/blob/master/IfSyntaxTree.jpg)
 
 More Information
 ----------------
