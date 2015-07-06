@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Formatting;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace TestTemplate
 {
@@ -108,7 +108,7 @@ namespace TestTemplate
                     document = document.WithSyntaxRoot(Formatter.Format(document.GetSyntaxRootAsync().Result, Formatter.Annotation, document.Project.Solution.Workspace));
                     newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, GetCompilerDiagnostics(document));
 
-                    Assert.IsTrue(false,
+                    Assert.True(false,
                         string.Format("Fix introduced new compiler diagnostics:\r\n{0}\r\n\r\nNew document:\r\n{1}\r\n",
                             string.Join("\r\n", newCompilerDiagnostics.Select(d => d.ToString())),
                             document.GetSyntaxRootAsync().Result.ToFullString()));
@@ -123,7 +123,7 @@ namespace TestTemplate
 
             // After applying all of the code fixes, compare the resulting string to the inputted one
             var actual = GetStringFromDocument(document);
-            Assert.AreEqual(newSource, actual);
+            Assert.Equal(newSource, actual);
         }
     }
 }

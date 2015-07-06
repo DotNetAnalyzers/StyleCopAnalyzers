@@ -3,15 +3,14 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestTemplate;
+using Xunit;
 
 namespace AsyncPackage.Tests
 {
     /// <summary>
     /// Unit Tests for the AsyncLambdaDiagnosticAnalzer and AsyncLambdaVariableCodeFix
     /// </summary>
-    [TestClass]
     public class AsyncLambdaTests : CodeFixVerifier
     {
         private const string DefaultHeader = @"
@@ -61,7 +60,7 @@ namespace ConsoleApplication1
             return new AsyncLambdaAnalyzer();
         }
 
-        [TestMethod]
+        [Fact]
         public void AL001_None_NoMethodNoDiagnostics()
         {
             var test = @"";
@@ -69,7 +68,7 @@ namespace ConsoleApplication1
             VerifyCSharpDiagnostic(test);
         }
 
-        [TestMethod]
+        [Fact]
         public void AL002_DACF_AssignVoidableVariable()
         {
             var body = @"
@@ -105,7 +104,7 @@ namespace ConsoleApplication1
         }
 
         // Task function assigned to lambda - no diagnostic should show
-        [TestMethod]
+        [Fact]
         public void AL003_None_TaskReturningDelegateType()
         {
             var body = @"
@@ -124,7 +123,7 @@ namespace ConsoleApplication1
         }
 
         // Method with void-returning delegate type - diagnostic should show on the lambda
-        [TestMethod]
+        [Fact]
         public void AL004_DA_PassAsVoidReturningDelagateType()
         {
             var body = @"
@@ -148,7 +147,7 @@ namespace ConsoleApplication1
         }
 
         // Method with correct delegate type - no diagnostic should show
-        [TestMethod]
+        [Fact]
         public void AL005_None_PassAsTaskReturningDelagateType()
         {
             var body = @"
@@ -170,7 +169,7 @@ namespace ConsoleApplication1
         }
 
         // Lambda overrides a Task function - no diagnostic should show
-        [TestMethod]
+        [Fact]
         public void AL006_None_TaskOverrideDelegateType()
         {
             var body = @"
@@ -189,7 +188,7 @@ namespace ConsoleApplication1
         }
 
         // Test delegate vs => correct - no diagnostic should show
-        [TestMethod]
+        [Fact]
         public void AL007_None_DelegateLambdaTaskReturn()
         {
             var body = @"
@@ -211,7 +210,7 @@ namespace ConsoleApplication1
         }
 
         // Test delegate vs => incorrect - 1 diagnostic should show
-        [TestMethod]
+        [Fact]
         public void AL008_DA_DelegateLambdaVoidReturn()
         {
             var body = @"
@@ -236,7 +235,7 @@ namespace ConsoleApplication1
         }
 
         // Test simple lambda correct - no diagnostic should show
-        [TestMethod]
+        [Fact]
         public void AL009_None_SimpleLambdaTaskReturn()
         {
             var body = @"
@@ -255,7 +254,7 @@ namespace ConsoleApplication1
         }
 
         // Test simple lambda incorrect - 1 diagnostic should show
-        [TestMethod]
+        [Fact]
         public void AL010_DA_SimpleLambdaVoidReturn()
         {
             var body = @"
@@ -276,7 +275,7 @@ namespace ConsoleApplication1
         }
 
         // Missing necessary using directives - 1 diagnostic
-        [TestMethod]
+        [Fact]
         public void AL011_DA_MissingUsings()
         {
             var body = @"

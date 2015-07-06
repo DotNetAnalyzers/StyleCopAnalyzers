@@ -3,15 +3,14 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestTemplate;
+using Xunit;
 
 namespace AsyncPackage.Tests
 {
     /// <summary>
     /// Unit Tests for the AsyncVoidAnalyzer and AsyncVoidCodeFix
     /// </summary>
-    [TestClass]
     public class AsyncVoidTests : CodeFixVerifier
     {
         private const string DefaultHeader = @"
@@ -57,7 +56,7 @@ namespace ConsoleApplication1
         }
 
         // No methods - no diagnostic should show
-        [TestMethod]
+        [Fact]
         public void AV001_None_NoMethodNoDiagnostics()
         {
             var body = @"";
@@ -68,7 +67,7 @@ namespace ConsoleApplication1
         }
 
         // Task Return Async Method - single request - should show no diagnostic
-        [TestMethod]
+        [Fact]
         public void AV002_None_TaskReturnAsyncSingleRequest()
         {
             var body = @"
@@ -83,7 +82,7 @@ namespace ConsoleApplication1
         }
 
         // Task Return Async Method - serial requests - should show no diagnostic
-        [TestMethod]
+        [Fact]
         public void AV003_None_TaskReturnAsyncSerialRequests()
         {
             var body = @"
@@ -101,7 +100,7 @@ namespace ConsoleApplication1
         }
 
         // Task Return Async Method - parallel requests - should show no diagnostic
-        [TestMethod]
+        [Fact]
         public void AV004_None_TaskReturnAsyncParallelRequests()
         {
             var body = @"
@@ -139,7 +138,7 @@ namespace ConsoleApplication1
         }
 
         // Task<int> Return Async Method - Single request - should show no diagnostic
-        [TestMethod]
+        [Fact]
         public void AV005_None_TaskIntReturnAsyncSingleRequest()
         {
             var body = @"
@@ -157,7 +156,7 @@ namespace ConsoleApplication1
         }
 
         // Task<int> Return Async Method - serial requests - should show no diagnostic
-        [TestMethod]
+        [Fact]
         public void AV006_None_TaskIntReturnWithAsync()
         {
             var body = @"
@@ -177,7 +176,7 @@ namespace ConsoleApplication1
         }
 
         // Task<string> Return Async Method - single request - should show no diagnostic
-        [TestMethod]
+        [Fact]
         public void AV007_None_TaskStringReturnAsyncSingleRequest()
         {
             var body = @"
@@ -193,7 +192,7 @@ namespace ConsoleApplication1
         }
 
         // Task<string> Return Async Method - serial requests - should show no diagnostic
-        [TestMethod]
+        [Fact]
         public void AV008_None_TaskStringReturnAsyncSerialRequests()
         {
             var body = @"
@@ -214,7 +213,7 @@ namespace ConsoleApplication1
         }
 
         // Task<int> Return Async Method - serial requests - should show no diagnostic
-        [TestMethod]
+        [Fact]
         public void AV009_None_TaskIntReturnAsyncSerialRequests()
         {
             var body = @"
@@ -234,7 +233,7 @@ namespace ConsoleApplication1
         }
 
         // Task Return Async Method - single request - should show no diagnostic
-        [TestMethod]
+        [Fact]
         public void AV010_None_TaskReturnNoAsyncSingleRequest()
         {
             var body = @"
@@ -249,7 +248,7 @@ namespace ConsoleApplication1
         }
 
         // Task<int> Return Async Method - serial requests - should show no diagnostic
-        [TestMethod]
+        [Fact]
         public void AV011_None_TaskIntReturnNoAsyncSerialRequests()
         {
             var body = @"
@@ -269,7 +268,7 @@ namespace ConsoleApplication1
         }
 
         // Task<bool> async method - no diagnostic
-        [TestMethod]
+        [Fact]
         public void AV012_None_TaskBoolReturnAsync()
         {
             var body = @"
@@ -286,7 +285,7 @@ namespace ConsoleApplication1
         }
 
         // Void Return Async Method with Event handling - should show no diagnostic
-        [TestMethod]
+        [Fact]
         public void AV013_None_AsyncVoidWithEventHandling()
         {
             var body = @"
@@ -306,7 +305,7 @@ namespace ConsoleApplication1
         }
 
         // Void Return Async Method - parallel requests - should show 1 diagnostic
-        [TestMethod]
+        [Fact]
         public void AV014_DACF_VoidReturnAsyncParallelRequests()
         {
             var body = @"         
@@ -380,7 +379,7 @@ namespace ConsoleApplication1
         }
 
         // No diagnostic shown during async void return when asynchronous event handler is used - parallel requests
-        [TestMethod]
+        [Fact]
         public void AV015_None_VoidReturnaSyncWithEventParallel()
         {
             var body = @"
@@ -406,7 +405,7 @@ namespace ConsoleApplication1
         }
 
         // No diagnostic shown during async void return when asynchronous event handler is used - serial requests
-        [TestMethod]
+        [Fact]
         public void AV016_None_VoidReturnaSyncWithEventSerial()
         {
             var body = @"
@@ -428,7 +427,7 @@ namespace ConsoleApplication1
         }
 
         // Void Return Async Method with no event handlers - 1 diagnostic should show 
-        [TestMethod]
+        [Fact]
         public void AV017_DACF_AsyncVoidWithOutEvent1()
         {
             var body = @"
@@ -472,7 +471,7 @@ namespace ConsoleApplication1
         }
 
         // Void Return Async Method with no event handlers - 1 diagnostic should show 
-        [TestMethod]
+        [Fact]
         public void AV018_DACF_AsyncVoidWithOutEvent2()
         {
             var body = @"
@@ -506,7 +505,7 @@ namespace ConsoleApplication1
         }
 
         // Check to make sure the diagnostic still shows for methods with two parameters that are not Event Handlers
-        [TestMethod]
+        [Fact]
         public void AV019_DACF_AsyncVoidTwoParams()
         {
             var body = @"
@@ -532,7 +531,7 @@ namespace ConsoleApplication1
         }
 
         // Check to make sure the diagnostic still shows for methods with a parameter that implements Event Handler
-        [TestMethod]
+        [Fact]
         public void AV020_DA_AsyncVoidImplementsEvent()
         {
             var body = @"
@@ -562,7 +561,7 @@ namespace TestingTemplate
         }
 
         // Check to make sure the diagnostic still shows for methods with a parameter that implements Event Handler
-        [TestMethod]
+        [Fact]
         public void AV021_DA_AsyncVoidParentImplementsEvent()
         {
             var body = @"
@@ -598,7 +597,7 @@ namespace TestingTemplate
         }
 
         // Check to make sure the diagnostic still shows for methods with a parameter that implements Event Handler
-        [TestMethod]
+        [Fact]
         public void AV022_DA_AsyncVoidGrandfatherImplementsEvent()
         {
             var body = @"
@@ -639,7 +638,7 @@ namespace TestingTemplate
         #region VB Tests
 
         // Check to make sure the diagnostic appears for VB
-        [TestMethod]
+        [Fact]
         public void AV023_DA_VBDiagnosticSimple()
         {
             var body = @"
@@ -665,7 +664,7 @@ End Module
         }
 
         // Check to make sure the diagnostic does not appear for the case of VB event handlers
-        [TestMethod]
+        [Fact]
         public void AV024_None_VBEventHandler()
         {
             var body = @"

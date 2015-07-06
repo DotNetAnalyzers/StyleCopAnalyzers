@@ -45,7 +45,7 @@ namespace TestTemplate
             {
                 if (this.locations == null)
                 {
-                    this.locations = Array.Empty<DiagnosticResultLocation>();
+                    this.locations = new DiagnosticResultLocation[0];
                 }
 
                 return this.locations;

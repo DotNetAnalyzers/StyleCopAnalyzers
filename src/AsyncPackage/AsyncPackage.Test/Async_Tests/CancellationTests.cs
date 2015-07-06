@@ -3,15 +3,14 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestTemplate;
+using Xunit;
 
 namespace AsyncPackage.Tests
 {
     /// <summary>
     /// Unit Tests for the CancellationAnalyzer and CancellationCodeFix
     /// </summary>
-    [TestClass]
     public class CancellationTests : CodeFixVerifier
     {
         private const string DefaultHeader = @"
@@ -53,7 +52,7 @@ namespace ConsoleApplication1
         }
 
         // No methods - no diagnostic should show
-        [TestMethod]
+        [Fact]
         public void C001_None_NoMethodNoDiagnostics()
         {
             var body = @"";
@@ -64,7 +63,7 @@ namespace ConsoleApplication1
         }
 
         // One method can pass a CT to another and does - no diagnostic
-        [TestMethod]
+        [Fact]
         public void C002_None_BasicCasePass()
         {
             var body = @"
@@ -84,7 +83,7 @@ namespace ConsoleApplication1
         }
 
         // One method can pass a CT to another and does not
-        [TestMethod]
+        [Fact]
         public void C003_DACF_BasicCaseNoPass()
         {
             var body = @"
@@ -122,7 +121,7 @@ namespace ConsoleApplication1
         }
 
         // One method can pass a CT to another and instead passes CancellationToken.None - no diagnostic
-        [TestMethod]
+        [Fact]
         public void C004_None_BasicCaseNone()
         {
             var body = @"
@@ -142,7 +141,7 @@ namespace ConsoleApplication1
         }
 
         // Both methods have multiple parameters - no diagnostic
-        [TestMethod]
+        [Fact]
         public void C005_None_ManyParamsPass()
         {
             var body = @"
@@ -162,7 +161,7 @@ namespace ConsoleApplication1
         }
 
         // Both methods have multiple parameters - 1 diagnostic
-        [TestMethod]
+        [Fact]
         public void C006_DACF_ManyParamsNoPass()
         {
             var body = @"
@@ -198,7 +197,7 @@ namespace ConsoleApplication1
         }
 
         // Containing method has many other things in it - 1 diagnostic
-        [TestMethod]
+        [Fact]
         public void C007_DACF_OtherMiscInContainingMethodNoPass()
         {
             var body = @"
@@ -256,7 +255,7 @@ namespace ConsoleApplication1
         }
 
         // Containing methods have multiple invocations where a token can be passed - 1 diagnostic
-        [TestMethod]
+        [Fact]
         public void C008_DACF_MultipleInvocationsInContainingMethod()
         {
             var body = @"
@@ -347,7 +346,7 @@ namespace ConsoleApplication1
         }
 
         // Nested invocations - 1 diagnostic
-        [TestMethod]
+        [Fact]
         public void C010_DACF_NestedInvocation()
         {
             var body = @"
@@ -388,7 +387,7 @@ namespace ConsoleApplication1
         }
 
         // Multiple tokens in scope, both passed - no diagnostic
-        [TestMethod]
+        [Fact]
         public void C011_None_MultipleTokensInScopePass()
         {
             var body = @"
@@ -409,7 +408,7 @@ namespace ConsoleApplication1
 
         // Multiple tokens in scope - 1 diagnostic
         // Codefix should take the first token and put it in the first available slot
-        [TestMethod]
+        [Fact]
         public void C012_DACF_MultipleTokensInScopeNoPass()
         {
             var body = @"
@@ -448,7 +447,7 @@ namespace ConsoleApplication1
         }
 
         // No tokens to pass - no diagnostic
-        [TestMethod]
+        [Fact]
         public void C013_None_NoTokensToPass()
         {
             var body = @"
@@ -468,7 +467,7 @@ namespace ConsoleApplication1
 
         // Multiple default parameters - 1 diagnostic
         // Adding CancellationToken but not other default should not cause other diagnostics
-        [TestMethod]
+        [Fact]
         public void C014_DACF_MultipleDefaultsNoPass()
         {
             var body = @"
@@ -504,7 +503,7 @@ namespace ConsoleApplication1
 
         // Multiple tokens can be passed and multiple slots to pass them in - 1 diagnostic
         // Should just take the first token and put it in the first slot - anything else is out of scope
-        [TestMethod]
+        [Fact]
         public void C015_DACF_MultipleTokensMultipleSlots()
         {
             var body = @"
@@ -539,7 +538,7 @@ namespace ConsoleApplication1
         }
 
         // CancellationToken can be passed, but it's a user made class called CancellationToken - no diagnostic
-        [TestMethod]
+        [Fact]
         public void C016_None_NotSystemCancellationToken()
         {
             var test = @"
@@ -577,7 +576,7 @@ namespace ConsoleApplication1
         }
 
         // An overload of the method takes a CancellationToken - no diagnostic, out of scope
-        [TestMethod]
+        [Fact]
         public void C017_None_OverloadWithNoPass()
         {
             var body = @"
@@ -601,7 +600,7 @@ namespace ConsoleApplication1
         }
 
         // An overload of the method uses default(CancellationToken) - no diagnostic, out of scope
-        [TestMethod]
+        [Fact]
         public void C018_None_OverloadWithDefaultNoPass()
         {
             var body = @"
@@ -625,7 +624,7 @@ namespace ConsoleApplication1
         }
 
         // An overload of the method takes a CancellationToken, but the overload being used does not - no diagnostic
-        [TestMethod]
+        [Fact]
         public void C019_None_OverloadWithTokenNotPossible()
         {
             var body = @"
@@ -649,7 +648,7 @@ namespace ConsoleApplication1
         }
 
         // The overload explicitly being used takes a CancellationToken- 1 diagnostic
-        [TestMethod]
+        [Fact]
         public void C020_DACF_UsedOverloadTakesTokenNoPass()
         {
             var body = @"

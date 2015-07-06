@@ -10,7 +10,6 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 using CSharp = Microsoft.CodeAnalysis.CSharp;
-using VisualBasic = Microsoft.CodeAnalysis.VisualBasic;
 
 namespace TestTemplate
 {

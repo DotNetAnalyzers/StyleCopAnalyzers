@@ -3,15 +3,14 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestTemplate;
+using Xunit;
 
 namespace AsyncPackage.Tests
 {
     /// <summary>
     /// Unit Tests for the BlockingAsyncAnalyzer and BlockingAsyncCodeFix
     /// </summary>
-    [TestClass]
     public class BlockingAsyncTests : CodeFixVerifier
     {
         private const string DefaultHeader = @"
@@ -63,7 +62,7 @@ namespace ConsoleApplication1
         }
 
         // No methods - no diagnostic should show
-        [TestMethod]
+        [Fact]
         public void BA001_None_NoMethodNoDiagnostics()
         {
             var body = @"";
@@ -74,7 +73,7 @@ namespace ConsoleApplication1
         }
 
         // Wait block on async code - 1 diagnostic - code fix
-        [TestMethod]
+        [Fact]
         public void BA002_DACF_WaitBlockAsyncCode()
         {
             var body = @"
@@ -115,7 +114,7 @@ namespace ConsoleApplication1
         }
 
         // Result block on async code - 1 diagnostic - code fix
-        [TestMethod]
+        [Fact]
         public void BA003_DACF_ResultBlockAsyncCode()
         {
             var body = @"
@@ -154,7 +153,7 @@ namespace ConsoleApplication1
         }
 
         // Invocation expression assigned to variable - 1 diagnostic
-        [TestMethod]
+        [Fact]
         public void BA004_DA_InvocationExpressionVariable()
         {
             var body = @"
@@ -198,7 +197,7 @@ namespace ConsoleApplication1
         }
 
         // Async method using waitall on task - 1 diagnostic - code fix
-        [TestMethod]
+        [Fact]
         public void BA005_DACF_WaitAllBlockAsyncCode()
         {
             var body = @"
@@ -305,7 +304,7 @@ namespace ConsoleApplication1
         }
 
         // Async with thread.sleep - 1 diagnostic - code fix
-        [TestMethod]
+        [Fact]
         public void BA006_DACF_AsyncWithThreadSleep()
         {
             var body = @"
@@ -336,7 +335,7 @@ namespace ConsoleApplication1
         }
 
         // Thread.sleep within loop - 1 diagnostic - code fix
-        [TestMethod]
+        [Fact]
         public void BA007_DACF_ThreadSleepInLoop()
         {
             var body = @"
@@ -369,7 +368,7 @@ namespace ConsoleApplication1
         }
 
         // Thread.sleep(timespan) - 1 diagnostic - code fix
-        [TestMethod]
+        [Fact]
         public void BA008_DACF_AsyncWithThreadSleepTimeSpan()
         {
             var body = @"
@@ -398,7 +397,7 @@ namespace ConsoleApplication1
         }
 
         // Thread.sleep(TimeSpan) within loop - 1 diagnostic - code fix
-        [TestMethod]
+        [Fact]
         public void BA009_DACF_ThreadSleepTimeSpanInForLoop()
         {
             var body = @"
@@ -435,7 +434,7 @@ namespace ConsoleApplication1
         }
 
         // Thread.sleep(timespan) within while loop - 1 diagnostic - code fix
-        [TestMethod]
+        [Fact]
         public void BA010_DACF_ThreadSleepTimeSpanInWhileLoop()
         {
             var body = @"
@@ -480,7 +479,7 @@ namespace ConsoleApplication1
         }
 
         // Async with task.delay - no diagnostic
-        [TestMethod]
+        [Fact]
         public void BA011_None_AsyncWithAsync()
         {
             var body = @"
@@ -493,7 +492,7 @@ namespace ConsoleApplication1
         }
 
         // Async method calls a function with thread.sleep in it - out of scope, no diagnostic
-        [TestMethod]
+        [Fact]
         public void BA012_None_HiddenSyncCode()
         {
             var body = @"
@@ -511,7 +510,7 @@ namespace ConsoleApplication1
         }
 
         // Non async method calls thread.wait - no diagnostic
-        [TestMethod]
+        [Fact]
         public void BA013_None_NonAsyncWait()
         {
             var body = @"
@@ -524,7 +523,7 @@ namespace ConsoleApplication1
         }
 
         // Async method calls a different Task method - no diagnostic
-        [TestMethod]
+        [Fact]
         public void BA014_None_AsyncWithOtherMethod()
         {
             var body = @"
@@ -537,7 +536,7 @@ namespace ConsoleApplication1
         }
 
         // Async method calls a Wait method on a Task, but not the same Wait - no diagnostic
-        [TestMethod]
+        [Fact]
         public void BA015_None_AsyncCallsOtherWait()
         {
             var test = @"
@@ -572,7 +571,7 @@ namespace ConsoleApplication1
         }
 
         // Async method calls a WaitAll method on a Task, but not the same WaitAll - no diagnostic
-        [TestMethod]
+        [Fact]
         public void BA016_None_AsyncCallsOtherWaitAll()
         {
             var test = @"
@@ -607,7 +606,7 @@ namespace ConsoleApplication1
         }
 
         // Async method calls a WaitAny method on a Task, but not the same WaitAny - no diagnostic
-        [TestMethod]
+        [Fact]
         public void BA017_None_AsyncCallsOtherWaitAny()
         {
             var test = @"
@@ -642,7 +641,7 @@ namespace ConsoleApplication1
         }
 
         // Async method calls a Sleep method on a Task, but not the same Sleep - no diagnostic
-        [TestMethod]
+        [Fact]
         public void BA018_None_AsyncCallsOtherSleep()
         {
             var test = @"
@@ -677,7 +676,7 @@ namespace ConsoleApplication1
         }
 
         // Async method calls a GetResult method on a Task, but not the same GetResult - no diagnostic
-        [TestMethod]
+        [Fact]
         public void BA019_None_AsyncCallsOtherGetResult()
         {
             var test = @"

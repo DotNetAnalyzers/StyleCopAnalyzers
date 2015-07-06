@@ -3,15 +3,14 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestTemplate;
+using Xunit;
 
 namespace AsyncPackage.Tests
 {
     /// <summary>
     /// Unit Tests for the RenameAsyncAnalyzer and RenameAsyncCodeFix
     /// </summary>
-    [TestClass]
     public class RenameAsyncTests : CodeFixVerifier
     {
         private const string DefaultHeader = @"
@@ -57,7 +56,7 @@ namespace ConsoleApplication1
         }
 
         // No methods - no diagnostic should show
-        [TestMethod]
+        [Fact]
         public void RA001_None_NoMethodNoDiagnostics()
         {
             var body = @"";
@@ -68,7 +67,7 @@ namespace ConsoleApplication1
         }
 
         // Task<int> async method includes "Async" - no diagnostic
-        [TestMethod]
+        [Fact]
         public void RA002_None_TaskIntReturnWithAsync()
         {
             var body = @"
@@ -85,7 +84,7 @@ namespace ConsoleApplication1
         }
 
         // Task<bool> async method includes "async" - no diagnostic
-        [TestMethod]
+        [Fact]
         public void RA003_None_TaskBoolReturnWithAsync()
         {
             var body = @"
@@ -102,7 +101,7 @@ namespace ConsoleApplication1
         }
 
         // Async method does not includes "Async" - 1 diagnostic
-        [TestMethod]
+        [Fact]
         public void RA004_DACF_AsyncMethodWithoutAsync()
         {
             var body = @"
@@ -132,7 +131,7 @@ namespace ConsoleApplication1
         }
 
         // Async method named "async" - no diagnostic 
-        [TestMethod]
+        [Fact]
         public void RA005_None_AsyncMethodNamedAsync()
         {
             var body = @"
@@ -149,7 +148,7 @@ namespace ConsoleApplication1
         }
 
         // Non async method named "async" - no diagnostic
-        [TestMethod]
+        [Fact]
         public void RA006_None_NonAsyncMethodnamedAsync()
         {
             var body = @"
@@ -169,7 +168,7 @@ namespace ConsoleApplication1
         }
 
         // Non-Async method that do not include async - no diagnostic 
-        [TestMethod]
+        [Fact]
         public void RA007_None_NonAsyncWithoutAsync()
         {
             var body = @"
@@ -188,7 +187,7 @@ namespace ConsoleApplication1
         }
 
         // Adding Async would cause conflict 
-        [TestMethod]
+        [Fact]
         public void RA008_DACF_MethodNameConflict1()
         {
             var body = @"
@@ -232,7 +231,7 @@ namespace ConsoleApplication1
         }
 
         // Method name conflict - 1 diagnostic
-        [TestMethod]
+        [Fact]
         public void RA009_DACF_MethodNameConflict2()
         {
             var body = @"
@@ -272,7 +271,7 @@ namespace ConsoleApplication1
         }
 
         // Async keyword is at beginning - should show 1 diagnostic 
-        [TestMethod]
+        [Fact]
         public void RA010_DACF_AsyncKeywordInBeginning()
         {
             var body = @"
@@ -315,7 +314,7 @@ namespace ConsoleApplication1
         }
 
         // Misspelled async in method name - 1 diagnostic
-        [TestMethod]
+        [Fact]
         public void RA011_DACF_MisspelledAsync()
         {
             var body = @"
@@ -345,7 +344,7 @@ namespace ConsoleApplication1
         }
 
         // No capital A in Async method name - 1 diagnostic
-        [TestMethod]
+        [Fact]
         public void RA012_DACF_NoCapitalAinAsync()
         {
             var body = @"
@@ -377,7 +376,7 @@ namespace ConsoleApplication1
         }
 
         // Method name contains async but misspelled and no capitol A - 1 diagnostic
-        [TestMethod]
+        [Fact]
         public void RA013_DACF_MisspelledAndNoCapitolA()
         {
             var body = @"
@@ -413,7 +412,7 @@ namespace ConsoleApplication1
         }
 
         // Misspelled Async named Async method - diagnostic should rename to Async
-        [TestMethod]
+        [Fact]
         public void RA014_DACF_AsyncnamedAsyncMethodMisspelled()
         {
             var body = @"
@@ -443,7 +442,7 @@ namespace ConsoleApplication1
         }
 
         // Very close spelling of async in name but wrong letters - 1 diagnostic
-        [TestMethod]
+        [Fact]
         public void RA015_DACF_CloseSpellingOfAsyncbutNotEnough()
         {
             var body = @"
@@ -473,7 +472,7 @@ namespace ConsoleApplication1
         }
 
         // Very close spelling of async in name but wrong letters - 1 diagnostic
-        [TestMethod]
+        [Fact]
         public void RA016_DACF_CloseSpellingOfAsyncbutNotEnough2()
         {
             var body = @"
@@ -503,7 +502,7 @@ namespace ConsoleApplication1
         }
 
         // Test multiple fixes in a row - should have 4 diagnostics and fixes
-        [TestMethod]
+        [Fact]
         public void RA017_DACF_MultipleMisspellings()
         {
             var body = @"
@@ -586,7 +585,7 @@ namespace ConsoleApplication1
 
         // Simple missing "Async" test for VB - 1 diagnostic
         // Codefix is out of scope
-        [TestMethod]
+        [Fact]
         public void RA018_DA_VBRenameSimple()
         {
             var body = @"
@@ -616,7 +615,7 @@ End Module
 
         // Misspelled "Async" test for VB - 1 diagnostic
         // Codefix is out of scope
-        [TestMethod]
+        [Fact]
         public void RA019_DA_VBRenameMisspelledAsync()
         {
             var body = @"
