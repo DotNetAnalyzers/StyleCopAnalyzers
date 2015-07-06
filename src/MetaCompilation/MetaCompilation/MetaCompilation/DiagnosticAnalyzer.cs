@@ -168,7 +168,7 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor SpanMissingRule = CreateRule(SpanMissing, "Diagnostic span variable missing", "The next step is to create a variable that is the span of the diagnostic that will be reported");
 
         public const string SpanIncorrect = "MetaAnalyzer041";
-        internal static DiagnosticDescriptor SpanIncorrectRule = CreateRule(SpanIncorrect, "Diagnostic span variable incorrect", "This statement should use TextSpan.FromBound, {0}, and {1} to create the span of the diagnostic that will be reported", "Each node in the syntax tree has a span. This span represents the number of character spaces that the node takes up. TextSpan.FromBounds(start, end) can be used to create a span to use for a diagnostic");
+        internal static DiagnosticDescriptor SpanIncorrectRule = CreateRule(SpanIncorrect, "Diagnostic span variable incorrect", "This statement should use TextSpan.FromBounds, {0}, and {1} to create the span of the diagnostic that will be reported", "Each node in the syntax tree has a span. This span represents the number of character spaces that the node takes up. TextSpan.FromBounds(start, end) can be used to create a span to use for a diagnostic");
 
         public const string LocationMissing = "MetaAnalyzer042";
         internal static DiagnosticDescriptor LocationMissingRule = CreateRule(LocationMissing, "Diagnostic location variable missing", "The next step is to create a location for the diagnostic");
@@ -196,11 +196,7 @@ namespace MetaCompilation
         public const string DiagnosticReportIncorrect = "MetaAnalyzer049";
         internal static DiagnosticDescriptor DiagnosticReportIncorrectRule = CreateRule(DiagnosticReportIncorrect, "Diagnostic report incorrect", "This statement should use ReportDiagnostic on {0} to report {1}", "A diagnostic is reported to a context of some sort so that the diagnostic can appear in all the right places");
         #endregion
-
-       
-
-       
-
+  
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
