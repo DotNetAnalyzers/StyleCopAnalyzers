@@ -5,16 +5,22 @@
   
   <PropertyGroup>
     <SolutionFile>$(MSBuildThisFileDirectory)\src\MetaCompilation\MetaCompilation.sln</SolutionFile>
+    <PackagingProject>$(MSBuildThisFileDirectory)\src\Packaging\Packaging.proj</PackagingProject>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <IncludePattern Condition="'$(IncludePattern)' == ''">*.Test*.dll</IncludePattern>
 
     <!-- Emit XML in a CIBuild in order to get structured test results -->
-    <RunTestArgs>$(RunTestArgs) /noisolation</RunTestArgs>
-    <RunTestArgs Condition="'$(CIBuild)' == 'true'">$(RunTestArgs) /resultsfile:TestResults.trx</RunTestArgs>
+    <RunTestArgs>-noshadow</RunTestArgs>
+    <RunTestArgs Condition="'$(CIBuild)' == 'true'">$(RunTestArgs) -xml TestResults.xml</RunTestArgs>
+
+    <NuGetExe>$(MSBuildThisFileDirectory)\Src\.nuget\Nuget.exe</NuGetExe>
+    <PackagesDirectory>$(MSBuildThisFileDirectory)\packages</PackagesDirectory>
   </PropertyGroup>
 
   <Target Name="RestorePackages">
-    <Exec Command="&quot;$(MSBuildThisFileDirectory)\Src\.nuget\Nuget.exe&quot; restore &quot;$(SolutionFile)&quot;" />
+    <Exec Command="&quot;$(NuGetExe)&quot; install xunit.runner.console -version 2.0.0 -OutputDirectory &quot;$(PackagesDirectory)&quot;"/>
+    <Exec Command="&quot;$(NuGetExe)&quot; restore &quot;$(MSBuildThisFileDirectory)\Src\.nuget\packages.config&quot; -PackagesDirectory &quot;$(PackagesDirectory)&quot;" />
+    <Exec Command="&quot;$(NuGetExe)&quot; restore &quot;$(SolutionFile)&quot; -PackagesDirectory &quot;$(PackagesDirectory)&quot;" />
   </Target>
 
   <Target Name="Build" DependsOnTargets="RestorePackages">
@@ -29,6 +35,8 @@
              Projects="$(SolutionFile)"
              Properties="RestorePackages=false"
              Targets="Clean"/>
+    <MSBuild Projects="$(PackagingProject)"
+             Targets="Clean" />
   </Target>
 
   <Target Name="Rebuild">
@@ -38,17 +46,22 @@
              Targets="Rebuild"/>
   </Target>
 
+  <Target Name="Package" DependsOnTargets="Build">
+    <MSBuild Projects="$(PackagingProject)" Targets="Build" />
+  </Target>
+
   <Target Name="Test">
     
     <ItemGroup>
       <TestAssemblies Include="Binaries\$(Configuration)\MetaCompilation.Test.dll" />
     </ItemGroup>
 
-    <Exec Command="mstest.exe $(RunTestArgs) @(TestAssemblies->'/testcontainer:%(FullPath)', ' ')" />
+    <Exec Command="&quot;$(PackagesDirectory)\xunit.runner.console.2.0.0\tools\xunit.console.x86.exe&quot; @(TestAssemblies, ' ') $(RunTestArgs)" />
+    <!-- <Exec Command="mstest.exe $(RunTestArgs) @(TestAssemblies->'/testcontainer:%(FullPath)', ' ')" />-->
 
   </Target>
 
   <Target Name="BuildAndTest"
-          DependsOnTargets="Build;Test" />
+          DependsOnTargets="Build;Package;Test" />
 
 </Project>

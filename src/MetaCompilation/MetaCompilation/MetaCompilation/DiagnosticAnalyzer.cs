@@ -71,7 +71,7 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor MissingAccessorRule = CreateRule(MissingAccessor, "Missing get accessor", "The {0} property is missing a get accessor", "The SupportedDiagnostics property needs to have a get accessor, because that is how the ImmutableArray of DiagnosticDescriptors is made accessible");
 
         public const string TooManyAccessors = "MetaAnalyzer010";
-        internal static DiagnosticDescriptor TooManyAccessorsRule = CreateRule(TooManyAccessors, "You only need a get accessor for this property", "The {0} property only needs a get accessor, no set accessor is needed");
+        internal static DiagnosticDescriptor TooManyAccessorsRule = CreateRule(TooManyAccessors, "You only need a single get accessor for this property", "The {0} property only needs a get accessor, no set accessor is needed");
 
         public const string IncorrectAccessorReturn = "MetaAnalyzer011";
         internal static DiagnosticDescriptor IncorrectAccessorReturnRule = CreateRule(IncorrectAccessorReturn, "Get accessor return value incorrect", "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules");
@@ -168,7 +168,7 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor SpanMissingRule = CreateRule(SpanMissing, "Diagnostic span variable missing", "The next step is to create a variable that is the span of the diagnostic that will be reported");
 
         public const string SpanIncorrect = "MetaAnalyzer041";
-        internal static DiagnosticDescriptor SpanIncorrectRule = CreateRule(SpanIncorrect, "Diagnostic span variable incorrect", "This statement should use TextSpan.FromBound, {0}, and {1} to create the span of the diagnostic that will be reported", "Each node in the syntax tree has a span. This span represents the number of character spaces that the node takes up. TextSpan.FromBounds(start, end) can be used to create a span to use for a diagnostic");
+        internal static DiagnosticDescriptor SpanIncorrectRule = CreateRule(SpanIncorrect, "Diagnostic span variable incorrect", "This statement should use TextSpan.FromBounds, {0}, and {1} to create the span of the diagnostic that will be reported", "Each node in the syntax tree has a span. This span represents the number of character spaces that the node takes up. TextSpan.FromBounds(start, end) can be used to create a span to use for a diagnostic");
 
         public const string LocationMissing = "MetaAnalyzer042";
         internal static DiagnosticDescriptor LocationMissingRule = CreateRule(LocationMissing, "Diagnostic location variable missing", "The next step is to create a location for the diagnostic");
@@ -196,11 +196,7 @@ namespace MetaCompilation
         public const string DiagnosticReportIncorrect = "MetaAnalyzer049";
         internal static DiagnosticDescriptor DiagnosticReportIncorrectRule = CreateRule(DiagnosticReportIncorrect, "Diagnostic report incorrect", "This statement should use ReportDiagnostic on {0} to report {1}", "A diagnostic is reported to a context of some sort so that the diagnostic can appear in all the right places");
         #endregion
-
-       
-
-       
-
+  
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
@@ -233,6 +229,8 @@ namespace MetaCompilation
                                              TrailingTriviaCheckIncorrectRule,
                                              TrailingTriviaVarMissingRule,
                                              TrailingTriviaVarIncorrectRule,
+                                             TrailingTriviaKindCheckIncorrectRule,
+                                             TrailingTriviaKindCheckMissingRule,
                                              WhitespaceCheckMissingRule,
                                              WhitespaceCheckIncorrectRule,
                                              ReturnStatementMissingRule,
@@ -385,11 +383,6 @@ namespace MetaCompilation
                                 {
                                     return;
                                 }
-                            }
-                            else
-                            {
-                                var analyzerClass = _analyzerClassSymbol.DeclaringSyntaxReferences[0].GetSyntax() as ClassDeclarationSyntax;
-                                ReportDiagnostic(context, MissingRuleRule, analyzerClass.Identifier.GetLocation(), MissingRuleRule.MessageFormat);
                             }
                         }
                         else
@@ -1712,11 +1705,22 @@ namespace MetaCompilation
                     return false;
                 }
 
-                SyntaxList<StatementSyntax> statements = SuppDiagAccessor(context, propertyDeclaration);
+                BlockSyntax body = SuppDiagAccessor(context, propertyDeclaration);
+                if (body == null)
+                {
+                    return false;
+                }
 
-                if (statements.Count == 0)
+                SyntaxList<StatementSyntax> statements = body.Statements;
+                if (statements == null || statements.Count == 0)
                 {
                     ReportDiagnostic(context, IncorrectAccessorReturnRule, propertyDeclaration.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
+                    return false;
+                }
+
+                if (statements.Count > 2)
+                {
+                    ReportDiagnostic(context, TooManyStatementsRule, body.GetLocation(), "get accessor", "1 or 2");
                     return false;
                 }
 
@@ -1793,43 +1797,51 @@ namespace MetaCompilation
             }
 
             //returns the statements of the get accessor, empty list if get accessor not found/incorrect
-            internal SyntaxList<StatementSyntax> SuppDiagAccessor(CompilationAnalysisContext context, PropertyDeclarationSyntax propertyDeclaration)
+            internal BlockSyntax SuppDiagAccessor(CompilationAnalysisContext context, PropertyDeclarationSyntax propertyDeclaration)
             {
-                SyntaxList<StatementSyntax> emptyResult = new SyntaxList<StatementSyntax>();
-
                 AccessorListSyntax accessorList = propertyDeclaration.AccessorList;
                 if (accessorList == null)
                 {
-                    return emptyResult;
+                    return null;
                 }
 
                 SyntaxList<AccessorDeclarationSyntax> accessors = accessorList.Accessors;
                 if (accessors == null || accessors.Count == 0)
                 {
                     ReportDiagnostic(context, MissingAccessorRule, propertyDeclaration.GetLocation(), propertyDeclaration.Identifier.Text);
-                    return emptyResult;
+                    return null;
                 }
+
                 if (accessors.Count > 1)
                 {
                     ReportDiagnostic(context, TooManyAccessorsRule, accessorList.GetLocation(), propertyDeclaration.Identifier.Text);
-                    return emptyResult;
+                    return null;
                 }
 
-                var getAccessor = accessors.First() as AccessorDeclarationSyntax;
+                AccessorDeclarationSyntax getAccessor = null;
+                foreach (AccessorDeclarationSyntax accessor in accessors)
+                {
+                    if (accessor.Keyword.IsKind(SyntaxKind.GetKeyword))
+                    {
+                        getAccessor = accessor;
+                        break;
+                    }
+                }
+
                 if (getAccessor == null || getAccessor.Keyword.Kind() != SyntaxKind.GetKeyword)
                 {
                     ReportDiagnostic(context, MissingAccessorRule, propertyDeclaration.GetLocation(), propertyDeclaration.Identifier.Text);
-                    return emptyResult;
+                    return null;
                 }
 
                 var accessorBody = getAccessor.Body as BlockSyntax;
                 if (accessorBody == null)
                 {
                     ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessor.Keyword.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
-                    return emptyResult;
+                    return null;
                 }
 
-                return accessorBody.Statements;
+                return accessorBody;
             }
 
             //checks the return value of the get accessor within SupportedDiagnostics
@@ -1857,12 +1869,20 @@ namespace MetaCompilation
                 var valueArguments = valueClause.ArgumentList as ArgumentListSyntax;
                 if (valueArguments == null)
                 {
+                    ReportDiagnostic(context, SupportedRulesRule, valueExpression.GetLocation(), SupportedRulesRule.MessageFormat);
                     return;
                 }
 
                 SeparatedSyntaxList<ArgumentSyntax> valueArgs = valueArguments.Arguments;
-                if (valueArgs == null)
+                if (valueArgs.Count == 0)
                 {
+                    ReportDiagnostic(context, SupportedRulesRule, valueExpression.GetLocation(), SupportedRulesRule.MessageFormat);
+                    return;
+                }
+
+                if (ruleNames.Count != valueArgs.Count)
+                {
+                    ReportDiagnostic(context, SupportedRulesRule, valueExpression.GetLocation(), SupportedRulesRule.MessageFormat);
                     return;
                 }
 
@@ -1874,14 +1894,19 @@ namespace MetaCompilation
 
                 foreach (ArgumentSyntax arg in valueArgs)
                 {
-                    if (newRuleNames.Count == 0)
+
+                    bool foundRule = false;
+                    foreach (string ruleName in ruleNames)
+                    {
+                        if (arg.ToString() == ruleName)
+                        {
+                            foundRule = true;
+                        }
+                    }
+                    if (!foundRule)
                     {
                         ReportDiagnostic(context, SupportedRulesRule, valueExpression.GetLocation(), SupportedRulesRule.MessageFormat);
                         return;
-                    }
-                    if (newRuleNames.Contains(arg.ToString()))
-                    {
-                        newRuleNames.Remove(arg.ToString());
                     }
                 }
             }
@@ -1907,7 +1932,7 @@ namespace MetaCompilation
                     return result;
                 }
 
-                if (returnSymbol.Type.Name != "System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor>")
+                if (returnSymbol.Type.Name != "System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor>" && returnSymbol.Type.Kind.ToString() != "ErrorType")
                 {
                     ReportDiagnostic(context, IncorrectAccessorReturnRule, returnSymbol.Locations[0], IncorrectAccessorReturnRule.MessageFormat);
                     return result;
@@ -1940,11 +1965,13 @@ namespace MetaCompilation
             {
                 List<string> ruleNames = new List<string>();
                 List<string> emptyRuleNames = new List<string>();
+                bool foundARule = false;
 
                 foreach (var fieldSymbol in _analyzerFieldSymbols)
                 {
                     if (fieldSymbol.Type != null && fieldSymbol.Type.MetadataName == "DiagnosticDescriptor")
                     {
+                        foundARule = true;
                         if (fieldSymbol.DeclaredAccessibility != Accessibility.Internal || !fieldSymbol.IsStatic)
                         {
                             ReportDiagnostic(context, InternalAndStaticErrorRule, fieldSymbol.Locations[0], fieldSymbol.Name);
@@ -1973,35 +2000,49 @@ namespace MetaCompilation
                                 return emptyRuleNames;
                             }
 
-                            var currentArgExpr = currentArg.Expression;
-                            if (currentArgExpr == null)
-                            {
-                                return emptyRuleNames;
-                            }
-
                             if (currentArg.NameColon != null)
                             {
                                 string currentArgName = currentArg.NameColon.Name.Identifier.Text;
+                                var currentArgExpr = currentArg.Expression;
 
-                                if (currentArgName == "isEnabledByDefault" && !currentArgExpr.IsKind(SyntaxKind.TrueLiteralExpression))
+                                if (currentArgName == "isEnabledByDefault")
                                 {
-                                    ReportDiagnostic(context, EnabledByDefaultErrorRule, currentArgExpr.GetLocation(), EnabledByDefaultErrorRule.MessageFormat);
-                                    return emptyRuleNames;
+                                    if (currentArgExpr.ToString() == "")
+                                    {
+                                        ReportDiagnostic(context, EnabledByDefaultErrorRule, currentArg.GetLocation(), EnabledByDefaultErrorRule.MessageFormat);
+                                        return emptyRuleNames;
+                                    }
+                                    else if (!currentArgExpr.IsKind(SyntaxKind.TrueLiteralExpression))
+                                    {
+                                        ReportDiagnostic(context, EnabledByDefaultErrorRule, currentArgExpr.GetLocation(), EnabledByDefaultErrorRule.MessageFormat);
+                                        return emptyRuleNames;
+                                    }
                                 }
                                 else if (currentArgName == "defaultSeverity")
                                 {
+                                    if (currentArgExpr.ToString() == "")
+                                    {
+                                        ReportDiagnostic(context, DefaultSeverityErrorRule, currentArg.GetLocation(), DefaultSeverityErrorRule.MessageFormat);
+                                        return emptyRuleNames;
+                                    }
                                     var memberAccessExpr = currentArgExpr as MemberAccessExpressionSyntax;
                                     if (memberAccessExpr == null)
                                     {
+                                        ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation(), DefaultSeverityErrorRule.MessageFormat);
                                         return emptyRuleNames;
                                     }
-
-                                    if (memberAccessExpr.Expression != null && memberAccessExpr.Name != null)
+                                    else if (memberAccessExpr.Expression != null && memberAccessExpr.Name != null)
                                     {
                                         string identifierExpr = memberAccessExpr.Expression.ToString();
                                         string identifierName = memberAccessExpr.Name.Identifier.Text;
                                         List<string> severities = new List<string> { "Warning", "Error", "Hidden", "Info" };
-                                        if (identifierExpr == "DiagnosticSeverity" && !severities.Contains(identifierName))
+
+                                        if (identifierExpr != "DiagnosticSeverity")
+                                        {
+                                            ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation(), DefaultSeverityErrorRule.MessageFormat);
+                                            return emptyRuleNames;
+                                        }
+                                        else if (identifierExpr == "DiagnosticSeverity" && !severities.Contains(identifierName))
                                         {
                                             ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation(), DefaultSeverityErrorRule.MessageFormat);
                                             return emptyRuleNames;
@@ -2009,12 +2050,18 @@ namespace MetaCompilation
                                     }
                                     else
                                     {
+                                        ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation(), DefaultSeverityErrorRule.MessageFormat);
                                         return emptyRuleNames;
                                     }
                                 }
                                 else if (currentArgName == "id")
                                 {
-                                    if (currentArgExpr.IsKind(SyntaxKind.StringLiteralExpression))
+                                    if (currentArgExpr.ToString() == "")
+                                    {
+                                        ReportDiagnostic(context, IdDeclTypeErrorRule, currentArg.GetLocation(), IdDeclTypeErrorRule.MessageFormat);
+                                        return emptyRuleNames;
+                                    }
+                                    if (!currentArgExpr.IsKind(SyntaxKind.IdentifierName))
                                     {
                                         ReportDiagnostic(context, IdDeclTypeErrorRule, currentArgExpr.GetLocation(), IdDeclTypeErrorRule.MessageFormat);
                                         return emptyRuleNames;
@@ -2046,9 +2093,22 @@ namespace MetaCompilation
                                 }
                             }
                         }
+                        if (ruleArgumentList.Arguments.Count != 6)
+                        {
+                            return emptyRuleNames;
+                        }
                     }
                 }
-                return ruleNames;
+                if (foundARule)
+                {
+                    return ruleNames;
+                }
+                else
+                {
+                    var analyzerClass = _analyzerClassSymbol.DeclaringSyntaxReferences[0].GetSyntax() as ClassDeclarationSyntax;
+                    ReportDiagnostic(context, MissingRuleRule, analyzerClass.Identifier.GetLocation(), MissingRuleRule.MessageFormat);
+                    return emptyRuleNames;
+                }
             }
 
             //returns a list of id names, empty if none found
@@ -2127,7 +2187,7 @@ namespace MetaCompilation
 
                             var preExpressionStart = expressionStart.Expression as IdentifierNameSyntax;
                             if (preExpressionStart == null || preExpressionStart.Identifier == null ||
-                                preExpressionStart.Identifier.ValueText != "context")
+                                preExpressionStart.Identifier.ValueText != _initializeSymbol.Parameters.First().Name.ToString())
                             {
                                 ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
                                 return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
@@ -2207,8 +2267,7 @@ namespace MetaCompilation
             {
                 ImmutableArray<IParameterSymbol> parameters = _initializeSymbol.Parameters;
                 if (parameters.Count() != 1 || parameters[0].Type != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.AnalysisContext")
-                    || parameters[0].Name != "context" || _initializeSymbol.DeclaredAccessibility != Accessibility.Public
-                    || !_initializeSymbol.IsOverride || !_initializeSymbol.ReturnsVoid)
+                    || _initializeSymbol.DeclaredAccessibility != Accessibility.Public || !_initializeSymbol.IsOverride || !_initializeSymbol.ReturnsVoid)
                 {
                     ReportDiagnostic(context, IncorrectInitSigRule, _initializeSymbol.Locations[0], _initializeSymbol.Name.ToString());
                     return null;
@@ -2261,7 +2320,9 @@ namespace MetaCompilation
                     return null;
                 }
 
-                if (memberExprContext.Identifier.Text != "context")
+                MethodDeclarationSyntax methodDeclaration = statement.Parent.Parent as MethodDeclarationSyntax;
+                ParameterSyntax parameter = methodDeclaration.ParameterList.Parameters[0] as ParameterSyntax;
+                if (memberExprContext.Identifier.Text != parameter.Identifier.ValueText)
                 {
                     ReportDiagnostic(context, InvalidStatementRule, statements[0].GetLocation(), statements[0]);
                     return null;
