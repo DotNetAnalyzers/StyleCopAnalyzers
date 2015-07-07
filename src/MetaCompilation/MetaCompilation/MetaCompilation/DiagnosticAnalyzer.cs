@@ -16,6 +16,8 @@ namespace MetaCompilation
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class MetaCompilationAnalyzer : DiagnosticAnalyzer
     {
+        public const string MessagePrefix = "T: ";
+        
         //default values for the DiagnosticDescriptors
         public const string RuleCategory = "Tutorial";
         public const DiagnosticSeverity RuleDefaultSeverity = DiagnosticSeverity.Error;
@@ -196,6 +198,15 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor DiagnosticReportIncorrectRule = CreateRule(DiagnosticReportIncorrect, "Diagnostic report incorrect", "This statement should use ReportDiagnostic on {0} to report {1}", "A diagnostic is reported to a context of some sort so that the diagnostic can appear in all the right places");
         #endregion
 
+        public const string GoToCodeFix = "MetaAnalyzer050";
+        internal static DiagnosticDescriptor GoToCodeFixRule = new DiagnosticDescriptor(
+            id: GoToCodeFix,
+            title: "Analyzer tutorial complete",
+            messageFormat: MessagePrefix + "Congratulations! You have written your first analyzer! If you would like to write a code fix for your diagnostic, open up CodeFixProvider.cs and get started!",
+            category: RuleCategory,
+            defaultSeverity: DiagnosticSeverity.Info,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
@@ -249,7 +260,8 @@ namespace MetaCompilation
                                              DiagnosticMissingRule,
                                              DiagnosticIncorrectRule,
                                              DiagnosticReportIncorrectRule,
-                                             DiagnosticReportMissingRule);
+                                             DiagnosticReportMissingRule,
+                                             GoToCodeFixRule);
             }
         }
 
@@ -378,7 +390,7 @@ namespace MetaCompilation
 
                                     if (analysisCorrect)
                                     {
-                                        //DiagnosticAnalyzer.cs is correct, display diagnostic to go to code fix?
+                                        ReportDiagnostic(context, GoToCodeFixRule, _analyzerClassSymbol.Locations[0]);
                                     }
                                     else
                                     {

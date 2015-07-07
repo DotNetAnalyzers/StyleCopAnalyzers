@@ -11,6 +11,8 @@ namespace MetaCompilation.Test
 {
     public class UnitTest : CodeFixVerifier
     {
+        public const string MessagePrefix = "T: ";
+        
         #region default no diagnostics tests
         //no diagnostics
         [Fact]
@@ -93,7 +95,15 @@ namespace SyntaxNodeAnalyzer
     }
 }";
 
-            VerifyCSharpDiagnostic(test);
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.GoToCodeFix,
+                Message = MessagePrefix + "Congratulations! You have written your first analyzer! If you would like to write a code fix for your diagnostic, open up CodeFixProvider.cs and get started!",
+                Severity = DiagnosticSeverity.Info,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 18) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
         }
         #endregion
 
