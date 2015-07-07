@@ -46,11 +46,11 @@ Then, once you've re-started Visual Studio:
           the syntax tree.
 	* You will notice that something is underlined in red, and there is a corresponding error in the
           error list
-          Errors directly related to this tutorial will begin with 'Tutorial:'
+          Errors directly related to this tutorial will begin with 'T:'
 	* Read the error and try to fix the problem
 	* If you are stuck, hover over the underline and a light bulb will show up. Clicking on this 
           lightbulb will bring up a list of code fixes.
-	  Code fixes directly related to this tutorial will begin with 'Tutorial:' and clicking 
+	  Code fixes directly related to this tutorial will begin with 'T:' and clicking 
           on the code fix will add the code for whatever you were stuck on.
 	* Continue to follow these error messages and code fixes to the end of the tutorial
 	* Congratulations! You have written an analyzer!
