@@ -5,7 +5,7 @@ open parenthesis of the condition.
 
 For more information, please reference the ReadMe.
 
-Before you begin, got to Tools->Extensions and Updates->Online, and install:
+Before you begin, go to Tools->Extensions and Updates->Online, and install:
     - .NET Compiler SDK
     - Roslyn Syntax Visualizer
 */
