@@ -126,7 +126,7 @@ namespace AsyncPackage
 
             protected override Task<Solution> GetChangedSolutionAsync(CancellationToken cancellationToken)
             {
-                return base.GetChangedSolutionAsync(cancellationToken);
+                return _generateSolution(cancellationToken);
             }
         }
     }
