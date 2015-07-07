@@ -12705,6 +12705,7 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 21) }
             };
+
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
@@ -12825,6 +12826,9 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
+
+            VerifyCSharpDiagnostic(test, expected);
+
             var fixtest = @"using System.Collections.Immutable;
             using Microsoft.CodeAnalysis;
             using Microsoft.CodeAnalysis.CSharp;
@@ -12943,6 +12947,8 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
+
+            VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
             using Microsoft.CodeAnalysis;
@@ -13063,6 +13069,8 @@ namespace SyntaxNodeAnalyzer
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
 
+            VerifyCSharpDiagnostic(test, expected);
+
             var fixtest = @"using System.Collections.Immutable;
             using Microsoft.CodeAnalysis;
             using Microsoft.CodeAnalysis.CSharp;
@@ -13181,6 +13189,8 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
+
+            VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
             using Microsoft.CodeAnalysis;
@@ -13301,6 +13311,8 @@ namespace SyntaxNodeAnalyzer
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
 
+            VerifyCSharpDiagnostic(test, expected);
+
             var fixtest = @"using System.Collections.Immutable;
             using Microsoft.CodeAnalysis;
             using Microsoft.CodeAnalysis.CSharp;
@@ -13419,6 +13431,9 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
+
+            VerifyCSharpDiagnostic(test, expected);
+
             var fixtest = @"using System.Collections.Immutable;
             using Microsoft.CodeAnalysis;
             using Microsoft.CodeAnalysis.CSharp;
@@ -13537,6 +13552,8 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
+
+            VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
             using Microsoft.CodeAnalysis;
@@ -13657,6 +13674,8 @@ namespace SyntaxNodeAnalyzer
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
 
+            VerifyCSharpDiagnostic(test, expected);
+
             var fixtest = @"using System.Collections.Immutable;
             using Microsoft.CodeAnalysis;
             using Microsoft.CodeAnalysis.CSharp;
@@ -13773,6 +13792,8 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
+
+            VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
             using Microsoft.CodeAnalysis;
@@ -13893,6 +13914,8 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
+
+            VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
             using Microsoft.CodeAnalysis;
@@ -14110,6 +14133,7 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 45, 25) }
             };
+
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
@@ -14234,6 +14258,7 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
+
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
@@ -14357,6 +14382,7 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
+
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
@@ -14480,6 +14506,7 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
+
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
@@ -14603,6 +14630,7 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
+
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
