@@ -1,4 +1,15 @@
 // Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
+
+/*This tutorial is going to guide you to write a diagnostic analyzer that enforces the placement of one space between the if keyword of an if statement and the 
+open parenthesis of the condition.
+
+For more information, please reference the ReadMe.
+
+Before you begin, got to Tools->Extensions and Updates->Online, and install:
+    - .NET Compiler SDK
+    - Roslyn Syntax Visualizer
+*/
+
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
