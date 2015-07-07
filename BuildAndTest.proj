@@ -4,7 +4,7 @@
   ToolsVersion="14.0">
   
   <PropertyGroup>
-    <SolutionFile>$(MSBuildThisFileDirectory)\src\MetaCompilation\MetaCompilation.sln</SolutionFile>
+    <SolutionFile>$(MSBuildThisFileDirectory)\src\Analyzers.sln</SolutionFile>
     <PackagingProject>$(MSBuildThisFileDirectory)\src\Packaging\Packaging.proj</PackagingProject>
     <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
     <IncludePattern Condition="'$(IncludePattern)' == ''">*.Test*.dll</IncludePattern>
@@ -54,6 +54,7 @@
     
     <ItemGroup>
       <TestAssemblies Include="Binaries\$(Configuration)\MetaCompilation.Test.dll" />
+      <TestAssemblies Include="Binaries\$(Configuration)\AsyncPackage.Test.dll" />
     </ItemGroup>
 
     <Exec Command="&quot;$(PackagesDirectory)\xunit.runner.console.2.0.0\tools\xunit.console.x86.exe&quot; @(TestAssemblies, ' ') $(RunTestArgs)" />
