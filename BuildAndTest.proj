@@ -10,7 +10,7 @@
     <IncludePattern Condition="'$(IncludePattern)' == ''">*.Test*.dll</IncludePattern>
 
     <!-- Emit XML in a CIBuild in order to get structured test results -->
-    <RunTestArgs>-noshadow</RunTestArgs>
+    <RunTestArgs>-noshadow -parallel all</RunTestArgs>
     <RunTestArgs Condition="'$(CIBuild)' == 'true'">$(RunTestArgs) -xml TestResults.xml</RunTestArgs>
 
     <NuGetExe>$(MSBuildThisFileDirectory)\Src\.nuget\Nuget.exe</NuGetExe>
