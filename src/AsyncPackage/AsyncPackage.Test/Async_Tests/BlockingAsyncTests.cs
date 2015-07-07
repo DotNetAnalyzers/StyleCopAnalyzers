@@ -92,7 +92,7 @@ namespace ConsoleApplication1
             var test = DefaultHeader + body + DefaultFooter;
 
             expected.Id = "Async006";
-            expected.Locations = new[] { new DiagnosticResultLocation("Test0.cs", 16, 13) };
+            expected.Locations = new[] { new DiagnosticResultLocation("Test0.cs", 16, 35) };
 
             VerifyCSharpDiagnostic(test, expected);
 
@@ -132,7 +132,7 @@ namespace ConsoleApplication1
             var test = DefaultHeader + body + DefaultFooter;
 
             expected.Id = "Async006";
-            expected.Locations = new[] { new DiagnosticResultLocation("Test0.cs", 16, 24) };
+            expected.Locations = new[] { new DiagnosticResultLocation("Test0.cs", 16, 46) };
 
             VerifyCSharpDiagnostic(test, expected);
 
@@ -174,7 +174,7 @@ namespace ConsoleApplication1
             var test = DefaultHeader + body + DefaultFooter;
 
             expected.Id = "Async006";
-            expected.Locations = new[] { new DiagnosticResultLocation("Test0.cs", 17, 13) };
+            expected.Locations = new[] { new DiagnosticResultLocation("Test0.cs", 17, 15) };
 
             var fixbody = @"
         async Task<Task<int>> SomeMethodAsync()
@@ -249,7 +249,7 @@ namespace ConsoleApplication1
             var test = DefaultHeader + body + DefaultFooter;
 
             expected.Id = "Async006";
-            expected.Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 17) };
+            expected.Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 22) };
 
             VerifyCSharpDiagnostic(test, expected);
 
@@ -318,7 +318,7 @@ namespace ConsoleApplication1
             var test = DefaultHeader + body + DefaultFooter;
 
             expected.Id = "Async006";
-            expected.Locations = new[] { new DiagnosticResultLocation("Test0.cs", 16, 13) };
+            expected.Locations = new[] { new DiagnosticResultLocation("Test0.cs", 16, 20) };
 
             VerifyCSharpDiagnostic(test, expected);
 
@@ -350,7 +350,7 @@ namespace ConsoleApplication1
             var test = DefaultHeader + body + DefaultFooter;
 
             expected.Id = "Async006";
-            expected.Locations = new[] { new DiagnosticResultLocation("Test0.cs", 18, 17) };
+            expected.Locations = new[] { new DiagnosticResultLocation("Test0.cs", 18, 24) };
 
             VerifyCSharpDiagnostic(test, expected);
 
@@ -381,7 +381,7 @@ namespace ConsoleApplication1
             var test = DefaultHeader + body + DefaultFooter;
 
             expected.Id = "Async006";
-            expected.Locations = new[] { new DiagnosticResultLocation("Test0.cs", 17, 13) };
+            expected.Locations = new[] { new DiagnosticResultLocation("Test0.cs", 17, 20) };
 
             VerifyCSharpDiagnostic(test, expected);
 
@@ -414,7 +414,7 @@ namespace ConsoleApplication1
             var test = DefaultHeader + body + DefaultFooter;
 
             expected.Id = "Async006";
-            expected.Locations = new[] { new DiagnosticResultLocation("Test0.cs", 20, 17) };
+            expected.Locations = new[] { new DiagnosticResultLocation("Test0.cs", 20, 24) };
 
             VerifyCSharpDiagnostic(test, expected);
 
@@ -455,7 +455,7 @@ namespace ConsoleApplication1
             var test = DefaultHeader + body + DefaultFooter;
 
             expected.Id = "Async006";
-            expected.Locations = new[] { new DiagnosticResultLocation("Test0.cs", 22, 21) };
+            expected.Locations = new[] { new DiagnosticResultLocation("Test0.cs", 22, 28) };
 
             VerifyCSharpDiagnostic(test, expected);
 

@@ -6,6 +6,7 @@ using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace AsyncPackage
 {
@@ -36,46 +37,51 @@ namespace AsyncPackage
 
         private void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
+            var memberAccessNode = (MemberAccessExpressionSyntax)context.Node;
+
             var method = context.SemanticModel.GetEnclosingSymbol(context.Node.SpanStart) as IMethodSymbol;
 
             if (method != null && method.IsAsync)
             {
                 var invokeMethod = context.SemanticModel.GetSymbolInfo(context.Node).Symbol as IMethodSymbol;
 
+                var location = memberAccessNode.Name.GetLocation();
+
                 if (invokeMethod != null && !invokeMethod.IsExtensionMethod)
                 {
+
                     // Checks if the Wait method is called within an async method then creates the diagnostic.
                     if (invokeMethod.OriginalDefinition.Name.Equals("Wait"))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Rule, context.Node.Parent.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Rule, location));
                         return;
                     }
 
                     // Checks if the WaitAny method is called within an async method then creates the diagnostic.
                     if (invokeMethod.OriginalDefinition.Name.Equals("WaitAny"))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Rule, context.Node.Parent.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Rule, location));
                         return;
                     }
 
                     // Checks if the WaitAll method is called within an async method then creates the diagnostic.
                     if (invokeMethod.OriginalDefinition.Name.Equals("WaitAll"))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Rule, context.Node.Parent.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Rule, location));
                         return;
                     }
 
                     // Checks if the Sleep method is called within an async method then creates the diagnostic.
                     if (invokeMethod.OriginalDefinition.Name.Equals("Sleep"))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Rule, context.Node.Parent.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Rule, location));
                         return;
                     }
 
                     // Checks if the GetResult method is called within an async method then creates the diagnostic.     
                     if (invokeMethod.OriginalDefinition.Name.Equals("GetResult"))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Rule, context.Node.Parent.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Rule, location));
                         return;
                     }
                 }
@@ -85,7 +91,7 @@ namespace AsyncPackage
                 // Checks if the Result property is called within an async method then creates the diagnostic.
                 if (property != null && property.OriginalDefinition.Name.Equals("Result"))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Rule, context.Node.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Rule, location));
                     return;
                 }
             }
