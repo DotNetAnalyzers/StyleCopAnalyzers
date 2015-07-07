@@ -51,16 +51,16 @@ namespace SyntaxNodeAnalyzer
             //This statement navigates down the syntax tree one level to extract the 'if' keyword.
 
             if (ifKeyword.HasTrailingTrivia)
-            //Checks whether the 'if' keyword has trailing trivia.
+            //Checks whether the 'if' keyword has trailing trivia.**
             {
                 var trailingTrivia = ifKeyword.TrailingTrivia.Last();
                 //Extracts the last trailing trivia of ifKeyword.
 
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
-                //Checks that the trailing trivia of the 'if' keyword is of Kind 'WhitespaceTrivia'.
+                //Checks that the trailing trivia of the 'if' keyword is of Kind 'WhitespaceTrivia'.**
                 {
                     if (trailingTrivia.ToString() == " ")
-                    //Checks that only trailing trivia is a single whitespace.
+                    //Checks that only trailing trivia is a single whitespace.**
                     {
                         return;
                         //If you are satisfied that there is only a single whitespace between 'if' and '(', you can return from this method.
@@ -76,10 +76,10 @@ namespace SyntaxNodeAnalyzer
             //Determines the start of the span of the diagnostic that will be reported, ie the start of the red squiggle.
 
             var endDiagnosticSpan = openParen.Span.Start;
-            //Determines the end of the span of the diagnostic that will be reported.
+            //Determines the end of the span of the diagnostic that will be reported.**
 
             var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
-            //Creates variable  to define the span of the diagnostic.
+            //Creates variable to define the span of the diagnostic.
 
             var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
             //Uses the span created above to create a location for the diagnostic, ie where the red squiggle will appear.
