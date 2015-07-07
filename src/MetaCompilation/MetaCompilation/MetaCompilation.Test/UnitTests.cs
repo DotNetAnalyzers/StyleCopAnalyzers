@@ -704,11 +704,11 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-        public override void initialize(AnalysisContext context)
-        {
-            throw new NotImplementedException();
+            public override void initialize(AnalysisContext context)
+            {
+                throw new NotImplementedException();
+            }
         }
-    }
     }";
 
             var expected = new DiagnosticResult
@@ -720,6 +720,45 @@ namespace SyntaxNodeAnalyzer
             };
 
             VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+    using System.Collections.Generic;
+    using System.Collections;
+    using System.Collections.Immutable;
+    using System.Linq;
+    using System.Threading;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Text;
+
+    namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
+        {
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public override void initialize(AnalysisContext context)
+            {
+                throw new NotImplementedException();
+            }
+
+        public override void Initialize(AnalysisContext context)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    }";
+
+            VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
         }
 
         // everything except the initialize method
