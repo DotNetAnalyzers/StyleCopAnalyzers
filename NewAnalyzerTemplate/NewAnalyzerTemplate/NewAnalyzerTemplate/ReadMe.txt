@@ -2,7 +2,7 @@ Analyzer Tutorial
 =================
 
 This tutorial is going to guide you to write a diagnostic analyzer that enforces the placement of one 
-space between the if keyword of an if statement and the open parenthesis containing the condition.
+space between the if keyword of an if statement and the open parenthesis of the condition.
  
 This tutorial itself was written as an analyzer, meaning that the instructions of the tutorial are 
 presented using the error underlines and light bulb code fixes in Visual Studio.
