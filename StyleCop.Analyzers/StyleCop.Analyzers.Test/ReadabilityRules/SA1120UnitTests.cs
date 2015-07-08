@@ -18,7 +18,7 @@
         }
 
         [Fact]
-        public async Task TestViolationWithSingleLineComment()
+        public async Task TestViolationWithSingleLineCommentAsync()
         {
             var testCode = @"
 class Foo
@@ -34,7 +34,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestViolationWithSingleLineCommentOnLineWithCode()
+        public async Task TestViolationWithSingleLineCommentOnLineWithCodeAsync()
         {
             var testCode = @"
 class Foo
@@ -50,7 +50,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestViolationWithMultiLineCommentOnASingleLine()
+        public async Task TestViolationWithMultiLineCommentOnASingleLineAsync()
         {
             var testCode = @"
 class Foo
@@ -67,7 +67,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestViolationWithMultiLineCommentMultiLine()
+        public async Task TestViolationWithMultiLineCommentMultiLineAsync()
         {
             var testCode = @"
 class Foo
@@ -85,7 +85,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestNoViolationOnCommentedOutCodeBlocks()
+        public async Task TestNoViolationOnCommentedOutCodeBlocksAsync()
         {
             var testCode = @"
 class Foo
@@ -101,7 +101,7 @@ class Foo
 
 
         [Fact]
-        public async Task TestViolationCodeBlockFirstLine()
+        public async Task TestViolationCodeBlockFirstLineAsync()
         {
             var testCode = @"
 class Foo
@@ -118,7 +118,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestViolationCodeBlockLastLine()
+        public async Task TestViolationCodeBlockLastLineAsync()
         {
             var testCode = @"
 class Foo
@@ -136,7 +136,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestViolationCodeBlockFirstAndLastLine()
+        public async Task TestViolationCodeBlockFirstAndLastLineAsync()
         {
             var testCode = @"
 class Foo
@@ -155,7 +155,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestCodeBlockNoDiagnosticOnInternalBlankLines()
+        public async Task TestCodeBlockNoDiagnosticOnInternalBlankLinesAsync()
         {
             var testCode = @"
 class Foo
