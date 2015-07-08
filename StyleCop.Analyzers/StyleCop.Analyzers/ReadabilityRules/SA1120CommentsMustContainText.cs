@@ -46,10 +46,10 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
         }
 
-        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var node in root.DescendantTrivia(descendIntoTrivia: true))
@@ -89,17 +89,16 @@
             var list = TriviaHelper.GetContainingTriviaList(singleLineComment, out index);
             var firstNonWhiteSpace = TriviaHelper.IndexOfFirstNonWhitespaceTrivia(list);
 
-            // This is -2 because we need to go back past the end of line trivia as well.
-            var lastNonWhiteSpace = TriviaHelper.IndexOfTrailingWhitespace(list) - 2;
-
             // When we enounter a block of single line comments, we only want to raise this diagnostic
             // on the first or last line.  This ensures that whitespace in code commented out using
             // the Comment Selection option in Visual Studio will not raise the diagnostic for every
             // blank line in the code which is commented out.
-            bool isFirstOrLast = false;
-            if (index == firstNonWhiteSpace || index == lastNonWhiteSpace)
+            bool isFirstOrLast = index == firstNonWhiteSpace;
+            if (!isFirstOrLast)
             {
-                isFirstOrLast = true;
+                // This is -2 because we need to go back past the end of line trivia as well.
+                var lastNonWhiteSpace = TriviaHelper.IndexOfTrailingWhitespace(list) - 2;
+                isFirstOrLast = index == lastNonWhiteSpace;
             }
 
             if (string.IsNullOrWhiteSpace(commentText) && isFirstOrLast)
