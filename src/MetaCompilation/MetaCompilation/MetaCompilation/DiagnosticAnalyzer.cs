@@ -22,7 +22,6 @@ namespace MetaCompilation
         public const string RuleCategory = "Tutorial";
         public const DiagnosticSeverity RuleDefaultSeverity = DiagnosticSeverity.Error;
         public const bool RuleEnabledByDefault = true;
-        public const string MessagePrefix = "T: ";
 
         //creates a DiagnosticDescriptor with the above defaults
         public static DiagnosticDescriptor CreateRule(string id, string title, string messageFormat, string description = "")
@@ -60,6 +59,9 @@ namespace MetaCompilation
 
         public const string InvalidStatement = "MetaAnalyzer006";
         internal static DiagnosticDescriptor InvalidStatementRule = CreateRule(InvalidStatement, "Incorrect statement", MessagePrefix + "The Initialize method only registers actions: the statement '{0}' is invalid");
+
+        public const string IncorrectKind = "MetaAnalyzer051";
+        internal static DiagnosticDescriptor IncorrectKindRule = CreateRule(IncorrectKind, "Incorrect kind", MessagePrefix + "This tutorial only allows registering for SyntaxKind.IfStatement", "For the purposes of this tutorial, you will be analyzing an if statement, so that is the only SyntaxKind you can register for");
         #endregion
 
         #region SupportedDiagnostics rules
@@ -262,7 +264,8 @@ namespace MetaCompilation
                                              DiagnosticIncorrectRule,
                                              DiagnosticReportIncorrectRule,
                                              DiagnosticReportMissingRule,
-                                             GoToCodeFixRule);
+                                             GoToCodeFixRule,
+                                             IncorrectKindRule);
             }
         }
 
@@ -411,7 +414,17 @@ namespace MetaCompilation
                     }
                     else
                     {
-                        ReportDiagnostic(context, InvalidStatementRule, invocationExpression.GetLocation(), invocationExpression);
+                        Location loc = null;
+                        if (kindName == null)
+                        {
+                            loc = invocationExpression.ArgumentList.GetLocation();
+                        }
+                        else
+                        {
+                            loc = invocationExpression.ArgumentList.Arguments[1].GetLocation();
+                        }
+
+                        ReportDiagnostic(context, IncorrectKindRule, loc);
                     }
                 }
                 else

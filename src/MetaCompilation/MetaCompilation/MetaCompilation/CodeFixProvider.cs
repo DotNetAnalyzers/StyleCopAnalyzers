@@ -72,7 +72,8 @@ namespace MetaCompilation
                                              MetaCompilationAnalyzer.DiagnosticReportMissing,
                                              MetaCompilationAnalyzer.TrailingTriviaKindCheckMissing,
                                              MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                                             MetaCompilationAnalyzer.MissingSuppDiag);
+                                             MetaCompilationAnalyzer.MissingSuppDiag,
+                                             MetaCompilationAnalyzer.IncorrectKind);
             }
         }
 
@@ -507,7 +508,36 @@ namespace MetaCompilation
                         context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Insert the beginning of a DiagnosticDescriptor", c => AddRuleAsync(context.Document, declaration, c)), diagnostic);
                     }
                 }
+                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectKind))
+                {
+                    IEnumerable<ArgumentListSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ArgumentListSyntax>();
+                    if (declarations.Count() != 0)
+                    {
+                        ArgumentListSyntax declaration = declarations.First();
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Analyze the correct SyntaxKind", c => CorrectKindAsync(context.Document, declaration, c)), diagnostic);
+                    }
+                }
             }
+        }
+
+        private async Task<Document> CorrectKindAsync(Document document, ArgumentListSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            ArgumentSyntax argument = CodeFixNodeCreator.CreateSyntaxKindIfStatement(generator);
+            SeparatedSyntaxList<ArgumentSyntax> arguments = declaration.Arguments;
+            if (arguments.Count < 2)
+            {
+                arguments = arguments.Add(argument);
+            }
+            else
+            {
+                arguments = arguments.Replace(arguments[1], argument);
+            }
+
+            var argList = SyntaxFactory.ArgumentList(arguments);
+
+            return await ReplaceNode(declaration, argList, document);
         }
 
         private async Task<Document> AddRuleAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
@@ -1803,6 +1833,14 @@ namespace MetaCompilation
                 propertyDeclaration = propertyDeclaration.RemoveNode(propertyDeclaration.AccessorList.Accessors[1], 0);
 
                 return propertyDeclaration;
+            }
+
+            internal static ArgumentSyntax CreateSyntaxKindIfStatement(SyntaxGenerator generator)
+            {
+                var syntaxKind = generator.IdentifierName("SyntaxKind");
+                var expression = generator.MemberAccessExpression(syntaxKind, "IfStatement");
+                var argument = generator.Argument(expression) as ArgumentSyntax;
+                return argument;
             }
         }
     }
