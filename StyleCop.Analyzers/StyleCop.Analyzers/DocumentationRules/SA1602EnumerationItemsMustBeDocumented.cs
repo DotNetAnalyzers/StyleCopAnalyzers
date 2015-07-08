@@ -1,12 +1,10 @@
 ﻿namespace StyleCop.Analyzers.DocumentationRules
 {
-    using System.Linq;
+    using System;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using StyleCop.Analyzers.Helpers;
+    using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
     /// An item within a C# enumeration is missing an XML documentation header.
@@ -34,16 +32,17 @@
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1602EnumerationItemsMustBeDocumented : DiagnosticAnalyzer
+    public class SA1602EnumerationItemsMustBeDocumented : DocumentationAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1602EnumerationItemsMustBeDocumented"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1602";
+
         private const string Title = "Enumeration items must be documented";
         private const string MessageFormat = "Enumeration items must be documented";
         private const string Category = "StyleCop.CSharp.DocumentationRules";
-        private const string Description = "An item within a C# enumeration is missing an Xml documentation header.";
+        private const string Description = "An item within a publicly visible C# enumeration is missing an Xml documentation header.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1602.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
@@ -67,15 +66,26 @@
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleEnumMember, SyntaxKind.EnumMemberDeclaration);
         }
 
-        private void HandleEnumMember(SyntaxNodeAnalysisContext context)
+        /// <inheritdoc/>
+        protected override DiagnosticDescriptor DescriptorFromEffectiveVisibility(SyntaxKind visibility, SyntaxNodeAnalysisContext context)
         {
-            EnumMemberDeclarationSyntax enumMemberDeclaration = context.Node as EnumMemberDeclarationSyntax;
-            if (enumMemberDeclaration != null)
+            switch (visibility)
             {
-                if (!XmlCommentHelper.HasDocumentation(enumMemberDeclaration))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, enumMemberDeclaration.Identifier.GetLocation()));
-                }
+            case SyntaxKind.PublicKeyword:
+                return (context.SemanticModel.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(CS1591DiagnosticId, ReportDiagnostic.Default) != ReportDiagnostic.Suppress)
+                    ? null
+                    : Descriptor;
+
+            case SyntaxKind.InternalKeyword:
+                return (context.SemanticModel.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(SA16X0InternalElementsMustBeDocumented.DiagnosticId, ReportDiagnostic.Default) != ReportDiagnostic.Suppress)
+                    ? null
+                    : Descriptor;
+
+            case SyntaxKind.PrivateKeyword:
+                return Descriptor;
+
+            default:
+                throw new ArgumentOutOfRangeException("visibility");
             }
         }
     }

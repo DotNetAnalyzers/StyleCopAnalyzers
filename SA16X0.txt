@@ -1,0 +1,36 @@
+# SA16X0
+
+<table>
+<tr>
+  <td>TypeName</td>
+  <td>SA16X0NonPrivateElementsMustBeDocumented</td>
+</tr>
+<tr>
+  <td>CheckId</td>
+  <td>SA16X0</td>
+</tr>
+<tr>
+  <td>Category</td>
+  <td>Documentation Rules</td>
+</tr>
+</table>
+
+## Cause
+
+A non-private, non-public C# code element is missing a documentation header.
+
+## Rule description
+
+C# syntax provides a mechanism for inserting documentation for classes and elements directly into the code, through the use of Xml documentation headers.
+For an introduction to these headers and a description of the header syntax, see the following article: http://msdn.microsoft.com/en-us/magazine/cc302121.aspx.
+
+A violation of this rule occurs if an element is completely missing a documentation header, or if the header is empty. In C# the following types of elements
+can have documentation headers: classes, constructors, delegates, enums, events, finalizers, indexers, interfaces, methods, properties, and structs.
+
+No violation of this rule occurs for public elements; these are covered by [CS1591](https://msdn.microsoft.com/en-us/library/zk18c1w9.aspx).
+This rule specializes [SA1600](http://www.stylecop.com/docs/SA1600.html), [SA1601](http://www.stylecop.com/docs/SA1601.html) and [SA1602](http://www.stylecop.com/docs/SA1602.html)
+for non-private, non-public elements only.
+
+## How to fix violations
+
+To fix a violation of this rule, add or fill in the documentation header for this element.
