@@ -10,7 +10,6 @@
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Formatting;
-    using Microsoft.CodeAnalysis.Text;
     using Xunit;
 
     /// <summary>
@@ -80,7 +79,11 @@
                     break;
                 }
 
-                Assert.True(AreDiagnosticsDifferent(analyzerDiagnostics, previousDiagnostics), "Unmodified diagnostics detected!");
+                if (!AreDiagnosticsDifferent(analyzerDiagnostics, previousDiagnostics))
+                {
+                    break;
+                }
+
                 previousDiagnostics = analyzerDiagnostics;
 
                 done = true;
@@ -93,14 +96,15 @@
                     if (actions.Count > 0)
                     {
                         var fixedDocument = await ApplyFixAsync(document, actions.ElementAt(codeFixIndex.GetValueOrDefault(0)), cancellationToken).ConfigureAwait(false);
+                        if (fixedDocument != document)
+                        {
+                            done = false;
+                            var newText = await fixedDocument.GetTextAsync(cancellationToken).ConfigureAwait(false);
 
-                        var oldText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
-                        var newText = await fixedDocument.GetTextAsync(cancellationToken).ConfigureAwait(false);
-                        done = oldText.ContentEquals(newText);
-
-                        // workaround for issue #936 - force reparsing to get the same sort of syntax tree as the original document.
-                        document = CreateDocument(newText.ToString(), language);
-                        break;
+                            // workaround for issue #936 - force re-parsing to get the same sort of syntax tree as the original document.
+                            document = document.WithText(newText);
+                            break;
+                        }
                     }
                 }
             }
