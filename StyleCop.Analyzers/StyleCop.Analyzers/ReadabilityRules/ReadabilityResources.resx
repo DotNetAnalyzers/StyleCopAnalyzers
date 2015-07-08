@@ -310,7 +310,7 @@
     <value>The C# comment does not contain any comment text.</value>
   </data>
   <data name="SA1120MessageFormat" xml:space="preserve">
-    <value />
+    <value>Comments must contain text</value>
   </data>
   <data name="SA1120Title" xml:space="preserve">
     <value>Comments must contain text</value>

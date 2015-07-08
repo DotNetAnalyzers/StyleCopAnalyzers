@@ -638,7 +638,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Comments must contain text.
         /// </summary>
         internal static string SA1120MessageFormat {
             get {
