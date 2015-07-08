@@ -198,11 +198,14 @@
   <data name="SA1106Title" xml:space="preserve">
     <value>Code must not contain empty statements</value>
   </data>
+  <data name="SA1107CodeFix" xml:space="preserve">
+    <value>Enter new line</value>
+  </data>
   <data name="SA1107Description" xml:space="preserve">
     <value>The C# code contains more than one statement on a single line.</value>
   </data>
   <data name="SA1107MessageFormat" xml:space="preserve">
-    <value />
+    <value>Code must not contain multiple statements on one line</value>
   </data>
   <data name="SA1107Title" xml:space="preserve">
     <value>Code must not contain multiple statements on one line</value>
