@@ -56,15 +56,17 @@
             var symbol = semanticModel.GetDeclaredSymbol(typeDeclarationNode);
             var accessModifierKind = (symbol.DeclaredAccessibility == Accessibility.Public) ? SyntaxKind.PublicKeyword : SyntaxKind.InternalKeyword;
 
-            var accessModifier = SyntaxFactory.Token(accessModifierKind);
-            var replacementModifiers = typeDeclarationNode.Modifiers.Insert(0, accessModifier);
-            var replacementNode = ReplaceModifiers(typeDeclarationNode, replacementModifiers);
+            var keywordToken = typeDeclarationNode.Keyword;
 
+            var replacementModifiers = DeclarationModifiersHelper.AddModifier(typeDeclarationNode.Modifiers, ref keywordToken, accessModifierKind);
+            var replacementNode = ReplaceModifiers(typeDeclarationNode, replacementModifiers);
+            replacementNode = ReplaceKeyword(replacementNode, keywordToken);
             var newSyntaxRoot = syntaxRoot.ReplaceNode(typeDeclarationNode, replacementNode);
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
 
-        // This code was copied from the Roslyn codebase (and slightly modified). It can be removed if TypeDeclarationSyntaxExtensions.WithModifiers is made public (roslyn issue #2186)
+        // This code was copied from the Roslyn code base (and slightly modified). It can be removed if
+        // TypeDeclarationSyntaxExtensions.WithModifiers is made public (Roslyn issue #2186)
         private static TypeDeclarationSyntax ReplaceModifiers(TypeDeclarationSyntax node, SyntaxTokenList modifiers)
         {
             switch (node.Kind())
@@ -75,6 +77,23 @@
                 return ((InterfaceDeclarationSyntax)node).WithModifiers(modifiers);
             case SyntaxKind.StructDeclaration:
                 return ((StructDeclarationSyntax)node).WithModifiers(modifiers);
+            }
+
+            return node;
+        }
+
+        // This code was copied from the Roslyn code base (and slightly modified). It can be removed if
+        // TypeDeclarationSyntaxExtensions.WithModifiers is made public (Roslyn issue #2186)
+        private static TypeDeclarationSyntax ReplaceKeyword(TypeDeclarationSyntax node, SyntaxToken keyword)
+        {
+            switch (node.Kind())
+            {
+            case SyntaxKind.ClassDeclaration:
+                return ((ClassDeclarationSyntax)node).WithKeyword(keyword);
+            case SyntaxKind.InterfaceDeclaration:
+                return ((InterfaceDeclarationSyntax)node).WithKeyword(keyword);
+            case SyntaxKind.StructDeclaration:
+                return ((StructDeclarationSyntax)node).WithKeyword(keyword);
             }
 
             return node;
