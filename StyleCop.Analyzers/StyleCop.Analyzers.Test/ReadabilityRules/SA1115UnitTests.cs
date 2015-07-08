@@ -204,6 +204,56 @@ class Foo
         }
 
         [Fact]
+        public async Task TestMethodCallFirstParameterIsMultiLineAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    public int Bar(int i, int z)
+    {
+        return 1;
+    }
+
+    public void Baz()
+    {
+        Bar(
+            Bar(
+                1,
+                2),
+            2);
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMethodCallSecondParameterIsMultiLineAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    public int Bar(int a, int i, int z)
+    {
+        return 1;
+    }
+
+    public void Baz()
+    {
+        Bar(
+            0,
+            Bar(
+                0,
+                1,
+                2),
+            2);
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestMethodCallParametersAtTheSameLineAsync()
         {
             var testCode = @"
@@ -690,6 +740,29 @@ class Foo
         }
 
         [Fact]
+        public async Task TestAttributeParametersFirstParameterIsMultiLineAsync()
+        {
+            var testCode = @"
+[System.AttributeUsage(System.AttributeTargets.Class)]
+public class MyAttribute : System.Attribute
+{
+    public MyAttribute(string a, int b)
+    {
+    }
+}
+
+[MyAttribute(
+    @""Some
+    long string"",
+    2)]
+class Foo
+{
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestAttributeListEmptyLinesBetweenParametersAsync()
         {
             var testCode = @"
@@ -708,6 +781,52 @@ class Foo
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(9, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestAttributeListFirstAttributeParametersAreMultiLineAsync()
+        {
+            var testCode = @"
+[System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = true)]
+public class MyAttribute : System.Attribute
+{
+    public MyAttribute() { }
+
+    public MyAttribute(int a, int b) { }
+}
+
+[MyAttribute(
+    1,
+    2),
+MyAttribute]
+class Foo
+{
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestAttributesFirstAttributeParametersAreMultiLineAsync()
+        {
+            var testCode = @"
+[System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = true)]
+public class MyAttribute : System.Attribute
+{
+    public MyAttribute() { }
+
+    public MyAttribute(int a, int b) { }
+}
+
+[MyAttribute(
+    1,
+    2)]
+[MyAttribute]
+class Foo
+{
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
