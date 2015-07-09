@@ -201,6 +201,7 @@
     <Compile Include="MaintainabilityRules\SA1407ArithmeticExpressionsMustDeclarePrecedence.cs" />
     <Compile Include="MaintainabilityRules\SA1407SA1408CodeFixProvider.cs" />
     <Compile Include="Helpers\DocumentBasedFixAllProvider.cs" />
+    <Compile Include="ReadabilityRules\RemoveRegionFixAllProvider.cs" />
     <Compile Include="MaintainabilityRules\SA1407SA1408FixAllProvider.cs" />
     <Compile Include="MaintainabilityRules\SA1408ConditionalExpressionsMustDeclarePrecedence.cs" />
     <Compile Include="MaintainabilityRules\SA1409RemoveUnnecessaryCode.cs" />
