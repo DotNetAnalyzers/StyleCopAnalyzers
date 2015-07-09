@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.MaintainabilityRules
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Threading.Tasks;
@@ -9,59 +10,15 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using SpacingRules;
+    using StyleCop.Analyzers.Helpers;
 
-    internal sealed class SA1407SA1408FixAllProvider : FixAllProvider
+    internal sealed class SA1407SA1408FixAllProvider : DocumentBasedFixAllProvider
     {
         private static readonly SyntaxAnnotation NeedsParenthesisAnnotation = new SyntaxAnnotation("StyleCop.NeedsParenthesis");
 
-        public override async Task<CodeAction> GetFixAsync(FixAllContext fixAllContext)
-        {
-            switch (fixAllContext.Scope)
-            {
-            case FixAllScope.Document:
-                var newRoot = await this.FixAllInDocumentAsync(fixAllContext, fixAllContext.Document).ConfigureAwait(false);
-                return CodeAction.Create(MaintainabilityResources.SA1407SA1408CodeFix, token => Task.FromResult(fixAllContext.Document.WithSyntaxRoot(newRoot)));
+        protected override string CodeActionTitle => MaintainabilityResources.SA1407SA1408CodeFix;
 
-            case FixAllScope.Project:
-                Solution solution = await this.GetProjectFixesAsync(fixAllContext, fixAllContext.Project).ConfigureAwait(false);
-                return CodeAction.Create(MaintainabilityResources.SA1407SA1408CodeFix, token => Task.FromResult(solution));
-
-            case FixAllScope.Solution:
-                var newSolution = fixAllContext.Solution;
-                var projectIds = newSolution.ProjectIds;
-                for (int i = 0; i < projectIds.Count; i++)
-                {
-                    newSolution = await this.GetProjectFixesAsync(fixAllContext, newSolution.GetProject(projectIds[i])).ConfigureAwait(false);
-                }
-
-                return CodeAction.Create(MaintainabilityResources.SA1407SA1408CodeFix, token => Task.FromResult(newSolution));
-
-            case FixAllScope.Custom:
-            default:
-                return null;
-            }
-        }
-
-        private async Task<Solution> GetProjectFixesAsync(FixAllContext fixAllContext, Project project)
-        {
-            Solution solution = project.Solution;
-            var oldDocuments = project.Documents.ToImmutableArray();
-            List<Task<SyntaxNode>> newDocuments = new List<Task<SyntaxNode>>(oldDocuments.Length);
-            foreach (var document in oldDocuments)
-            {
-                newDocuments.Add(this.FixAllInDocumentAsync(fixAllContext, document));
-            }
-
-            for (int i = 0; i < oldDocuments.Length; i++)
-            {
-                var newDocumentRoot = await newDocuments[i].ConfigureAwait(false);
-                solution = solution.WithDocumentSyntaxRoot(oldDocuments[i].Id, newDocumentRoot);
-            }
-
-            return solution;
-        }
-
-        private async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+        protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
         {
             var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
 
