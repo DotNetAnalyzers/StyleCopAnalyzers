@@ -610,7 +610,7 @@ namespace MetaCompilation
 
                                 if (statementCount > 10)
                                 {
-                                    ReportDiagnostic(context, TooManyStatementsRule, methodDeclaration.GetLocation(), "method", "10");
+                                    ReportDiagnostic(context, TooManyStatementsRule, methodDeclaration.Identifier.GetLocation(), "method", "10");
                                     return false;
                                 }
                             }
