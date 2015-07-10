@@ -14775,7 +14775,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.WhitespaceCheckMissing,
                 Message = MessagePrefix + "The sixth step is to make sure trailingTrivia is a single whitespace",
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 21) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
