@@ -556,7 +556,12 @@ namespace MetaCompilation
 
                                         if (triviaKindCheckBlockStatements.Count > 1)
                                         {
-                                            ReportDiagnostic(context, TooManyStatementsRule, triviaKindCheckBlock.GetLocation(), "if block", "1");
+                                            IfStatementSyntax ifStatement = triviaKindCheckBlock.Parent as IfStatementSyntax;
+                                            var startDiagnosticSpan = ifStatement.Span.Start;
+                                            var endDiagnosticSpan = ifStatement.CloseParenToken.Span.Start;
+                                            var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+                                            var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
+                                            ReportDiagnostic(context, TooManyStatementsRule, diagnosticLocation, "if block", "1");
                                             return false;
                                         }
                                     }
