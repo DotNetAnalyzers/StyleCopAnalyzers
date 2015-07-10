@@ -484,7 +484,12 @@ namespace MetaCompilation
                             SyntaxList<StatementSyntax> triviaBlockStatements = triviaBlock.Statements;
                             if (triviaBlockStatements == null)
                             {
-                                ReportDiagnostic(context, TrailingTriviaVarMissingRule, triviaBlock.GetLocation(), keywordIdentifierToken.Text);
+                                IfStatementSyntax ifStatement = triviaBlock.Parent as IfStatementSyntax;
+                                var startDiagnosticSpan = ifStatement.Span.Start;
+                                var endDiagnosticSpan = ifStatement.CloseParenToken.Span.Start;
+                                var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+                                var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
+                                ReportDiagnostic(context, TrailingTriviaVarMissingRule, diagnosticLocation, keywordIdentifierToken.Text);
                                 return false;
                             }
 
@@ -579,7 +584,13 @@ namespace MetaCompilation
                             }
                             else
                             {
-                                ReportDiagnostic(context, TrailingTriviaVarMissingRule, triviaBlock.GetLocation(), keywordIdentifierToken.Text);
+
+                                IfStatementSyntax ifStatement = triviaBlock.Parent as IfStatementSyntax;
+                                var startDiagnosticSpan = ifStatement.Span.Start;
+                                var endDiagnosticSpan = ifStatement.CloseParenToken.Span.Start;
+                                var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+                                var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
+                                ReportDiagnostic(context, TrailingTriviaVarMissingRule, diagnosticLocation, keywordIdentifierToken.Text);
                                 return false;
                             }
 

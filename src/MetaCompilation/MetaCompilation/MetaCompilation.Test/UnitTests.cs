@@ -6317,7 +6317,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarMissing,
                 Message = MessagePrefix + "The fourth step is to extract the last trailing trivia of ifKeyword into a variable",
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 40, 17) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 17) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -6426,7 +6426,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarMissing,
                 Message = MessagePrefix + "The fourth step is to extract the last trailing trivia of ifKeyword into a variable",
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 40, 17) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 17) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -6536,7 +6536,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarMissing,
                 Message = MessagePrefix + "The fourth step is to extract the last trailing trivia of ifKeyword into a variable",
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 40, 17) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 17) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
