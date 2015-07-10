@@ -22,7 +22,6 @@ namespace MetaCompilation
         public const string RuleCategory = "Tutorial";
         public const DiagnosticSeverity RuleDefaultSeverity = DiagnosticSeverity.Error;
         public const bool RuleEnabledByDefault = true;
-        public const string MessagePrefix = "T: ";
 
         //creates a DiagnosticDescriptor with the above defaults
         public static DiagnosticDescriptor CreateRule(string id, string title, string messageFormat, string description = "")
