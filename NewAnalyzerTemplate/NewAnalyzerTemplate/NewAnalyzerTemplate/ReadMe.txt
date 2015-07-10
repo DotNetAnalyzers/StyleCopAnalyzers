@@ -1,49 +1,39 @@
 Analyzer Tutorial
 =================
 
-This tutorial is going to guide you to write a diagnostic analyzer that enforces the placement of one 
-space between the if keyword of an if statement and the open parenthesis of the condition.
+This tutorial is going to guide you to write a diagnostic analyzer that enforces the placement of a single 
+space between the if keyword of an if statement and the open parenthesis of the condition. A syntax diagram of
+a sample if statement can be found below. You will a write a diagnostic that will surface when the whitespace circled in red is anything other than a single space.
+![If Statement Syntax Tree](https://github.com/dotnet/roslyn-analyzers/blob/master/IfSyntaxTree.jpg)
  
 This tutorial itself was written as an analyzer, meaning that the instructions of the tutorial are 
 presented using the error underlines and light bulb code fixes in Visual Studio.
 
 Analyzer Information
 --------------------
-
 Analyzers are tools that produce live warnings in Visual Studio to dynamically highlight potential 
 problems in the code.
-An analyzer operates by examining the syntax tree and semantic model describing the corresponding code. 
+An analyzer operates by examining the syntax tree and semantic model representing the corresponding code. 
 The information in the syntax tree and semantic model is built up during compilation, and is exposed by 
 the .NET Compiler Platform (aka Roslyn). An analyzer is triggered when changes are made to the syntax 
-tree, and then the analyzer can walk the syntax tree, looking at syntax nodes, syntax tokens and syntax 
+tree which happens when you edit a piece of code. The analyzer can then walk through the syntax tree, looking at syntax nodes, syntax tokens and syntax 
 trivia, and decide whether or not to surface a diagnostic. 
-
-You can explore syntax trees with the Roslyn Syntax Visualizer. An example diagram of the syntax tree of
-an if statement can be found below.
-![If Statement Syntax Tree](https://github.com/dotnet/roslyn-analyzers/blob/master/IfSyntaxTree.jpg)
 
 More Information
 ----------------
-
-More information about Roslyn and the Roslyn source code can be found at https://github.com/dotnet/roslyn
-More information on syntax trees can be found at 
-http://blogs.msdn.com/b/csharpfaq/archive/2014/04/17/visualizing-roslyn-syntax-trees.aspx
-More information on the Roslyn API can be found at http://www.coderesx.com/roslyn/html/Welcome.htm
+Further information about the topics below can be found by following the links:
+Roslyn and the Roslyn source code: https://github.com/dotnet/roslyn
+Syntax trees: http://blogs.msdn.com/b/csharpfaq/archive/2014/04/17/visualizing-roslyn-syntax-trees.aspx
+The Roslyn API: http://www.coderesx.com/roslyn/html/Welcome.htm
 
 Instructions
 ------------
 
-Before you begin, go to Tools->Extensions and Updates->Online, and install:
-	* .NET Compiler SDK
-	* Roslyn Syntax Visualizer
+	* Before you begin, go to Tools->Extensions and Updates->Online and install .NET Compiler SDK.
+	* Re-start Visual Studio.
 
-Then, once you've re-started Visual Studio:
 	* Open the DiagnosticAnalyzer.cs file
 	* Open the Solution Explorer, right click on the .Vsix project, click "Set as StartUp project"
-	* Go to View->Other Windows->Roslyn Syntax Visualizer. This will open the syntax visualizer,
-          displaying the syntax tree of your code.
-	  This will be useful when you are writing your analyzer, as the thing that you are analyzing is
-          the syntax tree.
 	* You will notice that something is underlined in red, and there is a corresponding error in the
           error list
           Errors directly related to this tutorial will begin with 'T:'
@@ -59,6 +49,12 @@ If you would like to try your analyzer out, or if you would like to debug at any
 make sure you are in debug mode and press F5. This will launch a second instance of Visual Studio with 
 your analyzer deployed as a VSIX (Visual Studio Extension). You can then open a new file and any messages 
 from your analyzer will appear.
+
+If you would like to see the syntax tree of your if statement being analyzed you can follow the steps below.
+	* Go to Tools->Extensions and Updates->Online, and install Roslyn Syntax Visualizer.
+	* Re-start Visual Studio.
+	* Go to View->Other Windows->Roslyn Syntax Visualizer. 
+The Roslyn Syntax Visulaizer is extremely useful when writing analyzers as it helps you determine exactly which syntax node you need to locate for a particular diagnostic.
 
 Packaging
 ---------
