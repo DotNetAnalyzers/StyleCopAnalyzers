@@ -22,7 +22,7 @@ namespace MetaCompilation
         public const string RuleCategory = "Tutorial";
         public const DiagnosticSeverity RuleDefaultSeverity = DiagnosticSeverity.Error;
         public const bool RuleEnabledByDefault = true;
-        public const string MessagePrefix = "T: ";
+       // public const string MessagePrefix = "T: ";
 
         //creates a DiagnosticDescriptor with the above defaults
         public static DiagnosticDescriptor CreateRule(string id, string title, string messageFormat, string description = "")
@@ -568,7 +568,12 @@ namespace MetaCompilation
 
                                     if (triviaBlockStatements.Count > 2)
                                     {
-                                        ReportDiagnostic(context, TooManyStatementsRule, triviaBlock.GetLocation(), "if block", "2");
+                                        IfStatementSyntax ifStatement = triviaBlock.Parent as IfStatementSyntax;
+                                        var startDiagnosticSpan = ifStatement.Span.Start;
+                                        var endDiagnosticSpan = ifStatement.CloseParenToken.Span.Start;
+                                        var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+                                        var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
+                                        ReportDiagnostic(context, TooManyStatementsRule, diagnosticLocation, "if block", "2");
                                         return false;
                                     }
                                 }
