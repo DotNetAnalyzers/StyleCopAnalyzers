@@ -6469,7 +6469,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarMissing,
                 Message = MessagePrefix + "The fourth step is to extract the last trailing trivia of ifKeyword into a variable",
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 40, 17) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 17) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -6578,7 +6578,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarMissing,
                 Message = MessagePrefix + "The fourth step is to extract the last trailing trivia of ifKeyword into a variable",
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 40, 17) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 17) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -6688,7 +6688,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarMissing,
                 Message = MessagePrefix + "The fourth step is to extract the last trailing trivia of ifKeyword into a variable",
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 40, 17) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 17) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -14927,7 +14927,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.WhitespaceCheckMissing,
                 Message = MessagePrefix + "The sixth step is to make sure trailingTrivia is a single whitespace",
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 21) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -16356,7 +16356,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.ReturnStatementMissing,
                 Message = MessagePrefix + "The seventh step is to return from AnalyzeIfStatement",
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 45, 25) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
