@@ -22,7 +22,6 @@ namespace MetaCompilation
         public const string RuleCategory = "Tutorial";
         public const DiagnosticSeverity RuleDefaultSeverity = DiagnosticSeverity.Error;
         public const bool RuleEnabledByDefault = true;
-        public const string MessagePrefix = "T: ";
 
         //creates a DiagnosticDescriptor with the above defaults
         public static DiagnosticDescriptor CreateRule(string id, string title, string messageFormat, string description = "")
@@ -485,7 +484,12 @@ namespace MetaCompilation
                             SyntaxList<StatementSyntax> triviaBlockStatements = triviaBlock.Statements;
                             if (triviaBlockStatements == null)
                             {
-                                ReportDiagnostic(context, TrailingTriviaVarMissingRule, triviaBlock.GetLocation(), keywordIdentifierToken.Text);
+                                IfStatementSyntax ifStatement = triviaBlock.Parent as IfStatementSyntax;
+                                var startDiagnosticSpan = ifStatement.Span.Start;
+                                var endDiagnosticSpan = ifStatement.CloseParenToken.Span.Start;
+                                var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+                                var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
+                                ReportDiagnostic(context, TrailingTriviaVarMissingRule, diagnosticLocation, keywordIdentifierToken.Text);
                                 return false;
                             }
 
@@ -550,7 +554,12 @@ namespace MetaCompilation
                                         }
                                         else
                                         {
-                                            ReportDiagnostic(context, ReturnStatementMissingRule, triviaCheckBlock.GetLocation(), methodDeclaration.Identifier.Text);
+                                            IfStatementSyntax ifStatement = triviaCheckBlock.Parent as IfStatementSyntax;
+                                            var startDiagnosticSpan = ifStatement.Span.Start;
+                                            var endDiagnosticSpan = ifStatement.CloseParenToken.Span.Start;
+                                            var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+                                            var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
+                                            ReportDiagnostic(context, ReturnStatementMissingRule, diagnosticLocation, methodDeclaration.Identifier.Text);
                                             return false;
                                         }
 
@@ -562,7 +571,12 @@ namespace MetaCompilation
                                     }
                                     else
                                     {
-                                        ReportDiagnostic(context, WhitespaceCheckMissingRule, triviaKindCheckBlock.GetLocation(), triviaIdentifierToken);
+                                        IfStatementSyntax ifStatement = triviaKindCheckBlock.Parent as IfStatementSyntax;
+                                        var startDiagnosticSpan = ifStatement.Span.Start;
+                                        var endDiagnosticSpan = ifStatement.CloseParenToken.Span.Start;
+                                        var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+                                        var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
+                                        ReportDiagnostic(context, WhitespaceCheckMissingRule, diagnosticLocation, triviaIdentifierToken);
                                         return false;
                                     }
 
@@ -580,7 +594,13 @@ namespace MetaCompilation
                             }
                             else
                             {
-                                ReportDiagnostic(context, TrailingTriviaVarMissingRule, triviaBlock.GetLocation(), keywordIdentifierToken.Text);
+
+                                IfStatementSyntax ifStatement = triviaBlock.Parent as IfStatementSyntax;
+                                var startDiagnosticSpan = ifStatement.Span.Start;
+                                var endDiagnosticSpan = ifStatement.CloseParenToken.Span.Start;
+                                var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+                                var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
+                                ReportDiagnostic(context, TrailingTriviaVarMissingRule, diagnosticLocation, keywordIdentifierToken.Text);
                                 return false;
                             }
 
