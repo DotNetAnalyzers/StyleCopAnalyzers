@@ -82,7 +82,6 @@ namespace SyntaxNodeAnalyzer
 
             context.ReportDiagnostic(diagnostic);
             //Sends diagnostic information to the IDE to be shown to the user.
-            //That's all folks! Try out your analyzer by running it and opening any new or existing project containing an if statement.
         }
     }
 }
