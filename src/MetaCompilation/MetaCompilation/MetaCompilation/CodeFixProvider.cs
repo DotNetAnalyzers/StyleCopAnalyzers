@@ -544,6 +544,26 @@ namespace MetaCompilation
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
+            var argList = declaration.ArgumentList;
+            if (argList != null)
+            {
+                var args = argList.Arguments;
+                if (args != null)
+                {
+                    if (args.Count > 0)
+                    {
+                        var nameArg = args[0];
+                        var expression = nameArg.Expression as IdentifierNameSyntax;
+                        if (expression != null)
+                        {
+                            SyntaxNode statementKeepArg = CodeFixNodeCreator.CreateRegister(generator, declaration.Parent.Parent.Parent as MethodDeclarationSyntax, expression.Identifier.Text);
+
+                            return await ReplaceNode(declaration, statementKeepArg, document);
+                        }
+                    }
+                }
+            }
+
             SyntaxNode statement = CodeFixNodeCreator.CreateRegister(generator, declaration.Parent.Parent.Parent as MethodDeclarationSyntax);
 
             return await ReplaceNode(declaration, statement, document);
@@ -1874,9 +1894,9 @@ namespace MetaCompilation
                 return argument;
             }
 
-            internal static SyntaxNode CreateRegister(SyntaxGenerator generator, MethodDeclarationSyntax declaration)
+            internal static SyntaxNode CreateRegister(SyntaxGenerator generator, MethodDeclarationSyntax declaration, string methodName = "AnalyzeIfStatement")
             {
-                SyntaxNode argument1 = generator.IdentifierName("AnalyzeIfStatement");
+                SyntaxNode argument1 = generator.IdentifierName(methodName);
                 SyntaxNode argument2 = generator.MemberAccessExpression(generator.IdentifierName("SyntaxKind"), "IfStatement");
                 SyntaxList<SyntaxNode> arguments = new SyntaxList<SyntaxNode>().Add(argument1).Add(argument2);
 

@@ -364,6 +364,10 @@ namespace MetaCompilation
                 {
                     kind = (IFieldSymbol)registerArgs[1];
                 }
+                else
+                {
+                    return;
+                }
 
                 var invocationExpression = (InvocationExpressionSyntax)registerInfo[2];
                 if (invocationExpression == null)
@@ -2369,6 +2373,10 @@ namespace MetaCompilation
                                 {
                                     registerArgs.Add(kindSymbol);
                                 }
+                            }
+                            else
+                            {
+                                ReportDiagnostic(context, IncorrectArgumentsRule, invocationExpr.Expression.GetLocation());
                             }
                         }
                     }
