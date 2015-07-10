@@ -16202,7 +16202,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.ReturnStatementMissing,
-                Message = "The seventh step is to return from AnalyzeIfStatement",
+                Message = "T: The seventh step is to return from AnalyzeIfStatement",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 45, 25) }
             };
@@ -16327,7 +16327,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.ReturnStatementIncorrect,
-                Message = "This statement should return from AnalyzeIfStatement, because reaching this point in the code means that the if statement being analyzed has the correct spacing",
+                Message = "T: This statement should return from AnalyzeIfStatement, because reaching this point in the code means that the if statement being analyzed has the correct spacing",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
@@ -16451,7 +16451,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.ReturnStatementIncorrect,
-                Message = "This statement should return from AnalyzeIfStatement, because reaching this point in the code means that the if statement being analyzed has the correct spacing",
+                Message = "T: This statement should return from AnalyzeIfStatement, because reaching this point in the code means that the if statement being analyzed has the correct spacing",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
@@ -16575,7 +16575,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.ReturnStatementIncorrect,
-                Message = "This statement should return from AnalyzeIfStatement, because reaching this point in the code means that the if statement being analyzed has the correct spacing",
+                Message = "T: This statement should return from AnalyzeIfStatement, because reaching this point in the code means that the if statement being analyzed has the correct spacing",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
@@ -16699,7 +16699,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.ReturnStatementIncorrect,
-                Message = "This statement should return from AnalyzeIfStatement, because reaching this point in the code means that the if statement being analyzed has the correct spacing",
+                Message = "T: This statement should return from AnalyzeIfStatement, because reaching this point in the code means that the if statement being analyzed has the correct spacing",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
