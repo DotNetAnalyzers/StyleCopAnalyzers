@@ -386,42 +386,53 @@ namespace MetaCompilation
 
                     if (kindName == null || allowedKinds.Contains(kindName))
                     {
-                        //look for and interpret id fields
-                        List<string> idNames = CheckIds(_branchesDict[registerSymbol.Name], kindName, context);
+                        //look for and interpret analysis methods
+                        List<string> analysisMethods = CheckMethods(_branchesDict[registerSymbol.Name], kindName, invocationExpression, context);
 
-                        if (idNames.Count > 0)
+                        if (analysisMethods.Count > 0)
                         {
-                            //look for and interpret rule fields
-                            List<string> ruleNames = CheckRules(idNames, _branchesDict[registerSymbol.Name], kindName, context);
 
-                            if (ruleNames.Count > 0)
+                            //look for and interpret id fields
+                            List<string> idNames = CheckIds(_branchesDict[registerSymbol.Name], kindName, context);
+
+                            if (idNames.Count > 0)
                             {
-                                //look for and interpret SupportedDiagnostics property
-                                bool supportedDiagnosticsCorrect = CheckSupportedDiagnostics(ruleNames, context);
+                                //look for and interpret rule fields
+                                List<string> ruleNames = CheckRules(idNames, _branchesDict[registerSymbol.Name], kindName, context);
 
-                                if (supportedDiagnosticsCorrect)
+                                if (ruleNames.Count > 0)
                                 {
-                                    //check the SyntaxNode, Symbol, Compilation, CodeBlock, etc analysis method(s)
-                                    bool analysisCorrect = CheckAnalysis(_branchesDict[registerSymbol.Name], kindName, ruleNames, context, analysisMethodSymbol);
+                                    //look for and interpret SupportedDiagnostics property
+                                    bool supportedDiagnosticsCorrect = CheckSupportedDiagnostics(ruleNames, context);
 
-                                    if (analysisCorrect)
+                                    if (supportedDiagnosticsCorrect)
                                     {
-                                        ReportDiagnostic(context, GoToCodeFixRule, _analyzerClassSymbol.Locations[0]);
+                                        //check the SyntaxNode, Symbol, Compilation, CodeBlock, etc analysis method(s)
+                                        bool analysisCorrect = CheckAnalysis(_branchesDict[registerSymbol.Name], kindName, ruleNames, context, analysisMethodSymbol);
+
+                                        if (analysisCorrect)
+                                        {
+                                            ReportDiagnostic(context, GoToCodeFixRule, _analyzerClassSymbol.Locations[0]);
+                                        }
+                                        else
+                                        {
+                                            return;
+                                        }
                                     }
                                     else
                                     {
                                         return;
                                     }
                                 }
-                                else
-                                {
-                                    return;
-                                }
+                            }
+                            else
+                            {
+                                ReportDiagnostic(context, MissingIdRule, _analyzerClassSymbol.Locations[0], _analyzerClassSymbol.Name.ToString());
                             }
                         }
                         else
                         {
-                            ReportDiagnostic(context, MissingIdRule, _analyzerClassSymbol.Locations[0], _analyzerClassSymbol.Name.ToString());
+                            return;
                         }
                     }
                     else
@@ -444,6 +455,9 @@ namespace MetaCompilation
                     return;
                 }
             }
+
+
+
 
             //checks the syntax tree analysis part of the user analyzer, returns a bool representing whether the check was successful or not
             internal bool CheckAnalysis(string branch, string kind, List<string> ruleNames, CompilationAnalysisContext context, IMethodSymbol analysisMethodSymbol)
@@ -2246,6 +2260,25 @@ namespace MetaCompilation
                 }
 
                 return idNames;
+            }
+
+            internal List<string> CheckMethods(string branch, string kindName, InvocationExpressionSyntax invocationExpression, CompilationAnalysisContext context)
+            {
+                List<string> emptyMethods = new List<string>();
+
+                var argList = invocationExpression.ArgumentList;
+                //if (argList.Count)
+                var methodName = argList.Arguments.First();
+
+                if (_analyzerMethodSymbols.Contains(methodName))
+
+                foreach (IMethodSymbol method in _analyzerMethodSymbols)
+                {
+
+                }
+
+
+                throw new NotImplementedException();
             }
 
             //returns a symbol for the register call, and a list of the arguments
