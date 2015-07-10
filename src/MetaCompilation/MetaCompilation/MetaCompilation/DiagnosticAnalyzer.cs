@@ -1761,7 +1761,8 @@ namespace MetaCompilation
 
                 if (statements.Count > 2)
                 {
-                    ReportDiagnostic(context, TooManyStatementsRule, body.GetLocation(), "get accessor", "1 or 2");
+                    AccessorListSyntax propertyAccessorList = propertyDeclaration.AccessorList as AccessorListSyntax;
+                    ReportDiagnostic(context, TooManyStatementsRule,propertyAccessorList.Accessors[0].Keyword.GetLocation(), "get accessor", "1 or 2");
                     return false;
                 }
 
