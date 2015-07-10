@@ -546,7 +546,12 @@ namespace MetaCompilation
 
                                             if (triviaCheckBlockStatements.Count > 1)
                                             {
-                                                ReportDiagnostic(context, TooManyStatementsRule, triviaCheckBlock.GetLocation(), "if block", "1");
+                                                IfStatementSyntax ifStatement = triviaCheckBlock.Parent as IfStatementSyntax;
+                                                var startDiagnosticSpan = ifStatement.Span.Start;
+                                                var endDiagnosticSpan = ifStatement.CloseParenToken.Span.Start;
+                                                var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+                                                var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
+                                                ReportDiagnostic(context, TooManyStatementsRule, diagnosticLocation, "if block", "1");
                                                 return false;
                                             }
                                             
@@ -565,7 +570,12 @@ namespace MetaCompilation
 
                                         if (triviaKindCheckBlockStatements.Count > 1)
                                         {
-                                            ReportDiagnostic(context, TooManyStatementsRule, triviaKindCheckBlock.GetLocation(), "if block", "1");
+                                            IfStatementSyntax ifStatement = triviaKindCheckBlock.Parent as IfStatementSyntax;
+                                            var startDiagnosticSpan = ifStatement.Span.Start;
+                                            var endDiagnosticSpan = ifStatement.CloseParenToken.Span.Start;
+                                            var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+                                            var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
+                                            ReportDiagnostic(context, TooManyStatementsRule, diagnosticLocation, "if block", "1");
                                             return false;
                                         }
                                     }
@@ -582,7 +592,12 @@ namespace MetaCompilation
 
                                     if (triviaBlockStatements.Count > 2)
                                     {
-                                        ReportDiagnostic(context, TooManyStatementsRule, triviaBlock.GetLocation(), "if block", "2");
+                                        IfStatementSyntax ifStatement = triviaBlock.Parent as IfStatementSyntax;
+                                        var startDiagnosticSpan = ifStatement.Span.Start;
+                                        var endDiagnosticSpan = ifStatement.CloseParenToken.Span.Start;
+                                        var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+                                        var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
+                                        ReportDiagnostic(context, TooManyStatementsRule, diagnosticLocation, "if block", "2");
                                         return false;
                                     }
                                 }
@@ -615,7 +630,7 @@ namespace MetaCompilation
 
                                 if (statementCount > 10)
                                 {
-                                    ReportDiagnostic(context, TooManyStatementsRule, methodDeclaration.GetLocation(), "method", "10");
+                                    ReportDiagnostic(context, TooManyStatementsRule, methodDeclaration.Identifier.GetLocation(), "method", "10");
                                     return false;
                                 }
                             }
@@ -1766,7 +1781,8 @@ namespace MetaCompilation
 
                 if (statements.Count > 2)
                 {
-                    ReportDiagnostic(context, TooManyStatementsRule, body.GetLocation(), "get accessor", "1 or 2");
+                    AccessorListSyntax propertyAccessorList = propertyDeclaration.AccessorList as AccessorListSyntax;
+                    ReportDiagnostic(context, TooManyStatementsRule,propertyAccessorList.Accessors[0].Keyword.GetLocation(), "get accessor", "1 or 2");
                     return false;
                 }
 
