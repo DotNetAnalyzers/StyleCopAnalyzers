@@ -16,7 +16,7 @@ problems in the code.
 An analyzer operates by examining the syntax tree and semantic model representing the corresponding code. 
 The information in the syntax tree and semantic model is built up during compilation, and is exposed by 
 the .NET Compiler Platform (aka Roslyn). An analyzer is triggered when changes are made to the syntax 
-tree which happens when you edit a piece of code. The analyzer can then walk through the syntax tree, looking at syntax nodes, syntax tokens and syntax 
+tree, which happens when you edit a piece of code. The analyzer can then walk through the syntax tree, looking at syntax nodes, syntax tokens and syntax 
 trivia, and decide whether or not to surface a diagnostic. 
 
 More Information
@@ -28,7 +28,6 @@ The Roslyn API: http://www.coderesx.com/roslyn/html/Welcome.htm
 
 Instructions
 ------------
-
 	* Before you begin, go to Tools->Extensions and Updates->Online and install .NET Compiler SDK.
 	* Re-start Visual Studio.
 
@@ -47,18 +46,17 @@ Instructions
 
 If you would like to try your analyzer out, or if you would like to debug at any step of the tutorial, 
 make sure you are in debug mode and press F5. This will launch a second instance of Visual Studio with 
-your analyzer deployed as a VSIX (Visual Studio Extension). You can then open a new file and any messages 
-from your analyzer will appear.
+your analyzer deployed as a VSIX (Visual Studio Extension). You can then open a new file, write an if statement, and any messages from your analyzer will appear.
 
 If you would like to see the syntax tree of your if statement being analyzed you can follow the steps below.
 	* Go to Tools->Extensions and Updates->Online, and install Roslyn Syntax Visualizer.
 	* Re-start Visual Studio.
-	* Go to View->Other Windows->Roslyn Syntax Visualizer. 
-The Roslyn Syntax Visulaizer is extremely useful when writing analyzers as it helps you determine exactly which syntax node you need to locate for a particular diagnostic.
+	* Again, you can open a newfile and write an if statement.
+	* Go to View->Other Windows->Roslyn Syntax Visualizer to see the if statement syntax tree.
+The Roslyn Syntax Visualizer is extremely useful when writing analyzers as it helps you determine exactly which syntax node you need to locate for a particular diagnostic.
 
 Packaging
 ---------
-
 Building this project will produce an analyzer .dll (dynamic-link library), as well as the
 following two ways you may wish to package that analyzer:
 	 * A NuGet package (.nupkg file) that will add your assembly as a
