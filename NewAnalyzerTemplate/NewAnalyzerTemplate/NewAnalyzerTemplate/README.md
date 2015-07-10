@@ -4,7 +4,7 @@ Analyzer Tutorial
 This tutorial is going to guide you to write a diagnostic analyzer that enforces the placement of a single 
 space between the if keyword of an if statement and the open parenthesis of the condition. A syntax diagram of
 a sample if statement can be found below. You will a write a diagnostic that will surface when the whitespace circled in red is anything other than a single space.
-![If Statement Syntax Tree](https://github.com/dotnet/roslyn-analyzers/blob/master/NewAnalyzerTemplate/NewAnalyzerTemplate/NewAnalyzerTemplate/README.md)
+![If Statement Syntax Tree](https://github.com/dotnet/roslyn-analyzers/blob/master/NewAnalyzerTemplate/NewAnalyzerTemplate/NewAnalyzerTemplate/IfSyntaxTree.jpg)
  
 This tutorial itself was written as an analyzer, meaning that the instructions of the tutorial are 
 presented using the error underlines and light bulb code fixes in Visual Studio.
