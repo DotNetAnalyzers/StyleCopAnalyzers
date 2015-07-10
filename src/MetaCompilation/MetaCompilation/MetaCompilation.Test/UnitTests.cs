@@ -16204,7 +16204,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.ReturnStatementMissing,
                 Message = "T: The seventh step is to return from AnalyzeIfStatement",
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 45, 25) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
 
             VerifyCSharpDiagnostic(test, expected);

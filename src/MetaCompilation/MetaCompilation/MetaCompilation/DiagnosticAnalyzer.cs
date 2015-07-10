@@ -554,7 +554,12 @@ namespace MetaCompilation
                                         }
                                         else
                                         {
-                                            ReportDiagnostic(context, ReturnStatementMissingRule, triviaCheckBlock.GetLocation(), methodDeclaration.Identifier.Text);
+                                            IfStatementSyntax ifStatement = triviaCheckBlock.Parent as IfStatementSyntax;
+                                            var startDiagnosticSpan = ifStatement.Span.Start;
+                                            var endDiagnosticSpan = ifStatement.CloseParenToken.Span.Start;
+                                            var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+                                            var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
+                                            ReportDiagnostic(context, ReturnStatementMissingRule, diagnosticLocation, methodDeclaration.Identifier.Text);
                                             return false;
                                         }
 
