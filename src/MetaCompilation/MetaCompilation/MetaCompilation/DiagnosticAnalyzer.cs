@@ -62,6 +62,12 @@ namespace MetaCompilation
 
         public const string IncorrectKind = "MetaAnalyzer051";
         internal static DiagnosticDescriptor IncorrectKindRule = CreateRule(IncorrectKind, "Incorrect kind", MessagePrefix + "This tutorial only allows registering for SyntaxKind.IfStatement", "For the purposes of this tutorial, you will be analyzing an if statement, so that is the only SyntaxKind you can register for");
+
+        public const string IncorrectRegister = "MetaAnalyzer052";
+        internal static DiagnosticDescriptor IncorrectRegisterRule = CreateRule(IncorrectRegister, "Incorrect register", MessagePrefix + "This tutorial only allows for RegisterSyntaxNodeAction", "For the purposes of this tutorial, you will be analyzing after a change to a SyntaxNode, and so you should register for a SyntaxNode action");
+
+        public const string IncorrectArguments = "MetaAnalyzer053";
+        internal static DiagnosticDescriptor IncorrectArgumentsRule = CreateRule(IncorrectArguments, "Incorrect arguments", MessagePrefix + "RegisterSyntaxNodeAction requires 2 arguments: a method, and a SyntaxKind", "The RegisterSyntaxNodeAction method takes two arguments. The first argument is a method that will actually perform the analysis, and the second argument is a SyntaxKind, which is the kind of syntax that the method will be triggered on");
         #endregion
 
         #region SupportedDiagnostics rules
@@ -265,7 +271,9 @@ namespace MetaCompilation
                                              DiagnosticReportIncorrectRule,
                                              DiagnosticReportMissingRule,
                                              GoToCodeFixRule,
-                                             IncorrectKindRule);
+                                             IncorrectKindRule,
+                                             IncorrectRegisterRule,
+                                             IncorrectArgumentsRule);
             }
         }
 
@@ -2304,7 +2312,7 @@ namespace MetaCompilation
                         SeparatedSyntaxList<ArgumentSyntax> arguments = invocationExpr.ArgumentList.Arguments;
                         if (arguments == null || arguments.Count == 0)
                         {
-                            ReportDiagnostic(context, MissingRegisterRule, memberExpr.GetLocation(), memberExpr.Name.ToString());
+                            ReportDiagnostic(context, IncorrectArgumentsRule, invocationExpr.Expression.GetLocation());
                             return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
                         }
 
@@ -2408,7 +2416,7 @@ namespace MetaCompilation
 
                 if (!_branchesDict.ContainsKey(memberExprRegister.ToString()))
                 {
-                    ReportDiagnostic(context, InvalidStatementRule, statements[0].GetLocation(), statements[0]);
+                    ReportDiagnostic(context, IncorrectRegisterRule, memberExprRegister.GetLocation());
                     return null;
                 }
 

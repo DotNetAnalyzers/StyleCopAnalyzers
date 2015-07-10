@@ -2876,6 +2876,82 @@ namespace SyntaxNodeAnalyzer
         }
         #endregion
 
+        #region IncorrectArguments
+        [Fact]
+        public void IncorrectArguments()
+        {
+            var test = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.CSharp;
+            using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction();
+            }
+        }
+    }";
+
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.IncorrectArguments,
+                Message = MessagePrefix + "RegisterSyntaxNodeAction requires 2 arguments: a method, and a SyntaxKind",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+            using System.Collections.Generic;
+            using System.Collections.Immutable;
+            using System.Linq;
+            using System.Threading;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.CSharp;
+            using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            }
+        }
+    }";
+
+            VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
+        }
+        #endregion
+
         #region IncorrectInitSig
         // more than one parameter
         [Fact]
