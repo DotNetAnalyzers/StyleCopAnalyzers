@@ -30,12 +30,11 @@
         public const string DiagnosticId = "SA1610";
         private const string Title = "Property documentation must have value text";
         private const string MessageFormat = "Property documentation must have value text";
-        private const string Category = "StyleCop.CSharp.DocumentationRules";
         private const string Description = "The XML header documentation for a C# property contains an empty <value> tag.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1610.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

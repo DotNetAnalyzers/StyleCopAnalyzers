@@ -35,12 +35,11 @@
         public const string DiagnosticId = "SA1308";
         private const string Title = "Variable names must not be prefixed";
         private const string MessageFormat = "Field '{0}' must not begin with the prefix '{1}'";
-        private const string Category = "StyleCop.CSharp.NamingRules";
         private const string Description = "A field name in C# is prefixed with 'm_', 's_', or 't_'.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1308.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

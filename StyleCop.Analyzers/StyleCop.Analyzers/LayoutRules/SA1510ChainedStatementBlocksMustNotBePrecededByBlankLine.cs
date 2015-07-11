@@ -42,12 +42,11 @@
         public const string DiagnosticId = "SA1510";
         private const string Title = "Chained statement blocks must not be preceded by blank line";
         private const string MessageFormat = "'{0}' statement must not be preceded by a blank line";
-        private const string Category = "StyleCop.CSharp.LayoutRules";
         private const string Description = "Chained C# statements are separated by a blank line.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1510.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

@@ -25,12 +25,11 @@
         public const string DiagnosticId = "SA1209";
         private const string Title = "Using alias directives must be placed after other using directives";
         private const string MessageFormat = "Using alias directives must be placed after all using namespace directives.";
-        private const string Category = "StyleCop.CSharp.OrderingRules";
         private const string Description = "A using-alias directive is positioned before a regular using directive.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1209.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

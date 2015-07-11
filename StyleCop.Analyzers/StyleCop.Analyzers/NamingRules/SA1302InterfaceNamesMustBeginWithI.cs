@@ -30,12 +30,11 @@
         public const string DiagnosticId = "SA1302";
         private const string Title = "Interface names must begin with I";
         private const string MessageFormat = "Interface names must begin with I";
-        private const string Category = "StyleCop.CSharp.NamingRules";
         private const string Description = "The name of a C# interface does not begin with the capital letter I.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1302.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

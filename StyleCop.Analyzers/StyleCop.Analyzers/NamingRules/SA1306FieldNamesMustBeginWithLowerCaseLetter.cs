@@ -31,12 +31,11 @@
         public const string DiagnosticId = "SA1306";
         private const string Title = "Field names must begin with lower-case letter";
         private const string MessageFormat = "Field '{0}' must begin with lower-case letter";
-        private const string Category = "StyleCop.CSharp.NamingRules";
         private const string Description = "The name of a field or variable in C# does not begin with a lower-case letter.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1306.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

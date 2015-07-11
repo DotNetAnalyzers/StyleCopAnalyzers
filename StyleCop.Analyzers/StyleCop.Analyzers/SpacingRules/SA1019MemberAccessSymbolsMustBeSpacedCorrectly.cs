@@ -23,12 +23,11 @@
         public const string DiagnosticId = "SA1019";
         private const string Title = "Member access symbols must be spaced correctly";
         private const string MessageFormat = "Member access symbol '{0}' must not be {1} by a space.";
-        private const string Category = "StyleCop.CSharp.SpacingRules";
         private const string Description = "The spacing around a member access symbol is incorrect, within a C# code file.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1019.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

@@ -59,12 +59,11 @@
         public const string DiagnosticId = "SA1500";
         private const string Title = "Curly brackets for multi-line statements must not share line";
         private const string MessageFormat = "Curly brackets for multi-line statements must not share line";
-        private const string Category = "StyleCop.CSharp.LayoutRules";
         private const string Description = "The opening or closing curly bracket within a C# statement, element, or expression is not placed on its own line.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1500.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

@@ -32,7 +32,6 @@
         /// </summary>
         public const string DiagnosticId = "SA1612";
         private const string Title = "Element parameter documentation must match element parameters";
-        private const string Category = "StyleCop.CSharp.DocumentationRules";
         private const string Description = "The documentation describing the parameters to a C# method, constructor, delegate or indexer element does not match the actual parameters on the element.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1612.html";
 
@@ -40,10 +39,10 @@
         private const string ParamWrongOrderMessageFormat = "The parameter documentation for '{0}' should be at position {1}.";
 
         private static readonly DiagnosticDescriptor MissingParameterDescriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MissingParamForDocumentationMessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MissingParamForDocumentationMessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly DiagnosticDescriptor OrderDescriptor =
-                   new DiagnosticDescriptor(DiagnosticId, Title, ParamWrongOrderMessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+                   new DiagnosticDescriptor(DiagnosticId, Title, ParamWrongOrderMessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(MissingParameterDescriptor);

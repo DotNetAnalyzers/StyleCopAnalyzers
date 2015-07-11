@@ -24,12 +24,11 @@
         public const string DiagnosticId = "SA1401";
         private const string Title = "Fields must be private";
         private const string MessageFormat = "Field must be private";
-        private const string Category = "StyleCop.CSharp.MaintainabilityRules";
         private const string Description = "A field within a C# class has an access modifier other than private.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1401.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
