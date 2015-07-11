@@ -25,12 +25,11 @@
         public const string DiagnosticId = "SA1216";
         private const string Title = "Using static directives must be placed after other using directives";
         private const string MessageFormat = "Using static directives must be placed after other using directives";
-        private const string Category = "StyleCop.CSharp.OrderingRules";
         private const string Description = "A using static directive is positioned before a regular or alias using directive.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1216.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

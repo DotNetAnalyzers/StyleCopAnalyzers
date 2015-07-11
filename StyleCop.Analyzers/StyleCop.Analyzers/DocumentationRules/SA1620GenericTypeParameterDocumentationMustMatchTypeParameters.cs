@@ -33,7 +33,6 @@
         /// </summary>
         public const string DiagnosticId = "SA1620";
         private const string Title = "Generic type parameter documentation must match type parameters";
-        private const string Category = "StyleCop.CSharp.DocumentationRules";
         private const string Description = "The &lt;typeparam&gt; tags within the Xml header documentation for a generic C# element do not match the generic type parameters on the element.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1620.html";
 
@@ -41,10 +40,10 @@
         private const string TypeParamWrongOrderMessageFormat = "The type parameter documentation for '{0}' should be at position {1}.";
 
         private static readonly DiagnosticDescriptor MissingTypeParameterDescriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MissingTypeParamForDocumentationMessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MissingTypeParamForDocumentationMessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly DiagnosticDescriptor OrderDescriptor =
-                   new DiagnosticDescriptor(DiagnosticId, Title, TypeParamWrongOrderMessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+                   new DiagnosticDescriptor(DiagnosticId, Title, TypeParamWrongOrderMessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(MissingTypeParameterDescriptor);

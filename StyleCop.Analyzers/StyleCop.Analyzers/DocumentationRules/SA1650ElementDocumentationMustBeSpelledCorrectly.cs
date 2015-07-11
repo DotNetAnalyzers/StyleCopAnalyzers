@@ -56,12 +56,11 @@
         public const string DiagnosticId = "SA1650";
         private const string Title = "Element documentation must be spelled correctly";
         private const string MessageFormat = "TODO: Message format";
-        private const string Category = "StyleCop.CSharp.DocumentationRules";
         private const string Description = "The element documentation for the element contains one or more spelling mistakes or unrecognized words.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1650.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

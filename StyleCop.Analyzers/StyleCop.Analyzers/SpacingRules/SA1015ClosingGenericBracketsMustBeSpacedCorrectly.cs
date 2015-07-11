@@ -27,12 +27,11 @@
         public const string DiagnosticId = "SA1015";
         private const string Title = "Closing generic brackets must be spaced correctly";
         private const string MessageFormat = "Closing generic bracket must{0} be {1} by a space.";
-        private const string Category = "StyleCop.CSharp.SpacingRules";
         private const string Description = "A closing generic bracket within a C# element is not spaced correctly.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1015.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

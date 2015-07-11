@@ -42,12 +42,11 @@
         public const string DiagnosticId = "SA1212";
         private const string Title = "Property accessors must follow order";
         private const string MessageFormat = "A get accessor appears after a set accessor within a property or indexer.";
-        private const string Category = "StyleCop.CSharp.OrderingRules";
         private const string Description = "A get accessor appears after a set accessor within a property or indexer.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1212.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

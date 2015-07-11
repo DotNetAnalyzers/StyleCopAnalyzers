@@ -37,12 +37,11 @@
         public const string DiagnosticId = "SA1511";
         private const string Title = "While-do footer must not be preceded by blank line";
         private const string MessageFormat = "While-do footer must not be preceded by blank line";
-        private const string Category = "StyleCop.CSharp.LayoutRules";
         private const string Description = "The while footer at the bottom of a do-while statement is separated from the statement by a blank line.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1511.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

@@ -27,12 +27,11 @@
         public const string DiagnosticId = "SA1217";
         private const string Title = "Using static directives must be ordered alphabetically";
         private const string MessageFormat = "The using static directive for '{0}' must appear after the using static directive for '{1}'";
-        private const string Category = "StyleCop.CSharp.OrderingRules";
         private const string Description = "All using static directives must be ordered alphabetically.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1217.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

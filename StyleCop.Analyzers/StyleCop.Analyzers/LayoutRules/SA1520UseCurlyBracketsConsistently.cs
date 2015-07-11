@@ -39,12 +39,11 @@
         public const string DiagnosticId = "SA1520";
         private const string Title = "Use curly brackets consistently";
         private const string MessageFormat = "Use curly brackets consistently";
-        private const string Category = "StyleCop.CSharp.LayoutRules";
         private const string Description = "The opening and closing curly brackets of a chained if/else if/else construct were included for some clauses, but omitted for others.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1520.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

@@ -36,12 +36,11 @@
         public const string DiagnosticId = "SA1202";
         private const string Title = "Elements must be ordered by access";
         private const string MessageFormat = "TODO: Message format";
-        private const string Category = "StyleCop.CSharp.OrderingRules";
         private const string Description = "An element within a C# code file is out of order within regard to access level, in relation to other elements in the code.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1202.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

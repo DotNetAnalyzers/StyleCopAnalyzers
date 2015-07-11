@@ -38,12 +38,11 @@
         public const string DiagnosticId = "SA1645";
         private const string Title = "Included documentation file does not exist";
         private const string MessageFormat = "TODO: Message format";
-        private const string Category = "StyleCop.CSharp.DocumentationRules";
         private const string Description = "An included XML documentation file does not exist.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1645.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
