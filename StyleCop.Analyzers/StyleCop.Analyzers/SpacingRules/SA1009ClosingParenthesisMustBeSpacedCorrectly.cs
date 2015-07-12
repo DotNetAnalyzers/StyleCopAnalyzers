@@ -4,6 +4,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A closing parenthesis within a C# statement is not spaced correctly.
@@ -29,12 +30,11 @@
         public const string DiagnosticId = "SA1009";
         private const string Title = "Closing parenthesis must be spaced correctly";
         private const string MessageFormat = "Closing parenthesis must{0} be {1} by a space.";
-        private const string Category = "StyleCop.CSharp.SpacingRules";
         private const string Description = "A closing parenthesis within a C# statement is not spaced correctly.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1009.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -78,26 +78,12 @@
                 return;
             }
 
-            bool precededBySpace;
-
-            bool followedBySpace;
-            bool lastInLine;
+            bool precededBySpace = token.IsFirstInLine() || token.IsPrecededByWhitespace();
+            bool followedBySpace = token.IsFollowedByWhitespace();
+            bool lastInLine = token.IsLastInLine();
             bool precedesStickyCharacter;
             bool allowEndOfLine = false;
 
-            bool firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
-            if (firstInLine)
-            {
-                precededBySpace = true;
-            }
-            else
-            {
-                SyntaxToken precedingToken = token.GetPreviousToken();
-                precededBySpace = precedingToken.HasTrailingTrivia;
-            }
-
-            followedBySpace = token.HasTrailingTrivia;
-            lastInLine = followedBySpace && token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia);
             bool suppressFollowingSpaceError = false;
 
             SyntaxToken nextToken = token.GetNextToken();

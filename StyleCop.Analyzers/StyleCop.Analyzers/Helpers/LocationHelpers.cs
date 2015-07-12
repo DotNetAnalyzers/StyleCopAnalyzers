@@ -18,6 +18,16 @@
         }
 
         /// <summary>
+        /// Gets the end line of node.
+        /// </summary>
+        /// <param name="node">The node to use.</param>
+        /// <returns>The line on which the given node ends.</returns>
+        internal static int GetEndLine(this SyntaxNode node)
+        {
+            return node.GetLocation().GetLineSpan().EndLinePosition.Line;
+        }
+
+        /// <summary>
         /// Get a value indicating whether the given node span multiple source text lines.
         /// </summary>
         /// <param name="node">The node to check.</param>

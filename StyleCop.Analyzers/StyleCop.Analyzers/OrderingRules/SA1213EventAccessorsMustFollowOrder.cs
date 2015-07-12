@@ -42,12 +42,11 @@
         public const string DiagnosticId = "SA1213";
         private const string Title = "Event accessors must follow order";
         private const string MessageFormat = "Event accessors must follow order.";
-        private const string Category = "StyleCop.CSharp.OrderingRules";
         private const string Description = "An add accessor appears after a remove accessor within an event.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1213.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

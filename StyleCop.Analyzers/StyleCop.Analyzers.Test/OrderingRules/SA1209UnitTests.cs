@@ -1,4 +1,4 @@
-﻿namespace StyleCop.Analyzers.Test
+﻿namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Collections.Generic;
     using System.Threading;

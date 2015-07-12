@@ -64,12 +64,11 @@
         public const string DiagnosticId = "SA1514";
         private const string Title = "Element documentation header must be preceded by blank line";
         private const string MessageFormat = "Element documentation header must be preceded by blank line";
-        private const string Category = "StyleCop.CSharp.LayoutRules";
         private const string Description = "An element documentation header above a C# element is not preceded by a blank line.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1514.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

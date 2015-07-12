@@ -2,7 +2,6 @@
 {
     using System;
     using System.Linq;
-    using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CSharp;
@@ -21,24 +20,6 @@
         public static string GetTextBetweenTokens(this SourceText text, SyntaxToken token1, SyntaxToken token2)
         {
             return (token1.RawKind == 0) ? text.ToString(TextSpan.FromBounds(0, token2.SpanStart)) : text.ToString(TextSpan.FromBounds(token1.Span.End, token2.SpanStart));
-        }
-
-        public static bool IsFirstTokenOnLine(this SyntaxToken token, CancellationToken cancellationToken)
-        {
-            if (token.IsMissingOrDefault())
-            {
-                return false;
-            }
-
-            var previousToken = token.GetPreviousToken();
-            if (previousToken.IsKind(SyntaxKind.None))
-            {
-                // the first token in the file has to be the first on its line
-                return true;
-            }
-
-            string textBetweenTokens = token.SyntaxTree.GetText(cancellationToken).GetTextBetweenTokens(previousToken, token);
-            return textBetweenTokens.IndexOf('\n') >= 0;
         }
 
         public static SyntaxToken WithoutLeadingWhitespace(this SyntaxToken token, bool removeEndOfLineTrivia = false)

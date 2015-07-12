@@ -50,12 +50,11 @@
         public const string DiagnosticId = "SA1626";
         private const string Title = "Single-line comments must not use documentation style slashes";
         private const string MessageFormat = "Single-line comments must not use documentation style slashes";
-        private const string Category = "StyleCop.CSharp.DocumentationRules";
         private const string Description = "The C# code contains a single-line comment which begins with three forward slashes in a row.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1626.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

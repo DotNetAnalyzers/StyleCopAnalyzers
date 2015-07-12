@@ -5,6 +5,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// An opening curly bracket within a C# element is not spaced correctly.
@@ -29,12 +30,11 @@
         public const string DiagnosticId = "SA1012";
         private const string Title = "Opening curly brackets must be spaced correctly";
         private const string MessageFormat = "Opening curly bracket must{0} be {1} by a space.";
-        private const string Category = "StyleCop.CSharp.SpacingRules";
         private const string Description = "An opening curly bracket within a C# element is not spaced correctly.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1012.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -79,14 +79,13 @@
             }
 
             bool precededBySpace;
-            bool firstInLine;
+            bool firstInLine = token.IsFirstInLine();
             bool allowLeadingSpace;
             bool allowLeadingNoSpace;
 
-            bool followedBySpace;
-            bool lastInLine;
+            bool followedBySpace = token.IsFollowedByWhitespace();
+            bool lastInLine = token.IsLastInLine();
 
-            firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
             if (firstInLine)
             {
                 precededBySpace = true;
@@ -110,9 +109,6 @@
                     break;
                 }
             }
-
-            followedBySpace = token.HasTrailingTrivia;
-            lastInLine = followedBySpace && token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia);
 
             if (token.Parent is InterpolationSyntax)
             {

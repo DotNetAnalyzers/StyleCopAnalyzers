@@ -24,12 +24,11 @@
         public const string DiagnosticId = "SA1214";
         private const string Title = "Static readonly elements must appear before static non-readonly elements";
         private const string MessageFormat = "Static readonly elements must appear before static non-readonly elements.";
-        private const string Category = "StyleCop.CSharp.OrderingRules";
         private const string Description = "A static readonly element is positioned beneath a static non-readonly element of the same type.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1214.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

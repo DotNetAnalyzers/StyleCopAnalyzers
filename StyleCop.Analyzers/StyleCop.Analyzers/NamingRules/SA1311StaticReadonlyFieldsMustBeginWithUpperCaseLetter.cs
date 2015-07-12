@@ -23,12 +23,11 @@
         public const string DiagnosticId = "SA1311";
         private const string Title = "Static readonly fields must begin with upper-case letter";
         private const string MessageFormat = "Static readonly fields must begin with upper-case letter";
-        private const string Category = "StyleCop.CSharp.NamingRules";
         private const string Description = "The name of a static readonly field does not begin with an upper-case letter.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1311.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

@@ -19,8 +19,6 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA110xQueryClauses : DiagnosticAnalyzer
     {
-        private static readonly string Category = "StyleCop.CSharp.ReadabilityRules";
-
         private static readonly string SA1102Identifier = "SA1102";
         private static readonly LocalizableString SA1102Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1102Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString SA1102MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1102MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
@@ -50,28 +48,28 @@
         /// </summary>
         /// <value>The <see cref="DiagnosticDescriptor"/> for SA1102.</value>
         public static DiagnosticDescriptor SA1102Descriptor { get; } =
-            new DiagnosticDescriptor(SA1102Identifier, SA1102Title, SA1102MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1102Description, SA1102HelpLink);
+            new DiagnosticDescriptor(SA1102Identifier, SA1102Title, SA1102MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1102Description, SA1102HelpLink);
 
         /// <summary>
         /// Gets the diagnostic descriptor for SA1103.
         /// </summary>
         /// <value>The <see cref="DiagnosticDescriptor"/> for SA1103.</value>
         public static DiagnosticDescriptor SA1103Descriptor { get; } =
-            new DiagnosticDescriptor(SA1103Identifier, SA1103Title, SA1103MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1103Description, SA1103HelpLink);
+            new DiagnosticDescriptor(SA1103Identifier, SA1103Title, SA1103MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1103Description, SA1103HelpLink);
 
         /// <summary>
         /// Gets the diagnostic descriptor for SA1104.
         /// </summary>
         /// <value>The <see cref="DiagnosticDescriptor"/> for SA1104.</value>
         public static DiagnosticDescriptor SA1104Descriptor { get; } =
-            new DiagnosticDescriptor(SA1104Identifier, SA1104Title, SA1104MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1104Description, SA1104HelpLink);
+            new DiagnosticDescriptor(SA1104Identifier, SA1104Title, SA1104MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1104Description, SA1104HelpLink);
 
         /// <summary>
         /// Gets the diagnostic descriptor for SA1105.
         /// </summary>
         /// <value>The <see cref="DiagnosticDescriptor"/> for SA1105.</value>
         public static DiagnosticDescriptor SA1105Descriptor { get; } =
-            new DiagnosticDescriptor(SA1105Identifier, SA1105Title, SA1105MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1105Description, SA1105HelpLink);
+            new DiagnosticDescriptor(SA1105Identifier, SA1105Title, SA1105MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1105Description, SA1105HelpLink);
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =

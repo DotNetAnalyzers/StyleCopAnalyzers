@@ -43,12 +43,11 @@
         public const string DiagnosticId = "SA1115";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1115Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1115MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
-        private static readonly string Category = "StyleCop.CSharp.ReadabilityRules";
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1115Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1115.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -132,17 +131,18 @@
                 return;
             }
 
-            var previousLine = attributeList.Attributes[0].GetLocation().GetLineSpan().StartLinePosition.Line;
+            var previousLine = attributeList.Attributes[0].GetLocation().GetLineSpan().EndLinePosition.Line;
             for (int i = 1; i < attributeList.Attributes.Count; i++)
             {
                 var currentAttribute = attributeList.Attributes[i];
-                var currentLine = currentAttribute.GetLocation().GetLineSpan().StartLinePosition.Line;
+                var lineSpan = currentAttribute.GetLocation().GetLineSpan();
+                var currentLine = lineSpan.StartLinePosition.Line;
                 if (currentLine - previousLine > 1)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentAttribute.GetLocation()));
                 }
 
-                previousLine = currentLine;
+                previousLine = lineSpan.EndLinePosition.Line;
             }
         }
 
@@ -156,17 +156,18 @@
                 return;
             }
 
-            var previousLine = attribute.ArgumentList.Arguments[0].GetLocation().GetLineSpan().StartLinePosition.Line;
+            var previousLine = attribute.ArgumentList.Arguments[0].GetLocation().GetLineSpan().EndLinePosition.Line;
             for (int i = 1; i < attribute.ArgumentList.Arguments.Count; i++)
             {
                 var currentArgument = attribute.ArgumentList.Arguments[i];
-                var currentLine = currentArgument.GetLocation().GetLineSpan().StartLinePosition.Line;
+                var lineSpan = currentArgument.GetLocation().GetLineSpan();
+                var currentLine = lineSpan.StartLinePosition.Line;
                 if (currentLine - previousLine > 1)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentArgument.GetLocation()));
                 }
 
-                previousLine = currentLine;
+                previousLine = lineSpan.EndLinePosition.Line;
             }
         }
 
@@ -185,17 +186,18 @@
                     continue;
                 }
 
-                var previousLine = rankSpecifier.Sizes[0].GetLocation().GetLineSpan().StartLinePosition.Line;
+                var previousLine = rankSpecifier.Sizes[0].GetLocation().GetLineSpan().EndLinePosition.Line;
                 for (int i = 1; i < rankSpecifier.Sizes.Count; i++)
                 {
                     var currentSize = rankSpecifier.Sizes[i];
-                    var currentLine = currentSize.GetLocation().GetLineSpan().StartLinePosition.Line;
+                    var lineSpan = currentSize.GetLocation().GetLineSpan();
+                    var currentLine = lineSpan.StartLinePosition.Line;
                     if (currentLine - previousLine > 1)
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentSize.GetLocation()));
                     }
 
-                    previousLine = currentLine;
+                    previousLine = lineSpan.EndLinePosition.Line;
                 }
             }
         }
@@ -243,17 +245,18 @@
                 return;
             }
 
-            var previousLine = argumentListSyntax.Arguments[0].GetLocation().GetLineSpan().StartLinePosition.Line;
+            var previousLine = argumentListSyntax.Arguments[0].GetLocation().GetLineSpan().EndLinePosition.Line;
             for (int i = 1; i < argumentListSyntax.Arguments.Count; i++)
             {
                 var currentArgument = argumentListSyntax.Arguments[i];
-                var currentLine = currentArgument.GetLocation().GetLineSpan().StartLinePosition.Line;
+                var lineSpan = currentArgument.GetLocation().GetLineSpan();
+                var currentLine = lineSpan.StartLinePosition.Line;
                 if (currentLine - previousLine > 1)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentArgument.GetLocation()));
                 }
 
-                previousLine = currentLine;
+                previousLine = lineSpan.EndLinePosition.Line;
             }
         }
 
@@ -265,17 +268,18 @@
                 return;
             }
 
-            var previousLine = parameterListSyntax.Parameters[0].GetLocation().GetLineSpan().StartLinePosition.Line;
+            var previousLine = parameterListSyntax.Parameters[0].GetLocation().GetLineSpan().EndLinePosition.Line;
             for (int i = 1; i < parameterListSyntax.Parameters.Count; i++)
             {
                 var currentParameter = parameterListSyntax.Parameters[i];
-                var currentLine = currentParameter.GetLocation().GetLineSpan().StartLinePosition.Line;
+                var lineSpan = currentParameter.GetLocation().GetLineSpan();
+                var currentLine = lineSpan.StartLinePosition.Line;
                 if (currentLine - previousLine > 1)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentParameter.GetLocation()));
                 }
 
-                previousLine = currentLine;
+                previousLine = lineSpan.EndLinePosition.Line;
             }
         }
     }

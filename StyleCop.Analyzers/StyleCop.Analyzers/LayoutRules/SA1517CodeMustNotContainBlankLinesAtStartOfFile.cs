@@ -24,12 +24,11 @@
         public const string DiagnosticId = "SA1517";
         private const string Title = "Code must not contain blank lines at start of file";
         private const string MessageFormat = "Code must not contain blank lines at start of file";
-        private const string Category = "StyleCop.CSharp.LayoutRules";
         private const string Description = "The code file has blank lines at the start.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1517.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

@@ -87,7 +87,7 @@
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         private async Task VerifyDiagnosticsAsync(string[] sources, string language, ImmutableArray<DiagnosticAnalyzer> analyzers, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
-            var diagnostics = await GetSortedDiagnosticsAsync(sources, language, analyzers, cancellationToken).ConfigureAwait(false);
+            var diagnostics = await this.GetSortedDiagnosticsAsync(sources, language, analyzers, cancellationToken).ConfigureAwait(false);
             VerifyDiagnosticResults(diagnostics, analyzers, expected);
         }
 

@@ -30,12 +30,11 @@
         public const string DiagnosticId = "SA1210";
         private const string Title = "Using directives must be ordered alphabetically by namespace";
         private const string MessageFormat = "Using directives must be ordered alphabetically by the namespaces.";
-        private const string Category = "StyleCop.CSharp.OrderingRules";
         private const string Description = "The using directives within a C# code file are not sorted alphabetically by namespace.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1210.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

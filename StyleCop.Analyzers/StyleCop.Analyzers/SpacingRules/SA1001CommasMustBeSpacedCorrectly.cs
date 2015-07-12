@@ -4,6 +4,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The spacing around a comma is incorrect, within a C# code file.
@@ -23,12 +24,11 @@
         public const string DiagnosticId = "SA1001";
         private const string Title = "Commas must be spaced correctly";
         private const string MessageFormat = "Commas must{0} be {1} by a space.";
-        private const string Category = "StyleCop.CSharp.SpacingRules";
         private const string Description = "The spacing around a comma is incorrect, within a C# code file.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1001.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -96,13 +96,9 @@
             }
 
             bool hasPrecedingSpace = false;
-            if (!token.IsFirstTokenOnLine(context.CancellationToken))
+            if (!token.IsFirstInLine())
             {
-                SyntaxToken precedingToken = token.GetPreviousToken();
-                if (precedingToken.HasTrailingTrivia)
-                {
-                    hasPrecedingSpace = true;
-                }
+                hasPrecedingSpace = token.IsPrecededByWhitespace();
             }
 
             if (missingFollowingSpace)

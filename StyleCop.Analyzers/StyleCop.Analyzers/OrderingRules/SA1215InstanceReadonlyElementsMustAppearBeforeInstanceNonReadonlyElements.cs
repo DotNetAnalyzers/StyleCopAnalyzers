@@ -21,12 +21,11 @@
         public const string DiagnosticId = "SA1215";
         private const string Title = "Instance readonly elements must appear before instance non-readonly elements";
         private const string MessageFormat = "TODO: Message format";
-        private const string Category = "StyleCop.CSharp.OrderingRules";
         private const string Description = "An instance readonly element is positioned beneath an instance non-readonly element of the same type.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1215.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

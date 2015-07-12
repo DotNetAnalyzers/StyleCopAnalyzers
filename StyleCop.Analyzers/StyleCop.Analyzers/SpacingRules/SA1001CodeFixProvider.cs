@@ -9,6 +9,7 @@
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1001CommasMustBeSpacedCorrectly"/>.
@@ -81,8 +82,7 @@
                 }
             }
 
-            bool firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
-            if (!firstInLine)
+            if (!token.IsFirstInLine())
             {
                 SyntaxToken precedingToken = token.GetPreviousToken();
                 if (precedingToken.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))

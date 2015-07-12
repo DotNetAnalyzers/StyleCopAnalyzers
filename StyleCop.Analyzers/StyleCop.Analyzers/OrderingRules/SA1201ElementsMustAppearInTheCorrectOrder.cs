@@ -108,12 +108,11 @@
         public const string DiagnosticId = "SA1201";
         private const string Title = "Elements must appear in the correct order";
         private const string MessageFormat = "A {0} should not follow a {1}.";
-        private const string Category = "StyleCop.CSharp.OrderingRules";
         private const string Description = "An element within a C# code file is out of order in relation to the other elements in the code.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1201.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

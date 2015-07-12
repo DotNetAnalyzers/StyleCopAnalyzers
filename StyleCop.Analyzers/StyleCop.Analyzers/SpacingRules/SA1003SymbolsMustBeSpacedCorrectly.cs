@@ -9,7 +9,6 @@
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
 
-
     /// <summary>
     /// The spacing around an operator symbol is incorrect, within a C# code file.
     /// </summary>
@@ -48,14 +47,12 @@
         /// </summary>
         public const string DiagnosticId = "SA1003";
         private const string Title = "Symbols must be spaced correctly";
-        private const string MessageFormat = "Operator '{0}' must {1}.";
         private const string MessageFormatNotFollowedByComment = "Operator '{0}' must not be followed by a comment.";
         private const string MessageFormatPrecededByWhitespace = "Operator '{0}' must be preceded by whitespace.";
         private const string MessageFormatNotPrecededByWhitespace = "Operator '{0}' must not be preceded by whitespace.";
         private const string MessageFormatFollowedByWhitespace = "Operator '{0}' must be followed by whitespace.";
         private const string MessageFormatNotFollowedByWhitespace = "Operator '{0}' must not be followed by whitespace.";
         private const string MessageFormatNotAtEndOfLine = "Operator '{0}' must not appear at the end of a line.";
-        private const string Category = "StyleCop.CSharp.SpacingRules";
         private const string Description = "The spacing around an operator symbol is incorrect, within a C# code file.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1003.html";
 
@@ -73,7 +70,7 @@
         /// A diagnostic descriptor.
         /// </value>
         public static DiagnosticDescriptor DescriptorNotFollowedByComment { get; } =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatNotFollowedByComment, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatNotFollowedByComment, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         /// <summary>
         /// Gets the descriptor indicating that an operator must be preceded by whitespace.
@@ -82,7 +79,7 @@
         /// A diagnostic descriptor.
         /// </value>
         public static DiagnosticDescriptor DescriptorPrecededByWhitespace { get; } =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatPrecededByWhitespace, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatPrecededByWhitespace, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         /// <summary>
         /// Gets the descriptor indicating that an operator must be preceded by whitespace.
@@ -91,7 +88,7 @@
         /// A diagnostic descriptor.
         /// </value>
         public static DiagnosticDescriptor DescriptorNotPrecededByWhitespace { get; } =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatNotPrecededByWhitespace, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatNotPrecededByWhitespace, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         /// <summary>
         /// Gets the descriptor indicating that an operator must be followed by whitespace.
@@ -100,7 +97,7 @@
         /// A diagnostic descriptor.
         /// </value>
         public static DiagnosticDescriptor DescriptorFollowedByWhitespace { get; } =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatFollowedByWhitespace, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatFollowedByWhitespace, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         /// <summary>
         /// Gets the descriptor indicating that an operator must be preceded by whitespace.
@@ -109,7 +106,7 @@
         /// A diagnostic descriptor.
         /// </value>
         public static DiagnosticDescriptor DescriptorNotFollowedByWhitespace { get; } =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatNotFollowedByWhitespace, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatNotFollowedByWhitespace, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         /// <summary>
         /// Gets the descriptor indicating that an operator must be appear at the end of a text line.
@@ -118,7 +115,7 @@
         /// A diagnostic descriptor.
         /// </value>
         public static DiagnosticDescriptor DescriptorNotAtEndOfLine { get; } =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatNotAtEndOfLine, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatNotAtEndOfLine, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =

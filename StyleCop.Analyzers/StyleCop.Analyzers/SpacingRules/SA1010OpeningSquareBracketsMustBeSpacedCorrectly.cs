@@ -4,6 +4,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// An opening square bracket within a C# statement is not spaced correctly.
@@ -25,13 +26,12 @@
         /// </summary>
         public const string DiagnosticId = "SA1010";
         private const string Title = "Opening square brackets must be spaced correctly";
-        private const string MessageFormat = "Opening square brackets must not be {0} by a space.";
-        private const string Category = "StyleCop.CSharp.SpacingRules";
+        private const string MessageFormat = "Opening square brackets must {0} by a space.";
         private const string Description = "An opening square bracket within a C# statement is not spaced correctly.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1010.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -48,70 +48,56 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
         }
 
-        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
             {
-                switch (token.Kind())
+                if (token.IsKind(SyntaxKind.OpenBracketToken) && !token.IsMissing)
                 {
-                case SyntaxKind.OpenBracketToken:
-                    this.HandleOpenBracketToken(context, token);
-                    break;
-
-                default:
-                    break;
+                    // attribute brackets are handled separately
+                    if (!token.Parent.IsKind(SyntaxKind.AttributeList))
+                    {
+                        HandleOpenBracketToken(context, token);
+                    }
                 }
             }
         }
 
-        private void HandleOpenBracketToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private static void HandleOpenBracketToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
-            if (token.IsMissing)
-            {
-                return;
-            }
-
-            // attribute brackets are handled separately
-            if (token.Parent.IsKind(SyntaxKind.AttributeList))
-            {
-                return;
-            }
-
-            bool precededBySpace;
-            bool firstInLine;
+            bool firstInLine = token.IsFirstInLine();
+            bool precededBySpace = true;
             bool ignorePrecedingSpaceProblem = false;
 
-            firstInLine = token.HasLeadingTrivia || token.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0;
-            if (firstInLine)
+            if (!firstInLine)
             {
-                precededBySpace = true;
-            }
-            else
-            {
-                SyntaxToken precedingToken = token.GetPreviousToken();
-                precededBySpace = precedingToken.HasTrailingTrivia;
+                precededBySpace = token.IsPrecededByWhitespace();
 
                 // ignore if handled by SA1026
-                ignorePrecedingSpaceProblem = precededBySpace && precedingToken.IsKind(SyntaxKind.NewKeyword);
+                ignorePrecedingSpaceProblem = precededBySpace && token.GetPreviousToken().IsKind(SyntaxKind.NewKeyword);
             }
 
-            bool followedBySpace = token.HasTrailingTrivia;
-            bool lastInLine = followedBySpace && token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia);
+            bool followedBySpace = token.IsFollowedByWhitespace();
+            bool lastInLine = token.IsLastInLine();
 
-            if (!firstInLine && precededBySpace && !ignorePrecedingSpaceProblem)
+            if (!firstInLine && precededBySpace && !ignorePrecedingSpaceProblem && !lastInLine && followedBySpace)
             {
-                // Opening square bracket must not be {preceded} by a space.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), "preceded"));
+                // Opening square bracket must {neither preceded nor followed} by a space.
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), "neither preceded nor followed"));
             }
-
-            if (!lastInLine && followedBySpace)
+            else if (!firstInLine && precededBySpace && !ignorePrecedingSpaceProblem)
             {
-                // Opening square bracket must not be {followed} by a space.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), "followed"));
+                // Opening square bracket must {not be preceded} by a space.
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), "not be preceded"));
+            }
+            else if (!lastInLine && followedBySpace)
+            {
+                // Opening square bracket must {not be followed} by a space.
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), "not be followed"));
             }
         }
     }

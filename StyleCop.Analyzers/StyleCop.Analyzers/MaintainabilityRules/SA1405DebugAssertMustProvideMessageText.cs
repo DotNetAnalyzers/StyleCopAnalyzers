@@ -27,12 +27,11 @@
         public const string DiagnosticId = "SA1405";
         private const string Title = "Debug.Assert must provide message text";
         private const string MessageFormat = "Debug.Assert must provide message text";
-        private const string Category = "StyleCop.CSharp.MaintainabilityRules";
         private const string Description = "A call to Debug.Assert in C# code does not include a descriptive message.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1405.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

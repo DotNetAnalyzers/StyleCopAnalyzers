@@ -258,6 +258,7 @@
     <Compile Include="ReadabilityRules\SA1104UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1105UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1106UnitTests.cs" />
+    <Compile Include="ReadabilityRules\SA1107UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1108UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1110UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1111UnitTests.cs" />
@@ -266,6 +267,7 @@
     <Compile Include="ReadabilityRules\SA1114UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1115UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1118UnitTests.cs" />
+    <Compile Include="ReadabilityRules\SA1120UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1121UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1122UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1123UnitTests.cs" />
@@ -280,6 +282,7 @@
     <Compile Include="SpacingRules\SA1006UnitTests.cs" />
     <Compile Include="SpacingRules\SA1007UnitTests.cs" />
     <Compile Include="SpacingRules\SA1008UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1010UnitTests.cs" />
     <Compile Include="SpacingRules\SA1018UnitTests.cs" />
     <Compile Include="SpacingRules\SA1021UnitTests.cs" />
     <Compile Include="SpacingRules\SA1022UnitTests.cs" />

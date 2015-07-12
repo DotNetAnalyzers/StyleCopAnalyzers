@@ -154,12 +154,11 @@
         public const string DiagnosticId = "SA1200";
         private const string Title = "Using directives must be placed within namespace";
         private const string MessageFormat = "Using directive must appear within a namespace declaration";
-        private const string Category = "StyleCop.CSharp.OrderingRules";
         private const string Description = "A C# using directive is placed outside of a namespace element.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1200.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

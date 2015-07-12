@@ -44,6 +44,7 @@
     <AssemblyOriginatorKeyFile Condition="'$(KeyConfiguration)' != 'Final'">..\..\build\keys\StyleCopAnalyzers.dev.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AnalyzerCategory.cs" />
     <Compile Include="AnalyzerConstants.cs" />
     <Compile Include="AnalyzerExtensions.cs" />
     <Compile Include="DocumentationRules\DocumentationResources.Designer.cs">
@@ -113,6 +114,7 @@
     <Compile Include="DocumentationRules\SA1651DoNotUsePlaceholderElements.cs" />
     <Compile Include="DocumentationRules\StandardTextDiagnosticBase.cs" />
     <Compile Include="GeneratedCodeAnalysisExtensions.cs" />
+    <Compile Include="Helpers\DeclarationModifiersHelper.cs" />
     <Compile Include="Helpers\DiagnosticOptionsHelper.cs" />
     <Compile Include="Helpers\DocumentationCommentExtensions.cs" />
     <Compile Include="Helpers\EnumerableHelpers.cs" />
@@ -125,6 +127,7 @@
     <Compile Include="Helpers\NameSyntaxHelpers.cs" />
     <Compile Include="Helpers\RenameHelper.cs" />
     <Compile Include="Helpers\SpecializedTasks.cs" />
+    <Compile Include="Helpers\TokenHelpers.cs" />
     <Compile Include="Helpers\TriviaHelper.cs" />
     <Compile Include="Helpers\UsingDirectiveSyntaxHelpers.cs" />
     <Compile Include="Helpers\XmlCommentHelper.cs" />
@@ -265,6 +268,7 @@
     <Compile Include="ReadabilityRules\SA1104SA1105CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1106CodeMustNotContainEmptyStatements.cs" />
     <Compile Include="ReadabilityRules\SA1107CodeMustNotContainMultipleStatementsOnOneLine.cs" />
+    <Compile Include="ReadabilityRules\SA1107FixAllProvider.cs" />
     <Compile Include="ReadabilityRules\SA1108BlockStatementsMustNotContainEmbeddedComments.cs" />
     <Compile Include="ReadabilityRules\SA1109BlockStatementsMustNotContainEmbeddedRegions.cs" />
     <Compile Include="ReadabilityRules\SA110xQueryClauses.cs" />
@@ -280,6 +284,7 @@
     <Compile Include="ReadabilityRules\SA1120CommentsMustContainText.cs" />
     <Compile Include="ReadabilityRules\SA1121CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1121UseBuiltInTypeAlias.cs" />
+    <Compile Include="ReadabilityRules\SA1107CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1122CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1122UseStringEmptyForEmptyStrings.cs" />
     <Compile Include="ReadabilityRules\SA1123DoNotPlaceRegionsWithinElements.cs" />
