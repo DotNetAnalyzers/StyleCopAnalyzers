@@ -11,6 +11,7 @@
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1018NullableTypeSymbolsMustNotBePrecededBySpace"/>.
@@ -93,7 +94,7 @@
                 [questionToken] = questionToken.WithLeadingTrivia()
             };
 
-            var newSyntaxRoot = syntaxRoot.ReplaceTokens(replaceMap.Keys, (t1, t2) => replaceMap[t1]);
+            var newSyntaxRoot = syntaxRoot.ReplaceTokens(replaceMap.Keys, replaceMap.GetReplacementToken);
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
     }

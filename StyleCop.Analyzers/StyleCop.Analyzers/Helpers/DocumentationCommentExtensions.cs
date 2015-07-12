@@ -241,7 +241,7 @@
                 replacements[pair.Value] = pair.Value.WithLeadingTrivia(pair.Value.LeadingTrivia.InsertRange(0, pair.Key.TrailingTrivia));
             }
 
-            return node.ReplaceTokens(replacements.Keys, (originalToken, rewrittenToken) => replacements[originalToken]);
+            return node.ReplaceTokens(replacements.Keys, replacements.GetReplacementToken);
         }
     }
 }
