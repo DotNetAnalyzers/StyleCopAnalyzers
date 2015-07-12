@@ -62,6 +62,7 @@
         internal const string InsertAfterTag = "InsertAfter";
         internal const string RemoveAfterTag = "RemoveAfter";
         internal const string RemoveEndOfLineTag = "RemoveEndOfLine";
+        internal const string RemoveEndOfLineWithTrailingSpaceTag = "RemoveEndOfLineWithTrailingSpace";
 
         /// <summary>
         /// Gets the descriptor for prefix unary expression that may not be followed by a comment.
@@ -300,7 +301,7 @@
                 // Do not register a codefix action if there are non whitespace or end of line tokens present.
                 if (followingTriviaList.All(t => t.IsKind(SyntaxKind.WhitespaceTrivia) || t.IsKind(SyntaxKind.EndOfLineTrivia)))
                 {
-                    properties = properties.Add(CodeFixAction, RemoveEndOfLineTag);
+                    properties = properties.Add(CodeFixAction, withTrailingWhitespace ? RemoveEndOfLineWithTrailingSpaceTag : RemoveEndOfLineTag);
                 }
 
                 context.ReportDiagnostic(Diagnostic.Create(DescriptorNotAtEndOfLine, token.GetLocation(), properties, tokenText ?? token.Text));
