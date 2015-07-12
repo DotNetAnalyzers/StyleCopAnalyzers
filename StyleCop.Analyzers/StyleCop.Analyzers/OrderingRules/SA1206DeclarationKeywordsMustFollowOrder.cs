@@ -34,12 +34,11 @@
         public const string DiagnosticId = "SA1206";
         private const string Title = "Declaration keywords must follow order";
         private const string MessageFormat = "The {0} keyword must come before the '{1}' keyword in the element declaration.";
-        private const string Category = "StyleCop.CSharp.OrderingRules";
         private const string Description = "The keywords within the declaration of an element do not follow a standard ordering scheme.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1206.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

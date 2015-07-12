@@ -46,12 +46,11 @@
         public const string DiagnosticId = "SA1003";
         private const string Title = "Symbols must be spaced correctly";
         private const string MessageFormat = "Operator '{0}' must {1}.";
-        private const string Category = "StyleCop.CSharp.SpacingRules";
         private const string Description = "The spacing around an operator symbol is incorrect, within a C# code file.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1003.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

@@ -40,12 +40,11 @@
         public const string DiagnosticId = "SA1502";
         private const string Title = "Element must not be on a single line";
         private const string MessageFormat = "Element must not be on a single line";
-        private const string Category = "StyleCop.CSharp.LayoutRules";
         private const string Description = "A C# element containing opening and closing curly brackets is written completely on a single line.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1502.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

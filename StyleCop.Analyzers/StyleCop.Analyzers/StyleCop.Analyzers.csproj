@@ -44,6 +44,7 @@
     <AssemblyOriginatorKeyFile Condition="'$(KeyConfiguration)' != 'Final'">..\..\build\keys\StyleCopAnalyzers.dev.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AnalyzerCategory.cs" />
     <Compile Include="AnalyzerConstants.cs" />
     <Compile Include="AnalyzerExtensions.cs" />
     <Compile Include="DocumentationRules\DocumentationResources.Designer.cs">

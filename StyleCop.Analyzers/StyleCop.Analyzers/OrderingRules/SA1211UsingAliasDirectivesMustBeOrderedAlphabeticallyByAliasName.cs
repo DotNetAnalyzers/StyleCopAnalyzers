@@ -25,12 +25,11 @@
         public const string DiagnosticId = "SA1211";
         private const string Title = "Using alias directives must be ordered alphabetically by alias name";
         private const string MessageFormat = "Using alias directive for '{0}' must appear before using alias directive for '{1}'";
-        private const string Category = "StyleCop.CSharp.OrderingRules";
         private const string Description = "The using-alias directives within a C# code file are not sorted alphabetically by alias name.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1211.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

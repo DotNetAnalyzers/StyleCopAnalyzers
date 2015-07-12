@@ -33,12 +33,11 @@
         public const string DiagnosticId = "SA1411";
         private const string Title = "Attribute constructor must not use unnecessary parenthesis";
         private const string MessageFormat = "Attribute constructor must not use unnecessary parenthesis";
-        private const string Category = "StyleCop.CSharp.MaintainabilityRules";
         private const string Description = "TODO.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1411.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

@@ -44,12 +44,11 @@
         public const string DiagnosticId = "SA1638";
         private const string Title = "File header file name documentation must match file name";
         private const string MessageFormat = "File header file name documentation must match file name";
-        private const string Category = "StyleCop.CSharp.DocumentationRules";
         private const string Description = "The file attribute within copyright tag of the file header at the top of a C# code file does not contain the name of the file.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1638.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

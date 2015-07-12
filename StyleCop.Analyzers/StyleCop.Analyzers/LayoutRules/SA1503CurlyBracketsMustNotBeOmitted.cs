@@ -58,12 +58,11 @@
         public const string DiagnosticId = "SA1503";
         private const string Title = "Curly brackets must not be omitted";
         private const string MessageFormat = "Curly brackets must not be omitted";
-        private const string Category = "StyleCop.CSharp.LayoutRules";
         private const string Description = "The opening and closing curly brackets for a C# statement have been omitted.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1503.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

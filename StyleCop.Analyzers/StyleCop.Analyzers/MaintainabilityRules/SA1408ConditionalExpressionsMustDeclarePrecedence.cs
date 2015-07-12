@@ -56,12 +56,11 @@
         public const string DiagnosticId = "SA1408";
         private const string Title = "Conditional expressions must declare precedence";
         private const string MessageFormat = "Conditional expressions must declare precedence";
-        private const string Category = "StyleCop.CSharp.MaintainabilityRules";
         private const string Description = "A C# statement contains a complex conditional expression which omits parenthesis around operators.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1408.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

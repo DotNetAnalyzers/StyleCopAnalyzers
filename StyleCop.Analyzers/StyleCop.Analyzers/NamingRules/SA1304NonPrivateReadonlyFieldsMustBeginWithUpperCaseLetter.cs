@@ -31,14 +31,13 @@
         public const string DiagnosticId = "SA1304";
         private const string Title = "Non-private readonly fields must begin with upper-case letter";
         private const string MessageFormat = "Non-private readonly fields must begin with upper-case letter";
-        private const string Category = "StyleCop.CSharp.NamingRules";
 
         private const string Description = "The name of a non-private readonly C# field must being with an upper-case letter.";
 
         private const string HelpLink = "http://www.stylecop.com/docs/SA1304.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning,
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning,
                 AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =

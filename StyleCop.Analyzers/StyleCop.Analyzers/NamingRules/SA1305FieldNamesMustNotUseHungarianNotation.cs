@@ -46,12 +46,11 @@
         public const string DiagnosticId = "SA1305";
         private const string Title = "Field names must not use Hungarian notation";
         private const string MessageFormat = "TODO: Message format";
-        private const string Category = "StyleCop.CSharp.NamingRules";
         private const string Description = "The name of a field or variable in C# uses Hungarian notation.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1305.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

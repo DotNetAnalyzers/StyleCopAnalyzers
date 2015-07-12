@@ -22,12 +22,11 @@
         public const string DiagnosticId = "SA1204";
         private const string Title = "Static elements must appear before instance elements";
         private const string MessageFormat = "TODO: Message format";
-        private const string Category = "StyleCop.CSharp.OrderingRules";
         private const string Description = "A static element is positioned beneath an instance element of the same type.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1204.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

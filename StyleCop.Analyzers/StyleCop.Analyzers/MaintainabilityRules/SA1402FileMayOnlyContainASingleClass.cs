@@ -29,12 +29,11 @@
         public const string DiagnosticId = "SA1402";
         private const string Title = "File may only contain a single class";
         private const string MessageFormat = "File may only contain a single class";
-        private const string Category = "StyleCop.CSharp.MaintainabilityRules";
         private const string Description = "A C# code file contains more than one unique class.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1402.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

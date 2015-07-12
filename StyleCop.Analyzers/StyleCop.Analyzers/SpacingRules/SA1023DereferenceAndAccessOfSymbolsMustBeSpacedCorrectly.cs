@@ -43,12 +43,11 @@
         public const string DiagnosticId = "SA1023";
         private const string Title = "Dereference and access of symbols must be spaced correctly";
         private const string MessageFormat = "Dereference symbol '*' must {0}.";
-        private const string Category = "StyleCop.CSharp.SpacingRules";
         private const string Description = "A dereference symbol or an access-of symbol within a C# element is not spaced correctly.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1023.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
