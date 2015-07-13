@@ -47,6 +47,7 @@
         [InlineData("\n")]
         [InlineData("\r\n")]
         [InlineData(" \t \r\n")]
+        [InlineData(" \t \r\n\t ")]
         public async Task TestInvalidSpacingOfImplicitlyTypedArrayAsync(string space)
         {
             string testCode = string.Format("public class Foo {{ public Foo() {{ var ints = new{0}[] {{ 1, 2, 3 }}; }} }}", space);
