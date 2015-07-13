@@ -55,17 +55,29 @@
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             SyntaxNode node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
-            TypeDeclarationSyntax typeDeclarationSyntax = node as TypeDeclarationSyntax;
-            if (typeDeclarationSyntax == null)
+            BaseTypeDeclarationSyntax baseTypeDeclarationSyntax = node as BaseTypeDeclarationSyntax;
+            DelegateDeclarationSyntax delegateDeclarationSyntax = node as DelegateDeclarationSyntax;
+            if (baseTypeDeclarationSyntax == null && delegateDeclarationSyntax == null)
             {
                 return document.Project.Solution;
             }
 
             DocumentId extractedDocumentId = DocumentId.CreateNewId(document.Project.Id);
-            string extractedDocumentName = typeDeclarationSyntax.Identifier.ValueText;
-            if (typeDeclarationSyntax.TypeParameterList?.Parameters.Count > 0)
+            string extractedDocumentName = baseTypeDeclarationSyntax.Identifier.ValueText;
+            if (baseTypeDeclarationSyntax != null)
             {
-                extractedDocumentName += "`" + typeDeclarationSyntax.TypeParameterList.Parameters.Count;
+                TypeDeclarationSyntax typeDeclarationSyntax = baseTypeDeclarationSyntax as TypeDeclarationSyntax;
+                if (typeDeclarationSyntax?.TypeParameterList?.Parameters.Count > 0)
+                {
+                    extractedDocumentName += "`" + typeDeclarationSyntax.TypeParameterList.Parameters.Count;
+                }
+            }
+            else
+            {
+                if (delegateDeclarationSyntax.TypeParameterList?.Parameters.Count > 0)
+                {
+                    extractedDocumentName += "`" + delegateDeclarationSyntax.TypeParameterList.Parameters.Count;
+                }
             }
 
             extractedDocumentName += ".cs";
@@ -109,8 +121,8 @@
                 updatedSolution = updatedSolution.AddDocument(linkedExtractedDocumentId, extractedDocumentName, extractedDocumentNode, document.Folders);
             }
 
-            // Remove the class from its original location
-            updatedSolution = updatedSolution.WithDocumentSyntaxRoot(document.Id, root.RemoveNode(typeDeclarationSyntax, SyntaxRemoveOptions.KeepUnbalancedDirectives));
+            // Remove the type from its original location
+            updatedSolution = updatedSolution.WithDocumentSyntaxRoot(document.Id, root.RemoveNode(node, SyntaxRemoveOptions.KeepUnbalancedDirectives));
 
             return updatedSolution;
         }
