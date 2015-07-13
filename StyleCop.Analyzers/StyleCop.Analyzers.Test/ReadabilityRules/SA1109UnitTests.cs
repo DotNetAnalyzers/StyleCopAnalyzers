@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.ReadabilityRules;
@@ -395,6 +396,17 @@
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new SA1109CodeFixProvider();
+        }
+
+        /// <inheritdoc/>
+        protected override Solution CreateSolution(ProjectId projectId, string language)
+        {
+            var solution = base.CreateSolution(projectId, language);
+
+            var compilationOptions = solution.GetProject(projectId).CompilationOptions;
+            var newCompilationOptions = compilationOptions.WithSpecificDiagnosticOptions(compilationOptions.SpecificDiagnosticOptions.Add(SA1123DoNotPlaceRegionsWithinElements.DiagnosticId, ReportDiagnostic.Suppress));
+
+            return solution.WithProjectCompilationOptions(projectId, newCompilationOptions);
         }
     }
 }

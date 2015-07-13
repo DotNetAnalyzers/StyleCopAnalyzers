@@ -55,7 +55,7 @@
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            ////if (context.IsAnalyzerSuppressed(SA1123DoNotPlaceRegionsWithinElements.DiagnosticId))
+            if (context.IsAnalyzerSuppressed(SA1123DoNotPlaceRegionsWithinElements.DiagnosticId))
             {
                 context.RegisterSyntaxNodeActionHonorExclusions(HandleBlock, SyntaxKind.Block);
                 context.RegisterSyntaxNodeActionHonorExclusions(HandleSwitchStatement, SyntaxKind.SwitchStatement);
