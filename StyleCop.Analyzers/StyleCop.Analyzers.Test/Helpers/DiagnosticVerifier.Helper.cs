@@ -81,7 +81,7 @@
             foreach (var project in projects)
             {
                 // update the project compilation options
-                var modifiedSpecificDiagnosticOptions = project.CompilationOptions.SpecificDiagnosticOptions.SetItems(supportedDiagnosticsSpecificOptions);
+                var modifiedSpecificDiagnosticOptions = supportedDiagnosticsSpecificOptions.ToImmutableDictionary().SetItems(project.CompilationOptions.SpecificDiagnosticOptions);
                 var modifiedCompilationOptions = project.CompilationOptions.WithSpecificDiagnosticOptions(modifiedSpecificDiagnosticOptions);
                 var processedProject = project.WithCompilationOptions(modifiedCompilationOptions);
 

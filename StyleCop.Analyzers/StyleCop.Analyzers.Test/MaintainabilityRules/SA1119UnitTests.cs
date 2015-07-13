@@ -1,9 +1,11 @@
 ﻿namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using System.Threading;
     using System.Threading.Tasks;
     using Analyzers.MaintainabilityRules;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using TestHelper;
@@ -13,6 +15,8 @@
     {
         private const string DiagnosticId = SA1119StatementMustNotUseUnnecessaryParenthesis.DiagnosticId;
         private const string ParenthesesDiagnosticId = SA1119StatementMustNotUseUnnecessaryParenthesis.ParenthesesDiagnosticId;
+
+        private bool mainDiagnosticShouldBeDisabled = false;
 
         [Fact]
         public async Task TestEmptySourceAsync()
@@ -1077,6 +1081,22 @@ public class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestParenthesisDiagnosticIsNotTriggeredIfParentDiagnosticIsDisabledAsync()
+        {
+            this.mainDiagnosticShouldBeDisabled = true;
+
+            string testCode = @"class Foo
+{
+    public void Bar()
+    {
+        int i = (1 + 1);
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1119StatementMustNotUseUnnecessaryParenthesis();
@@ -1085,6 +1105,26 @@ public class Foo
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new SA1119CodeFixProvider();
+        }
+
+        protected override Solution CreateSolution(ProjectId projectId, string language)
+        {
+            Solution solution = base.CreateSolution(projectId, language);
+
+            if (this.mainDiagnosticShouldBeDisabled)
+            {
+                Project project = solution.GetProject(projectId);
+
+                CompilationOptions options = project.CompilationOptions;
+
+                ImmutableDictionary<string, ReportDiagnostic> specificOptions = options.SpecificDiagnosticOptions;
+
+                options = options.WithSpecificDiagnosticOptions(specificOptions.Add(DiagnosticId, ReportDiagnostic.Suppress));
+
+                solution = solution.WithProjectCompilationOptions(projectId, options);
+            }
+
+            return solution;
         }
     }
 }
