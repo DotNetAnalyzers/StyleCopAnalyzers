@@ -624,6 +624,77 @@ public class Foo : Exception
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that a simple for statement will not trigger any diagnostics.
+        /// </summary>
+        /// <remarks>This is a regression for issue #955.</remarks>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestForStatementAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    public void TestMethod()
+    {
+        var j = 100;
+        var k = 0;
+        for (var i = 0; i < 99; k++, i++)
+        {
+            j--;
+        }
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a type cast inside an interpolation statement will not trigger any diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestInterpolationTypeCastAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    public string TestMethod(int i)
+    {
+        return $""Test value 1: {(byte)i:X2}\r\n""
+            + $""Test value 2: {++i}\r\n""
+            + $""Test value 3: {i++}\r\n"";
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that prefix unary expression that are the first token on a source line will not trigger any diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestFirstOnLineUnaryPrefixExpressionsAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    public void TestMethod1(byte b, int i)
+    {
+    }
+
+    public void TestMethod2(int i)
+    {
+        TestMethod1(
+            (byte)i,
+            ++i);
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {

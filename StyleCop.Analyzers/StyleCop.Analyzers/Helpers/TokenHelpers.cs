@@ -48,6 +48,37 @@
         }
 
         /// <summary>
+        /// Gets a value indicating whether the <paramref name="token"/> is the first token in a line and it is only preceded by whitespace.
+        /// </summary>
+        /// <param name="token">The token to process.</param>
+        /// <returns>true if the token is the first token in a line and it is only preceded by whitespace.</returns>
+        internal static bool IsOnlyPrecededByWhitespaceInLine(this SyntaxToken token)
+        {
+            SyntaxToken precedingToken = token.GetPreviousToken();
+
+            if (!precedingToken.IsKind(SyntaxKind.None) && (precedingToken.GetLine() == token.GetLine()))
+            {
+                return false;
+            }
+
+            var precedingTriviaList = precedingToken.TrailingTrivia.AddRange(token.LeadingTrivia);
+            for (var i = precedingTriviaList.Count - 1; i >= 0; i--)
+            {
+                switch (precedingTriviaList[i].Kind())
+                {
+                    case SyntaxKind.WhitespaceTrivia:
+                        break;
+                    case SyntaxKind.EndOfLineTrivia:
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// Gets a value indicating whether the <paramref name="token"/> is followed by a whitespace.
         /// </summary>
         /// <param name="token">The token to process.</param>

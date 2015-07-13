@@ -129,7 +129,7 @@
             context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeParameterConstraint, SyntaxKind.TypeParameterConstraintClause);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleBinaryExpression, SyntaxKind.CoalesceExpression, SyntaxKind.IsExpression, SyntaxKind.AsExpression, SyntaxKind.BitwiseOrExpression, SyntaxKind.ExclusiveOrExpression, SyntaxKind.BitwiseAndExpression, SyntaxKind.EqualsExpression, SyntaxKind.NotEqualsExpression, SyntaxKind.LessThanExpression, SyntaxKind.LessThanOrEqualExpression, SyntaxKind.GreaterThanExpression, SyntaxKind.GreaterThanOrEqualExpression, SyntaxKind.LeftShiftExpression, SyntaxKind.RightShiftExpression, SyntaxKind.AddExpression, SyntaxKind.SubtractExpression, SyntaxKind.MultiplyExpression, SyntaxKind.DivideExpression, SyntaxKind.ModuloExpression, SyntaxKind.LogicalAndExpression, SyntaxKind.LogicalOrExpression);
             context.RegisterSyntaxNodeActionHonorExclusions(HandlePrefixUnaryExpression, SyntaxKind.UnaryPlusExpression, SyntaxKind.UnaryMinusExpression, SyntaxKind.BitwiseNotExpression, SyntaxKind.LogicalNotExpression, SyntaxKind.PreIncrementExpression, SyntaxKind.PreDecrementExpression, SyntaxKind.AddressOfExpression, SyntaxKind.PointerIndirectionExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandlePostfixUnaryExpression, SyntaxKind.PostIncrementExpression, SyntaxKind.PostIncrementExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandlePostfixUnaryExpression, SyntaxKind.PostIncrementExpression, SyntaxKind.PostDecrementExpression);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleAssignmentExpression, SyntaxKind.OrAssignmentExpression, SyntaxKind.AndAssignmentExpression, SyntaxKind.ExclusiveOrAssignmentExpression, SyntaxKind.LeftShiftAssignmentExpression, SyntaxKind.RightShiftAssignmentExpression, SyntaxKind.AddAssignmentExpression, SyntaxKind.SubtractAssignmentExpression, SyntaxKind.MultiplyAssignmentExpression, SyntaxKind.DivideAssignmentExpression, SyntaxKind.ModuloAssignmentExpression, SyntaxKind.SimpleAssignmentExpression);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleCastExpression, SyntaxKind.CastExpression);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleEqualsValueClause, SyntaxKind.EqualsValueClause);
@@ -184,7 +184,8 @@
             var mustHaveLeadingWhitespace = !(unaryExpression.Parent is PrefixUnaryExpressionSyntax)
                 && !(unaryExpression.Parent is CastExpressionSyntax)
                 && !precedingToken.IsKind(SyntaxKind.OpenParenToken)
-                && !precedingToken.IsKind(SyntaxKind.OpenBracketToken);
+                && !precedingToken.IsKind(SyntaxKind.OpenBracketToken)
+                && !(precedingToken.IsKind(SyntaxKind.OpenBraceToken) && (precedingToken.Parent is InterpolationSyntax));
 
             bool analyze;
             switch (unaryExpression.OperatorToken.Kind())
@@ -223,9 +224,12 @@
             var followingToken = unaryExpression.OperatorToken.GetNextToken();
 
             var mustHaveTrailingWhitespace = !followingToken.IsKind(SyntaxKind.CloseParenToken)
-                && !followingToken.IsKind(SyntaxKind.CloseBracketToken);
+                && !followingToken.IsKind(SyntaxKind.CloseBracketToken)
+                && !followingToken.IsKind(SyntaxKind.SemicolonToken)
+                && !followingToken.IsKind(SyntaxKind.CommaToken)
+                && !(followingToken.IsKind(SyntaxKind.CloseBraceToken) && (followingToken.Parent is InterpolationSyntax));
 
-            CheckToken(context, unaryExpression.OperatorToken, false, false, true);
+            CheckToken(context, unaryExpression.OperatorToken, false, false, mustHaveTrailingWhitespace);
         }
 
         private static void HandleAssignmentExpression(SyntaxNodeAnalysisContext context)
@@ -243,7 +247,8 @@
             var mustHaveLeadingWhitespace = !(castExpression.Parent is PrefixUnaryExpressionSyntax)
                 && !(castExpression.Parent is CastExpressionSyntax)
                 && !precedingToken.IsKind(SyntaxKind.OpenParenToken)
-                && !precedingToken.IsKind(SyntaxKind.OpenBracketToken);
+                && !precedingToken.IsKind(SyntaxKind.OpenBracketToken)
+                && !(precedingToken.IsKind(SyntaxKind.OpenBraceToken) && (precedingToken.Parent is InterpolationSyntax));
 
             var tokenString = castExpression.OpenParenToken.ToString() + castExpression.Type.ToString() + castExpression.CloseParenToken.ToString();
             CheckToken(context, castExpression.OpenParenToken, mustHaveLeadingWhitespace, false, false, tokenString);
@@ -275,8 +280,8 @@
             if (withLeadingWhitespace)
             {
                 // Don't report missing leading whitespace when the token is the first token on a text line.
-                if ((IndentationHelper.GetFirstTokenOnTextLine(token) != token)
-                     && ((precedingTriviaList.Count == 0) || !precedingTriviaList.Last().IsKind(SyntaxKind.WhitespaceTrivia)))
+                if (!token.IsFirstInLine()
+                    && ((precedingTriviaList.Count == 0) || !precedingTriviaList.Last().IsKind(SyntaxKind.WhitespaceTrivia)))
                 {
                     var properties = ImmutableDictionary.Create<string, string>()
                         .Add(CodeFixAction, InsertBeforeTag);
@@ -285,7 +290,9 @@
             }
             else
             {
-                if ((precedingTriviaList.Count > 0) && precedingTriviaList.Last().IsKind(SyntaxKind.WhitespaceTrivia))
+                // don't report leading whitespace when the token is the first token on a text line
+                if (!token.IsOnlyPrecededByWhitespaceInLine()
+                    && ((precedingTriviaList.Count > 0) && precedingTriviaList.Last().IsKind(SyntaxKind.WhitespaceTrivia)))
                 {
                     var properties = ImmutableDictionary.Create<string, string>()
                         .Add(CodeFixAction, RemoveBeforeTag);
