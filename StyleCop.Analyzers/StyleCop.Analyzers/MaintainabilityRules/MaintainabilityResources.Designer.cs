@@ -80,6 +80,15 @@ namespace StyleCop.Analyzers.MaintainabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Move type to new file.
+        /// </summary>
+        internal static string SA1402CodeFix {
+            get {
+                return ResourceManager.GetString("SA1402CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add parentheses.
         /// </summary>
         internal static string SA1407SA1408CodeFix {
