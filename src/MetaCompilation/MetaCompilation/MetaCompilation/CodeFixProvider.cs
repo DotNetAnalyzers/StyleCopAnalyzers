@@ -32,6 +32,7 @@ namespace MetaCompilation
                                              MetaCompilationAnalyzer.TooManyInitStatements,
                                              MetaCompilationAnalyzer.IncorrectInitSig,
                                              MetaCompilationAnalyzer.InvalidStatement,
+                                             MetaCompilationAnalyzer.MissingAnalysisMethod,
                                              MetaCompilationAnalyzer.IncorrectSigSuppDiag,
                                              MetaCompilationAnalyzer.MissingAccessor,
                                              MetaCompilationAnalyzer.TooManyAccessors,
@@ -136,6 +137,15 @@ namespace MetaCompilation
                     {
                         StatementSyntax declaration = declarations.First();
                         context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "The Initialize method can only register actions, all other statements are invalid", c => InvalidStatementAsync(context.Document, declaration, c)), diagnostic);
+                    }
+                }
+                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingAnalysisMethodRule))
+                {
+                    IEnumerable<MethodDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
+                    if (declarations.Count() != 0)
+                    {
+                        MethodDeclarationSyntax declaration = declarations.First();
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Generate the method called by actions registered in Initialize.", c => MissingAnalysisMethodAsync(context.Document, declaration, c)), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.InternalAndStaticError))
@@ -538,6 +548,11 @@ namespace MetaCompilation
                     }
                 }
             }
+        }
+
+        private Task<Document> MissingAnalysisMethodAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        {
+            throw new NotImplementedException();
         }
 
         private async Task<Document> CorrectArgumentsAsync(Document document, InvocationExpressionSyntax declaration, CancellationToken c)
