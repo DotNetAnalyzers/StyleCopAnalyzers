@@ -189,7 +189,7 @@ namespace MetaCompilation
 
         #region analysis rules
         public const string MissingAnalysisMethod = "MetaAnalyzer044";
-        internal static DiagnosticDescriptor MissingAnalysisMethodRule = CreateRule(MissingAnalysisMethod, "Missing analysis method", MessagePrefix + "You are missing the method that was registered to perform the analysis", "In Initialize, the register statement denotes an analysis method to be called when an action is triggered. This method needs to be created");
+        internal static DiagnosticDescriptor MissingAnalysisMethodRule = CreateRule(MissingAnalysisMethod, "Missing analysis method", MessagePrefix + "You are missing the method {0} that was registered to perform the analysis", "In Initialize, the register statement denotes an analysis method to be called when an action is triggered. This method needs to be created");
 
         public const string TooManyStatements = "MetaAnalyzer045";
         internal static DiagnosticDescriptor TooManyStatementsRule = CreateRule(TooManyStatements, "Too many statements", MessagePrefix + "This {0} should only have {1} statement(s)", "For the purpose of this tutorial this method has too many statements, use the code fixes to guide you through the creation of this method");
@@ -239,7 +239,6 @@ namespace MetaCompilation
                                              EnabledByDefaultErrorRule, 
                                              InternalAndStaticErrorRule,
                                              MissingRuleRule,
-                                             MissingAnalysisMethodRule,
                                              IfStatementMissingRule,
                                              IfStatementIncorrectRule,
                                              IfKeywordMissingRule,
@@ -387,9 +386,9 @@ namespace MetaCompilation
                     if (kindName == null || allowedKinds.Contains(kindName))
                     {
                         //look for and interpret analysis methods
-                        List<string> analysisMethods = CheckMethods(_branchesDict[registerSymbol.Name], kindName, invocationExpression, context);
+                        bool analysisMethodFound = CheckMethods(_branchesDict[registerSymbol.Name], kindName, invocationExpression, context);
 
-                        if (analysisMethods.Count > 0)
+                        if (analysisMethodFound)
                         {
 
                             //look for and interpret id fields
@@ -2262,23 +2261,36 @@ namespace MetaCompilation
                 return idNames;
             }
 
-            internal List<string> CheckMethods(string branch, string kindName, InvocationExpressionSyntax invocationExpression, CompilationAnalysisContext context)
+            internal bool CheckMethods(string branch, string kindName, InvocationExpressionSyntax invocationExpression, CompilationAnalysisContext context)
             {
-                List<string> emptyMethods = new List<string>();
+                IMethodSymbol analysisMethod = null;
+                bool analysisMethodFound = false;
 
                 var argList = invocationExpression.ArgumentList;
-                //if (argList.Count)
-                var methodName = argList.Arguments.First();
+                var calledMethodName = argList.Arguments.First();
 
-                if (_analyzerMethodSymbols.Contains(methodName))
 
-                foreach (IMethodSymbol method in _analyzerMethodSymbols)
+                foreach (IMethodSymbol currentMethod in _analyzerMethodSymbols)
                 {
+                    if (calledMethodName.Expression.ToString() == currentMethod.MetadataName.ToString())
+                    {
+                        analysisMethod = currentMethod;
+                        analysisMethodFound = true;
+                        break;
+                    }
+                }
+                //check analysisMethod is private void and takes syntaxnodeanalysis context
 
+                if (analysisMethodFound)
+                {
+                    return true;
+                }
+                else
+                {
+                    ReportDiagnostic(context, MissingAnalysisMethodRule, calledMethodName.GetLocation(), calledMethodName.Expression.ToString());
+                    return false;
                 }
 
-
-                throw new NotImplementedException();
             }
 
             //returns a symbol for the register call, and a list of the arguments
