@@ -146,7 +146,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingId,
-                Message = MessagePrefix + "The analyzer 'SyntaxNodeAnalyzer' is missing a diagnostic id",
+                Message = MessagePrefix + "'SyntaxNodeAnalyzer' should have a diagnostic id (a public, constant string uniquely identifying each diagnostic)",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 22) }
             };
@@ -235,7 +235,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingId,
-                Message = MessagePrefix + "The analyzer 'SyntaxNodeAnalyzer' is missing a diagnostic id",
+                Message = MessagePrefix + "'SyntaxNodeAnalyzer' should have a diagnostic id (a public, constant string uniquely identifying each diagnostic)",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 22) }
             };
@@ -323,7 +323,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingId,
-                Message = MessagePrefix + "The analyzer 'SyntaxNodeAnalyzer' is missing a diagnostic id",
+                Message = MessagePrefix + "'SyntaxNodeAnalyzer' should have a diagnostic id (a public, constant string uniquely identifying each diagnostic)",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 22) }
             };
@@ -404,7 +404,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingId,
-                Message = MessagePrefix + "The analyzer 'SyntaxNodeAnalyzer' is missing a diagnostic id",
+                Message = MessagePrefix + "'SyntaxNodeAnalyzer' should have a diagnostic id (a public, constant string uniquely identifying each diagnostic)",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 22) }
             };
@@ -485,7 +485,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingId,
-                Message = MessagePrefix + "The analyzer 'SyntaxNodeAnalyzer' is missing a diagnostic id",
+                Message = MessagePrefix + "'SyntaxNodeAnalyzer' should have a diagnostic id (a public, constant string uniquely identifying each diagnostic)",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 22) }
             };
@@ -566,7 +566,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingId,
-                Message = MessagePrefix + "The analyzer 'SyntaxNodeAnalyzer' is missing a diagnostic id",
+                Message = MessagePrefix + "'SyntaxNodeAnalyzer' should have a diagnostic id (a public, constant string uniquely identifying each diagnostic)",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 22) }
             };
@@ -644,7 +644,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingInit,
-                Message = MessagePrefix + "The analyzer 'SyntaxNodeAnalyzer' is missing the required Initialize method",
+                Message = MessagePrefix + "'SyntaxNodeAnalyzer' is missing the required inherited Initialize method, needed to register analysis actions",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 16, 22) }
             };
@@ -725,7 +725,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingInit,
-                Message = MessagePrefix + "The analyzer 'SyntaxNodeAnalyzer' is missing the required Initialize method",
+                Message = MessagePrefix + "'SyntaxNodeAnalyzer' is missing the required inherited Initialize method, needed to register analysis actions",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 16, 22) }
             };
@@ -842,7 +842,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingInit,
-                Message = MessagePrefix + "The analyzer 'SyntaxNodeAnalyzer' is missing the required Initialize method",
+                Message = MessagePrefix + "'SyntaxNodeAnalyzer' is missing the required inherited Initialize method, needed to register analysis actions",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 18) }
             };
@@ -963,7 +963,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingRegisterStatement,
-                Message = MessagePrefix + "An action must be registered within the 'Initialize' method",
+                Message = MessagePrefix + "A syntax node action should be registered within the 'Initialize' method",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 30) }
             };
@@ -1052,7 +1052,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingRegisterStatement,
-                Message = MessagePrefix + "An action must be registered within the 'Initialize' method",
+                Message = MessagePrefix + "A syntax node action should be registered within the 'Initialize' method",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 30) }
             };

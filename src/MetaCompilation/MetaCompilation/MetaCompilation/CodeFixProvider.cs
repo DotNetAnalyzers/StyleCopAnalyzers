@@ -117,7 +117,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "The Initialize method must register an action to be performed when changes occur", c => MissingRegisterAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Registered actions are necessary to analyze code when changes occur", c => MissingRegisterAsync(context.Document, declaration, c)), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TooManyInitStatements))
