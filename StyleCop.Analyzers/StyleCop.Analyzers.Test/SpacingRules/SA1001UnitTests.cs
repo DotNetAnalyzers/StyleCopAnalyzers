@@ -133,6 +133,24 @@
             await this.TestCommaInStatementOrDeclAsync(statement, expected, fixedStatement).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestCommaFollowedByBracketInArrayDeclAsync()
+        {
+            string statement = @"int[,] myArray;";
+            await this.TestCommaInStatementOrDeclAsync(statement, EmptyDiagnosticResults, statement).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestSpaceBeforeCommaFollowedByBracketInArrayDeclAsync()
+        {
+            string statement = @"int[, ,] myArray;";
+            string fixedStatement = @"int[,,] myArray;";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 19);
+
+            await this.TestCommaInStatementOrDeclAsync(statement, expected, fixedStatement).ConfigureAwait(false);
+        }
+
         private Task TestCommaInStatementOrDeclAsync(string originalStatement, DiagnosticResult expected, string fixedStatement)
         {
             return this.TestCommaInStatementOrDeclAsync(originalStatement, new[] { expected }, fixedStatement);
