@@ -10605,7 +10605,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyAccessors,
-                Message = MessagePrefix + "The SupportedDiagnostics property only needs one get accessor, no additional get accessors or any set accessors are needed",
+                Message = MessagePrefix + "The 'SupportedDiagnostics' property needs only a single get-accessor",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 32, 13) }
             };
@@ -10716,7 +10716,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyAccessors,
-                Message = MessagePrefix + "The SupportedDiagnostics property only needs one get accessor, no additional get accessors or any set accessors are needed",
+                Message = MessagePrefix + "The 'SupportedDiagnostics' property needs only a single get-accessor",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 32, 13) }
             };
@@ -10827,7 +10827,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyAccessors,
-                Message = MessagePrefix + "The SupportedDiagnostics property only needs one get accessor, no additional get accessors or any set accessors are needed",
+                Message = MessagePrefix + "The 'SupportedDiagnostics' property needs only a single get-accessor",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 32, 13) }
             };

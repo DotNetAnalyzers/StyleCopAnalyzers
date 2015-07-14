@@ -81,7 +81,7 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor MissingAccessorRule = CreateRule(MissingAccessor, "Missing get-accessor", MessagePrefix + "The '{0}' property is missing a get-accessor to return a list of accepted diagnostics", "The SupportedDiagnostics property needs to have a get-accessor to make the ImmutableArray of DiagnosticDescriptors accessible");
 
         public const string TooManyAccessors = "MetaAnalyzer010";
-        internal static DiagnosticDescriptor TooManyAccessorsRule = CreateRule(TooManyAccessors, "You only need a single get accessor for this property", MessagePrefix + "The {0} property only needs one get accessor, no additional get accessors or any set accessors are needed");
+        internal static DiagnosticDescriptor TooManyAccessorsRule = CreateRule(TooManyAccessors, "Too many accessors", MessagePrefix + "The '{0}' property needs only a single get-accessor", "The purpose of the SupportedDiagnostics property is to return a list of all diagnostics that can be reported by a particular analyzer, so it doesn't have a need for any other accessors");
 
         public const string IncorrectAccessorReturn = "MetaAnalyzer011";
         internal static DiagnosticDescriptor IncorrectAccessorReturnRule = CreateRule(IncorrectAccessorReturn, "Get accessor return value incorrect", MessagePrefix + "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules");
