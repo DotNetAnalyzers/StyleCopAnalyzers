@@ -8533,7 +8533,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.DefaultSeverityError,
-                Message = MessagePrefix + "defaultSeverity must be of the form: DiagnosticSeverity.[severity]",
+                Message = MessagePrefix + "The defaultSeverity should be of the form: DiagnosticSeverity.[severity]",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 24, 30) }
             };
@@ -8757,7 +8757,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.DefaultSeverityError,
-                Message = MessagePrefix + "defaultSeverity must be of the form: DiagnosticSeverity.[severity]",
+                Message = MessagePrefix + "The defaultSeverity should be of the form: DiagnosticSeverity.[severity]",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 24, 30) }
             };
@@ -8977,7 +8977,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.DefaultSeverityError,
-                Message = MessagePrefix + "defaultSeverity must be of the form: DiagnosticSeverity.[severity]",
+                Message = MessagePrefix + "The defaultSeverity should be of the form: DiagnosticSeverity.[severity]",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 22, 13) }
             };
