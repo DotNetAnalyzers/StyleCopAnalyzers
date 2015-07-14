@@ -534,7 +534,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         InvocationExpressionSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Pass in the correct arguments", c => CorrectArgumentsAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "The arguments needed are an analysis method and a syntax kind", c => CorrectArgumentsAsync(context.Document, declaration, c)), diagnostic);
                     }
                 }
             }

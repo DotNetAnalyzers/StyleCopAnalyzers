@@ -67,7 +67,7 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor IncorrectRegisterRule = CreateRule(IncorrectRegister, "Incorrect register", MessagePrefix + "This tutorial only registers SyntaxNode actions", "For the purposes of this tutorial, the only analysis will occur after a change to a SyntaxNode, and SyntaxNode actions are the only actions to register");
 
         public const string IncorrectArguments = "MetaAnalyzer053";
-        internal static DiagnosticDescriptor IncorrectArgumentsRule = CreateRule(IncorrectArguments, "Incorrect arguments", MessagePrefix + "RegisterSyntaxNodeAction requires 2 arguments: a method, and a SyntaxKind", "The RegisterSyntaxNodeAction method takes two arguments. The first argument is a method that will actually perform the analysis, and the second argument is a SyntaxKind, which is the kind of syntax that the method will be triggered on");
+        internal static DiagnosticDescriptor IncorrectArgumentsRule = CreateRule(IncorrectArguments, "Incorrect arguments", MessagePrefix + "The method RegisterSyntaxNodeAction requires 2 arguments: a method and a SyntaxKind", "The RegisterSyntaxNodeAction method takes two arguments. The first argument is a method that will be called to perform the analysis, and the second argument is a SyntaxKind, which is the kind of syntax that the method will be triggered on");
         #endregion
 
         #region SupportedDiagnostics rules

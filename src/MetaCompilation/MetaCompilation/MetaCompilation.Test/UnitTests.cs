@@ -2951,7 +2951,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectArguments,
-                Message = MessagePrefix + "RegisterSyntaxNodeAction requires 2 arguments: a method, and a SyntaxKind",
+                Message = MessagePrefix + "The method RegisterSyntaxNodeAction requires 2 arguments: a method and a SyntaxKind",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
             };
