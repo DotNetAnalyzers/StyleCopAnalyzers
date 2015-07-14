@@ -77,7 +77,7 @@ namespace SyntaxNodeAnalyzer
             var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
             //Uses the span created above to create a location for the diagnostic "red squiggle" to appear within the syntax tree passed in as an argument.
 
-            var diagnostic = Diagnostic.Create(Rule, diagnosticLocation, Rule.MessageFormat);
+            var diagnostic = Diagnostic.Create(Rule, diagnosticLocation);
             //Holds the diagnostic and all necessary information to be reported.
 
             context.ReportDiagnostic(diagnostic);

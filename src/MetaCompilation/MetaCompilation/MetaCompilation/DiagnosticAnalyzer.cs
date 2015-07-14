@@ -198,7 +198,7 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor DiagnosticMissingRule = CreateRule(DiagnosticMissing, "Diagnostic variable missing", MessagePrefix + "The next step is to create a variable to hold the diagnostic");
 
         public const string DiagnosticIncorrect = "MetaAnalyzer047";
-        internal static DiagnosticDescriptor DiagnosticIncorrectRule = CreateRule(DiagnosticIncorrect, "Diagnostic variable incorrect", MessagePrefix + "This statement should use Diagnostic.Create, {0}, and {1} to create the diagnostic that will be reported", "The diagnostic is created with a DiagnosticDescriptor, a Location, message arguments. The message arguments are the inputs to a format string");
+        internal static DiagnosticDescriptor DiagnosticIncorrectRule = CreateRule(DiagnosticIncorrect, "Diagnostic variable incorrect", MessagePrefix + "This statement should use Diagnostic.Create, {0}, and {1} to create the diagnostic that will be reported", "The diagnostic is created with a DiagnosticDescriptor, a Location, and message arguments. The message arguments are the inputs to a format string");
 
         public const string DiagnosticReportMissing = "MetaAnalyzer048";
         internal static DiagnosticDescriptor DiagnosticReportMissingRule = CreateRule(DiagnosticReportMissing, "Diagnostic report missing", MessagePrefix + "The next step is to report the diagnostic that has been created");
@@ -1552,7 +1552,7 @@ namespace MetaCompilation
                 }
 
                 SeparatedSyntaxList<ArgumentSyntax> args = argumentList.Arguments;
-                if (args == null || args.Count != 3)
+                if (args == null || args.Count < 2)
                 {
                     return emptyResult;
                 }
@@ -1577,30 +1577,6 @@ namespace MetaCompilation
 
                 var locationArgIdentifier = locationArg.Expression as IdentifierNameSyntax;
                 if (locationArgIdentifier == null || locationArgIdentifier.Identifier.Text != locationToken.Text)
-                {
-                    return emptyResult;
-                }
-
-                var messageArg = args[2] as ArgumentSyntax;
-                if (messageArg == null)
-                {
-                    return emptyResult;
-                }
-
-                var messageArgExpression = messageArg.Expression as MemberAccessExpressionSyntax;
-                if (messageArgExpression == null)
-                {
-                    return emptyResult;
-                }
-
-                var messageIdentifier = messageArgExpression.Expression as IdentifierNameSyntax;
-                if (messageIdentifier == null || messageIdentifier.Identifier.Text != ruleArgIdentifier.Identifier.Text)
-                {
-                    return emptyResult;
-                }
-
-                var messageName = messageArgExpression.Name as IdentifierNameSyntax;
-                if (messageName == null || messageName.Identifier.Text != "MessageFormat")
                 {
                     return emptyResult;
                 }
