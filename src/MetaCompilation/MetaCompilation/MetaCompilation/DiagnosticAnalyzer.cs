@@ -78,7 +78,7 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor IncorrectSigSuppDiagRule = CreateRule(IncorrectSigSuppDiag, "Incorrect SupportedDiagnostics property", MessagePrefix + "The overriden SupportedDiagnostics property should return an Immutable Array of Diagnostic Descriptors");
 
         public const string MissingAccessor = "MetaAnalyzer009";
-        internal static DiagnosticDescriptor MissingAccessorRule = CreateRule(MissingAccessor, "Missing get accessor", MessagePrefix + "The {0} property is missing a get accessor", "The SupportedDiagnostics property needs to have a get accessor, because that is how the ImmutableArray of DiagnosticDescriptors is made accessible");
+        internal static DiagnosticDescriptor MissingAccessorRule = CreateRule(MissingAccessor, "Missing get-accessor", MessagePrefix + "The '{0}' property is missing a get-accessor to return a list of accepted diagnostics", "The SupportedDiagnostics property needs to have a get-accessor to make the ImmutableArray of DiagnosticDescriptors accessible");
 
         public const string TooManyAccessors = "MetaAnalyzer010";
         internal static DiagnosticDescriptor TooManyAccessorsRule = CreateRule(TooManyAccessors, "You only need a single get accessor for this property", MessagePrefix + "The {0} property only needs one get accessor, no additional get accessors or any set accessors are needed");

@@ -10386,7 +10386,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingAccessor,
-                Message = MessagePrefix + "The SupportedDiagnostics property is missing a get accessor",
+                Message = MessagePrefix + "The 'SupportedDiagnostics' property is missing a get-accessor to return a list of accepted diagnostics",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 62) }
             };
@@ -10492,7 +10492,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingAccessor,
-                Message = MessagePrefix + "The SupportedDiagnostics property is missing a get accessor",
+                Message = MessagePrefix + "The 'SupportedDiagnostics' property is missing a get-accessor to return a list of accepted diagnostics",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 62) }
             };

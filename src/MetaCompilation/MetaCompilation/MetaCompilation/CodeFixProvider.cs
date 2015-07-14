@@ -462,7 +462,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         PropertyDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a get accessor within the SupportedDiagnostics property", c => MissingAccessorAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "The get-accessor should return all diagnostics from this analyzer", c => MissingAccessorAsync(context.Document, declaration, c)), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TooManyAccessors))
