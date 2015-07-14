@@ -9961,7 +9961,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingSuppDiag,
-                Message = MessagePrefix + "You are missing the required SupportedDiagnostics property",
+                Message = MessagePrefix + "You are missing the required inherited SupportedDiagnostics property",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 18) }
             };

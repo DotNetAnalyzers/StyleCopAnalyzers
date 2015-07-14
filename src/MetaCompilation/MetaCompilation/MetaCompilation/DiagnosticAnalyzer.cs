@@ -72,7 +72,7 @@ namespace MetaCompilation
 
         #region SupportedDiagnostics rules
         public const string MissingSuppDiag = "MetaAnalyzer007";
-        internal static DiagnosticDescriptor MissingSuppDiagRule = CreateRule(MissingSuppDiag, "Missing SupportedDiagnostics property", MessagePrefix + "You are missing the required SupportedDiagnostics property", "The SupportedDiagnostics property tells the analyzer which diagnostic ids the analyzer supports. In other words, which DiagnosticDescriptors might be reported by the analyzer. Generally any DiagnosticDescriptor that you have created should be returned by SupportedDiagnostics");
+        internal static DiagnosticDescriptor MissingSuppDiagRule = CreateRule(MissingSuppDiag, "Missing SupportedDiagnostics property", MessagePrefix + "You are missing the required inherited SupportedDiagnostics property", "The SupportedDiagnostics property tells the analyzer which diagnostic ids the analyzer supports, or in other words, which DiagnosticDescriptors might be reported by the analyzer. Generally, any DiagnosticDescriptor should be returned by SupportedDiagnostics.");
 
         public const string IncorrectSigSuppDiag = "MetaAnalyzer008";
         internal static DiagnosticDescriptor IncorrectSigSuppDiagRule = CreateRule(IncorrectSigSuppDiag, "Incorrect SupportedDiagnostics property", MessagePrefix + "The signature of the SupportedDiagnostics property is incorrect");

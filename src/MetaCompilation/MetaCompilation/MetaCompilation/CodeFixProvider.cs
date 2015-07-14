@@ -498,7 +498,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         ClassDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Add a SupportedDiagnostics property", c => AddSuppDiagAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "The SupportedDiagnostics property describes the diagnostics from an analyzer", c => AddSuppDiagAsync(context.Document, declaration, c)), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingRule))
