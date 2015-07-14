@@ -525,7 +525,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         IdentifierNameSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Use RegisterSyntaxNodeAction", c => CorrectRegisterAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "This tutorial only registers actions for SyntaxNode analysis", c => CorrectRegisterAsync(context.Document, declaration, c)), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectArguments))
