@@ -2,5 +2,7 @@
   <PropertyGroup>
     <MetaCompilationSemanticVersion>1.0.0</MetaCompilationSemanticVersion>
     <MetaCompilationPreReleaseVersion>beta1</MetaCompilationPreReleaseVersion>
+    <AsyncPackageSemanticVersion>1.0.0</AsyncPackageSemanticVersion>
+    <AsyncPackagePreReleaseVersion>beta1</AsyncPackagePreReleaseVersion>
   </PropertyGroup>
 </Project>
