@@ -10996,7 +10996,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectAccessorReturn,
-                Message = MessagePrefix + "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules",
+                Message = MessagePrefix + "The get-accessor should return an ImmutableArray containing all of the DiagnosticDescriptor rules",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 62) }
             };
@@ -11102,7 +11102,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectAccessorReturn,
-                Message = MessagePrefix + "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules",
+                Message = MessagePrefix + "The get-accessor should return an ImmutableArray containing all of the DiagnosticDescriptor rules",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 28, 13) }
             };
@@ -11208,7 +11208,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectAccessorReturn,
-                Message = MessagePrefix + "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules",
+                Message = MessagePrefix + "The get-accessor should return an ImmutableArray containing all of the DiagnosticDescriptor rules",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 17) }
             };
@@ -11314,7 +11314,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectAccessorReturn,
-                Message = MessagePrefix + "The get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules",
+                Message = MessagePrefix + "The get-accessor should return an ImmutableArray containing all of the DiagnosticDescriptor rules",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 17) }
             };
