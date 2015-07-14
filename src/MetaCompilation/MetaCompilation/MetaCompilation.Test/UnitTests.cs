@@ -11420,7 +11420,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.SuppDiagReturnValue,
-                Message = MessagePrefix + "The SupportedDiagnostics property's get accessor needs to return an ImmutableArray containing all of your DiagnosticDescriptor rules",
+                Message = MessagePrefix + "The 'SupportedDiagnostics' property's get-accessor should return an ImmutableArray containing all DiagnosticDescriptor rules",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 17) }
             };
