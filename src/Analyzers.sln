@@ -17,6 +17,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetaCompilation.Test", "Met
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetaCompilation.Vsix", "MetaCompilation\MetaCompilation\MetaCompilation.Vsix\MetaCompilation.Vsix.csproj", "{AEDFBCB1-8D38-4148-B9D5-E31FB6087E14}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CodeAnalysis", "CodeAnalysis", "{55A710CD-95EC-4C49-AE7D-BA5E930FD1DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeAnalysisDiagnosticAnalyzers", "CodeAnalysis\Core\CodeAnalysisDiagnosticAnalyzers.csproj", "{D8762A0A-3832-47BE-BCF6-8B1060BE6B28}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +47,10 @@ Global
 		{AEDFBCB1-8D38-4148-B9D5-E31FB6087E14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AEDFBCB1-8D38-4148-B9D5-E31FB6087E14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AEDFBCB1-8D38-4148-B9D5-E31FB6087E14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8762A0A-3832-47BE-BCF6-8B1060BE6B28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8762A0A-3832-47BE-BCF6-8B1060BE6B28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8762A0A-3832-47BE-BCF6-8B1060BE6B28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8762A0A-3832-47BE-BCF6-8B1060BE6B28}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,5 +61,6 @@ Global
 		{6CD505A6-60D7-4C35-AE53-694AFDEB3A64} = {94CED7DE-E53D-4496-9B13-AC484092D848}
 		{45D60761-2694-4084-9B23-B8D1660B6712} = {94CED7DE-E53D-4496-9B13-AC484092D848}
 		{AEDFBCB1-8D38-4148-B9D5-E31FB6087E14} = {94CED7DE-E53D-4496-9B13-AC484092D848}
+		{D8762A0A-3832-47BE-BCF6-8B1060BE6B28} = {55A710CD-95EC-4C49-AE7D-BA5E930FD1DC}
 	EndGlobalSection
 EndGlobal

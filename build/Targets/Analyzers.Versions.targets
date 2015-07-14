@@ -4,5 +4,7 @@
     <MetaCompilationPreReleaseVersion>beta1</MetaCompilationPreReleaseVersion>
     <AsyncPackageSemanticVersion>1.0.0</AsyncPackageSemanticVersion>
     <AsyncPackagePreReleaseVersion>beta1</AsyncPackagePreReleaseVersion>
+    <MicrosoftCodeAnalysisAnalyzersSemanticVersion>1.0.1</MicrosoftCodeAnalysisAnalyzersSemanticVersion>
+    <MicrosoftCodeAnalysisAnalyzersPreReleaseVersion>beta1</MicrosoftCodeAnalysisAnalyzersPreReleaseVersion>
   </PropertyGroup>
 </Project>
