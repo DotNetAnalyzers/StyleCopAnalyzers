@@ -61,7 +61,7 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor InvalidStatementRule = CreateRule(InvalidStatement, "Incorrect statement", MessagePrefix + "The Initialize method only registers actions: the statement '{0}' is invalid", "By definition, the purpose of the Initialize method is to register actions for analysis. Therefore, all other statements placed in Initialize are incorrect.");
 
         public const string IncorrectKind = "MetaAnalyzer051";
-        internal static DiagnosticDescriptor IncorrectKindRule = CreateRule(IncorrectKind, "Incorrect kind", MessagePrefix + "This tutorial only allows registering for SyntaxKind.IfStatement", "For the purposes of this tutorial, you will be analyzing an if statement, so that is the only SyntaxKind you can register for");
+        internal static DiagnosticDescriptor IncorrectKindRule = CreateRule(IncorrectKind, "Incorrect kind", MessagePrefix + "This tutorial only allows registering for kind SyntaxKind.IfStatement", "For the purposes of this tutorial, the only analysis will occur on an if-statement, so it is only necessary to register for syntax of kind IfStatement");
 
         public const string IncorrectRegister = "MetaAnalyzer052";
         internal static DiagnosticDescriptor IncorrectRegisterRule = CreateRule(IncorrectRegister, "Incorrect register", MessagePrefix + "This tutorial only allows for RegisterSyntaxNodeAction", "For the purposes of this tutorial, you will be analyzing after a change to a SyntaxNode, and so you should register for a SyntaxNode action");

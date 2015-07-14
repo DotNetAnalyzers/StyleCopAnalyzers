@@ -2875,7 +2875,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectKind,
-                Message = MessagePrefix + "This tutorial only allows registering for SyntaxKind.IfStatement",
+                Message = MessagePrefix + "This tutorial only allows registering for kind SyntaxKind.IfStatement",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 70) }
             };

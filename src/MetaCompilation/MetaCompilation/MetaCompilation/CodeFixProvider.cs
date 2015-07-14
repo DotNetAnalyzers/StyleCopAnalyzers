@@ -516,7 +516,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         ArgumentListSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Analyze the correct SyntaxKind", c => CorrectKindAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "This tutorial analyzes nodes of syntax kind 'IfStatement'", c => CorrectKindAsync(context.Document, declaration, c)), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectRegister))
