@@ -24,13 +24,13 @@
                 var currentTrivia = triviaList[index];
                 switch (currentTrivia.Kind())
                 {
-                    case SyntaxKind.EndOfLineTrivia:
-                    case SyntaxKind.WhitespaceTrivia:
-                        break;
+                case SyntaxKind.EndOfLineTrivia:
+                case SyntaxKind.WhitespaceTrivia:
+                    break;
 
-                    default:
-                        // encountered non-whitespace trivia -> the search is done.
-                        return index;
+                default:
+                    // encountered non-whitespace trivia -> the search is done.
+                    return index;
                 }
             }
 
@@ -75,25 +75,25 @@
                 var currentTrivia = triviaList[index];
                 switch (currentTrivia.Kind())
                 {
-                    case SyntaxKind.EndOfLineTrivia:
-                        whiteSpaceStartIndex = index;
-                        previousTriviaWasEndOfLine = true;
-                        break;
+                case SyntaxKind.EndOfLineTrivia:
+                    whiteSpaceStartIndex = index;
+                    previousTriviaWasEndOfLine = true;
+                    break;
 
-                    case SyntaxKind.WhitespaceTrivia:
-                        whiteSpaceStartIndex = index;
-                        previousTriviaWasEndOfLine = false;
-                        break;
+                case SyntaxKind.WhitespaceTrivia:
+                    whiteSpaceStartIndex = index;
+                    previousTriviaWasEndOfLine = false;
+                    break;
 
-                    default:
-                        // encountered non-whitespace trivia -> the search is done.
-                        if (previousTriviaWasEndOfLine)
-                        {
-                            whiteSpaceStartIndex++;
-                        }
+                default:
+                    // encountered non-whitespace trivia -> the search is done.
+                    if (previousTriviaWasEndOfLine)
+                    {
+                        whiteSpaceStartIndex++;
+                    }
 
-                        done = true;
-                        break;
+                    done = true;
+                    break;
                 }
             }
 
@@ -190,21 +190,21 @@
             {
                 switch (triviaList[index].Kind())
                 {
-                    case SyntaxKind.WhitespaceTrivia:
-                        // ignore;
-                        break;
-                    case SyntaxKind.EndOfLineTrivia:
-                        blankLineCount++;
-                        break;
-                    case SyntaxKind.IfDirectiveTrivia:
-                    case SyntaxKind.ElifDirectiveTrivia:
-                    case SyntaxKind.ElseDirectiveTrivia:
-                    case SyntaxKind.EndIfDirectiveTrivia:
-                        // directive trivia have an embedded end of line
-                        blankLineCount++;
-                        return blankLineCount > 0;
-                    default:
-                        return blankLineCount > 0;
+                case SyntaxKind.WhitespaceTrivia:
+                    // ignore;
+                    break;
+                case SyntaxKind.EndOfLineTrivia:
+                    blankLineCount++;
+                    break;
+                case SyntaxKind.IfDirectiveTrivia:
+                case SyntaxKind.ElifDirectiveTrivia:
+                case SyntaxKind.ElseDirectiveTrivia:
+                case SyntaxKind.EndIfDirectiveTrivia:
+                    // directive trivia have an embedded end of line
+                    blankLineCount++;
+                    return blankLineCount > 0;
+                default:
+                    return blankLineCount > 0;
                 }
 
                 index--;
@@ -235,30 +235,30 @@
             {
                 switch (triviaList[blankLinesStart].Kind())
                 {
-                    case SyntaxKind.WhitespaceTrivia:
-                    case SyntaxKind.EndOfLineTrivia:
-                        blankLinesStart--;
-                        break;
+                case SyntaxKind.WhitespaceTrivia:
+                case SyntaxKind.EndOfLineTrivia:
+                    blankLinesStart--;
+                    break;
 
-                    case SyntaxKind.IfDirectiveTrivia:
-                    case SyntaxKind.ElifDirectiveTrivia:
-                    case SyntaxKind.ElseDirectiveTrivia:
-                    case SyntaxKind.EndIfDirectiveTrivia:
-                        // directives include an embedded end of line
+                case SyntaxKind.IfDirectiveTrivia:
+                case SyntaxKind.ElifDirectiveTrivia:
+                case SyntaxKind.ElseDirectiveTrivia:
+                case SyntaxKind.EndIfDirectiveTrivia:
+                    // directives include an embedded end of line
+                    blankLinesStart++;
+                    done = true;
+                    break;
+
+                default:
+                    // include the first end of line (as it is part of the non blank line trivia)
+                    while (!triviaList[blankLinesStart].IsKind(SyntaxKind.EndOfLineTrivia))
+                    {
                         blankLinesStart++;
-                        done = true;
-                        break;
+                    }
 
-                    default:
-                        // include the first end of line (as it is part of the non blank line trivia)
-                        while (!triviaList[blankLinesStart].IsKind(SyntaxKind.EndOfLineTrivia))
-                        {
-                            blankLinesStart++;
-                        }
-
-                        blankLinesStart++;
-                        done = true;
-                        break;
+                    blankLinesStart++;
+                    done = true;
+                    break;
                 }
             }
 
