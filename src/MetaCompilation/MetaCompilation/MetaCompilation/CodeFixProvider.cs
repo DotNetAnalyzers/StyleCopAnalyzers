@@ -174,7 +174,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         VariableDeclaratorSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Generate a public field for this rule id.", c => MissingIdDeclarationAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "The id should be declared before it can be used", c => MissingIdDeclarationAsync(context.Document, declaration, c)), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.IdDeclTypeError))

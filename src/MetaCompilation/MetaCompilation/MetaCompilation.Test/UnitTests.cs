@@ -9587,7 +9587,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingIdDeclaration,
-                Message = MessagePrefix + "This diagnostic id has not been declared",
+                Message = MessagePrefix + "This diagnostic id should be declared as a public const string",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 20, 17) }
             };
