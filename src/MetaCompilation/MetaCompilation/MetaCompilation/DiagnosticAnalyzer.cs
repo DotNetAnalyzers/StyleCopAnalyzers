@@ -55,7 +55,7 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor TooManyInitStatementsRule = CreateRule(TooManyInitStatements, "Multiple registered actions", MessagePrefix + "For this tutorial, the '{0}' method should only register one action", "For this tutorial only, the Initialize method should only register one action. More complicated analyzers may need to register multiple actions.");
         
         public const string IncorrectInitSig = "MetaAnalyzer005";
-        internal static DiagnosticDescriptor IncorrectInitSigRule = CreateRule(IncorrectInitSig, "Incorrect method signature", MessagePrefix + "The signature for the '{0}' method is incorrect", "The Initialize method shoould override the Initialize method from the DiagnosticAnalyzer abstract class from which your analyzer inherits");
+        internal static DiagnosticDescriptor IncorrectInitSigRule = CreateRule(IncorrectInitSig, "Incorrect method signature", MessagePrefix + "The '{0}' method should be overriden and void-returning, with parameter type 'AnalysisContext'", "The Initialize method should override the abstract Initialize class member from the DiagnosticAnalyzer class. It therefore needs to be public, overriden, and return void. It needs to have a single input parameter of type 'AnalysisContext.'");
 
         public const string InvalidStatement = "MetaAnalyzer006";
         internal static DiagnosticDescriptor InvalidStatementRule = CreateRule(InvalidStatement, "Incorrect statement", MessagePrefix + "The Initialize method only registers actions: the statement '{0}' is invalid");

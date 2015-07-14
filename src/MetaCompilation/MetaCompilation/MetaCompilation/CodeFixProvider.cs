@@ -210,7 +210,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "The initialize method must have the correct signature to be called", c => IncorrectSigAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "The Initialize method must have the correct signature to be implemented", c => IncorrectSigAsync(context.Document, declaration, c)), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfKeywordIncorrect))

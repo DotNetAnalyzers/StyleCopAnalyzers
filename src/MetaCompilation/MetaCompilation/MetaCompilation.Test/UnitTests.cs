@@ -3031,7 +3031,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectInitSig,
-                Message = MessagePrefix + "The signature for the 'Initialize' method is incorrect",
+                Message = MessagePrefix + "The 'Initialize' method should be overriden and void-returning, with parameter type 'AnalysisContext'",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 30) }
             };
@@ -3112,7 +3112,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectInitSig,
-                Message = MessagePrefix + "The signature for the 'Initialize' method is incorrect",
+                Message = MessagePrefix + "The 'Initialize' method should be overriden and void-returning, with parameter type 'AnalysisContext'",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 30) }
             };
@@ -3193,7 +3193,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectInitSig,
-                Message = MessagePrefix + "The signature for the 'Initialize' method is incorrect",
+                Message = MessagePrefix + "The 'Initialize' method should be overriden and void-returning, with parameter type 'AnalysisContext'",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 31) }
             };
@@ -3274,7 +3274,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectInitSig,
-                Message = MessagePrefix + "The signature for the 'Initialize' method is incorrect",
+                Message = MessagePrefix + "The 'Initialize' method should be overriden and void-returning, with parameter type 'AnalysisContext'",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 21) }
             };
@@ -3355,7 +3355,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectInitSig,
-                Message = MessagePrefix + "The signature for the 'Initialize' method is incorrect",
+                Message = MessagePrefix + "The 'Initialize' method should be overriden and void-returning, with parameter type 'AnalysisContext'",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 29) }
             };
