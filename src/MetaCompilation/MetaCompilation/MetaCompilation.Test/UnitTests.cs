@@ -10937,7 +10937,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.SupportedRules,
-                Message = MessagePrefix + "The immutable array should contain every DiagnosticDescriptor rule that was created",
+                Message = MessagePrefix + "The ImmutableArray should contain every DiagnosticDescriptor rule that was created",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 29) }
             };
@@ -11528,7 +11528,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.SupportedRules,
-                Message = MessagePrefix + "The immutable array should contain every DiagnosticDescriptor rule that was created",
+                Message = MessagePrefix + "The ImmutableArray should contain every DiagnosticDescriptor rule that was created",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 24) }
             };
@@ -11635,7 +11635,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.SupportedRules,
-                Message = MessagePrefix + "The immutable array should contain every DiagnosticDescriptor rule that was created",
+                Message = MessagePrefix + "The ImmutableArray should contain every DiagnosticDescriptor rule that was created",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 29) }
             };
@@ -11750,7 +11750,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.SupportedRules,
-                Message = MessagePrefix + "The immutable array should contain every DiagnosticDescriptor rule that was created",
+                Message = MessagePrefix + "The ImmutableArray should contain every DiagnosticDescriptor rule that was created",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 38, 24) }
             };
@@ -11873,7 +11873,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.SupportedRules,
-                Message = MessagePrefix + "The immutable array should contain every DiagnosticDescriptor rule that was created",
+                Message = MessagePrefix + "The ImmutableArray should contain every DiagnosticDescriptor rule that was created",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 38, 29) }
             };
