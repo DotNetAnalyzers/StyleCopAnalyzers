@@ -453,7 +453,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         PropertyDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Fix the signature of the SupportedDiagnostics property", c => IncorrectSigSuppDiagAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "The property's signature must match its inherited member's signature", c => IncorrectSigSuppDiagAsync(context.Document, declaration, c)), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingAccessor))

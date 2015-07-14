@@ -10069,7 +10069,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectSigSuppDiag,
-                Message = MessagePrefix + "The signature of the SupportedDiagnostics property is incorrect",
+                Message = MessagePrefix + "The overriden SupportedDiagnostics property should return an Immutable Array of Diagnostic Descriptors",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 55) }
             };
@@ -10175,7 +10175,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectSigSuppDiag,
-                Message = MessagePrefix + "The signature of the SupportedDiagnostics property is incorrect",
+                Message = MessagePrefix + "The overriden SupportedDiagnostics property should return an Immutable Array of Diagnostic Descriptors",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 53) }
             };
@@ -10281,7 +10281,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectSigSuppDiag,
-                Message = MessagePrefix + "The signature of the SupportedDiagnostics property is incorrect",
+                Message = MessagePrefix + "The overriden SupportedDiagnostics property should return an Immutable Array of Diagnostic Descriptors",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 46) }
             };

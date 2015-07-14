@@ -75,7 +75,7 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor MissingSuppDiagRule = CreateRule(MissingSuppDiag, "Missing SupportedDiagnostics property", MessagePrefix + "You are missing the required inherited SupportedDiagnostics property", "The SupportedDiagnostics property tells the analyzer which diagnostic ids the analyzer supports, or in other words, which DiagnosticDescriptors might be reported by the analyzer. Generally, any DiagnosticDescriptor should be returned by SupportedDiagnostics.");
 
         public const string IncorrectSigSuppDiag = "MetaAnalyzer008";
-        internal static DiagnosticDescriptor IncorrectSigSuppDiagRule = CreateRule(IncorrectSigSuppDiag, "Incorrect SupportedDiagnostics property", MessagePrefix + "The signature of the SupportedDiagnostics property is incorrect");
+        internal static DiagnosticDescriptor IncorrectSigSuppDiagRule = CreateRule(IncorrectSigSuppDiag, "Incorrect SupportedDiagnostics property", MessagePrefix + "The overriden SupportedDiagnostics property should return an Immutable Array of Diagnostic Descriptors");
 
         public const string MissingAccessor = "MetaAnalyzer009";
         internal static DiagnosticDescriptor MissingAccessorRule = CreateRule(MissingAccessor, "Missing get accessor", MessagePrefix + "The {0} property is missing a get accessor", "The SupportedDiagnostics property needs to have a get accessor, because that is how the ImmutableArray of DiagnosticDescriptors is made accessible");
