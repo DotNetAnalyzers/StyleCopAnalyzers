@@ -75,9 +75,9 @@
             else
             {
                 SyntaxToken nextToken = token.GetNextToken();
-                if (nextToken.IsKind(SyntaxKind.CommaToken) || nextToken.IsKind(SyntaxKind.GreaterThanToken))
+                if (nextToken.IsKind(SyntaxKind.CommaToken) || nextToken.IsKind(SyntaxKind.GreaterThanToken) || nextToken.IsKind(SyntaxKind.CloseBracketToken))
                 {
-                    // make an exception for things like typeof(Func<,>) and typeof(Func<,,>)
+                    // make an exception for things like typeof(Func<,>), typeof(Func<,,>) and int[,] myArray
                     missingFollowingSpace = false;
                 }
             }
