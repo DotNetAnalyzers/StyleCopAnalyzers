@@ -1196,12 +1196,15 @@ namespace MetaCompilation
         #region supported diagnostics code fix
         private async Task<Document> IncorrectSigSuppDiagAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken c)
         {
-            var whiteSpace = SyntaxFactory.Whitespace(" ");
-            var newIdentifier = SyntaxFactory.ParseToken("SupportedDiagnostics").WithLeadingTrivia(whiteSpace);
-            var publicKeyword = SyntaxFactory.ParseToken("public").WithTrailingTrivia(whiteSpace);
-            var overrideKeyword = SyntaxFactory.ParseToken("override").WithTrailingTrivia(whiteSpace);
-            var modifierList = SyntaxFactory.TokenList(publicKeyword, overrideKeyword);
-            var newPropertyDeclaration = declaration.WithIdentifier(newIdentifier).WithModifiers(modifierList).WithLeadingTrivia(declaration.GetLeadingTrivia()).WithTrailingTrivia(whiteSpace);
+            var newPropertyDeclaration =
+                declaration
+                    .WithIdentifier(SyntaxFactory.Identifier("SupportedDiagnostics"))
+                    .WithModifiers(
+                        SyntaxFactory.TokenList(
+                            SyntaxFactory.Token(SyntaxKind.PublicKeyword),
+                            SyntaxFactory.Token(SyntaxKind.OverrideKeyword)))
+                    .WithLeadingTrivia(declaration.GetLeadingTrivia())
+                    .WithTrailingTrivia(declaration.GetTrailingTrivia());
 
             return await ReplaceNode(declaration, newPropertyDeclaration, document);
         }
