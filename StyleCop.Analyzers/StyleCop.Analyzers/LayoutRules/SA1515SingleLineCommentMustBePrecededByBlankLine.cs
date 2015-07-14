@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.LayoutRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
     using Microsoft.CodeAnalysis;
@@ -156,7 +157,7 @@
             }
         }
 
-        private static bool IsOnOwnLine(SyntaxTriviaList triviaList, int triviaIndex)
+        private static bool IsOnOwnLine(IReadOnlyList<SyntaxTrivia> triviaList, int triviaIndex)
         {
             while (triviaIndex >= 0)
             {
@@ -171,7 +172,7 @@
             return false;
         }
 
-        private static bool IsPrecededBySingleLineComment(SyntaxTriviaList triviaList, int triviaIndex)
+        private static bool IsPrecededBySingleLineComment(IReadOnlyList<SyntaxTrivia> triviaList, int triviaIndex)
         {
             var eolCount = 0;
 
@@ -200,7 +201,7 @@
             return false;
         }
 
-        private static bool IsPrecededByBlankLine(SyntaxTriviaList triviaList, int triviaIndex)
+        private static bool IsPrecededByBlankLine(IReadOnlyList<SyntaxTrivia> triviaList, int triviaIndex)
         {
             var eolCount = 0;
             var index = triviaIndex - 1;
@@ -248,7 +249,7 @@
                    || prevToken.Parent.IsKind(SyntaxKind.DefaultSwitchLabel);
         }
 
-        private static bool IsPrecededByDirectiveTrivia(SyntaxTriviaList triviaList, int triviaIndex)
+        private static bool IsPrecededByDirectiveTrivia(IReadOnlyList<SyntaxTrivia> triviaList, int triviaIndex)
         {
             triviaIndex--;
             while (triviaIndex >= 0)
