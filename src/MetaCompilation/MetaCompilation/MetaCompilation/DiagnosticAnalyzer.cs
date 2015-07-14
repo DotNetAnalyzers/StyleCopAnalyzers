@@ -95,7 +95,7 @@ namespace MetaCompilation
 
         #region rule rules
         public const string IdDeclTypeError = "MetaAnalyzer014";
-        internal static DiagnosticDescriptor IdDeclTypeErrorRule = CreateRule(IdDeclTypeError, "DiagnosticDescriptor 'id' incorrect", MessagePrefix + "The diagnostic id should be the const declared above this", "The id parameter of a DiagnosticDescriptor should be a string const declared previously. This is so that the diagnostic id is accessible from the CodeFixProvider.cs file.");
+        internal static DiagnosticDescriptor IdDeclTypeErrorRule = CreateRule(IdDeclTypeError, "DiagnosticDescriptor id incorrect", MessagePrefix + "The diagnostic id should be the constant string declared above", "The id parameter of a DiagnosticDescriptor should be a string constant previously declared. This ensures that the diagnostic id is accessible from the CodeFixProvider.cs file.");
 
         public const string MissingIdDeclaration = "MetaAnalyzer015";
         internal static DiagnosticDescriptor MissingIdDeclarationRule = CreateRule(MissingIdDeclaration, "Diagnostic id declaration missing", MessagePrefix + "This diagnostic id has not been declared");

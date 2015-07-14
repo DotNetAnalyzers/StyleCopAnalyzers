@@ -9187,7 +9187,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IdDeclTypeError,
-                Message = MessagePrefix + "The diagnostic id should be the const declared above this",
+                Message = MessagePrefix + "The diagnostic id should be the constant string declared above",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 20, 17) }
             };
@@ -9286,7 +9286,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IdDeclTypeError,
-                Message = MessagePrefix + "The diagnostic id should be the const declared above this",
+                Message = MessagePrefix + "The diagnostic id should be the constant string declared above",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 18, 17) }
             };
@@ -9386,7 +9386,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IdDeclTypeError,
-                Message = MessagePrefix + "The diagnostic id should be the const declared above this",
+                Message = MessagePrefix + "The diagnostic id should be the constant string declared above",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 18, 17) }
             };
@@ -9486,7 +9486,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IdDeclTypeError,
-                Message = MessagePrefix + "The diagnostic id should be the const declared above this",
+                Message = MessagePrefix + "The diagnostic id should be the constant string declared above",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 18, 13) }
             };
