@@ -46,7 +46,7 @@ namespace MetaCompilation
 
         #region Initialize rules
         public const string MissingInit = "MetaAnalyzer002";
-        internal static DiagnosticDescriptor MissingInitRule = CreateRule(MissingInit, "Missing Initialize method", MessagePrefix + "The analyzer '{0}' is missing the required Initialize method", "The Initialize method is required because it is where actions are registered for. Actions are registered to call an analysis method when something specific changes in the syntax tree or semantic model. For example, context.RegisterSyntaxNodeAction(AnalyzeMethod, SyntaxKind.IfStatement) will call AnalyzeMethod every time an if statement changes in the syntax tree.");
+        internal static DiagnosticDescriptor MissingInitRule = CreateRule(MissingInit, "Missing Initialize method", MessagePrefix + "'{0}' is missing the required inherited Initialize method, needed to register analysis actions", "An analyzer requires the Initialize method to register code analysis actions. Actions are registered to call an analysis method when something specific changes in the syntax tree or semantic model. For example, context.RegisterSyntaxNodeAction(AnalyzeMethod, SyntaxKind.IfStatement) will call AnalyzeMethod every time an if statement changes in the syntax tree.");
 
         public const string MissingRegisterStatement = "MetaAnalyzer003";
         internal static DiagnosticDescriptor MissingRegisterRule = CreateRule(MissingRegisterStatement, "An action must be registered within the method", MessagePrefix + "An action must be registered within the '{0}' method", "The Initialize method must register for at least one action so that some analysis can be performed. Otherwise there is no way any diagnostics could be reported");

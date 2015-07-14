@@ -98,7 +98,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         ClassDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Each diagnostic should have a unique id identifying it from other diagnostics", c => MissingIdAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Each diagnostic should have a unique string id identifying it from other diagnostics", c => MissingIdAsync(context.Document, declaration, c)), diagnostic);
 
                     }
                 }
@@ -108,7 +108,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         ClassDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Each analyzer must have an Initialize method to register actions to be performed when changes occur", c => MissingInitAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "The Initialize method prompts actions to analyze the code when changes occur", c => MissingInitAsync(context.Document, declaration, c)), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingRegisterStatement))
