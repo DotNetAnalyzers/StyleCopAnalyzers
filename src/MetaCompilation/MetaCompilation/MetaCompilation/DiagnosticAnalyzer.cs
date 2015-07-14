@@ -52,7 +52,7 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor MissingRegisterRule = CreateRule(MissingRegisterStatement, "Missing register statement", MessagePrefix + "A syntax node action should be registered within the '{0}' method", "The Initialize method must register for at least one action so that some analysis can be performed. Otherwise, analysis will not be performed and no diagnostics will be reported. Registering a syntax node action is useful for analyzing the semantics of a piece of code.");
 
         public const string TooManyInitStatements = "MetaAnalyzer004";
-        internal static DiagnosticDescriptor TooManyInitStatementsRule = CreateRule(TooManyInitStatements, "The method registers multiple actions", MessagePrefix + "The '{0}' method registers multiple actions", "For this tutorial only, only one action is registered for. This is not necessarily a general rule");
+        internal static DiagnosticDescriptor TooManyInitStatementsRule = CreateRule(TooManyInitStatements, "Multiple registered actions", MessagePrefix + "For this tutorial, the '{0}' method should only register one action", "For this tutorial only, the Initialize method should only register one action. More complicated analyzers may need to register multiple actions.");
         
         public const string IncorrectInitSig = "MetaAnalyzer005";
         internal static DiagnosticDescriptor IncorrectInitSigRule = CreateRule(IncorrectInitSig, "Incorrect method signature", MessagePrefix + "The signature for the '{0}' method is incorrect", "The Initialize method shoould override the Initialize method from the DiagnosticAnalyzer abstract class from which your analyzer inherits");

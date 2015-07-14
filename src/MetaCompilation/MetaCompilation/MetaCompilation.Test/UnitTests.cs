@@ -1139,7 +1139,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyInitStatements,
-                Message = MessagePrefix + "The 'Initialize' method registers multiple actions",
+                Message = MessagePrefix + "For this tutorial, the 'Initialize' method should only register one action",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 30) }
             };
@@ -1219,7 +1219,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyInitStatements,
-                Message = MessagePrefix + "The 'Initialize' method registers multiple actions",
+                Message = MessagePrefix + "For this tutorial, the 'Initialize' method should only register one action",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 30) }
             };
@@ -1299,7 +1299,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyInitStatements,
-                Message = MessagePrefix + "The 'Initialize' method registers multiple actions",
+                Message = MessagePrefix + "For this tutorial, the 'Initialize' method should only register one action",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 30) }
             };
@@ -1380,7 +1380,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyInitStatements,
-                Message = MessagePrefix + "The 'Initialize' method registers multiple actions",
+                Message = MessagePrefix + "For this tutorial, the 'Initialize' method should only register one action",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 30) }
             };
@@ -1461,7 +1461,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyInitStatements,
-                Message = MessagePrefix + "The 'Initialize' method registers multiple actions",
+                Message = MessagePrefix + "For this tutorial, the 'Initialize' method should only register one action",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 30) }
             };
@@ -1538,7 +1538,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyInitStatements,
-                Message = MessagePrefix + "The 'Initialize' method registers multiple actions",
+                Message = MessagePrefix + "For this tutorial, the 'Initialize' method should only register one action",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 22, 30) }
             };
