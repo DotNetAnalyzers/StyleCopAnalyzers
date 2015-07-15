@@ -7,6 +7,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Within a C# property, indexer or event, at least one of the child accessors is written on a single line, and at
@@ -114,7 +115,7 @@
 
             foreach (var accessorDeclarationSyntax in accessors)
             {
-                var fileLinePositionSpan = accessorDeclarationSyntax.GetLocation().GetLineSpan();
+                var fileLinePositionSpan = accessorDeclarationSyntax.GetLineSpan();
 
                 if (fileLinePositionSpan.StartLinePosition.Line == fileLinePositionSpan.EndLinePosition.Line)
                 {

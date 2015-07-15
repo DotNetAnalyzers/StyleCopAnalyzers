@@ -6,6 +6,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A static readonly element is positioned beneath a static non-readonly element of the same type.
@@ -70,7 +71,7 @@
                 return;
             }
 
-            var firstNonReadonlyFieldLocation = firstNonReadonlyField.GetLocation().GetLineSpan();
+            var firstNonReadonlyFieldLocation = firstNonReadonlyField.GetLineSpan();
             if (!firstNonReadonlyFieldLocation.IsValid)
             {
                 return;
@@ -78,12 +79,12 @@
 
             var readonlyFieldLocations =
                 staticFields.Where(f => f.Modifiers.Any(SyntaxKind.ReadOnlyKeyword))
-                    .Where(f => f.GetLocation().GetLineSpan().IsValid)
+                    .Where(f => f.GetLineSpan().IsValid)
                     .Where(f => f.Declaration != null && f.Declaration.Variables.Any())
                     .Select(f => new
                     {
-                        FieldLocation = f.GetLocation(),
-                        FieldEndLinePosition = f.GetLocation().GetLineSpan().EndLinePosition
+                        FieldDeclaration = f,
+                        FieldEndLinePosition = f.GetLineSpan().EndLinePosition
                     })
                     .ToList();
 
@@ -91,7 +92,7 @@
             {
                 if (firstNonReadonlyFieldLocation.EndLinePosition < location.FieldEndLinePosition)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, location.FieldLocation));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, location.FieldDeclaration.GetLocation()));
                 }
             }
         }

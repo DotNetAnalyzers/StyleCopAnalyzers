@@ -5,6 +5,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The opening or closing curly bracket within a C# statement, element, or expression is not placed on its own
@@ -169,9 +170,9 @@
             }
         }
 
-        private static int? GetStartLine(SyntaxToken token)
+        private static int GetStartLine(SyntaxToken token)
         {
-            return token.GetLocation()?.GetLineSpan().StartLinePosition.Line;
+            return token.GetLineSpan().StartLinePosition.Line;
         }
 
         private void CheckCurlyBracketToken(SyntaxNodeAnalysisContext context, SyntaxToken token)
@@ -181,15 +182,14 @@
                 return;
             }
 
-            Location location = token.GetLocation();
-            int line = location.GetLineSpan().StartLinePosition.Line;
+            int line = token.GetLineSpan().StartLinePosition.Line;
 
             SyntaxToken previousToken = token.GetPreviousToken();
             if (!previousToken.IsMissing)
             {
-                if (previousToken.GetLocation().GetLineSpan().StartLinePosition.Line == line)
+                if (previousToken.GetLineSpan().StartLinePosition.Line == line)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));
 
                     // no need to report more than one instance for this token
                     return;
@@ -206,14 +206,17 @@
                 case SyntaxKind.SemicolonToken:
                     // these are allowed to appear on the same line
                     return;
+                case SyntaxKind.None:
+                    // last token of this file
+                    return;
 
                 default:
-                    break;
+                break;
                 }
 
-                if (nextToken.GetLocation().GetLineSpan().StartLinePosition.Line == line)
+                if (nextToken.GetLineSpan().StartLinePosition.Line == line)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));
                 }
             }
         }

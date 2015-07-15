@@ -8,6 +8,7 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A closing curly bracket within a C# element, statement, or expression is not followed by a blank line.
@@ -230,7 +231,7 @@
             private bool IsOnSameLineAsOpeningBrace(SyntaxToken closeBrace)
             {
                 var matchingOpenBrace = this.curlyBracketsStack.Peek();
-                return matchingOpenBrace.GetLocation().GetLineSpan().EndLinePosition.Line == closeBrace.GetLocation().GetLineSpan().StartLinePosition.Line;
+                return matchingOpenBrace.GetLineSpan().EndLinePosition.Line == closeBrace.GetLineSpan().StartLinePosition.Line;
             }
 
             private bool StartsWithDirectiveTrivia(SyntaxTriviaList triviaList)

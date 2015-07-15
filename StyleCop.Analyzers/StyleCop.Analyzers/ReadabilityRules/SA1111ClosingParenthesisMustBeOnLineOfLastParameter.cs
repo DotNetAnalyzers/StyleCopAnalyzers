@@ -5,6 +5,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or
@@ -331,14 +332,13 @@
         private static void CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(SyntaxNodeAnalysisContext context,
        CSharpSyntaxNode parameterOrArgument, SyntaxToken closeToken)
         {
-            var lastParameterLine = parameterOrArgument.GetLocation().GetLineSpan();
-            var closeParenLocation = closeToken.GetLocation();
-            var closeParenLine = closeParenLocation.GetLineSpan();
+            var lastParameterLine = parameterOrArgument.GetLineSpan();
+            var closeParenLine = closeToken.GetLineSpan();
             if (lastParameterLine.IsValid &&
                 closeParenLine.IsValid &&
                 closeParenLine.StartLinePosition.Line != lastParameterLine.EndLinePosition.Line)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, closeParenLocation));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, closeToken.GetLocation()));
             }
         }
     }

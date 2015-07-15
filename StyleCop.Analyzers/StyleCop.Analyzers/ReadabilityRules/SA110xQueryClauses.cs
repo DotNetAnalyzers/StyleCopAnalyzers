@@ -112,17 +112,17 @@
 
                 // The node before the query clause may encompass the entire query clause,
                 // so we need to use the token within that node for the line determination.
-                var location1 = !(parent1 is QueryContinuationSyntax) ? parent1.GetLocation() : token1.GetLocation();
-                var location2 = parent2.GetLocation();
+                var location1 = !(parent1 is QueryContinuationSyntax) ? parent1.GetLineSpan() : token1.GetLineSpan();
+                var location2 = parent2.GetLineSpan();
 
-                if (((location2.GetLineSpan().StartLinePosition.Line - location1.GetLineSpan().EndLinePosition.Line) > 1)
+                if (((location2.StartLinePosition.Line - location1.EndLinePosition.Line) > 1)
                     && isEnabledSA1102
                     && !token2.LeadingTrivia.Any(trivia => trivia.IsDirective))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(SA1102Descriptor, token2.GetLocation()));
                 }
 
-                var onSameLine = location1.GetLineSpan().EndLinePosition.Line == location2.GetLineSpan().StartLinePosition.Line;
+                var onSameLine = location1.EndLinePosition.Line == location2.StartLinePosition.Line;
 
                 if (onSameLine
                     && isEnabledSA1104

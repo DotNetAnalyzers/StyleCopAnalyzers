@@ -5,6 +5,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A parameter within a C# method or indexer call or declaration does not begin on the same line as the previous
@@ -131,11 +132,11 @@
                 return;
             }
 
-            var previousLine = attributeList.Attributes[0].GetLocation().GetLineSpan().EndLinePosition.Line;
+            var previousLine = attributeList.Attributes[0].GetLineSpan().EndLinePosition.Line;
             for (int i = 1; i < attributeList.Attributes.Count; i++)
             {
                 var currentAttribute = attributeList.Attributes[i];
-                var lineSpan = currentAttribute.GetLocation().GetLineSpan();
+                var lineSpan = currentAttribute.GetLineSpan();
                 var currentLine = lineSpan.StartLinePosition.Line;
                 if (currentLine - previousLine > 1)
                 {
@@ -156,11 +157,11 @@
                 return;
             }
 
-            var previousLine = attribute.ArgumentList.Arguments[0].GetLocation().GetLineSpan().EndLinePosition.Line;
+            var previousLine = attribute.ArgumentList.Arguments[0].GetLineSpan().EndLinePosition.Line;
             for (int i = 1; i < attribute.ArgumentList.Arguments.Count; i++)
             {
                 var currentArgument = attribute.ArgumentList.Arguments[i];
-                var lineSpan = currentArgument.GetLocation().GetLineSpan();
+                var lineSpan = currentArgument.GetLineSpan();
                 var currentLine = lineSpan.StartLinePosition.Line;
                 if (currentLine - previousLine > 1)
                 {
@@ -186,11 +187,11 @@
                     continue;
                 }
 
-                var previousLine = rankSpecifier.Sizes[0].GetLocation().GetLineSpan().EndLinePosition.Line;
+                var previousLine = rankSpecifier.Sizes[0].GetLineSpan().EndLinePosition.Line;
                 for (int i = 1; i < rankSpecifier.Sizes.Count; i++)
                 {
                     var currentSize = rankSpecifier.Sizes[i];
-                    var lineSpan = currentSize.GetLocation().GetLineSpan();
+                    var lineSpan = currentSize.GetLineSpan();
                     var currentLine = lineSpan.StartLinePosition.Line;
                     if (currentLine - previousLine > 1)
                     {
@@ -245,11 +246,11 @@
                 return;
             }
 
-            var previousLine = argumentListSyntax.Arguments[0].GetLocation().GetLineSpan().EndLinePosition.Line;
+            var previousLine = argumentListSyntax.Arguments[0].GetLineSpan().EndLinePosition.Line;
             for (int i = 1; i < argumentListSyntax.Arguments.Count; i++)
             {
                 var currentArgument = argumentListSyntax.Arguments[i];
-                var lineSpan = currentArgument.GetLocation().GetLineSpan();
+                var lineSpan = currentArgument.GetLineSpan();
                 var currentLine = lineSpan.StartLinePosition.Line;
                 if (currentLine - previousLine > 1)
                 {
@@ -268,11 +269,11 @@
                 return;
             }
 
-            var previousLine = parameterListSyntax.Parameters[0].GetLocation().GetLineSpan().EndLinePosition.Line;
+            var previousLine = parameterListSyntax.Parameters[0].GetLineSpan().EndLinePosition.Line;
             for (int i = 1; i < parameterListSyntax.Parameters.Count; i++)
             {
                 var currentParameter = parameterListSyntax.Parameters[i];
-                var lineSpan = currentParameter.GetLocation().GetLineSpan();
+                var lineSpan = currentParameter.GetLineSpan();
                 var currentLine = lineSpan.StartLinePosition.Line;
                 if (currentLine - previousLine > 1)
                 {

@@ -173,7 +173,7 @@
             {
                 if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
-                    var locations = variableDeclaration.Variables.Select(v => v.Identifier.GetLocation()).ToArray();
+                    var locations = variableDeclaration.Variables.Select(v => v.Identifier.GetLocation());
                     foreach (var location in locations)
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
@@ -232,7 +232,7 @@
             {
                 if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
-                    var locations = variableDeclaration.Variables.Select(v => v.Identifier.GetLocation()).ToArray();
+                    var locations = variableDeclaration.Variables.Select(v => v.Identifier.GetLocation());
                     foreach (var location in locations)
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));

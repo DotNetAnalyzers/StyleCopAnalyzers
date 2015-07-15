@@ -199,7 +199,7 @@
 
         private static bool IsMultiline(SyntaxNode node)
         {
-            var lineSpan = node.GetLocation().GetLineSpan();
+            var lineSpan = node.GetLineSpan();
 
             return lineSpan.StartLinePosition.Line != lineSpan.EndLinePosition.Line;
         }
@@ -227,8 +227,6 @@
 
         private static Location GetDiagnosticLocation(SyntaxNode node)
         {
-            Location nodeLocation = node.GetLocation();
-
             if (node.HasLeadingTrivia)
             {
                 return node.GetLeadingTrivia()[0].GetLocation();

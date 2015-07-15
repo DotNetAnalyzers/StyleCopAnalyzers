@@ -6,6 +6,7 @@
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A C# element containing opening and closing curly brackets is written completely on a single line.
@@ -107,8 +108,8 @@
 
         private static void CheckViolation(SyntaxNodeAnalysisContext context, SyntaxToken openBraceToken, SyntaxToken closeBraceToken)
         {
-            var openingBraceLineSpan = openBraceToken.GetLocation().GetLineSpan();
-            var closingBraceLineSpan = closeBraceToken.GetLocation().GetLineSpan();
+            var openingBraceLineSpan = openBraceToken.GetLineSpan();
+            var closingBraceLineSpan = closeBraceToken.GetLineSpan();
 
             if (openingBraceLineSpan.EndLinePosition.Line == closingBraceLineSpan.StartLinePosition.Line)
             {
