@@ -174,7 +174,7 @@
             var unaryExpression = (PrefixUnaryExpressionSyntax)context.Node;
             var precedingToken = unaryExpression.OperatorToken.GetPreviousToken();
             var followingToken = unaryExpression.OperatorToken.GetNextToken();
-            var followingTrivia = unaryExpression.OperatorToken.TrailingTrivia.AddRange(followingToken.LeadingTrivia);
+            var followingTrivia = TriviaHelper.MergeTriviaLists(unaryExpression.OperatorToken.TrailingTrivia, followingToken.LeadingTrivia);
 
             /* let the outer operator handle things like the following, so no error is reported for '++':
              *   c ^= *++buf4;
@@ -207,7 +207,7 @@
 
             if (analyze)
             {
-                if (followingTrivia.Any(SyntaxKind.SingleLineCommentTrivia) || followingTrivia.Any(SyntaxKind.MultiLineCommentTrivia))
+                if (followingTrivia.Any(t => t.IsKind(SyntaxKind.SingleLineCommentTrivia)) || followingTrivia.Any(t => t.IsKind(SyntaxKind.MultiLineCommentTrivia)))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(DescriptorNotFollowedByComment, unaryExpression.OperatorToken.GetLocation(), unaryExpression.OperatorToken.Text));
                 }
@@ -272,10 +272,10 @@
         private static void CheckToken(SyntaxNodeAnalysisContext context, SyntaxToken token, bool withLeadingWhitespace, bool allowAtEndOfLine, bool withTrailingWhitespace, string tokenText = null)
         {
             var precedingToken = token.GetPreviousToken();
-            var precedingTriviaList = precedingToken.TrailingTrivia.AddRange(token.LeadingTrivia);
+            var precedingTriviaList = TriviaHelper.MergeTriviaLists(precedingToken.TrailingTrivia, token.LeadingTrivia);
 
             var followingToken = token.GetNextToken();
-            var followingTriviaList = token.TrailingTrivia.AddRange(followingToken.LeadingTrivia);
+            var followingTriviaList = TriviaHelper.MergeTriviaLists(token.TrailingTrivia, followingToken.LeadingTrivia);
 
             if (withLeadingWhitespace)
             {

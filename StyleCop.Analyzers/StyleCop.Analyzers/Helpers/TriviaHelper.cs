@@ -160,6 +160,17 @@
         }
 
         /// <summary>
+        /// Merges the given trivia lists into a new single trivia list.
+        /// </summary>
+        /// <param name="list1">The first part of the new list.</param>
+        /// <param name="list2">The second part of the new list.</param>
+        /// <returns>The merged trivia list.</returns>
+        internal static IReadOnlyList<SyntaxTrivia> MergeTriviaLists(IReadOnlyList<SyntaxTrivia> list1, IReadOnlyList<SyntaxTrivia> list2)
+        {
+            return new DualTriviaListHelper(list1, list2);
+        }
+
+        /// <summary>
         /// Determines if the given token has leading blank lines. Leading whitespace on the same line as the token is ignored.
         /// </summary>
         /// <param name="token">The token to check for leading blank lines.</param>
@@ -271,11 +282,11 @@
         /// </summary>
         private class DualTriviaListHelper : IReadOnlyList<SyntaxTrivia>
         {
-            private SyntaxTriviaList part1;
+            private IReadOnlyList<SyntaxTrivia> part1;
             private int part1Count;
-            private SyntaxTriviaList part2;
+            private IReadOnlyList<SyntaxTrivia> part2;
 
-            public DualTriviaListHelper(SyntaxTriviaList part1, SyntaxTriviaList part2)
+            public DualTriviaListHelper(IReadOnlyList<SyntaxTrivia> part1, IReadOnlyList<SyntaxTrivia> part2)
             {
                 this.part1 = part1;
                 this.part2 = part2;

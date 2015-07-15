@@ -6,6 +6,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A nullable type symbol within a C# element is not spaced correctly.
@@ -64,7 +65,7 @@
              */
 
             SyntaxToken precedingToken = questionToken.GetPreviousToken();
-            var triviaList = precedingToken.TrailingTrivia.AddRange(questionToken.LeadingTrivia);
+            var triviaList = TriviaHelper.MergeTriviaLists(precedingToken.TrailingTrivia, questionToken.LeadingTrivia);
             if (triviaList.Any(t => t.IsKind(SyntaxKind.WhitespaceTrivia) || t.IsKind(SyntaxKind.EndOfLineTrivia)))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, questionToken.GetLocation()));

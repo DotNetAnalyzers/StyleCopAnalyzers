@@ -5,6 +5,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A closing curly bracket within a C# element, statement, or expression is preceded by a blank line.
@@ -117,7 +118,7 @@
                 return;
             }
 
-            var separatingTrivia = previousToken.TrailingTrivia.AddRange(closeBraceToken.LeadingTrivia);
+            var separatingTrivia = TriviaHelper.MergeTriviaLists(previousToken.TrailingTrivia, closeBraceToken.LeadingTrivia);
 
             // skip all leading whitespace for the close brace
             var index = separatingTrivia.Count - 1;

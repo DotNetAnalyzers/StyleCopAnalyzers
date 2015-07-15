@@ -5,6 +5,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// An opening curly bracket within a C# element, statement, or expression is followed by a blank line.
@@ -117,10 +118,16 @@
                 return;
             }
 
-            var separatingTrivia = openBraceToken.TrailingTrivia.AddRange(nextToken.LeadingTrivia);
+            var separatingTrivia = TriviaHelper.MergeTriviaLists(openBraceToken.TrailingTrivia, nextToken.LeadingTrivia);
 
             // skip everything until the first end of line (as this is considered part of the line of the opening brace)
-            var startIndex = separatingTrivia.IndexOf(SyntaxKind.EndOfLineTrivia) + 1;
+            var startIndex = 0;
+            while ((startIndex < separatingTrivia.Count) && !separatingTrivia[startIndex].IsKind(SyntaxKind.EndOfLineTrivia))
+            {
+                startIndex++;
+            }
+
+            startIndex = startIndex % separatingTrivia.Count;
 
             var done = false;
             var eolCount = 0;
