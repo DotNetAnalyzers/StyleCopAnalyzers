@@ -831,6 +831,36 @@
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that an opening curly bracket followed by a comment will not trigger any diagnostics.
+        /// </summary>
+        /// <remarks>Tests regression for #971.</remarks>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestOpeningSingleLineCommentAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public object TestMethod1()
+        {
+            // Test comment
+            return null;
+        }
+
+        public object TestMethod2()
+        {
+            /* Test comment */
+            return null;
+        }
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
