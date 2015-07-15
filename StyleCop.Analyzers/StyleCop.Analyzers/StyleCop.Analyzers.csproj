@@ -127,6 +127,7 @@
     <Compile Include="Helpers\NameSyntaxHelpers.cs" />
     <Compile Include="Helpers\RenameHelper.cs" />
     <Compile Include="Helpers\SpecializedTasks.cs" />
+    <Compile Include="Helpers\SyntaxTriviaHelpers.cs" />
     <Compile Include="Helpers\TokenHelpers.cs" />
     <Compile Include="Helpers\TriviaHelper.cs" />
     <Compile Include="Helpers\UsingDirectiveSyntaxHelpers.cs" />
