@@ -16243,7 +16243,7 @@ namespace SyntaxNodeAnalyzerAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingRule,
-                Message = MessagePrefix + "You need to have at least one DiagnosticDescriptor rule",
+                Message = MessagePrefix + "The analyzer should have at least one DiagnosticDescriptor rule",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 17, 29) }
             };
