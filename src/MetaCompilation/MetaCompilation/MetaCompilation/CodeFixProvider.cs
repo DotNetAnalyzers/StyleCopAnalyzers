@@ -98,7 +98,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         ClassDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Give each diagnostic a unique string id identifying it from other diagnostics", c => MissingIdAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Give the diagnostic a unique string id identifying it from other diagnostics", c => MissingIdAsync(context.Document, declaration, c)), diagnostic);
 
                     }
                 }
@@ -144,7 +144,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         FieldDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Make DiagnosticDescriptor rule both internal and static", c => InternalStaticAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Make the DiagnosticDescriptor rule both internal and static", c => InternalStaticAsync(context.Document, declaration, c)), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.EnabledByDefaultError))
@@ -516,7 +516,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         ArgumentListSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Implement analysis on SyntaxNodes of kind 'IfStatement'", c => CorrectKindAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Analyze the correct SyntaxKind", c => CorrectKindAsync(context.Document, declaration, c)), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectRegister))
