@@ -168,8 +168,8 @@ namespace SyntaxNodeAnalyzer
             }
 
             var openParen = ifStatement.OpenParenToken;
-            var startDiagnosticSpan = ifKeyword.Span.Start;
-            var endDiagnosticSpan = openParen.Span.Start;
+            var startDiagnosticSpan = ifKeyword.SpanStart;
+            var endDiagnosticSpan = openParen.SpanStart;
             var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
             var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
             var diagnostic = Diagnostic.Create(Rule, diagnosticLocation, Rule.MessageFormat);
