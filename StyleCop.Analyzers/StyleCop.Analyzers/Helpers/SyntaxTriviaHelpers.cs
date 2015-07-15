@@ -5,7 +5,6 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Foo = Microsoft.CodeAnalysis.CSharp;
 
     internal static class SyntaxTreeHelpers
     {
