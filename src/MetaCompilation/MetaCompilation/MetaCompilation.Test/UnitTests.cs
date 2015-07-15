@@ -349,8 +349,8 @@ namespace SyntaxNodeAnalyzer
         public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
         {
         //Each analyzer needs a public id to identify each DiagnosticDescriptor and subsequently fix diagnostics in CodeFixProvider.cs
-        public const string spacingRuleId = ""IfSpacing"";
-        public string practice = ""IfSpacing001"";
+        public const string spacingRuleId = ""IfSpacing001"";
+        public string practice = ""IfSpacing"";
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
             {
                 get
