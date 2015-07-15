@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.LayoutRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
     using Helpers;
@@ -216,8 +217,7 @@
 
             var allTrivia = parent.DescendantTrivia(TextSpan.FromBounds(firstNode.Span.End, secondNode.Span.Start),
                 descendIntoTrivia: true,
-                descendIntoChildren: n => true)
-                .ToImmutableList();
+                descendIntoChildren: n => true);
 
             if (!HasEmptyLine(allTrivia))
             {
@@ -241,23 +241,23 @@
             return Location.None;
         }
 
-        private static bool HasEmptyLine(ImmutableList<SyntaxTrivia> allTrivia)
+        private static bool HasEmptyLine(IEnumerable<SyntaxTrivia> allTrivia)
         {
-            allTrivia = allTrivia.Where(x => !x.IsKind(SyntaxKind.WhitespaceTrivia)).ToImmutableList();
-            for (int i = 1; i < allTrivia.Count; i++)
+            allTrivia = allTrivia.Where(x => !x.IsKind(SyntaxKind.WhitespaceTrivia));
+
+            SyntaxTrivia previousTrivia = default(SyntaxTrivia);
+
+            foreach (var trivia in allTrivia)
             {
-                if (allTrivia[i].IsKind(SyntaxKind.EndOfLineTrivia))
+                if (trivia.IsKind(SyntaxKind.EndOfLineTrivia))
                 {
-                    if (allTrivia[i - 1].IsKind(SyntaxKind.EndOfLineTrivia))
+                    if (previousTrivia.IsKind(SyntaxKind.EndOfLineTrivia))
                     {
                         return true;
                     }
                 }
-                else
-                {
-                    // We can skip one trivia
-                    i++;
-                }
+
+                previousTrivia = trivia;
             }
 
             return false;
