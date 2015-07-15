@@ -127,7 +127,7 @@
                 startIndex++;
             }
 
-            startIndex = startIndex % separatingTrivia.Count;
+            startIndex = (startIndex == separatingTrivia.Count) ? 0 : startIndex + 1;
 
             var done = false;
             var eolCount = 0;
