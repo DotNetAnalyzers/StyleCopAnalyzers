@@ -139,7 +139,7 @@
             SyntaxTriviaList part1;
             SyntaxTriviaList part2;
 
-            triviaIndex = token.TrailingTrivia.IndexOf(trivia);
+            triviaIndex = BinarySearch(token.TrailingTrivia, trivia);
             if (triviaIndex != -1)
             {
                 var nextToken = token.GetNextToken(includeZeroWidth: true);
@@ -150,13 +150,41 @@
             else
             {
                 var prevToken = token.GetPreviousToken();
-                triviaIndex = prevToken.TrailingTrivia.Count + token.LeadingTrivia.IndexOf(trivia);
+                triviaIndex = prevToken.TrailingTrivia.Count + BinarySearch(token.LeadingTrivia, trivia);
 
                 part1 = prevToken.TrailingTrivia;
                 part2 = token.LeadingTrivia;
             }
 
             return new DualTriviaListHelper(part1, part2);
+        }
+
+        private static int BinarySearch(SyntaxTriviaList leadingTrivia, SyntaxTrivia trivia)
+        {
+            int low = 0;
+            int high = leadingTrivia.Count - 1;
+            while (low <= high)
+            {
+                int index = low + ((high - low) >> 1);
+                int order = leadingTrivia[index].Span.CompareTo(trivia.Span);
+
+                if (order == 0)
+                {
+                    return index;
+                }
+
+                if (order < 0)
+                {
+                    low = index + 1;
+                }
+                else
+                {
+                    high = index - 1;
+                }
+            }
+
+            // Entry was not found
+            throw new KeyNotFoundException("trivia was not in trivia list");
         }
 
         /// <summary>
