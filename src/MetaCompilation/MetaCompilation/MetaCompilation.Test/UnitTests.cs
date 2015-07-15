@@ -169,6 +169,7 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
         {
+        //Each analyzer needs a public id to identify each DiagnosticDescriptor and subsequently fix diagnostics in CodeFixProvider.cs
         public const string spacingRuleId = ""IfSpacing"";
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
@@ -258,6 +259,7 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
         {
+        //Each analyzer needs a public id to identify each DiagnosticDescriptor and subsequently fix diagnostics in CodeFixProvider.cs
         public const string spacingRuleId = ""IfSpacing"";
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
                 id: SpacingRuleId, //make the id specific
@@ -346,6 +348,7 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
         {
+        //Each analyzer needs a public id to identify each DiagnosticDescriptor and subsequently fix diagnostics in CodeFixProvider.cs
         public const string spacingRuleId = ""IfSpacing"";
         public string practice = ""IfSpacing"";
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
@@ -427,6 +430,7 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
         {
+        //Each analyzer needs a public id to identify each DiagnosticDescriptor and subsequently fix diagnostics in CodeFixProvider.cs
         public const string spacingRuleId = ""IfSpacing"";
         private const string practice = ""IfSpacing"";
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
@@ -508,6 +512,7 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
         {
+        //Each analyzer needs a public id to identify each DiagnosticDescriptor and subsequently fix diagnostics in CodeFixProvider.cs
         public const string spacingRuleId = ""IfSpacing"";
         string practice = ""IfSpacing"";
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
@@ -589,6 +594,7 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
         {
+        //Each analyzer needs a public id to identify each DiagnosticDescriptor and subsequently fix diagnostics in CodeFixProvider.cs
         public const string spacingRuleId = ""IfSpacing"";
         public const int practice = 7;
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
@@ -996,6 +1002,7 @@ namespace SyntaxNodeAnalyzer
 
         public override void Initialize(AnalysisContext context)
         {
+            //Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
         }
 
@@ -1085,6 +1092,7 @@ namespace SyntaxNodeAnalyzer
 
         public override void Initialize(AnalysisContext context)
         {
+            //Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
         }
 
@@ -2906,12 +2914,13 @@ namespace SyntaxNodeAnalyzer
 
             public override void Initialize(AnalysisContext context)
             {
-                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
-            }
+            //Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
         }
     }";
 
-            VerifyCSharpFix(test, fixtest);
+            VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
         }
         #endregion
 
@@ -2982,8 +2991,9 @@ namespace SyntaxNodeAnalyzer
 
             public override void Initialize(AnalysisContext context)
             {
+            //Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
-            }
+        }
         }
     }";
 
@@ -3500,6 +3510,7 @@ namespace SyntaxNodeAnalyzer
 
         private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
         {
+            //The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax
             var ifStatement = (IfStatementSyntax)context.Node;
         }
     }
@@ -3609,6 +3620,7 @@ namespace SyntaxNodeAnalyzer
 
         private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
         {
+            //The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax
             var ifStatement = (IfStatementSyntax)context.Node;
         }
     }
@@ -3718,6 +3730,7 @@ namespace SyntaxNodeAnalyzer
 
             private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
             {
+            //The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax
             var ifStatement = (IfStatementSyntax)context.Node;
         }
         }
@@ -3827,6 +3840,7 @@ namespace SyntaxNodeAnalyzer
 
             private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
             {
+            //The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax
             var ifStatement = (IfStatementSyntax)context.Node;
         }
         }
@@ -3936,6 +3950,7 @@ namespace SyntaxNodeAnalyzer
 
             private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
             {
+            //The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax
             var ifStatement = (IfStatementSyntax)context.Node;
         }
         }
@@ -4045,6 +4060,7 @@ namespace SyntaxNodeAnalyzer
 
             private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
             {
+            //The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax
             var ifStatement = (IfStatementSyntax)context.Node;
         }
         }
@@ -4154,6 +4170,7 @@ namespace SyntaxNodeAnalyzer
 
             private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
             {
+            //The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax
             var ifStatement = (IfStatementSyntax)context.Node;
         }
         }
@@ -4264,6 +4281,7 @@ namespace SyntaxNodeAnalyzer
 
             private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
             {
+            //The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax
             var ifStatement = (IfStatementSyntax)context.Node;
             var ifKeyword = ifStatement.IfKeyword;
             }
@@ -4378,6 +4396,7 @@ namespace SyntaxNodeAnalyzer
             private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
             {
                 var ifStatement = (IfStatementSyntax)context.Node;
+            //This statement navigates down the syntax tree one level to extract the 'if' keyword
             var ifKeyword = ifStatement.IfKeyword;
         }
         }
@@ -4489,6 +4508,7 @@ namespace SyntaxNodeAnalyzer
             private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
             {
                 var ifStatement = (IfStatementSyntax)context.Node;
+            //This statement navigates down the syntax tree one level to extract the 'if' keyword
             var ifKeyword = ifStatement.IfKeyword;
         }
         }
@@ -4600,6 +4620,7 @@ namespace SyntaxNodeAnalyzer
             private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
             {
                 var ifStatement = (IfStatementSyntax)context.Node;
+            //This statement navigates down the syntax tree one level to extract the 'if' keyword
             var ifKeyword = ifStatement.IfKeyword;
         }
         }
@@ -4711,6 +4732,7 @@ namespace SyntaxNodeAnalyzer
             private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
             {
                 var ifStatement = (IfStatementSyntax)context.Node;
+            //This statement navigates down the syntax tree one level to extract the 'if' keyword
             var ifKeyword = ifStatement.IfKeyword;
         }
         }
@@ -4822,6 +4844,7 @@ namespace SyntaxNodeAnalyzer
             private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
             {
                 var ifStatement = (IfStatementSyntax)context.Node;
+            //This statement navigates down the syntax tree one level to extract the 'if' keyword
             var ifKeyword = ifStatement.IfKeyword;
         }
         }
@@ -4936,6 +4959,7 @@ namespace SyntaxNodeAnalyzer
             private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
             {
                 var ifStatement = (IfStatementSyntax)context.Node;
+            //This statement navigates down the syntax tree one level to extract the 'if' keyword
             var ifKeyword = ifStatement.IfKeyword;
             if (ifKeyword.HasTrailingTrivia)
                 {
@@ -5049,6 +5073,7 @@ namespace SyntaxNodeAnalyzer
 
             private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
             {
+            //The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax
             var ifStatement = (IfStatementSyntax)context.Node;
         }
         }
@@ -5158,6 +5183,7 @@ namespace SyntaxNodeAnalyzer
 
             private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
             {
+            //The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax
             var ifStatement = (IfStatementSyntax)context.Node;
             //var ifStatement = (IfStatementSyntax)context.Node;
         }
@@ -5271,6 +5297,7 @@ namespace SyntaxNodeAnalyzer
             private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
             {
                 var ifStatement = (IfStatementSyntax)context.Node;
+            //This statement navigates down the syntax tree one level to extract the 'if' keyword
             var ifKeyword = ifStatement.IfKeyword;
         }
         }
@@ -5382,6 +5409,7 @@ namespace SyntaxNodeAnalyzer
             private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
             {
                 var ifStatement = (IfStatementSyntax)context.Node;
+            //This statement navigates down the syntax tree one level to extract the 'if' keyword
             var ifKeyword = ifStatement.IfKeyword;
             //var ifKeyword = ifStatement.IfKeyword;
         }
@@ -8101,6 +8129,7 @@ namespace SyntaxNodeAnalyzer
     {
         public const string spacingRuleId = ""IfSpacing"";
 
+        //If the analyzer finds an issue, it will report the DiagnosticDescriptor rule
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
             id: spacingRuleId, //make the id specific
             title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
@@ -8108,6 +8137,8 @@ namespace SyntaxNodeAnalyzer
             category: ""Syntax"", //make the category specific
             defaultSeverity: DiagnosticSeverity.Warning, //possible options
             isEnabledByDefault: false);
+        //id: Identifies each rule. Same as the public constant declared above
+        //defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -8129,7 +8160,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.EnabledByDefaultError,
                 Message = MessagePrefix + "isEnabledByDefault should be set to true",
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 33) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 33) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -8152,6 +8183,7 @@ namespace SyntaxNodeAnalyzer
     {
         public const string spacingRuleId = ""IfSpacing"";
 
+        //If the analyzer finds an issue, it will report the DiagnosticDescriptor rule
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
             id: spacingRuleId, //make the id specific
             title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
@@ -8159,6 +8191,9 @@ namespace SyntaxNodeAnalyzer
             category: ""Syntax"", //make the category specific
             defaultSeverity: DiagnosticSeverity.Warning, //possible options
             isEnabledByDefault: true);
+        //isEnabledByDefault: Determines whether the analyzer is enabled by default or if the user must manually enable it. Generally set to true
+        //id: Identifies each rule. Same as the public constant declared above
+        //defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -8199,6 +8234,7 @@ namespace SyntaxNodeAnalyzer
     {
         public const string spacingRuleId = ""IfSpacing"";
 
+        //If the analyzer finds an issue, it will report the DiagnosticDescriptor rule
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
             id: spacingRuleId, //make the id specific
             title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
@@ -8227,7 +8263,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.EnabledByDefaultError,
                 Message = MessagePrefix + "isEnabledByDefault should be set to true",
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 33) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 33) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -8250,6 +8286,7 @@ namespace SyntaxNodeAnalyzer
     {
         public const string spacingRuleId = ""IfSpacing"";
 
+        //If the analyzer finds an issue, it will report the DiagnosticDescriptor rule
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
             id: spacingRuleId, //make the id specific
             title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
@@ -8257,6 +8294,7 @@ namespace SyntaxNodeAnalyzer
             category: ""Syntax"", //make the category specific
             defaultSeverity: DiagnosticSeverity.Warning, //possible options
             isEnabledByDefault: true);
+        //isEnabledByDefault: Determines whether the analyzer is enabled by default or if the user must manually enable it. Generally set to true
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -8360,6 +8398,7 @@ namespace SyntaxNodeAnalyzer
             category: ""Syntax"", //make the category specific
             defaultSeverity: DiagnosticSeverity.Warning, //possible options
             isEnabledByDefault: true);
+        //isEnabledByDefault: Determines whether the analyzer is enabled by default or if the user must manually enable it. Generally set to true
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -8462,6 +8501,7 @@ namespace SyntaxNodeAnalyzer
             category: ""Syntax"", //make the category specific
             defaultSeverity: DiagnosticSeverity.Warning, //possible options
             isEnabledByDefault: true);
+        //isEnabledByDefault: Determines whether the analyzer is enabled by default or if the user must manually enable it. Generally set to true
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
@@ -8507,6 +8547,7 @@ namespace SyntaxNodeAnalyzer
     {
         public const string spacingRuleId = ""IfSpacing"";
 
+        //If the analyzer finds an issue, it will report the DiagnosticDescriptor rule
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
             id: spacingRuleId, //make the id specific
             title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
@@ -8535,7 +8576,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.DefaultSeverityError,
                 Message = MessagePrefix + "defaultSeverity must be of the form: DiagnosticSeverity.[severity]",
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 24, 30) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 30) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -8558,6 +8599,7 @@ namespace SyntaxNodeAnalyzer
     {
         public const string spacingRuleId = ""IfSpacing"";
 
+        //If the analyzer finds an issue, it will report the DiagnosticDescriptor rule
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
             id: spacingRuleId, //make the id specific
             title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
@@ -8565,6 +8607,7 @@ namespace SyntaxNodeAnalyzer
             category: ""Syntax"", //make the category specific
             defaultSeverity: DiagnosticSeverity.Error, //possible options
             isEnabledByDefault: true);
+        //defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -8599,6 +8642,7 @@ namespace SyntaxNodeAnalyzer
     {
         public const string spacingRuleId = ""IfSpacing"";
 
+        //If the analyzer finds an issue, it will report the DiagnosticDescriptor rule
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
             id: spacingRuleId, //make the id specific
             title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
@@ -8606,6 +8650,7 @@ namespace SyntaxNodeAnalyzer
             category: ""Syntax"", //make the category specific
             defaultSeverity: DiagnosticSeverity.Warning, //possible options
             isEnabledByDefault: true);
+        //defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -8640,6 +8685,7 @@ namespace SyntaxNodeAnalyzer
     {
         public const string spacingRuleId = ""IfSpacing"";
 
+        //If the analyzer finds an issue, it will report the DiagnosticDescriptor rule
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
             id: spacingRuleId, //make the id specific
             title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
@@ -8647,6 +8693,7 @@ namespace SyntaxNodeAnalyzer
             category: ""Syntax"", //make the category specific
             defaultSeverity: DiagnosticSeverity.Hidden, //possible options
             isEnabledByDefault: true);
+        //defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -8681,6 +8728,7 @@ namespace SyntaxNodeAnalyzer
     {
         public const string spacingRuleId = ""IfSpacing"";
 
+        //If the analyzer finds an issue, it will report the DiagnosticDescriptor rule
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
             id: spacingRuleId, //make the id specific
             title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
@@ -8688,6 +8736,7 @@ namespace SyntaxNodeAnalyzer
             category: ""Syntax"", //make the category specific
             defaultSeverity: DiagnosticSeverity.Info, //possible options
             isEnabledByDefault: true);
+        //defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -8789,6 +8838,7 @@ namespace SyntaxNodeAnalyzer
             category: ""Syntax"", //make the category specific
             defaultSeverity: DiagnosticSeverity.Error, //possible options
             isEnabledByDefault: true);
+        //defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -8830,6 +8880,7 @@ namespace SyntaxNodeAnalyzer
             category: ""Syntax"", //make the category specific
             defaultSeverity: DiagnosticSeverity.Warning, //possible options
             isEnabledByDefault: true);
+        //defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -8871,6 +8922,7 @@ namespace SyntaxNodeAnalyzer
             category: ""Syntax"", //make the category specific
             defaultSeverity: DiagnosticSeverity.Hidden, //possible options
             isEnabledByDefault: true);
+        //defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -8912,6 +8964,7 @@ namespace SyntaxNodeAnalyzer
             category: ""Syntax"", //make the category specific
             defaultSeverity: DiagnosticSeverity.Info, //possible options
             isEnabledByDefault: true);
+        //defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -9007,6 +9060,7 @@ namespace SyntaxNodeAnalyzer
             category: ""Syntax"", //make the category specific
             defaultSeverity: DiagnosticSeverity.Error, //possible options
             isEnabledByDefault: true);
+        //defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
@@ -9044,6 +9098,7 @@ namespace SyntaxNodeAnalyzer
             category: ""Syntax"", //make the category specific
             defaultSeverity: DiagnosticSeverity.Warning, //possible options
             isEnabledByDefault: true);
+        //defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
@@ -9081,6 +9136,7 @@ namespace SyntaxNodeAnalyzer
             category: ""Syntax"", //make the category specific
             defaultSeverity: DiagnosticSeverity.Hidden, //possible options
             isEnabledByDefault: true);
+        //defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
@@ -9118,6 +9174,7 @@ namespace SyntaxNodeAnalyzer
             category: ""Syntax"", //make the category specific
             defaultSeverity: DiagnosticSeverity.Info, //possible options
             isEnabledByDefault: true);
+        //defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
@@ -9161,6 +9218,7 @@ namespace SyntaxNodeAnalyzer
     {
         public const string spacingRuleId = ""IfSpacing"";
 
+        //If the analyzer finds an issue, it will report the DiagnosticDescriptor rule
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
             id: ""test"", //make the id specific
             title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
@@ -9189,7 +9247,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.IdDeclTypeError,
                 Message = MessagePrefix + "The diagnostic id should be the const declared above this",
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 20, 17) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 21, 17) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -9212,6 +9270,7 @@ namespace SyntaxNodeAnalyzer
     {
         public const string spacingRuleId = ""IfSpacing"";
 
+        //If the analyzer finds an issue, it will report the DiagnosticDescriptor rule
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
             id: spacingRuleId, //make the id specific
             title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
@@ -9219,6 +9278,7 @@ namespace SyntaxNodeAnalyzer
             category: ""Syntax"", //make the category specific
             defaultSeverity: DiagnosticSeverity.Warning, //possible options
             isEnabledByDefault: true);
+        //id: Identifies each rule. Same as the public constant declared above
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -9316,6 +9376,7 @@ namespace SyntaxNodeAnalyzer
             category: ""Syntax"", //make the category specific
             defaultSeverity: DiagnosticSeverity.Warning, //possible options
             isEnabledByDefault: true);
+        //id: Identifies each rule. Same as the public constant declared above
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
@@ -9416,6 +9477,7 @@ namespace SyntaxNodeAnalyzer
             category: ""Syntax"", //make the category specific
             defaultSeverity: DiagnosticSeverity.Warning, //possible options
             isEnabledByDefault: true);
+        //id: Identifies each rule. Same as the public constant declared above
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
@@ -9516,6 +9578,7 @@ namespace SyntaxNodeAnalyzer
             category: ""Syntax"", //make the category specific
             defaultSeverity: DiagnosticSeverity.Warning, //possible options
             isEnabledByDefault: true);
+        //id: Identifies each rule. Same as the public constant declared above
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
@@ -9610,6 +9673,7 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        //Each analyzer needs a public id to identify each DiagnosticDescriptor and subsequently fix diagnostics in CodeFixProvider.cs
         public const string test = ""DescriptiveId"";
         public const string spacingRuleId = ""IfSpacing"";
 
@@ -9769,7 +9833,7 @@ namespace SyntaxNodeAnalyzer
                     }
                 }
             }
-
+            //Extracts the opening parenthesis of the if-statement condition
             var openParen = ifState.OpenParenToken;
         }
     }
@@ -9907,7 +9971,7 @@ namespace SyntaxNodeAnalyzer
                         }
                     }
                 }
-
+            //Extracts the opening parenthesis of the if-statement condition
             var openParen = ifState.OpenParenToken;
         }
     }
@@ -10549,7 +10613,6 @@ namespace SyntaxNodeAnalyzer
         #endregion
 
         #region TooManyAccessors
-
         [Fact]
         public void TooManyAccessors1() //SupportedDiagnostics property with get and then set accessors
         {
@@ -10660,7 +10723,6 @@ namespace SyntaxNodeAnalyzer
             VerifyCSharpFix(test, fixtest);
         }
 
-
         [Fact]
         public void TooManyAccessors2() //SupportedDiagnostics property with set and then get accessors
         {
@@ -10770,7 +10832,6 @@ namespace SyntaxNodeAnalyzer
 
             VerifyCSharpFix(test, fixtest);
         }
-
 
         [Fact]
         public void TooManyAccessors3() //SupportedDiagnostics property with two get accessors
@@ -10884,7 +10945,6 @@ namespace SyntaxNodeAnalyzer
         #endregion
 
         #region AccessorReturnValue (fix for IncorrectAccessorReturn & SuppDiagReturn)
-
         [Fact]
         public void AccessorReturnValue1() //check that "return array;" is supported. ie SupportedRules diagnostic should surface
         {
@@ -11032,6 +11092,7 @@ namespace SyntaxNodeAnalyzer
         {
             get
             {
+                //This array contains all the diagnostics that can be shown to the user
                 return ImmutableArray.Create();
             }
         }
@@ -11138,6 +11199,7 @@ namespace SyntaxNodeAnalyzer
         {
             get
             {
+                //This array contains all the diagnostics that can be shown to the user
                 return ImmutableArray.Create();
             }
         }
@@ -11244,6 +11306,7 @@ namespace SyntaxNodeAnalyzer
         {
             get
             {
+                //This array contains all the diagnostics that can be shown to the user
                 return ImmutableArray.Create();
             }
         }
@@ -11350,6 +11413,7 @@ namespace SyntaxNodeAnalyzer
         {
             get
             {
+                //This array contains all the diagnostics that can be shown to the user
                 return ImmutableArray.Create();
             }
         }
@@ -11456,6 +11520,7 @@ namespace SyntaxNodeAnalyzer
         {
             get
             {
+                //This array contains all the diagnostics that can be shown to the user
                 return ImmutableArray.Create();
             }
         }
@@ -11564,6 +11629,7 @@ namespace SyntaxNodeAnalyzer
         {
             get
             {
+                //This array contains all the diagnostics that can be shown to the user
                 return ImmutableArray.Create(Rule);
             }
         }
@@ -11671,6 +11737,7 @@ namespace SyntaxNodeAnalyzer
         {
             get
             {
+                //This array contains all the diagnostics that can be shown to the user
                 var array = ImmutableArray.Create(Rule);
                 return array;
             }
@@ -11794,6 +11861,7 @@ namespace SyntaxNodeAnalyzer
         {
             get
             {
+                //This array contains all the diagnostics that can be shown to the user
                 return ImmutableArray.Create(Rule, Rule2);
             }
         }
@@ -11917,6 +11985,7 @@ namespace SyntaxNodeAnalyzer
         {
             get
             {
+                //This array contains all the diagnostics that can be shown to the user
                 var array = ImmutableArray.Create(Rule, Rule2);
                 return array;
             }
@@ -12070,6 +12139,7 @@ namespace SyntaxNodeAnalyzer
             }
 
             var open = ifState.OpenParenToken;
+            //Determines the start of the span of the diagnostic that will be reported, ie the start of the squiggle
             var startDiagnosticSpan = ifKeyword.Span.Start;
         }
     }
@@ -12210,6 +12280,7 @@ namespace SyntaxNodeAnalyzer
             }
 
             var open = ifState.OpenParenToken;
+            //Determines the start of the span of the diagnostic that will be reported, ie the start of the squiggle
             var startDiagnosticSpan = ifKeyword.Span.Start;
         }
     }
@@ -12353,6 +12424,7 @@ namespace SyntaxNodeAnalyzer
 
             var open = ifState.OpenParenToken;
             var start = ifKeyword.Span.Start;
+            //Determines the end of the span of the diagnostic that will be reported
             var endDiagnosticSpan = open.Span.Start;
         }
     }
@@ -12495,6 +12567,7 @@ namespace SyntaxNodeAnalyzer
 
             var open = ifState.OpenParenToken;
             var start = ifKeyword.Span.Start;
+            //Determines the end of the span of the diagnostic that will be reported
             var endDiagnosticSpan = open.Span.Start;
         }
     }
@@ -12640,6 +12713,7 @@ namespace SyntaxNodeAnalyzer
             var open = ifState.OpenParenToken;
             var start = ifKeyword.Span.Start;
             var end = open.Span.Start;
+            //The span is the range of integers that define the position of the characters the red squiggle will underline
             var diagnosticSpan = TextSpan.FromBounds(start, end);
         }
     }
@@ -12784,6 +12858,7 @@ namespace SyntaxNodeAnalyzer
             var open = ifState.OpenParenToken;
             var start = ifKeyword.Span.Start;
             var end = open.Span.Start;
+            //The span is the range of integers that define the position of the characters the red squiggle will underline
             var diagnosticSpan = TextSpan.FromBounds(start, end);
         }
     }
@@ -12793,7 +12868,7 @@ namespace SyntaxNodeAnalyzer
         }
         #endregion
 
-        #region SpanTests
+        #region LocationTests
         [Fact]
         public void MissingLocation()
         {
@@ -12931,6 +13006,7 @@ namespace SyntaxNodeAnalyzer
             var start = ifKeyword.Span.Start;
             var end = open.Span.Start;
             var span = TextSpan.FromBounds(start, end);
+            //Uses the span created above to create a location for the diagnostic squiggle to appear within the syntax tree passed in as an argument
             var diagnosticLocation = Location.Create(ifState.SyntaxTree, span);
         }
     }
@@ -13077,6 +13153,7 @@ namespace SyntaxNodeAnalyzer
             var start = ifKeyword.Span.Start;
             var end = open.Span.Start;
             var span = TextSpan.FromBounds(start, end);
+            //Uses the span created above to create a location for the diagnostic squiggle to appear within the syntax tree passed in as an argument
             var diagnosticLocation = Location.Create(ifState.SyntaxTree, span);
         }
     }
@@ -13226,6 +13303,7 @@ namespace SyntaxNodeAnalyzer
             var end = open.Span.Start;
             var span = TextSpan.FromBounds(start, end);
             var location = Location.Create(ifState.SyntaxTree, span);
+            //Holds the diagnostic and all necessary information to be reported
             var diagnostic = Diagnostic.Create(spacingRule, location);
         }
     }
@@ -13374,6 +13452,7 @@ namespace SyntaxNodeAnalyzer
             var end = open.Span.Start;
             var span = TextSpan.FromBounds(start, end);
             var location = Location.Create(ifState.SyntaxTree, span);
+            //Holds the diagnostic and all necessary information to be reported
             var diagnostic = Diagnostic.Create(spacingRule, location);
         }
     }
@@ -16267,7 +16346,8 @@ namespace SyntaxNodeAnalyzerAnalyzer
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
         public const string spacingRuleId = ""IfSpacing"";
-        internal static DiagnosticDescriptor spacingRule = new DiagnosticDescriptor(id: , title: ""Enter a title for this diagnostic"", messageFormat: ""Enter a message to be displayed with this diagnostic"", category: ""Enter a category for this diagnostic"", defaultSeverity: , isEnabledByDefault: );
+        //If the analyzer finds an issue, it will report the DiagnosticDescriptor rule
+        internal static DiagnosticDescriptor spacingRule = new DiagnosticDescriptor(id: ""Change me to the name of the above constant"", title: ""Enter a title for this diagnostic"", messageFormat: ""Enter a message to be displayed with this diagnostic"", category: ""Enter a category for this diagnostic (e.g. Formatting)"", defaultSeverity: default(DiagnosticSeverity), isEnabledByDefault: default(bool));
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -16291,7 +16371,6 @@ namespace SyntaxNodeAnalyzerAnalyzer
 
             VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
         }
-
         #endregion
 
         #region ReturnStatementMissing
@@ -16406,6 +16485,7 @@ namespace SyntaxNodeAnalyzer
                     {
                         if (trailingTrivia.ToString() == "" "")
                         {
+                        //If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic
                         return;
                     }
                     }
@@ -16531,6 +16611,7 @@ namespace SyntaxNodeAnalyzer
                     {
                         if (trailingTrivia.ToString() == "" "")
                         {
+                        //If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic
                         return;
                     }
                     }
@@ -16655,6 +16736,7 @@ namespace SyntaxNodeAnalyzer
                     {
                         if (trailingTrivia.ToString() == "" "")
                         {
+                        //If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic
                         return;
                         return;
                         }
@@ -16779,6 +16861,7 @@ namespace SyntaxNodeAnalyzer
                     {
                         if (trailingTrivia.ToString() == "" "")
                         {
+                        //If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic
                         return;
                     }
                     }
@@ -16903,6 +16986,7 @@ namespace SyntaxNodeAnalyzer
                     {
                         if (trailingTrivia.ToString() == "" "")
                         {
+                        //If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic
                         return;
                     }
                     }
