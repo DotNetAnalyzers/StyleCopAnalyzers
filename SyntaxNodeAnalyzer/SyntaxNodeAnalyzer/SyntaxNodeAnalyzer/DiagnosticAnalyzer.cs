@@ -39,7 +39,7 @@ namespace SyntaxNodeAnalyzer
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
         }
 
-        //This method, which is the method that is registered within Initialize, performs the analysis of the if statement. If the analysis finds an error, a diagnostic is reported
+        //This method, which is the method that is registered within Initialize, performs the analysis of the if-statement. If the analysis finds an error, a diagnostic is reported
         private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
         {
             //The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax
@@ -56,13 +56,13 @@ namespace SyntaxNodeAnalyzer
                 {
                     if (trailingTrivia.ToString() == " ")
                     {
-                        //If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', you can return from this method
+                        //If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic
                         return;
                     }
                 }
             }
 
-            //Extracts the opening parenthesis of the if statement condition
+            //Extracts the opening parenthesis of the if-statement condition
             var openParen = ifStatement.OpenParenToken;
 
             //Determines the start of the span of the diagnostic that will be reported, ie the start of the squiggle

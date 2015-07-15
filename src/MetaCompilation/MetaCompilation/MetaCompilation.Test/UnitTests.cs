@@ -9833,7 +9833,7 @@ namespace SyntaxNodeAnalyzer
                     }
                 }
             }
-            //Extracts the opening parenthesis of the if statement condition
+            //Extracts the opening parenthesis of the if-statement condition
             var openParen = ifState.OpenParenToken;
         }
     }
@@ -9971,7 +9971,7 @@ namespace SyntaxNodeAnalyzer
                         }
                     }
                 }
-            //Extracts the opening parenthesis of the if statement condition
+            //Extracts the opening parenthesis of the if-statement condition
             var openParen = ifState.OpenParenToken;
         }
     }
@@ -16485,7 +16485,7 @@ namespace SyntaxNodeAnalyzer
                     {
                         if (trailingTrivia.ToString() == "" "")
                         {
-                        //If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', you can return from this method
+                        //If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic
                         return;
                     }
                     }
@@ -16611,7 +16611,7 @@ namespace SyntaxNodeAnalyzer
                     {
                         if (trailingTrivia.ToString() == "" "")
                         {
-                        //If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', you can return from this method
+                        //If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic
                         return;
                     }
                     }
@@ -16736,7 +16736,7 @@ namespace SyntaxNodeAnalyzer
                     {
                         if (trailingTrivia.ToString() == "" "")
                         {
-                        //If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', you can return from this method
+                        //If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic
                         return;
                         return;
                         }
@@ -16861,7 +16861,7 @@ namespace SyntaxNodeAnalyzer
                     {
                         if (trailingTrivia.ToString() == "" "")
                         {
-                        //If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', you can return from this method
+                        //If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic
                         return;
                     }
                     }
@@ -16986,7 +16986,7 @@ namespace SyntaxNodeAnalyzer
                     {
                         if (trailingTrivia.ToString() == "" "")
                         {
-                        //If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', you can return from this method
+                        //If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', yit will return from this method without reporting a diagnostic
                         return;
                     }
                     }
