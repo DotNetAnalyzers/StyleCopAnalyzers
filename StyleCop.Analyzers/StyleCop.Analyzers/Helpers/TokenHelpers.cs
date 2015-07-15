@@ -61,7 +61,7 @@
                 return false;
             }
 
-            var precedingTriviaList = precedingToken.TrailingTrivia.AddRange(token.LeadingTrivia);
+            var precedingTriviaList = TriviaHelper.MergeTriviaLists(precedingToken.TrailingTrivia, token.LeadingTrivia);
             for (var i = precedingTriviaList.Count - 1; i >= 0; i--)
             {
                 switch (precedingTriviaList[i].Kind())

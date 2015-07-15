@@ -1,5 +1,8 @@
 ﻿namespace StyleCop.Analyzers.Helpers
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -14,7 +17,7 @@
         /// </summary>
         /// <param name="triviaList">The trivia list to process.</param>
         /// <returns>The index where the non-whitespace starts, or -1 if there is no non-whitespace trivia.</returns>
-        internal static int IndexOfFirstNonWhitespaceTrivia(SyntaxTriviaList triviaList)
+        internal static int IndexOfFirstNonWhitespaceTrivia(IReadOnlyList<SyntaxTrivia> triviaList)
         {
             for (var index = 0; index < triviaList.Count; index++)
             {
@@ -39,7 +42,7 @@
         /// </summary>
         /// <param name="triviaList">The trivia list to process.</param>
         /// <returns>The index of the first trivia that is not part of a blank line, or -1 if there is no such trivia.</returns>
-        internal static int IndexOfFirstNonBlankLineTrivia(SyntaxTriviaList triviaList)
+        internal static int IndexOfFirstNonBlankLineTrivia(IReadOnlyList<SyntaxTrivia> triviaList)
         {
             var firstNonWhitespaceTriviaIndex = IndexOfFirstNonWhitespaceTrivia(triviaList);
             var startIndex = (firstNonWhitespaceTriviaIndex == -1) ? triviaList.Count : firstNonWhitespaceTriviaIndex;
@@ -61,7 +64,7 @@
         /// </summary>
         /// <param name="triviaList">The trivia list to process.</param>
         /// <returns>The index where the trailing whitespace starts, or -1 if there is no trailing whitespace.</returns>
-        internal static int IndexOfTrailingWhitespace(SyntaxTriviaList triviaList)
+        internal static int IndexOfTrailingWhitespace(IReadOnlyList<SyntaxTrivia> triviaList)
         {
             var done = false;
             int whiteSpaceStartIndex = -1;
@@ -130,19 +133,69 @@
         /// <param name="trivia">The trivia to create the list from.</param>
         /// <param name="triviaIndex">The index of the trivia in the created trivia list.</param>
         /// <returns>The created trivia list.</returns>
-        internal static SyntaxTriviaList GetContainingTriviaList(SyntaxTrivia trivia, out int triviaIndex)
+        internal static IReadOnlyList<SyntaxTrivia> GetContainingTriviaList(SyntaxTrivia trivia, out int triviaIndex)
         {
             var token = trivia.Token;
-            triviaIndex = token.TrailingTrivia.IndexOf(trivia);
+            SyntaxTriviaList part1;
+            SyntaxTriviaList part2;
+
+            triviaIndex = BinarySearch(token.TrailingTrivia, trivia);
             if (triviaIndex != -1)
             {
                 var nextToken = token.GetNextToken(includeZeroWidth: true);
-                return token.TrailingTrivia.AddRange(nextToken.LeadingTrivia);
+
+                part1 = token.TrailingTrivia;
+                part2 = nextToken.LeadingTrivia;
+            }
+            else
+            {
+                var prevToken = token.GetPreviousToken();
+                triviaIndex = prevToken.TrailingTrivia.Count + BinarySearch(token.LeadingTrivia, trivia);
+
+                part1 = prevToken.TrailingTrivia;
+                part2 = token.LeadingTrivia;
             }
 
-            var prevToken = token.GetPreviousToken();
-            triviaIndex = prevToken.TrailingTrivia.Count + token.LeadingTrivia.IndexOf(trivia);
-            return prevToken.TrailingTrivia.AddRange(token.LeadingTrivia);
+            return new DualTriviaListHelper(part1, part2);
+        }
+
+        private static int BinarySearch(SyntaxTriviaList leadingTrivia, SyntaxTrivia trivia)
+        {
+            int low = 0;
+            int high = leadingTrivia.Count - 1;
+            while (low <= high)
+            {
+                int index = low + ((high - low) >> 1);
+                int order = leadingTrivia[index].Span.CompareTo(trivia.Span);
+
+                if (order == 0)
+                {
+                    return index;
+                }
+
+                if (order < 0)
+                {
+                    low = index + 1;
+                }
+                else
+                {
+                    high = index - 1;
+                }
+            }
+
+            // Entry was not found
+            return -1;
+        }
+
+        /// <summary>
+        /// Merges the given trivia lists into a new single trivia list.
+        /// </summary>
+        /// <param name="list1">The first part of the new list.</param>
+        /// <param name="list2">The second part of the new list.</param>
+        /// <returns>The merged trivia list.</returns>
+        internal static IReadOnlyList<SyntaxTrivia> MergeTriviaLists(IReadOnlyList<SyntaxTrivia> list1, IReadOnlyList<SyntaxTrivia> list2)
+        {
+            return new DualTriviaListHelper(list1, list2);
         }
 
         /// <summary>
@@ -250,6 +303,63 @@
 
             var newLeadingTrivia = SyntaxFactory.TriviaList(triviaList.Take(blankLinesStart).Concat(triviaList.Skip(leadingWhitespaceStart)));
             return token.WithLeadingTrivia(newLeadingTrivia);
+        }
+
+        /// <summary>
+        /// Helper class that merges two SyntaxTriviaLists with (hopefully) the lowest possible performance penalty.
+        /// </summary>
+        private class DualTriviaListHelper : IReadOnlyList<SyntaxTrivia>
+        {
+            private IReadOnlyList<SyntaxTrivia> part1;
+            private int part1Count;
+            private IReadOnlyList<SyntaxTrivia> part2;
+
+            public DualTriviaListHelper(IReadOnlyList<SyntaxTrivia> part1, IReadOnlyList<SyntaxTrivia> part2)
+            {
+                this.part1 = part1;
+                this.part2 = part2;
+                this.part1Count = part1.Count;
+                this.Count = part1.Count + part2.Count;
+            }
+
+            public int Count { get; }
+
+            public SyntaxTrivia this[int index]
+            {
+                get
+                {
+                    if (index < this.part1Count)
+                    {
+                        return this.part1[index];
+                    }
+                    else if (index < this.Count)
+                    {
+                        return this.part2[index - this.part1Count];
+                    }
+                    else
+                    {
+                        throw new IndexOutOfRangeException();
+                    }
+                }
+            }
+
+            public IEnumerator<SyntaxTrivia> GetEnumerator()
+            {
+                foreach (var item in this.part1)
+                {
+                    yield return item;
+                }
+
+                foreach (var item in this.part2)
+                {
+                    yield return item;
+                }
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return this.GetEnumerator();
+            }
         }
     }
 }

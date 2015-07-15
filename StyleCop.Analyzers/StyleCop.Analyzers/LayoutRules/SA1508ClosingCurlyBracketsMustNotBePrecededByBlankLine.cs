@@ -118,7 +118,7 @@
                 return;
             }
 
-            var separatingTrivia = previousToken.TrailingTrivia.AddRange(closeBraceToken.LeadingTrivia);
+            var separatingTrivia = TriviaHelper.MergeTriviaLists(previousToken.TrailingTrivia, closeBraceToken.LeadingTrivia);
 
             // skip all leading whitespace for the close brace
             var index = separatingTrivia.Count - 1;

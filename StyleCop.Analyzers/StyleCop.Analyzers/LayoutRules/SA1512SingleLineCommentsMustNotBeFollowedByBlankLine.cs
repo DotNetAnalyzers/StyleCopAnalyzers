@@ -1,6 +1,7 @@
 ﻿namespace StyleCop.Analyzers.LayoutRules
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
     using Microsoft.CodeAnalysis;
@@ -155,7 +156,7 @@
             }
         }
 
-        private static bool IsOnOwnLine(SyntaxTriviaList triviaList, int triviaIndex)
+        private static bool IsOnOwnLine(IReadOnlyList<SyntaxTrivia> triviaList, int triviaIndex)
         {
             while (triviaIndex >= 0)
             {
@@ -170,9 +171,9 @@
             return false;
         }
 
-        private static bool IsPartOfFileHeader(SyntaxTriviaList triviaList, int triviaIndex)
+        private static bool IsPartOfFileHeader(IReadOnlyList<SyntaxTrivia> triviaList, int triviaIndex)
         {
-            if (triviaList.FullSpan.Start > 0)
+            if (triviaList[0].FullSpan.Start > 0)
             {
                 return false;
             }
@@ -204,7 +205,7 @@
             return true;
         }
 
-        private static int GetTrailingBlankLineCount(SyntaxTriviaList triviaList, ref int triviaIndex)
+        private static int GetTrailingBlankLineCount(IReadOnlyList<SyntaxTrivia> triviaList, ref int triviaIndex)
         {
             int eolCount = 0;
 
