@@ -170,7 +170,7 @@ namespace SyntaxNodeAnalyzer
         public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
         {
         //Each analyzer needs a public id to identify each DiagnosticDescriptor and subsequently fix diagnostics in CodeFixProvider.cs
-        public const string spacingRuleId = ""IfSpacing"";
+        public const string spacingRuleId = ""IfSpacing001"";
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
             {
@@ -260,7 +260,7 @@ namespace SyntaxNodeAnalyzer
         public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
         {
         //Each analyzer needs a public id to identify each DiagnosticDescriptor and subsequently fix diagnostics in CodeFixProvider.cs
-        public const string spacingRuleId = ""IfSpacing"";
+        public const string spacingRuleId = ""IfSpacing001"";
         internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
                 id: SpacingRuleId, //make the id specific
                 title: ""If statement must have a space between the 'if' keyword and the boolean expression"", 
@@ -350,7 +350,7 @@ namespace SyntaxNodeAnalyzer
         {
         //Each analyzer needs a public id to identify each DiagnosticDescriptor and subsequently fix diagnostics in CodeFixProvider.cs
         public const string spacingRuleId = ""IfSpacing"";
-        public string practice = ""IfSpacing"";
+        public string practice = ""IfSpacing001"";
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
             {
                 get
@@ -431,7 +431,7 @@ namespace SyntaxNodeAnalyzer
         public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
         {
         //Each analyzer needs a public id to identify each DiagnosticDescriptor and subsequently fix diagnostics in CodeFixProvider.cs
-        public const string spacingRuleId = ""IfSpacing"";
+        public const string spacingRuleId = ""IfSpacing001"";
         private const string practice = ""IfSpacing"";
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
             {
@@ -513,7 +513,7 @@ namespace SyntaxNodeAnalyzer
         public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
         {
         //Each analyzer needs a public id to identify each DiagnosticDescriptor and subsequently fix diagnostics in CodeFixProvider.cs
-        public const string spacingRuleId = ""IfSpacing"";
+        public const string spacingRuleId = ""IfSpacing001"";
         string practice = ""IfSpacing"";
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
             {
@@ -595,7 +595,7 @@ namespace SyntaxNodeAnalyzer
         public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
         {
         //Each analyzer needs a public id to identify each DiagnosticDescriptor and subsequently fix diagnostics in CodeFixProvider.cs
-        public const string spacingRuleId = ""IfSpacing"";
+        public const string spacingRuleId = ""IfSpacing001"";
         public const int practice = 7;
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
             {
