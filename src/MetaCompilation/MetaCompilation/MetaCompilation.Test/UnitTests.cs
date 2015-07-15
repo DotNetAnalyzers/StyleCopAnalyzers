@@ -85,8 +85,8 @@ namespace SyntaxNodeAnalyzer
             }
 
             var openParen = ifStatement.OpenParenToken;
-            var startDiagnosticSpan = ifKeyword.Span.Start;
-            var endDiagnosticSpan = openParen.Span.Start;
+            var startDiagnosticSpan = ifKeyword.SpanStart;
+            var endDiagnosticSpan = openParen.SpanStart;
             var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
             var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
             var diagnostic = Diagnostic.Create(Rule, diagnosticLocation, Rule.MessageFormat);
@@ -835,8 +835,8 @@ namespace SyntaxNodeAnalyzer
             }
 
             var openParen = ifStatement.OpenParenToken;
-            var startDiagnosticSpan = ifKeyword.Span.Start;
-            var endDiagnosticSpan = openParen.Span.Start;
+            var startDiagnosticSpan = ifKeyword.SpanStart;
+            var endDiagnosticSpan = openParen.SpanStart;
             var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
             var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
             var diagnostic = Diagnostic.Create(Rule, diagnosticLocation, Rule.MessageFormat);
@@ -908,8 +908,8 @@ namespace SyntaxNodeAnalyzer
             }
 
             var openParen = ifStatement.OpenParenToken;
-            var startDiagnosticSpan = ifKeyword.Span.Start;
-            var endDiagnosticSpan = openParen.Span.Start;
+            var startDiagnosticSpan = ifKeyword.SpanStart;
+            var endDiagnosticSpan = openParen.SpanStart;
             var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
             var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
             var diagnostic = Diagnostic.Create(Rule, diagnosticLocation, Rule.MessageFormat);
@@ -12140,7 +12140,7 @@ namespace SyntaxNodeAnalyzer
 
             var open = ifState.OpenParenToken;
             //Determines the start of the span of the diagnostic that will be reported, ie the start of the squiggle
-            var startDiagnosticSpan = ifKeyword.Span.Start;
+            var startDiagnosticSpan = ifKeyword.SpanStart;
         }
     }
 }";
@@ -12208,7 +12208,7 @@ namespace SyntaxNodeAnalyzer
             }
 
             var open = ifState.OpenParenToken;
-            var start = ifState.Span.Start;
+            var start = ifState.SpanStart;
         }
     }
 }";
@@ -12281,7 +12281,7 @@ namespace SyntaxNodeAnalyzer
 
             var open = ifState.OpenParenToken;
             //Determines the start of the span of the diagnostic that will be reported, ie the start of the squiggle
-            var startDiagnosticSpan = ifKeyword.Span.Start;
+            var startDiagnosticSpan = ifKeyword.SpanStart;
         }
     }
 }";
@@ -12351,7 +12351,7 @@ namespace SyntaxNodeAnalyzer
             }
 
             var open = ifState.OpenParenToken;
-            var start = ifKeyword.Span.Start;
+            var start = ifKeyword.SpanStart;
         }
     }
 }";
@@ -12423,9 +12423,9 @@ namespace SyntaxNodeAnalyzer
             }
 
             var open = ifState.OpenParenToken;
-            var start = ifKeyword.Span.Start;
+            var start = ifKeyword.SpanStart;
             //Determines the end of the span of the diagnostic that will be reported
-            var endDiagnosticSpan = open.Span.Start;
+            var endDiagnosticSpan = open.SpanStart;
         }
     }
 }";
@@ -12493,7 +12493,7 @@ namespace SyntaxNodeAnalyzer
             }
 
             var open = ifState.OpenParenToken;
-            var start = ifKeyword.Span.Start;
+            var start = ifKeyword.SpanStart;
             return 1;
         }
     }
@@ -12566,9 +12566,9 @@ namespace SyntaxNodeAnalyzer
             }
 
             var open = ifState.OpenParenToken;
-            var start = ifKeyword.Span.Start;
+            var start = ifKeyword.SpanStart;
             //Determines the end of the span of the diagnostic that will be reported
-            var endDiagnosticSpan = open.Span.Start;
+            var endDiagnosticSpan = open.SpanStart;
         }
     }
 }";
@@ -12638,8 +12638,8 @@ namespace SyntaxNodeAnalyzer
             }
 
             var open = ifState.OpenParenToken;
-            var start = ifKeyword.Span.Start;
-            var end = open.Span.Start;
+            var start = ifKeyword.SpanStart;
+            var end = open.SpanStart;
         }
     }
 }";
@@ -12711,8 +12711,8 @@ namespace SyntaxNodeAnalyzer
             }
 
             var open = ifState.OpenParenToken;
-            var start = ifKeyword.Span.Start;
-            var end = open.Span.Start;
+            var start = ifKeyword.SpanStart;
+            var end = open.SpanStart;
             //The span is the range of integers that define the position of the characters the red squiggle will underline
             var diagnosticSpan = TextSpan.FromBounds(start, end);
         }
@@ -12782,8 +12782,8 @@ namespace SyntaxNodeAnalyzer
             }
 
             var open = ifState.OpenParenToken;
-            var start = ifKeyword.Span.Start;
-            var end = open.Span.Start;
+            var start = ifKeyword.SpanStart;
+            var end = open.SpanStart;
             if (true) {}
         }
     }
@@ -12856,8 +12856,8 @@ namespace SyntaxNodeAnalyzer
             }
 
             var open = ifState.OpenParenToken;
-            var start = ifKeyword.Span.Start;
-            var end = open.Span.Start;
+            var start = ifKeyword.SpanStart;
+            var end = open.SpanStart;
             //The span is the range of integers that define the position of the characters the red squiggle will underline
             var diagnosticSpan = TextSpan.FromBounds(start, end);
         }
@@ -12929,8 +12929,8 @@ namespace SyntaxNodeAnalyzer
             }
 
             var open = ifState.OpenParenToken;
-            var start = ifKeyword.Span.Start;
-            var end = open.Span.Start;
+            var start = ifKeyword.SpanStart;
+            var end = open.SpanStart;
             var span = TextSpan.FromBounds(start, end);
         }
     }
@@ -13003,8 +13003,8 @@ namespace SyntaxNodeAnalyzer
             }
 
             var open = ifState.OpenParenToken;
-            var start = ifKeyword.Span.Start;
-            var end = open.Span.Start;
+            var start = ifKeyword.SpanStart;
+            var end = open.SpanStart;
             var span = TextSpan.FromBounds(start, end);
             //Uses the span created above to create a location for the diagnostic squiggle to appear within the syntax tree passed in as an argument
             var diagnosticLocation = Location.Create(ifState.SyntaxTree, span);
@@ -13075,8 +13075,8 @@ namespace SyntaxNodeAnalyzer
             }
 
             var open = ifState.OpenParenToken;
-            var start = ifKeyword.Span.Start;
-            var end = open.Span.Start;
+            var start = ifKeyword.SpanStart;
+            var end = open.SpanStart;
             var span = TextSpan.FromBounds(start, end);
             var diagnosticLocation = ""Hello World"";
         }
@@ -13150,8 +13150,8 @@ namespace SyntaxNodeAnalyzer
             }
 
             var open = ifState.OpenParenToken;
-            var start = ifKeyword.Span.Start;
-            var end = open.Span.Start;
+            var start = ifKeyword.SpanStart;
+            var end = open.SpanStart;
             var span = TextSpan.FromBounds(start, end);
             //Uses the span created above to create a location for the diagnostic squiggle to appear within the syntax tree passed in as an argument
             var diagnosticLocation = Location.Create(ifState.SyntaxTree, span);
@@ -13224,8 +13224,8 @@ namespace SyntaxNodeAnalyzer
             }
 
             var open = ifState.OpenParenToken;
-            var start = ifKeyword.Span.Start;
-            var end = open.Span.Start;
+            var start = ifKeyword.SpanStart;
+            var end = open.SpanStart;
             var span = TextSpan.FromBounds(start, end);
             var location = Location.Create(ifState.SyntaxTree, span);
         }
@@ -13299,8 +13299,8 @@ namespace SyntaxNodeAnalyzer
             }
 
             var open = ifState.OpenParenToken;
-            var start = ifKeyword.Span.Start;
-            var end = open.Span.Start;
+            var start = ifKeyword.SpanStart;
+            var end = open.SpanStart;
             var span = TextSpan.FromBounds(start, end);
             var location = Location.Create(ifState.SyntaxTree, span);
             //Holds the diagnostic and all necessary information to be reported
@@ -13372,8 +13372,8 @@ namespace SyntaxNodeAnalyzer
             }
 
             var open = ifState.OpenParenToken;
-            var start = ifKeyword.Span.Start;
-            var end = open.Span.Start;
+            var start = ifKeyword.SpanStart;
+            var end = open.SpanStart;
             var span = TextSpan.FromBounds(start, end);
             var location = Location.Create(ifState.SyntaxTree, span);
             diagnostic = Diagnostic.Create(spacingRule, location, spacingRule.MessageFormat);
@@ -13448,8 +13448,8 @@ namespace SyntaxNodeAnalyzer
             }
 
             var open = ifState.OpenParenToken;
-            var start = ifKeyword.Span.Start;
-            var end = open.Span.Start;
+            var start = ifKeyword.SpanStart;
+            var end = open.SpanStart;
             var span = TextSpan.FromBounds(start, end);
             var location = Location.Create(ifState.SyntaxTree, span);
             //Holds the diagnostic and all necessary information to be reported

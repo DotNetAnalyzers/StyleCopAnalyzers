@@ -511,8 +511,8 @@ namespace MetaCompilation
                             if (triviaBlockStatements == null)
                             {
                                 IfStatementSyntax ifStatement = triviaBlock.Parent as IfStatementSyntax;
-                                var startDiagnosticSpan = ifStatement.Span.Start;
-                                var endDiagnosticSpan = ifStatement.CloseParenToken.Span.Start;
+                                var startDiagnosticSpan = ifStatement.SpanStart;
+                                var endDiagnosticSpan = ifStatement.CloseParenToken.SpanStart;
                                 var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
                                 var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
                                 ReportDiagnostic(context, TrailingTriviaVarMissingRule, diagnosticLocation, keywordIdentifierToken.Text);
@@ -573,8 +573,8 @@ namespace MetaCompilation
                                             if (triviaCheckBlockStatements.Count > 1)
                                             {
                                                 IfStatementSyntax ifStatement = triviaCheckBlock.Parent as IfStatementSyntax;
-                                                var startDiagnosticSpan = ifStatement.Span.Start;
-                                                var endDiagnosticSpan = ifStatement.CloseParenToken.Span.Start;
+                                                var startDiagnosticSpan = ifStatement.SpanStart;
+                                                var endDiagnosticSpan = ifStatement.CloseParenToken.SpanStart;
                                                 var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
                                                 var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
                                                 ReportDiagnostic(context, TooManyStatementsRule, diagnosticLocation, "if block", "1");
@@ -586,8 +586,8 @@ namespace MetaCompilation
                                         else
                                         {
                                             IfStatementSyntax ifStatement = triviaCheckBlock.Parent as IfStatementSyntax;
-                                            var startDiagnosticSpan = ifStatement.Span.Start;
-                                            var endDiagnosticSpan = ifStatement.CloseParenToken.Span.Start;
+                                            var startDiagnosticSpan = ifStatement.SpanStart;
+                                            var endDiagnosticSpan = ifStatement.CloseParenToken.SpanStart;
                                             var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
                                             var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
                                             ReportDiagnostic(context, ReturnStatementMissingRule, diagnosticLocation, methodDeclaration.Identifier.Text);
@@ -597,8 +597,8 @@ namespace MetaCompilation
                                         if (triviaKindCheckBlockStatements.Count > 1)
                                         {
                                             IfStatementSyntax ifStatement = triviaKindCheckBlock.Parent as IfStatementSyntax;
-                                            var startDiagnosticSpan = ifStatement.Span.Start;
-                                            var endDiagnosticSpan = ifStatement.CloseParenToken.Span.Start;
+                                            var startDiagnosticSpan = ifStatement.SpanStart;
+                                            var endDiagnosticSpan = ifStatement.CloseParenToken.SpanStart;
                                             var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
                                             var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
                                             ReportDiagnostic(context, TooManyStatementsRule, diagnosticLocation, "if block", "1");
@@ -608,8 +608,8 @@ namespace MetaCompilation
                                     else
                                     {
                                         IfStatementSyntax ifStatement = triviaKindCheckBlock.Parent as IfStatementSyntax;
-                                        var startDiagnosticSpan = ifStatement.Span.Start;
-                                        var endDiagnosticSpan = ifStatement.CloseParenToken.Span.Start;
+                                        var startDiagnosticSpan = ifStatement.SpanStart;
+                                        var endDiagnosticSpan = ifStatement.CloseParenToken.SpanStart;
                                         var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
                                         var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
                                         ReportDiagnostic(context, WhitespaceCheckMissingRule, diagnosticLocation, triviaIdentifierToken);
@@ -619,8 +619,8 @@ namespace MetaCompilation
                                     if (triviaBlockStatements.Count > 2)
                                     {
                                         IfStatementSyntax ifStatement = triviaBlock.Parent as IfStatementSyntax;
-                                        var startDiagnosticSpan = ifStatement.Span.Start;
-                                        var endDiagnosticSpan = ifStatement.CloseParenToken.Span.Start;
+                                        var startDiagnosticSpan = ifStatement.SpanStart;
+                                        var endDiagnosticSpan = ifStatement.CloseParenToken.SpanStart;
                                         var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
                                         var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
                                         ReportDiagnostic(context, TooManyStatementsRule, diagnosticLocation, "if block", "2");
@@ -637,8 +637,8 @@ namespace MetaCompilation
                             {
 
                                 IfStatementSyntax ifStatement = triviaBlock.Parent as IfStatementSyntax;
-                                var startDiagnosticSpan = ifStatement.Span.Start;
-                                var endDiagnosticSpan = ifStatement.CloseParenToken.Span.Start;
+                                var startDiagnosticSpan = ifStatement.SpanStart;
+                                var endDiagnosticSpan = ifStatement.CloseParenToken.SpanStart;
                                 var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
                                 var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
                                 ReportDiagnostic(context, TrailingTriviaVarMissingRule, diagnosticLocation, keywordIdentifierToken.Text);
@@ -1231,26 +1231,14 @@ namespace MetaCompilation
                     return emptyResult;
                 }
 
-                var innerMemberExpression = memberExpression.Expression as MemberAccessExpressionSyntax;
-                if (innerMemberExpression == null)
+                var expressionName = memberExpression.Expression as IdentifierNameSyntax;
+                if (expressionName == null || expressionName.Identifier.Text != keywordIdentifierToken.Text)
                 {
                     return emptyResult;
                 }
 
-                var innerIdentifier = innerMemberExpression.Expression as IdentifierNameSyntax;
-                if (innerIdentifier == null || innerIdentifier.Identifier.Text != keywordIdentifierToken.Text)
-                {
-                    return emptyResult;
-                }
-
-                var innerName = innerMemberExpression.Name as IdentifierNameSyntax;
-                if (innerName == null || innerName.Identifier.Text != "Span")
-                {
-                    return emptyResult;
-                }
-
-                var name = memberExpression.Name as IdentifierNameSyntax;
-                if (name == null || name.Identifier.Text != "Start")
+                var expressionMember = memberExpression.Name as IdentifierNameSyntax;
+                if (expressionMember == null || expressionMember.Identifier.Text != "SpanStart")
                 {
                     return emptyResult;
                 }
@@ -1287,26 +1275,14 @@ namespace MetaCompilation
                     return emptyResult;
                 }
 
-                var innerMemberExpression = memberExpression.Expression as MemberAccessExpressionSyntax;
-                if (innerMemberExpression == null)
+                var expressionName = memberExpression.Expression as IdentifierNameSyntax;
+                if (expressionName == null || expressionName.Identifier.Text != openParenToken.Text)
                 {
                     return emptyResult;
                 }
 
-                var innerIdentifier = innerMemberExpression.Expression as IdentifierNameSyntax;
-                if (innerIdentifier == null || innerIdentifier.Identifier.Text != openParenToken.Text)
-                {
-                    return emptyResult;
-                }
-
-                var innerName = innerMemberExpression.Name as IdentifierNameSyntax;
-                if (innerName == null || innerName.Identifier.Text != "Span")
-                {
-                    return emptyResult;
-                }
-
-                var name = memberExpression.Name as IdentifierNameSyntax;
-                if (name == null || name.Identifier.Text != "Start")
+                var expressionMember = memberExpression.Name as IdentifierNameSyntax;
+                if (expressionMember == null || expressionMember.Identifier.Text != "SpanStart")
                 {
                     return emptyResult;
                 }

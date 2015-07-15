@@ -1775,8 +1775,7 @@ namespace MetaCompilation
             {
                 SyntaxNode identifier = generator.IdentifierName(identifierString);
 
-                SyntaxNode expression = generator.MemberAccessExpression(identifier, "Span");
-                SyntaxNode initializer = generator.MemberAccessExpression(expression, "Start");
+                SyntaxNode initializer = generator.MemberAccessExpression(identifier, "SpanStart");
 
                 SyntaxNode localDeclaration = generator.LocalDeclarationStatement(variableName, initializer);
 
