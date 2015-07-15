@@ -66,10 +66,10 @@ namespace SyntaxNodeAnalyzer
             var openParen = ifStatement.OpenParenToken;
 
             //Determines the start of the span of the diagnostic that will be reported, ie the start of the squiggle
-            var startDiagnosticSpan = ifKeyword.Span.Start;
+            var startDiagnosticSpan = ifKeyword.SpanStart;
 
             //Determines the end of the span of the diagnostic that will be reported
-            var endDiagnosticSpan = openParen.Span.Start;
+            var endDiagnosticSpan = openParen.SpanStart;
 
             //The span is the range of integers that define the position of the characters the red squiggle will underline
             var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);

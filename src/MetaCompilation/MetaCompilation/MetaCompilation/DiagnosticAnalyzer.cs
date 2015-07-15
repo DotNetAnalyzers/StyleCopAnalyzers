@@ -1231,26 +1231,14 @@ namespace MetaCompilation
                     return emptyResult;
                 }
 
-                var innerMemberExpression = memberExpression.Expression as MemberAccessExpressionSyntax;
-                if (innerMemberExpression == null)
+                var expressionName = memberExpression.Expression as IdentifierNameSyntax;
+                if (expressionName == null || expressionName.Identifier.Text != keywordIdentifierToken.Text)
                 {
                     return emptyResult;
                 }
 
-                var innerIdentifier = innerMemberExpression.Expression as IdentifierNameSyntax;
-                if (innerIdentifier == null || innerIdentifier.Identifier.Text != keywordIdentifierToken.Text)
-                {
-                    return emptyResult;
-                }
-
-                var innerName = innerMemberExpression.Name as IdentifierNameSyntax;
-                if (innerName == null || innerName.Identifier.Text != "Span")
-                {
-                    return emptyResult;
-                }
-
-                var name = memberExpression.Name as IdentifierNameSyntax;
-                if (name == null || name.Identifier.Text != "Start")
+                var expressionMember = memberExpression.Name as IdentifierNameSyntax;
+                if (expressionMember == null || expressionMember.Identifier.Text != "SpanStart")
                 {
                     return emptyResult;
                 }
@@ -1287,26 +1275,14 @@ namespace MetaCompilation
                     return emptyResult;
                 }
 
-                var innerMemberExpression = memberExpression.Expression as MemberAccessExpressionSyntax;
-                if (innerMemberExpression == null)
+                var expressionName = memberExpression.Expression as IdentifierNameSyntax;
+                if (expressionName == null || expressionName.Identifier.Text != openParenToken.Text)
                 {
                     return emptyResult;
                 }
 
-                var innerIdentifier = innerMemberExpression.Expression as IdentifierNameSyntax;
-                if (innerIdentifier == null || innerIdentifier.Identifier.Text != openParenToken.Text)
-                {
-                    return emptyResult;
-                }
-
-                var innerName = innerMemberExpression.Name as IdentifierNameSyntax;
-                if (innerName == null || innerName.Identifier.Text != "Span")
-                {
-                    return emptyResult;
-                }
-
-                var name = memberExpression.Name as IdentifierNameSyntax;
-                if (name == null || name.Identifier.Text != "Start")
+                var expressionMember = memberExpression.Name as IdentifierNameSyntax;
+                if (expressionMember == null || expressionMember.Identifier.Text != "SpanStart")
                 {
                     return emptyResult;
                 }
