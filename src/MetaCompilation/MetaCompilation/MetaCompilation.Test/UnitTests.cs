@@ -1598,6 +1598,9 @@ namespace SyntaxNodeAnalyzer
         #endregion
 
         #region InvalidStatement
+
+        public const string InvalidStatementMessage = MessagePrefix + "The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect";
+
         // invalid throw statement
         [Fact]
         public void InvalidStatement1()
@@ -1633,7 +1636,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = MessagePrefix + "The Initialize method only registers actions: the statement 'throw new NotImplementedException();' is invalid",
+                Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 24, 12) }
             };
@@ -1706,7 +1709,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = MessagePrefix + "The Initialize method only registers actions: the statement 'break;' is invalid",
+                Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 12) }
             };
@@ -1780,7 +1783,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = MessagePrefix + "The Initialize method only registers actions: the statement 'checked { var num = num + 1; }' is invalid",
+                Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 12) }
             };
@@ -1854,7 +1857,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = MessagePrefix + "The Initialize method only registers actions: the statement 'continue;' is invalid",
+                Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 12) }
             };
@@ -1928,7 +1931,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = MessagePrefix + "The Initialize method only registers actions: the statement 'do { var i = 1; } while (i > 3);' is invalid",
+                Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 12) }
             };
@@ -2002,7 +2005,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = MessagePrefix + "The Initialize method only registers actions: the statement 'context.GetHashCode();' is invalid",
+                Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 12) }
             };
@@ -2076,7 +2079,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = MessagePrefix + "The Initialize method only registers actions: the statement 'foreach() { break; }' is invalid",
+                Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 12) }
             };
@@ -2150,7 +2153,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = MessagePrefix + "The Initialize method only registers actions: the statement 'for(int i = 1; i < 3; i++) { i++; }' is invalid",
+                Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
             };
@@ -2224,7 +2227,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = MessagePrefix + "The Initialize method only registers actions: the statement 'if (i < 3) { i++; }' is invalid",
+                Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
             };
@@ -2298,7 +2301,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = MessagePrefix + "The Initialize method only registers actions: the statement 'context: return context;' is invalid",
+                Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
             };
@@ -2372,7 +2375,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = MessagePrefix + "The Initialize method only registers actions: the statement 'int i;' is invalid",
+                Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
             };
@@ -2446,7 +2449,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = MessagePrefix + "The Initialize method only registers actions: the statement 'lock () {}' is invalid",
+                Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
             };
@@ -2520,7 +2523,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = MessagePrefix + "The Initialize method only registers actions: the statement 'return;' is invalid",
+                Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
             };
@@ -2595,7 +2598,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = MessagePrefix + "The Initialize method only registers actions: the statement 'int one = 1;' is invalid",
+                Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
             };
@@ -2669,7 +2672,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = MessagePrefix + "The Initialize method only registers actions: the statement 'int one = 1;' is invalid",
+                Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 24, 17) }
             };
@@ -2742,7 +2745,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = MessagePrefix + "The Initialize method only registers actions: the statement 'int one = 1;' is invalid",
+                Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 24, 17) }
             };
@@ -2818,7 +2821,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = MessagePrefix + "The Initialize method only registers actions: the statement 'int one = 1;' is invalid",
+                Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 17) }
             };
@@ -2861,7 +2864,7 @@ namespace SyntaxNodeAnalyzer
 
         #region IncorrectKind
 
-        public const string IncorrectKindMessage = MessagePrefix + "This tutorial only allows registering for kind SyntaxKind.IfStatement";
+        public const string IncorrectKindMessage = MessagePrefix + "This tutorial only allows registering for SyntaxKind.IfStatement";
 
         [Fact]
         public void IncorrectKind()
@@ -3021,7 +3024,7 @@ namespace SyntaxNodeAnalyzer
 
         #region IncorrectInitSig
 
-        public const string IncorrectInitSigMessage = MessagePrefix + "The 'Initialize' method should be overriden and void-returning, with parameter type 'AnalysisContext'";
+        public const string IncorrectInitSigMessage = MessagePrefix + "The 'Initialize' method should return void, have the 'override' modifier, and have a single parameter of type 'AnalysisContext'";
 
         // more than one parameter
         [Fact]
@@ -9661,7 +9664,7 @@ namespace SyntaxNodeAnalyzer
 
         #region MissingIdDeclaration
 
-        public const string MissingIdDeclarationMessage = MessagePrefix + "This diagnostic id should be declared as a public const string";
+        public const string MissingIdDeclarationMessage = MessagePrefix + "This diagnostic id should be the constant string declared above";
 
         [Fact]
         public void MissingIdDeclaration1() //id set to undeclared variable
@@ -10472,7 +10475,7 @@ namespace SyntaxNodeAnalyzer
 
         #region MissingAccessor
 
-        public const string MissingAccessorMessage = MessagePrefix + "The 'SupportedDiagnostics' property is missing a get-accessor to return a list of accepted diagnostics";
+        public const string MissingAccessorMessage = MessagePrefix + "The 'SupportedDiagnostics' property is missing a get-accessor to return a list of supported diagnostics";
 
         [Fact]
         public void MissingAccessor1() //empty SupportedDiagnostics property
