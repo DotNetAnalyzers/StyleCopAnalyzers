@@ -184,7 +184,7 @@
             }
 
             // Entry was not found
-            throw new KeyNotFoundException("trivia was not in trivia list");
+            return -1;
         }
 
         /// <summary>
