@@ -78,7 +78,7 @@ namespace SyntaxNodeAnalyzer
             var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
 
             //Holds the diagnostic and all necessary information to be reported
-            var diagnostic = Diagnostic.Create(Rule, diagnosticLocation, Rule.MessageFormat);
+            var diagnostic = Diagnostic.Create(Rule, diagnosticLocation);
 
             //Sends diagnostic information to the IDE to be shown to the user
             context.ReportDiagnostic(diagnostic);
