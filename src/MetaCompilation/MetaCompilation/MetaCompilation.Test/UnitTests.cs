@@ -13304,7 +13304,7 @@ namespace SyntaxNodeAnalyzer
             var span = TextSpan.FromBounds(start, end);
             var location = Location.Create(ifState.SyntaxTree, span);
             //Holds the diagnostic and all necessary information to be reported
-            var diagnostic = Diagnostic.Create(spacingRule, location, spacingRule.MessageFormat);
+            var diagnostic = Diagnostic.Create(spacingRule, location);
         }
     }
 }";
@@ -13453,7 +13453,7 @@ namespace SyntaxNodeAnalyzer
             var span = TextSpan.FromBounds(start, end);
             var location = Location.Create(ifState.SyntaxTree, span);
             //Holds the diagnostic and all necessary information to be reported
-            var diagnostic = Diagnostic.Create(spacingRule, location, spacingRule.MessageFormat);
+            var diagnostic = Diagnostic.Create(spacingRule, location);
         }
     }
 }";

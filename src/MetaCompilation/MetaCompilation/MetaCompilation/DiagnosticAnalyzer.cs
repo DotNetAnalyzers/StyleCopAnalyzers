@@ -198,7 +198,7 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor DiagnosticMissingRule = CreateRule(DiagnosticMissing, "Diagnostic variable missing", MessagePrefix + "The next step is to create a variable to hold the diagnostic");
 
         public const string DiagnosticIncorrect = "MetaAnalyzer047";
-        internal static DiagnosticDescriptor DiagnosticIncorrectRule = CreateRule(DiagnosticIncorrect, "Diagnostic variable incorrect", MessagePrefix + "This statement should use Diagnostic.Create, {0}, and {1} to create the diagnostic that will be reported", "The diagnostic is created with a DiagnosticDescriptor, a Location, message arguments. The message arguments are the inputs to a format string");
+        internal static DiagnosticDescriptor DiagnosticIncorrectRule = CreateRule(DiagnosticIncorrect, "Diagnostic variable incorrect", MessagePrefix + "This statement should use Diagnostic.Create, {0}, and {1} to create the diagnostic that will be reported", "The diagnostic is created with a DiagnosticDescriptor, a Location, and message arguments. The message arguments are the inputs to a format string");
 
         public const string DiagnosticReportMissing = "MetaAnalyzer048";
         internal static DiagnosticDescriptor DiagnosticReportMissingRule = CreateRule(DiagnosticReportMissing, "Diagnostic report missing", MessagePrefix + "The next step is to report the diagnostic that has been created");
@@ -1552,7 +1552,7 @@ namespace MetaCompilation
                 }
 
                 SeparatedSyntaxList<ArgumentSyntax> args = argumentList.Arguments;
-                if (args == null || args.Count != 3)
+                if (args == null || args.Count < 2)
                 {
                     return emptyResult;
                 }
@@ -1577,30 +1577,6 @@ namespace MetaCompilation
 
                 var locationArgIdentifier = locationArg.Expression as IdentifierNameSyntax;
                 if (locationArgIdentifier == null || locationArgIdentifier.Identifier.Text != locationToken.Text)
-                {
-                    return emptyResult;
-                }
-
-                var messageArg = args[2] as ArgumentSyntax;
-                if (messageArg == null)
-                {
-                    return emptyResult;
-                }
-
-                var messageArgExpression = messageArg.Expression as MemberAccessExpressionSyntax;
-                if (messageArgExpression == null)
-                {
-                    return emptyResult;
-                }
-
-                var messageIdentifier = messageArgExpression.Expression as IdentifierNameSyntax;
-                if (messageIdentifier == null || messageIdentifier.Identifier.Text != ruleArgIdentifier.Identifier.Text)
-                {
-                    return emptyResult;
-                }
-
-                var messageName = messageArgExpression.Name as IdentifierNameSyntax;
-                if (messageName == null || messageName.Identifier.Text != "MessageFormat")
                 {
                     return emptyResult;
                 }
@@ -1801,7 +1777,7 @@ namespace MetaCompilation
                 SyntaxList<StatementSyntax> statements = body.Statements;
                 if (statements == null || statements.Count == 0)
                 {
-                    ReportDiagnostic(context, IncorrectAccessorReturnRule, propertyDeclaration.Identifier.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, propertyDeclaration.Identifier.GetLocation());
                     return false;
                 }
 
@@ -1817,21 +1793,21 @@ namespace MetaCompilation
                 IEnumerable<ReturnStatementSyntax> returnStatements = statements.OfType<ReturnStatementSyntax>();
                 if (returnStatements.Count() == 0)
                 {
-                    ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessorKeywordLocation, IncorrectAccessorReturnRule.MessageFormat);
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessorKeywordLocation);
                     return false;
                 }
 
                 ReturnStatementSyntax returnStatement = returnStatements.First();
                 if (returnStatement == null)
                 {
-                    ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessorKeywordLocation, IncorrectAccessorReturnRule.MessageFormat);
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessorKeywordLocation);
                     return false;
                 }
 
                 var returnExpression = returnStatement.Expression;
                 if (returnExpression == null)
                 {
-                    ReportDiagnostic(context, IncorrectAccessorReturnRule, returnStatement.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, returnStatement.GetLocation());
                     return false;
                 }
 
@@ -1866,7 +1842,7 @@ namespace MetaCompilation
                 }
                 else
                 {
-                    ReportDiagnostic(context, IncorrectAccessorReturnRule, returnStatement.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, returnStatement.GetLocation());
                     return false;
                 }
 
@@ -1879,13 +1855,13 @@ namespace MetaCompilation
             {
                 if (_propertySymbol == null)
                 {
-                    ReportDiagnostic(context, MissingSuppDiagRule, _analyzerClassSymbol.Locations[0], MissingSuppDiagRule.MessageFormat);
+                    ReportDiagnostic(context, MissingSuppDiagRule, _analyzerClassSymbol.Locations[0]);
                     return null;
                 }
 
                 if (_propertySymbol.Name != "SupportedDiagnostics" || _propertySymbol.DeclaredAccessibility != Accessibility.Public || !_propertySymbol.IsOverride)
                 {
-                    ReportDiagnostic(context, IncorrectSigSuppDiagRule, _propertySymbol.Locations[0], IncorrectSigSuppDiagRule.MessageFormat);
+                    ReportDiagnostic(context, IncorrectSigSuppDiagRule, _propertySymbol.Locations[0]);
                     return null;
                 }
 
@@ -1933,7 +1909,7 @@ namespace MetaCompilation
                 var accessorBody = getAccessor.Body as BlockSyntax;
                 if (accessorBody == null)
                 {
-                    ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessor.Keyword.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessor.Keyword.GetLocation());
                     return null;
                 }
 
@@ -1945,14 +1921,14 @@ namespace MetaCompilation
             {
                 if (valueClause == null)
                 {
-                    ReportDiagnostic(context, IncorrectAccessorReturnRule, returnDeclarationLocation.ReturnKeyword.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, returnDeclarationLocation.ReturnKeyword.GetLocation());
                     return false;
                 }
 
                 var valueExpression = valueClause.Expression as MemberAccessExpressionSyntax;
                 if (valueExpression == null)
                 {
-                    ReportDiagnostic(context, IncorrectAccessorReturnRule, returnDeclarationLocation.ReturnKeyword.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, returnDeclarationLocation.ReturnKeyword.GetLocation());
                     return false;
                 }
 
@@ -1965,20 +1941,20 @@ namespace MetaCompilation
                 var valueArguments = valueClause.ArgumentList as ArgumentListSyntax;
                 if (valueArguments == null)
                 {
-                    ReportDiagnostic(context, SupportedRulesRule, valueExpression.GetLocation(), SupportedRulesRule.MessageFormat);
+                    ReportDiagnostic(context, SupportedRulesRule, valueExpression.GetLocation());
                     return false;
                 }
 
                 SeparatedSyntaxList<ArgumentSyntax> valueArgs = valueArguments.Arguments;
                 if (valueArgs.Count == 0)
                 {
-                    ReportDiagnostic(context, SupportedRulesRule, valueExpression.GetLocation(), SupportedRulesRule.MessageFormat);
+                    ReportDiagnostic(context, SupportedRulesRule, valueExpression.GetLocation());
                     return false;
                 }
 
                 if (ruleNames.Count != valueArgs.Count)
                 {
-                    ReportDiagnostic(context, SupportedRulesRule, valueExpression.GetLocation(), SupportedRulesRule.MessageFormat);
+                    ReportDiagnostic(context, SupportedRulesRule, valueExpression.GetLocation());
                     return false;
                 }
 
@@ -2001,7 +1977,7 @@ namespace MetaCompilation
                     }
                     if (!foundRule)
                     {
-                        ReportDiagnostic(context, SupportedRulesRule, valueExpression.GetLocation(), SupportedRulesRule.MessageFormat);
+                        ReportDiagnostic(context, SupportedRulesRule, valueExpression.GetLocation());
                         return false;
                     }
                 }
@@ -2025,13 +2001,13 @@ namespace MetaCompilation
 
                 if (returnSymbol == null)
                 {
-                    ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessorKeywordLocation, IncorrectAccessorReturnRule.MessageFormat);
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessorKeywordLocation);
                     return result;
                 }
 
                 if (returnSymbol.Type.ToString() != "System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor>" && returnSymbol.Type.Kind.ToString() != "ErrorType")
                 {
-                    ReportDiagnostic(context, IncorrectAccessorReturnRule, returnSymbol.Locations[0], IncorrectAccessorReturnRule.MessageFormat);
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, returnSymbol.Locations[0]);
                     return result;
                 }
 
@@ -2039,14 +2015,14 @@ namespace MetaCompilation
                 ReturnStatementSyntax returnDeclaration = returnSymbol.DeclaringSyntaxReferences[0].GetSyntax() as ReturnStatementSyntax;
                 if (variableDeclaration == null)
                 {
-                    ReportDiagnostic(context, IncorrectAccessorReturnRule, returnSymbol.Locations[0], IncorrectAccessorReturnRule.MessageFormat);
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, returnSymbol.Locations[0]);
                     return result;
                 }
 
                 var equalsValueClause = variableDeclaration.Initializer as EqualsValueClauseSyntax;
                 if (equalsValueClause == null)
                 {
-                    ReportDiagnostic(context, IncorrectAccessorReturnRule, returnDeclaration.ReturnKeyword.GetLocation(), IncorrectAccessorReturnRule.MessageFormat);
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, returnDeclaration.ReturnKeyword.GetLocation());
                     return result;
                 }
 
@@ -2113,12 +2089,12 @@ namespace MetaCompilation
                                 {
                                     if (currentArgExpr.ToString() == "")
                                     {
-                                        ReportDiagnostic(context, EnabledByDefaultErrorRule, currentArg.GetLocation(), EnabledByDefaultErrorRule.MessageFormat);
+                                        ReportDiagnostic(context, EnabledByDefaultErrorRule, currentArg.GetLocation());
                                         return emptyRuleNames;
                                     }
                                     else if (!currentArgExpr.IsKind(SyntaxKind.TrueLiteralExpression))
                                     {
-                                        ReportDiagnostic(context, EnabledByDefaultErrorRule, currentArgExpr.GetLocation(), EnabledByDefaultErrorRule.MessageFormat);
+                                        ReportDiagnostic(context, EnabledByDefaultErrorRule, currentArgExpr.GetLocation());
                                         return emptyRuleNames;
                                     }
                                 }
@@ -2126,14 +2102,14 @@ namespace MetaCompilation
                                 {
                                     if (currentArgExpr.ToString() == "")
                                     {
-                                        ReportDiagnostic(context, DefaultSeverityErrorRule, currentArg.GetLocation(), DefaultSeverityErrorRule.MessageFormat);
+                                        ReportDiagnostic(context, DefaultSeverityErrorRule, currentArg.GetLocation());
                                         return emptyRuleNames;
                                     }
 
                                     var memberAccessExpr = currentArgExpr as MemberAccessExpressionSyntax;
                                     if (memberAccessExpr == null)
                                     {
-                                        ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation(), DefaultSeverityErrorRule.MessageFormat);
+                                        ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation());
                                         return emptyRuleNames;
                                     }
                                     else if (memberAccessExpr.Expression != null && memberAccessExpr.Name != null)
@@ -2144,18 +2120,18 @@ namespace MetaCompilation
 
                                         if (identifierExpr != "DiagnosticSeverity")
                                         {
-                                            ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation(), DefaultSeverityErrorRule.MessageFormat);
+                                            ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation());
                                             return emptyRuleNames;
                                         }
                                         else if (identifierExpr == "DiagnosticSeverity" && !severities.Contains(identifierName))
                                         {
-                                            ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation(), DefaultSeverityErrorRule.MessageFormat);
+                                            ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation());
                                             return emptyRuleNames;
                                         }
                                     }
                                     else
                                     {
-                                        ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation(), DefaultSeverityErrorRule.MessageFormat);
+                                        ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation());
                                         return emptyRuleNames;
                                     }
                                 }
@@ -2163,13 +2139,13 @@ namespace MetaCompilation
                                 {
                                     if (currentArgExpr.ToString() == "")
                                     {
-                                        ReportDiagnostic(context, IdDeclTypeErrorRule, currentArg.GetLocation(), IdDeclTypeErrorRule.MessageFormat);
+                                        ReportDiagnostic(context, IdDeclTypeErrorRule, currentArg.GetLocation());
                                         return emptyRuleNames;
                                     }
 
                                     if (!currentArgExpr.IsKind(SyntaxKind.IdentifierName))
                                     {
-                                        ReportDiagnostic(context, IdDeclTypeErrorRule, currentArgExpr.GetLocation(), IdDeclTypeErrorRule.MessageFormat);
+                                        ReportDiagnostic(context, IdDeclTypeErrorRule, currentArgExpr.GetLocation());
                                         return emptyRuleNames;
                                     }
 
@@ -2193,7 +2169,7 @@ namespace MetaCompilation
 
                                     if (!ruleIdFound)
                                     {
-                                        ReportDiagnostic(context, MissingIdDeclarationRule, currentArgExpr.GetLocation(), MissingIdDeclarationRule.MessageFormat);
+                                        ReportDiagnostic(context, MissingIdDeclarationRule, currentArgExpr.GetLocation());
                                         return emptyRuleNames;
                                     }
                                 }
@@ -2223,7 +2199,7 @@ namespace MetaCompilation
                         }
                     }
 
-                    ReportDiagnostic(context, MissingRuleRule, idLocation, MissingRuleRule.MessageFormat);
+                    ReportDiagnostic(context, MissingRuleRule, idLocation);
                     return emptyRuleNames;
                 }
             }

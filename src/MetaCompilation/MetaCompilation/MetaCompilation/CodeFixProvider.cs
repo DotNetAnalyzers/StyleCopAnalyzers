@@ -1809,12 +1809,8 @@ namespace MetaCompilation
                 var locationExpression = generator.IdentifierName(locationName);
                 var locationArg = generator.Argument(locationExpression);
 
-                var messageExpression = generator.MemberAccessExpression(ruleExpression, "MessageFormat");
-                var messageArg = generator.Argument(messageExpression);
-
                 arguments = arguments.Add(ruleArg);
                 arguments = arguments.Add(locationArg);
-                arguments = arguments.Add(messageArg);
 
                 string name = "diagnostic";
                 var initializer = generator.InvocationExpression(expression, arguments);
