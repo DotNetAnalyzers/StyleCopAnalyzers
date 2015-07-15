@@ -144,7 +144,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         FieldDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Rules must be declared as both internal and static.", c => InternalStaticAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "DiagnosticDescriptor rules should be declared as both internal and static", c => InternalStaticAsync(context.Document, declaration, c)), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.EnabledByDefaultError))
@@ -153,7 +153,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         ArgumentSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Rules should be enabled by default.", c => EnabledByDefaultAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Generally, rules should be enabled by default", c => EnabledByDefaultAsync(context.Document, declaration, c)), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.DefaultSeverityError))

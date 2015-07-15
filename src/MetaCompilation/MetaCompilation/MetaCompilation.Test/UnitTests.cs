@@ -7784,7 +7784,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InternalAndStaticError,
-                Message = MessagePrefix + "The Rule field should be internal and static",
+                Message = MessagePrefix + "The 'Rule' field should be internal and static",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 19, 37) }
             };
@@ -7882,7 +7882,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InternalAndStaticError,
-                Message = MessagePrefix + "The Rule field should be internal and static",
+                Message = MessagePrefix + "The 'Rule' field should be internal and static",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 19, 39) }
             };
@@ -7980,7 +7980,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InternalAndStaticError,
-                Message = MessagePrefix + "The Rule field should be internal and static",
+                Message = MessagePrefix + "The 'Rule' field should be internal and static",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 19, 31) }
             };
@@ -8127,7 +8127,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.EnabledByDefaultError,
-                Message = MessagePrefix + "isEnabledByDefault should be set to true",
+                Message = MessagePrefix + "The 'isEnabledByDefault' field should be set to true",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 33) }
             };
@@ -8225,7 +8225,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.EnabledByDefaultError,
-                Message = MessagePrefix + "isEnabledByDefault should be set to true",
+                Message = MessagePrefix + "The 'isEnabledByDefault' field should be set to true",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 33) }
             };
@@ -8328,7 +8328,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.EnabledByDefaultError,
-                Message = MessagePrefix + "isEnabledByDefault should be set to true",
+                Message = MessagePrefix + "The 'isEnabledByDefault' field should be set to true",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 33) }
             };
@@ -8432,7 +8432,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.EnabledByDefaultError,
-                Message = MessagePrefix + "isEnabledByDefault should be set to true",
+                Message = MessagePrefix + "The 'isEnabledByDefault' field should be set to true",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 23, 13) }
             };
@@ -8533,7 +8533,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.DefaultSeverityError,
-                Message = MessagePrefix + "The defaultSeverity should be of the form: DiagnosticSeverity.[severity]",
+                Message = MessagePrefix + "The 'defaultSeverity' should be of the form: DiagnosticSeverity.[severity]",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 24, 30) }
             };
@@ -8757,7 +8757,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.DefaultSeverityError,
-                Message = MessagePrefix + "The defaultSeverity should be of the form: DiagnosticSeverity.[severity]",
+                Message = MessagePrefix + "The 'defaultSeverity' should be of the form: DiagnosticSeverity.[severity]",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 24, 30) }
             };
@@ -8977,7 +8977,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.DefaultSeverityError,
-                Message = MessagePrefix + "The defaultSeverity should be of the form: DiagnosticSeverity.[severity]",
+                Message = MessagePrefix + "The 'defaultSeverity' should be of the form: DiagnosticSeverity.[severity]",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 22, 13) }
             };
