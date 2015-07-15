@@ -635,7 +635,6 @@ namespace MetaCompilation
                             }
                             else
                             {
-
                                 IfStatementSyntax ifStatement = triviaBlock.Parent as IfStatementSyntax;
                                 var startDiagnosticSpan = ifStatement.SpanStart;
                                 var endDiagnosticSpan = ifStatement.CloseParenToken.SpanStart;
@@ -713,11 +712,40 @@ namespace MetaCompilation
                 var statementCastExpression = statementEqualsValueClause.Value as CastExpressionSyntax;
                 if (statementCastExpression == null)
                 {
-                    return emptyResult;
+                    var statementAsExpression = statementEqualsValueClause.Value as BinaryExpressionSyntax;
+                    if (statementAsExpression == null)
+                    {
+                        return emptyResult;
+                    }
+
+                    var left = statementAsExpression.Left as MemberAccessExpressionSyntax;
+                    if (left == null)
+                    {
+                        return emptyResult;
+                    }
+
+                    var leftName = left.Name as IdentifierNameSyntax;
+                    if (leftName == null || leftName.Identifier.Text != "Node")
+                    {
+                        return emptyResult;
+                    }
+
+                    var leftMember = left.Expression as IdentifierNameSyntax;
+                    if (leftMember == null || leftMember.Identifier.Text != contextParameter.Identifier.Text)
+                    {
+                        return emptyResult;
+                    }
+
+                    var right = statementAsExpression.Right as IdentifierNameSyntax;
+                    if (right == null || right.Identifier.Text != "IfStatementSyntax")
+                    {
+                        return emptyResult;
+                    }
+
+                    return statementName;
                 }
 
                 var statementIdentifier = statementCastExpression.Type as TypeSyntax;
-                //TODO: figure out how to make this not use ToString()
                 if (statementIdentifier == null || statementIdentifier.ToString() != "IfStatementSyntax")
                 {
                     return emptyResult;
