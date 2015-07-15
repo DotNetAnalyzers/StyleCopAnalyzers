@@ -56,7 +56,7 @@
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
             var curlyBracketToken = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-            var curlyBracketLine = curlyBracketToken.GetLocation().GetLineSpan().StartLinePosition.Line;
+            var curlyBracketLine = curlyBracketToken.GetLineSpan().StartLinePosition.Line;
             var curlyBracketReplacementToken = curlyBracketToken;
 
             var indentationOptions = IndentationOptions.FromDocument(document);
@@ -80,7 +80,7 @@
             else
             {
                 // Check if we need to apply a fix before the curly bracket
-                if (previousToken.GetLocation().GetLineSpan().StartLinePosition.Line == curlyBracketLine)
+                if (previousToken.GetLineSpan().StartLinePosition.Line == curlyBracketLine)
                 {
                     var sharedTrivia = curlyBracketReplacementToken.LeadingTrivia.WithoutTrailingWhitespace();
                     var previousTokenNewTrailingTrivia = previousToken.TrailingTrivia
@@ -95,7 +95,7 @@
 
                 // Check if we need to apply a fix after the curly bracket
                 // if a closing curly bracket is followed by a semi-colon or closing paren, no fix is needed.
-                if ((nextToken.GetLocation().GetLineSpan().StartLinePosition.Line == curlyBracketLine) &&
+                if ((nextToken.GetLineSpan().StartLinePosition.Line == curlyBracketLine) &&
                     (!curlyBracketToken.IsKind(SyntaxKind.CloseBraceToken) || !IsValidFollowingToken(nextToken)))
                 {
                     var sharedTrivia = nextToken.LeadingTrivia.WithoutTrailingWhitespace();
@@ -167,7 +167,7 @@
                 }
             }
 
-            return curlyBracketToken.GetLocation().GetLineSpan().StartLinePosition.Line == token.GetLocation().GetLineSpan().StartLinePosition.Line;
+            return curlyBracketToken.GetLineSpan().StartLinePosition.Line == token.GetLineSpan().StartLinePosition.Line;
         }
 
         private static bool IsValidFollowingToken(SyntaxToken nextToken)

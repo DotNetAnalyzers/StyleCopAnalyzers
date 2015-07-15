@@ -5,6 +5,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The C# code contains more than one statement on a single line.
@@ -53,17 +54,17 @@
 
             if (block != null && block.Statements.Any())
             {
-                Location previousStatementLocation = block.Statements[0].GetLocation();
-                Location currentStatementLocation;
+                FileLinePositionSpan previousStatementLocation = block.Statements[0].GetLineSpan();
+                FileLinePositionSpan currentStatementLocation;
 
                 for (int i = 1; i < block.Statements.Count; i++)
                 {
-                    currentStatementLocation = block.Statements[i].GetLocation();
+                    currentStatementLocation = block.Statements[i].GetLineSpan();
 
-                    if (previousStatementLocation.GetLineSpan().EndLinePosition.Line
-                        == currentStatementLocation.GetLineSpan().StartLinePosition.Line)
+                    if (previousStatementLocation.EndLinePosition.Line
+                        == currentStatementLocation.StartLinePosition.Line)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentStatementLocation));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, block.Statements[i].GetLocation()));
                     }
 
                     previousStatementLocation = currentStatementLocation;

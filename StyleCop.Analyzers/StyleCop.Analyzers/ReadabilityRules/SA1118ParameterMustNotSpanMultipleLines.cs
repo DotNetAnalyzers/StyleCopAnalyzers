@@ -6,6 +6,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A parameter to a C# method or indexer, other than the first parameter, spans across multiple lines.
@@ -121,7 +122,7 @@
 
         private bool CheckIfArgumentIsMultiline(CSharpSyntaxNode argument)
         {
-            var lineSpan = argument.GetLocation().GetLineSpan();
+            var lineSpan = argument.GetLineSpan();
             return lineSpan.EndLinePosition.Line > lineSpan.StartLinePosition.Line;
         }
 

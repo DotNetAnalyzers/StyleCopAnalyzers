@@ -72,7 +72,7 @@
                 return;
             }
 
-            if (trivia.GetLocation()?.GetMappedLineSpan().StartLinePosition.Character == 0)
+            if (trivia.SyntaxTree.GetMappedLineSpan(trivia.Span).StartLinePosition.Character == 0)
             {
                 return;
             }

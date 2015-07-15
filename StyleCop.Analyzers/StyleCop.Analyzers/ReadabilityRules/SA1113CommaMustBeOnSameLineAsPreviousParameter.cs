@@ -238,10 +238,9 @@
                         return;
                     }
 
-                    var location = nodeOrToken.GetLocation();
-                    if (previousNode.GetEndLine() < location.GetLineSpan().StartLinePosition.Line)
+                    if (previousNode.GetEndLine() < nodeOrToken.GetLineSpan().StartLinePosition.Line)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, nodeOrToken.GetLocation()));
                     }
                 }
             }

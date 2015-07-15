@@ -51,7 +51,7 @@
 
             var stringBuilder = new StringBuilder();
 
-            var column = violatingTrivia.GetLocation().GetLineSpan().StartLinePosition.Character;
+            var column = violatingTrivia.GetLineSpan().StartLinePosition.Character;
             foreach (var c in violatingTrivia.ToFullString())
             {
                 if (c == '\t')

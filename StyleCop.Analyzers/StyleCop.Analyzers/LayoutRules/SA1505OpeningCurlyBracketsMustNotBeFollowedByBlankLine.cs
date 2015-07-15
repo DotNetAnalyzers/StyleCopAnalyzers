@@ -5,6 +5,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// An opening curly bracket within a C# element, statement, or expression is followed by a blank line.
@@ -147,7 +148,7 @@
 
         private static int GetLine(SyntaxToken token)
         {
-            return token.GetLocation().GetLineSpan().StartLinePosition.Line;
+            return token.GetLineSpan().StartLinePosition.Line;
         }
     }
 }

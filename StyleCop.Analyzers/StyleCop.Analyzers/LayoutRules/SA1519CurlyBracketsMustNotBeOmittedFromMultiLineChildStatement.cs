@@ -5,6 +5,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The opening and closing curly brackets for a multi-line C# statement have been omitted.
@@ -122,8 +123,7 @@
                 return;
             }
 
-            Location location = childStatement.GetLocation();
-            FileLinePositionSpan lineSpan = location.GetLineSpan();
+            FileLinePositionSpan lineSpan = childStatement.GetLineSpan();
             if (lineSpan.StartLinePosition.Line == lineSpan.EndLinePosition.Line)
             {
                 return;
