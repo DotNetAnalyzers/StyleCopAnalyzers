@@ -1,5 +1,3 @@
-// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
-
 /*This tutorial is going to guide you to write a diagnostic analyzer that enforces the placement of a single space between the if keyword of an if statement and the 
 open parenthesis of the condition.
 

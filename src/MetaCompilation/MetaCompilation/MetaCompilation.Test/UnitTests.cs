@@ -98,7 +98,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.GoToCodeFix,
-                Message = MessagePrefix + "Congratulations! You have written your first analyzer! If you would like to write a code fix for your diagnostic, open up CodeFixProvider.cs and get started!",
+                Message = MessagePrefix + "Congratulations! You have written your first analyzer! If you would like to explore a code fix for your diagnostic, open up CodeFixProvider.cs and take a look!",
                 Severity = DiagnosticSeverity.Info,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 18) }
             };
@@ -168,8 +168,8 @@ namespace SyntaxNodeAnalyzer
             }
 
             var openParen = ifStatement.OpenParenToken;
-            var startDiagnosticSpan = ifKeyword.Span.Start;
-            var endDiagnosticSpan = openParen.Span.Start;
+            var startDiagnosticSpan = ifKeyword.SpanStart;
+            var endDiagnosticSpan = openParen.SpanStart;
             var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
             var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
             var diagnostic = Diagnostic.Create(Rule, diagnosticLocation, Rule.MessageFormat);
@@ -181,7 +181,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.GoToCodeFix,
-                Message = MessagePrefix + "Congratulations! You have written your first analyzer! If you would like to write a code fix for your diagnostic, open up CodeFixProvider.cs and get started!",
+                Message = MessagePrefix + "Congratulations! You have written your first analyzer! If you would like to explore a code fix for your diagnostic, open up CodeFixProvider.cs and take a look!",
                 Severity = DiagnosticSeverity.Info,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 18) }
             };

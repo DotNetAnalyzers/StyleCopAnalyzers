@@ -211,7 +211,7 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor GoToCodeFixRule = new DiagnosticDescriptor(
             id: GoToCodeFix,
             title: "Analyzer tutorial complete",
-            messageFormat: MessagePrefix + "Congratulations! You have written your first analyzer! If you would like to write a code fix for your diagnostic, open up CodeFixProvider.cs and get started!",
+            messageFormat: MessagePrefix + "Congratulations! You have written your first analyzer! If you would like to explore a code fix for your diagnostic, open up CodeFixProvider.cs and take a look!",
             category: RuleCategory,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true);
