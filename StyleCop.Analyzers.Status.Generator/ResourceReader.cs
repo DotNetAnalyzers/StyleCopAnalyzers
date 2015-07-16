@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
@@ -60,7 +59,8 @@ namespace StyleCop.Analyzers.Status.Generator
                 string relativePath = Path.ChangeExtension(Path.GetFullPath(path)
                     .Substring(root.Length)
                     .Replace(Path.DirectorySeparatorChar, '.')
-                    .Replace(Path.AltDirectorySeparatorChar, '.'), "resources");
+                    .Replace(Path.AltDirectorySeparatorChar, '.'), "resources")
+                    .TrimStart('.');
 
                 descriptions.Add(ReadResource(relativePath, path));
             }
