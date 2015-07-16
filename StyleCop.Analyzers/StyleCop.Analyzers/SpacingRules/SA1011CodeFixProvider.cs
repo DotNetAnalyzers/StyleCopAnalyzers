@@ -94,6 +94,10 @@
                     ignoreTrailingWhitespace = nextToken.Parent.IsKind(SyntaxKind.ConditionalAccessExpression);
                     break;
 
+                case SyntaxKind.IdentifierToken:
+                    ignoreTrailingWhitespace = token.Parent.IsKind(SyntaxKind.ArrayRankSpecifier);
+                    break;
+
                 default:
                     ignoreTrailingWhitespace = false;
                     break;
