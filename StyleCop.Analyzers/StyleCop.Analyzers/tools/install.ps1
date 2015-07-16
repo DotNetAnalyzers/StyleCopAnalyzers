@@ -1,33 +1,57 @@
 ﻿param($installPath, $toolsPath, $package, $project)
 
-$analyzersPath = join-path $toolsPath "analyzers"
+$analyzersPaths = Join-Path (Join-Path (Split-Path -Path $toolsPath -Parent) "analyzers" ) * -Resolve
 
-# Install the language agnostic analyzers.
-foreach ($analyzerFilePath in Get-ChildItem $analyzersPath -Filter *.dll)
+foreach($analyzersPath in $analyzersPaths)
 {
-    if($project.Object.AnalyzerReferences)
+    # Install the language agnostic analyzers.
+    if (Test-Path $analyzersPath)
     {
-        $project.Object.AnalyzerReferences.Add($analyzerFilePath.FullName)
+        foreach ($analyzerFilePath in Get-ChildItem $analyzersPath -Filter *.dll)
+        {
+            if($project.Object.AnalyzerReferences)
+            {
+                $project.Object.AnalyzerReferences.Add($analyzerFilePath.FullName)
+            }
+        }
     }
 }
 
-# Install language specific analyzers.
 # $project.Type gives the language name like (C# or VB.NET)
-$languageAnalyzersPath = join-path $analyzersPath $project.Type
-
-foreach ($analyzerFilePath in Get-ChildItem $languageAnalyzersPath -Filter *.dll)
+$languageFolder = ""
+if($project.Type -eq "C#")
 {
-    if($project.Object.AnalyzerReferences)
-    {
-        $project.Object.AnalyzerReferences.Add($analyzerFilePath.FullName)
-    }
+    $languageFolder = "cs"
+}
+if($project.Type -eq "VB.NET")
+{
+    $languageFolder = "vb"
+}
+if($languageFolder -eq "")
+{
+    return
 }
 
+foreach($analyzersPath in $analyzersPaths)
+{
+    # Install language specific analyzers.
+    $languageAnalyzersPath = join-path $analyzersPath $languageFolder
+    if (Test-Path $languageAnalyzersPath)
+    {
+        foreach ($analyzerFilePath in Get-ChildItem $languageAnalyzersPath -Filter *.dll)
+        {
+            if($project.Object.AnalyzerReferences)
+            {
+                $project.Object.AnalyzerReferences.Add($analyzerFilePath.FullName)
+            }
+        }
+    }
+}
 # SIG # Begin signature block
 # MIIaoQYJKoZIhvcNAQcCoIIakjCCGo4CAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUHLgQKQRok9aaj/CeWxAYaFN/
-# KC6gghWCMIIEwzCCA6ugAwIBAgITMwAAAHPGWcJSl4OjOgAAAAAAczANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU2Q/XtUMgeda05ZRH6iWmJDPu
+# oTCgghWCMIIEwzCCA6ugAwIBAgITMwAAAHPGWcJSl4OjOgAAAAAAczANBgkqhkiG
 # 9w0BAQUFADB3MQswCQYDVQQGEwJVUzETMBEGA1UECBMKV2FzaGluZ3RvbjEQMA4G
 # A1UEBxMHUmVkbW9uZDEeMBwGA1UEChMVTWljcm9zb2Z0IENvcnBvcmF0aW9uMSEw
 # HwYDVQQDExhNaWNyb3NvZnQgVGltZS1TdGFtcCBQQ0EwHhcNMTUwMzIwMTczMjA0
@@ -52,33 +76,33 @@ foreach ($analyzerFilePath in Get-ChildItem $languageAnalyzersPath -Filter *.dll
 # 6BCVoUNlxEgptx5suXvzd7dgvF0jpzSnWPUVzaasjBvdqMfy/L2f24Jaiu9s8vsu
 # w79c0Y2DVhPd4x2T7ReueUVSCxzhK8AzUN271fiW2JRLQ0tRCF8tnA5TKJe7RuvG
 # emKndxIklRnPRf1Y2R0getwBvO8Lg3pDeZDUR+AIteZ96oBsSHnsJwxb8T45Ur6a
-# lIw5sEMholc7XInenHZH5DEg0aJpQ86Btpv5rzgwggTsMIID1KADAgECAhMzAAAA
-# ymzVMhI1xOFVAAEAAADKMA0GCSqGSIb3DQEBBQUAMHkxCzAJBgNVBAYTAlVTMRMw
+# lIw5sEMholc7XInenHZH5DEg0aJpQ86Btpv5rzgwggTsMIID1KADAgECAhMzAAAB
+# Cix5rtd5e6asAAEAAAEKMA0GCSqGSIb3DQEBBQUAMHkxCzAJBgNVBAYTAlVTMRMw
 # EQYDVQQIEwpXYXNoaW5ndG9uMRAwDgYDVQQHEwdSZWRtb25kMR4wHAYDVQQKExVN
 # aWNyb3NvZnQgQ29ycG9yYXRpb24xIzAhBgNVBAMTGk1pY3Jvc29mdCBDb2RlIFNp
-# Z25pbmcgUENBMB4XDTE0MDQyMjE3MzkwMFoXDTE1MDcyMjE3MzkwMFowgYMxCzAJ
+# Z25pbmcgUENBMB4XDTE1MDYwNDE3NDI0NVoXDTE2MDkwNDE3NDI0NVowgYMxCzAJ
 # BgNVBAYTAlVTMRMwEQYDVQQIEwpXYXNoaW5ndG9uMRAwDgYDVQQHEwdSZWRtb25k
 # MR4wHAYDVQQKExVNaWNyb3NvZnQgQ29ycG9yYXRpb24xDTALBgNVBAsTBE1PUFIx
 # HjAcBgNVBAMTFU1pY3Jvc29mdCBDb3Jwb3JhdGlvbjCCASIwDQYJKoZIhvcNAQEB
-# BQADggEPADCCAQoCggEBAJZxXe0GRvqEy51bt0bHsOG0ETkDrbEVc2Cc66e2bho8
-# P/9l4zTxpqUhXlaZbFjkkqEKXMLT3FIvDGWaIGFAUzGcbI8hfbr5/hNQUmCVOlu5
-# WKV0YUGplOCtJk5MoZdwSSdefGfKTx5xhEa8HUu24g/FxifJB+Z6CqUXABlMcEU4
-# LYG0UKrFZ9H6ebzFzKFym/QlNJj4VN8SOTgSL6RrpZp+x2LR3M/tPTT4ud81MLrs
-# eTKp4amsVU1Mf0xWwxMLdvEH+cxHrPuI1VKlHij6PS3Pz4SYhnFlEc+FyQlEhuFv
-# 57H8rEBEpamLIz+CSZ3VlllQE1kYc/9DDK0r1H8wQGcCAwEAAaOCAWAwggFcMBMG
-# A1UdJQQMMAoGCCsGAQUFBwMDMB0GA1UdDgQWBBQfXuJdUI1Whr5KPM8E6KeHtcu/
-# gzBRBgNVHREESjBIpEYwRDENMAsGA1UECxMETU9QUjEzMDEGA1UEBRMqMzE1OTUr
-# YjQyMThmMTMtNmZjYS00OTBmLTljNDctM2ZjNTU3ZGZjNDQwMB8GA1UdIwQYMBaA
+# BQADggEPADCCAQoCggEBAJL8bza74QO5KNZG0aJhuqVG+2MWPi75R9LH7O3HmbEm
+# UXW92swPBhQRpGwZnsBfTVSJ5E1Q2I3NoWGldxOaHKftDXT3p1Z56Cj3U9KxemPg
+# 9ZSXt+zZR/hsPfMliLO8CsUEp458hUh2HGFGqhnEemKLwcI1qvtYb8VjC5NJMIEb
+# e99/fE+0R21feByvtveWE1LvudFNOeVz3khOPBSqlw05zItR4VzRO/COZ+owYKlN
+# Wp1DvdsjusAP10sQnZxN8FGihKrknKc91qPvChhIqPqxTqWYDku/8BTzAMiwSNZb
+# /jjXiREtBbpDAk8iAJYlrX01boRoqyAYOCj+HKIQsaUCAwEAAaOCAWAwggFcMBMG
+# A1UdJQQMMAoGCCsGAQUFBwMDMB0GA1UdDgQWBBSJ/gox6ibN5m3HkZG5lIyiGGE3
+# NDBRBgNVHREESjBIpEYwRDENMAsGA1UECxMETU9QUjEzMDEGA1UEBRMqMzE1OTUr
+# MDQwNzkzNTAtMTZmYS00YzYwLWI2YmYtOWQyYjFjZDA1OTg0MB8GA1UdIwQYMBaA
 # FMsR6MrStBZYAck3LjMWFrlMmgofMFYGA1UdHwRPME0wS6BJoEeGRWh0dHA6Ly9j
 # cmwubWljcm9zb2Z0LmNvbS9wa2kvY3JsL3Byb2R1Y3RzL01pY0NvZFNpZ1BDQV8w
 # OC0zMS0yMDEwLmNybDBaBggrBgEFBQcBAQROMEwwSgYIKwYBBQUHMAKGPmh0dHA6
 # Ly93d3cubWljcm9zb2Z0LmNvbS9wa2kvY2VydHMvTWljQ29kU2lnUENBXzA4LTMx
-# LTIwMTAuY3J0MA0GCSqGSIb3DQEBBQUAA4IBAQB3XOvXkT3NvXuD2YWpsEOdc3wX
-# yQ/tNtvHtSwbXvtUBTqDcUCBCaK3cSZe1n22bDvJql9dAxgqHSd+B+nFZR+1zw23
-# VMcoOFqI53vBGbZWMrrizMuT269uD11E9dSw7xvVTsGvDu8gm/Lh/idd6MX/YfYZ
-# 0igKIp3fzXCCnhhy2CPMeixD7v/qwODmHaqelzMAUm8HuNOIbN6kBjWnwlOGZRF3
-# CY81WbnYhqgA/vgxfSz0jAWdwMHVd3Js6U1ZJoPxwrKIV5M1AHxQK7xZ/P4cKTiC
-# 095Sl0UpGE6WW526Xxuj8SdQ6geV6G00DThX3DcoNZU6OJzU7WqFXQ4iEV57MIIF
+# LTIwMTAuY3J0MA0GCSqGSIb3DQEBBQUAA4IBAQCmqFOR3zsB/mFdBlrrZvAM2PfZ
+# hNMAUQ4Q0aTRFyjnjDM4K9hDxgOLdeszkvSp4mf9AtulHU5DRV0bSePgTxbwfo/w
+# iBHKgq2k+6apX/WXYMh7xL98m2ntH4LB8c2OeEti9dcNHNdTEtaWUu81vRmOoECT
+# oQqlLRacwkZ0COvb9NilSTZUEhFVA7N7FvtH/vto/MBFXOI/Enkzou+Cxd5AGQfu
+# FcUKm1kFQanQl56BngNb/ErjGi4FrFBHL4z6edgeIPgF+ylrGBT6cgS3C6eaZOwR
+# XU9FSY0pGi370LYJU180lOAWxLnqczXoV+/h6xbDGMcGszvPYYTitkSJlKOGMIIF
 # vDCCA6SgAwIBAgIKYTMmGgAAAAAAMTANBgkqhkiG9w0BAQUFADBfMRMwEQYKCZIm
 # iZPyLGQBGRYDY29tMRkwFwYKCZImiZPyLGQBGRYJbWljcm9zb2Z0MS0wKwYDVQQD
 # EyRNaWNyb3NvZnQgUm9vdCBDZXJ0aWZpY2F0ZSBBdXRob3JpdHkwHhcNMTAwODMx
@@ -144,27 +168,27 @@ foreach ($analyzerFilePath in Get-ChildItem $languageAnalyzersPath -Filter *.dll
 # 9wFlb4kLfchpyOZu6qeXzjEp/w7FW1zYTRuh2Povnj8uVRZryROj/TGCBIkwggSF
 # AgEBMIGQMHkxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpXYXNoaW5ndG9uMRAwDgYD
 # VQQHEwdSZWRtb25kMR4wHAYDVQQKExVNaWNyb3NvZnQgQ29ycG9yYXRpb24xIzAh
-# BgNVBAMTGk1pY3Jvc29mdCBDb2RlIFNpZ25pbmcgUENBAhMzAAAAymzVMhI1xOFV
-# AAEAAADKMAkGBSsOAwIaBQCggaIwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQw
-# HAYKKwYBBAGCNwIBCzEOMAwGCisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFCPR
-# 04vrW62zkQvF7VEbU5oRAOrlMEIGCisGAQQBgjcCAQwxNDAyoBiAFgBpAG4AcwB0
+# BgNVBAMTGk1pY3Jvc29mdCBDb2RlIFNpZ25pbmcgUENBAhMzAAABCix5rtd5e6as
+# AAEAAAEKMAkGBSsOAwIaBQCggaIwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQw
+# HAYKKwYBBAGCNwIBCzEOMAwGCisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFNWy
+# JYWiXrB52VhT/lC+8pUKXim8MEIGCisGAQQBgjcCAQwxNDAyoBiAFgBpAG4AcwB0
 # AGEAbABsAC4AcABzADGhFoAUaHR0cDovL21pY3Jvc29mdC5jb20wDQYJKoZIhvcN
-# AQEBBQAEggEAalWpg2MRxEhWKW0gPAZ2o9L6OIrWmpzfzF79eHoHZllnXLX18ZqC
-# SYwqvvH20TV8aCUqmSOGNbj74H3LvdudRQHzv+eP803+7W/5tgYc6EO9u9ilOXUs
-# JSAT9NpYjWD0abhxeyCvLtjMnohuWssXhBunvER54y/HKrlJOVrIUTIJvIh+nMAy
-# eD9lrMOkHutrYtJna0UPecAFKVgdUCWcpR8aeR5VDOegPaEs5C++POMhdKiWhwRY
-# yna6VgPz7zgHrWY1Dgwpvz371kepE3Noh2s/Nf0RThrk+EPa3TgTvtGWas04NabL
-# Sx6duMzrUJeazs+Z/SR2ZjYNS0x5ZwmSX6GCAigwggIkBgkqhkiG9w0BCQYxggIV
+# AQEBBQAEggEAPijsy7fqbQghv6HRRRSMUi3S6UmVRRL/NIehIU4uTM0SniruHlUf
+# YBFAp5PhTCjaj2dNnFL6J4zIcaugqI3Shk6kuopA3Vd8YIiqMOc/9CJ3lRxJ3/nI
+# BBAAWpEYXo4xs2500Bco5TpoMUJORWUN15onwqGp+YIc/aWYX1Jtfqvb5oaiTcvI
+# 2OWx1dyFfpWxc56hX4eyo3Lj5l2454Z5bB40kzLX07qCgvY+MRYSd89P1uNUtBEB
+# qkaymzrmVkTMZaUn4YdyAHR7CfJ7sgMmiOyQ+YySDBDD6HPycGwLpdip93Bmjjfz
+# Yj/4ERbiVOPRRpa2GtCAsNXtPiw0SSaQJaGCAigwggIkBgkqhkiG9w0BCQYxggIV
 # MIICEQIBATCBjjB3MQswCQYDVQQGEwJVUzETMBEGA1UECBMKV2FzaGluZ3RvbjEQ
 # MA4GA1UEBxMHUmVkbW9uZDEeMBwGA1UEChMVTWljcm9zb2Z0IENvcnBvcmF0aW9u
 # MSEwHwYDVQQDExhNaWNyb3NvZnQgVGltZS1TdGFtcCBQQ0ECEzMAAABzxlnCUpeD
 # ozoAAAAAAHMwCQYFKw4DAhoFAKBdMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEw
-# HAYJKoZIhvcNAQkFMQ8XDTE1MDQxODAxNTgwN1owIwYJKoZIhvcNAQkEMRYEFKuw
-# mWey4iWO1aQzZpocSXLDzUvxMA0GCSqGSIb3DQEBBQUABIIBAHSG2N1ioICZDKDU
-# TjjCqqZdBhtQFyiXjiDzmNqNLyuu06EzhkLdO+AEUZf88t4914Hp6Cf7v8GDsPeW
-# r/KCAx7y6h8kgcO6ewpRuBq5LhG8mRdh7KEdeJ6bTFuvUNofTUrHef26c8CKJYZ7
-# vOE0I/01QtwWuGJnf3dcLkIN80UcNfy/D6JC/irxo8Edfyk14Z5Cx8TczGcHFjbP
-# yqDLj7XmOvrlkYjQ1TqV7eqQ6Yfn8nfopl0POR3IYW8k760z6dBOGxsiQH6vDFZW
-# FRX3zLfOXLpMxzvC/PQKvTafAFbs6yDWVdjFJcJ2n0kcpL50go8Or3sh2+tVKXYl
-# tLmRTEw=
+# HAYJKoZIhvcNAQkFMQ8XDTE1MDYxOTAyNTk0OFowIwYJKoZIhvcNAQkEMRYEFGZQ
+# e8ojPYUl1DjvBan3KNtqFEJdMA0GCSqGSIb3DQEBBQUABIIBAJHjS6vTvsLIuzBU
+# xQdQopG+qV3hJzqh7u1uPdsknaqMLWjn9zF7Qy6q7gk17eCQ+uStUXdqMCYWqX6J
+# GkpaBZGZpmmQ2uEau2G6TuxdN4nVFAmlO5W+RbfLBTizjTH3/VRJsLiIHNu0JpmM
+# SjbuKpROk3wKYiUIsbWrHU0rpWmU6lX/xGv/zIZrMskzJ0Xas7+78S1zHeHlsoWS
+# TMNtcy+MJfhAfAg6AX1x9Ga7T4J2uT+zo16rMqkIgH/VGmS3+/1ZIMY92ev6BOps
+# smrx6ksElucvRtwE41kulKtPbziSPaIhCQyoIvvalwdjO+F0nd3lip/k4dJpUpzj
+# d2EmeyI=
 # SIG # End signature block
