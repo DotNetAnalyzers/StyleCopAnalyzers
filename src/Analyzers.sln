@@ -29,6 +29,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{12759EA5-B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiagnosticsTestUtilities", "Test\Utilities\DiagnosticsTestUtilities.csproj", "{0A0621F2-D1DC-47FF-B643-C6646557505E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeAnalysisDiagnosticAnalyzersTest", "CodeAnalysis\Test\CodeAnalysisDiagnosticAnalyzersTest.csproj", "{0C2925AD-CD97-46FA-A686-E2C1AD19DAD8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,10 @@ Global
 		{0A0621F2-D1DC-47FF-B643-C6646557505E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A0621F2-D1DC-47FF-B643-C6646557505E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A0621F2-D1DC-47FF-B643-C6646557505E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C2925AD-CD97-46FA-A686-E2C1AD19DAD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C2925AD-CD97-46FA-A686-E2C1AD19DAD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C2925AD-CD97-46FA-A686-E2C1AD19DAD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C2925AD-CD97-46FA-A686-E2C1AD19DAD8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -85,5 +91,6 @@ Global
 		{921B412A-5551-4853-82B4-46AD5A05A03E} = {55A710CD-95EC-4C49-AE7D-BA5E930FD1DC}
 		{B1A6A74B-E484-48FB-8745-7A30A06DB631} = {55A710CD-95EC-4C49-AE7D-BA5E930FD1DC}
 		{0A0621F2-D1DC-47FF-B643-C6646557505E} = {12759EA5-BDF5-4888-8134-8CEB17754183}
+		{0C2925AD-CD97-46FA-A686-E2C1AD19DAD8} = {55A710CD-95EC-4C49-AE7D-BA5E930FD1DC}
 	EndGlobalSection
 EndGlobal
