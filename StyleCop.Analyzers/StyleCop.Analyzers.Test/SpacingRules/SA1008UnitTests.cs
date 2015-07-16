@@ -1627,6 +1627,42 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that named parameters are handled properly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestNamedParameterAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    using System;
+
+    public class TestClass
+    {
+        public void TestMethod1(int a, int b)
+        {
+        }
+
+        public void TestMethod2(Action<int, int> a)
+        {
+        }
+
+        public void TestMethod3()
+        {
+            TestMethod1(a: 10, b: (100 + 10) + 40);
+            TestMethod1(
+                a: 10,
+                b: (100 + 10) + 40);
+            TestMethod2(a: (v1, v2) => { });
+        }
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
