@@ -24,6 +24,7 @@ namespace NewAnalyzerTemplate
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class NewAnalyzerTemplateAnalyzer : DiagnosticAnalyzer
     {
+        //The SupportedDiagnostics property stores an ImmutableArray containing any diagnostics that can be reported by this analyzer
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
@@ -32,6 +33,8 @@ namespace NewAnalyzerTemplate
             }
         }
 
+        //The Initialize method is used to register methods to perform analysis of the Syntax Tree or Semantic Model when there is a change to the SyntaxTree or Semantic Model
+        //The AnalysisContext parameter has members that facilitate the registering mentioned above
         public override void Initialize(AnalysisContext context)
         {
             
