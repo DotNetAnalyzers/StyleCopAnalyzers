@@ -112,8 +112,8 @@
             var tokenSubstitutions = new Dictionary<SyntaxToken, SyntaxToken>();
 
             var parentLastToken = openBraceToken.GetPreviousToken();
-            var parentEndLine = parentLastToken.GetLocation().GetLineSpan().EndLinePosition.Line;
-            var blockStartLine = openBraceToken.GetLocation().GetLineSpan().StartLinePosition.Line;
+            var parentEndLine = parentLastToken.GetLineSpan().EndLinePosition.Line;
+            var blockStartLine = openBraceToken.GetLineSpan().StartLinePosition.Line;
 
             // reformat parent if it is on the same line as the block.
             if (parentEndLine == blockStartLine)

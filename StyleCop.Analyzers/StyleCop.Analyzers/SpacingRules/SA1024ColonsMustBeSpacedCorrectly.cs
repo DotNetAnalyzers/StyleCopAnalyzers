@@ -1,9 +1,11 @@
 ﻿namespace StyleCop.Analyzers.SpacingRules
 {
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A colon within a C# element is not spaced correctly.
@@ -137,7 +139,7 @@
             {
                 // only the first token on the line has leading trivia, and those are ignored
                 SyntaxToken precedingToken = token.GetPreviousToken();
-                SyntaxTriviaList combinedTrivia = precedingToken.TrailingTrivia.AddRange(token.LeadingTrivia);
+                var combinedTrivia = TriviaHelper.MergeTriviaLists(precedingToken.TrailingTrivia, token.LeadingTrivia);
                 if (combinedTrivia.Count > 0 && !combinedTrivia.Last().IsKind(SyntaxKind.MultiLineCommentTrivia))
                 {
                     hasPrecedingSpace = true;

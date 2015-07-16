@@ -68,13 +68,13 @@
         {
             var result = new List<SyntaxTrivia>();
 
-            var lineOfOpenBrace = openBrace.GetLocation().GetLineSpan().StartLinePosition.Line;
+            var lineOfOpenBrace = openBrace.GetLineSpan().StartLinePosition.Line;
             var lineToCheck = lineOfOpenBrace - 1;
 
             while (lineToCheck > -1)
             {
                 var trivias = openBrace.LeadingTrivia
-                    .Where(t => t.GetLocation().GetLineSpan().StartLinePosition.Line == lineToCheck)
+                    .Where(t => t.GetLineSpan().StartLinePosition.Line == lineToCheck)
                     .ToList();
                 var endOfLineTrivia = trivias.Where(t => t.IsKind(SyntaxKind.EndOfLineTrivia)).ToList();
                 if (endOfLineTrivia.Any() && trivias.Except(endOfLineTrivia).All(t => t.IsKind(SyntaxKind.WhitespaceTrivia)))

@@ -60,7 +60,7 @@
                 return true;
 
             case SyntaxKind.MultiLineCommentTrivia:
-                var lineSpan = trivia.GetLocation().GetLineSpan();
+                var lineSpan = trivia.GetLineSpan();
                 return lineSpan.StartLinePosition.Line == lineSpan.EndLinePosition.Line;
 
             default:

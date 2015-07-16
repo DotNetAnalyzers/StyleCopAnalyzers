@@ -6,6 +6,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or
@@ -293,27 +294,25 @@
 
         private static void CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(SyntaxNodeAnalysisContext context, SyntaxToken openToken, SyntaxToken identifierToken)
         {
-            var identifierLine = identifierToken.GetLocation().GetLineSpan();
-            var openParenLocation = openToken.GetLocation();
-            var openParenLine = openParenLocation.GetLineSpan();
+            var identifierLine = identifierToken.GetLineSpan();
+            var openParenLine = openToken.GetLineSpan();
             if (identifierLine.IsValid &&
                 openParenLine.IsValid &&
                 openParenLine.StartLinePosition.Line != identifierLine.StartLinePosition.Line)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, openParenLocation));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, openToken.GetLocation()));
             }
         }
 
         private static void CheckIfLocationOfExpressionAndOpenTokenAreTheSame(SyntaxNodeAnalysisContext context, SyntaxToken openToken, ExpressionSyntax expression)
         {
-            var identifierLine = expression.GetLocation().GetLineSpan();
-            var openParenLocation = openToken.GetLocation();
-            var openParenLine = openParenLocation.GetLineSpan();
+            var identifierLine = expression.GetLineSpan();
+            var openParenLine = openToken.GetLineSpan();
             if (identifierLine.IsValid &&
                 openParenLine.IsValid &&
                 openParenLine.StartLinePosition.Line != identifierLine.StartLinePosition.Line)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, openParenLocation));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, openToken.GetLocation()));
             }
         }
     }

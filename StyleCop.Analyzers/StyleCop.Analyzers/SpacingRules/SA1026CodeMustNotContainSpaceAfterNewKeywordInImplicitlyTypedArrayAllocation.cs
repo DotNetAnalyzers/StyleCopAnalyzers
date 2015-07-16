@@ -4,6 +4,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// An implicitly typed new array allocation within a C# code file is not spaced correctly.
@@ -28,7 +29,7 @@
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1026Title), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(SpacingResources.SA1026MessageFormat), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1026Description), SpacingResources.ResourceManager, typeof(SpacingResources));
-        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1026.html";
+        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1026.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -66,9 +67,7 @@
                     continue;
                 }
 
-                SyntaxTriviaList trailingTriviaList = token.TrailingTrivia;
-                if (trailingTriviaList.Count > 0 &&
-                    (trailingTriviaList[0].IsKind(SyntaxKind.WhitespaceTrivia) || trailingTriviaList[0].IsKind(SyntaxKind.EndOfLineTrivia)))
+                if (token.IsFollowedByWhitespace() || token.IsLastInLine())
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));
                 }

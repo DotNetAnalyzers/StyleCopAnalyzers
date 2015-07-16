@@ -96,9 +96,8 @@
                 break;
             case SyntaxKind.MultiLineCommentTrivia:
             case SyntaxKind.MultiLineDocumentationCommentTrivia:
-                var triviaLocation = trivia.GetLocation();
                 string oldTriviaContent = trivia.ToFullString();
-                TextSpan diagnosticSpanWithinTrivia = TextSpan.FromBounds(diagnosticSpan.Start - triviaLocation.SourceSpan.Start, diagnosticSpan.End - triviaLocation.SourceSpan.Start);
+                TextSpan diagnosticSpanWithinTrivia = TextSpan.FromBounds(diagnosticSpan.Start - trivia.Span.Start, diagnosticSpan.End - trivia.Span.Start);
                 newTriviaContent = string.Concat(
                     oldTriviaContent.Substring(0, diagnosticSpanWithinTrivia.Start),
                     oldTriviaContent.Substring(diagnosticSpanWithinTrivia.End));

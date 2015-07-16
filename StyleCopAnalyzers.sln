@@ -33,6 +33,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{A0840AD0
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "documentation", "documentation", "{19DD9E9D-877A-4492-9B7F-2E681DD58308}"
 	ProjectSection(SolutionItems) = preProject
+		documentation\SA1026.md = documentation\SA1026.md
 		documentation\SA1028.md = documentation\SA1028.md
 		documentation\SA1102.md = documentation\SA1102.md
 		documentation\SA1103.md = documentation\SA1103.md
@@ -47,6 +48,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "documentation", "documentat
 		documentation\SX1309.md = documentation\SX1309.md
 		documentation\SX1309S.md = documentation\SX1309S.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StyleCopTester", "StyleCop.Analyzers\StyleCopTester\StyleCopTester.csproj", "{C4B7092C-E1A9-4CF7-AE4C-D6A146392BA7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -66,6 +69,10 @@ Global
 		{06BEBB30-AC91-4470-8930-22F7722A25E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06BEBB30-AC91-4470-8930-22F7722A25E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06BEBB30-AC91-4470-8930-22F7722A25E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4B7092C-E1A9-4CF7-AE4C-D6A146392BA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4B7092C-E1A9-4CF7-AE4C-D6A146392BA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4B7092C-E1A9-4CF7-AE4C-D6A146392BA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4B7092C-E1A9-4CF7-AE4C-D6A146392BA7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

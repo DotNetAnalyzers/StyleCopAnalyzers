@@ -5,6 +5,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The start of the parameter list for a method or indexer call or declaration does not begin on the same line as
@@ -192,13 +193,13 @@
 
                 var firstSize = arrayRankSpecifierSyntax.Sizes[0];
 
-                var firstSizeLineSpan = firstSize.GetLocation().GetLineSpan();
+                var firstSizeLineSpan = firstSize.GetLineSpan();
                 if (!firstSizeLineSpan.IsValid)
                 {
                     return;
                 }
 
-                var openBracketLineSpan = openBracketToken.GetLocation().GetLineSpan();
+                var openBracketLineSpan = openBracketToken.GetLineSpan();
                 if (!openBracketLineSpan.IsValid)
                 {
                     return;
@@ -224,13 +225,13 @@
 
             var firstAttribute = attributesList.Attributes[0];
 
-            var firstAttributeLineSpan = firstAttribute.GetLocation().GetLineSpan();
+            var firstAttributeLineSpan = firstAttribute.GetLineSpan();
             if (!firstAttributeLineSpan.IsValid)
             {
                 return;
             }
 
-            var openBracketLineSpan = openBracketToken.GetLocation().GetLineSpan();
+            var openBracketLineSpan = openBracketToken.GetLineSpan();
             if (!openBracketLineSpan.IsValid)
             {
                 return;
@@ -255,13 +256,13 @@
 
             var firstArgument = argumentListSyntax.Arguments[0];
 
-            var firstArgumentLineSpan = firstArgument.GetLocation().GetLineSpan();
+            var firstArgumentLineSpan = firstArgument.GetLineSpan();
             if (!firstArgumentLineSpan.IsValid)
             {
                 return;
             }
 
-            var openBracketLineSpan = openBracketToken.GetLocation().GetLineSpan();
+            var openBracketLineSpan = openBracketToken.GetLineSpan();
             if (!openBracketLineSpan.IsValid)
             {
                 return;
@@ -286,13 +287,13 @@
 
             var firstArgument = argumentListSyntax.Arguments[0];
 
-            var firstArgumentLineSpan = firstArgument.GetLocation().GetLineSpan();
+            var firstArgumentLineSpan = firstArgument.GetLineSpan();
             if (!firstArgumentLineSpan.IsValid)
             {
                 return;
             }
 
-            var openParenLineSpan = argumentListSyntax.OpenParenToken.GetLocation().GetLineSpan();
+            var openParenLineSpan = argumentListSyntax.OpenParenToken.GetLineSpan();
             if (!openParenLineSpan.IsValid)
             {
                 return;
@@ -317,13 +318,13 @@
 
             var firstArgument = argumentListSyntax.Arguments[0];
 
-            var firstArgumentLineSpan = firstArgument.GetLocation().GetLineSpan();
+            var firstArgumentLineSpan = firstArgument.GetLineSpan();
             if (!firstArgumentLineSpan.IsValid)
             {
                 return;
             }
 
-            var openParenLineSpan = openParenToken.GetLocation().GetLineSpan();
+            var openParenLineSpan = openParenToken.GetLineSpan();
             if (!openParenLineSpan.IsValid)
             {
                 return;
@@ -348,13 +349,13 @@
 
             var firstParameter = parameterListSyntax.Parameters[0];
 
-            var firstParameterLineSpan = firstParameter.GetLocation().GetLineSpan();
+            var firstParameterLineSpan = firstParameter.GetLineSpan();
             if (!firstParameterLineSpan.IsValid)
             {
                 return;
             }
 
-            var openBracketLineSpan = openBracketToken.GetLocation().GetLineSpan();
+            var openBracketLineSpan = openBracketToken.GetLineSpan();
             if (!openBracketLineSpan.IsValid)
             {
                 return;
@@ -379,13 +380,13 @@
 
             var firstParameter = parameterListSyntax.Parameters[0];
 
-            var firstParameterLineSpan = firstParameter.GetLocation().GetLineSpan();
+            var firstParameterLineSpan = firstParameter.GetLineSpan();
             if (!firstParameterLineSpan.IsValid)
             {
                 return;
             }
 
-            var openParenLineSpan = parameterListSyntax.OpenParenToken.GetLocation().GetLineSpan();
+            var openParenLineSpan = parameterListSyntax.OpenParenToken.GetLineSpan();
             if (!openParenLineSpan.IsValid)
             {
                 return;

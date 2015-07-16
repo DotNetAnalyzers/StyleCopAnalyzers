@@ -80,10 +80,7 @@
 
         private static void HandleSingleLineComment(SyntaxTreeAnalysisContext context, SyntaxTrivia singleLineComment)
         {
-            // Remove the leading // from the comment
-            var commentText = singleLineComment.ToString().Substring(2);
             int index = 0;
-
             var list = TriviaHelper.GetContainingTriviaList(singleLineComment, out index);
             var firstNonWhiteSpace = TriviaHelper.IndexOfFirstNonWhitespaceTrivia(list);
 
@@ -91,19 +88,40 @@
             // on the first or last line.  This ensures that whitespace in code commented out using
             // the Comment Selection option in Visual Studio will not raise the diagnostic for every
             // blank line in the code which is commented out.
-            bool isFirstOrLast = index == firstNonWhiteSpace;
-            if (!isFirstOrLast)
+            bool isFirst = index == firstNonWhiteSpace;
+            if (!isFirst)
             {
                 // This is -2 because we need to go back past the end of line trivia as well.
                 var lastNonWhiteSpace = TriviaHelper.IndexOfTrailingWhitespace(list) - 2;
-                isFirstOrLast = index == lastNonWhiteSpace;
+                if (index != lastNonWhiteSpace)
+                {
+                    return;
+                }
             }
 
-            if (string.IsNullOrWhiteSpace(commentText) && isFirstOrLast)
+            if (IsNullOrWhiteSpace(singleLineComment.ToString(), 2))
             {
                 var diagnostic = Diagnostic.Create(Descriptor, singleLineComment.GetLocation());
                 context.ReportDiagnostic(diagnostic);
             }
+        }
+
+        private static bool IsNullOrWhiteSpace(string value, int startIndex)
+        {
+            if (value == null)
+            {
+                return true;
+            }
+
+            for (int i = startIndex; i < value.Length; i++)
+            {
+                if (!char.IsWhiteSpace(value[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

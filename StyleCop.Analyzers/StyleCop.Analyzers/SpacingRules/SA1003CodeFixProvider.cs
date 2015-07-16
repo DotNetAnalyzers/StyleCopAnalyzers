@@ -4,12 +4,12 @@
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
@@ -36,80 +36,59 @@
         }
 
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-
-            foreach (var diagnostic in context.Diagnostics)
+            foreach (var diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                if (!diagnostic.Id.Equals(SA1003SymbolsMustBeSpacedCorrectly.DiagnosticId))
+                if (diagnostic.Properties.ContainsKey(SA1003SymbolsMustBeSpacedCorrectly.CodeFixAction))
                 {
-                    continue;
+                    context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1003CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token)), diagnostic);
                 }
-
-                SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (token.IsMissing)
-                {
-                    continue;
-                }
-
-                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1003CodeFix, t => GetTransformedDocumentAsync(context.Document, root, token)), diagnostic);
             }
+
+            return SpecializedTasks.CompletedTask;
         }
 
-        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxToken token)
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
-            Dictionary<SyntaxToken, SyntaxToken> replacements = new Dictionary<SyntaxToken, SyntaxToken>();
+            var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var replacements = new Dictionary<SyntaxToken, SyntaxToken>();
 
-            // always a space before unless at the beginning of a line or after certain tokens
-            if (!token.IsFirstInLine())
+            var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
+            SyntaxToken followingToken;
+
+            switch (diagnostic.Properties[SA1003SymbolsMustBeSpacedCorrectly.CodeFixAction])
             {
-                SyntaxToken precedingToken = token.GetPreviousToken();
-                SyntaxToken correctedPrecedingNoSpace = precedingToken.WithoutTrailingWhitespace();
-                switch (precedingToken.Kind())
-                {
-                case SyntaxKind.OpenParenToken:
-                case SyntaxKind.CloseParenToken:
-                case SyntaxKind.OpenBracketToken:
-                case SyntaxKind.CloseBracketToken:
-                    // remove any whitespace before
-                    replacements[precedingToken] = correctedPrecedingNoSpace;
-                    break;
-
-                default:
-                    if (!precedingToken.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
-                    {
-                        SyntaxToken correctedPreceding = correctedPrecedingNoSpace.WithTrailingTrivia(correctedPrecedingNoSpace.TrailingTrivia.Insert(0, SyntaxFactory.ElasticSpace));
-                        replacements[precedingToken] = correctedPreceding;
-                    }
-
-                    break;
-                }
+            case SA1003SymbolsMustBeSpacedCorrectly.InsertBeforeTag:
+                replacements[token] = token.WithLeadingTrivia(token.LeadingTrivia.Add(SyntaxFactory.Space));
+                break;
+            case SA1003SymbolsMustBeSpacedCorrectly.InsertAfterTag:
+                replacements[token] = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, SyntaxFactory.Space));
+                break;
+            case SA1003SymbolsMustBeSpacedCorrectly.RemoveBeforeTag:
+                var precedingToken = token.GetPreviousToken();
+                replacements[precedingToken] = precedingToken.WithTrailingTrivia(precedingToken.TrailingTrivia.WithoutTrailingWhitespace());
+                replacements[token] = token.WithLeadingTrivia(token.LeadingTrivia.WithoutLeadingWhitespace());
+                break;
+            case SA1003SymbolsMustBeSpacedCorrectly.RemoveAfterTag:
+                followingToken = token.GetNextToken();
+                replacements[token] = token.WithTrailingTrivia(token.TrailingTrivia.WithoutLeadingWhitespace());
+                replacements[followingToken] = followingToken.WithLeadingTrivia(followingToken.LeadingTrivia.WithoutLeadingWhitespace());
+                break;
+            case SA1003SymbolsMustBeSpacedCorrectly.RemoveEndOfLineTag:
+                followingToken = token.GetNextToken();
+                replacements[token] = token.WithTrailingTrivia(token.TrailingTrivia.WithoutTrailingWhitespace());
+                replacements[followingToken] = followingToken.WithLeadingTrivia(followingToken.LeadingTrivia.WithoutLeadingWhitespace());
+                break;
+            case SA1003SymbolsMustBeSpacedCorrectly.RemoveEndOfLineWithTrailingSpaceTag:
+                followingToken = token.GetNextToken();
+                replacements[token] = token.WithTrailingTrivia(token.TrailingTrivia.WithoutTrailingWhitespace().Add(SyntaxFactory.Space));
+                replacements[followingToken] = followingToken.WithLeadingTrivia(followingToken.LeadingTrivia.WithoutLeadingWhitespace());
+                break;
             }
 
-            if (token.Parent is BinaryExpressionSyntax)
-            {
-                // include a space after unless last on line
-                if (!token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia))
-                {
-                    SyntaxToken correctedOperatorNoSpace = token.WithoutTrailingWhitespace();
-                    SyntaxToken correctedOperator =
-                        correctedOperatorNoSpace
-                        .WithTrailingTrivia(correctedOperatorNoSpace.TrailingTrivia.Insert(0, SyntaxFactory.Space));
-                    replacements[token] = correctedOperator;
-                }
-            }
-            else if (token.Parent is PrefixUnaryExpressionSyntax)
-            {
-                // do not include a space after (includes new line characters)
-                SyntaxToken correctedOperatorNoSpace = token.WithoutTrailingWhitespace(removeEndOfLineTrivia: true).WithoutFormatting();
-                replacements[token] = correctedOperatorNoSpace;
-            }
-
-            var transformed = root.ReplaceTokens(replacements.Keys, (original, maybeRewritten) => replacements[original]);
-            Document updatedDocument = document.WithSyntaxRoot(transformed);
-
-            return Task.FromResult(updatedDocument);
+            var newSyntaxRoot = syntaxRoot.ReplaceTokens(replacements.Keys, (original, maybeRewritten) => replacements[original]);
+            return document.WithSyntaxRoot(newSyntaxRoot);
         }
     }
 }

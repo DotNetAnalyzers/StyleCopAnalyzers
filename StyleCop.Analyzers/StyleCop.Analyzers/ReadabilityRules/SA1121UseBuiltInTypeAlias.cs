@@ -6,6 +6,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The code uses one of the basic C# types, but does not use the built-in alias for the type.
@@ -185,6 +186,34 @@
             if (identifierNameSyntax.FirstAncestorOrSelf<UsingDirectiveSyntax>() != null)
             {
                 return;
+            }
+
+            // Most source files will not have any using alias directives. Then we don't have to use semantics
+            // if the identifier name doesn't match the name of a special type
+            if (!identifierNameSyntax.SyntaxTree.ContainsUsingAlias())
+            {
+                switch (identifierNameSyntax.Identifier.Text)
+                {
+                case nameof(Boolean):
+                case nameof(Byte):
+                case nameof(Char):
+                case nameof(Decimal):
+                case nameof(Double):
+                case nameof(Int16):
+                case nameof(Int32):
+                case nameof(Int64):
+                case nameof(Object):
+                case nameof(SByte):
+                case nameof(Single):
+                case nameof(String):
+                case nameof(UInt16):
+                case nameof(UInt32):
+                case nameof(UInt64):
+                    break;
+
+                default:
+                    return;
+                }
             }
 
             SemanticModel semanticModel = context.SemanticModel;

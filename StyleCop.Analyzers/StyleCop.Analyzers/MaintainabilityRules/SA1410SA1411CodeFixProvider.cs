@@ -73,7 +73,7 @@
             var newSyntaxRoot = root.RemoveNode(node, SyntaxRemoveOptions.KeepNoTrivia);
 
             // The removing operation has not changed the location of the previous token
-            var newPreviousToken = newSyntaxRoot.FindToken(previousToken.GetLocation().SourceSpan.Start);
+            var newPreviousToken = newSyntaxRoot.FindToken(previousToken.Span.Start);
 
             var newTrailingTrivia = newPreviousToken.TrailingTrivia.AddRange(firstToken.GetAllTrivia()).AddRange(lastToken.GetAllTrivia());
 

@@ -5,6 +5,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// An opening curly bracket within a C# element, statement, or expression is preceded by a blank line.
@@ -82,7 +83,7 @@
         private static void AnalyzeOpenBrace(SyntaxTreeAnalysisContext context, SyntaxToken openBrace)
         {
             var prevToken = openBrace.GetPreviousToken();
-            var triviaList = prevToken.IsKind(SyntaxKind.None) ? openBrace.LeadingTrivia : prevToken.TrailingTrivia.AddRange(openBrace.LeadingTrivia);
+            var triviaList = prevToken.IsKind(SyntaxKind.None) ? openBrace.LeadingTrivia : TriviaHelper.MergeTriviaLists(prevToken.TrailingTrivia, openBrace.LeadingTrivia);
 
             var done = false;
             var eolCount = 0;

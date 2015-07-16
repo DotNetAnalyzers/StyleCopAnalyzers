@@ -97,10 +97,10 @@
             }
 
             var prevToken = token.GetPreviousToken();
-            var leadingTriviaList = prevToken.TrailingTrivia.AddRange(token.LeadingTrivia);
+            var leadingTriviaList = TriviaHelper.MergeTriviaLists(prevToken.TrailingTrivia, token.LeadingTrivia);
 
             var isFirstOnLine = false;
-            if (prevToken.GetLocation().GetLineSpan().EndLinePosition.Line < token.GetLocation().GetLineSpan().StartLinePosition.Line)
+            if (prevToken.GetLineSpan().EndLinePosition.Line < token.GetLineSpan().StartLinePosition.Line)
             {
                 var done = false;
                 for (var i = leadingTriviaList.Count - 1; !done && (i >= 0); i--)
