@@ -163,7 +163,7 @@
 
             if (!suppressFollowingSpaceError)
             {
-                if (!precedesStickyCharacter && !followedBySpace)
+                if (!precedesStickyCharacter && !followedBySpace && !lastInLine)
                 {
                     // Closing parenthesis must{} be {followed} by a space.
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "followed"));
