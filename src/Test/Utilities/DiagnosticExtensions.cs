@@ -195,76 +195,84 @@ namespace Microsoft.CodeAnalysis
             return CompilationWithAnalyzers.IsDiagnosticAnalyzerSuppressed(analyzer, options);
         }
 
-        public static TCompilation VerifyEmitDiagnostics<TCompilation>(this TCompilation c, EmitOptions options, params DiagnosticDescription[] expected)
-            where TCompilation : Compilation
-        {
-            var pdbStream = CLRHelpers.IsRunningOnMono() ? null : new MemoryStream();
-            c.Emit(new MemoryStream(), pdbStream: pdbStream, options: options).Diagnostics.Verify(expected);
-            return c;
-        }
+        // TODO (tomescht): Determine if this method is actually needed.
+        //public static TCompilation VerifyEmitDiagnostics<TCompilation>(this TCompilation c, EmitOptions options, params DiagnosticDescription[] expected)
+        //    where TCompilation : Compilation
+        //{
+        //    var pdbStream = CLRHelpers.IsRunningOnMono() ? null : new MemoryStream();
+        //    c.Emit(new MemoryStream(), pdbStream: pdbStream, options: options).Diagnostics.Verify(expected);
+        //    return c;
+        //}
 
-        public static TCompilation VerifyEmitDiagnostics<TCompilation>(this TCompilation c, params DiagnosticDescription[] expected)
-            where TCompilation : Compilation
-        {
-            return VerifyEmitDiagnostics(c, EmitOptions.Default, expected);
-        }
+        // TODO (tomescht): Determine if this method is actually needed.
+        //public static TCompilation VerifyEmitDiagnostics<TCompilation>(this TCompilation c, params DiagnosticDescription[] expected)
+        //    where TCompilation : Compilation
+        //{
+        //    return VerifyEmitDiagnostics(c, EmitOptions.Default, expected);
+        //}
 
-        public static TCompilation VerifyEmitDiagnostics<TCompilation>(this TCompilation c, IEnumerable<ResourceDescription> manifestResources, params DiagnosticDescription[] expected)
-            where TCompilation : Compilation
-        {
-            var pdbStream = CLRHelpers.IsRunningOnMono() ? null : new MemoryStream();
-            c.Emit(new MemoryStream(), pdbStream: pdbStream, manifestResources: manifestResources).Diagnostics.Verify(expected);
-            return c;
-        }
+        // TODO (tomescht): Determine if this method is actually needed.
+        //public static TCompilation VerifyEmitDiagnostics<TCompilation>(this TCompilation c, IEnumerable<ResourceDescription> manifestResources, params DiagnosticDescription[] expected)
+        //    where TCompilation : Compilation
+        //{
+        //    var pdbStream = CLRHelpers.IsRunningOnMono() ? null : new MemoryStream();
+        //    c.Emit(new MemoryStream(), pdbStream: pdbStream, manifestResources: manifestResources).Diagnostics.Verify(expected);
+        //    return c;
+        //}
 
         public static string Concat(this string[] str)
         {
             return str.Aggregate(new StringBuilder(), (sb, s) => sb.AppendLine(s), sb => sb.ToString());
         }
 
-        public static DiagnosticAnalyzer GetCompilerDiagnosticAnalyzer(string languageName)
-        {
-            return languageName == LanguageNames.CSharp ?
-                (DiagnosticAnalyzer)new Diagnostics.CSharp.CSharpCompilerDiagnosticAnalyzer() :
-                new Diagnostics.VisualBasic.VisualBasicCompilerDiagnosticAnalyzer();
-        }
+        // TODO (tomescht): Determine if this method is actually needed.
+        //public static DiagnosticAnalyzer GetCompilerDiagnosticAnalyzer(string languageName)
+        //{
+        //    return languageName == LanguageNames.CSharp ?
+        //        (DiagnosticAnalyzer)new Diagnostics.CSharp.CSharpCompilerDiagnosticAnalyzer() :
+        //        new Diagnostics.VisualBasic.VisualBasicCompilerDiagnosticAnalyzer();
+        //}
 
-        public static ImmutableDictionary<string, ImmutableArray<DiagnosticAnalyzer>> GetCompilerDiagnosticAnalyzersMap()
-        {
-            var builder = ImmutableDictionary.CreateBuilder<string, ImmutableArray<DiagnosticAnalyzer>>();
-            builder.Add(LanguageNames.CSharp, ImmutableArray.Create(GetCompilerDiagnosticAnalyzer(LanguageNames.CSharp)));
-            builder.Add(LanguageNames.VisualBasic, ImmutableArray.Create(GetCompilerDiagnosticAnalyzer(LanguageNames.VisualBasic)));
-            return builder.ToImmutable();
-        }
+        // TODO (tomescht): Determine if this method is actually needed.
+        //public static ImmutableDictionary<string, ImmutableArray<DiagnosticAnalyzer>> GetCompilerDiagnosticAnalyzersMap()
+        //{
+        //    var builder = ImmutableDictionary.CreateBuilder<string, ImmutableArray<DiagnosticAnalyzer>>();
+        //    builder.Add(LanguageNames.CSharp, ImmutableArray.Create(GetCompilerDiagnosticAnalyzer(LanguageNames.CSharp)));
+        //    builder.Add(LanguageNames.VisualBasic, ImmutableArray.Create(GetCompilerDiagnosticAnalyzer(LanguageNames.VisualBasic)));
+        //    return builder.ToImmutable();
+        //}
 
-        public static AnalyzerReference GetCompilerDiagnosticAnalyzerReference(string languageName)
-        {
-            var analyzer = GetCompilerDiagnosticAnalyzer(languageName);
-            return new AnalyzerImageReference(ImmutableArray.Create(analyzer), display: analyzer.GetType().FullName);
-        }
+        // TODO (tomescht): Determine if this method is actually needed.
+        //public static AnalyzerReference GetCompilerDiagnosticAnalyzerReference(string languageName)
+        //{
+        //    var analyzer = GetCompilerDiagnosticAnalyzer(languageName);
+        //    return new AnalyzerImageReference(ImmutableArray.Create(analyzer), display: analyzer.GetType().FullName);
+        //}
 
-        public static ImmutableDictionary<string, ImmutableArray<AnalyzerReference>> GetCompilerDiagnosticAnalyzerReferencesMap()
-        {
-            var builder = ImmutableDictionary.CreateBuilder<string, ImmutableArray<AnalyzerReference>>();
-            builder.Add(LanguageNames.CSharp, ImmutableArray.Create(GetCompilerDiagnosticAnalyzerReference(LanguageNames.CSharp)));
-            builder.Add(LanguageNames.VisualBasic, ImmutableArray.Create(GetCompilerDiagnosticAnalyzerReference(LanguageNames.VisualBasic)));
-            return builder.ToImmutable();
-        }
+        // TODO (tomescht): Determine if this method is actually needed.
+        //public static ImmutableDictionary<string, ImmutableArray<AnalyzerReference>> GetCompilerDiagnosticAnalyzerReferencesMap()
+        //{
+        //    var builder = ImmutableDictionary.CreateBuilder<string, ImmutableArray<AnalyzerReference>>();
+        //    builder.Add(LanguageNames.CSharp, ImmutableArray.Create(GetCompilerDiagnosticAnalyzerReference(LanguageNames.CSharp)));
+        //    builder.Add(LanguageNames.VisualBasic, ImmutableArray.Create(GetCompilerDiagnosticAnalyzerReference(LanguageNames.VisualBasic)));
+        //    return builder.ToImmutable();
+        //}
 
-        internal static string GetExpectedErrorLogHeader(string actualOutput, CommonCompiler compiler)
-        {
-            var expectedToolName = compiler.GetToolName();
-            var expectedProductVersion = compiler.GetAssemblyVersion().ToString(fieldCount: 3);
-            var fileVersion = compiler.GetAssemblyFileVersion();
-            var expectedFileVersion = fileVersion.Substring(0, fileVersion.LastIndexOf('.'));
+        // TODO (tomescht): Determine if this method is actually needed.
+        //      internal static string GetExpectedErrorLogHeader(string actualOutput, CommonCompiler compiler)
+        //      {
+        //          var expectedToolName = compiler.GetToolName();
+        //          var expectedProductVersion = compiler.GetAssemblyVersion().ToString(fieldCount: 3);
+        //          var fileVersion = compiler.GetAssemblyFileVersion();
+        //          var expectedFileVersion = fileVersion.Substring(0, fileVersion.LastIndexOf('.'));
 
-            return string.Format(@"{{
-  ""version"": ""{0}"",
-  ""toolInfo"": {{
-    ""toolName"": ""{1}"",
-    ""productVersion"": ""{2}"",
-    ""fileVersion"": ""{3}""
-  }},", ErrorLogger.OutputFormatVersion, expectedToolName, expectedProductVersion, expectedFileVersion);
-        }
+        //          return string.Format(@"{{
+        //""version"": ""{0}"",
+        //""toolInfo"": {{
+        //  ""toolName"": ""{1}"",
+        //  ""productVersion"": ""{2}"",
+        //  ""fileVersion"": ""{3}""
+        //}},", ErrorLogger.OutputFormatVersion, expectedToolName, expectedProductVersion, expectedFileVersion);
+        //      }
     }
 }
