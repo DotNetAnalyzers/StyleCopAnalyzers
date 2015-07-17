@@ -39,7 +39,8 @@ namespace SyntaxNodeAnalyzer
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
         }
 
-        //This method, which is the method that is registered within Initialize, performs the analysis of the if-statement. If the analysis finds an error, a diagnostic is reported
+        //This method, which is the method that is registered within Initialize, performs the analysis of the Syntax Tree. If the analysis finds an error, a diagnostic is reported
+        //In this tutorial, this method will walk through the Syntax Tree seen in IfSyntaxTree.jpg and determine if the if-statement being analyzed has the correct spacing
         private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
         {
             //The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax
