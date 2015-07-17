@@ -581,7 +581,7 @@ namespace MetaCompilation
             }
         }
 
-        //sets the analysis to take context of type type SyntaxNodeAnalysisContext
+        //sets the analysis to take context of type SyntaxNodeAnalysisContext
         private async Task<Document> IncorrectAnalysisParameterAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -1041,11 +1041,7 @@ namespace MetaCompilation
 
             SemanticModel semanticModel = await document.GetSemanticModelAsync();
             SyntaxNode newAnalysisMethod = CodeFixNodeCreator.CreateAnalysisMethod(generator, methodName, semanticModel);
-
-            if (newAnalysisMethod != null)
-            {
-                newClassDecl = generator.AddMembers(newClassDecl, newAnalysisMethod) as ClassDeclarationSyntax;
-            }
+            newClassDecl = generator.AddMembers(newClassDecl, newAnalysisMethod) as ClassDeclarationSyntax;
 
             return await ReplaceNode(classDeclaration, newClassDecl, document);
         }
@@ -2030,11 +2026,7 @@ namespace MetaCompilation
                 var parameters = new[] { generator.ParameterDeclaration("context", type) };
                 SyntaxList<SyntaxNode> statements = new SyntaxList<SyntaxNode>();
                 INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException");
-
-                if (notImplementedException != null)
-                {
-                    statements = statements.Add(generator.ThrowStatement(generator.ObjectCreationExpression(notImplementedException)));
-                }
+                statements = statements.Add(generator.ThrowStatement(generator.ObjectCreationExpression(notImplementedException)));
 
                 SyntaxNode newMethodDeclaration = generator.MethodDeclaration(methodName, parameters: parameters, accessibility: Accessibility.Private, statements: statements);
                 return newMethodDeclaration;

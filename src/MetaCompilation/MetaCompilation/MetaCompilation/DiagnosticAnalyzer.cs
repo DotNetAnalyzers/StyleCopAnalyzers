@@ -189,16 +189,16 @@ namespace MetaCompilation
 
         #region analysis rules
         public const string MissingAnalysisMethod = "MetaAnalyzer044";
-        internal static DiagnosticDescriptor MissingAnalysisMethodRule = CreateRule(MissingAnalysisMethod, "Missing analysis method", MessagePrefix + "You are missing the method {0} that was registered to perform the analysis", "In Initialize, the register statement denotes an analysis method to be called when an action is triggered. This method needs to be created");
+        internal static DiagnosticDescriptor MissingAnalysisMethodRule = CreateRule(MissingAnalysisMethod, "Missing analysis method", MessagePrefix + "Tthe method '{0}' that was registered to perform the analysis is missing", "In Initialize, the register statement denotes an analysis method to be called when an action is triggered. This method needs to be created");
 
         public const string IncorrectAnalysisAccessibility = "MetaAnalyzer054";
-        internal static DiagnosticDescriptor IncorrectAnalysisAccessibilityRule = CreateRule(IncorrectAnalysisAccessibility, "Incorrect analysis method accessibility", MessagePrefix + "The {0} method should be private");
+        internal static DiagnosticDescriptor IncorrectAnalysisAccessibilityRule = CreateRule(IncorrectAnalysisAccessibility, "Incorrect analysis method accessibility", MessagePrefix + "The '{0}' method should be private");
 
         public const string IncorrectAnalysisReturnType = "MetaAnalyzer055";
-        internal static DiagnosticDescriptor IncorrectAnalysisReturnTypeRule = CreateRule(IncorrectAnalysisReturnType, "Incorrect analysis method return type", MessagePrefix + "The {0} method should have a void return type");
+        internal static DiagnosticDescriptor IncorrectAnalysisReturnTypeRule = CreateRule(IncorrectAnalysisReturnType, "Incorrect analysis method return type", MessagePrefix + "The '{0}' method should have a void return type");
 
         public const string IncorrectAnalysisParameter = "MetaAnalyzer056";
-        internal static DiagnosticDescriptor IncorrectAnalysisParameterRule = CreateRule(IncorrectAnalysisParameter, "Incorrect parameter to analysis method", MessagePrefix + "The {0} method should take one parameter of type SyntaxNodeAnalysisContext");
+        internal static DiagnosticDescriptor IncorrectAnalysisParameterRule = CreateRule(IncorrectAnalysisParameter, "Incorrect parameter to analysis method", MessagePrefix + "The '{0}' method should take one parameter of type SyntaxNodeAnalysisContext");
 
         public const string TooManyStatements = "MetaAnalyzer045";
         internal static DiagnosticDescriptor TooManyStatementsRule = CreateRule(TooManyStatements, "Too many statements", MessagePrefix + "This {0} should only have {1} statement(s)", "For the purpose of this tutorial this method has too many statements, use the code fixes to guide you through the creation of this method");
