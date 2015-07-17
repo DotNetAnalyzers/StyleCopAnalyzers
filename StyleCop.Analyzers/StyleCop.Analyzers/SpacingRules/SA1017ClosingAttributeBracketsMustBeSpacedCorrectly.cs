@@ -78,21 +78,19 @@
                 return;
             }
 
-            bool hasPrecedingSpace = false;
-            if (!token.IsFirstInLine())
+            if (token.IsFirstInLine())
             {
-                SyntaxToken precedingToken = token.GetPreviousToken();
-                if (precedingToken.HasTrailingTrivia)
-                {
-                    hasPrecedingSpace = true;
-                }
+                return;
             }
 
-            if (hasPrecedingSpace)
+            SyntaxToken precedingToken = token.GetPreviousToken();
+            if (!precedingToken.HasTrailingTrivia)
             {
-                // Closing attribute brackets must not be preceded by a space.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));
+                return;
             }
+
+            // Closing attribute brackets must not be preceded by a space.
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));
         }
     }
 }
