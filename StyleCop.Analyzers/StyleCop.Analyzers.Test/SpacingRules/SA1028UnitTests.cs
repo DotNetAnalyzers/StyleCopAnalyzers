@@ -1,6 +1,7 @@
 ﻿namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Collections.Generic;
+    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -18,28 +19,29 @@
         [Fact]
         public async Task TrailingWhitespaceAfterStatementAsync()
         {
-            string testCode = @"
-class ClassName
-{
-    void MethodName()
-    {
-        System.Console.WriteLine(); 
-    }
-}
-";
+            string testCode = new StringBuilder()
+                .AppendLine("class ClassName")
+                .AppendLine("{")
+                .AppendLine("    void MethodName()")
+                .AppendLine("    {")
+                .AppendLine("        System.Console.WriteLine(); ")
+                .AppendLine("    }")
+                .AppendLine("}")
+                .ToString();
 
-            string fixedCode = @"
-class ClassName
-{
-    void MethodName()
-    {
-        System.Console.WriteLine();
-    }
-}
-";
+            string fixedCode = new StringBuilder()
+                .AppendLine("class ClassName")
+                .AppendLine("{")
+                .AppendLine("    void MethodName()")
+                .AppendLine("    {")
+                .AppendLine("        System.Console.WriteLine();")
+                .AppendLine("    }")
+                .AppendLine("}")
+                .ToString();
+
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(6, 36),
+                this.CSharpDiagnostic().WithLocation(5, 36),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -50,21 +52,21 @@ class ClassName
         [Fact]
         public async Task TrailingWhitespaceAfterDeclarationAsync()
         {
-            string testCode = @"
-class ClassName 
-{
-}
-";
+            string testCode = new StringBuilder()
+                .AppendLine("class ClassName ")
+                .AppendLine("{")
+                .AppendLine("}")
+                .ToString();
 
-            string fixedCode = @"
-class ClassName
-{
-}
-";
+            string fixedCode = new StringBuilder()
+                .AppendLine("class ClassName")
+                .AppendLine("{")
+                .AppendLine("}")
+                .ToString();
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(2, 16),
+                this.CSharpDiagnostic().WithLocation(1, 16),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -75,17 +77,17 @@ class ClassName
         [Fact]
         public async Task TrailingWhitespaceAfterSingleLineCommentAsync()
         {
-            string testCode = @"
-// hi there    
-";
+            string testCode = new StringBuilder()
+                .AppendLine("// hi there    ")
+                .ToString();
 
-            string fixedCode = @"
-// hi there
-";
+            string fixedCode = new StringBuilder()
+                .AppendLine("// hi there")
+                .ToString();
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(2, 12),
+                this.CSharpDiagnostic().WithLocation(1, 12),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -96,17 +98,19 @@ class ClassName
         [Fact]
         public async Task TrailingWhitespaceInsideMultiLineCommentAsync()
         {
-            string testCode = @"/* 
- foo   
-  bar   
-*/  
-";
+            string testCode = new StringBuilder()
+                .AppendLine("/* ")
+                .AppendLine(" foo   ")
+                .AppendLine("  bar   ")
+                .AppendLine("*/  ")
+                .ToString();
 
-            string fixedCode = @"/*
- foo
-  bar
-*/
-";
+            string fixedCode = new StringBuilder()
+                .AppendLine("/*")
+                .AppendLine(" foo")
+                .AppendLine("  bar")
+                .AppendLine("*/")
+                .ToString();
 
             DiagnosticResult[] expected =
             {
@@ -124,25 +128,25 @@ class ClassName
         [Fact]
         public async Task TrailingWhitespaceInsideXmlDocCommentAsync()
         {
-            string testCode = @"
-/// <summary>  
-/// Some description    
-/// </summary>  
-class Foo { }
-";
+            string testCode = new StringBuilder()
+                .AppendLine("/// <summary>  ")
+                .AppendLine("/// Some description    ")
+                .AppendLine("/// </summary>  ")
+                .AppendLine("class Foo { }")
+                .ToString();
 
-            string fixedCode = @"
-/// <summary>
-/// Some description
-/// </summary>
-class Foo { }
-";
+            string fixedCode = new StringBuilder()
+                .AppendLine("/// <summary>")
+                .AppendLine("/// Some description")
+                .AppendLine("/// </summary>")
+                .AppendLine("class Foo { }")
+                .ToString();
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(2, 14),
-                this.CSharpDiagnostic().WithLocation(3, 21),
-                this.CSharpDiagnostic().WithLocation(4, 15),
+                this.CSharpDiagnostic().WithLocation(1, 14),
+                this.CSharpDiagnostic().WithLocation(2, 21),
+                this.CSharpDiagnostic().WithLocation(3, 15),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -153,27 +157,27 @@ class Foo { }
         [Fact]
         public async Task TrailingWhitespaceWithinAndAfterHereStringAsync()
         {
-            string testCode = @"
-class ClassName
-{
-    string foo = @""      
-more text    
-"";  
-}
-";
+            string testCode = new StringBuilder()
+                .AppendLine("class ClassName")
+                .AppendLine("{")
+                .AppendLine("    string foo = @\"      ")
+                .AppendLine("more text    ")
+                .AppendLine("\";  ")
+                .AppendLine("}")
+                .ToString();
 
-            string fixedCode = @"
-class ClassName
-{
-    string foo = @""      
-more text    
-"";
-}
-";
+            string fixedCode = new StringBuilder()
+                .AppendLine("class ClassName")
+                .AppendLine("{")
+                .AppendLine("    string foo = @\"      ")
+                .AppendLine("more text    ")
+                .AppendLine("\";")
+                .AppendLine("}")
+                .ToString();
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(6, 3),
+                this.CSharpDiagnostic().WithLocation(5, 3),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -184,44 +188,44 @@ more text
         [Fact]
         public async Task TrailingWhitespaceAfterDirectivesAsync()
         {
-            string testCode = @"
-#define Zoot  
-#undef Zoot2  
-using System;  
-#if Foo  
-#elif Bar  
-#else  
-#endif 
-#warning Some warning  
-#region Some region  
-#endregion  
-";
+            string testCode = new StringBuilder()
+                .AppendLine("#define Zoot  ")
+                .AppendLine("#undef Zoot2  ")
+                .AppendLine("using System;  ")
+                .AppendLine("#if Foo  ")
+                .AppendLine("#elif Bar  ")
+                .AppendLine("#else  ")
+                .AppendLine("#endif ")
+                .AppendLine("#warning Some warning  ")
+                .AppendLine("#region Some region  ")
+                .AppendLine("#endregion  ")
+                .ToString();
 
-            string fixedCode = @"
-#define Zoot
-#undef Zoot2
-using System;
-#if Foo
-#elif Bar
-#else
-#endif
-#warning Some warning
-#region Some region
-#endregion
-";
+            string fixedCode = new StringBuilder()
+                .AppendLine("#define Zoot")
+                .AppendLine("#undef Zoot2")
+                .AppendLine("using System;")
+                .AppendLine("#if Foo")
+                .AppendLine("#elif Bar")
+                .AppendLine("#else")
+                .AppendLine("#endif")
+                .AppendLine("#warning Some warning")
+                .AppendLine("#region Some region")
+                .AppendLine("#endregion")
+                .ToString();
 
             DiagnosticResult[] expected =
             {
+                this.CSharpDiagnostic().WithLocation(1, 13),
                 this.CSharpDiagnostic().WithLocation(2, 13),
-                this.CSharpDiagnostic().WithLocation(3, 13),
-                this.CSharpDiagnostic().WithLocation(4, 14),
-                this.CSharpDiagnostic().WithLocation(5, 8),
-                this.CSharpDiagnostic().WithLocation(6, 10),
-                this.CSharpDiagnostic().WithLocation(7, 6),
-                this.CSharpDiagnostic().WithLocation(8, 7),
-                this.CSharpDiagnostic().WithLocation(9, 22),
-                this.CSharpDiagnostic().WithLocation(10, 20),
-                this.CSharpDiagnostic().WithLocation(11, 11),
+                this.CSharpDiagnostic().WithLocation(3, 14),
+                this.CSharpDiagnostic().WithLocation(4, 8),
+                this.CSharpDiagnostic().WithLocation(5, 10),
+                this.CSharpDiagnostic().WithLocation(6, 6),
+                this.CSharpDiagnostic().WithLocation(7, 7),
+                this.CSharpDiagnostic().WithLocation(8, 22),
+                this.CSharpDiagnostic().WithLocation(9, 20),
+                this.CSharpDiagnostic().WithLocation(10, 11),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -234,11 +238,11 @@ using System;
         [Fact]
         public async Task TrailingWhitespaceFoundWithinFalseConditionalDirectiveBlocksAsync()
         {
-            string testCode = @"
-#if false
-using System;  
-#endif
-";
+            string testCode = new StringBuilder()
+                .AppendLine("#if false")
+                .AppendLine("using System;  ")
+                .AppendLine("#endif")
+                .ToString();
 
             // Note: we verify that no diagnostics are produced inside non-compiled blocks
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -247,11 +251,11 @@ using System;
         [Fact]
         public async Task NoTrailingWhitespaceAfterBlockCommentAsync()
         {
-            string testCode = @"
-class Program    /* some block comment that follows several spaces */
-{
-}
-";
+            string testCode = new StringBuilder()
+                .AppendLine("class Program    /* some block comment that follows several spaces */")
+                .AppendLine("{")
+                .AppendLine("}")
+                .ToString();
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
