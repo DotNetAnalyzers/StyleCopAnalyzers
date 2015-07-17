@@ -4,6 +4,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A closing attribute bracket within a C# element is not spaced correctly.
@@ -78,9 +79,8 @@
             }
 
             bool hasPrecedingSpace = false;
-            if (!token.HasLeadingTrivia)
+            if (!token.IsFirstInLine())
             {
-                // only the first token on the line has leading trivia, and those are ignored
                 SyntaxToken precedingToken = token.GetPreviousToken();
                 if (precedingToken.HasTrailingTrivia)
                 {
