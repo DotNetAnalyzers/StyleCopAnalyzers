@@ -1,27 +1,27 @@
 Analyzer Tutorial
 =================
 
-This tutorial is going to guide you to write a diagnostic analyzer that enforces the placement of a single space between the `if` keyword of an if statement and the open parenthesis of the condition.
+This tutorial is going to guide you to write a diagnostic analyzer that enforces the placement of a single space between the `if` keyword of an if-statement and the open parenthesis of the condition.
 This tutorial itself was written as an analyzer, meaning that the instructions of the tutorial are presented using the error squiggles and light bulb code fixes in Visual Studio.
 
 Analyzer Information
 --------------------
-Analyzers are tools that produce live diagnostics in Visual Studio to dynamically highlight potential problems in the code. Diagnostics appear as red squiggles under the incorrect code. Code Fixes appear as light bulbs with suggestions as to how to fix these errors.
+Analyzers are tools that produce live diagnostics in Visual Studio, highlighting potential problems in the code. Diagnostics appear as squiggles under the incorrect code. Code Fixes appear as light bulbs with suggestions as to how to fix these errors.
 An analyzer operates by examining the syntax tree representing the corresponding code.
 The information in the syntax tree is built up during compilation, and is exposed by the .NET Compiler Platform (aka Roslyn). An analyzer is triggered when changes are made to the syntax tree, which happens when you edit a piece of code. The analyzer can then walk through the syntax tree, looking at syntax nodes, syntax tokens and syntax trivia, and decide whether or not to surface a diagnostic.
-Note that analyzers can also examine the semantic model of a piece of code if the information required to surface a diagnostic cannot be represented syntatically.
+Analyzers can also examine the semantic model, a higher-level representation of the code, if the information required to surface a diagnostic cannot be represented syntatically.
 
 Tutorial Overview
 ------------
 Writing an analyzer can be broken down into the following high-level steps:
-1. Create an ID to distinguish the diagnostic. An analyzer can contain several diagnostics.
-2. Create a diagnostic rule that is associated with the above ID and has properties such as a message to display to the user and whether your diagnostic is enabled by default.
+1. Create an ID to distinguish the diagnostic from other diagnostics as an analyzer can contain several diagnostics.
+2. Create a diagnostic rule that is associated with the aforementioned ID and has properties such as a message to display to the user and whether the diagnostic is enabled by default.
 3. Create an array to hold all diagnostics supported by your analyzer. 
-4. Use the Initialize method to identify a kind of syntax node (in this case if statement syntax nodes) and call an analysis function.
-5. Within the analysis method, navigate the syntax tree to determine if the spacing of the if statement is correct. See the image below.
-6. If the analysis finds an error, create and report a diagnostic to inform the user of this.
+4. Use the Initialize method to identify a kind of syntax node (in this case if-statement syntax nodes) and call an analysis function.
+5. Within the analysis method, navigate the syntax tree to determine if the spacing of the if-statement is correct. See the image below.
+6. If the analysis finds an error, create and report a diagnostic to inform the user of this error.
 
-The syntax diagram for a sample if statement can be found below. You will a write a diagnostic that will surface when the whitespace circled in red is either absent or anything other than a single space. 
+The syntax diagram for a sample if-statement can be found below. You will a write a diagnostic that will surface when the whitespace circled in red is either absent or anything other than a single space. 
 For more information on visualizing syntax trees see [Syntax Trees](https://github.com/dotnet/roslyn-analyzers/blob/master/NewAnalyzerTemplate/NewAnalyzerTemplate/NewAnalyzerTemplate/README.md#syntax-trees).
 ![If Statement Syntax Tree](https://github.com/dotnet/roslyn-analyzers/blob/master/NewAnalyzerTemplate/NewAnalyzerTemplate/NewAnalyzerTemplate/IfSyntaxTree.jpg)
 
@@ -38,11 +38,11 @@ Instructions
 * Continue to follow these error messages and code fixes to the end of the tutorial
 * Congratulations! You have written an analyzer!
 
-If you would like to try your analyzer out, or if you would like to debug at any step of the tutorial, make sure your configuration is set to Debug and press F5. This will launch a second instance of Visual Studio with your analyzer deployed as a VSIX (Visual Studio Extension). You can then open a new C# console app, write an if statement, and any messages from your analyzer will appear.
+If you would like to try your analyzer out, or if you would like to debug at any step of the tutorial, make sure your configuration is set to Debug and press F5. This will launch a second instance of Visual Studio with your analyzer deployed as a VSIX (Visual Studio Extension). You can then open a new C# console app, write an if-statement, and any messages from your analyzer will appear.
 
 Syntax Trees
 ------------
-If you would like to see the syntax tree of your if statement being analyzed you can follow the steps below.
+If you would like to see the syntax tree of your if-statement being analyzed you can follow the steps below.
 	* Go to *Tools -> Extensions and Updates -> Online*, and install Roslyn Syntax Visualizer.
 	* Restart Visual Studio.
 	* Again, you can open a new C# console app and write an if-statement.
