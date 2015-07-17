@@ -46,10 +46,10 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
         }
 
-        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
@@ -57,7 +57,7 @@
                 switch (token.Kind())
                 {
                 case SyntaxKind.CloseBracketToken:
-                    this.HandleCloseBracketToken(context, token);
+                    HandleCloseBracketToken(context, token);
                     break;
 
                 default:
@@ -66,7 +66,7 @@
             }
         }
 
-        private void HandleCloseBracketToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private static void HandleCloseBracketToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
             {
