@@ -41,9 +41,6 @@ namespace SyntaxNodeAnalyzer
 
         private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
         {
-            //This method, which is the method registered in the Initialize method, performs the analysis of the if statement. 
-            //If the analysis finds an error, a diagnostic is reported.
-
             var ifStatement = (IfStatementSyntax)context.Node;
             //The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax.
 
