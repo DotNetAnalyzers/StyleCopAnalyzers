@@ -77,7 +77,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestMethodWith2ParametersndSpacebeforeClosingParenthesisAsync()
+        public async Task TestMethodWith2ParametersndSpaceBeforeClosingParenthesisAsync()
         {
             const string testCode = @"using System;
 
@@ -87,9 +87,92 @@ public class Foo
     {
     }
 }";
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(5, 25);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(5, 47);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestAttributeWithParametersAndNoSpaceAfterClosingParenthesisAsync()
+        {
+            const string testCode = @"using System;
+using System.Security.Permissions;
+
+[PermissionSet(SecurityAction.LinkDemand, Name = ""FullTrust"")]
+public class Foo
+{
+    public void Method(int param1, int param2)
+    {
+    }
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestAttributeWithParametersAndSpaceAfterClosingParenthesisAsync()
+        {
+            const string testCode = @"using System;
+using System.Security.Permissions;
+
+[PermissionSet(SecurityAction.LinkDemand, Name = ""FullTrust"") ]
+public class Foo
+{
+    public void Method(int param1, int param2)
+    {
+    }
+}";
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(4, 61);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestConstructorInheritenceWithSpaceAfterClosingParenthesisAsync()
+        {
+            const string testCode = @"using System;
+
+public class Foo
+{
+    public Foo(int i) : base()
+    {
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestConstructorInheritenceWithNoSpaceAfterClosingParenthesisAsync()
+        {
+            const string testCode = @"using System;
+
+public class Foo
+{
+    public Foo(int i): base()
+    {
+    }
+}";
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(5, 21);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestLambdaExpressionWithSpaceAfterClosingParenthesisAsync()
+        {
+            var validStatement = @"System.EventHandler handler = (s, e) => { };";
+
+            await this.TestWhitespaceInStatementOrDeclAsync(validStatement, EmptyDiagnosticResults).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestLambdaExpressionWithNoSpaceAfterClosingParenthesisAsync()
+        {
+            var invalidStatement = @"System.EventHandler handler = (s, e)=> { };";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 48);
+
+            await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, expected).ConfigureAwait(false);
         }
 
         [Fact]
