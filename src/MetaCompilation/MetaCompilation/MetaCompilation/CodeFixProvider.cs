@@ -581,30 +581,38 @@ namespace MetaCompilation
             }
         }
 
+        //sets the analysis to take context of type type SyntaxNodeAnalysisContext
         private async Task<Document> IncorrectAnalysisParameterAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
             var type = SyntaxFactory.ParseTypeName("SyntaxNodeAnalysisContext");
             var parameters = new[] { generator.ParameterDeclaration("context", type) };
+            string methodName = declaration.Identifier.Text;
+            var returnType = declaration.ReturnType;
+            var statements = declaration.Body.Statements;
 
-            MethodDeclarationSyntax newDeclaration = generator.InsertParameters(declaration, 0, parameters) as MethodDeclarationSyntax;// AddParameters(declaration, parameters) as MethodDeclarationSyntax;
-
-            //MethodDeclarationSyntax newDeclaration = generator.WithTypeParameters(declaration, "SyntaxNodeAnalysisContext") as MethodDeclarationSyntax;
+            var newDeclaration = generator.MethodDeclaration(methodName, parameters, returnType: returnType, accessibility: Accessibility.Private, statements: statements);
 
             return await ReplaceNode(declaration, newDeclaration, document);
         }
 
-        private  Task<Document> IncorrectAnalysisReturnTypeAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        //sets the analysis method return type to void
+        private async Task<Document> IncorrectAnalysisReturnTypeAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
-            //SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            //MethodDeclarationSyntax newDeclaration = generator. 
+            string methodName = declaration.Identifier.Text;
+            var parameters = declaration.ParameterList.Parameters;
+            var returnType = SyntaxFactory.ParseTypeName("void");
+            var statements = declaration.Body.Statements;
 
-            //return await ReplaceNode(declaration, newDeclaration, document);
-            throw new NotImplementedException();
+            var newDeclaration = generator.MethodDeclaration(methodName, parameters, returnType: returnType, accessibility: Accessibility.Private, statements: statements);
+
+            return await ReplaceNode(declaration, newDeclaration, document);
         }
 
+        //sets the analysis method accessibility to private
         private async Task<Document> IncorrectAnalysisAccessibilityAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);

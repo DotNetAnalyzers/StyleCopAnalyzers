@@ -2305,7 +2305,7 @@ namespace MetaCompilation
                         ReportDiagnostic(context, IncorrectAnalysisReturnTypeRule, analysisMethodSyntax.Identifier.GetLocation(), analysisMethodSyntax.Identifier.ValueText);
                         return false;
                     }
-                    else if (analysisMethod.Parameters.First().Type != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.SyntaxNodeAnalysisContext"))
+                    else if (analysisMethod.Parameters.Count() == 0 || analysisMethod.Parameters.First().Type != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.SyntaxNodeAnalysisContext"))
                     {
                         ReportDiagnostic(context, IncorrectAnalysisParameterRule, analysisMethodSyntax.ParameterList.GetLocation(), analysisMethodSyntax.Identifier.ValueText);
                         return false;
