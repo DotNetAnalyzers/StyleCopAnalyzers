@@ -11,17 +11,8 @@
     /// <summary>
     /// Unit tests for <see cref="SA1009ClosingParenthesisMustBeSpacedCorrectly"/>
     /// </summary>
-    public class SA1009UnitTests : CodeFixVerifier
+    public class SA1009UnitTests : DiagnosticVerifier
     {
-        private const string SimpleMethodOutline = @"using System;
-
-public class Foo
-{
-    public void Method()
-    {
-    }
-}";
-
         [Fact]
         public async Task TestEmptySourceAsync()
         {
@@ -62,7 +53,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestMethodWith2CorrectlySpaceParametersAsync()
+        public async Task TestMethodWith2CorrectlySpacedParametersAsync()
         {
             const string testCode = @"using System;
 
@@ -77,7 +68,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestMethodWith2ParametersndSpaceBeforeClosingParenthesisAsync()
+        public async Task TestMethodWith2ParametersAndSpaceBeforeClosingParenthesisAsync()
         {
             const string testCode = @"using System;
 
@@ -176,11 +167,73 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestSpaceAfterParenthisisInArithmeticAsync()
+        public async Task TestSpaceAfterParenthisisInAddOperationAsync()
+        {
+            var validStatement = @"var i = (1 + 1) + 2;";
+
+            await this.TestWhitespaceInStatementOrDeclAsync(validStatement, EmptyDiagnosticResults).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestNoSpaceAfterParenthisisInAddOperationAsync()
+        {
+            // Note - this looks wrong but according to comments in the implementation "this will be reported as SA1022"
+            var invalidStatement = @"var i = (1 + 1)+ 2;";
+
+            await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, EmptyDiagnosticResults).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestSpaceAfterParenthisisInSubtractOperationAsync()
+        {
+            var validStatement = @"var i = (1 + 1) - 2;";
+
+            await this.TestWhitespaceInStatementOrDeclAsync(validStatement, EmptyDiagnosticResults).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestNoSpaceAfterParenthisisInSubtractOperationAsync()
+        {
+            // Note - this looks wrong but according to comments in the implementation "this will be reported as SA1021"
+            var invalidStatement = @"var i = (1 + 1)- 2;";
+
+            await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, EmptyDiagnosticResults).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestSpaceAfterParenthisisInMultiplyOperationAsync()
         {
             var validStatement = @"var i = (1 + 1) * 2;";
 
             await this.TestWhitespaceInStatementOrDeclAsync(validStatement, EmptyDiagnosticResults).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestNoSpaceAfterParenthisisInMultiplyOperationAsync()
+        {
+            var invalidStatement = @"var i = (1 + 1)* 2;";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 27);
+
+            await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, expected).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestSpaceAfterParenthisisInDivisionOperationAsync()
+        {
+            var validStatement = @"var i = (1 + 1) / 2;";
+
+            await this.TestWhitespaceInStatementOrDeclAsync(validStatement, EmptyDiagnosticResults).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestNoSpaceAfterParenthisisInDivisionOperationAsync()
+        {
+            var invalidStatement = @"var i = (1 + 1)/ 2;";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 27);
+
+            await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -196,23 +249,35 @@ public class Foo
         [Fact]
         public async Task TestSpaceBeforeParenthisInIncrementingForLoopAsync()
         {
-            var validStatement = @"for (int i = 0; i < 10; i++ )
+            var invalidStatement = @"for (int i = 0; i < 10; i++ )
             {
             }";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 41);
 
-            await this.TestWhitespaceInStatementOrDeclAsync(validStatement, expected).ConfigureAwait(false);
+            await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, expected).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestNoSpaceAfterParenthisInDecrementingForLoopAsync()
+        public async Task TestNoSpaceBeforeParenthisInDecrementingForLoopAsync()
         {
             var validStatement = @"for (int i = 0; i < 10; i--)
             {
             }";
 
             await this.TestWhitespaceInStatementOrDeclAsync(validStatement, EmptyDiagnosticResults).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestSpaceBeforeParenthisInDecrementingForLoopAsync()
+        {
+            var invalidStatement = @"for (int i = 0; i < 10; i-- )
+            {
+            }";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 41);
+
+            await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -251,6 +316,191 @@ public class Foo
             await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, expected).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestNoSpaceMethodCallFollowedByPropertyGetAsync()
+        {
+            var validStatement = @"var o = new Baz().Test;";
+
+            await this.TestWhitespaceInStatementOrDeclAsync(validStatement, EmptyDiagnosticResults).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestSpaceMethodCallFollowedByPropertyGetAsync()
+        {
+            var validStatement = @"var o = new Baz() .Test;";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 29);
+
+            await this.TestWhitespaceInStatementOrDeclAsync(validStatement, expected).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestNoSpaceMethodCallFollowedByConditionalAccessPropertyGetAsync()
+        {
+            var validStatement = @"var o = new Baz()?.Test;";
+
+            await this.TestWhitespaceInStatementOrDeclAsync(validStatement, EmptyDiagnosticResults).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestSpaceMethodCallFollowedByConditionalAccessPropertyGetAsync()
+        {
+            var validStatement = @"var o = new Baz() ?.Test;";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 29);
+
+            await this.TestWhitespaceInStatementOrDeclAsync(validStatement, expected).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestNoSpaceOperationInDoubleSetOfParenthesisAsync()
+        {
+            var validStatement = @"var o = ((1 + 1));";
+
+            await this.TestWhitespaceInStatementOrDeclAsync(validStatement, EmptyDiagnosticResults).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestSpaceOperationInDoubleSetOfParenthesisAsync()
+        {
+            var invalidStatement = @"var o = ((1 + 1) );";
+
+            DiagnosticResult expected1 = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 28);
+            DiagnosticResult expected2 = this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 30);
+
+            await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, expected1, expected2).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestNoSpaceIncrementOperatorFollowingParenthesisAsync()
+        {
+            var validStatement = @"int i = 0;
+            (i)++;";
+
+            await this.TestWhitespaceInStatementOrDeclAsync(validStatement, EmptyDiagnosticResults).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestSpaceIncrementOperatorFollowingParenthesisAsync()
+        {
+            var invalidStatement = @"int i = 0;
+            (i) ++;";
+
+            DiagnosticResult expected1 = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(8, 15);
+
+            await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, expected1).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestNoSpaceDecrementOperatorFollowingParenthesisAsync()
+        {
+            var validStatement = @"int i = 0;
+            (i)--;";
+
+            await this.TestWhitespaceInStatementOrDeclAsync(validStatement, EmptyDiagnosticResults).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestSpaceDecrementOperatorFollowingParenthesisAsync()
+        {
+            var invalidStatement = @"int i = 0;
+            (i) --;";
+
+            DiagnosticResult expected1 = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(8, 15);
+
+            await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, expected1).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestNoSpaceBetweenClosingBraceAndParenthesisAsync()
+        {
+            var validStatement = @"var x = new System.Action(() => { });";
+
+            await this.TestWhitespaceInStatementOrDeclAsync(validStatement, EmptyDiagnosticResults).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestSpaceBetweenClosingBraceAndParenthesisAsync()
+        {
+            var invalidStatement = @"var x = new System.Action(() => { } );";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 49);
+
+            await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, expected).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestNoSpaceClosingParenthesisFollowedByParenthesisPairAsync()
+        {
+            var validStatement = @"new System.Action(() => { })();";
+
+            await this.TestWhitespaceInStatementOrDeclAsync(validStatement, EmptyDiagnosticResults).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestSpaceClosingParenthesisFollowedByParenthesisPairAsync()
+        {
+            var invalidStatement = @"new System.Action(() => { }) ();";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 40);
+
+            await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, expected).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestNoSpaceParenthesisFollowedByBracketAsync()
+        {
+            var validStatement = @"var a = GetA()[0];";
+
+            await this.TestWhitespaceInStatementOrDeclAsync(validStatement, EmptyDiagnosticResults).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestSpaceParenthesisFollowedByBracketAsync()
+        {
+            var invalidStatement = @"var a = GetA() [0];";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 26);
+
+            await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, expected).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestSpaceParenthesisFollowedByColonAsync()
+        {
+            var validStatement = @"var x = true ? GetA() : GetB();";
+
+            await this.TestWhitespaceInStatementOrDeclAsync(validStatement, EmptyDiagnosticResults).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestNoSpaceParenthesisFollowedByColonAsync()
+        {
+            var invalidStatement = @"var x = true ? GetA(): GetB();";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 33);
+
+            await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, expected).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestSpaceParenthesisFollowedByQuestionAsync()
+        {
+            var validStatement = @"var x = (true == true) ? GetA() : GetB();";
+
+            await this.TestWhitespaceInStatementOrDeclAsync(validStatement, EmptyDiagnosticResults).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestNoSpaceParenthesisFollowedByQuestionAsync()
+        {
+            var invalidStatement = @"var x = (true == true)? GetA() : GetB();";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 34);
+
+            await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, expected).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
@@ -263,9 +513,38 @@ public class Foo
 {{
     class Bar
     {{
-        void Baz()
+        void DoIt()
         {{
             {0}
+        }}
+
+        Baz GetA()
+        {{
+            return null;
+        }}
+
+        Baz GetB()
+        {{
+            return null;
+        }}
+
+        class Baz
+        {{
+            public object this[int i]
+            {{
+                get
+                {{
+                    return null;
+                }}
+            }}
+
+            public object Test
+            {{
+                get
+                {{
+                    return null;
+                }}
+            }}
         }}
     }}
 }}

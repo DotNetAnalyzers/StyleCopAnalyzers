@@ -140,6 +140,12 @@
                 precedesStickyCharacter = !requireSpace;
                 break;
 
+            case SyntaxKind.PlusPlusToken:
+            case SyntaxKind.MinusMinusToken:
+                precedesStickyCharacter = true;
+                suppressFollowingSpaceError = false;
+                break;
+
             default:
                 precedesStickyCharacter = false;
                 break;
