@@ -58,7 +58,7 @@ class ClassName5<[
     MyAttribute] T>
 {
     [return: MyAttribute]
-    int MethodName([MyAttribute] int x) { return 0; }
+    int [ ] MethodName([MyAttribute] int x) { return new int [ 3 ]; }
 }
 
 [System.AttributeUsage(System.AttributeTargets.All)]

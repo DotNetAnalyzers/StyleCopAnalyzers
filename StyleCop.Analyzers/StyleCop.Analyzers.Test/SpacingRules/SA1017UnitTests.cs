@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.SpacingRules;
@@ -107,6 +108,49 @@ class ClassName2
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMissingBracketTokenAsync()
+        {
+            var testCode = @"
+class ClassName
+{
+    void MethodName()
+    {
+        int[] x = new int[3;
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                new DiagnosticResult()
+                {
+                    Id = "CS1003",
+                    Message = "Syntax error, ',' expected",
+                    Severity = DiagnosticSeverity.Error,
+                },
+                new DiagnosticResult()
+                {
+                    Id = "CS0443",
+                    Message = "Syntax error; value expected",
+                    Severity = DiagnosticSeverity.Error,
+                },
+                new DiagnosticResult()
+                {
+                    Id = "CS1003",
+                    Message = "Syntax error, ']' expected",
+                    Severity = DiagnosticSeverity.Error,
+                }
+            };
+
+            for (int i = 0; i < expected.Length; i++)
+            {
+                expected[i] = expected[i].WithLocation(6, 28);
+            }
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
