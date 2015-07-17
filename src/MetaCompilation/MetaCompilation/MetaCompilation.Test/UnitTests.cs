@@ -136,10 +136,15 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            public override void Initialize(AnalysisContext context)
-            {
-                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
-            }
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
         }
     }";
 
@@ -179,10 +184,15 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            public override void Initialize(AnalysisContext context)
-            {
-                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
-            }
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
         }
     }";
 
@@ -225,10 +235,15 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            public override void Initialize(AnalysisContext context)
-            {
-                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
-            }
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
         }
     }";
 
@@ -275,10 +290,15 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            public override void Initialize(AnalysisContext context)
-            {
-                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
-            }
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
         }
     }";
 
@@ -313,10 +333,15 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            public override void Initialize(AnalysisContext context)
-            {
-                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
-            }
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
         }
     }";
 
@@ -356,10 +381,15 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            public override void Initialize(AnalysisContext context)
-            {
-                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
-            }
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
         }
     }";
 
@@ -394,10 +424,15 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            public override void Initialize(AnalysisContext context)
-            {
-                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
-            }
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
         }
     }";
 
@@ -437,10 +472,15 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            public override void Initialize(AnalysisContext context)
-            {
-                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
-            }
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
         }
     }";
 
@@ -475,10 +515,15 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            public override void Initialize(AnalysisContext context)
-            {
-                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
-            }
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
         }
     }";
 
@@ -518,10 +563,15 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            public override void Initialize(AnalysisContext context)
-            {
-                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
-            }
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
         }
     }";
 
@@ -556,10 +606,15 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            public override void Initialize(AnalysisContext context)
-            {
-                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
-            }
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
         }
     }";
 
@@ -599,10 +654,15 @@ namespace SyntaxNodeAnalyzer
                 }
             }
 
-            public override void Initialize(AnalysisContext context)
-            {
-                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
-            }
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
         }
     }";
 
@@ -952,11 +1012,6 @@ namespace SyntaxNodeAnalyzer
         public override void Initialize(AnalysisContext context)
         {
         }
-
-        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
-        {
-            throw new NotImplementedException();
-        }
     }
 }";
 
@@ -1006,7 +1061,7 @@ namespace SyntaxNodeAnalyzer
     }
 }";
 
-            VerifyCSharpFix(test, fixTest);
+            VerifyCSharpFix(test, fixTest, allowNewCompilerDiagnostics: true);
         }
 
         // register statement in comments
@@ -1040,11 +1095,6 @@ namespace SyntaxNodeAnalyzer
         public override void Initialize(AnalysisContext context)
         {
             // context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
-        }
-
-        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
-        {
-            throw new NotImplementedException();
         }
     }
 }";
@@ -1095,7 +1145,7 @@ namespace SyntaxNodeAnalyzer
     }
 }";
 
-            VerifyCSharpFix(test, fixtest);
+            VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
         }
         #endregion
 
@@ -7778,6 +7828,11 @@ namespace SyntaxNodeAnalyzer
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
         }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
     }
 }";
 
@@ -7829,6 +7884,11 @@ namespace SyntaxNodeAnalyzer
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
         }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
     }
 }";
 
@@ -7875,6 +7935,11 @@ namespace SyntaxNodeAnalyzer
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
         }
     }
 }";
@@ -7927,6 +7992,11 @@ namespace SyntaxNodeAnalyzer
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
         }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
     }
 }";
 
@@ -7973,6 +8043,11 @@ namespace SyntaxNodeAnalyzer
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
         }
     }
 }";
@@ -8025,58 +8100,17 @@ namespace SyntaxNodeAnalyzer
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
         }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
     }
 }";
 
             VerifyCSharpFix(test, fixtest);
         }
 
-        [Fact]
-        public void InternalAndStatic4() //modifiers = "static internal"
-        {
-            var test = @"using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Threading;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Text;
-
-namespace SyntaxNodeAnalyzer
-{
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
-    {
-        public const string spacingRuleId = ""IfSpacing"";
-
-        static internal DiagnosticDescriptor Rule = new DiagnosticDescriptor(
-            id: spacingRuleId, //make the id specific
-            title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
-            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
-            category: ""Syntax"", //make the category specific
-            defaultSeverity: DiagnosticSeverity.Error, //possible options
-            isEnabledByDefault: true);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        {
-            get
-            {
-                return ImmutableArray.Create(Rule);
-            }
-        }
-
-        public override void Initialize(AnalysisContext context)
-        {
-            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
-        }
-    }
-}";
-
-            VerifyCSharpDiagnostic(test);
-        }
         #endregion
 
         #region EnabledByDefault
@@ -8116,10 +8150,14 @@ namespace SyntaxNodeAnalyzer
                 return ImmutableArray.Create(Rule);
             }
         }
-
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
         }
     }
 }";
@@ -8167,10 +8205,14 @@ namespace SyntaxNodeAnalyzer
                 return ImmutableArray.Create(Rule);
             }
         }
-
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
         }
     }
 }";
@@ -8219,6 +8261,11 @@ namespace SyntaxNodeAnalyzer
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
         }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
     }
 }";
 
@@ -8269,6 +8316,11 @@ namespace SyntaxNodeAnalyzer
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
         }
     }
 }";
@@ -8527,6 +8579,11 @@ namespace SyntaxNodeAnalyzer
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
         }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
     }
 }";
 
@@ -8578,6 +8635,11 @@ namespace SyntaxNodeAnalyzer
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
         }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
     }
 }";
 
@@ -8618,6 +8680,11 @@ namespace SyntaxNodeAnalyzer
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
         }
     }
 }";
@@ -8660,6 +8727,11 @@ namespace SyntaxNodeAnalyzer
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
         }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
     }
 }";
 
@@ -8700,6 +8772,11 @@ namespace SyntaxNodeAnalyzer
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
         }
     }
 }";
@@ -8751,6 +8828,11 @@ namespace SyntaxNodeAnalyzer
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
         }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
     }
 }";
 
@@ -8802,6 +8884,11 @@ namespace SyntaxNodeAnalyzer
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
         }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
     }
 }";
 
@@ -8842,6 +8929,11 @@ namespace SyntaxNodeAnalyzer
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
         }
     }
 }";
@@ -8884,6 +8976,11 @@ namespace SyntaxNodeAnalyzer
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
         }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
     }
 }";
 
@@ -8924,6 +9021,11 @@ namespace SyntaxNodeAnalyzer
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
         }
     }
 }";
@@ -8970,6 +9072,11 @@ namespace SyntaxNodeAnalyzer
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
         }
     }
 }";
@@ -9018,6 +9125,11 @@ namespace SyntaxNodeAnalyzer
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
         }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
     }
 }";
 
@@ -9054,6 +9166,11 @@ namespace SyntaxNodeAnalyzer
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
         }
     }
 }";
@@ -9092,6 +9209,11 @@ namespace SyntaxNodeAnalyzer
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
         }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
     }
 }";
 
@@ -9128,6 +9250,11 @@ namespace SyntaxNodeAnalyzer
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
         }
     }
 }";
@@ -9181,6 +9308,11 @@ namespace SyntaxNodeAnalyzer
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
         }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
     }
 }";
 
@@ -9231,6 +9363,11 @@ namespace SyntaxNodeAnalyzer
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
         }
     }
 }";
@@ -9581,6 +9718,11 @@ namespace SyntaxNodeAnalyzer
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
         }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
+        }
     }
 }";
 
@@ -9632,6 +9774,11 @@ namespace SyntaxNodeAnalyzer
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext obj)
+        {
+            throw new NotImplementedException();
         }
     }
 }";
