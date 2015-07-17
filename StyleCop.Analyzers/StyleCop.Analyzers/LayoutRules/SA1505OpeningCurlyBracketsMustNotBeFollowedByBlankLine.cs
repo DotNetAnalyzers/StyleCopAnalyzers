@@ -6,6 +6,7 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.SpacingRules;
 
     /// <summary>
     /// An opening curly bracket within a C# element, statement, or expression is followed by a blank line.
@@ -112,6 +113,11 @@
         private void AnalyzeOpenBrace(SyntaxNodeAnalysisContext context, SyntaxToken openBraceToken)
         {
             var nextToken = openBraceToken.GetNextToken();
+            if (nextToken.IsMissingOrDefault())
+            {
+                return;
+            }
+
             if ((GetLine(nextToken) - GetLine(openBraceToken)) < 2)
             {
                 // there will be no blank lines when the opening brace and the following token are not at least two lines apart.
