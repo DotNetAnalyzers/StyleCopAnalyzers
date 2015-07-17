@@ -33,6 +33,9 @@ namespace MetaCompilation
                                              MetaCompilationAnalyzer.IncorrectInitSig,
                                              MetaCompilationAnalyzer.InvalidStatement,
                                              MetaCompilationAnalyzer.MissingAnalysisMethod,
+                                             MetaCompilationAnalyzer.IncorrectAnalysisAccessibility,
+                                             MetaCompilationAnalyzer.IncorrectAnalysisParameter,
+                                             MetaCompilationAnalyzer.IncorrectAnalysisReturnType,
                                              MetaCompilationAnalyzer.IncorrectSigSuppDiag,
                                              MetaCompilationAnalyzer.MissingAccessor,
                                              MetaCompilationAnalyzer.TooManyAccessors,
@@ -148,6 +151,34 @@ namespace MetaCompilation
                         context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Generate the method called by actions registered in Initialize.", c => MissingAnalysisMethodAsync(context.Document, declaration, c)), diagnostic);
                     }
                 }
+                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectAnalysisAccessibility))
+                {
+                    IEnumerable<MethodDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
+                    if (declarations.Count() != 0)
+                    {
+                        MethodDeclarationSyntax declaration = declarations.First();
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Add the private keyword to this method.", c => IncorrectAnalysisAccessibilityAsync(context.Document, declaration, c)), diagnostic);
+                    }
+                }
+                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectAnalysisReturnType))
+                {
+                    IEnumerable<MethodDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
+                    if (declarations.Count() != 0)
+                    {
+                        MethodDeclarationSyntax declaration = declarations.First();
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Declare a void return type for this method.", c => IncorrectAnalysisReturnTypeAsync(context.Document, declaration, c)), diagnostic);
+                    }
+                }
+                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectAnalysisParameter))
+                {
+                    IEnumerable<MethodDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
+                    if (declarations.Count() != 0)
+                    {
+                        MethodDeclarationSyntax declaration = declarations.First();
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Have this method take a parameter of type SyntaxNodeAnalysisContext.", c => IncorrectAnalysisParameterAsync(context.Document, declaration, c)), diagnostic);
+                    }
+                }
+
                 else if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.InternalAndStaticError))
                 {
                     IEnumerable<FieldDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<FieldDeclarationSyntax>();
@@ -548,6 +579,39 @@ namespace MetaCompilation
                     }
                 }
             }
+        }
+
+        private async Task<Document> IncorrectAnalysisParameterAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            var type = SyntaxFactory.ParseTypeName("SyntaxNodeAnalysisContext");
+            var parameters = new[] { generator.ParameterDeclaration("context", type) };
+
+            MethodDeclarationSyntax newDeclaration = generator.InsertParameters(declaration, 0, parameters) as MethodDeclarationSyntax;// AddParameters(declaration, parameters) as MethodDeclarationSyntax;
+
+            //MethodDeclarationSyntax newDeclaration = generator.WithTypeParameters(declaration, "SyntaxNodeAnalysisContext") as MethodDeclarationSyntax;
+
+            return await ReplaceNode(declaration, newDeclaration, document);
+        }
+
+        private  Task<Document> IncorrectAnalysisReturnTypeAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        {
+            //SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            //MethodDeclarationSyntax newDeclaration = generator. 
+
+            //return await ReplaceNode(declaration, newDeclaration, document);
+            throw new NotImplementedException();
+        }
+
+        private async Task<Document> IncorrectAnalysisAccessibilityAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            MethodDeclarationSyntax newDeclaration = generator.WithAccessibility(declaration, Accessibility.Private) as MethodDeclarationSyntax;
+
+            return await ReplaceNode(declaration, newDeclaration, document);
         }
 
         private async Task<Document> MissingAnalysisMethodAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
