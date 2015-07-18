@@ -166,10 +166,15 @@ public class Foo
             await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, expected).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestSpaceAfterParenthisisInAddOperationAsync()
+        [Theory]
+        [InlineData("+")]
+        [InlineData("-")]
+        [InlineData("*")]
+        [InlineData("/")]
+        public async Task TestSpaceAfterParenthisisInArithmeticOperationAsync(string operatorValue)
         {
-            var validStatement = @"var i = (1 + 1) + 2;";
+            // e.g. var i = (1 + 1) + 2
+            var validStatement = string.Format(@"var i = (1 + 1) {0} 2;", operatorValue);
 
             await this.TestWhitespaceInStatementOrDeclAsync(validStatement, EmptyDiagnosticResults).ConfigureAwait(false);
         }
@@ -184,14 +189,6 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestSpaceAfterParenthisisInSubtractOperationAsync()
-        {
-            var validStatement = @"var i = (1 + 1) - 2;";
-
-            await this.TestWhitespaceInStatementOrDeclAsync(validStatement, EmptyDiagnosticResults).ConfigureAwait(false);
-        }
-
-        [Fact]
         public async Task TestNoSpaceAfterParenthisisInSubtractOperationAsync()
         {
             // Note - this looks wrong but according to comments in the implementation "this will be reported as SA1021"
@@ -200,36 +197,13 @@ public class Foo
             await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestSpaceAfterParenthisisInMultiplyOperationAsync()
+        [Theory]
+        [InlineData("*")]
+        [InlineData("/")]
+        public async Task TestNoSpaceAfterParenthisisInArithmeticOperationAsync(string operatorValue)
         {
-            var validStatement = @"var i = (1 + 1) * 2;";
-
-            await this.TestWhitespaceInStatementOrDeclAsync(validStatement, EmptyDiagnosticResults).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestNoSpaceAfterParenthisisInMultiplyOperationAsync()
-        {
-            var invalidStatement = @"var i = (1 + 1)* 2;";
-
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 27);
-
-            await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, expected).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestSpaceAfterParenthisisInDivisionOperationAsync()
-        {
-            var validStatement = @"var i = (1 + 1) / 2;";
-
-            await this.TestWhitespaceInStatementOrDeclAsync(validStatement, EmptyDiagnosticResults).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestNoSpaceAfterParenthisisInDivisionOperationAsync()
-        {
-            var invalidStatement = @"var i = (1 + 1)/ 2;";
+            // e.g. var i = (1 + 1)* 2;
+            var invalidStatement = string.Format(@"var i = (1 + 1){0} 2;", operatorValue);
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 27);
 
@@ -371,40 +345,26 @@ public class Foo
             await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, expected1, expected2).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestNoSpaceIncrementOperatorFollowingParenthesisAsync()
+        [Theory]
+        [InlineData("++")]
+        [InlineData("--")]
+        public async Task TestNoSpaceIncrementOrDecrementOperatorFollowingParenthesisAsync(string operatorValue)
         {
-            var validStatement = @"int i = 0;
-            (i)++;";
+            var validStatement = string.Format(@"int i = 0;
+            (i){0};",
+            operatorValue);
 
             await this.TestWhitespaceInStatementOrDeclAsync(validStatement, EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestSpaceIncrementOperatorFollowingParenthesisAsync()
+        [Theory]
+        [InlineData("++")]
+        [InlineData("--")]
+        public async Task TestSpaceIncrementOrDecrementOperatorFollowingParenthesisAsync(string operatorValue)
         {
-            var invalidStatement = @"int i = 0;
-            (i) ++;";
-
-            DiagnosticResult expected1 = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(8, 15);
-
-            await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, expected1).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestNoSpaceDecrementOperatorFollowingParenthesisAsync()
-        {
-            var validStatement = @"int i = 0;
-            (i)--;";
-
-            await this.TestWhitespaceInStatementOrDeclAsync(validStatement, EmptyDiagnosticResults).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestSpaceDecrementOperatorFollowingParenthesisAsync()
-        {
-            var invalidStatement = @"int i = 0;
-            (i) --;";
+            var invalidStatement = string.Format(@"int i = 0;
+            (i) {0};",
+            operatorValue);
 
             DiagnosticResult expected1 = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(8, 15);
 
