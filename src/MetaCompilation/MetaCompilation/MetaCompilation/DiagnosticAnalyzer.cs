@@ -1149,7 +1149,7 @@ namespace MetaCompilation
                                     }
                                     else
                                     {
-                                        ReportDiagnostic(context, DiagnosticReportMissingRule, statements[8].GetLocation());
+                                        ReportDiagnostic(context, DiagnosticReportMissingRule, statements[8].GetLocation(), contextParameter.Identifier.Text);
                                         return false;
                                     }
                                 }
