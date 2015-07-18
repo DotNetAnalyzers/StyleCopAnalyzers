@@ -4,6 +4,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// An element documentation header above a C# element is followed by a blank line.
@@ -89,7 +90,7 @@
                 case SyntaxKind.SingleLineDocumentationCommentTrivia:
                     if (eolCount > 0)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, triviaList[i + 1].GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, triviaList[i + 1].GetLocation(), ArrayEx.Empty<object>()));
                     }
 
                     return;

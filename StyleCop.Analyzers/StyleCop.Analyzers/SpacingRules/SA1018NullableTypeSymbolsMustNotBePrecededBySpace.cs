@@ -68,7 +68,7 @@
             var triviaList = TriviaHelper.MergeTriviaLists(precedingToken.TrailingTrivia, questionToken.LeadingTrivia);
             if (triviaList.Any(t => t.IsKind(SyntaxKind.WhitespaceTrivia) || t.IsKind(SyntaxKind.EndOfLineTrivia)))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, questionToken.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, questionToken.GetLocation(), ArrayEx.Empty<object>()));
             }
         }
     }

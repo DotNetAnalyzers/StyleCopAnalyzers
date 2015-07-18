@@ -64,7 +64,7 @@
 
             if (string.Equals(name.ToString(), XmlCommentHelper.ParamXmlTag) && XmlCommentHelper.IsConsideredEmpty(emptyElement))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, emptyElement.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, emptyElement.GetLocation(), ArrayEx.Empty<object>()));
             }
         }
 
@@ -75,7 +75,7 @@
             if (string.Equals(emptyElement?.Name.ToString(), XmlCommentHelper.ParamXmlTag))
             {
                 // <param .../> is empty.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, emptyElement.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, emptyElement.GetLocation(), ArrayEx.Empty<object>()));
             }
         }
     }

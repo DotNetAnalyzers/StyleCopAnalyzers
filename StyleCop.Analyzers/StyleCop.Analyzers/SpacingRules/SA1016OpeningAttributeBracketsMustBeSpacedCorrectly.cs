@@ -4,6 +4,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// An opening attribute bracket within a C# element is not spaced correctly.
@@ -84,7 +85,7 @@
             }
 
             // Opening attribute brackets must not be followed by a space.
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), ArrayEx.Empty<object>()));
         }
     }
 }

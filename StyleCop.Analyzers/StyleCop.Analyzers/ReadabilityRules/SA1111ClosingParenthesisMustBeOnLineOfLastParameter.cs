@@ -338,7 +338,7 @@
                 closeParenLine.IsValid &&
                 closeParenLine.StartLinePosition.Line != lastParameterLine.EndLinePosition.Line)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, closeToken.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, closeToken.GetLocation(), ArrayEx.Empty<object>()));
             }
         }
     }

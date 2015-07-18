@@ -118,7 +118,7 @@
                 }
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, childStatement.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, childStatement.GetLocation(), ArrayEx.Empty<object>()));
         }
     }
 }

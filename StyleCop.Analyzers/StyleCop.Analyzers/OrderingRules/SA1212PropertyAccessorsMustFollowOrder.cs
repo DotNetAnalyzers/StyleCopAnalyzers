@@ -5,6 +5,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A get accessor appears after a set accessor within a property or indexer.
@@ -98,7 +99,7 @@
             if (accessors[0].Kind() == SyntaxKind.SetAccessorDeclaration &&
                 accessors[1].Kind() == SyntaxKind.GetAccessorDeclaration)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, accessors[0].GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, accessors[0].GetLocation(), ArrayEx.Empty<object>()));
             }
         }
     }

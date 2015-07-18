@@ -113,7 +113,7 @@
 
             if (openingBraceLineSpan.EndLinePosition.Line == closingBraceLineSpan.StartLinePosition.Line)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, openBraceToken.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, openBraceToken.GetLocation(), ArrayEx.Empty<object>()));
             }
         }
     }

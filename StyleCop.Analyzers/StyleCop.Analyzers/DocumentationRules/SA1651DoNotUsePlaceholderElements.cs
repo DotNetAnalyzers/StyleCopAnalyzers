@@ -6,6 +6,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The documentation for the element contains one or more &lt;placeholder&gt; elements.
@@ -69,7 +70,7 @@
                 return;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.GetLocation(), ArrayEx.Empty<object>()));
         }
 
         private void HandleXmlEmptyElement(SyntaxNodeAnalysisContext context)
@@ -80,7 +81,7 @@
                 return;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.GetLocation(), ArrayEx.Empty<object>()));
         }
     }
 }

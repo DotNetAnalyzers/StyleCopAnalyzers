@@ -5,6 +5,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// TODO.
@@ -66,7 +67,7 @@
             }
 
             // Attribute constructor must not use unnecessary parenthesis
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.GetLocation(), ArrayEx.Empty<object>()));
         }
     }
 }

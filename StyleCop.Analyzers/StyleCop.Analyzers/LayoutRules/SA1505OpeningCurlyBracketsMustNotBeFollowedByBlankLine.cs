@@ -154,7 +154,7 @@
 
             if (eolCount > 0)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, openBraceToken.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, openBraceToken.GetLocation(), ArrayEx.Empty<object>()));
             }
         }
 

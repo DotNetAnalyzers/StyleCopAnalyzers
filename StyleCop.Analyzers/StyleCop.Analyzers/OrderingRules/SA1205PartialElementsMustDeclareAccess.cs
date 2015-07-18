@@ -6,6 +6,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The partial element does not have an access modifier defined. StyleCop may not be able to determine the correct
@@ -56,7 +57,7 @@
                 if (!ContainsModifier(typeDeclarationNode.Modifiers, SyntaxKind.PublicKeyword) &&
                     !ContainsModifier(typeDeclarationNode.Modifiers, SyntaxKind.InternalKeyword))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, typeDeclarationNode.Identifier.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, typeDeclarationNode.Identifier.GetLocation(), ArrayEx.Empty<object>()));
                 }
             }
         }

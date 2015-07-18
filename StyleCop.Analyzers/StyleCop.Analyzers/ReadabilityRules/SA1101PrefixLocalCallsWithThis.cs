@@ -5,6 +5,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A call to an instance member of the local class or a base class is not prefixed with ‘this.’, within a C# code
@@ -184,7 +185,7 @@
             }
 
             // Prefix local calls with this
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, nameExpression.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, nameExpression.GetLocation(), ArrayEx.Empty<object>()));
         }
 
         private bool HasThis(SyntaxNode node)

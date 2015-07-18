@@ -81,7 +81,7 @@
                         {
                             if (text.TrimStart().StartsWith(DefaultText))
                             {
-                                context.ReportDiagnostic(Diagnostic.Create(Descriptor, summaryElement.GetLocation()));
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptor, summaryElement.GetLocation(), ArrayEx.Empty<object>()));
                             }
                         }
                     }

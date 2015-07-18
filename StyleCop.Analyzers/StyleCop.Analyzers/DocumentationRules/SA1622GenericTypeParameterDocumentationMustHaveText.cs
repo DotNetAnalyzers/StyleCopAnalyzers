@@ -63,7 +63,7 @@
 
             if (string.Equals(name.ToString(), XmlCommentHelper.TypeParamXmlTag) && XmlCommentHelper.IsConsideredEmpty(emptyElement))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, emptyElement.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, emptyElement.GetLocation(), ArrayEx.Empty<object>()));
             }
         }
 
@@ -74,7 +74,7 @@
             if (string.Equals(emptyElement?.Name.ToString(), XmlCommentHelper.TypeParamXmlTag))
             {
                 // <typeparam .../> is empty.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, emptyElement.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, emptyElement.GetLocation(), ArrayEx.Empty<object>()));
             }
         }
     }

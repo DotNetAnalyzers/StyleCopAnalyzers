@@ -70,7 +70,7 @@
             string name = interfaceDeclaration.Identifier.ValueText;
             if (name != null && !name.StartsWith("I", StringComparison.Ordinal))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, interfaceDeclaration.Identifier.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, interfaceDeclaration.Identifier.GetLocation(), ArrayEx.Empty<object>()));
             }
         }
     }

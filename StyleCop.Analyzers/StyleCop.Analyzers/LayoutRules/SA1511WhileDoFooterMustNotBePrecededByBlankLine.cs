@@ -65,7 +65,7 @@
                 return;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, whileKeyword.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, whileKeyword.GetLocation(), ArrayEx.Empty<object>()));
         }
     }
 }

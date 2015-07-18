@@ -133,7 +133,7 @@
                 openParenLine.IsValid &&
                 openParenLine.StartLinePosition.Line != closeParenLine.StartLinePosition.Line)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, closeToken.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, closeToken.GetLocation(), ArrayEx.Empty<object>()));
             }
         }
     }

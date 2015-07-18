@@ -5,6 +5,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The C# code includes an empty string, written as <c>""</c>.
@@ -72,7 +73,7 @@
 
                     if (token.ValueText == string.Empty)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, literalExpression.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, literalExpression.GetLocation(), ArrayEx.Empty<object>()));
                     }
                 }
             }

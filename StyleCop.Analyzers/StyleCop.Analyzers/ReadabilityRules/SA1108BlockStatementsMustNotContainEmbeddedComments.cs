@@ -6,6 +6,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A C# statement contains a comment between the declaration of the statement and the opening curly bracket of the
@@ -130,7 +131,7 @@
                 .Concat(openBraceToken.LeadingTrivia.Where(this.IsComment));
             foreach (var comment in comments)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, comment.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, comment.GetLocation(), ArrayEx.Empty<object>()));
             }
         }
 

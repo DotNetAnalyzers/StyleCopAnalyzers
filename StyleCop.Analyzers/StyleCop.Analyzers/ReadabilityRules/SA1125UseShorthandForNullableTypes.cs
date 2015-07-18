@@ -6,6 +6,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The <see cref="Nullable{T}"/> type has been defined not using the C# shorthand. For example,
@@ -118,7 +119,7 @@
             }
 
             // Use shorthand for nullable types
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, locationNode.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, locationNode.GetLocation(), ArrayEx.Empty<object>()));
         }
     }
 }

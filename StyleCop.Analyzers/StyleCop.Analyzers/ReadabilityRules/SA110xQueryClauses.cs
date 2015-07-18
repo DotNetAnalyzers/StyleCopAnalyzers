@@ -119,7 +119,7 @@
                     && isEnabledSA1102
                     && !token2.LeadingTrivia.Any(trivia => trivia.IsDirective))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(SA1102Descriptor, token2.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(SA1102Descriptor, token2.GetLocation(), ArrayEx.Empty<object>()));
                 }
 
                 var onSameLine = location1.EndLinePosition.Line == location2.StartLinePosition.Line;
@@ -129,7 +129,7 @@
                     && !(parent1 is QueryContinuationSyntax)
                     && parent1.SpansMultipleLines())
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(SA1104Descriptor, token2.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(SA1104Descriptor, token2.GetLocation(), ArrayEx.Empty<object>()));
 
                     // Make sure that SA1103 will not be reported, as there is a more specific diagnostic reported.
                     suppressSA1103 = true;
@@ -139,7 +139,7 @@
                     && isEnabledSA1105
                     && parent2.SpansMultipleLines())
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(SA1105Descriptor, token2.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(SA1105Descriptor, token2.GetLocation(), ArrayEx.Empty<object>()));
 
                     // Make sure that SA1103 will not be reported, as there is a more specific diagnostic reported.
                     suppressSA1103 = true;
@@ -151,7 +151,7 @@
 
             if (!allOnSameLine && !allOnSeparateLine && !suppressSA1103 && isEnabledSA1103)
             {
-                context.ReportDiagnostic(Diagnostic.Create(SA1103Descriptor, queryExpression.FromClause.FromKeyword.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(SA1103Descriptor, queryExpression.FromClause.FromKeyword.GetLocation(), ArrayEx.Empty<object>()));
             }
         }
 

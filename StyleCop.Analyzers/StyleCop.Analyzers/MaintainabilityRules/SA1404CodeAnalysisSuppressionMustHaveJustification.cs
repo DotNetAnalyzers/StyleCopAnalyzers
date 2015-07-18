@@ -6,6 +6,7 @@
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A Code Analysis SuppressMessage attribute does not include a justification.
@@ -84,13 +85,13 @@
                                 }
 
                                 // Empty, Whitespace or null justification provided
-                                context.ReportDiagnostic(Diagnostic.Create(Descriptor, attributeArgument.GetLocation()));
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptor, attributeArgument.GetLocation(), ArrayEx.Empty<object>()));
                                 return;
                             }
                         }
 
                         // No justification set
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, attribute.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, attribute.GetLocation(), ArrayEx.Empty<object>()));
                     }
                 }
             }

@@ -5,6 +5,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A single-line comment within a C# code file does not begin with a single space.
@@ -161,7 +162,7 @@
             }
 
             // Single line comment must begin with a space.
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, trivia.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, trivia.GetLocation(), ArrayEx.Empty<object>()));
         }
     }
 }

@@ -220,7 +220,7 @@
 
             if (!HasEmptyLine(allTrivia))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, GetDiagnosticLocation(secondNode)));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, GetDiagnosticLocation(secondNode), ArrayEx.Empty<object>()));
             }
         }
 

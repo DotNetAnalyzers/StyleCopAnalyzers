@@ -5,6 +5,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The name of a static readonly field does not begin with an upper-case letter.
@@ -86,7 +87,7 @@
                     continue;
                 }
 
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), ArrayEx.Empty<object>()));
             }
         }
     }

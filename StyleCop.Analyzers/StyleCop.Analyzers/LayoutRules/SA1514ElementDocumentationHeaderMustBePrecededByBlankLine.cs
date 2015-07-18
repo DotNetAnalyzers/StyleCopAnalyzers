@@ -152,7 +152,7 @@
                 }
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, GetDiagnosticLocation(documentationHeader)));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, GetDiagnosticLocation(documentationHeader), ArrayEx.Empty<object>()));
         }
 
         private static Location GetDiagnosticLocation(SyntaxTrivia documentationHeader)

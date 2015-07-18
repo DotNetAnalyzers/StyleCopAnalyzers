@@ -93,7 +93,7 @@
 
             if (documentationStructure.Content.GetFirstXmlElement(XmlCommentHelper.ReturnsXmlTag) == null)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, returnType.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, returnType.GetLocation(), ArrayEx.Empty<object>()));
             }
         }
     }

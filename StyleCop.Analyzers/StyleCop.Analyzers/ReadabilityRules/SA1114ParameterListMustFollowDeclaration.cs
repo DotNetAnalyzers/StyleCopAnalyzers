@@ -208,7 +208,7 @@
                 if (openBracketLineSpan.EndLinePosition.Line != firstSizeLineSpan.StartLinePosition.Line &&
                     openBracketLineSpan.EndLinePosition.Line != (firstSizeLineSpan.StartLinePosition.Line - 1))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstSize.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstSize.GetLocation(), ArrayEx.Empty<object>()));
                 }
             }
         }
@@ -240,7 +240,7 @@
             if (openBracketLineSpan.EndLinePosition.Line != firstAttributeLineSpan.StartLinePosition.Line &&
                 openBracketLineSpan.EndLinePosition.Line != (firstAttributeLineSpan.StartLinePosition.Line - 1))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstAttribute.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstAttribute.GetLocation(), ArrayEx.Empty<object>()));
             }
         }
 
@@ -271,7 +271,7 @@
             if (openBracketLineSpan.EndLinePosition.Line != firstArgumentLineSpan.StartLinePosition.Line &&
                 openBracketLineSpan.EndLinePosition.Line != (firstArgumentLineSpan.StartLinePosition.Line - 1))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstArgument.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstArgument.GetLocation(), ArrayEx.Empty<object>()));
             }
         }
 
@@ -302,7 +302,7 @@
             if (openParenLineSpan.EndLinePosition.Line != firstArgumentLineSpan.StartLinePosition.Line &&
                 openParenLineSpan.EndLinePosition.Line != (firstArgumentLineSpan.StartLinePosition.Line - 1))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstArgument.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstArgument.GetLocation(), ArrayEx.Empty<object>()));
             }
         }
 
@@ -333,7 +333,7 @@
             if (openParenLineSpan.EndLinePosition.Line != firstArgumentLineSpan.StartLinePosition.Line &&
                 openParenLineSpan.EndLinePosition.Line != (firstArgumentLineSpan.StartLinePosition.Line - 1))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstArgument.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstArgument.GetLocation(), ArrayEx.Empty<object>()));
             }
         }
 
@@ -364,7 +364,7 @@
             if (openBracketLineSpan.EndLinePosition.Line != firstParameterLineSpan.StartLinePosition.Line &&
                 openBracketLineSpan.EndLinePosition.Line != (firstParameterLineSpan.StartLinePosition.Line - 1))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstParameter.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstParameter.GetLocation(), ArrayEx.Empty<object>()));
             }
         }
 
@@ -395,7 +395,7 @@
             if (openParenLineSpan.EndLinePosition.Line != firstParameterLineSpan.StartLinePosition.Line &&
                 openParenLineSpan.EndLinePosition.Line != (firstParameterLineSpan.StartLinePosition.Line - 1))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstParameter.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstParameter.GetLocation(), ArrayEx.Empty<object>()));
             }
         }
     }

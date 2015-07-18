@@ -5,6 +5,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The code contains multiple whitespace characters in a row.
@@ -102,7 +103,7 @@
             }
 
             // Code must not contain multiple whitespace characters in a row.
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, trivia.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, trivia.GetLocation(), ArrayEx.Empty<object>()));
         }
     }
 }

@@ -64,7 +64,7 @@
                     if (previousStatementLocation.EndLinePosition.Line
                         == currentStatementLocation.StartLinePosition.Line)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, block.Statements[i].GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, block.Statements[i].GetLocation(), ArrayEx.Empty<object>()));
                     }
 
                     previousStatementLocation = currentStatementLocation;

@@ -82,7 +82,7 @@
 
                 if (string.IsNullOrWhiteSpace(nameAttribute?.Identifier?.Identifier.ValueText))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, nameAttribute?.GetLocation() ?? alternativeDiagnosticLocation));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, nameAttribute?.GetLocation() ?? alternativeDiagnosticLocation, ArrayEx.Empty<object>()));
                 }
             }
         }

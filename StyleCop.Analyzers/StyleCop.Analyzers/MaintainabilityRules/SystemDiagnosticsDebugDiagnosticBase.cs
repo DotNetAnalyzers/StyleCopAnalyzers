@@ -4,6 +4,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A base class for <see cref="System.Diagnostics.Debug"/> diagnostics.
@@ -39,7 +40,7 @@
                         if (symbolInfo.Parameters.Length <= parameterIndex)
                         {
                             // Wrong overload was used, e.g. Debug.Assert(bool condition)
-                            context.ReportDiagnostic(Diagnostic.Create(descriptor, invocationExpressionSyntax.GetLocation()));
+                            context.ReportDiagnostic(Diagnostic.Create(descriptor, invocationExpressionSyntax.GetLocation(), ArrayEx.Empty<object>()));
                         }
                         else
                         {
@@ -51,7 +52,7 @@
                                 // Report a diagnostic if the message is constant and null or whitespace
                                 if (constantValue.HasValue && string.IsNullOrWhiteSpace(constantValue.Value as string))
                                 {
-                                    context.ReportDiagnostic(Diagnostic.Create(descriptor, invocationExpressionSyntax.GetLocation()));
+                                    context.ReportDiagnostic(Diagnostic.Create(descriptor, invocationExpressionSyntax.GetLocation(), ArrayEx.Empty<object>()));
                                 }
                             }
                         }

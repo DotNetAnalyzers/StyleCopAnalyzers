@@ -73,7 +73,7 @@
             {
                 if (!XmlCommentHelper.HasDocumentation(enumMemberDeclaration))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, enumMemberDeclaration.Identifier.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, enumMemberDeclaration.Identifier.GetLocation(), ArrayEx.Empty<object>()));
                 }
             }
         }

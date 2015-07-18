@@ -140,7 +140,7 @@
                 var currentLine = lineSpan.StartLinePosition.Line;
                 if (currentLine - previousLine > 1)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentAttribute.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentAttribute.GetLocation(), ArrayEx.Empty<object>()));
                 }
 
                 previousLine = lineSpan.EndLinePosition.Line;
@@ -165,7 +165,7 @@
                 var currentLine = lineSpan.StartLinePosition.Line;
                 if (currentLine - previousLine > 1)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentArgument.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentArgument.GetLocation(), ArrayEx.Empty<object>()));
                 }
 
                 previousLine = lineSpan.EndLinePosition.Line;
@@ -195,7 +195,7 @@
                     var currentLine = lineSpan.StartLinePosition.Line;
                     if (currentLine - previousLine > 1)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentSize.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentSize.GetLocation(), ArrayEx.Empty<object>()));
                     }
 
                     previousLine = lineSpan.EndLinePosition.Line;
@@ -254,7 +254,7 @@
                 var currentLine = lineSpan.StartLinePosition.Line;
                 if (currentLine - previousLine > 1)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentArgument.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentArgument.GetLocation(), ArrayEx.Empty<object>()));
                 }
 
                 previousLine = lineSpan.EndLinePosition.Line;
@@ -277,7 +277,7 @@
                 var currentLine = lineSpan.StartLinePosition.Line;
                 if (currentLine - previousLine > 1)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentParameter.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentParameter.GetLocation(), ArrayEx.Empty<object>()));
                 }
 
                 previousLine = lineSpan.EndLinePosition.Line;

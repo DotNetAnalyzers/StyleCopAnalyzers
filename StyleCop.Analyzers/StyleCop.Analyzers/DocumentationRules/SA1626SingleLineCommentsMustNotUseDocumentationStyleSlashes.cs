@@ -6,6 +6,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The C# code contains a single-line comment which begins with three forward slashes in a row.
@@ -88,7 +89,7 @@
                 // Add a diagnostic on '///'
                 var trivia = context.Node.GetLeadingTrivia().First();
 
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, trivia.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, trivia.GetLocation(), ArrayEx.Empty<object>()));
             }
         }
     }

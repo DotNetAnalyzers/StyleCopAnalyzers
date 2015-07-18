@@ -5,7 +5,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using StyleCop.Analyzers.SpacingRules;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A call to a member from an inherited class begins with <c>base.</c>, and the local class does not contain an
@@ -111,7 +111,7 @@
             }
 
             // Do not prefix calls with base unless local implementation exists
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, baseExpressionSyntax.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, baseExpressionSyntax.GetLocation(), ArrayEx.Empty<object>()));
         }
     }
 }

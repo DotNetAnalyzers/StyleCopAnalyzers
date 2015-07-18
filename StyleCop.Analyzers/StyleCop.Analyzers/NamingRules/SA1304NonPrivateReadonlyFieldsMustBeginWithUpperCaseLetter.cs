@@ -114,7 +114,7 @@
                 }
 
                 // Non-private readonly fields must begin with upper-case letter.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), ArrayEx.Empty<object>()));
             }
         }
     }
