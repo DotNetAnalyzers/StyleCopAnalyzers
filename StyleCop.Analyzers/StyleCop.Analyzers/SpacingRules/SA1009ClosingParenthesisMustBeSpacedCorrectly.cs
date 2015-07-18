@@ -34,7 +34,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1009.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -140,6 +140,12 @@
                 precedesStickyCharacter = !requireSpace;
                 break;
 
+            case SyntaxKind.PlusPlusToken:
+            case SyntaxKind.MinusMinusToken:
+                precedesStickyCharacter = true;
+                suppressFollowingSpaceError = false;
+                break;
+
             default:
                 precedesStickyCharacter = false;
                 break;
@@ -163,7 +169,7 @@
 
             if (!suppressFollowingSpaceError)
             {
-                if (!precedesStickyCharacter && !followedBySpace)
+                if (!precedesStickyCharacter && !followedBySpace && !lastInLine)
                 {
                     // Closing parenthesis must{} be {followed} by a space.
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "followed"));
