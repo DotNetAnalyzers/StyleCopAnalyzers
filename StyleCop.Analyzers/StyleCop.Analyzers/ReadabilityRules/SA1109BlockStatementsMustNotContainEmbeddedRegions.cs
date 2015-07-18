@@ -89,7 +89,7 @@
                     if (ifStatement.Else != null)
                     {
                         followingToken = block.CloseBraceToken.GetNextToken();
-                        CheckTrivia(context, GetTrailingTriviaList(block.CloseBraceToken, followingToken));
+                        CheckTrivia(context, TriviaHelper.MergeTriviaLists(block.CloseBraceToken.TrailingTrivia, followingToken.LeadingTrivia));
                     }
 
                     break;
@@ -97,13 +97,13 @@
                 case SyntaxKind.DoStatement:
                     var doStatement = (DoStatementSyntax)block.Parent;
                     CheckTrivia(context, block.GetLeadingTrivia());
-                    CheckTrivia(context, GetTrailingTriviaList(block.CloseBraceToken, doStatement.WhileKeyword));
+                    CheckTrivia(context, TriviaHelper.MergeTriviaLists(block.CloseBraceToken.TrailingTrivia, doStatement.WhileKeyword.LeadingTrivia));
                     break;
 
                 case SyntaxKind.TryStatement:
                     CheckTrivia(context, block.GetLeadingTrivia());
                     followingToken = block.CloseBraceToken.GetNextToken();
-                    CheckTrivia(context, GetTrailingTriviaList(block.CloseBraceToken, followingToken));
+                    CheckTrivia(context, TriviaHelper.MergeTriviaLists(block.CloseBraceToken.TrailingTrivia, followingToken.LeadingTrivia));
                     break;
 
                 case SyntaxKind.CatchClause:
@@ -114,7 +114,7 @@
                     if ((tryStatement.Catches.Last() != catchClause) || (tryStatement.Finally != null))
                     {
                         followingToken = block.CloseBraceToken.GetNextToken();
-                        CheckTrivia(context, GetTrailingTriviaList(block.CloseBraceToken, followingToken));
+                        CheckTrivia(context, TriviaHelper.MergeTriviaLists(block.CloseBraceToken.TrailingTrivia, followingToken.LeadingTrivia));
                     }
 
                     break;
@@ -143,17 +143,6 @@
                     context.ReportDiagnostic(Diagnostic.Create(SA1109Descriptor, location));
                     break;
             }
-        }
-
-        private static IEnumerable<SyntaxTrivia> GetTrailingTriviaList(SyntaxToken firstToken, SyntaxToken secondToken)
-        {
-            // Merging the SyntaxTriviaLists will clear the syntax tree information that is needed.
-            // Therefore the trivia are combined into a generic collection.
-            var trailingTriviaList = new List<SyntaxTrivia>();
-            trailingTriviaList.AddRange(firstToken.TrailingTrivia);
-            trailingTriviaList.AddRange(secondToken.LeadingTrivia);
-
-            return trailingTriviaList;
         }
     }
 }

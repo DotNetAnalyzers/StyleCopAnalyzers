@@ -64,11 +64,11 @@
     {{
         public void TestMethod(int x, int y)
         {{
-            #region
             {statement}
             {{
+                #region
+                #endregion
             }}
-            #endregion
         }}
     }}
 }}
@@ -81,7 +81,7 @@
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            ////await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -126,12 +126,12 @@
 
         public unsafe void TestMethod(HelperClass x)
         {
-            #region
             fixed (int* p = &x.A)
             {
+                #region
                 *p = 1;
+                #endregion
             }
-            #endregion
         }
     }
 }
@@ -144,7 +144,7 @@
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            ////await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -178,13 +178,13 @@
     {
         public void TestMethod(int x, int y)
         {
-        #region
-        switch (x)
-        {
-            case 1:
-            break;
-        }
-        #endregion
+            switch (x)
+            {
+                #region
+                case 1:
+                break;
+                #endregion
+            }
         }
     }
 }
@@ -197,7 +197,7 @@
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            ////await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -243,6 +243,25 @@
     {
         public void TestMethod(int x, int y)
         {
+            if (x > y)
+            {
+                #region
+                #endregion
+                #region
+                #endregion
+            }
+            else if (x < y)
+            {
+                #region
+                #endregion
+                #region
+                #endregion
+            }
+            else
+            {
+                #region
+                #endregion
+            }
         }
     }
 }
@@ -259,7 +278,7 @@
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            ////await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -294,6 +313,14 @@
     {
         public void TestMethod(int x, int y)
         {
+            do
+            {
+                #region
+                #endregion
+                #region
+                #endregion
+            }
+            while (x < y);
         }
     }
 }
@@ -307,7 +334,7 @@
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            ////await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -358,10 +385,38 @@
 
             var fixedTestCode = @"namespace TestNamespace
 {
+    using System;
+
     public class TestClass
     {
         public void TestMethod(int x, int y)
         {
+            try
+            {
+                #region
+                #endregion
+                #region
+                #endregion
+            }
+            catch (InvalidOperationException ex)
+            {
+                #region
+                #endregion
+                #region
+                #endregion
+            }
+            catch
+            {
+                #region
+                #endregion
+                #region
+                #endregion
+            }
+            finally
+            {
+                #region
+                #endregion
+            }
         }
     }
 }
@@ -380,11 +435,8 @@
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            ////await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
-
-        //// TODO: Test exotic stuff like multiple regions
-        //// TODO: Test SA1124 interaction
 
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
