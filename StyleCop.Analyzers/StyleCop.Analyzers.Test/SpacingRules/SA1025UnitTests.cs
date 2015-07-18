@@ -105,7 +105,6 @@
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-
         }
 
         /// <summary>
