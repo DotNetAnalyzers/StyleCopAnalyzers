@@ -183,7 +183,8 @@
                 break;
             }
 
-            if (identifierNameSyntax.FirstAncestorOrSelf<UsingDirectiveSyntax>() != null)
+            if (identifierNameSyntax.FirstAncestorOrSelf<UsingDirectiveSyntax>() != null
+                && identifierNameSyntax.FirstAncestorOrSelf<TypeArgumentListSyntax>() == null)
             {
                 return;
             }

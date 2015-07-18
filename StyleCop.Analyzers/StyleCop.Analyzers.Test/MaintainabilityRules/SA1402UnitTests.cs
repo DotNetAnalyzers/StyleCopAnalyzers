@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.MaintainabilityRules;
     using TestHelper;
@@ -17,6 +18,8 @@
                 return "class";
             }
         }
+
+        public override bool SupportsCodeFix => true;
 
         [Fact]
         public async Task TestPartialClassesAsync()
@@ -42,10 +45,16 @@ public partial class Bar
 {
 
 }";
+            var fixedCode = @"public partial class Foo
+{
+}
+";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 22);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -65,6 +74,11 @@ public partial class Bar
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1402FileMayOnlyContainASingleClass();
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1402CodeFixProvider();
         }
     }
 }

@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.LayoutRules;
@@ -859,6 +860,32 @@
 ";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that an opening curly bracket at the end of the file will not trigger any diagnostics.
+        /// </summary>
+        /// <remarks>
+        /// <para>This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#981.</para>
+        /// </remarks>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestOpeningBracketAtEndOfFileAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+";
+
+            DiagnosticResult expected = new DiagnosticResult
+            {
+                Id = "CS1513",
+                Message = "} expected",
+                Severity = DiagnosticSeverity.Error,
+            };
+
+            expected = expected.WithLocation(2, 2);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

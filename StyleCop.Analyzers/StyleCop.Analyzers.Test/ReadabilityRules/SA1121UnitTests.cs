@@ -100,6 +100,24 @@
             }
         }
 
+        public static IEnumerable<object[]> AllFullQualifiedTypes
+        {
+            get
+            {
+                foreach (var pair in ReferenceTypesData)
+                {
+                    yield return new[] { pair.Item1, "System." + pair.Item2 };
+                    yield return new[] { pair.Item1, "global::System." + pair.Item2 };
+                }
+
+                foreach (var pair in ValueTypesData)
+                {
+                    yield return new[] { pair.Item1, "System." + pair.Item2 };
+                    yield return new[] { pair.Item1, "global::System." + pair.Item2 };
+                }
+            }
+        }
+
         [Fact]
         public async Task TestEmptySourceAsync()
         {
@@ -540,6 +558,68 @@ public class Foo
     }}
 }}
 }}";
+
+            await this.VerifyCSharpFixAsync(string.Format(testSource, fullName), string.Format(testSource, predefined), cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(AllFullQualifiedTypes))]
+        public async Task TestUsingNameChangeGenericAsync(string predefined, string fullName)
+        {
+            string testCode = @"using System;
+using IntAction = System.Action<{0}>;
+public class Foo
+{{
+}}";
+            DiagnosticResult[] expected =
+                {
+                    this.CSharpDiagnostic().WithLocation(2, 33)
+                };
+
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(AllFullQualifiedTypes))]
+        public async Task TestUsingNameChangeGenericCodeFixAsync(string predefined, string fullName)
+        {
+            string testSource = @"using System;
+using IntAction = System.Action<{0}>;
+public class Foo
+{{
+}}";
+
+            await this.VerifyCSharpFixAsync(string.Format(testSource, fullName), string.Format(testSource, predefined), cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(AllFullQualifiedTypes))]
+        public async Task TestUsingStaticGenericAsync(string predefined, string fullName)
+        {
+            string testCode = @"using System;
+using static StaticGenericClass<{0}>;
+public class Foo
+{{
+}}
+public static class StaticGenericClass<T> {{ }}";
+            DiagnosticResult[] expected =
+                {
+                    this.CSharpDiagnostic().WithLocation(2, 33)
+                };
+
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(AllFullQualifiedTypes))]
+        public async Task TestUsingStaticGenericCodeFixAsync(string predefined, string fullName)
+        {
+            string testSource = @"using System;
+using static StaticGenericClass<{0}>;
+public class Foo
+{{
+}}
+public static class StaticGenericClass<T> {{ }}";
 
             await this.VerifyCSharpFixAsync(string.Format(testSource, fullName), string.Format(testSource, predefined), cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
