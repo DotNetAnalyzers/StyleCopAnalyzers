@@ -107,7 +107,7 @@
                 {
                     if (!XmlCommentHelper.HasDocumentation(typeDeclaration))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, typeDeclaration.Identifier.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, typeDeclaration.Identifier.GetLocation(), ArrayEx.Empty<object>()));
                     }
                 }
             }
@@ -122,7 +122,7 @@
                 {
                     if (!XmlCommentHelper.HasDocumentation(methodDeclaration))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, methodDeclaration.Identifier.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, methodDeclaration.Identifier.GetLocation(), ArrayEx.Empty<object>()));
                     }
                 }
             }

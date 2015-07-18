@@ -4,6 +4,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A closing attribute bracket within a C# element is not spaced correctly.
@@ -91,7 +92,7 @@
             if (hasPrecedingSpace)
             {
                 // Closing attribute brackets must not be preceded by a space.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), ArrayEx.Empty<object>()));
             }
         }
     }

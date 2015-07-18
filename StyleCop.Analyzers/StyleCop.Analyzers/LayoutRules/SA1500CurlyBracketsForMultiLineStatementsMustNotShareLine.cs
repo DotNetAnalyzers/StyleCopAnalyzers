@@ -189,7 +189,7 @@
             {
                 if (previousToken.GetLineSpan().StartLinePosition.Line == line)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), ArrayEx.Empty<object>()));
 
                     // no need to report more than one instance for this token
                     return;
@@ -217,7 +217,7 @@
 
                 if (nextToken.GetLineSpan().StartLinePosition.Line == line)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), ArrayEx.Empty<object>()));
                 }
             }
         }

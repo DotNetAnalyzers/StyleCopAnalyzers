@@ -92,7 +92,7 @@
             {
                 if (firstNonReadonlyFieldLocation.EndLinePosition < location.FieldEndLinePosition)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, location.FieldDeclaration.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, location.FieldDeclaration.GetLocation(), ArrayEx.Empty<object>()));
                 }
             }
         }

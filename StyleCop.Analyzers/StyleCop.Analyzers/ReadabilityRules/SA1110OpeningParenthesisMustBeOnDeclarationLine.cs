@@ -300,7 +300,7 @@
                 openParenLine.IsValid &&
                 openParenLine.StartLinePosition.Line != identifierLine.StartLinePosition.Line)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, openToken.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, openToken.GetLocation(), ArrayEx.Empty<object>()));
             }
         }
 
@@ -312,7 +312,7 @@
                 openParenLine.IsValid &&
                 openParenLine.StartLinePosition.Line != identifierLine.StartLinePosition.Line)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, openToken.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, openToken.GetLocation(), ArrayEx.Empty<object>()));
             }
         }
     }

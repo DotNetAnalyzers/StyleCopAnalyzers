@@ -105,7 +105,7 @@
                 {
                     if (CultureInfo.InvariantCulture.CompareInfo.Compare(previousUsingDirective.Name.ToString(), directive.Name.ToString(), CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreWidth) > 0)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, previousUsingDirective.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, previousUsingDirective.GetLocation(), ArrayEx.Empty<object>()));
                     }
                 }
 

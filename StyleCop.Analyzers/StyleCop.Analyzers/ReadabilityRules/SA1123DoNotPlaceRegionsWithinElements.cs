@@ -7,6 +7,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The C# code contains a region within the body of a code element.
@@ -57,7 +58,7 @@
             if (regionSyntax != null && IsCompletelyContainedInBody(regionSyntax))
             {
                 // Region must not be located within a code element.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, regionSyntax.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, regionSyntax.GetLocation(), ArrayEx.Empty<object>()));
             }
         }
 

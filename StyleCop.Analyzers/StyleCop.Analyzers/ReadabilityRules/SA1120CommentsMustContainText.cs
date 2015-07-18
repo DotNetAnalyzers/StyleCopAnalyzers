@@ -73,7 +73,7 @@
 
             if (string.IsNullOrWhiteSpace(commentText))
             {
-                var diagnostic = Diagnostic.Create(Descriptor, multiLineComment.GetLocation());
+                var diagnostic = Diagnostic.Create(Descriptor, multiLineComment.GetLocation(), ArrayEx.Empty<object>());
                 context.ReportDiagnostic(diagnostic);
             }
         }
@@ -101,7 +101,7 @@
 
             if (IsNullOrWhiteSpace(singleLineComment.ToString(), 2))
             {
-                var diagnostic = Diagnostic.Create(Descriptor, singleLineComment.GetLocation());
+                var diagnostic = Diagnostic.Create(Descriptor, singleLineComment.GetLocation(), ArrayEx.Empty<object>());
                 context.ReportDiagnostic(diagnostic);
             }
         }

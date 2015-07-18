@@ -100,7 +100,7 @@
                 {
                     foreach (var location in diagnosticLocations)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, location, ArrayEx.Empty<object>()));
                     }
                 }
             }

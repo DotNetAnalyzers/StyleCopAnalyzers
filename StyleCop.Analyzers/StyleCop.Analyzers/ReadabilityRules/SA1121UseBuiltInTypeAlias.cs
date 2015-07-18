@@ -265,7 +265,7 @@
             }
 
             // Use built-in type alias
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, locationNode.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, locationNode.GetLocation(), ArrayEx.Empty<object>()));
         }
 
         private bool IsNameInNameOfExpression(IdentifierNameSyntax identifierNameSyntax)

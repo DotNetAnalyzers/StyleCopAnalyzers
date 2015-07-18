@@ -5,6 +5,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A call to a C# anonymous method does not contain any method parameters, yet the statement still includes
@@ -81,7 +82,7 @@
             }
 
             // Remove delegate parenthesis when possible
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.ParameterList.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.ParameterList.GetLocation(), ArrayEx.Empty<object>()));
         }
     }
 }

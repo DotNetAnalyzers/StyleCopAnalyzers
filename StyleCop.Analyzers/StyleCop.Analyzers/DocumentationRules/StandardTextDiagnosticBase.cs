@@ -95,7 +95,7 @@
 
             if (reportDiagnostic)
             {
-                context.ReportDiagnostic(Diagnostic.Create(this.DiagnosticDescriptor, summaryElement.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(this.DiagnosticDescriptor, summaryElement.GetLocation(), ArrayEx.Empty<object>()));
             }
 
             // TODO: be more specific about the type of error when possible

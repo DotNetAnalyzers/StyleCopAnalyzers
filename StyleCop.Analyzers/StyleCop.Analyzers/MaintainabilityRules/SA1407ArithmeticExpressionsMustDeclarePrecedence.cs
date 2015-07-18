@@ -5,6 +5,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A C# statement contains a complex arithmetic expression which omits parenthesis around operators.
@@ -87,7 +88,7 @@
 
                     if (!this.IsSameFamily(binSyntax.OperatorToken, left.OperatorToken))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, left.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, left.GetLocation(), ArrayEx.Empty<object>()));
                     }
                 }
 
@@ -98,7 +99,7 @@
 
                     if (!this.IsSameFamily(binSyntax.OperatorToken, right.OperatorToken))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, right.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, right.GetLocation(), ArrayEx.Empty<object>()));
                     }
                 }
             }

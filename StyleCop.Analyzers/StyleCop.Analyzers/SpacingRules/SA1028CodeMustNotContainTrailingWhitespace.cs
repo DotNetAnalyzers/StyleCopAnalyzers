@@ -6,6 +6,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Discovers any C# lines of code with trailing whitespace.
@@ -95,7 +96,7 @@
 
                     if (reportWarning)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, trivia.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, trivia.GetLocation(), ArrayEx.Empty<object>()));
                     }
 
                     break;
@@ -103,7 +104,7 @@
                     TextSpan trailingWhitespace = FindTrailingWhitespace(text, trivia.Span);
                     if (!trailingWhitespace.IsEmpty)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, trailingWhitespace)));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, trailingWhitespace), ArrayEx.Empty<object>()));
                     }
 
                     break;
@@ -115,7 +116,7 @@
                         trailingWhitespace = FindTrailingWhitespace(text, line.Span);
                         if (!trailingWhitespace.IsEmpty)
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, trailingWhitespace)));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, trailingWhitespace), ArrayEx.Empty<object>()));
                         }
 
                         if (line.EndIncludingLineBreak == text.Length)
@@ -142,7 +143,7 @@
                     trailingWhitespace = FindTrailingWhitespace(text, trivia.Span);
                     if (!trailingWhitespace.IsEmpty)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, trailingWhitespace)));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, trailingWhitespace), ArrayEx.Empty<object>()));
                     }
 
                     break;

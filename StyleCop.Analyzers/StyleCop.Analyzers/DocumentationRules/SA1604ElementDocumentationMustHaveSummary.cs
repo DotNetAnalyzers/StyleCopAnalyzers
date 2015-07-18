@@ -4,6 +4,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The XML header documentation for a C# element is missing a <c>&lt;summary&gt;</c> tag.
@@ -51,7 +52,7 @@
             {
                 foreach (var location in diagnosticLocations)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, location, ArrayEx.Empty<object>()));
                 }
             }
         }

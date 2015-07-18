@@ -5,6 +5,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A C# statement contains parenthesis which are unnecessary and should be removed.
@@ -150,9 +151,9 @@
 
         private static void ReportDiagnostic(SyntaxNodeAnalysisContext context, ParenthesizedExpressionSyntax node)
         {
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, node.GetLocation()));
-            context.ReportDiagnostic(Diagnostic.Create(ParenthesisDescriptor, node.OpenParenToken.GetLocation()));
-            context.ReportDiagnostic(Diagnostic.Create(ParenthesisDescriptor, node.CloseParenToken.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, node.GetLocation(), ArrayEx.Empty<object>()));
+            context.ReportDiagnostic(Diagnostic.Create(ParenthesisDescriptor, node.OpenParenToken.GetLocation(), ArrayEx.Empty<object>()));
+            context.ReportDiagnostic(Diagnostic.Create(ParenthesisDescriptor, node.CloseParenToken.GetLocation(), ArrayEx.Empty<object>()));
         }
     }
 }

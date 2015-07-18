@@ -76,7 +76,7 @@
             {
                 if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation(), ArrayEx.Empty<object>()));
                 }
             }
         }
@@ -95,7 +95,7 @@
             {
                 if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation(), ArrayEx.Empty<object>()));
                 }
             }
         }
@@ -108,7 +108,7 @@
             {
                 if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation(), ArrayEx.Empty<object>()));
                 }
             }
         }
@@ -121,7 +121,7 @@
             {
                 if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation(), ArrayEx.Empty<object>()));
                 }
             }
         }
@@ -140,7 +140,7 @@
             {
                 if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation(), ArrayEx.Empty<object>()));
                 }
             }
         }
@@ -159,7 +159,7 @@
             {
                 if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.ThisKeyword.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.ThisKeyword.GetLocation(), ArrayEx.Empty<object>()));
                 }
             }
         }
@@ -176,7 +176,7 @@
                     var locations = variableDeclaration.Variables.Select(v => v.Identifier.GetLocation());
                     foreach (var location in locations)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, location, ArrayEx.Empty<object>()));
                     }
                 }
             }
@@ -192,7 +192,7 @@
             {
                 if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation(), ArrayEx.Empty<object>()));
                 }
             }
         }
@@ -211,7 +211,7 @@
             {
                 if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation(), ArrayEx.Empty<object>()));
                 }
             }
         }
@@ -235,7 +235,7 @@
                     var locations = variableDeclaration.Variables.Select(v => v.Identifier.GetLocation());
                     foreach (var location in locations)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, location, ArrayEx.Empty<object>()));
                     }
                 }
             }

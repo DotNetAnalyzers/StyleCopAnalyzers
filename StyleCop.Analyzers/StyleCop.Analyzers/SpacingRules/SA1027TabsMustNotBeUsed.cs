@@ -4,6 +4,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The C# code contains a tab character.
@@ -76,7 +77,7 @@
             }
 
             // Tabs must not be used.
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, trivia.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, trivia.GetLocation(), ArrayEx.Empty<object>()));
         }
     }
 }

@@ -83,7 +83,7 @@
 
                     if (returnsElement != null)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, returnsElement.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, returnsElement.GetLocation(), ArrayEx.Empty<object>()));
                     }
                 }
             }

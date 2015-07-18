@@ -5,6 +5,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// An add accessor appears after a remove accessor within an event.
@@ -85,7 +86,7 @@
             if (accessors[0].Kind() == SyntaxKind.RemoveAccessorDeclaration &&
                 accessors[1].Kind() == SyntaxKind.AddAccessorDeclaration)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, accessors[0].Keyword.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, accessors[0].Keyword.GetLocation(), ArrayEx.Empty<object>()));
             }
         }
     }

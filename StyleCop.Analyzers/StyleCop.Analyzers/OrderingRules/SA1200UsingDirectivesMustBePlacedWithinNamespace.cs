@@ -7,6 +7,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A C# using directive is placed outside of a namespace element.
@@ -217,7 +218,7 @@
             foreach (var directive in usingDirectives)
             {
                 // Using directive must appear within a namespace declaration
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, directive.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, directive.GetLocation(), ArrayEx.Empty<object>()));
             }
         }
     }

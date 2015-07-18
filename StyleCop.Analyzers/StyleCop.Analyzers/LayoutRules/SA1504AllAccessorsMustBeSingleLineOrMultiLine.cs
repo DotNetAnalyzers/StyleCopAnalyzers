@@ -105,7 +105,7 @@
             if (accessorsAnalyzeResult.SingleLineAccessors.Count == 1
                 && accessorsAnalyzeResult.MultiLineAccessors.Count == 1)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, accessorsAnalyzeResult.SingleLineAccessors.Single().Keyword.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, accessorsAnalyzeResult.SingleLineAccessors.Single().Keyword.GetLocation(), ArrayEx.Empty<object>()));
             }
         }
 

@@ -100,7 +100,7 @@
                 var argument = attributeArgumentList.Arguments[i];
                 if (this.CheckIfArgumentIsMultiline(argument))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation(), ArrayEx.Empty<object>()));
                 }
             }
         }
@@ -115,7 +115,7 @@
                 if (this.CheckIfArgumentIsMultiline(argument)
                     && !this.IsArgumentOnExceptionList(argument.Expression))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation(), ArrayEx.Empty<object>()));
                 }
             }
         }

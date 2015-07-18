@@ -240,7 +240,7 @@
 
                     if (previousNode.GetEndLine() < nodeOrToken.GetLineSpan().StartLinePosition.Line)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, nodeOrToken.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, nodeOrToken.GetLocation(), ArrayEx.Empty<object>()));
                     }
                 }
             }
