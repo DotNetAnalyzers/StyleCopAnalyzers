@@ -2,11 +2,13 @@
 {
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1016OpeningAttributeBracketsMustBeSpacedCorrectly"/>.
@@ -32,10 +34,8 @@
         }
 
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1016OpeningAttributeBracketsMustBeSpacedCorrectly.DiagnosticId))
@@ -43,33 +43,37 @@
                     continue;
                 }
 
-                SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (!token.IsKind(SyntaxKind.OpenBracketToken))
-                {
-                    continue;
-                }
-
-                if (token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia))
-                {
-                    continue;
-                }
-
-                if (!token.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
-                {
-                    continue;
-                }
-
-                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1016CodeFix, t => GetTransformedDocumentAsync(context.Document, root, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1016CodeFix, cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken)), diagnostic);
             }
+
+            return SpecializedTasks.CompletedTask;
         }
 
-        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxToken token)
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
+            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+
+            SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
+            if (!token.IsKind(SyntaxKind.OpenBracketToken))
+            {
+                return document;
+            }
+
+            if (token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia))
+            {
+                return document;
+            }
+
+            if (!token.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
+            {
+                return document;
+            }
+
             SyntaxToken corrected = token.WithoutTrailingWhitespace().WithoutFormatting();
             SyntaxNode transformed = root.ReplaceToken(token, corrected);
             Document updatedDocument = document.WithSyntaxRoot(transformed);
 
-            return Task.FromResult(updatedDocument);
+            return updatedDocument;
         }
     }
 }
