@@ -103,7 +103,7 @@
 
         public static XmlCrefAttributeSyntax CrefAttribute(CrefSyntax cref, SyntaxKind quoteKind)
         {
-            cref = cref.ReplaceTokens(cref.DescendantTokens(), ReplaceBracketTokens);
+            cref = cref.ReplaceTokens(cref.DescendantTokens(), (original, maybeRewritten) => ReplaceBracketTokens(original, maybeRewritten));
             return SyntaxFactory.XmlCrefAttribute(
                 SyntaxFactory.XmlName(XmlCommentHelper.CrefArgumentName),
                 SyntaxFactory.Token(quoteKind),

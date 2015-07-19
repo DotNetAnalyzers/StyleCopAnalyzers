@@ -87,10 +87,10 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandlePropertyDeclaration, SyntaxKind.PropertyDeclaration, SyntaxKind.IndexerDeclaration, SyntaxKind.EventDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandlePropertyDeclaration, SyntaxKind.PropertyDeclaration, SyntaxKind.IndexerDeclaration, SyntaxKind.EventDeclaration);
         }
 
-        private void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
         {
             var property = (BasePropertyDeclarationSyntax)context.Node;
 
@@ -101,7 +101,7 @@
                 return;
             }
 
-            var accessorsAnalyzeResult = this.AnalyzeAccessorsLineSpans(property.AccessorList.Accessors);
+            var accessorsAnalyzeResult = AnalyzeAccessorsLineSpans(property.AccessorList.Accessors);
             if (accessorsAnalyzeResult.SingleLineAccessors.Count == 1
                 && accessorsAnalyzeResult.MultiLineAccessors.Count == 1)
             {
@@ -109,7 +109,7 @@
             }
         }
 
-        private AccessorsAnalysisResult AnalyzeAccessorsLineSpans(IEnumerable<AccessorDeclarationSyntax> accessors)
+        private static AccessorsAnalysisResult AnalyzeAccessorsLineSpans(SyntaxList<AccessorDeclarationSyntax> accessors)
         {
             var result = new AccessorsAnalysisResult();
 

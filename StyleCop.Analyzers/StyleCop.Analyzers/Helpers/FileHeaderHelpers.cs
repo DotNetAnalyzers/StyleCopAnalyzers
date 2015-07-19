@@ -55,7 +55,8 @@
                     fileHeaderStart = Math.Min(trivia.FullSpan.Start, fileHeaderStart);
                     fileHeaderEnd = trivia.FullSpan.End;
 
-                    sb.AppendLine(commentString.Substring(2));
+                    sb.Append(commentString, 2, commentString.Length - 2);
+                    sb.AppendLine();
                     break;
                 case SyntaxKind.EndOfLineTrivia:
                     endOfLineCount++;

@@ -43,7 +43,8 @@
             else if (nameSyntax.IsKind(SyntaxKind.GenericName))
             {
                 var genericNameSyntax = (GenericNameSyntax)nameSyntax;
-                builder.AppendFormat("{0}{1}", genericNameSyntax.Identifier.ValueText, genericNameSyntax.TypeArgumentList.ToString());
+                builder.Append(genericNameSyntax.Identifier.ValueText);
+                builder.Append(genericNameSyntax.TypeArgumentList.ToString());
             }
             else if (nameSyntax.IsKind(SyntaxKind.AliasQualifiedName))
             {

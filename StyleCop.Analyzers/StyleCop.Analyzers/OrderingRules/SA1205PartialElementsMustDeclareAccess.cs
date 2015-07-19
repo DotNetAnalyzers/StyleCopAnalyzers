@@ -1,7 +1,6 @@
 ﻿namespace StyleCop.Analyzers.OrderingRules
 {
     using System.Collections.Immutable;
-    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -44,26 +43,22 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleElementDeclaration, SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleElementDeclaration, SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.InterfaceDeclaration);
         }
 
-        private void HandleElementDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleElementDeclaration(SyntaxNodeAnalysisContext context)
         {
             var typeDeclarationNode = (TypeDeclarationSyntax)context.Node;
+            var modifiers = typeDeclarationNode.Modifiers;
 
-            if (ContainsModifier(typeDeclarationNode.Modifiers, SyntaxKind.PartialKeyword))
+            if (modifiers.Any(SyntaxKind.PartialKeyword))
             {
-                if (!ContainsModifier(typeDeclarationNode.Modifiers, SyntaxKind.PublicKeyword) &&
-                    !ContainsModifier(typeDeclarationNode.Modifiers, SyntaxKind.InternalKeyword))
+                if (!modifiers.Any(SyntaxKind.PublicKeyword) &&
+                    !modifiers.Any(SyntaxKind.InternalKeyword))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, typeDeclarationNode.Identifier.GetLocation()));
                 }
             }
-        }
-
-        private static bool ContainsModifier(SyntaxTokenList modifiers, SyntaxKind expectedKeyword)
-        {
-            return modifiers.Any(modifier => modifier.Kind() == expectedKeyword);
         }
     }
 }

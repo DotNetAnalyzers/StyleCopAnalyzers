@@ -66,12 +66,10 @@
 
         private static void HandleMultiLineComment(SyntaxTreeAnalysisContext context, SyntaxTrivia multiLineComment)
         {
-            var nodeText = multiLineComment.ToString();
+            var commentText = multiLineComment.ToString();
 
-            // We remove the /* and the */ and determine if the comment has any content.
-            var commentText = nodeText.Substring(2, nodeText.Length - 4);
-
-            if (string.IsNullOrWhiteSpace(commentText))
+            // We and determine if the comment has any content between /* and */
+            if (IsNullOrWhiteSpace(commentText, 2, commentText.Length - 4))
             {
                 var diagnostic = Diagnostic.Create(Descriptor, multiLineComment.GetLocation());
                 context.ReportDiagnostic(diagnostic);
@@ -99,21 +97,22 @@
                 }
             }
 
-            if (IsNullOrWhiteSpace(singleLineComment.ToString(), 2))
+            string commentText = singleLineComment.ToString();
+            if (IsNullOrWhiteSpace(commentText, 2, commentText.Length - 2))
             {
                 var diagnostic = Diagnostic.Create(Descriptor, singleLineComment.GetLocation());
                 context.ReportDiagnostic(diagnostic);
             }
         }
 
-        private static bool IsNullOrWhiteSpace(string value, int startIndex)
+        private static bool IsNullOrWhiteSpace(string value, int startIndex, int count)
         {
             if (value == null)
             {
                 return true;
             }
 
-            for (int i = startIndex; i < value.Length; i++)
+            for (int i = startIndex, length = startIndex + count; i < length; i++)
             {
                 if (!char.IsWhiteSpace(value[i]))
                 {
