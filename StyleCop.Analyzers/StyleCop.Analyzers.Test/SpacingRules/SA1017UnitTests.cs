@@ -41,13 +41,18 @@ class ClassName
 
 [System.Obsolete
 ]
-class ClassName3
+class ClassName2
 {
 }
 
 [System.Obsolete
  ]
-class ClassName4
+class ClassName3
+{
+}
+
+[System.Obsolete /*comment*/]
+class ClassNam4
 {
 }
 
@@ -86,6 +91,11 @@ class ClassName
 class ClassName2
 {
 }
+
+[System.Obsolete /*comment*/ ]
+class ClassNam3
+{
+}
 ";
             var fixedCode = @"
 [System.Obsolete]
@@ -97,12 +107,18 @@ class ClassName
 class ClassName2
 {
 }
+
+[System.Obsolete/*comment*/]
+class ClassNam3
+{
+}
 ";
 
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(2, 18),
                 this.CSharpDiagnostic().WithLocation(7, 19),
+                this.CSharpDiagnostic().WithLocation(12, 30),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

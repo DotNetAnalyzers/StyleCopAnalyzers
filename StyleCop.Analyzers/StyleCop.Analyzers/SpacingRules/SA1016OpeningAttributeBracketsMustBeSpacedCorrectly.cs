@@ -4,6 +4,8 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
+
 
     /// <summary>
     /// An opening attribute bracket within a C# element is not spaced correctly.
@@ -78,7 +80,17 @@
                 return;
             }
 
-            if (!token.HasTrailingTrivia || token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia))
+            if (token.IsLastInLine())
+            {
+                return;
+            }
+
+            if (!token.HasTrailingTrivia)
+            {
+                return;
+            }
+
+            if (!token.TrailingTrivia[0].IsKind(SyntaxKind.WhitespaceTrivia))
             {
                 return;
             }
