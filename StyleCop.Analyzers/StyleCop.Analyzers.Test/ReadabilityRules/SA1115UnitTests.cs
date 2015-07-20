@@ -36,7 +36,7 @@ int k)
             DiagnosticResult expected1 = this.CSharpDiagnostic().WithLocation(6, 1);
             DiagnosticResult expected2 = this.CSharpDiagnostic().WithLocation(8, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, new []{ expected1, expected2 }, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, new[] { expected1, expected2 }, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -295,7 +295,7 @@ class Foo
             DiagnosticResult expected1 = this.CSharpDiagnostic().WithLocation(12, 1);
             DiagnosticResult expected2 = this.CSharpDiagnostic().WithLocation(14, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, new [] { expected1, expected2 }, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, new[] { expected1, expected2 }, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
