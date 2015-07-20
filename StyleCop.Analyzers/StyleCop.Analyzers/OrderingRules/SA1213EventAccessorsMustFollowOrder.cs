@@ -68,7 +68,7 @@
 
         private void HandleEventDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var eventDeclaration = (EventDeclarationSyntax) context.Node;
+            var eventDeclaration = (EventDeclarationSyntax)context.Node;
 
             if (eventDeclaration?.AccessorList == null)
             {
