@@ -20,7 +20,7 @@
         /// <param name="syntax">The <see cref="XmlElementSyntax"/> or <see cref="XmlEmptyElementSyntax"/> of the node
         /// to examine.</param>
         /// <param name="diagnosticLocations">The location(s) where diagnostics, if any, should be reported.</param>
-        abstract protected void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, params Location[] diagnosticLocations);
+        protected abstract void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, params Location[] diagnosticLocations);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
