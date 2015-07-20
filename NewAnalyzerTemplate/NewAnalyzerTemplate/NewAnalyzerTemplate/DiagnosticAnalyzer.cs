@@ -33,8 +33,8 @@ namespace NewAnalyzerTemplate
             }
         }
 
-        //The Initialize method is used to register methods to perform analysis of the Syntax Tree or Semantic Model when there is a change to the SyntaxTree or Semantic Model
-        //The AnalysisContext parameter has members that facilitate the registering mentioned above
+        //The Initialize method is used to register methods to perform analysis of the Syntax Tree when there is a change to the Syntax Tree
+        //The AnalysisContext parameter has members, such as RegisterSyntaxNodeAction, that perform the registering mentioned above
         public override void Initialize(AnalysisContext context)
         {
             
