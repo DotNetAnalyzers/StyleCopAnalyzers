@@ -2,11 +2,11 @@
 {
     using System.Collections.Immutable;
     using System.Linq;
+    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Helpers;
 
     /// <summary>
     /// The <c>&lt;summary&gt;</c> or <c>&lt;content&gt;</c> tag within the documentation header for a C# code element

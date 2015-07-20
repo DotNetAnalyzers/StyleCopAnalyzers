@@ -56,7 +56,7 @@
 
         private void HandleInterfaceDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            var interfaceDeclaration = (InterfaceDeclarationSyntax) context.Node;
+            var interfaceDeclaration = (InterfaceDeclarationSyntax)context.Node;
             if (interfaceDeclaration.Identifier.IsMissing)
             {
                 return;
