@@ -49,6 +49,7 @@ public class Foo
         {
             get
             {
+                yield return string.Empty;
                 yield return "protected";
                 yield return "internal";
                 yield return "protected internal";
