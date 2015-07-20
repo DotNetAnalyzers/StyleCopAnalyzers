@@ -84,6 +84,7 @@
                 if (childToken.IsKind(SyntaxKind.ProtectedKeyword) && internalKeywordFound)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, childToken.GetLocation()));
+                    break;
                 }
             }
         }
