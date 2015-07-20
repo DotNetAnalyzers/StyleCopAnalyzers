@@ -1,7 +1,10 @@
 ﻿namespace StyleCop.Analyzers.OrderingRules
 {
+    using System;
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -24,12 +27,12 @@
         /// </summary>
         public const string DiagnosticId = "SA1207";
         private const string Title = "Protected must come before internal";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "The keyword 'protected' must come before 'internal'.";
         private const string Description = "The keyword 'protected' is positioned after the keyword 'internal' within the declaration of a protected internal C# element.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1207.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -46,7 +49,46 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeActionHonorExclusions(
+                this.HandleDeclaration,
+                SyntaxKind.ClassDeclaration,
+                SyntaxKind.DelegateDeclaration,
+                SyntaxKind.EventDeclaration,
+                SyntaxKind.EventFieldDeclaration,
+                SyntaxKind.FieldDeclaration,
+                SyntaxKind.IndexerDeclaration,
+                SyntaxKind.InterfaceDeclaration,
+                SyntaxKind.MethodDeclaration,
+                SyntaxKind.PropertyDeclaration,
+                SyntaxKind.StructDeclaration);
+        }
+
+        private void HandleDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            // TODO: Should we do null checking? It's not covered in a test, because (this version of) Roslyn never returns null.
+            var childTokens = context.Node?.ChildTokens()?.ToArray();
+            if (childTokens == null)
+            {
+                return;
+            }
+
+            var firstProtectedKeyworkIndex = Array.FindIndex(childTokens, token => token.IsKind(SyntaxKind.ProtectedKeyword));
+            if (firstProtectedKeyworkIndex < 0)
+            {
+                return;
+            }
+
+            var firstInternalKeyworkIndex = Array.FindIndex(childTokens, token => token.IsKind(SyntaxKind.InternalKeyword));
+            if (firstInternalKeyworkIndex < 0)
+            {
+                return;
+            }
+
+            if (firstProtectedKeyworkIndex > firstInternalKeyworkIndex)
+            {
+                var firstProtectedKeyword = childTokens[firstProtectedKeyworkIndex];
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstProtectedKeyword.GetLocation()));
+            }
         }
     }
 }
