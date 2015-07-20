@@ -2,6 +2,7 @@
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -24,12 +25,12 @@
         /// </summary>
         public const string DiagnosticId = "SA1207";
         private const string Title = "Protected must come before internal";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "The keyword 'protected' must come before 'internal'.";
         private const string Description = "The keyword 'protected' is positioned after the keyword 'internal' within the declaration of a protected internal C# element.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1207.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -46,7 +47,43 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterSyntaxNodeActionHonorExclusions(
+                HandleDeclaration,
+                SyntaxKind.ClassDeclaration,
+                SyntaxKind.DelegateDeclaration,
+                SyntaxKind.EventDeclaration,
+                SyntaxKind.EventFieldDeclaration,
+                SyntaxKind.FieldDeclaration,
+                SyntaxKind.IndexerDeclaration,
+                SyntaxKind.InterfaceDeclaration,
+                SyntaxKind.MethodDeclaration,
+                SyntaxKind.PropertyDeclaration,
+                SyntaxKind.StructDeclaration);
+        }
+
+        private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var childTokens = context.Node?.ChildTokens();
+            if (childTokens == null)
+            {
+                return;
+            }
+
+            bool internalKeywordFound = false;
+            foreach (var childToken in childTokens)
+            {
+                if (childToken.IsKind(SyntaxKind.InternalKeyword))
+                {
+                    internalKeywordFound = true;
+                    continue;
+                }
+
+                if (childToken.IsKind(SyntaxKind.ProtectedKeyword) && internalKeywordFound)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, childToken.GetLocation()));
+                    break;
+                }
+            }
         }
     }
 }
