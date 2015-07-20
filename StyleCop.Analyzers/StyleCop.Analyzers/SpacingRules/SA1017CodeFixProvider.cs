@@ -2,6 +2,7 @@
 {
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
@@ -33,10 +34,8 @@
         }
 
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1017ClosingAttributeBracketsMustBeSpacedCorrectly.DiagnosticId))
@@ -44,34 +43,38 @@
                     continue;
                 }
 
-                SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (!token.IsKind(SyntaxKind.CloseBracketToken))
-                {
-                    continue;
-                }
-
-                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1017CodeFix, t => GetTransformedDocumentAsync(context.Document, root, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1017CodeFix, cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken)), diagnostic);
             }
+
+            return SpecializedTasks.CompletedTask;
         }
 
-        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxToken token)
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
+            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+
+            SyntaxToken token = root.FindToken(diagnostic.Location.SourceSpan.Start);
+            if (!token.IsKind(SyntaxKind.CloseBracketToken))
+            {
+                return document;
+            }
+
             if (token.IsFirstInLine())
             {
-                return Task.FromResult(document);
+                return document;
             }
 
             SyntaxToken precedingToken = token.GetPreviousToken();
             if (!precedingToken.TrailingTrivia.Any(SyntaxKind.WhitespaceTrivia))
             {
-                return Task.FromResult(document);
+                return document;
             }
 
             SyntaxToken corrected = precedingToken.WithoutTrailingWhitespace().WithoutFormatting();
             SyntaxNode transformed = root.ReplaceToken(precedingToken, corrected);
             Document updatedDocument = document.WithSyntaxRoot(transformed);
 
-            return Task.FromResult(updatedDocument);
+            return updatedDocument;
         }
     }
 }

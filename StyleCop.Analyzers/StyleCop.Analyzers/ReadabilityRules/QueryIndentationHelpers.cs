@@ -16,7 +16,6 @@
         /// <param name="indentationOptions">The indentation options to use.</param>
         /// <param name="queryExpression">The query expression to determine indentation from.</param>
         /// <returns>A whitespace trivia containing the proper amount of indentation.</returns>
-
         internal static SyntaxTrivia GetQueryIndentationTrivia(IndentationOptions indentationOptions, QueryExpressionSyntax queryExpression)
         {
             var firstTokenOnTextLine = IndentationHelper.GetFirstTokenOnTextLine(queryExpression.FromClause.FromKeyword);

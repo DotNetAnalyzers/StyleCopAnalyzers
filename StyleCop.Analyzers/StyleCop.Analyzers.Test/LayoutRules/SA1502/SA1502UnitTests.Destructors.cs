@@ -149,7 +149,7 @@
 }";
             var fixedTestCode = @"public class Foo
 {
-    ~Foo()
+    ~Foo() 
     {
         int bar;
     }

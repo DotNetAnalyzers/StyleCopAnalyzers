@@ -3,9 +3,9 @@
     using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
     /// A Code Analysis SuppressMessage attribute does not include a justification.

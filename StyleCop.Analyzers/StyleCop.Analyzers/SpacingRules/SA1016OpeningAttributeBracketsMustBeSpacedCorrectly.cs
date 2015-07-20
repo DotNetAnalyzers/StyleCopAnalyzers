@@ -4,6 +4,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// An opening attribute bracket within a C# element is not spaced correctly.
@@ -29,7 +30,7 @@
         private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1016.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -46,10 +47,10 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
         }
 
-        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
@@ -57,7 +58,7 @@
                 switch (token.Kind())
                 {
                 case SyntaxKind.OpenBracketToken:
-                    this.HandleOpenBracketToken(context, token);
+                    HandleOpenBracketToken(context, token);
                     break;
 
                 default:
@@ -66,7 +67,7 @@
             }
         }
 
-        private void HandleOpenBracketToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private static void HandleOpenBracketToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
             {
@@ -78,7 +79,17 @@
                 return;
             }
 
-            if (!token.HasTrailingTrivia || token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia))
+            if (token.IsLastInLine())
+            {
+                return;
+            }
+
+            if (!token.HasTrailingTrivia)
+            {
+                return;
+            }
+
+            if (!token.TrailingTrivia[0].IsKind(SyntaxKind.WhitespaceTrivia))
             {
                 return;
             }

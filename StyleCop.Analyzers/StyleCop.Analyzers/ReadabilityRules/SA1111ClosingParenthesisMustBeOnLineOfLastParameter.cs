@@ -76,7 +76,7 @@
 
         private void HandleArrayCreation(SyntaxNodeAnalysisContext context)
         {
-            var arrayCreation = (ArrayCreationExpressionSyntax) context.Node;
+            var arrayCreation = (ArrayCreationExpressionSyntax)context.Node;
 
             if (arrayCreation.Type == null)
             {
@@ -144,7 +144,7 @@
 
         private void HandleAnonymousMethod(SyntaxNodeAnalysisContext context)
         {
-            var anonymousMethod = (AnonymousMethodExpressionSyntax) context.Node;
+            var anonymousMethod = (AnonymousMethodExpressionSyntax)context.Node;
 
             if (anonymousMethod.ParameterList == null ||
                 anonymousMethod.ParameterList.IsMissing ||
@@ -166,7 +166,7 @@
 
         private void HandleAttribute(SyntaxNodeAnalysisContext context)
         {
-            var attribute = (AttributeSyntax) context.Node;
+            var attribute = (AttributeSyntax)context.Node;
 
             if (attribute.ArgumentList == null ||
                 attribute.ArgumentList.IsMissing ||
@@ -188,7 +188,7 @@
 
         private void HandleDelegateDeclarationExpression(SyntaxNodeAnalysisContext context)
         {
-            var delegateDeclaration = (DelegateDeclarationSyntax) context.Node;
+            var delegateDeclaration = (DelegateDeclarationSyntax)context.Node;
 
             if (delegateDeclaration.ParameterList == null ||
                 delegateDeclaration.ParameterList.IsMissing ||
@@ -210,7 +210,7 @@
 
         private void HandleElementAccessExpression(SyntaxNodeAnalysisContext context)
         {
-            var elementAccess = (ElementAccessExpressionSyntax) context.Node;
+            var elementAccess = (ElementAccessExpressionSyntax)context.Node;
 
             if (elementAccess.ArgumentList == null ||
                 elementAccess.ArgumentList.IsMissing ||
@@ -244,7 +244,7 @@
 
         private void HandleInvocationExpression(SyntaxNodeAnalysisContext context)
         {
-            var invocationExpression = (InvocationExpressionSyntax) context.Node;
+            var invocationExpression = (InvocationExpressionSyntax)context.Node;
 
             if (invocationExpression.ArgumentList == null ||
                 invocationExpression.ArgumentList.IsMissing ||
@@ -267,7 +267,7 @@
 
         private void HandleObjectCreationExpression(SyntaxNodeAnalysisContext context)
         {
-            var objectCreation = (ObjectCreationExpressionSyntax) context.Node;
+            var objectCreation = (ObjectCreationExpressionSyntax)context.Node;
 
             if (objectCreation.ArgumentList == null ||
                 objectCreation.ArgumentList.IsMissing ||

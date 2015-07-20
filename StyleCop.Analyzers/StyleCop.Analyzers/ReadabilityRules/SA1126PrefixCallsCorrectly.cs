@@ -9,6 +9,8 @@
     /// prefix to indicate the intended method call, within a C# code file.
     /// </summary>
     /// <remarks>
+    /// <para>This diagnostic is not implemented in StyleCopAnalyzers.</para>
+    ///
     /// <para>A violation of this rule occurs whenever the code contains a call to a member which is not prefixed
     /// correctly.</para>
     ///
@@ -16,6 +18,7 @@
     /// <c>this</c>, <c>base</c>, <c>object</c>, the typename of the class we're in, or one of our base classes.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    [NoDiagnostic("Roslyn provides the ability to create well-defined rules for specific use cases, removing the need for this vaguely-worded diagnostic.")]
     public class SA1126PrefixCallsCorrectly : DiagnosticAnalyzer
     {
         /// <summary>
@@ -28,7 +31,7 @@
         private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1126.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledByDefault, Description, HelpLink, WellKnownDiagnosticTags.NotConfigurable);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -45,7 +48,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            // This diagnostic is not implemented (by design) in StyleCopAnalyzers.
         }
     }
 }

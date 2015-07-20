@@ -1,12 +1,9 @@
 ﻿namespace StyleCop.Analyzers.Test.DocumentationRules
 {
-    using System;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
     using TestHelper;
@@ -449,27 +446,6 @@ internal abstract class CustomizableBlockSubscriberBase<TSource, TTarget, TSubsc
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// This is a regression test for
-        /// <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/780">DotNetAnalyzers/StyleCopAnalyzers#780</see>.
-        /// </summary>
-        /// <remarks>
-        /// If this test starts to fail, it means the underlying issue with
-        /// <see cref="SeparatedSyntaxList{TNode}.ReplaceSeparator"/> has been fixed, so code in this project using explicit
-        /// manipulation of lists returned by <see cref="SeparatedSyntaxList{TNode}.GetWithSeparators"/> should be
-        /// updated to use <see cref="SeparatedSyntaxList{T}.ReplaceSeparator"/> instead.
-        /// </remarks>
-        [Fact]
-        public void TestIssue780WorkaroundRequired()
-        {
-            var x = SyntaxFactory.IdentifierName("x");
-            var separatedList = SyntaxFactory.SeparatedList<SyntaxNode>(new[] { x, x, x });
-            var separatorToReplace = separatedList.GetSeparator(1);
-            ArgumentException exception = Assert.Throws<ArgumentException>(() => separatedList.ReplaceSeparator(separatorToReplace, separatorToReplace));
-            Assert.Equal("separatorToken", exception.Message);
-            Assert.Null(exception.ParamName);
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

@@ -4,6 +4,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A closing attribute bracket within a C# element is not spaced correctly.
@@ -28,7 +29,7 @@
         private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1017.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -45,10 +46,10 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
         }
 
-        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
@@ -56,7 +57,7 @@
                 switch (token.Kind())
                 {
                 case SyntaxKind.CloseBracketToken:
-                    this.HandleCloseBracketToken(context, token);
+                    HandleCloseBracketToken(context, token);
                     break;
 
                 default:
@@ -65,7 +66,7 @@
             }
         }
 
-        private void HandleCloseBracketToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private static void HandleCloseBracketToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
             {
@@ -77,22 +78,24 @@
                 return;
             }
 
-            bool hasPrecedingSpace = false;
-            if (!token.HasLeadingTrivia)
+            if (token.IsFirstInLine())
             {
-                // only the first token on the line has leading trivia, and those are ignored
-                SyntaxToken precedingToken = token.GetPreviousToken();
-                if (precedingToken.HasTrailingTrivia)
-                {
-                    hasPrecedingSpace = true;
-                }
+                return;
             }
 
-            if (hasPrecedingSpace)
+            SyntaxToken precedingToken = token.GetPreviousToken();
+            if (!precedingToken.HasTrailingTrivia)
             {
-                // Closing attribute brackets must not be preceded by a space.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));
+                return;
             }
+
+            if (!precedingToken.TrailingTrivia.Last().IsKind(SyntaxKind.WhitespaceTrivia))
+            {
+                return;
+            }
+
+            // Closing attribute brackets must not be preceded by a space.
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));
         }
     }
 }
