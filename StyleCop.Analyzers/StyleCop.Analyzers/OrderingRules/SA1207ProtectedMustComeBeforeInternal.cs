@@ -50,7 +50,7 @@
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterSyntaxNodeActionHonorExclusions(
-                this.HandleDeclaration,
+                HandleDeclaration,
                 SyntaxKind.ClassDeclaration,
                 SyntaxKind.DelegateDeclaration,
                 SyntaxKind.EventDeclaration,
@@ -63,7 +63,7 @@
                 SyntaxKind.StructDeclaration);
         }
 
-        private void HandleDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
         {
             // TODO: Should we do null checking? It's not covered in a test, because (this version of) Roslyn never returns null.
             var childTokens = context.Node?.ChildTokens()?.ToArray();
@@ -72,22 +72,19 @@
                 return;
             }
 
-            var firstProtectedKeyworkIndex = Array.FindIndex(childTokens, token => token.IsKind(SyntaxKind.ProtectedKeyword));
-            if (firstProtectedKeyworkIndex < 0)
+            bool internalKeywordFound = false;
+            foreach (var childToken in childTokens)
             {
-                return;
-            }
+                if (childToken.IsKind(SyntaxKind.InternalKeyword))
+                {
+                    internalKeywordFound = true;
+                    continue;
+                }
 
-            var firstInternalKeyworkIndex = Array.FindIndex(childTokens, token => token.IsKind(SyntaxKind.InternalKeyword));
-            if (firstInternalKeyworkIndex < 0)
-            {
-                return;
-            }
-
-            if (firstProtectedKeyworkIndex > firstInternalKeyworkIndex)
-            {
-                var firstProtectedKeyword = childTokens[firstProtectedKeyworkIndex];
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstProtectedKeyword.GetLocation()));
+                if (childToken.IsKind(SyntaxKind.ProtectedKeyword) && internalKeywordFound)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, childToken.GetLocation()));
+                }
             }
         }
     }
