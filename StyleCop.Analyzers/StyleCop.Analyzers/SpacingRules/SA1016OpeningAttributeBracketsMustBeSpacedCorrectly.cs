@@ -6,7 +6,6 @@
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
 
-
     /// <summary>
     /// An opening attribute bracket within a C# element is not spaced correctly.
     /// </summary>
