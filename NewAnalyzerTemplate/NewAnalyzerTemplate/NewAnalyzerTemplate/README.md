@@ -13,13 +13,14 @@ Analyzers can also examine the semantic model, a higher-level representation of 
 
 Tutorial Overview
 ------------
-Writing an analyzer can be broken down into the following high-level steps:
-1. Create an ID to distinguish the diagnostic from other diagnostics as an analyzer can contain several diagnostics.
-2. Create a diagnostic rule that is associated with the aforementioned ID and has properties such as a message to display to the user and whether the diagnostic is enabled by default.
-3. Create an array to hold all diagnostics supported by your analyzer. 
-4. Use the Initialize method to identify a kind of syntax node (in this case if-statement syntax nodes) and call an analysis function.
-5. Within the analysis method, navigate the syntax tree to determine if the spacing of the if-statement is correct. See the image below.
-6. If the analysis finds an error, create and report a diagnostic to inform the user of this error.
+Writing an analyzer can be broken down into the following high-level steps
+
+1. Create an ID to distinguish the diagnostic from other diagnostics as an analyzer can contain several diagnostics
+1. Create a diagnostic rule that is associated with the aforementioned ID and has properties such as a message to display to the user and whether the diagnostic is enabled by default
+1. Create an array to hold all diagnostics supported by your analyzer.
+1. Use the Initialize method to identify a kind of syntax node (in this case if-statement syntax nodes) and call an analysis function
+1. Within the analysis method, navigate the syntax tree to determine if the spacing of the if-statement is correct. See the image below
+1. If the analysis finds an error, create and report a diagnostic to inform the user of this error
 
 The syntax diagram for a sample if-statement can be found below. You will a write a diagnostic that will surface when the whitespace circled in red is either absent or anything other than a single space. 
 For more information on visualizing syntax trees see [Syntax Trees](https://github.com/dotnet/roslyn-analyzers/blob/master/NewAnalyzerTemplate/NewAnalyzerTemplate/NewAnalyzerTemplate/README.md#syntax-trees).
