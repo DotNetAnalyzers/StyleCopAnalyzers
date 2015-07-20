@@ -98,7 +98,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.GoToCodeFix,
-                Message = MessagePrefix + "Congratulations! You have written your first analyzer! If you would like to explore a code fix for your diagnostic, open up CodeFixProvider.cs and take a look!",
+                Message = MessagePrefix + "Congratulations! You have written an analyzer! If you would like to explore a code fix for your diagnostic, open up CodeFixProvider.cs and take a look!",
                 Severity = DiagnosticSeverity.Info,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 18) }
             };
@@ -181,7 +181,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.GoToCodeFix,
-                Message = MessagePrefix + "Congratulations! You have written your first analyzer! If you would like to explore a code fix for your diagnostic, open up CodeFixProvider.cs and take a look!",
+                Message = MessagePrefix + "Congratulations! You have written an analyzer! If you would like to explore a code fix for your diagnostic, open up CodeFixProvider.cs and take a look!",
                 Severity = DiagnosticSeverity.Info,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 18) }
             };
@@ -3517,7 +3517,7 @@ namespace SyntaxNodeAnalyzer
 
         #region IfStatementIncorrect
 
-        public const string IfStatementIncorrectMessage = MessagePrefix + "This statement should extract the if statement in question by casting context.Node to IfStatementSyntax";
+        public const string IfStatementIncorrectMessage = MessagePrefix + "This statement should extract the if-statement being analyzed by casting context.Node to IfStatementSyntax";
 
         // No identifier for statement
         [Fact]
@@ -4404,7 +4404,7 @@ namespace SyntaxNodeAnalyzer
 
         #region IfKeywordIncorrect
 
-        public const string IfKeywordIncorrectMessage = MessagePrefix + "This statement should extract the 'if' keyword from ifStatement";
+        public const string IfKeywordIncorrectMessage = MessagePrefix + "This statement should extract the if-keyword SyntaxToken from 'ifStatement'";
 
         // not initialized
         [Fact]
@@ -5087,7 +5087,7 @@ namespace SyntaxNodeAnalyzer
 
         #region IfStatementMissing
 
-        public const string IfStatementMissingMessage = MessagePrefix + "The first step of the node analysis is to extract the if statement from context";
+        public const string IfStatementMissingMessage = MessagePrefix + "The first step of the SyntaxNode analysis is to extract the if-statement from 'context' by casting context.Node to IfStatementSyntax";
 
         // no statements in analyze method
         [Fact]
@@ -5312,7 +5312,7 @@ namespace SyntaxNodeAnalyzer
 
         #region IfKeywordMissing
 
-        public const string IfKeywordMissingMessage = MessagePrefix + "The second step is to extract the 'if' keyword from ifStatement";
+        public const string IfKeywordMissingMessage = MessagePrefix + "Next, extract the if-keyword SyntaxToken from 'ifStatement'";
 
         // no 2nd statement
         [Fact]
@@ -5541,7 +5541,7 @@ namespace SyntaxNodeAnalyzer
 
         #region TrailingTriviaCheckMissing
 
-        public const string TrailingTriviaCheckMissingMessage = MessagePrefix + "The third step is to begin looking for the space between 'if' and '(' by checking if ifKeyword has trailing trivia";
+        public const string TrailingTriviaCheckMissingMessage = MessagePrefix + "Next, begin looking for the space between 'if' and '(' by checking if 'ifKeyword' has trailing trivia";
 
         // no 3rd statement
         [Fact]
@@ -5779,7 +5779,7 @@ namespace SyntaxNodeAnalyzer
 
         #region TrailingTriviaCheckIncorrect
 
-        public const string TrailingTriviaCheckIncorrectMessage = MessagePrefix + "This statement should be an if statement that checks to see if ifKeyword has trailing trivia";
+        public const string TrailingTriviaCheckIncorrectMessage = MessagePrefix + "This statement should be an if-statement that checks to see if 'ifKeyword' has trailing trivia";
 
         // no if statement
         [Fact]
@@ -6569,7 +6569,7 @@ namespace SyntaxNodeAnalyzer
 
         #region TrailingTriviaVarMissing
 
-        public const string TrailingTriviaVarMissingMessage = MessagePrefix + "The fourth step is to extract the last trailing trivia of ifKeyword into a variable";
+        public const string TrailingTriviaVarMissingMessage = MessagePrefix + "Next, extract the last trailing trivia of 'ifKeyword' into a variable";
 
         // no variable declaration
         [Fact]
@@ -6902,7 +6902,7 @@ namespace SyntaxNodeAnalyzer
 
         #region TrailingTriviaVarIncorrect
 
-        public const string TrailingTriviaVarIncorrectMessage = MessagePrefix + "This statement should extract the last trailing trivia of ifKeyword into a variable";
+        public const string TrailingTriviaVarIncorrectMessage = MessagePrefix + "This statement should extract the last trailing trivia of 'ifKeyword' into a variable";
 
         // not initialized
         [Fact]
@@ -9852,8 +9852,8 @@ namespace SyntaxNodeAnalyzer
 
         #region OpenParenTests
 
-        public const string MissingOpenParenMessage = MessagePrefix + "The next step is to extract the open parenthesis of the if statement condition";
-        public const string IncorrectOpenParenMessage = MessagePrefix + "This statement should extract the open parenthesis of ifState to use as the end of the diagnostic span";
+        public const string MissingOpenParenMessage = MessagePrefix + "Moving on to the creation and reporting of the diagnostic, extract the open parenthesis of 'ifState' into a variable to use as the end of the diagnostic span";
+        public const string IncorrectOpenParenMessage = MessagePrefix + "This statement should extract the open parenthesis of 'ifState' to use as the end of the diagnostic span";
 
         [Fact]
         public void MissingOpenParen() //no DiagnosticDescriptor field
@@ -12177,8 +12177,8 @@ namespace SyntaxNodeAnalyzer
 
         #region StartSpanTests
 
-        public const string StartSpanMissingMessage = MessagePrefix + "The next step is to determine the start of the span for the diagnostic that will be reported";
-        public const string StartSpanIncorrectMessage = MessagePrefix + "This statement should extract the start of the span of ifKeyword into a variable, to be used as the start of the diagnostic span";
+        public const string StartSpanMissingMessage = MessagePrefix + "Next, extract the start of the span of 'ifKeyword' into a variable, to be used as the start of the diagnostic span";
+        public const string StartSpanIncorrectMessage = MessagePrefix + "This statement should extract the start of the span of 'ifKeyword' into a variable, to be used as the start of the diagnostic span";
 
         [Fact]
         public void MissingStartSpan()
@@ -12464,8 +12464,8 @@ namespace SyntaxNodeAnalyzer
 
         #region EndSpanTests
 
-        public const string EndSpanMissingMessage = MessagePrefix + "The next step is to determine the end of the span for the diagnostic that is going to be reported";
-        public const string EndSpanIncorrectMessage = MessagePrefix + "This statement should extract the start of the span of open into a variable, to be used as the end of the diagnostic span";
+        public const string EndSpanMissingMessage = MessagePrefix + "Next, determine the end of the span of the diagnostic that is going to be reported";
+        public const string EndSpanIncorrectMessage = MessagePrefix + "This statement should extract the start of the span of 'open' into a variable, to be used as the end of the diagnostic span";
 
         [Fact]
         public void MissingEndSpan()
@@ -12755,8 +12755,8 @@ namespace SyntaxNodeAnalyzer
 
         #region SpanTests
 
-        public const string SpanMissingMessage = MessagePrefix + "The next step is to create a variable that is the span of the diagnostic that will be reported";
-        public const string SpanIncorrectMessage = MessagePrefix + "This statement should use TextSpan.FromBounds, start, and end to create the span of the diagnostic that will be reported";
+        public const string SpanMissingMessage = MessagePrefix + "Next, using TextSpan.FromBounds, create a variable that is the span of the diagnostic that will be reported";
+        public const string SpanIncorrectMessage = MessagePrefix + "This statement should use TextSpan.FromBounds, 'start', and 'end' to create the span of the diagnostic that will be reported";
 
         [Fact]
         public void MissingSpan()
@@ -13050,8 +13050,8 @@ namespace SyntaxNodeAnalyzer
 
         #region LocationTests
 
-        public const string LocationMissingMessage = MessagePrefix + "The next step is to create a location for the diagnostic";
-        public const string LocationIncorrectMessage = MessagePrefix + "This statement should use Location.Create, ifState, and span to create the location of the diagnostic";
+        public const string LocationMissingMessage = MessagePrefix + "Next, using Location.Create, create a location for the diagnostic";
+        public const string LocationIncorrectMessage = MessagePrefix + "This statement should use Location.Create, 'ifState', and 'span' to create the location of the diagnostic";
 
         [Fact]
         public void MissingLocation()
@@ -13349,8 +13349,8 @@ namespace SyntaxNodeAnalyzer
 
         #region DiagnosticTests
 
-        public const string DiagnosticMissingMessage = MessagePrefix + "The next step is to create a variable to hold the diagnostic";
-        public const string DiagnosticIncorrectMessage = MessagePrefix + "This statement should use Diagnostic.Create, spacingRule, and location to create the diagnostic that will be reported";
+        public const string DiagnosticMissingMessage = MessagePrefix + "Next, use Diagnostic.Create to create the diagnostic";
+        public const string DiagnosticIncorrectMessage = MessagePrefix + "This statement should use Diagnostic.Create, 'spacingRule', and 'location' to create the diagnostic that will be reported";
 
         [Fact]
         public void MissingDiagnostic()
@@ -13652,7 +13652,7 @@ namespace SyntaxNodeAnalyzer
 
         #region TrailingTriviaKindCheckMissing
 
-        public const string TrailingTriviaKindCheckMissingMessage = MessagePrefix + "The fifth step is to check the kind of trailingTrivia";
+        public const string TrailingTriviaKindCheckMissingMessage = MessagePrefix + "Next, check if the kind of 'trailingTrivia' is whitespace trivia";
 
         [Fact]
         public void TrailingKindMissing1() // no whitespace check
@@ -13768,7 +13768,7 @@ namespace SyntaxNodeAnalyzer
 
         #region TrailingTriviaKindCheckIncorrect
 
-        public const string TrailingTriviaKindCheckIncorrectMessage = MessagePrefix + "This statement should check to see if the kind of trailingTrivia is whitespace trivia";
+        public const string TrailingTriviaKindCheckIncorrectMessage = MessagePrefix + "This statement should check to see if the kind of 'trailingTrivia' is whitespace trivia";
 
         //random variable declaration
         [Fact]
@@ -13828,6 +13828,7 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
+
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
@@ -13942,6 +13943,7 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
+
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
@@ -14056,6 +14058,7 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
+
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
@@ -14170,6 +14173,7 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
+
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
@@ -14284,6 +14288,7 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
+
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
@@ -14398,6 +14403,7 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
+
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
@@ -14512,6 +14518,7 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
+
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
@@ -14626,6 +14633,7 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
+
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
@@ -14740,6 +14748,7 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
+
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
@@ -14854,6 +14863,7 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
+
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
@@ -15085,6 +15095,7 @@ namespace SyntaxNodeAnalyzer
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
             };
+
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"using System.Collections.Immutable;
@@ -15143,7 +15154,7 @@ namespace SyntaxNodeAnalyzer
 
         #region WhitespaceCheckMissing
 
-        public const string WhitespaceCheckMissingMessage = MessagePrefix + "The sixth step is to make sure trailingTrivia is a single whitespace";
+        public const string WhitespaceCheckMissingMessage = MessagePrefix + "Next, check if 'trailingTrivia' is a single whitespace, which is the desired formatting";
 
         // no whitespace check
         [Fact]
@@ -15266,7 +15277,7 @@ namespace SyntaxNodeAnalyzer
 
         #region WhitespaceCheckIncorrect
 
-        public const string WhitespaceCheckIncorrectMessage = MessagePrefix + "This statement should check to see if trailingTrivia is a single whitespace";
+        public const string WhitespaceCheckIncorrectMessage = MessagePrefix + "This statement should check to see if 'trailingTrivia' is a single whitespace, which is the desired formatting";
 
         // random variable declaration
         [Fact]
@@ -16578,7 +16589,7 @@ namespace SyntaxNodeAnalyzerAnalyzer
 
         #region ReturnStatementMissing
 
-        public const string ReturnStatementMissingMessage = MessagePrefix + "The seventh step is to return from AnalyzeIfStatement";
+        public const string ReturnStatementMissingMessage = MessagePrefix + "Next, since if the code reaches this point the formatting must be correct, return from 'AnalyzeIfStatement'";
 
         //no return statement
         [Fact]
@@ -16706,7 +16717,7 @@ namespace SyntaxNodeAnalyzer
 
         #region ReturnStatementIncorrect
 
-        public const string ReturnStatementIncorrectMessage = MessagePrefix + "This statement should return from AnalyzeIfStatement, because reaching this point in the code means that the if statement being analyzed has the correct spacing";
+        public const string ReturnStatementIncorrectMessage = MessagePrefix + "This statement should return from 'AnalyzeIfStatement', because reaching this point in the code means that the if-statement being analyzed has the correct spacing";
 
         // throw new NotImplementedException statement
         [Fact]
