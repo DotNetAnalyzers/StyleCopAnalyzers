@@ -189,7 +189,16 @@ namespace MetaCompilation
 
         #region analysis rules
         public const string MissingAnalysisMethod = "MetaAnalyzer044";
-        internal static DiagnosticDescriptor MissingAnalysisMethodRule = CreateRule(MissingAnalysisMethod, "Missing analysis method", MessagePrefix + "You are missing the method that was registered to perform the analysis", "In Initialize, the register statement denotes an analysis method to be called when an action is triggered. This method needs to be created");
+        internal static DiagnosticDescriptor MissingAnalysisMethodRule = CreateRule(MissingAnalysisMethod, "Missing analysis method", MessagePrefix + "The method '{0}' that was registered to perform the analysis is missing", "In Initialize, the register statement denotes an analysis method to be called when an action is triggered. This method needs to be created");
+
+        public const string IncorrectAnalysisAccessibility = "MetaAnalyzer054";
+        internal static DiagnosticDescriptor IncorrectAnalysisAccessibilityRule = CreateRule(IncorrectAnalysisAccessibility, "Incorrect analysis method accessibility", MessagePrefix + "The '{0}' method should be private");
+
+        public const string IncorrectAnalysisReturnType = "MetaAnalyzer055";
+        internal static DiagnosticDescriptor IncorrectAnalysisReturnTypeRule = CreateRule(IncorrectAnalysisReturnType, "Incorrect analysis method return type", MessagePrefix + "The '{0}' method should have a void return type");
+
+        public const string IncorrectAnalysisParameter = "MetaAnalyzer056";
+        internal static DiagnosticDescriptor IncorrectAnalysisParameterRule = CreateRule(IncorrectAnalysisParameter, "Incorrect parameter to analysis method", MessagePrefix + "The '{0}' method should take one parameter of type SyntaxNodeAnalysisContext");
 
         public const string TooManyStatements = "MetaAnalyzer045";
         internal static DiagnosticDescriptor TooManyStatementsRule = CreateRule(TooManyStatements, "Too many statements", MessagePrefix + "This {0} should only have {1} statement(s)", "For the purpose of this tutorial there are too many statements here, use the code fixes to guide you through the creation of this section");
@@ -239,7 +248,6 @@ namespace MetaCompilation
                                              EnabledByDefaultErrorRule, 
                                              InternalAndStaticErrorRule,
                                              MissingRuleRule,
-                                             MissingAnalysisMethodRule,
                                              IfStatementMissingRule,
                                              IfStatementIncorrectRule,
                                              IfKeywordMissingRule,
@@ -265,6 +273,9 @@ namespace MetaCompilation
                                              LocationIncorrectRule,
                                              LocationMissingRule,
                                              MissingAnalysisMethodRule,
+                                             IncorrectAnalysisAccessibilityRule,
+                                             IncorrectAnalysisReturnTypeRule,
+                                             IncorrectAnalysisParameterRule,
                                              TooManyStatementsRule,
                                              DiagnosticMissingRule,
                                              DiagnosticIncorrectRule,
@@ -386,42 +397,53 @@ namespace MetaCompilation
 
                     if (kindName == null || allowedKinds.Contains(kindName))
                     {
-                        //look for and interpret id fields
-                        List<string> idNames = CheckIds(_branchesDict[registerSymbol.Name], kindName, context);
+                        //look for and interpret analysis methods
+                        bool analysisMethodFound = CheckMethods(_branchesDict[registerSymbol.Name], kindName, invocationExpression, context);
 
-                        if (idNames.Count > 0)
+                        if (analysisMethodFound)
                         {
-                            //look for and interpret rule fields
-                            List<string> ruleNames = CheckRules(idNames, _branchesDict[registerSymbol.Name], kindName, context);
 
-                            if (ruleNames.Count > 0)
+                            //look for and interpret id fields
+                            List<string> idNames = CheckIds(_branchesDict[registerSymbol.Name], kindName, context);
+
+                            if (idNames.Count > 0)
                             {
-                                //look for and interpret SupportedDiagnostics property
-                                bool supportedDiagnosticsCorrect = CheckSupportedDiagnostics(ruleNames, context);
+                                //look for and interpret rule fields
+                                List<string> ruleNames = CheckRules(idNames, _branchesDict[registerSymbol.Name], kindName, context);
 
-                                if (supportedDiagnosticsCorrect)
+                                if (ruleNames.Count > 0)
                                 {
-                                    //check the SyntaxNode, Symbol, Compilation, CodeBlock, etc analysis method(s)
-                                    bool analysisCorrect = CheckAnalysis(_branchesDict[registerSymbol.Name], kindName, ruleNames, context, analysisMethodSymbol);
+                                    //look for and interpret SupportedDiagnostics property
+                                    bool supportedDiagnosticsCorrect = CheckSupportedDiagnostics(ruleNames, context);
 
-                                    if (analysisCorrect)
+                                    if (supportedDiagnosticsCorrect)
                                     {
-                                        ReportDiagnostic(context, GoToCodeFixRule, _analyzerClassSymbol.Locations[0]);
+                                        //check the SyntaxNode, Symbol, Compilation, CodeBlock, etc analysis method(s)
+                                        bool analysisCorrect = CheckAnalysis(_branchesDict[registerSymbol.Name], kindName, ruleNames, context, analysisMethodSymbol);
+
+                                        if (analysisCorrect)
+                                        {
+                                            ReportDiagnostic(context, GoToCodeFixRule, _analyzerClassSymbol.Locations[0]);
+                                        }
+                                        else
+                                        {
+                                            return;
+                                        }
                                     }
                                     else
                                     {
                                         return;
                                     }
                                 }
-                                else
-                                {
-                                    return;
-                                }
+                            }
+                            else
+                            {
+                                ReportDiagnostic(context, MissingIdRule, _analyzerClassSymbol.Locations[0], _analyzerClassSymbol.Name.ToString());
                             }
                         }
                         else
                         {
-                            ReportDiagnostic(context, MissingIdRule, _analyzerClassSymbol.Locations[0], _analyzerClassSymbol.Name.ToString());
+                            return;
                         }
                     }
                     else
@@ -444,6 +466,9 @@ namespace MetaCompilation
                     return;
                 }
             }
+
+
+
 
             //checks the syntax tree analysis part of the user analyzer, returns a bool representing whether the check was successful or not
             internal bool CheckAnalysis(string branch, string kind, List<string> ruleNames, CompilationAnalysisContext context, IMethodSymbol analysisMethodSymbol)
@@ -2226,6 +2251,56 @@ namespace MetaCompilation
                 }
 
                 return idNames;
+            }
+
+            //returns true if the method called upon registering an action exists and is correct
+            internal bool CheckMethods(string branch, string kindName, InvocationExpressionSyntax invocationExpression, CompilationAnalysisContext context)
+            {
+                IMethodSymbol analysisMethod = null;
+                bool analysisMethodFound = false;
+
+                var argList = invocationExpression.ArgumentList;
+                var calledMethodName = argList.Arguments.First();
+
+                foreach (IMethodSymbol currentMethod in _analyzerMethodSymbols)
+                {
+                    if (calledMethodName.Expression.ToString() == currentMethod.MetadataName.ToString())
+                    {
+                        analysisMethod = currentMethod;
+                        analysisMethodFound = true;
+                        break;
+                    }
+                }
+
+                if (analysisMethodFound)
+                {
+                    MethodDeclarationSyntax analysisMethodSyntax = analysisMethod.DeclaringSyntaxReferences[0].GetSyntax() as MethodDeclarationSyntax;
+                    if (analysisMethodSyntax.Modifiers.Count == 0 || analysisMethodSyntax.Modifiers.First().ToString() != "private" || analysisMethod.DeclaredAccessibility != Accessibility.Private)
+                    {
+                        ReportDiagnostic(context, IncorrectAnalysisAccessibilityRule, analysisMethodSyntax.Identifier.GetLocation(), analysisMethodSyntax.Identifier.ValueText);
+                        return false;
+                    }
+                    else if (analysisMethodSyntax.ReturnType.IsMissing || !analysisMethod.ReturnsVoid)
+                    {
+                        ReportDiagnostic(context, IncorrectAnalysisReturnTypeRule, analysisMethodSyntax.Identifier.GetLocation(), analysisMethodSyntax.Identifier.ValueText);
+                        return false;
+                    }
+                    else if (analysisMethod.Parameters.Count() != 1 || analysisMethod.Parameters.First().Type != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.SyntaxNodeAnalysisContext"))
+                    {
+                        ReportDiagnostic(context, IncorrectAnalysisParameterRule, analysisMethodSyntax.ParameterList.GetLocation(), analysisMethodSyntax.Identifier.ValueText);
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    ReportDiagnostic(context, MissingAnalysisMethodRule, calledMethodName.GetLocation(), calledMethodName.Expression.ToString());
+                    return false;
+                }
+
             }
 
             //returns a symbol for the register call, and a list of the arguments

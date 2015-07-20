@@ -32,6 +32,10 @@ namespace MetaCompilation
                                              MetaCompilationAnalyzer.TooManyInitStatements,
                                              MetaCompilationAnalyzer.IncorrectInitSig,
                                              MetaCompilationAnalyzer.InvalidStatement,
+                                             MetaCompilationAnalyzer.MissingAnalysisMethod,
+                                             MetaCompilationAnalyzer.IncorrectAnalysisAccessibility,
+                                             MetaCompilationAnalyzer.IncorrectAnalysisParameter,
+                                             MetaCompilationAnalyzer.IncorrectAnalysisReturnType,
                                              MetaCompilationAnalyzer.IncorrectSigSuppDiag,
                                              MetaCompilationAnalyzer.MissingAccessor,
                                              MetaCompilationAnalyzer.TooManyAccessors,
@@ -138,6 +142,43 @@ namespace MetaCompilation
                         context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Remove invalid statements from the Initialize method", c => InvalidStatementAsync(context.Document, declaration, c)), diagnostic);
                     }
                 }
+                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingAnalysisMethod))
+                {
+                    IEnumerable<MethodDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
+                    if (declarations.Count() != 0)
+                    {
+                        MethodDeclarationSyntax declaration = declarations.First();
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Generate the method called by actions registered in Initialize.", c => MissingAnalysisMethodAsync(context.Document, declaration, c)), diagnostic);
+                    }
+                }
+                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectAnalysisAccessibility))
+                {
+                    IEnumerable<MethodDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
+                    if (declarations.Count() != 0)
+                    {
+                        MethodDeclarationSyntax declaration = declarations.First();
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Add the private keyword to this method.", c => IncorrectAnalysisAccessibilityAsync(context.Document, declaration, c)), diagnostic);
+                    }
+                }
+                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectAnalysisReturnType))
+                {
+                    IEnumerable<MethodDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
+                    if (declarations.Count() != 0)
+                    {
+                        MethodDeclarationSyntax declaration = declarations.First();
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Declare a void return type for this method.", c => IncorrectAnalysisReturnTypeAsync(context.Document, declaration, c)), diagnostic);
+                    }
+                }
+                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectAnalysisParameter))
+                {
+                    IEnumerable<MethodDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
+                    if (declarations.Count() != 0)
+                    {
+                        MethodDeclarationSyntax declaration = declarations.First();
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Have this method take one parameter of type SyntaxNodeAnalysisContext.", c => IncorrectAnalysisParameterAsync(context.Document, declaration, c)), diagnostic);
+                    }
+                }
+
                 else if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.InternalAndStaticError))
                 {
                     IEnumerable<FieldDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<FieldDeclarationSyntax>();
@@ -540,6 +581,69 @@ namespace MetaCompilation
             }
         }
 
+        //sets the analysis to take context of type SyntaxNodeAnalysisContext
+        private async Task<Document> IncorrectAnalysisParameterAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            var type = SyntaxFactory.ParseTypeName("SyntaxNodeAnalysisContext");
+            var parameters = new[] { generator.ParameterDeclaration("context", type) };
+            string methodName = declaration.Identifier.Text;
+            var returnType = declaration.ReturnType;
+            var statements = declaration.Body.Statements;
+
+            var newDeclaration = generator.MethodDeclaration(methodName, parameters, returnType: returnType, accessibility: Accessibility.Private, statements: statements);
+
+            return await ReplaceNode(declaration, newDeclaration, document);
+        }
+
+        //sets the analysis method return type to void
+        private async Task<Document> IncorrectAnalysisReturnTypeAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            string methodName = declaration.Identifier.Text;
+            var parameters = declaration.ParameterList.Parameters;
+            var returnType = SyntaxFactory.ParseTypeName("void");
+            var statements = declaration.Body.Statements;
+
+            var newDeclaration = generator.MethodDeclaration(methodName, parameters, returnType: returnType, accessibility: Accessibility.Private, statements: statements);
+
+            return await ReplaceNode(declaration, newDeclaration, document);
+        }
+
+        //sets the analysis method accessibility to private
+        private async Task<Document> IncorrectAnalysisAccessibilityAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            MethodDeclarationSyntax newDeclaration = generator.WithAccessibility(declaration, Accessibility.Private) as MethodDeclarationSyntax;
+
+            return await ReplaceNode(declaration, newDeclaration, document);
+        }
+
+        private async Task<Document> MissingAnalysisMethodAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            var statements = declaration.Body.Statements.First() as ExpressionStatementSyntax;
+            var invocationExpression = statements.Expression as InvocationExpressionSyntax;
+            string methodName = invocationExpression.ArgumentList.Arguments[0].ToString();
+
+            SemanticModel semanticModel = await document.GetSemanticModelAsync();
+            SyntaxNode newAnalysisMethod = CodeFixNodeCreator.CreateAnalysisMethod(generator, methodName, semanticModel);
+
+            ClassDeclarationSyntax classDeclaration = declaration.Parent as ClassDeclarationSyntax;
+            ClassDeclarationSyntax newClassDecl = classDeclaration as ClassDeclarationSyntax;
+
+            if (newAnalysisMethod != null)
+            {
+                newClassDecl = generator.AddMembers(classDeclaration, newAnalysisMethod) as ClassDeclarationSyntax;
+            }
+
+            return await ReplaceNode(classDeclaration, newClassDecl, document);
+        }
+
         private async Task<Document> CorrectArgumentsAsync(Document document, InvocationExpressionSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -565,7 +669,8 @@ namespace MetaCompilation
                 }
             }
 
-            SyntaxNode statement = CodeFixNodeCreator.CreateRegister(generator, declaration.Parent.Parent.Parent as MethodDeclarationSyntax);
+            string methodName = "AnalyzeIfStatement";
+            SyntaxNode statement = CodeFixNodeCreator.CreateRegister(generator, declaration.Parent.Parent.Parent as MethodDeclarationSyntax, methodName);
             SyntaxNode expression = generator.ExpressionStatement(statement);
 
             return await ReplaceNode(declaration.Parent, expression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
@@ -936,12 +1041,19 @@ namespace MetaCompilation
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            SyntaxNode invocationExpression = CodeFixNodeCreator.CreateRegister(generator, declaration);
+            string methodName = "AnalyzeIfStatement";
+            SyntaxNode invocationExpression = CodeFixNodeCreator.CreateRegister(generator, declaration, methodName);
             SyntaxList<SyntaxNode> statements = new SyntaxList<SyntaxNode>().Add(invocationExpression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))));
-            
-            SyntaxNode newMethod = generator.MethodDeclaration("Initialize", declaration.ParameterList.Parameters, accessibility: Accessibility.Public, modifiers: DeclarationModifiers.Override, statements: statements);
+            SyntaxNode newInitializeMethod = generator.MethodDeclaration("Initialize", declaration.ParameterList.Parameters, accessibility: Accessibility.Public, modifiers: DeclarationModifiers.Override, statements: statements);
 
-            return await ReplaceNode(declaration, newMethod, document);
+            ClassDeclarationSyntax classDeclaration = declaration.Parent as ClassDeclarationSyntax;
+            ClassDeclarationSyntax newClassDecl = classDeclaration.ReplaceNode(declaration, newInitializeMethod);
+
+            SemanticModel semanticModel = await document.GetSemanticModelAsync();
+            SyntaxNode newAnalysisMethod = CodeFixNodeCreator.CreateAnalysisMethod(generator, methodName, semanticModel);
+            newClassDecl = generator.AddMembers(newClassDecl, newAnalysisMethod) as ClassDeclarationSyntax;
+
+            return await ReplaceNode(classDeclaration, newClassDecl, document);
         }
 
         private async Task<Document> MultipleStatementsAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
@@ -1934,7 +2046,7 @@ namespace MetaCompilation
                 return argument;
             }
 
-            internal static SyntaxNode CreateRegister(SyntaxGenerator generator, MethodDeclarationSyntax declaration, string methodName = "AnalyzeIfStatement")
+            internal static SyntaxNode CreateRegister(SyntaxGenerator generator, MethodDeclarationSyntax declaration, string methodName)
             {
                 SyntaxNode argument1 = generator.IdentifierName(methodName);
                 SyntaxNode argument2 = generator.MemberAccessExpression(generator.IdentifierName("SyntaxKind"), "IfStatement");
@@ -1945,6 +2057,18 @@ namespace MetaCompilation
                 SyntaxNode invocationExpression = generator.InvocationExpression(memberAccessExpression, arguments);
 
                 return invocationExpression;
+            }
+
+            internal static SyntaxNode CreateAnalysisMethod(SyntaxGenerator generator, string methodName, SemanticModel semanticModel)
+            {
+                var type = SyntaxFactory.ParseTypeName("SyntaxNodeAnalysisContext");
+                var parameters = new[] { generator.ParameterDeclaration("context", type) };
+                SyntaxList<SyntaxNode> statements = new SyntaxList<SyntaxNode>();
+                INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException");
+                statements = statements.Add(generator.ThrowStatement(generator.ObjectCreationExpression(notImplementedException)));
+
+                SyntaxNode newMethodDeclaration = generator.MethodDeclaration(methodName, parameters: parameters, accessibility: Accessibility.Private, statements: statements);
+                return newMethodDeclaration;
             }
         }
     }
