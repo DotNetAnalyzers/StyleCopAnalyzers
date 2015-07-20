@@ -9852,7 +9852,7 @@ namespace SyntaxNodeAnalyzer
 
         #region OpenParenTests
 
-        public const string MissingOpenParenMessage = MessagePrefix + "Moving on to the creation and reporting of the diagnostic, extract the open parenthesis of 'ifState' into a variable outside of this if-statement";
+        public const string MissingOpenParenMessage = MessagePrefix + "Moving on to the creation and reporting of the diagnostic, extract the open parenthesis of 'ifState' into a variable to use as the end of the diagnostic span";
         public const string IncorrectOpenParenMessage = MessagePrefix + "This statement should extract the open parenthesis of 'ifState' to use as the end of the diagnostic span";
 
         [Fact]
