@@ -931,7 +931,7 @@ namespace System
 }}
 ";
 
-            await this.VerifyCSharpFixAsync(string.Format(testCode, fullName), string.Format(testCode, predefined), cancellationToken:  CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(string.Format(testCode, fullName), string.Format(testCode, predefined), cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

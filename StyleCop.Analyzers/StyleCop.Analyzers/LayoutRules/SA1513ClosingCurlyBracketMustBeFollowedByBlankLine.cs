@@ -184,7 +184,7 @@
                     }
 
                     var parenthesizedExpressionSyntax = nextToken.Parent as ParenthesizedExpressionSyntax;
-                    if  (parenthesizedExpressionSyntax?.CloseParenToken == nextToken)
+                    if (parenthesizedExpressionSyntax?.CloseParenToken == nextToken)
                     {
                         // the close brace is followed by the closing paren of a parenthesized expression.
                         return;

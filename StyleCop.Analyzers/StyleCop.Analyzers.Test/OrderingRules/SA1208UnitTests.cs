@@ -73,7 +73,8 @@ class A
     class A
     {
     }
-}"      };
+}"
+            };
 
             var expectedForCompilationUnit = new[]
             {
@@ -268,7 +269,8 @@ namespace Test
     class A
     {
     }
-}"      };
+}"
+            };
 
             var expected = new[]
             {
