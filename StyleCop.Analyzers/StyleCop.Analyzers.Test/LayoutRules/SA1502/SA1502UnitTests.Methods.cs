@@ -192,7 +192,7 @@
 }";
             var fixedTestCode = @"public ##PH## Foo
 {
-    public bool Bar()
+    public bool Bar() 
     {
         return false;
     }

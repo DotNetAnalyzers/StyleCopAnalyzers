@@ -69,7 +69,7 @@
                 }
             }
 
-            var newSyntaxRoot = syntaxRoot.ReplaceTrivia(violatingTrivia, SyntaxFactory.Whitespace(stringBuilder.ToString(), elastic: false));
+            var newSyntaxRoot = syntaxRoot.ReplaceTrivia(violatingTrivia, SyntaxFactory.Whitespace(stringBuilder.ToString()));
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
     }
