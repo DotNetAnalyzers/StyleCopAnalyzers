@@ -3517,7 +3517,7 @@ namespace SyntaxNodeAnalyzer
 
         #region IfStatementIncorrect
 
-        public const string IfStatementIncorrectMessage = MessagePrefix + "This statement should extract the if-statement in question by casting 'context'.Node to IfStatementSyntax";
+        public const string IfStatementIncorrectMessage = MessagePrefix + "This statement should extract the if-statement being analyzed by casting context.Node to IfStatementSyntax";
 
         // No identifier for statement
         [Fact]
@@ -5087,7 +5087,7 @@ namespace SyntaxNodeAnalyzer
 
         #region IfStatementMissing
 
-        public const string IfStatementMissingMessage = MessagePrefix + "The first step of the SyntaxNode analysis is to extract the if-statement from 'context' by casting 'context'.Node to IfStatementSyntax";
+        public const string IfStatementMissingMessage = MessagePrefix + "The first step of the SyntaxNode analysis is to extract the if-statement from 'context' by casting context.Node to IfStatementSyntax";
 
         // no statements in analyze method
         [Fact]
