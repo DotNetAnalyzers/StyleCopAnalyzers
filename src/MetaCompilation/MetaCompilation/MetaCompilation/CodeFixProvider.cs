@@ -175,7 +175,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Have this method take a parameter of type SyntaxNodeAnalysisContext.", c => IncorrectAnalysisParameterAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Have this method take one parameter of type SyntaxNodeAnalysisContext.", c => IncorrectAnalysisParameterAsync(context.Document, declaration, c)), diagnostic);
                     }
                 }
 
