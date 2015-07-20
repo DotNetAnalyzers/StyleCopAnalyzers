@@ -243,6 +243,7 @@
     <Compile Include="OrderingRules\SA1205CodeFixProvider.cs" />
     <Compile Include="OrderingRules\SA1205PartialElementsMustDeclareAccess.cs" />
     <Compile Include="OrderingRules\SA1206DeclarationKeywordsMustFollowOrder.cs" />
+    <Compile Include="OrderingRules\SA1207CodeFixProvider.cs" />
     <Compile Include="OrderingRules\SA1207ProtectedMustComeBeforeInternal.cs" />
     <Compile Include="OrderingRules\SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives.cs" />
     <Compile Include="OrderingRules\SA1209UsingAliasDirectivesMustBePlacedAfterOtherUsingDirectives.cs" />
