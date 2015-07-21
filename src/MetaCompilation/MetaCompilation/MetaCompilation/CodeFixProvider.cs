@@ -559,7 +559,7 @@ namespace MetaCompilation
                             SyntaxNode statementKeepArg = CodeFixNodeCreator.CreateRegister(generator, declaration.Parent.Parent.Parent as MethodDeclarationSyntax, name.Identifier.Text);
                             SyntaxNode expressionKeepArg = generator.ExpressionStatement(statementKeepArg);
 
-                            return await ReplaceNode(declaration.Parent, expressionKeepArg.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+                            return await ReplaceNode(declaration.Parent, expressionKeepArg.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
                         }
                     }
                 }
@@ -568,7 +568,7 @@ namespace MetaCompilation
             SyntaxNode statement = CodeFixNodeCreator.CreateRegister(generator, declaration.Parent.Parent.Parent as MethodDeclarationSyntax);
             SyntaxNode expression = generator.ExpressionStatement(statement);
 
-            return await ReplaceNode(declaration.Parent, expression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+            return await ReplaceNode(declaration.Parent, expression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
         private async Task<Document> CorrectRegisterAsync(Document document, IdentifierNameSyntax declaration, CancellationToken c)
@@ -579,7 +579,7 @@ namespace MetaCompilation
             SyntaxNode newInvocationExpr = generator.InvocationExpression(newMemberExpr, ((declaration.Parent as MemberAccessExpressionSyntax).Parent as InvocationExpressionSyntax).ArgumentList.Arguments);
             SyntaxNode newExpression = generator.ExpressionStatement(newInvocationExpr);
 
-            return await ReplaceNode(declaration.FirstAncestorOrSelf<ExpressionStatementSyntax>(), newExpression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+            return await ReplaceNode(declaration.FirstAncestorOrSelf<ExpressionStatementSyntax>(), newExpression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
         private async Task<Document> CorrectKindAsync(Document document, ArgumentListSyntax declaration, CancellationToken c)
@@ -604,7 +604,7 @@ namespace MetaCompilation
             SyntaxNode newInvocationExpr = generator.InvocationExpression(newMemberExpr, argList.Arguments);
             SyntaxNode newExpression = generator.ExpressionStatement(newInvocationExpr);
 
-            return await ReplaceNode(declaration.Ancestors().OfType<ExpressionStatementSyntax>().First(), newExpression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+            return await ReplaceNode(declaration.Ancestors().OfType<ExpressionStatementSyntax>().First(), newExpression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("            "), SyntaxFactory.ParseLeadingTrivia("//Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("            "))), document);
         }
 
         private async Task<Document> AddRuleAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
@@ -633,7 +633,7 @@ namespace MetaCompilation
             FieldDeclarationSyntax fieldDeclaration = CodeFixNodeCreator.CreateEmptyRule(generator);
 
             var newNode = new SyntaxList<SyntaxNode>();
-            newNode = newNode.Add(fieldDeclaration.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//If the analyzer finds an issue, it will report the DiagnosticDescriptor rule").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))));
+            newNode = newNode.Add(fieldDeclaration.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//If the analyzer finds an issue, it will report the DiagnosticDescriptor rule").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
 
             var root = await document.GetSyntaxRootAsync();
             if (insertPointNode != null)
@@ -644,7 +644,7 @@ namespace MetaCompilation
             }
             else
             {
-                var newRoot = root.ReplaceNode(declaration, declaration.AddMembers(fieldDeclaration.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//If the analyzer finds an issue, it will report the DiagnosticDescriptor rule").ElementAt(0), SyntaxFactory.EndOfLine("/n/r")))));
+                var newRoot = root.ReplaceNode(declaration, declaration.AddMembers(fieldDeclaration.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//If the analyzer finds an issue, it will report the DiagnosticDescriptor rule").ElementAt(0), SyntaxFactory.EndOfLine("\r\n")))));
                 var newDocument = document.WithSyntaxRoot(newRoot);
                 return newDocument;
             }
@@ -713,7 +713,7 @@ namespace MetaCompilation
 
             SyntaxNode diagnosticReport = CodeFixNodeCreator.CreateDiagnosticReport(generator, argumentName, contextName);
 
-            return await ReplaceNode(declaration, diagnosticReport.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Sends diagnostic information to the IDE to be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+            return await ReplaceNode(declaration, diagnosticReport.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Sends diagnostic information to the IDE to be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
         private async Task<Document> AddDiagnosticReportAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
@@ -724,7 +724,7 @@ namespace MetaCompilation
             string contextName = (declaration.ParameterList.Parameters[0].Identifier.Text);
             SyntaxNode diagnosticReport = CodeFixNodeCreator.CreateDiagnosticReport(generator, argumentName, contextName);
             var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
-            var newStatements = oldStatements.Add(diagnosticReport.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Sends diagnostic information to the IDE to be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))));
+            var newStatements = oldStatements.Add(diagnosticReport.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Sends diagnostic information to the IDE to be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
             var newMethod = generator.WithStatements(declaration, newStatements);
 
             return await ReplaceNode(declaration, newMethod, document);
@@ -742,7 +742,7 @@ namespace MetaCompilation
 
             var diagnostic = CodeFixNodeCreator.CreateDiagnostic(generator, locationName, ruleName);
 
-            return await ReplaceNode(declaration, diagnostic.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Holds the diagnostic and all necessary information to be reported").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+            return await ReplaceNode(declaration, diagnostic.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Holds the diagnostic and all necessary information to be reported").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
         private async Task<Document> AddDiagnosticAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
@@ -756,7 +756,7 @@ namespace MetaCompilation
             var diagnostic = CodeFixNodeCreator.CreateDiagnostic(generator, locationName, ruleName);
 
             var oldStatements = (SyntaxList<SyntaxNode>)analysis.Body.Statements;
-            var newStatements = oldStatements.Add(diagnostic.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Holds the diagnostic and all necessary information to be reported").ElementAt(0), SyntaxFactory.EndOfLine(" /n/r"))));
+            var newStatements = oldStatements.Add(diagnostic.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Holds the diagnostic and all necessary information to be reported").ElementAt(0), SyntaxFactory.EndOfLine(" \r\n"))));
             var newMethod = generator.WithStatements(analysis, newStatements);
 
             return await ReplaceNode(analysis, newMethod, document);
@@ -772,7 +772,7 @@ namespace MetaCompilation
 
             SyntaxNode openParen = CodeFixNodeCreator.CreateOpenParen(generator, expressionString);
 
-            return await ReplaceNode(declaration, openParen.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Extracts the opening parenthesis of the if-statement condition").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+            return await ReplaceNode(declaration, openParen.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Extracts the opening parenthesis of the if-statement condition").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
         //adds the open parenthesis statement
@@ -783,7 +783,7 @@ namespace MetaCompilation
             string expressionString = (declaration.Body.Statements[0] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
             SyntaxNode openParen = CodeFixNodeCreator.CreateOpenParen(generator, expressionString);
             var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
-            var newStatements = oldStatements.Add(openParen.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Extracts the opening parenthesis of the if-statement condition").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))));
+            var newStatements = oldStatements.Add(openParen.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Extracts the opening parenthesis of the if-statement condition").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
             var newMethod = generator.WithStatements(declaration, newStatements);
 
             return await ReplaceNode(declaration, newMethod, document);
@@ -799,7 +799,7 @@ namespace MetaCompilation
 
             SyntaxNode startSpan = CodeFixNodeCreator.CreateEndOrStartSpan(generator, identifierString, "startDiagnosticSpan");
 
-            return await ReplaceNode(declaration, startSpan.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Determines the start of the span of the diagnostic that will be reported, ie the start of the squiggle").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+            return await ReplaceNode(declaration, startSpan.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Determines the start of the span of the diagnostic that will be reported, ie the start of the squiggle").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
         //adds a start span statement
@@ -810,7 +810,7 @@ namespace MetaCompilation
             string identifierString = (declaration.Body.Statements[1] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
             SyntaxNode startSpan = CodeFixNodeCreator.CreateEndOrStartSpan(generator, identifierString, "startDiagnosticSpan");
             var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
-            var newStatements = oldStatements.Add(startSpan.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Determines the start of the span of the diagnostic that will be reported, ie the start of the squiggle").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))));
+            var newStatements = oldStatements.Add(startSpan.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Determines the start of the span of the diagnostic that will be reported, ie the start of the squiggle").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
             var newMethod = generator.WithStatements(declaration, newStatements);
 
             return await ReplaceNode(declaration, newMethod, document);
@@ -826,7 +826,7 @@ namespace MetaCompilation
 
             SyntaxNode endSpan = CodeFixNodeCreator.CreateEndOrStartSpan(generator, identifierString, "endDiagnosticSpan");
 
-            return await ReplaceNode(declaration, endSpan.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Determines the end of the span of the diagnostic that will be reported").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+            return await ReplaceNode(declaration, endSpan.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Determines the end of the span of the diagnostic that will be reported").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
         //adds an end span statement
@@ -837,7 +837,7 @@ namespace MetaCompilation
             string identifierString = (declaration.Body.Statements[3] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
             SyntaxNode endSpan = CodeFixNodeCreator.CreateEndOrStartSpan(generator, identifierString, "endDiagnosticSpan");
             var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
-            var newStatements = oldStatements.Add(endSpan.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Determines the end of the span of the diagnostic that will be reported").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))));
+            var newStatements = oldStatements.Add(endSpan.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Determines the end of the span of the diagnostic that will be reported").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
             var newMethod = generator.WithStatements(declaration, newStatements);
 
             return await ReplaceNode(declaration, newMethod, document);
@@ -854,7 +854,7 @@ namespace MetaCompilation
 
             SyntaxNode span = CodeFixNodeCreator.CreateSpan(generator, startIdentifier, endIdentifier);
 
-            return await ReplaceNode(declaration, span.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//The span is the range of integers that define the position of the characters the red squiggle will underline").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+            return await ReplaceNode(declaration, span.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//The span is the range of integers that define the position of the characters the red squiggle will underline").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
         //adds the diagnostic span statement
@@ -866,7 +866,7 @@ namespace MetaCompilation
             string endIdentifier = (declaration.Body.Statements[5] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
             SyntaxNode span = CodeFixNodeCreator.CreateSpan(generator, startIdentifier, endIdentifier);
             var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
-            var newStatements = oldStatements.Add(span.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//The span is the range of integers that define the position of the characters the red squiggle will underline").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))));
+            var newStatements = oldStatements.Add(span.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//The span is the range of integers that define the position of the characters the red squiggle will underline").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
             var newMethod = generator.WithStatements(declaration, newStatements);
 
             return await ReplaceNode(declaration, newMethod, document);
@@ -883,7 +883,7 @@ namespace MetaCompilation
 
             SyntaxNode location = CodeFixNodeCreator.CreateLocation(generator, ifStatementIdentifier, spanIdentifier);
 
-            return await ReplaceNode(declaration, location.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Uses the span created above to create a location for the diagnostic squiggle to appear within the syntax tree passed in as an argument").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+            return await ReplaceNode(declaration, location.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Uses the span created above to create a location for the diagnostic squiggle to appear within the syntax tree passed in as an argument").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
         //adds the diagnostic location statement
@@ -895,7 +895,7 @@ namespace MetaCompilation
             string spanIdentifier = (declaration.Body.Statements[6] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
             SyntaxNode location = CodeFixNodeCreator.CreateLocation(generator, ifStatementIdentifier, spanIdentifier);
             var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
-            var newStatements = oldStatements.Add(location.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Uses the span created above to create a location for the diagnostic squiggle to appear within the syntax tree passed in as an argument").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))));
+            var newStatements = oldStatements.Add(location.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Uses the span created above to create a location for the diagnostic squiggle to appear within the syntax tree passed in as an argument").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
             var newMethod = generator.WithStatements(declaration, newStatements);
 
             return await ReplaceNode(declaration, newMethod, document);
@@ -908,7 +908,7 @@ namespace MetaCompilation
 
             var expressionKind = SyntaxFactory.ParseExpression("\"IfSpacing001\"") as ExpressionSyntax;
 
-            var newField = CodeFixNodeCreator.NewIdCreator(generator, "spacingRuleId", expressionKind).WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Each analyzer needs a public id to identify each DiagnosticDescriptor and subsequently fix diagnostics in CodeFixProvider.cs").ElementAt(0), SyntaxFactory.EndOfLine("/n/r")));
+            var newField = CodeFixNodeCreator.NewIdCreator(generator, "spacingRuleId", expressionKind).WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Each analyzer needs a public id to identify each DiagnosticDescriptor and subsequently fix diagnostics in CodeFixProvider.cs").ElementAt(0), SyntaxFactory.EndOfLine("\r\n")));
             var newClass = generator.InsertMembers(declaration, 0, newField) as ClassDeclarationSyntax;
             var triviaClass = newClass.ReplaceNode(newClass.Members[0], newField);
 
@@ -937,7 +937,7 @@ namespace MetaCompilation
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
             SyntaxNode invocationExpression = CodeFixNodeCreator.CreateRegister(generator, declaration);
-            SyntaxList<SyntaxNode> statements = new SyntaxList<SyntaxNode>().Add(invocationExpression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))));
+            SyntaxList<SyntaxNode> statements = new SyntaxList<SyntaxNode>().Add(invocationExpression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
             
             SyntaxNode newMethod = generator.MethodDeclaration("Initialize", declaration.ParameterList.Parameters, accessibility: Accessibility.Public, modifiers: DeclarationModifiers.Override, statements: statements);
 
@@ -1019,7 +1019,7 @@ namespace MetaCompilation
             string name = methodDeclaration.ParameterList.Parameters[0].Identifier.ValueText as string;
             var ifStatement = CodeFixNodeCreator.IfHelper(generator, name);
 
-            return await ReplaceNode(declaration, ifStatement.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+            return await ReplaceNode(declaration, ifStatement.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
         private async Task<Document> MissingIfAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
@@ -1030,7 +1030,7 @@ namespace MetaCompilation
             StatementSyntax ifStatement = CodeFixNodeCreator.IfHelper(generator, name) as StatementSyntax;
 
             var oldBlock = declaration.Body as BlockSyntax;
-            var newBlock = oldBlock.AddStatements(ifStatement.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))));
+            var newBlock = oldBlock.AddStatements(ifStatement.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
 
             return await ReplaceNode(oldBlock, newBlock, document);
         }
@@ -1039,13 +1039,9 @@ namespace MetaCompilation
         #region rule code fix
         private async Task<Document> InternalStaticAsync(Document document, FieldDeclarationSyntax declaration, CancellationToken c)
         {
-            var whiteSpace = SyntaxFactory.Whitespace(" ");
-            var internalKeyword = SyntaxFactory.ParseToken("internal").WithTrailingTrivia(whiteSpace);
-            var staticKeyword = SyntaxFactory.ParseToken("static").WithTrailingTrivia(whiteSpace);
-            var modifierList = SyntaxFactory.TokenList(internalKeyword, staticKeyword);
-            var newFieldDeclaration = declaration.WithModifiers(modifierList).WithLeadingTrivia(declaration.GetLeadingTrivia()).WithTrailingTrivia(declaration.GetTrailingTrivia());
-
-            return await ReplaceNode(declaration, newFieldDeclaration, document);
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            var newFieldDecl = generator.FieldDeclaration(declaration.Declaration.Variables[0].Identifier.Text, generator.IdentifierName("DiagnosticDescriptor"), accessibility: Accessibility.Internal, modifiers: DeclarationModifiers.Static, initializer: declaration.Declaration.Variables[0].Initializer.Value as SyntaxNode).WithLeadingTrivia(declaration.GetLeadingTrivia()).WithTrailingTrivia(declaration.GetTrailingTrivia());
+            return await ReplaceNode(declaration, newFieldDecl, document);
         }
 
         private async Task<Document> EnabledByDefaultAsync(Document document, ArgumentSyntax argument, CancellationToken c)
@@ -1055,7 +1051,7 @@ namespace MetaCompilation
             var rule = argument.FirstAncestorOrSelf<FieldDeclarationSyntax>();
             var newRule = rule.ReplaceNode(argument.Expression, generator.LiteralExpression(true));
 
-            return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("/n/r"), SyntaxFactory.EndOfLine("/n/r"), SyntaxFactory.ParseTrailingTrivia("//isEnabledByDefault: Determines whether the analyzer is enabled by default or if the user must manually enable it. Generally set to true").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document);
+            return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("//isEnabledByDefault: Determines whether the analyzer is enabled by default or if the user must manually enable it. Generally set to true").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document);
         }
 
         private async Task<Document> DiagnosticSeverityWarning(Document document, ArgumentSyntax argument, CancellationToken c)
@@ -1067,7 +1063,7 @@ namespace MetaCompilation
             var rule = argument.FirstAncestorOrSelf<FieldDeclarationSyntax>();
             var newRule = rule.ReplaceNode(argument.Expression, newExpression);
 
-            return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("/n/r"), SyntaxFactory.ParseTrailingTrivia("//defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document);
+            return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("//defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document);
         }
 
         private async Task<Document> DiagnosticSeverityHidden(Document document, ArgumentSyntax argument, CancellationToken c)
@@ -1079,7 +1075,7 @@ namespace MetaCompilation
             var rule = argument.FirstAncestorOrSelf<FieldDeclarationSyntax>();
             var newRule = rule.ReplaceNode(argument.Expression, newExpression);
 
-            return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("/n/r"), SyntaxFactory.ParseTrailingTrivia("//defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document);
+            return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("//defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document);
         }
 
         private async Task<Document> DiagnosticSeverityInfo(Document document, ArgumentSyntax argument, CancellationToken c)
@@ -1091,7 +1087,7 @@ namespace MetaCompilation
             var rule = argument.FirstAncestorOrSelf<FieldDeclarationSyntax>();
             var newRule = rule.ReplaceNode(argument.Expression, newExpression);
 
-            return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("/n/r"), SyntaxFactory.ParseTrailingTrivia("//defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document);
+            return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("//defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document);
         }
 
         private async Task<Document> DiagnosticSeverityError(Document document, ArgumentSyntax argument, CancellationToken c)
@@ -1103,7 +1099,7 @@ namespace MetaCompilation
             var rule = argument.FirstAncestorOrSelf<FieldDeclarationSyntax>();
             var newRule = rule.ReplaceNode(argument.Expression, newExpression);
 
-            return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("/n/r"), SyntaxFactory.ParseTrailingTrivia("//defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document);
+            return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("//defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document);
         }
 
         private async Task<Document> MissingIdDeclarationAsync(Document document, VariableDeclaratorSyntax ruleDeclarationField, CancellationToken c)
@@ -1126,7 +1122,7 @@ namespace MetaCompilation
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
             var expressionKind = SyntaxFactory.ParseExpression("\"DescriptiveId\"") as ExpressionSyntax;
-            var newField = CodeFixNodeCreator.NewIdCreator(generator, currentRuleId, expressionKind).WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Each analyzer needs a public id to identify each DiagnosticDescriptor and subsequently fix diagnostics in CodeFixProvider.cs").ElementAt(0), SyntaxFactory.EndOfLine("/n/r")));
+            var newField = CodeFixNodeCreator.NewIdCreator(generator, currentRuleId, expressionKind).WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Each analyzer needs a public id to identify each DiagnosticDescriptor and subsequently fix diagnostics in CodeFixProvider.cs").ElementAt(0), SyntaxFactory.EndOfLine("\r\n")));
 
             var newClass = generator.InsertMembers(classDeclaration, 0, newField) as ClassDeclarationSyntax;
             var triviaClass = newClass.ReplaceNode(newClass.Members[0], newField);
@@ -1206,21 +1202,30 @@ namespace MetaCompilation
 
             var newRule = rule.ReplaceNode(oldIdName, newIdName);
 
-            return await ReplaceNode(rule, newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("/n/r"), SyntaxFactory.ParseTrailingTrivia("//id: Identifies each rule. Same as the public constant declared above").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))).WithLeadingTrivia(rule.GetLeadingTrivia()), document);
+            return await ReplaceNode(rule, newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("//id: Identifies each rule. Same as the public constant declared above").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(rule.GetLeadingTrivia()), document);
         }
         #endregion
 
         #region supported diagnostics code fix
         private async Task<Document> IncorrectSigSuppDiagAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken c)
         {
-            var whiteSpace = SyntaxFactory.Whitespace(" ");
-            var newIdentifier = SyntaxFactory.ParseToken("SupportedDiagnostics").WithLeadingTrivia(whiteSpace);
-            var publicKeyword = SyntaxFactory.ParseToken("public").WithTrailingTrivia(whiteSpace);
-            var overrideKeyword = SyntaxFactory.ParseToken("override").WithTrailingTrivia(whiteSpace);
-            var modifierList = SyntaxFactory.TokenList(publicKeyword, overrideKeyword);
-            var newPropertyDeclaration = declaration.WithIdentifier(newIdentifier).WithModifiers(modifierList).WithLeadingTrivia(declaration.GetLeadingTrivia()).WithTrailingTrivia(whiteSpace);
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            return await ReplaceNode(declaration, newPropertyDeclaration, document);
+            var type = generator.IdentifierName("ImmutableArray<DiagnosticDescriptor>");
+            var getAccessorStatements = new SyntaxList<SyntaxNode>();
+            foreach (var accessor in declaration.AccessorList.Accessors)
+            {
+                if (accessor.IsKind(SyntaxKind.GetAccessorDeclaration))
+                {
+                    getAccessorStatements = accessor.Body.Statements;
+                    break;
+                }
+            }
+
+            var newPropertyDecl = generator.PropertyDeclaration("SupportedDiagnostics", type, accessibility: Accessibility.Public, modifiers: DeclarationModifiers.Override, getAccessorStatements: getAccessorStatements).WithLeadingTrivia(declaration.GetLeadingTrivia()).WithTrailingTrivia(declaration.GetTrailingTrivia());
+            newPropertyDecl = newPropertyDecl.RemoveNode((newPropertyDecl as PropertyDeclarationSyntax).AccessorList.Accessors[1], 0);
+            
+            return await ReplaceNode(declaration, newPropertyDecl, document);
         }
 
         private async Task<Document> MissingAccessorAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken c)
@@ -1283,7 +1288,7 @@ namespace MetaCompilation
             var identifierString = generator.IdentifierName("Create");
             var expression = generator.MemberAccessExpression(expressionString, identifierString);
             var invocationExpression = generator.InvocationExpression(expression);
-            var returnStatement = (generator.ReturnStatement(invocationExpression) as ReturnStatementSyntax).WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//This array contains all the diagnostics that can be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("/n/r")));
+            var returnStatement = (generator.ReturnStatement(invocationExpression) as ReturnStatementSyntax).WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//This array contains all the diagnostics that can be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("\r\n")));
 
             SyntaxList<AccessorDeclarationSyntax> accessors = declaration.AccessorList.Accessors;
             if (accessors == null || accessors.Count == 0)
@@ -1389,11 +1394,11 @@ namespace MetaCompilation
 
                 if (invocationExpression.FirstAncestorOrSelf<ReturnStatementSyntax>() == null)
                 {
-                    return await ReplaceNode(invocationExpression.FirstAncestorOrSelf<LocalDeclarationStatementSyntax>(), generator.LocalDeclarationStatement(invocationExpression.FirstAncestorOrSelf<LocalDeclarationStatementSyntax>().Declaration.Variables[0].Identifier.Text, generator.InvocationExpression(generator.MemberAccessExpression(generator.IdentifierName("ImmutableArray"), "Create"), nodeArgs)).WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//This array contains all the diagnostics that can be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+                    return await ReplaceNode(invocationExpression.FirstAncestorOrSelf<LocalDeclarationStatementSyntax>(), generator.LocalDeclarationStatement(invocationExpression.FirstAncestorOrSelf<LocalDeclarationStatementSyntax>().Declaration.Variables[0].Identifier.Text, generator.InvocationExpression(generator.MemberAccessExpression(generator.IdentifierName("ImmutableArray"), "Create"), nodeArgs)).WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//This array contains all the diagnostics that can be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
                 }
                 else
                 {
-                    return await ReplaceNode(invocationExpression.Parent, generator.ReturnStatement(generator.InvocationExpression(generator.MemberAccessExpression(generator.IdentifierName("ImmutableArray"), "Create"), nodeArgs)).WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//This array contains all the diagnostics that can be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+                    return await ReplaceNode(invocationExpression.Parent, generator.ReturnStatement(generator.InvocationExpression(generator.MemberAccessExpression(generator.IdentifierName("ImmutableArray"), "Create"), nodeArgs)).WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//This array contains all the diagnostics that can be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
                 }
             }
 
@@ -1408,7 +1413,7 @@ namespace MetaCompilation
             var block = declaration.Parent as BlockSyntax;
             var ifKeyword = CodeFixNodeCreator.KeywordHelper(generator, block);
 
-            return await ReplaceNode(declaration, ifKeyword.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//This statement navigates down the syntax tree one level to extract the 'if' keyword").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+            return await ReplaceNode(declaration, ifKeyword.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//This statement navigates down the syntax tree one level to extract the 'if' keyword").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
         private async Task<Document> TrailingCheckIncorrectAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
@@ -1440,7 +1445,7 @@ namespace MetaCompilation
 
             var methodBlock = declaration.Body as BlockSyntax;
             var ifKeyword = CodeFixNodeCreator.KeywordHelper(generator, methodBlock) as StatementSyntax;
-            var newBlock = methodBlock.AddStatements(ifKeyword.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//This statement navigates down the syntax tree one level to extract the 'if' keyword").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))));
+            var newBlock = methodBlock.AddStatements(ifKeyword.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//This statement navigates down the syntax tree one level to extract the 'if' keyword").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
 
             return await ReplaceNode(methodBlock, newBlock, document);
         }
@@ -1590,7 +1595,7 @@ namespace MetaCompilation
             var returnStatement = generator.ReturnStatement() as ReturnStatementSyntax;
 
             var oldBlock = ifStatement.Statement as BlockSyntax;
-            var newStatements = oldBlock.Statements.Replace(oldBlock.Statements[0], returnStatement.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))));
+            var newStatements = oldBlock.Statements.Replace(oldBlock.Statements[0], returnStatement.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
             var newBlock = oldBlock.WithStatements(newStatements);
 
             return await ReplaceNode(oldBlock, newBlock, document);
@@ -1600,7 +1605,7 @@ namespace MetaCompilation
         {
             var generator = SyntaxGenerator.GetGenerator(document);
 
-            var returnStatements = new SyntaxList<SyntaxNode>().Add(generator.ReturnStatement().WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))));
+            var returnStatements = new SyntaxList<SyntaxNode>().Add(generator.ReturnStatement().WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
 
             var oldBlock = declaration.Statement as BlockSyntax;
             var newBlock = oldBlock.WithStatements(returnStatements);
