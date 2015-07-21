@@ -86,13 +86,21 @@
             var test = 2;
             var x = $""{test}"";
             x = $"" {test}"";
+            x = $""({test})"";
+            x = $""( {test})"";
+            x = $""{ test}"";
             x = $"" { test}"";
         }
     }
 }
 ";
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(12, 19).WithArguments(" not", "followed"),
+                this.CSharpDiagnostic().WithLocation(13, 20).WithArguments(" not", "followed")
+            };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>

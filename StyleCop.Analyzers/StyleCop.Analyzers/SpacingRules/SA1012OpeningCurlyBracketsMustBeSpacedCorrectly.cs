@@ -91,7 +91,12 @@
 
             if (token.Parent is InterpolationSyntax)
             {
-                // Don't report for interpolation string inlets
+                if (followedBySpace)
+                {
+                    // Opening curly bracket must{} be {followed} by a space.
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), " not", "followed"));
+                }
+
                 return;
             }
 
