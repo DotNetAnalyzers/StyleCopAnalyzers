@@ -78,10 +78,7 @@
                 return;
             }
 
-            bool precededBySpace = token.IsPrecededByWhitespace();
-            bool firstInLine = token.IsFirstInLine();
             bool followedBySpace = token.IsFollowedByWhitespace();
-            bool lastInLine = token.IsLastInLine();
 
             if (token.Parent is InterpolationSyntax)
             {
@@ -94,7 +91,10 @@
                 return;
             }
 
-            if (!firstInLine && !precededBySpace)
+            bool precededBySpace = token.IsFirstInLine() || token.IsPrecededByWhitespace();
+            bool lastInLine = token.IsLastInLine();
+
+            if (!precededBySpace)
             {
                 // Opening curly bracket must{} be {preceded} by a space.
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "preceded"));
