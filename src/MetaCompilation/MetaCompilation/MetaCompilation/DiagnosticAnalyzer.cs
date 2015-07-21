@@ -133,10 +133,10 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor TrailingTriviaCheckIncorrectRule = CreateRule(TrailingTriviaCheckIncorrect, "Incorrect trailing trivia check", MessagePrefix + "This statement should be an if-statement that checks to see if '{0}' has trailing trivia", "Syntax trivia are all the things that aren't actually code (i.e. comments, whitespace, end of line tokens, etc). The first step in checking for a single space between the if-keyword and '(' is to check if the if-keyword SyntaxToken has any trailing trivia");
 
         public const string TrailingTriviaVarMissing = "MetaAnalyzer026";
-        internal static DiagnosticDescriptor TrailingTriviaVarMissingRule = CreateRule(TrailingTriviaVarMissing, "Missing trailing trivia extraction", MessagePrefix + "Next, extract the last trailing trivia of '{0}' into a variable", "The last trailing trivia of the if-keyword should be a single whitespace");
+        internal static DiagnosticDescriptor TrailingTriviaVarMissingRule = CreateRule(TrailingTriviaVarMissing, "Missing trailing trivia extraction", MessagePrefix + "Next, extract the first trailing trivia of '{0}' into a variable", "The first trailing trivia of the if-keyword should be a single whitespace");
 
         public const string TrailingTriviaVarIncorrect = "MetaAnalyzer027";
-        internal static DiagnosticDescriptor TrailingTriviaVarIncorrectRule = CreateRule(TrailingTriviaVarIncorrect, "Incorrect trailing trivia extraction", MessagePrefix + "This statement should extract the last trailing trivia of '{0}' into a variable", "The last trailing trivia of the if-keyword should be a single whitespace");
+        internal static DiagnosticDescriptor TrailingTriviaVarIncorrectRule = CreateRule(TrailingTriviaVarIncorrect, "Incorrect trailing trivia extraction", MessagePrefix + "This statement should extract the first trailing trivia of '{0}' into a variable", "The first trailing trivia of the if-keyword should be a single whitespace");
 
         public const string TrailingTriviaKindCheckMissing = "MetaAnalyzer028";
         internal static DiagnosticDescriptor TrailingTriviaKindCheckMissingRule = CreateRule(TrailingTriviaKindCheckMissing, "Missing SyntaxKind check", MessagePrefix + "Next, check if the kind of '{0}' is whitespace trivia");
@@ -933,7 +933,7 @@ namespace MetaCompilation
                 }
 
                 var memberExprName = memberExpr.Name as IdentifierNameSyntax;
-                if (memberExprName == null || memberExprName.Identifier.Text != "Last")
+                if (memberExprName == null || memberExprName.Identifier.Text != "First")
                 {
                     return emptyResult;
                 }

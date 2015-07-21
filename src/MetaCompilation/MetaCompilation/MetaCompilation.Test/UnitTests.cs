@@ -73,7 +73,7 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
 
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
@@ -156,7 +156,7 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
 
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
@@ -6619,7 +6619,7 @@ namespace SyntaxNodeAnalyzer
 
         #region TrailingTriviaVarMissing
 
-        public const string TrailingTriviaVarMissingMessage = MessagePrefix + "Next, extract the last trailing trivia of 'ifKeyword' into a variable";
+        public const string TrailingTriviaVarMissingMessage = MessagePrefix + "Next, extract the first trailing trivia of 'ifKeyword' into a variable";
 
         // no variable declaration
         [Fact]
@@ -6720,7 +6720,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
             }
             }
         }
@@ -6774,7 +6774,7 @@ namespace SyntaxNodeAnalyzer
                 if (ifKeyword.HasTrailingTrivia)
                 {
                 }
-                var trailing = ifKeyword.TrailingTrivia.Last();
+                var trailing = ifKeyword.TrailingTrivia.First();
             }
         }
     }";
@@ -6829,9 +6829,9 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
             }
-                var trailing = ifKeyword.TrailingTrivia.Last();
+                var trailing = ifKeyword.TrailingTrivia.First();
             }
         }
     }";
@@ -6883,7 +6883,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    //var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    //var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 }
             }
         }
@@ -6939,8 +6939,8 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
-                //var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                //var trailingTrivia = ifKeyword.TrailingTrivia.First();
             }
             }
         }
@@ -6952,7 +6952,7 @@ namespace SyntaxNodeAnalyzer
 
         #region TrailingTriviaVarIncorrect
 
-        public const string TrailingTriviaVarIncorrectMessage = MessagePrefix + "This statement should extract the last trailing trivia of 'ifKeyword' into a variable";
+        public const string TrailingTriviaVarIncorrectMessage = MessagePrefix + "This statement should extract the first trailing trivia of 'ifKeyword' into a variable";
 
         // not initialized
         [Fact]
@@ -7054,7 +7054,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
             }
             }
         }
@@ -7163,7 +7163,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
             }
             }
         }
@@ -7272,7 +7272,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
             }
             }
         }
@@ -7324,7 +7324,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.Last().TrailingTrivia;
+                    var trailingTrivia = ifKeyword.First().TrailingTrivia;
                 }
             }
         }
@@ -7380,7 +7380,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
             }
             }
         }
@@ -7489,7 +7489,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
             }
             }
         }
@@ -7542,7 +7542,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifStatement.TrailingTrivia.Last();
+                    var trailingTrivia = ifStatement.TrailingTrivia.First();
                 }
             }
         }
@@ -7598,7 +7598,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
             }
             }
         }
@@ -7651,7 +7651,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifStatement.TrailingTrivia.Last();
+                    var trailingTrivia = ifStatement.TrailingTrivia.First();
                 }
                 var openParen = ifStatement.OpenParenToken;
             }
@@ -7708,7 +7708,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
             }
                 var openParen = ifStatement.OpenParenToken;
             }
@@ -7762,7 +7762,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifStatement.TrailingTrivia.Last();
+                    var trailingTrivia = ifStatement.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                     }
@@ -7821,7 +7821,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                     }
@@ -7935,7 +7935,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
             }
             }
         }
@@ -10051,7 +10051,7 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                     if (trailingTrivia.ToString() == "" "")
@@ -10120,7 +10120,7 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                     if (trailingTrivia.ToString() == "" "")
@@ -10187,7 +10187,7 @@ namespace SyntaxNodeAnalyzer
 
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                         if (trailingTrivia.ToString() == "" "")
@@ -10258,7 +10258,7 @@ namespace SyntaxNodeAnalyzer
 
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                         if (trailingTrivia.ToString() == "" "")
@@ -12376,7 +12376,7 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                     if (trailingTrivia.ToString() == "" "")
@@ -12447,7 +12447,7 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                     if (trailingTrivia.ToString() == "" "")
@@ -12516,7 +12516,7 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                     if (trailingTrivia.ToString() == "" "")
@@ -12588,7 +12588,7 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                     if (trailingTrivia.ToString() == "" "")
@@ -12663,7 +12663,7 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                     if (trailingTrivia.ToString() == "" "")
@@ -12735,7 +12735,7 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                     if (trailingTrivia.ToString() == "" "")
@@ -12805,7 +12805,7 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                     if (trailingTrivia.ToString() == "" "")
@@ -12878,7 +12878,7 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                     if (trailingTrivia.ToString() == "" "")
@@ -12954,7 +12954,7 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                     if (trailingTrivia.ToString() == "" "")
@@ -13027,7 +13027,7 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                     if (trailingTrivia.ToString() == "" "")
@@ -13098,7 +13098,7 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                     if (trailingTrivia.ToString() == "" "")
@@ -13172,7 +13172,7 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                     if (trailingTrivia.ToString() == "" "")
@@ -13249,7 +13249,7 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                     if (trailingTrivia.ToString() == "" "")
@@ -13323,7 +13323,7 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                     if (trailingTrivia.ToString() == "" "")
@@ -13395,7 +13395,7 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                     if (trailingTrivia.ToString() == "" "")
@@ -13470,7 +13470,7 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                     if (trailingTrivia.ToString() == "" "")
@@ -13548,7 +13548,7 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                     if (trailingTrivia.ToString() == "" "")
@@ -13623,7 +13623,7 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                     if (trailingTrivia.ToString() == "" "")
@@ -13696,7 +13696,7 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                     if (trailingTrivia.ToString() == "" "")
@@ -13772,7 +13772,7 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                     if (trailingTrivia.ToString() == "" "")
@@ -13844,7 +13844,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 }
             }
         }
@@ -13900,7 +13900,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                 }
@@ -13961,7 +13961,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     var ifCheck = true;
                 }
             }
@@ -14018,7 +14018,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                 }
@@ -14074,7 +14074,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (ifKeyword.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                     }
@@ -14133,7 +14133,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                 }
@@ -14189,7 +14189,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind == SyntaxKind.WhitespaceTrivia)
                     {
                     }
@@ -14248,7 +14248,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                 }
@@ -14304,7 +14304,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.IsKind() == SyntaxKind.WhitespaceTrivia)
                     {
                     }
@@ -14363,7 +14363,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                 }
@@ -14419,7 +14419,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() = SyntaxKind.WhitespaceTrivia)
                     {
                     }
@@ -14478,7 +14478,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                 }
@@ -14534,7 +14534,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SymbolKind.WhitespaceTrivia)
                     {
                     }
@@ -14593,7 +14593,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                 }
@@ -14649,7 +14649,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.IfStatement)
                     {
                     }
@@ -14708,7 +14708,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                 }
@@ -14764,7 +14764,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia == SyntaxKind.WhitespaceTrivia)
                     {
                     }
@@ -14823,7 +14823,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                 }
@@ -14879,7 +14879,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind)
                     {
                     }
@@ -14938,7 +14938,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                 }
@@ -14994,7 +14994,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if ()
                     {
                     }
@@ -15053,7 +15053,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                 }
@@ -15109,7 +15109,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.ToString() == "" "")
                     {
                     }
@@ -15168,7 +15168,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                 }
@@ -15224,7 +15224,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia == SyntaxKind.WhitespaceTrivia)
                     {
                         var one = 1;
@@ -15285,7 +15285,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                 if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                 {
                     var one = 1;
@@ -15347,7 +15347,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                     }
@@ -15406,7 +15406,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                     if (trailingTrivia.ToString() == "" "")
@@ -15470,7 +15470,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                         var one = 1;
@@ -15530,7 +15530,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                     if (trailingTrivia.ToString() == "" "")
@@ -15589,7 +15589,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                         if (ifKeyword.ToString() == "" "")
@@ -15651,7 +15651,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                     if (trailingTrivia.ToString() == "" "")
@@ -15710,7 +15710,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                         if (trailingTrivia.FullSpan == "" "")
@@ -15772,7 +15772,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                     if (trailingTrivia.ToString() == "" "")
@@ -15831,7 +15831,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                         if (trailingTrivia == "" "")
@@ -15893,7 +15893,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                     if (trailingTrivia.ToString() == "" "")
@@ -15952,7 +15952,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                         if (trailingTrivia.ToString() = "" "")
@@ -16014,7 +16014,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                     if (trailingTrivia.ToString() == "" "")
@@ -16073,7 +16073,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                         if (trailingTrivia.ToString() == ""trailingTrivia.ToString()"")
@@ -16135,7 +16135,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                     if (trailingTrivia.ToString() == "" "")
@@ -16194,7 +16194,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                         if ()
@@ -16256,7 +16256,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                     if (trailingTrivia.ToString() == "" "")
@@ -16315,7 +16315,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                         if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
@@ -16377,7 +16377,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                     if (trailingTrivia.ToString() == "" "")
@@ -16436,7 +16436,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                         return;
@@ -16496,7 +16496,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                     if (trailingTrivia.ToString() == "" "")
@@ -16555,7 +16555,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                         if (trailingTrivia == "" "")
@@ -16618,7 +16618,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                     if (trailingTrivia.ToString() == "" "")
@@ -16782,7 +16782,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                         if (trailingTrivia.ToString() == "" "")
@@ -16844,7 +16844,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                         if (trailingTrivia.ToString() == "" "")
@@ -16910,7 +16910,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                         if (trailingTrivia.ToString() == "" "")
@@ -16973,7 +16973,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                         if (trailingTrivia.ToString() == "" "")
@@ -17034,7 +17034,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                         if (trailingTrivia.ToString() == "" "")
@@ -17098,7 +17098,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                         if (trailingTrivia.ToString() == "" "")
@@ -17160,7 +17160,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                         if (trailingTrivia.ToString() == "" "")
@@ -17223,7 +17223,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                         if (trailingTrivia.ToString() == "" "")
@@ -17284,7 +17284,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                         if (trailingTrivia.ToString() == "" "")
@@ -17348,7 +17348,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.Last();
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
                     if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
                         if (trailingTrivia.ToString() == "" "")
