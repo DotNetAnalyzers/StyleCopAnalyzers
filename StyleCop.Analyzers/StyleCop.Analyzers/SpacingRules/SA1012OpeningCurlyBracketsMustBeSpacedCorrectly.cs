@@ -92,7 +92,6 @@
             }
 
             bool precededBySpace = token.IsFirstInLine() || token.IsPrecededByWhitespace();
-            bool lastInLine = token.IsLastInLine();
 
             if (!precededBySpace)
             {
@@ -100,7 +99,7 @@
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "preceded"));
             }
 
-            if (!lastInLine && !followedBySpace)
+            if (!token.IsLastInLine() && !followedBySpace)
             {
                 // Opening curly bracket must{} be {followed} by a space.
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "followed"));
