@@ -78,36 +78,15 @@
                 return;
             }
 
-            bool precededBySpace;
+            bool precededBySpace = true;
             bool firstInLine = token.IsFirstInLine();
-            bool allowLeadingSpace;
-            bool allowLeadingNoSpace;
-
             bool followedBySpace = token.IsFollowedByWhitespace();
             bool lastInLine = token.IsLastInLine();
 
-            if (firstInLine)
-            {
-                precededBySpace = true;
-                allowLeadingSpace = true;
-                allowLeadingNoSpace = true;
-            }
-            else
+            if (!firstInLine)
             {
                 SyntaxToken precedingToken = token.GetPreviousToken();
                 precededBySpace = precedingToken.HasTrailingTrivia;
-                switch (precedingToken.Kind())
-                {
-                case SyntaxKind.OpenParenToken:
-                    allowLeadingNoSpace = true;
-                    allowLeadingSpace = false;
-                    break;
-
-                default:
-                    allowLeadingNoSpace = false;
-                    allowLeadingSpace = true;
-                    break;
-                }
             }
 
             if (token.Parent is InterpolationSyntax)
@@ -116,18 +95,10 @@
                 return;
             }
 
-            if (!firstInLine)
+            if (!firstInLine && !precededBySpace)
             {
-                if (!allowLeadingSpace && precededBySpace)
-                {
-                    // Opening curly bracket must{ not} be {preceded} by a space.
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), " not", "preceded"));
-                }
-                else if (!allowLeadingNoSpace && !precededBySpace)
-                {
-                    // Opening curly bracket must{} be {preceded} by a space.
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "preceded"));
-                }
+                // Opening curly bracket must{} be {preceded} by a space.
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "preceded"));
             }
 
             if (!lastInLine && !followedBySpace)

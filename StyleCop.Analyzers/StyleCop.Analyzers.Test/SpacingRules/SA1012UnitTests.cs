@@ -165,55 +165,6 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// Verifies that the analyzer will properly handle opening curly brackets in parentheses.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestParenthesisAsync()
-        {
-            var testCode = @"namespace TestNamespace
-{
-    public class TestClass
-    {
-        public void TestMethod()
-        {
-            TestMethod({ });
-            TestMethod( { });
-            TestMethod( {});
-            TestMethod({});
-        }
-    }
-}
-";
-
-            var expectedCloseParenError = new DiagnosticResult { Id = "CS1026", Message = ") expected", Severity = DiagnosticSeverity.Error };
-            var expectedSemicolonError = new DiagnosticResult { Id = "CS1002", Message = "; expected", Severity = DiagnosticSeverity.Error };
-            var expectedCloseCurlyBracketError = new DiagnosticResult { Id = "CS1513", Message = "} expected", Severity = DiagnosticSeverity.Error };
-
-            DiagnosticResult[] expected =
-            {
-                expectedCloseParenError.WithLocation(7, 24),
-                expectedSemicolonError.WithLocation(7, 24),
-                expectedCloseCurlyBracketError.WithLocation(7, 27),
-                this.CSharpDiagnostic().WithLocation(8, 25).WithArguments(" not", "preceded"),
-                expectedCloseParenError.WithLocation(8, 25),
-                expectedSemicolonError.WithLocation(8, 25),
-                expectedCloseCurlyBracketError.WithLocation(8, 28),
-                this.CSharpDiagnostic().WithLocation(9, 25).WithArguments(" not", "preceded"),
-                this.CSharpDiagnostic().WithLocation(9, 25).WithArguments(string.Empty, "followed"),
-                expectedCloseParenError.WithLocation(9, 25),
-                expectedSemicolonError.WithLocation(9, 25),
-                expectedCloseCurlyBracketError.WithLocation(9, 27),
-                this.CSharpDiagnostic().WithLocation(10, 24).WithArguments(string.Empty, "followed"),
-                expectedCloseParenError.WithLocation(10, 24),
-                expectedSemicolonError.WithLocation(10, 24),
-                expectedCloseCurlyBracketError.WithLocation(10, 26)
-            };
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
