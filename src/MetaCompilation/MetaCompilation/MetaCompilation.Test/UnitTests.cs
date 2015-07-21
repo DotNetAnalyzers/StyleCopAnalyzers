@@ -10487,7 +10487,7 @@ namespace SyntaxNodeAnalyzer
     }
 }";
 
-            VerifyCSharpFix(test, fixtest);
+            VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
         }
 
         [Fact]
@@ -10593,7 +10593,7 @@ namespace SyntaxNodeAnalyzer
     }
 }";
 
-            VerifyCSharpFix(test, fixtest);
+            VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
         }
 
         [Fact]
@@ -10699,7 +10699,7 @@ namespace SyntaxNodeAnalyzer
     }
 }";
 
-            VerifyCSharpFix(test, fixtest);
+            VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
         }
         #endregion
 
