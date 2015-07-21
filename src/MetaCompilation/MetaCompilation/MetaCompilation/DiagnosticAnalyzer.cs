@@ -341,83 +341,149 @@ namespace MetaCompilation
                 }
 
                 //gather initialize info
-                List<object> registerInfo = CheckInitialize(context);
-                if (registerInfo == null)
-                {
-                    return;
-                }
+                #region Initialize
+                //List<object> registerInfo = CheckInitialize(context);
+                //if (registerInfo == null)
+                //{
+                //    return;
+                //}
 
-                var registerSymbol = (IMethodSymbol)registerInfo[0];
-                if (registerSymbol == null)
-                {
-                    return;
-                }
+                //var registerSymbol = (IMethodSymbol)registerInfo[0];
+                //if (registerSymbol == null)
+                //{
+                //    return;
+                //}
 
-                var registerArgs = (List<ISymbol>)registerInfo[1];
-                if (registerArgs == null)
-                {
-                    return;
-                }
+                //var registerArgs = (List<ISymbol>)registerInfo[1];
+                //if (registerArgs == null)
+                //{
+                //    return;
+                //}
 
-                if (registerArgs.Count == 0)
-                {
-                    return;
-                }
+                //if (registerArgs.Count == 0)
+                //{
+                //    return;
+                //}
 
-                IMethodSymbol analysisMethodSymbol = null;
-                if (registerArgs.Count > 0)
-                {
-                    analysisMethodSymbol = (IMethodSymbol)registerArgs[0];
-                }
+                //IMethodSymbol analysisMethodSymbol = null;
+                //if (registerArgs.Count > 0)
+                //{
+                //    analysisMethodSymbol = (IMethodSymbol)registerArgs[0];
+                //}
 
-                IFieldSymbol kind = null;
-                if (registerArgs.Count > 1)
-                {
-                    kind = (IFieldSymbol)registerArgs[1];
-                }
-                else
-                {
-                    return;
-                }
+                //IFieldSymbol kind = null;
+                //if (registerArgs.Count > 1)
+                //{
+                //    kind = (IFieldSymbol)registerArgs[1];
+                //}
+                //else
+                //{
+                //    return;
+                //}
 
-                var invocationExpression = (InvocationExpressionSyntax)registerInfo[2];
-                if (invocationExpression == null)
-                {
-                    return;
-                }
+                //var invocationExpression = (InvocationExpressionSyntax)registerInfo[2];
+                //if (invocationExpression == null)
+                //{
+                //    return;
+                //}
+                #endregion
 
-                //interpret initialize info
-                if (_branchesDict.ContainsKey(registerSymbol.Name))
+                ////interpret initialize info
+                //if (_branchesDict.ContainsKey(registerSymbol.Name))//don't need to check for branch
+                //{
+                //    string kindName = null;
+                //    if (kind != null)
+                //    {
+                //        kindName = kind.Name;
+                //    }
+
+                //    if (kindName == null || allowedKinds.Contains(kindName))
+                //    {
+                //        //look for and interpret analysis methods
+                //        bool analysisMethodFound = CheckMethods(_branchesDict[registerSymbol.Name], kindName, invocationExpression, context);
+
+                //if (analysisMethodFound)
+                //{
+
+                //look for and interpret id fields
+                List<string> idNames = CheckIds(context);
+
+                if (idNames.Count > 0)
                 {
-                    string kindName = null;
-                    if (kind != null)
+                    //look for and interpret rule fields
+                    List<string> ruleNames = CheckRules(idNames, context);
+
+                    if (ruleNames.Count > 0)
                     {
-                        kindName = kind.Name;
-                    }
+                        //look for and interpret SupportedDiagnostics property
+                        bool supportedDiagnosticsCorrect = CheckSupportedDiagnostics(ruleNames, context);
 
-                    if (kindName == null || allowedKinds.Contains(kindName))
-                    {
-                        //look for and interpret analysis methods
-                        bool analysisMethodFound = CheckMethods(_branchesDict[registerSymbol.Name], kindName, invocationExpression, context);
-
-                        if (analysisMethodFound)
+                        if (supportedDiagnosticsCorrect)
                         {
-
-                            //look for and interpret id fields
-                            List<string> idNames = CheckIds(_branchesDict[registerSymbol.Name], kindName, context);
-
-                            if (idNames.Count > 0)
+                            //this is where we check initialize and method
+                            List<object> registerInfo = CheckInitialize(context);
+                            if (registerInfo == null)
                             {
-                                //look for and interpret rule fields
-                                List<string> ruleNames = CheckRules(idNames, _branchesDict[registerSymbol.Name], kindName, context);
+                                return;
+                            }
 
-                                if (ruleNames.Count > 0)
+                            var registerSymbol = (IMethodSymbol)registerInfo[0];
+                            if (registerSymbol == null)
+                            {
+                                return;
+                            }
+
+                            var registerArgs = (List<ISymbol>)registerInfo[1];
+                            if (registerArgs == null)
+                            {
+                                return;
+                            }
+
+                            if (registerArgs.Count == 0)
+                            {
+                                return;
+                            }
+
+                            IMethodSymbol analysisMethodSymbol = null;
+                            if (registerArgs.Count > 0)
+                            {
+                                analysisMethodSymbol = (IMethodSymbol)registerArgs[0];
+                            }
+
+                            IFieldSymbol kind = null;
+                            if (registerArgs.Count > 1)
+                            {
+                                kind = (IFieldSymbol)registerArgs[1];
+                            }
+                            else
+                            {
+                                return;
+                            }
+
+                            var invocationExpression = (InvocationExpressionSyntax)registerInfo[2];
+                            if (invocationExpression == null)
+                            {
+                                return;
+                            }
+
+
+                            //interpret initialize info
+                            if (_branchesDict.ContainsKey(registerSymbol.Name))//don't need to check for branch
+                            {
+                                string kindName = null;
+                                if (kind != null)
                                 {
-                                    //look for and interpret SupportedDiagnostics property
-                                    bool supportedDiagnosticsCorrect = CheckSupportedDiagnostics(ruleNames, context);
+                                    kindName = kind.Name;
+                                }
 
-                                    if (supportedDiagnosticsCorrect)
+                                if (kindName == null || allowedKinds.Contains(kindName))
+                                {
+                                    //look for and interpret analysis methods
+                                    bool analysisMethodFound = CheckMethods(_branchesDict[registerSymbol.Name], kindName, invocationExpression, context);
+
+                                    if (analysisMethodFound)
                                     {
+
                                         //check the SyntaxNode, Symbol, Compilation, CodeBlock, etc analysis method(s)
                                         bool analysisCorrect = CheckAnalysis(_branchesDict[registerSymbol.Name], kindName, ruleNames, context, analysisMethodSymbol);
 
@@ -435,36 +501,73 @@ namespace MetaCompilation
                                         return;
                                     }
                                 }
+
+
+                                else
+                                {
+                                    Location loc = null;
+                                    if (kindName == null)
+                                    {
+                                        loc = invocationExpression.ArgumentList.GetLocation();
+                                    }
+                                    else
+                                    {
+                                        loc = invocationExpression.ArgumentList.Arguments[1].GetLocation();
+                                    }
+
+                                    ReportDiagnostic(context, IncorrectKindRule, loc);
+                                }
                             }
                             else
                             {
-                                ReportDiagnostic(context, MissingIdRule, _analyzerClassSymbol.Locations[0], _analyzerClassSymbol.Name.ToString());
+                                return;
                             }
+
                         }
                         else
                         {
                             return;
                         }
+
                     }
                     else
                     {
-                        Location loc = null;
-                        if (kindName == null)
-                        {
-                            loc = invocationExpression.ArgumentList.GetLocation();
-                        }
-                        else
-                        {
-                            loc = invocationExpression.ArgumentList.Arguments[1].GetLocation();
-                        }
-
-                        ReportDiagnostic(context, IncorrectKindRule, loc);
+                        return;
                     }
+
                 }
+
+
                 else
                 {
-                    return;
+                    ReportDiagnostic(context, MissingIdRule, _analyzerClassSymbol.Locations[0], _analyzerClassSymbol.Name.ToString());
                 }
+
+                //            }
+                //            else
+                //            {
+                //                return;
+                //            }
+                //        }
+                //        else
+                //        {
+                //            Location loc = null;
+                //            if (kindName == null)
+                //            {
+                //                loc = invocationExpression.ArgumentList.GetLocation();
+                //            }
+                //            else
+                //            {
+                //                loc = invocationExpression.ArgumentList.Arguments[1].GetLocation();
+                //            }
+
+                //            ReportDiagnostic(context, IncorrectKindRule, loc);
+                //        }
+                //    }
+                //    else
+                //    {
+                //        return;
+                //    }
             }
 
 
@@ -2070,7 +2173,7 @@ namespace MetaCompilation
             #endregion
 
             //returns a list of rule names
-            internal List<string> CheckRules(List<string> idNames, string branch, string kind, CompilationAnalysisContext context)
+            internal List<string> CheckRules(List<string> idNames, CompilationAnalysisContext context)
             {
                 List<string> ruleNames = new List<string>();
                 List<string> emptyRuleNames = new List<string>();
@@ -2234,7 +2337,7 @@ namespace MetaCompilation
             }
 
             //returns a list of id names, empty if none found
-            internal List<string> CheckIds(string branch, string kind, CompilationAnalysisContext context)
+            internal List<string> CheckIds(CompilationAnalysisContext context)
             {
                 List<string> idNames = new List<string>();
                 foreach (IFieldSymbol field in _analyzerFieldSymbols)
