@@ -309,7 +309,7 @@ public class Bar
             Solution solution = base.CreateSolution(projectId, language);
             Project project = solution.GetProject(projectId);
 
-            return solution.WithProjectParseOptions(projectId, project.ParseOptions.WithDocumentationMode(DocumentationMode.None));
+            return solution.WithProjectParseOptions(projectId, project.ParseOptions.WithDocumentationMode(this.documentationMode));
         }
     }
 }
