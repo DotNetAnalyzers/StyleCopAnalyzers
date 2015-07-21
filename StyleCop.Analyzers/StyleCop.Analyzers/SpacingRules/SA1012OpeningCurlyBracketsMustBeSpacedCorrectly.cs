@@ -78,16 +78,10 @@
                 return;
             }
 
-            bool precededBySpace = true;
+            bool precededBySpace = token.IsPrecededByWhitespace();
             bool firstInLine = token.IsFirstInLine();
             bool followedBySpace = token.IsFollowedByWhitespace();
             bool lastInLine = token.IsLastInLine();
-
-            if (!firstInLine)
-            {
-                SyntaxToken precedingToken = token.GetPreviousToken();
-                precededBySpace = precedingToken.HasTrailingTrivia;
-            }
 
             if (token.Parent is InterpolationSyntax)
             {
