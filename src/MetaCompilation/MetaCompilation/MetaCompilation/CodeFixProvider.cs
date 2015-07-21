@@ -102,7 +102,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         ClassDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Give the diagnostic a unique string ID distinguishing it from other diagnostics", c => MissingIdAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Give the diagnostic a unique string ID distinguishing it from other diagnostics", c => MissingIdAsync(context.Document, declaration, c), "Give the diagnostic a unique string ID distinguishing it from other diagnostics"), diagnostic);
 
                     }
                 }
@@ -112,7 +112,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         ClassDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Insert the missing Initialize method", c => MissingInitAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Insert the missing Initialize method", c => MissingInitAsync(context.Document, declaration, c), "Insert the missing Initialize method"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingRegisterStatement))
@@ -121,7 +121,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Register an action to analyze code when changes occur", c => MissingRegisterAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Register an action to analyze code when changes occur", c => MissingRegisterAsync(context.Document, declaration, c), "Register an action to analyze code when changes occur"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TooManyInitStatements))
@@ -130,7 +130,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Remove multiple registered actions from the Initialize method", c => MultipleStatementsAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Remove multiple registered actions from the Initialize method", c => MultipleStatementsAsync(context.Document, declaration, c), "Remove multiple registered actions from the Initialize method"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.InvalidStatement))
@@ -139,7 +139,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         StatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Remove invalid statements from the Initialize method", c => InvalidStatementAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Remove invalid statements from the Initialize method", c => InvalidStatementAsync(context.Document, declaration, c), "Remove invalid statements from the Initialize method"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingAnalysisMethod))
@@ -148,7 +148,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Generate the method called by actions registered in Initialize.", c => MissingAnalysisMethodAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Generate the method called by actions registered in Initialize", c => MissingAnalysisMethodAsync(context.Document, declaration, c), "Generate the method called by actions registered in Initialize"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectAnalysisAccessibility))
@@ -157,7 +157,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Add the private keyword to this method.", c => IncorrectAnalysisAccessibilityAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Add the private keyword to this method", c => IncorrectAnalysisAccessibilityAsync(context.Document, declaration, c), "Add the private keyword to this method"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectAnalysisReturnType))
@@ -166,7 +166,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Declare a void return type for this method.", c => IncorrectAnalysisReturnTypeAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Declare a void return type for this method", c => IncorrectAnalysisReturnTypeAsync(context.Document, declaration, c), "Declare a void return type for this method"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectAnalysisParameter))
@@ -175,7 +175,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Have this method take one parameter of type SyntaxNodeAnalysisContext.", c => IncorrectAnalysisParameterAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Have this method take one parameter of type SyntaxNodeAnalysisContext", c => IncorrectAnalysisParameterAsync(context.Document, declaration, c), "Have this method take one parameter of type SyntaxNodeAnalysisContext"), diagnostic);
                     }
                 }
 
@@ -185,7 +185,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         FieldDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Make the DiagnosticDescriptor rule both internal and static", c => InternalStaticAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Make the DiagnosticDescriptor rule both internal and static", c => InternalStaticAsync(context.Document, declaration, c), "Make the DiagnosticDescriptor rule both internal and static"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.EnabledByDefaultError))
@@ -194,7 +194,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         ArgumentSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Set 'isEnabledByDefault' parameter to true", c => EnabledByDefaultAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Set 'isEnabledByDefault' parameter to true", c => EnabledByDefaultAsync(context.Document, declaration, c), "Set 'isEnabledByDefault' parameter to true"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.DefaultSeverityError))
@@ -203,10 +203,10 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         ArgumentSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Set the severity to 'Error' if something is not allowed", c => DiagnosticSeverityError(context.Document, declaration, c)), diagnostic);
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Set the severity to 'Warning' if something is suspicious but allowed", c => DiagnosticSeverityWarning(context.Document, declaration, c)), diagnostic);
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Set the severity to 'Hidden' if something is an issue, but is not surfaced", c => DiagnosticSeverityHidden(context.Document, declaration, c)), diagnostic);
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Set the severity to 'Info' for information not indicating a problem", c => DiagnosticSeverityInfo(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Set the severity to 'Error' if something is not allowed", c => DiagnosticSeverityError(context.Document, declaration, c), "Set the severity to 'Error' if something is not allowed"), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Set the severity to 'Warning' if something is suspicious but allowed", c => DiagnosticSeverityWarning(context.Document, declaration, c), "Set the severity to 'Warning' if something is suspicious but allowed"), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Set the severity to 'Hidden' if something is an issue, but is not surfaced", c => DiagnosticSeverityHidden(context.Document, declaration, c), "Set the severity to 'Hidden' if something is an issue, but is not surfaced"), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Set the severity to 'Info' for information not indicating a problem", c => DiagnosticSeverityInfo(context.Document, declaration, c), "Set the severity to 'Info' for information not indicating a problem"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.MissingIdDeclaration))
@@ -215,7 +215,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         VariableDeclaratorSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Declare the diagnostic ID as a public constant string", c => MissingIdDeclarationAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Declare the diagnostic ID as a public constant string", c => MissingIdDeclarationAsync(context.Document, declaration, c), "Declare the diagnostic ID as a public constant string"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.IdDeclTypeError))
@@ -224,7 +224,7 @@ namespace MetaCompilation
                     if (classDeclarations.Count() != 0)
                     {
                         ClassDeclarationSyntax classDeclaration = classDeclarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Declare the diagnostic ID as a public constant string", c => IdDeclTypeAsync(context.Document, classDeclaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Declare the diagnostic ID as a public constant string", c => IdDeclTypeAsync(context.Document, classDeclaration, c), "Declare the diagnostic ID as a public constant string"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfStatementIncorrect))
@@ -233,7 +233,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         StatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the IfStatementSyntax Node from the context", c => IncorrectIfAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the IfStatementSyntax Node from the context", c => IncorrectIfAsync(context.Document, declaration, c), "Extract the IfStatementSyntax Node from the context"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfStatementMissing))
@@ -242,7 +242,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the IfStatementSyntax Node from the context", c => MissingIfAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the IfStatementSyntax Node from the context", c => MissingIfAsync(context.Document, declaration, c), "Extract the IfStatementSyntax Node from the context"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectInitSig))
@@ -251,7 +251,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Implement the correct signature for the Initialize method", c => IncorrectSigAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Implement the correct signature for the Initialize method", c => IncorrectSigAsync(context.Document, declaration, c), "Implement the correct signature for the Initialize method"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfKeywordIncorrect))
@@ -260,7 +260,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         StatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the if-keyword from the if-statement", c => IncorrectKeywordAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the if-keyword from the if-statement", c => IncorrectKeywordAsync(context.Document, declaration, c), "Extract the if-keyword from the if-statement"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfKeywordMissing))
@@ -269,7 +269,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the if-keyword from the if-statement", c => MissingKeywordAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the if-keyword from the if-statement", c => MissingKeywordAsync(context.Document, declaration, c), "Extract the if-keyword from the if-statement"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect))
@@ -278,7 +278,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check if the if-keyword has trailing trivia", c => TrailingCheckIncorrectAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check if the if-keyword has trailing trivia", c => TrailingCheckIncorrectAsync(context.Document, declaration, c), "Check if the if-keyword has trailing trivia"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaCheckMissing))
@@ -287,7 +287,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check if the if-keyword has trailing trivia", c => TrailingCheckMissingAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check if the if-keyword has trailing trivia", c => TrailingCheckMissingAsync(context.Document, declaration, c), "Check if the if-keyword has trailing trivia"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaVarMissing))
@@ -296,7 +296,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the last trailing trivia into a variable", c => TrailingVarMissingAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the last trailing trivia into a variable", c => TrailingVarMissingAsync(context.Document, declaration, c), "Extract the last trailing trivia into a variable"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaVarIncorrect))
@@ -305,7 +305,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the last trailing trivia into a variable", c => TrailingVarIncorrectAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the last trailing trivia into a variable", c => TrailingVarIncorrectAsync(context.Document, declaration, c), "Extract the last trailing trivia into a variable"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect))
@@ -314,7 +314,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         IfStatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check the kind of the last trailing trivia", c => TrailingKindCheckIncorrectAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check the kind of the last trailing trivia", c => TrailingKindCheckIncorrectAsync(context.Document, declaration, c), "Check the kind of the last trailing trivia"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaKindCheckMissing))
@@ -323,7 +323,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         IfStatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check the kind of the last trailing trivia", c => TrailingKindCheckMissingAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check the kind of the last trailing trivia", c => TrailingKindCheckMissingAsync(context.Document, declaration, c), "Check the kind of the last trailing trivia"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.WhitespaceCheckIncorrect))
@@ -332,7 +332,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         IfStatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check if the whitespace is a single space", c => WhitespaceCheckIncorrectAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check if the whitespace is a single space", c => WhitespaceCheckIncorrectAsync(context.Document, declaration, c), "Check if the whitespace is a single space"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.ReturnStatementIncorrect))
@@ -341,7 +341,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         IfStatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Return from the method", c => ReturnIncorrectAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Return from the method", c => ReturnIncorrectAsync(context.Document, declaration, c), "Return from the method"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.ReturnStatementMissing))
@@ -350,7 +350,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         IfStatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Return from the method", c => ReturnMissingAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Return from the method", c => ReturnMissingAsync(context.Document, declaration, c), "Return from the method"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.WhitespaceCheckMissing))
@@ -359,7 +359,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         IfStatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check if the whitespace is a single space", c => WhitespaceCheckMissingAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check if the whitespace is a single space", c => WhitespaceCheckMissingAsync(context.Document, declaration, c), "Check if the whitespace is a single space"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.LocationMissing))
@@ -368,7 +368,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a diagnostic location", c => AddLocationAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a diagnostic location", c => AddLocationAsync(context.Document, declaration, c), "Create a diagnostic location"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.LocationIncorrect))
@@ -377,7 +377,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         StatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a diagnostic location", c => ReplaceLocationAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a diagnostic location", c => ReplaceLocationAsync(context.Document, declaration, c), "Create a diagnostic location"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.SpanMissing))
@@ -386,7 +386,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a diagnostic span", c => AddSpanAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a diagnostic span", c => AddSpanAsync(context.Document, declaration, c), "Create a diagnostic span"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.SpanIncorrect))
@@ -395,7 +395,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         StatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a diagnostic span", c => ReplaceSpanAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a diagnostic span", c => ReplaceSpanAsync(context.Document, declaration, c), "Create a diagnostic span"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.EndSpanMissing))
@@ -404,7 +404,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a variable representing the end of the diagnostic span", c => AddEndSpanAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a variable representing the end of the diagnostic span", c => AddEndSpanAsync(context.Document, declaration, c), "Create a variable representing the end of the diagnostic span"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.EndSpanIncorrect))
@@ -413,7 +413,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         StatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a variable representing the end of the diagnostic span", c => ReplaceEndSpanAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a variable representing the end of the diagnostic span", c => ReplaceEndSpanAsync(context.Document, declaration, c), "Create a variable representing the end of the diagnostic span"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.StartSpanMissing))
@@ -422,7 +422,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a variable representing the start of the diagnostic span", c => AddStartSpanAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a variable representing the start of the diagnostic span", c => AddStartSpanAsync(context.Document, declaration, c), "Create a variable representing the start of the diagnostic span"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.StartSpanIncorrect))
@@ -431,7 +431,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         StatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a variable representing the start of the diagnostic span", c => ReplaceStartSpanAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a variable representing the start of the diagnostic span", c => ReplaceStartSpanAsync(context.Document, declaration, c), "Create a variable representing the start of the diagnostic span"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.OpenParenMissing))
@@ -440,7 +440,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the open parenthesis from the if-statement", c => AddOpenParenAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the open parenthesis from the if-statement", c => AddOpenParenAsync(context.Document, declaration, c), "Extract the open parenthesis from the if-statement"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.OpenParenIncorrect))
@@ -449,7 +449,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         StatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the open parenthesis from the if-statement", c => ReplaceOpenParenAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the open parenthesis from the if-statement", c => ReplaceOpenParenAsync(context.Document, declaration, c), "Extract the open parenthesis from the if-statement"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.DiagnosticMissing))
@@ -458,7 +458,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         ClassDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create the diagnostic that is going to be reported", c => AddDiagnosticAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create the diagnostic that is going to be reported", c => AddDiagnosticAsync(context.Document, declaration, c), "Create the diagnostic that is going to be reported"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.DiagnosticIncorrect))
@@ -467,7 +467,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         StatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create the diagnostic that is going to be reported", c => ReplaceDiagnosticAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create the diagnostic that is going to be reported", c => ReplaceDiagnosticAsync(context.Document, declaration, c), "Create the diagnostic that is going to be reported"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.DiagnosticReportMissing))
@@ -476,7 +476,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Report the diagnostic to the SyntaxNodeAnalysisContext", c => AddDiagnosticReportAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Report the diagnostic to the SyntaxNodeAnalysisContext", c => AddDiagnosticReportAsync(context.Document, declaration, c), "Report the diagnostic to the SyntaxNodeAnalysisContext"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.DiagnosticReportIncorrect))
@@ -485,7 +485,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         StatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Report the diagnostic to the SyntaxNodeAnalysisContext", c => ReplaceDiagnosticReportAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Report the diagnostic to the SyntaxNodeAnalysisContext", c => ReplaceDiagnosticReportAsync(context.Document, declaration, c), "Report the diagnostic to the SyntaxNodeAnalysisContext"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectSigSuppDiag))
@@ -494,7 +494,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         PropertyDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Implement the correct signature for the SupportedDiagnostics property", c => IncorrectSigSuppDiagAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Implement the correct signature for the SupportedDiagnostics property", c => IncorrectSigSuppDiagAsync(context.Document, declaration, c), "Implement the correct signature for the SupportedDiagnostics property"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingAccessor))
@@ -503,7 +503,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         PropertyDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Add a get-accessor to the SupportedDiagnostics property", c => MissingAccessorAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Add a get-accessor to the SupportedDiagnostics property", c => MissingAccessorAsync(context.Document, declaration, c), "Add a get-accessor to the SupportedDiagnostics property"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TooManyAccessors))
@@ -512,7 +512,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         PropertyDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Remove unnecessary accessors from the SupportedDiagnostics property", c => TooManyAccessorsAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Remove unnecessary accessors from the SupportedDiagnostics property", c => TooManyAccessorsAsync(context.Document, declaration, c), "Remove unnecessary accessors from the SupportedDiagnostics property"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectAccessorReturn) || diagnostic.Id.Equals(MetaCompilationAnalyzer.SuppDiagReturnValue))
@@ -521,7 +521,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         PropertyDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Return an ImmutableArray of DiagnosticDescriptors from SupportedDiagnostics", c => AccessorReturnValueAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Return an ImmutableArray of DiagnosticDescriptors from SupportedDiagnostics", c => AccessorReturnValueAsync(context.Document, declaration, c), "Return an ImmutableArray of DiagnosticDescriptors from SupportedDiagnostics"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.SupportedRules))
@@ -530,7 +530,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         ClassDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Return a list of all diagnostics that can be reported by this analyzer", c => SupportedRulesAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Return a list of all diagnostics that can be reported by this analyzer", c => SupportedRulesAsync(context.Document, declaration, c), "Return a list of all diagnostics that can be reported by this analyzer"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingSuppDiag))
@@ -539,7 +539,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         ClassDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Add the required SupportedDiagnostics property", c => AddSuppDiagAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Add the required SupportedDiagnostics property", c => AddSuppDiagAsync(context.Document, declaration, c), "Add the required SupportedDiagnostics property"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingRule))
@@ -548,7 +548,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         ClassDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Add a DiagnosticDescriptor rule to create the diagnostic", c => AddRuleAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Add a DiagnosticDescriptor rule to create the diagnostic", c => AddRuleAsync(context.Document, declaration, c), "Add a DiagnosticDescriptor rule to create the diagnostic"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectKind))
@@ -557,7 +557,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         ArgumentListSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Analyze the correct SyntaxKind", c => CorrectKindAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Analyze the correct SyntaxKind", c => CorrectKindAsync(context.Document, declaration, c), "Analyze the correct SyntaxKind"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectRegister))
@@ -566,7 +566,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         IdentifierNameSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Register an action of kind SyntaxNodeAnalysis", c => CorrectRegisterAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Register an action of kind SyntaxNodeAnalysis", c => CorrectRegisterAsync(context.Document, declaration, c), "Register an action of kind SyntaxNodeAnalysis"), diagnostic);
                     }
                 }
                 else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectArguments))
@@ -575,7 +575,7 @@ namespace MetaCompilation
                     if (declarations.Count() != 0)
                     {
                         InvocationExpressionSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Add the correct arguments to the Initialize method", c => CorrectArgumentsAsync(context.Document, declaration, c)), diagnostic);
+                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Add the correct arguments to the Initialize method", c => CorrectArgumentsAsync(context.Document, declaration, c), "Add the correct arguments to the Initialize method"), diagnostic);
                     }
                 }
             }
@@ -663,7 +663,7 @@ namespace MetaCompilation
                             SyntaxNode statementKeepArg = CodeFixNodeCreator.CreateRegister(generator, declaration.Parent.Parent.Parent as MethodDeclarationSyntax, name.Identifier.Text);
                             SyntaxNode expressionKeepArg = generator.ExpressionStatement(statementKeepArg);
 
-                            return await ReplaceNode(declaration.Parent, expressionKeepArg.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+                            return await ReplaceNode(declaration.Parent, expressionKeepArg.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
                         }
                     }
                 }
@@ -673,7 +673,7 @@ namespace MetaCompilation
             SyntaxNode statement = CodeFixNodeCreator.CreateRegister(generator, declaration.Parent.Parent.Parent as MethodDeclarationSyntax, methodName);
             SyntaxNode expression = generator.ExpressionStatement(statement);
 
-            return await ReplaceNode(declaration.Parent, expression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+            return await ReplaceNode(declaration.Parent, expression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
         private async Task<Document> CorrectRegisterAsync(Document document, IdentifierNameSyntax declaration, CancellationToken c)
@@ -684,7 +684,7 @@ namespace MetaCompilation
             SyntaxNode newInvocationExpr = generator.InvocationExpression(newMemberExpr, ((declaration.Parent as MemberAccessExpressionSyntax).Parent as InvocationExpressionSyntax).ArgumentList.Arguments);
             SyntaxNode newExpression = generator.ExpressionStatement(newInvocationExpr);
 
-            return await ReplaceNode(declaration.FirstAncestorOrSelf<ExpressionStatementSyntax>(), newExpression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+            return await ReplaceNode(declaration.FirstAncestorOrSelf<ExpressionStatementSyntax>(), newExpression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
         private async Task<Document> CorrectKindAsync(Document document, ArgumentListSyntax declaration, CancellationToken c)
@@ -709,7 +709,7 @@ namespace MetaCompilation
             SyntaxNode newInvocationExpr = generator.InvocationExpression(newMemberExpr, argList.Arguments);
             SyntaxNode newExpression = generator.ExpressionStatement(newInvocationExpr);
 
-            return await ReplaceNode(declaration.Ancestors().OfType<ExpressionStatementSyntax>().First(), newExpression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+            return await ReplaceNode(declaration.Ancestors().OfType<ExpressionStatementSyntax>().First(), newExpression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("            "), SyntaxFactory.ParseLeadingTrivia("//Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("            "))), document);
         }
 
         private async Task<Document> AddRuleAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
@@ -738,7 +738,7 @@ namespace MetaCompilation
             FieldDeclarationSyntax fieldDeclaration = CodeFixNodeCreator.CreateEmptyRule(generator);
 
             var newNode = new SyntaxList<SyntaxNode>();
-            newNode = newNode.Add(fieldDeclaration.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//If the analyzer finds an issue, it will report the DiagnosticDescriptor rule").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))));
+            newNode = newNode.Add(fieldDeclaration.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//If the analyzer finds an issue, it will report the DiagnosticDescriptor rule").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
 
             var root = await document.GetSyntaxRootAsync();
             if (insertPointNode != null)
@@ -749,7 +749,7 @@ namespace MetaCompilation
             }
             else
             {
-                var newRoot = root.ReplaceNode(declaration, declaration.AddMembers(fieldDeclaration.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//If the analyzer finds an issue, it will report the DiagnosticDescriptor rule").ElementAt(0), SyntaxFactory.EndOfLine("/n/r")))));
+                var newRoot = root.ReplaceNode(declaration, declaration.AddMembers(fieldDeclaration.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//If the analyzer finds an issue, it will report the DiagnosticDescriptor rule").ElementAt(0), SyntaxFactory.EndOfLine("\r\n")))));
                 var newDocument = document.WithSyntaxRoot(newRoot);
                 return newDocument;
             }
@@ -818,7 +818,7 @@ namespace MetaCompilation
 
             SyntaxNode diagnosticReport = CodeFixNodeCreator.CreateDiagnosticReport(generator, argumentName, contextName);
 
-            return await ReplaceNode(declaration, diagnosticReport.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Sends diagnostic information to the IDE to be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+            return await ReplaceNode(declaration, diagnosticReport.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Sends diagnostic information to the IDE to be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
         private async Task<Document> AddDiagnosticReportAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
@@ -829,7 +829,7 @@ namespace MetaCompilation
             string contextName = (declaration.ParameterList.Parameters[0].Identifier.Text);
             SyntaxNode diagnosticReport = CodeFixNodeCreator.CreateDiagnosticReport(generator, argumentName, contextName);
             var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
-            var newStatements = oldStatements.Add(diagnosticReport.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Sends diagnostic information to the IDE to be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))));
+            var newStatements = oldStatements.Add(diagnosticReport.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Sends diagnostic information to the IDE to be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
             var newMethod = generator.WithStatements(declaration, newStatements);
 
             return await ReplaceNode(declaration, newMethod, document);
@@ -847,7 +847,7 @@ namespace MetaCompilation
 
             var diagnostic = CodeFixNodeCreator.CreateDiagnostic(generator, locationName, ruleName);
 
-            return await ReplaceNode(declaration, diagnostic.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Holds the diagnostic and all necessary information to be reported").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+            return await ReplaceNode(declaration, diagnostic.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Holds the diagnostic and all necessary information to be reported").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
         private async Task<Document> AddDiagnosticAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
@@ -861,7 +861,7 @@ namespace MetaCompilation
             var diagnostic = CodeFixNodeCreator.CreateDiagnostic(generator, locationName, ruleName);
 
             var oldStatements = (SyntaxList<SyntaxNode>)analysis.Body.Statements;
-            var newStatements = oldStatements.Add(diagnostic.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Holds the diagnostic and all necessary information to be reported").ElementAt(0), SyntaxFactory.EndOfLine(" /n/r"))));
+            var newStatements = oldStatements.Add(diagnostic.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Holds the diagnostic and all necessary information to be reported").ElementAt(0), SyntaxFactory.EndOfLine(" \r\n"))));
             var newMethod = generator.WithStatements(analysis, newStatements);
 
             return await ReplaceNode(analysis, newMethod, document);
@@ -877,7 +877,7 @@ namespace MetaCompilation
 
             SyntaxNode openParen = CodeFixNodeCreator.CreateOpenParen(generator, expressionString);
 
-            return await ReplaceNode(declaration, openParen.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Extracts the opening parenthesis of the if-statement condition").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+            return await ReplaceNode(declaration, openParen.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Extracts the opening parenthesis of the if-statement condition").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
         //adds the open parenthesis statement
@@ -888,7 +888,7 @@ namespace MetaCompilation
             string expressionString = (declaration.Body.Statements[0] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
             SyntaxNode openParen = CodeFixNodeCreator.CreateOpenParen(generator, expressionString);
             var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
-            var newStatements = oldStatements.Add(openParen.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Extracts the opening parenthesis of the if-statement condition").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))));
+            var newStatements = oldStatements.Add(openParen.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Extracts the opening parenthesis of the if-statement condition").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
             var newMethod = generator.WithStatements(declaration, newStatements);
 
             return await ReplaceNode(declaration, newMethod, document);
@@ -904,7 +904,7 @@ namespace MetaCompilation
 
             SyntaxNode startSpan = CodeFixNodeCreator.CreateEndOrStartSpan(generator, identifierString, "startDiagnosticSpan");
 
-            return await ReplaceNode(declaration, startSpan.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Determines the start of the span of the diagnostic that will be reported, ie the start of the squiggle").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+            return await ReplaceNode(declaration, startSpan.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Determines the start of the span of the diagnostic that will be reported, ie the start of the squiggle").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
         //adds a start span statement
@@ -915,7 +915,7 @@ namespace MetaCompilation
             string identifierString = (declaration.Body.Statements[1] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
             SyntaxNode startSpan = CodeFixNodeCreator.CreateEndOrStartSpan(generator, identifierString, "startDiagnosticSpan");
             var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
-            var newStatements = oldStatements.Add(startSpan.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Determines the start of the span of the diagnostic that will be reported, ie the start of the squiggle").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))));
+            var newStatements = oldStatements.Add(startSpan.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Determines the start of the span of the diagnostic that will be reported, ie the start of the squiggle").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
             var newMethod = generator.WithStatements(declaration, newStatements);
 
             return await ReplaceNode(declaration, newMethod, document);
@@ -931,7 +931,7 @@ namespace MetaCompilation
 
             SyntaxNode endSpan = CodeFixNodeCreator.CreateEndOrStartSpan(generator, identifierString, "endDiagnosticSpan");
 
-            return await ReplaceNode(declaration, endSpan.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Determines the end of the span of the diagnostic that will be reported").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+            return await ReplaceNode(declaration, endSpan.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Determines the end of the span of the diagnostic that will be reported").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
         //adds an end span statement
@@ -942,7 +942,7 @@ namespace MetaCompilation
             string identifierString = (declaration.Body.Statements[3] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
             SyntaxNode endSpan = CodeFixNodeCreator.CreateEndOrStartSpan(generator, identifierString, "endDiagnosticSpan");
             var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
-            var newStatements = oldStatements.Add(endSpan.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Determines the end of the span of the diagnostic that will be reported").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))));
+            var newStatements = oldStatements.Add(endSpan.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Determines the end of the span of the diagnostic that will be reported").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
             var newMethod = generator.WithStatements(declaration, newStatements);
 
             return await ReplaceNode(declaration, newMethod, document);
@@ -959,7 +959,7 @@ namespace MetaCompilation
 
             SyntaxNode span = CodeFixNodeCreator.CreateSpan(generator, startIdentifier, endIdentifier);
 
-            return await ReplaceNode(declaration, span.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//The span is the range of integers that define the position of the characters the red squiggle will underline").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+            return await ReplaceNode(declaration, span.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//The span is the range of integers that define the position of the characters the red squiggle will underline").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
         //adds the diagnostic span statement
@@ -971,7 +971,7 @@ namespace MetaCompilation
             string endIdentifier = (declaration.Body.Statements[5] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
             SyntaxNode span = CodeFixNodeCreator.CreateSpan(generator, startIdentifier, endIdentifier);
             var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
-            var newStatements = oldStatements.Add(span.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//The span is the range of integers that define the position of the characters the red squiggle will underline").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))));
+            var newStatements = oldStatements.Add(span.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//The span is the range of integers that define the position of the characters the red squiggle will underline").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
             var newMethod = generator.WithStatements(declaration, newStatements);
 
             return await ReplaceNode(declaration, newMethod, document);
@@ -988,7 +988,7 @@ namespace MetaCompilation
 
             SyntaxNode location = CodeFixNodeCreator.CreateLocation(generator, ifStatementIdentifier, spanIdentifier);
 
-            return await ReplaceNode(declaration, location.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Uses the span created above to create a location for the diagnostic squiggle to appear within the syntax tree passed in as an argument").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+            return await ReplaceNode(declaration, location.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Uses the span created above to create a location for the diagnostic squiggle to appear within the syntax tree passed in as an argument").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
         //adds the diagnostic location statement
@@ -1000,7 +1000,7 @@ namespace MetaCompilation
             string spanIdentifier = (declaration.Body.Statements[6] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
             SyntaxNode location = CodeFixNodeCreator.CreateLocation(generator, ifStatementIdentifier, spanIdentifier);
             var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
-            var newStatements = oldStatements.Add(location.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Uses the span created above to create a location for the diagnostic squiggle to appear within the syntax tree passed in as an argument").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))));
+            var newStatements = oldStatements.Add(location.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Uses the span created above to create a location for the diagnostic squiggle to appear within the syntax tree passed in as an argument").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
             var newMethod = generator.WithStatements(declaration, newStatements);
 
             return await ReplaceNode(declaration, newMethod, document);
@@ -1013,7 +1013,7 @@ namespace MetaCompilation
 
             var expressionKind = SyntaxFactory.ParseExpression("\"IfSpacing001\"") as ExpressionSyntax;
 
-            var newField = CodeFixNodeCreator.NewIdCreator(generator, "spacingRuleId", expressionKind).WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Each analyzer needs a public id to identify each DiagnosticDescriptor and subsequently fix diagnostics in CodeFixProvider.cs").ElementAt(0), SyntaxFactory.EndOfLine("/n/r")));
+            var newField = CodeFixNodeCreator.NewIdCreator(generator, "spacingRuleId", expressionKind).WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Each analyzer needs a public id to identify each DiagnosticDescriptor and subsequently fix diagnostics in CodeFixProvider.cs").ElementAt(0), SyntaxFactory.EndOfLine("\r\n")));
             var newClass = generator.InsertMembers(declaration, 0, newField) as ClassDeclarationSyntax;
             var triviaClass = newClass.ReplaceNode(newClass.Members[0], newField);
 
@@ -1043,7 +1043,8 @@ namespace MetaCompilation
 
             string methodName = "AnalyzeIfStatement";
             SyntaxNode invocationExpression = CodeFixNodeCreator.CreateRegister(generator, declaration, methodName);
-            SyntaxList<SyntaxNode> statements = new SyntaxList<SyntaxNode>().Add(invocationExpression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))));
+            SyntaxList<SyntaxNode> statements = new SyntaxList<SyntaxNode>().Add(invocationExpression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
+            
             SyntaxNode newInitializeMethod = generator.MethodDeclaration("Initialize", declaration.ParameterList.Parameters, accessibility: Accessibility.Public, modifiers: DeclarationModifiers.Override, statements: statements);
 
             ClassDeclarationSyntax classDeclaration = declaration.Parent as ClassDeclarationSyntax;
@@ -1131,7 +1132,7 @@ namespace MetaCompilation
             string name = methodDeclaration.ParameterList.Parameters[0].Identifier.ValueText as string;
             var ifStatement = CodeFixNodeCreator.IfHelper(generator, name);
 
-            return await ReplaceNode(declaration, ifStatement.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+            return await ReplaceNode(declaration, ifStatement.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
         private async Task<Document> MissingIfAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
@@ -1142,7 +1143,7 @@ namespace MetaCompilation
             StatementSyntax ifStatement = CodeFixNodeCreator.IfHelper(generator, name) as StatementSyntax;
 
             var oldBlock = declaration.Body as BlockSyntax;
-            var newBlock = oldBlock.AddStatements(ifStatement.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))));
+            var newBlock = oldBlock.AddStatements(ifStatement.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
 
             return await ReplaceNode(oldBlock, newBlock, document);
         }
@@ -1151,13 +1152,9 @@ namespace MetaCompilation
         #region rule code fix
         private async Task<Document> InternalStaticAsync(Document document, FieldDeclarationSyntax declaration, CancellationToken c)
         {
-            var whiteSpace = SyntaxFactory.Whitespace(" ");
-            var internalKeyword = SyntaxFactory.ParseToken("internal").WithTrailingTrivia(whiteSpace);
-            var staticKeyword = SyntaxFactory.ParseToken("static").WithTrailingTrivia(whiteSpace);
-            var modifierList = SyntaxFactory.TokenList(internalKeyword, staticKeyword);
-            var newFieldDeclaration = declaration.WithModifiers(modifierList).WithLeadingTrivia(declaration.GetLeadingTrivia()).WithTrailingTrivia(declaration.GetTrailingTrivia());
-
-            return await ReplaceNode(declaration, newFieldDeclaration, document);
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            var newFieldDecl = generator.FieldDeclaration(declaration.Declaration.Variables[0].Identifier.Text, generator.IdentifierName("DiagnosticDescriptor"), accessibility: Accessibility.Internal, modifiers: DeclarationModifiers.Static, initializer: declaration.Declaration.Variables[0].Initializer.Value as SyntaxNode).WithLeadingTrivia(declaration.GetLeadingTrivia()).WithTrailingTrivia(declaration.GetTrailingTrivia());
+            return await ReplaceNode(declaration, newFieldDecl, document);
         }
 
         private async Task<Document> EnabledByDefaultAsync(Document document, ArgumentSyntax argument, CancellationToken c)
@@ -1167,7 +1164,7 @@ namespace MetaCompilation
             var rule = argument.FirstAncestorOrSelf<FieldDeclarationSyntax>();
             var newRule = rule.ReplaceNode(argument.Expression, generator.LiteralExpression(true));
 
-            return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("/n/r"), SyntaxFactory.EndOfLine("/n/r"), SyntaxFactory.ParseTrailingTrivia("//isEnabledByDefault: Determines whether the analyzer is enabled by default or if the user must manually enable it. Generally set to true").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document);
+            return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("//isEnabledByDefault: Determines whether the analyzer is enabled by default or if the user must manually enable it. Generally set to true").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document);
         }
 
         private async Task<Document> DiagnosticSeverityWarning(Document document, ArgumentSyntax argument, CancellationToken c)
@@ -1179,7 +1176,7 @@ namespace MetaCompilation
             var rule = argument.FirstAncestorOrSelf<FieldDeclarationSyntax>();
             var newRule = rule.ReplaceNode(argument.Expression, newExpression);
 
-            return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("/n/r"), SyntaxFactory.ParseTrailingTrivia("//defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document);
+            return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("//defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document);
         }
 
         private async Task<Document> DiagnosticSeverityHidden(Document document, ArgumentSyntax argument, CancellationToken c)
@@ -1191,7 +1188,7 @@ namespace MetaCompilation
             var rule = argument.FirstAncestorOrSelf<FieldDeclarationSyntax>();
             var newRule = rule.ReplaceNode(argument.Expression, newExpression);
 
-            return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("/n/r"), SyntaxFactory.ParseTrailingTrivia("//defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document);
+            return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("//defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document);
         }
 
         private async Task<Document> DiagnosticSeverityInfo(Document document, ArgumentSyntax argument, CancellationToken c)
@@ -1203,7 +1200,7 @@ namespace MetaCompilation
             var rule = argument.FirstAncestorOrSelf<FieldDeclarationSyntax>();
             var newRule = rule.ReplaceNode(argument.Expression, newExpression);
 
-            return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("/n/r"), SyntaxFactory.ParseTrailingTrivia("//defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document);
+            return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("//defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document);
         }
 
         private async Task<Document> DiagnosticSeverityError(Document document, ArgumentSyntax argument, CancellationToken c)
@@ -1215,7 +1212,7 @@ namespace MetaCompilation
             var rule = argument.FirstAncestorOrSelf<FieldDeclarationSyntax>();
             var newRule = rule.ReplaceNode(argument.Expression, newExpression);
 
-            return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("/n/r"), SyntaxFactory.ParseTrailingTrivia("//defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document);
+            return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("//defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document);
         }
 
         private async Task<Document> MissingIdDeclarationAsync(Document document, VariableDeclaratorSyntax ruleDeclarationField, CancellationToken c)
@@ -1238,7 +1235,7 @@ namespace MetaCompilation
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
             var expressionKind = SyntaxFactory.ParseExpression("\"DescriptiveId\"") as ExpressionSyntax;
-            var newField = CodeFixNodeCreator.NewIdCreator(generator, currentRuleId, expressionKind).WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Each analyzer needs a public id to identify each DiagnosticDescriptor and subsequently fix diagnostics in CodeFixProvider.cs").ElementAt(0), SyntaxFactory.EndOfLine("/n/r")));
+            var newField = CodeFixNodeCreator.NewIdCreator(generator, currentRuleId, expressionKind).WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Each analyzer needs a public id to identify each DiagnosticDescriptor and subsequently fix diagnostics in CodeFixProvider.cs").ElementAt(0), SyntaxFactory.EndOfLine("\r\n")));
 
             var newClass = generator.InsertMembers(classDeclaration, 0, newField) as ClassDeclarationSyntax;
             var triviaClass = newClass.ReplaceNode(newClass.Members[0], newField);
@@ -1318,21 +1315,30 @@ namespace MetaCompilation
 
             var newRule = rule.ReplaceNode(oldIdName, newIdName);
 
-            return await ReplaceNode(rule, newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("/n/r"), SyntaxFactory.ParseTrailingTrivia("//id: Identifies each rule. Same as the public constant declared above").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))).WithLeadingTrivia(rule.GetLeadingTrivia()), document);
+            return await ReplaceNode(rule, newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("//id: Identifies each rule. Same as the public constant declared above").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(rule.GetLeadingTrivia()), document);
         }
         #endregion
 
         #region supported diagnostics code fix
         private async Task<Document> IncorrectSigSuppDiagAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken c)
         {
-            var whiteSpace = SyntaxFactory.Whitespace(" ");
-            var newIdentifier = SyntaxFactory.ParseToken("SupportedDiagnostics").WithLeadingTrivia(whiteSpace);
-            var publicKeyword = SyntaxFactory.ParseToken("public").WithTrailingTrivia(whiteSpace);
-            var overrideKeyword = SyntaxFactory.ParseToken("override").WithTrailingTrivia(whiteSpace);
-            var modifierList = SyntaxFactory.TokenList(publicKeyword, overrideKeyword);
-            var newPropertyDeclaration = declaration.WithIdentifier(newIdentifier).WithModifiers(modifierList).WithLeadingTrivia(declaration.GetLeadingTrivia()).WithTrailingTrivia(whiteSpace);
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            return await ReplaceNode(declaration, newPropertyDeclaration, document);
+            var type = generator.IdentifierName("ImmutableArray<DiagnosticDescriptor>");
+            var getAccessorStatements = new SyntaxList<SyntaxNode>();
+            foreach (var accessor in declaration.AccessorList.Accessors)
+            {
+                if (accessor.IsKind(SyntaxKind.GetAccessorDeclaration))
+                {
+                    getAccessorStatements = accessor.Body.Statements;
+                    break;
+                }
+            }
+
+            var newPropertyDecl = generator.PropertyDeclaration("SupportedDiagnostics", type, accessibility: Accessibility.Public, modifiers: DeclarationModifiers.Override, getAccessorStatements: getAccessorStatements).WithLeadingTrivia(declaration.GetLeadingTrivia()).WithTrailingTrivia(declaration.GetTrailingTrivia());
+            newPropertyDecl = newPropertyDecl.RemoveNode((newPropertyDecl as PropertyDeclarationSyntax).AccessorList.Accessors[1], 0);
+            
+            return await ReplaceNode(declaration, newPropertyDecl, document);
         }
 
         private async Task<Document> MissingAccessorAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken c)
@@ -1395,7 +1401,7 @@ namespace MetaCompilation
             var identifierString = generator.IdentifierName("Create");
             var expression = generator.MemberAccessExpression(expressionString, identifierString);
             var invocationExpression = generator.InvocationExpression(expression);
-            var returnStatement = (generator.ReturnStatement(invocationExpression) as ReturnStatementSyntax).WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//This array contains all the diagnostics that can be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("/n/r")));
+            var returnStatement = (generator.ReturnStatement(invocationExpression) as ReturnStatementSyntax).WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//This array contains all the diagnostics that can be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("\r\n")));
 
             SyntaxList<AccessorDeclarationSyntax> accessors = declaration.AccessorList.Accessors;
             if (accessors == null || accessors.Count == 0)
@@ -1501,11 +1507,11 @@ namespace MetaCompilation
 
                 if (invocationExpression.FirstAncestorOrSelf<ReturnStatementSyntax>() == null)
                 {
-                    return await ReplaceNode(invocationExpression.FirstAncestorOrSelf<LocalDeclarationStatementSyntax>(), generator.LocalDeclarationStatement(invocationExpression.FirstAncestorOrSelf<LocalDeclarationStatementSyntax>().Declaration.Variables[0].Identifier.Text, generator.InvocationExpression(generator.MemberAccessExpression(generator.IdentifierName("ImmutableArray"), "Create"), nodeArgs)).WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//This array contains all the diagnostics that can be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+                    return await ReplaceNode(invocationExpression.FirstAncestorOrSelf<LocalDeclarationStatementSyntax>(), generator.LocalDeclarationStatement(invocationExpression.FirstAncestorOrSelf<LocalDeclarationStatementSyntax>().Declaration.Variables[0].Identifier.Text, generator.InvocationExpression(generator.MemberAccessExpression(generator.IdentifierName("ImmutableArray"), "Create"), nodeArgs)).WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//This array contains all the diagnostics that can be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
                 }
                 else
                 {
-                    return await ReplaceNode(invocationExpression.Parent, generator.ReturnStatement(generator.InvocationExpression(generator.MemberAccessExpression(generator.IdentifierName("ImmutableArray"), "Create"), nodeArgs)).WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//This array contains all the diagnostics that can be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+                    return await ReplaceNode(invocationExpression.Parent, generator.ReturnStatement(generator.InvocationExpression(generator.MemberAccessExpression(generator.IdentifierName("ImmutableArray"), "Create"), nodeArgs)).WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//This array contains all the diagnostics that can be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
                 }
             }
 
@@ -1520,7 +1526,7 @@ namespace MetaCompilation
             var block = declaration.Parent as BlockSyntax;
             var ifKeyword = CodeFixNodeCreator.KeywordHelper(generator, block);
 
-            return await ReplaceNode(declaration, ifKeyword.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//This statement navigates down the syntax tree one level to extract the 'if' keyword").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))), document);
+            return await ReplaceNode(declaration, ifKeyword.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//This statement navigates down the syntax tree one level to extract the 'if' keyword").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
         private async Task<Document> TrailingCheckIncorrectAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
@@ -1552,7 +1558,7 @@ namespace MetaCompilation
 
             var methodBlock = declaration.Body as BlockSyntax;
             var ifKeyword = CodeFixNodeCreator.KeywordHelper(generator, methodBlock) as StatementSyntax;
-            var newBlock = methodBlock.AddStatements(ifKeyword.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//This statement navigates down the syntax tree one level to extract the 'if' keyword").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))));
+            var newBlock = methodBlock.AddStatements(ifKeyword.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//This statement navigates down the syntax tree one level to extract the 'if' keyword").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
 
             return await ReplaceNode(methodBlock, newBlock, document);
         }
@@ -1702,7 +1708,7 @@ namespace MetaCompilation
             var returnStatement = generator.ReturnStatement() as ReturnStatementSyntax;
 
             var oldBlock = ifStatement.Statement as BlockSyntax;
-            var newStatements = oldBlock.Statements.Replace(oldBlock.Statements[0], returnStatement.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))));
+            var newStatements = oldBlock.Statements.Replace(oldBlock.Statements[0], returnStatement.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
             var newBlock = oldBlock.WithStatements(newStatements);
 
             return await ReplaceNode(oldBlock, newBlock, document);
@@ -1712,7 +1718,7 @@ namespace MetaCompilation
         {
             var generator = SyntaxGenerator.GetGenerator(document);
 
-            var returnStatements = new SyntaxList<SyntaxNode>().Add(generator.ReturnStatement().WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic").ElementAt(0), SyntaxFactory.EndOfLine("/n/r"))));
+            var returnStatements = new SyntaxList<SyntaxNode>().Add(generator.ReturnStatement().WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
 
             var oldBlock = declaration.Statement as BlockSyntax;
             var newBlock = oldBlock.WithStatements(returnStatements);
