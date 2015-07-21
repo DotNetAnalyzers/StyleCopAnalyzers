@@ -122,8 +122,8 @@
                 return;
             }
 
-            // special case: commented code
-            if (text.StartsWith(@"////", StringComparison.Ordinal))
+            // special case: commented code or documentation if the parsers documentation mode is DocumentationMode.None
+            if (text.StartsWith(@"///", StringComparison.Ordinal))
             {
                 return;
             }
