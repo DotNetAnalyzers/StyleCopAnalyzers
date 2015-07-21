@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.SpacingRules;
@@ -14,6 +15,8 @@
     /// </summary>
     public class SA1005UnitTests : CodeFixVerifier
     {
+        private DocumentationMode documentationMode = DocumentationMode.Diagnose;
+
         /// <summary>
         /// Verifies that the analyzer will properly handle an empty source.
         /// </summary>
@@ -267,6 +270,28 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verify that the diagnostic is not reported for documentation comments
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestDocumentationAsync()
+        {
+            var testCode = @"/// <summary>
+/// Some text
+/// </summary>
+public class Bar
+{
+}
+";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+
+            // Verify that this works if the project was configured to treat documentation comments as regular comments
+            this.documentationMode = DocumentationMode.None;
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
@@ -277,6 +302,14 @@
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new SA1005CodeFixProvider();
+        }
+
+        protected override Solution CreateSolution(ProjectId projectId, string language)
+        {
+            Solution solution = base.CreateSolution(projectId, language);
+            Project project = solution.GetProject(projectId);
+
+            return solution.WithProjectParseOptions(projectId, project.ParseOptions.WithDocumentationMode(this.documentationMode));
         }
     }
 }
