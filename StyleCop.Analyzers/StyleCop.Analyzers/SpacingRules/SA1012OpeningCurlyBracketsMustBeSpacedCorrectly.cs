@@ -34,7 +34,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1012.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -78,59 +78,28 @@
                 return;
             }
 
-            bool precededBySpace;
-            bool firstInLine = token.IsFirstInLine();
-            bool allowLeadingSpace;
-            bool allowLeadingNoSpace;
-
             bool followedBySpace = token.IsFollowedByWhitespace();
-            bool lastInLine = token.IsLastInLine();
-
-            if (firstInLine)
-            {
-                precededBySpace = true;
-                allowLeadingSpace = true;
-                allowLeadingNoSpace = true;
-            }
-            else
-            {
-                SyntaxToken precedingToken = token.GetPreviousToken();
-                precededBySpace = precedingToken.HasTrailingTrivia;
-                switch (precedingToken.Kind())
-                {
-                case SyntaxKind.OpenParenToken:
-                    allowLeadingNoSpace = true;
-                    allowLeadingSpace = false;
-                    break;
-
-                default:
-                    allowLeadingNoSpace = false;
-                    allowLeadingSpace = true;
-                    break;
-                }
-            }
 
             if (token.Parent is InterpolationSyntax)
             {
-                // Don't report for interpolation string inlets
+                if (followedBySpace)
+                {
+                    // Opening curly bracket must{} be {followed} by a space.
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), " not", "followed"));
+                }
+
                 return;
             }
 
-            if (!firstInLine)
+            bool precededBySpace = token.IsFirstInLine() || token.IsPrecededByWhitespace();
+
+            if (!precededBySpace)
             {
-                if (!allowLeadingSpace && precededBySpace)
-                {
-                    // Opening curly bracket must{ not} be {preceded} by a space.
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), " not", "preceded"));
-                }
-                else if (!allowLeadingNoSpace && !precededBySpace)
-                {
-                    // Opening curly bracket must{} be {preceded} by a space.
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "preceded"));
-                }
+                // Opening curly bracket must{} be {preceded} by a space.
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "preceded"));
             }
 
-            if (!lastInLine && !followedBySpace)
+            if (!token.IsLastInLine() && !followedBySpace)
             {
                 // Opening curly bracket must{} be {followed} by a space.
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "followed"));
