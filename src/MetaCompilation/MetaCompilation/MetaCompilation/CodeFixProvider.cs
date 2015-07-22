@@ -96,487 +96,436 @@ namespace MetaCompilation
             {
                 TextSpan diagnosticSpan = diagnostic.Location.SourceSpan;
 
-                if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingId))
+                switch (diagnostic.Id)
                 {
-                    IEnumerable<ClassDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        ClassDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Give the diagnostic a unique string ID distinguishing it from other diagnostics", c => MissingIdAsync(context.Document, declaration, c), "Give the diagnostic a unique string ID distinguishing it from other diagnostics"), diagnostic);
-
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingInit))
-                {
-                    IEnumerable<ClassDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        ClassDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Insert the missing Initialize method", c => MissingInitAsync(context.Document, declaration, c), "Insert the missing Initialize method"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingRegisterStatement))
-                {
-                    IEnumerable<MethodDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Register an action to analyze code when changes occur", c => MissingRegisterAsync(context.Document, declaration, c), "Register an action to analyze code when changes occur"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TooManyInitStatements))
-                {
-                    IEnumerable<MethodDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Remove multiple registered actions from the Initialize method", c => MultipleStatementsAsync(context.Document, declaration, c), "Remove multiple registered actions from the Initialize method"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.InvalidStatement))
-                {
-                    IEnumerable<StatementSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        StatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Remove invalid statements from the Initialize method", c => InvalidStatementAsync(context.Document, declaration, c), "Remove invalid statements from the Initialize method"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingAnalysisMethod))
-                {
-                    IEnumerable<MethodDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Generate the method called by actions registered in Initialize", c => MissingAnalysisMethodAsync(context.Document, declaration, c), "Generate the method called by actions registered in Initialize"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectAnalysisAccessibility))
-                {
-                    IEnumerable<MethodDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Add the private keyword to this method", c => IncorrectAnalysisAccessibilityAsync(context.Document, declaration, c), "Add the private keyword to this method"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectAnalysisReturnType))
-                {
-                    IEnumerable<MethodDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Declare a void return type for this method", c => IncorrectAnalysisReturnTypeAsync(context.Document, declaration, c), "Declare a void return type for this method"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectAnalysisParameter))
-                {
-                    IEnumerable<MethodDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Have this method take one parameter of type SyntaxNodeAnalysisContext", c => IncorrectAnalysisParameterAsync(context.Document, declaration, c), "Have this method take one parameter of type SyntaxNodeAnalysisContext"), diagnostic);
-                    }
-                }
-
-                else if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.InternalAndStaticError))
-                {
-                    IEnumerable<FieldDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<FieldDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        FieldDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Make the DiagnosticDescriptor rule both internal and static", c => InternalStaticAsync(context.Document, declaration, c), "Make the DiagnosticDescriptor rule both internal and static"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.EnabledByDefaultError))
-                {
-                    IEnumerable<ArgumentSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ArgumentSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        ArgumentSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Set 'isEnabledByDefault' parameter to true", c => EnabledByDefaultAsync(context.Document, declaration, c), "Set 'isEnabledByDefault' parameter to true"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.DefaultSeverityError))
-                {
-                    IEnumerable<ArgumentSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ArgumentSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        ArgumentSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Set the severity to 'Error' if something is not allowed", c => DiagnosticSeverityError(context.Document, declaration, c), "Set the severity to 'Error' if something is not allowed"), diagnostic);
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Set the severity to 'Warning' if something is suspicious but allowed", c => DiagnosticSeverityWarning(context.Document, declaration, c), "Set the severity to 'Warning' if something is suspicious but allowed"), diagnostic);
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Set the severity to 'Hidden' if something is an issue, but is not surfaced", c => DiagnosticSeverityHidden(context.Document, declaration, c), "Set the severity to 'Hidden' if something is an issue, but is not surfaced"), diagnostic);
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Set the severity to 'Info' for information not indicating a problem", c => DiagnosticSeverityInfo(context.Document, declaration, c), "Set the severity to 'Info' for information not indicating a problem"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.MissingIdDeclaration))
-                {
-                    IEnumerable<VariableDeclaratorSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<VariableDeclaratorSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        VariableDeclaratorSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Declare the diagnostic ID as a public constant string", c => MissingIdDeclarationAsync(context.Document, declaration, c), "Declare the diagnostic ID as a public constant string"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.EndsWith(MetaCompilationAnalyzer.IdDeclTypeError))
-                {
-                    IEnumerable<ClassDeclarationSyntax> classDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>();
-                    if (classDeclarations.Count() != 0)
-                    {
-                        ClassDeclarationSyntax classDeclaration = classDeclarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Declare the diagnostic ID as a public constant string", c => IdDeclTypeAsync(context.Document, classDeclaration, c), "Declare the diagnostic ID as a public constant string"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfStatementIncorrect))
-                {
-                    IEnumerable<StatementSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        StatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the IfStatementSyntax Node from the context", c => IncorrectIfAsync(context.Document, declaration, c), "Extract the IfStatementSyntax Node from the context"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfStatementMissing))
-                {
-                    IEnumerable<MethodDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the IfStatementSyntax Node from the context", c => MissingIfAsync(context.Document, declaration, c), "Extract the IfStatementSyntax Node from the context"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectInitSig))
-                {
-                    IEnumerable<MethodDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Implement the correct signature for the Initialize method", c => IncorrectSigAsync(context.Document, declaration, c), "Implement the correct signature for the Initialize method"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfKeywordIncorrect))
-                {
-                    IEnumerable<StatementSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        StatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the if-keyword from the if-statement", c => IncorrectKeywordAsync(context.Document, declaration, c), "Extract the if-keyword from the if-statement"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IfKeywordMissing))
-                {
-                    IEnumerable<MethodDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the if-keyword from the if-statement", c => MissingKeywordAsync(context.Document, declaration, c), "Extract the if-keyword from the if-statement"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect))
-                {
-                    IEnumerable<MethodDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check if the if-keyword has trailing trivia", c => TrailingCheckIncorrectAsync(context.Document, declaration, c), "Check if the if-keyword has trailing trivia"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaCheckMissing))
-                {
-                    IEnumerable<MethodDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check if the if-keyword has trailing trivia", c => TrailingCheckMissingAsync(context.Document, declaration, c), "Check if the if-keyword has trailing trivia"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaVarMissing))
-                {
-                    IEnumerable<MethodDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the last trailing trivia into a variable", c => TrailingVarMissingAsync(context.Document, declaration, c), "Extract the last trailing trivia into a variable"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaVarIncorrect))
-                {
-                    IEnumerable<MethodDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the last trailing trivia into a variable", c => TrailingVarIncorrectAsync(context.Document, declaration, c), "Extract the last trailing trivia into a variable"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect))
-                {
-                    IEnumerable<IfStatementSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        IfStatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check the kind of the last trailing trivia", c => TrailingKindCheckIncorrectAsync(context.Document, declaration, c), "Check the kind of the last trailing trivia"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TrailingTriviaKindCheckMissing))
-                {
-                    IEnumerable<IfStatementSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        IfStatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check the kind of the last trailing trivia", c => TrailingKindCheckMissingAsync(context.Document, declaration, c), "Check the kind of the last trailing trivia"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.WhitespaceCheckIncorrect))
-                {
-                    IEnumerable<IfStatementSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        IfStatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check if the whitespace is a single space", c => WhitespaceCheckIncorrectAsync(context.Document, declaration, c), "Check if the whitespace is a single space"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.ReturnStatementIncorrect))
-                {
-                    IEnumerable<IfStatementSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        IfStatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Return from the method", c => ReturnIncorrectAsync(context.Document, declaration, c), "Return from the method"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.ReturnStatementMissing))
-                {
-                    IEnumerable<IfStatementSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        IfStatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Return from the method", c => ReturnMissingAsync(context.Document, declaration, c), "Return from the method"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.WhitespaceCheckMissing))
-                {
-                    IEnumerable<IfStatementSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        IfStatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check if the whitespace is a single space", c => WhitespaceCheckMissingAsync(context.Document, declaration, c), "Check if the whitespace is a single space"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.LocationMissing))
-                {
-                    IEnumerable<MethodDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a diagnostic location", c => AddLocationAsync(context.Document, declaration, c), "Create a diagnostic location"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.LocationIncorrect))
-                {
-                    IEnumerable<StatementSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        StatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a diagnostic location", c => ReplaceLocationAsync(context.Document, declaration, c), "Create a diagnostic location"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.SpanMissing))
-                {
-                    IEnumerable<MethodDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a diagnostic span", c => AddSpanAsync(context.Document, declaration, c), "Create a diagnostic span"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.SpanIncorrect))
-                {
-                    IEnumerable<StatementSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        StatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a diagnostic span", c => ReplaceSpanAsync(context.Document, declaration, c), "Create a diagnostic span"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.EndSpanMissing))
-                {
-                    IEnumerable<MethodDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a variable representing the end of the diagnostic span", c => AddEndSpanAsync(context.Document, declaration, c), "Create a variable representing the end of the diagnostic span"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.EndSpanIncorrect))
-                {
-                    IEnumerable<StatementSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        StatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a variable representing the end of the diagnostic span", c => ReplaceEndSpanAsync(context.Document, declaration, c), "Create a variable representing the end of the diagnostic span"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.StartSpanMissing))
-                {
-                    IEnumerable<MethodDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a variable representing the start of the diagnostic span", c => AddStartSpanAsync(context.Document, declaration, c), "Create a variable representing the start of the diagnostic span"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.StartSpanIncorrect))
-                {
-                    IEnumerable<StatementSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        StatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a variable representing the start of the diagnostic span", c => ReplaceStartSpanAsync(context.Document, declaration, c), "Create a variable representing the start of the diagnostic span"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.OpenParenMissing))
-                {
-                    IEnumerable<MethodDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the open parenthesis from the if-statement", c => AddOpenParenAsync(context.Document, declaration, c), "Extract the open parenthesis from the if-statement"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.OpenParenIncorrect))
-                {
-                    IEnumerable<StatementSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        StatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the open parenthesis from the if-statement", c => ReplaceOpenParenAsync(context.Document, declaration, c), "Extract the open parenthesis from the if-statement"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.DiagnosticMissing))
-                {
-                    IEnumerable<ClassDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        ClassDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create the diagnostic that is going to be reported", c => AddDiagnosticAsync(context.Document, declaration, c), "Create the diagnostic that is going to be reported"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.DiagnosticIncorrect))
-                {
-                    IEnumerable<StatementSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        StatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create the diagnostic that is going to be reported", c => ReplaceDiagnosticAsync(context.Document, declaration, c), "Create the diagnostic that is going to be reported"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.DiagnosticReportMissing))
-                {
-                    IEnumerable<MethodDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        MethodDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Report the diagnostic to the SyntaxNodeAnalysisContext", c => AddDiagnosticReportAsync(context.Document, declaration, c), "Report the diagnostic to the SyntaxNodeAnalysisContext"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.DiagnosticReportIncorrect))
-                {
-                    IEnumerable<StatementSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        StatementSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Report the diagnostic to the SyntaxNodeAnalysisContext", c => ReplaceDiagnosticReportAsync(context.Document, declaration, c), "Report the diagnostic to the SyntaxNodeAnalysisContext"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectSigSuppDiag))
-                {
-                    IEnumerable<PropertyDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<PropertyDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        PropertyDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Implement the correct signature for the SupportedDiagnostics property", c => IncorrectSigSuppDiagAsync(context.Document, declaration, c), "Implement the correct signature for the SupportedDiagnostics property"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingAccessor))
-                {
-                    IEnumerable<PropertyDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<PropertyDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        PropertyDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Add a get-accessor to the SupportedDiagnostics property", c => MissingAccessorAsync(context.Document, declaration, c), "Add a get-accessor to the SupportedDiagnostics property"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.TooManyAccessors))
-                {
-                    IEnumerable<PropertyDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<PropertyDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        PropertyDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Remove unnecessary accessors from the SupportedDiagnostics property", c => TooManyAccessorsAsync(context.Document, declaration, c), "Remove unnecessary accessors from the SupportedDiagnostics property"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectAccessorReturn) || diagnostic.Id.Equals(MetaCompilationAnalyzer.SuppDiagReturnValue))
-                {
-                    IEnumerable<PropertyDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<PropertyDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        PropertyDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Return an ImmutableArray of DiagnosticDescriptors from SupportedDiagnostics", c => AccessorReturnValueAsync(context.Document, declaration, c), "Return an ImmutableArray of DiagnosticDescriptors from SupportedDiagnostics"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.SupportedRules))
-                {
-                    IEnumerable<ClassDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        ClassDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Return a list of all diagnostics that can be reported by this analyzer", c => SupportedRulesAsync(context.Document, declaration, c), "Return a list of all diagnostics that can be reported by this analyzer"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingSuppDiag))
-                {
-                    IEnumerable<ClassDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        ClassDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Add the required SupportedDiagnostics property", c => AddSuppDiagAsync(context.Document, declaration, c), "Add the required SupportedDiagnostics property"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.MissingRule))
-                {
-                    IEnumerable<ClassDeclarationSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        ClassDeclarationSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Add a DiagnosticDescriptor rule to create the diagnostic", c => AddRuleAsync(context.Document, declaration, c), "Add a DiagnosticDescriptor rule to create the diagnostic"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectKind))
-                {
-                    IEnumerable<ArgumentListSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ArgumentListSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        ArgumentListSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Analyze the correct SyntaxKind", c => CorrectKindAsync(context.Document, declaration, c), "Analyze the correct SyntaxKind"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectRegister))
-                {
-                    IEnumerable<IdentifierNameSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IdentifierNameSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        IdentifierNameSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Register an action of kind SyntaxNodeAnalysis", c => CorrectRegisterAsync(context.Document, declaration, c), "Register an action of kind SyntaxNodeAnalysis"), diagnostic);
-                    }
-                }
-                else if (diagnostic.Id.Equals(MetaCompilationAnalyzer.IncorrectArguments))
-                {
-                    IEnumerable<InvocationExpressionSyntax> declarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<InvocationExpressionSyntax>();
-                    if (declarations.Count() != 0)
-                    {
-                        InvocationExpressionSyntax declaration = declarations.First();
-                        context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Add the correct arguments to the Initialize method", c => CorrectArgumentsAsync(context.Document, declaration, c), "Add the correct arguments to the Initialize method"), diagnostic);
-                    }
+                    case MetaCompilationAnalyzer.MissingId:
+                        IEnumerable<ClassDeclarationSyntax> idDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>();
+                        if (idDeclarations.Count() != 0)
+                        {
+                            ClassDeclarationSyntax declaration = idDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Give the diagnostic a unique string ID distinguishing it from other diagnostics", c => MissingIdAsync(context.Document, declaration, c), "Give the diagnostic a unique string ID distinguishing it from other diagnostics"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.MissingInit:
+                        IEnumerable<ClassDeclarationSyntax> initDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>();
+                        if (initDeclarations.Count() != 0)
+                        {
+                            ClassDeclarationSyntax declaration = initDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Insert the missing Initialize method", c => MissingInitAsync(context.Document, declaration, c), "Insert the missing Initialize method"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.MissingRegisterStatement:
+                        IEnumerable<MethodDeclarationSyntax> registerDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
+                        if (registerDeclarations.Count() != 0)
+                        {
+                            MethodDeclarationSyntax declaration = registerDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Register an action to analyze code when changes occur", c => MissingRegisterAsync(context.Document, declaration, c), "Register an action to analyze code when changes occur"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.TooManyInitStatements:
+                        IEnumerable<MethodDeclarationSyntax> manyDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
+                        if (manyDeclarations.Count() != 0)
+                        {
+                            MethodDeclarationSyntax declaration = manyDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Remove multiple registered actions from the Initialize method", c => MultipleStatementsAsync(context.Document, declaration, c), "Remove multiple registered actions from the Initialize method"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.InvalidStatement:
+                        IEnumerable<StatementSyntax> invalidDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>();
+                        if (invalidDeclarations.Count() != 0)
+                        {
+                            StatementSyntax declaration = invalidDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Remove invalid statements from the Initialize method", c => InvalidStatementAsync(context.Document, declaration, c), "Remove invalid statements from the Initialize method"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.MissingAnalysisMethod:
+                        IEnumerable<MethodDeclarationSyntax> analysisDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
+                        if (analysisDeclarations.Count() != 0)
+                        {
+                            MethodDeclarationSyntax declaration = analysisDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Generate the method called by actions registered in Initialize", c => MissingAnalysisMethodAsync(context.Document, declaration, c), "Generate the method called by actions registered in Initialize"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.IncorrectAnalysisAccessibility:
+                        IEnumerable<MethodDeclarationSyntax> incorrectDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
+                        if (incorrectDeclarations.Count() != 0)
+                        {
+                            MethodDeclarationSyntax declaration = incorrectDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Add the private keyword to this method", c => IncorrectAnalysisAccessibilityAsync(context.Document, declaration, c), "Add the private keyword to this method"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.IncorrectAnalysisReturnType:
+                        IEnumerable<MethodDeclarationSyntax> returnDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
+                        if (returnDeclarations.Count() != 0)
+                        {
+                            MethodDeclarationSyntax declaration = returnDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Declare a void return type for this method", c => IncorrectAnalysisReturnTypeAsync(context.Document, declaration, c), "Declare a void return type for this method"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.IncorrectAnalysisParameter:
+                        IEnumerable<MethodDeclarationSyntax> parameterDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
+                        if (parameterDeclarations.Count() != 0)
+                        {
+                            MethodDeclarationSyntax declaration = parameterDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Have this method take one parameter of type SyntaxNodeAnalysisContext", c => IncorrectAnalysisParameterAsync(context.Document, declaration, c), "Have this method take one parameter of type SyntaxNodeAnalysisContext"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.InternalAndStaticError:
+                        IEnumerable<FieldDeclarationSyntax> internalDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<FieldDeclarationSyntax>();
+                        if (internalDeclarations.Count() != 0)
+                        {
+                            FieldDeclarationSyntax declaration = internalDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Make the DiagnosticDescriptor rule both internal and static", c => InternalStaticAsync(context.Document, declaration, c), "Make the DiagnosticDescriptor rule both internal and static"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.EnabledByDefaultError:
+                        IEnumerable<ArgumentSyntax> enabledDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ArgumentSyntax>();
+                        if (enabledDeclarations.Count() != 0)
+                        {
+                            ArgumentSyntax declaration = enabledDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Set 'isEnabledByDefault' parameter to true", c => EnabledByDefaultAsync(context.Document, declaration, c), "Set 'isEnabledByDefault' parameter to true"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.DefaultSeverityError:
+                        IEnumerable<ArgumentSyntax> severityDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ArgumentSyntax>();
+                        if (severityDeclarations.Count() != 0)
+                        {
+                            ArgumentSyntax declaration = severityDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Set the severity to 'Error' if something is not allowed", c => DiagnosticSeverityError(context.Document, declaration, c), "Set the severity to 'Error' if something is not allowed"), diagnostic);
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Set the severity to 'Warning' if something is suspicious but allowed", c => DiagnosticSeverityWarning(context.Document, declaration, c), "Set the severity to 'Warning' if something is suspicious but allowed"), diagnostic);
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Set the severity to 'Hidden' if something is an issue, but is not surfaced", c => DiagnosticSeverityHidden(context.Document, declaration, c), "Set the severity to 'Hidden' if something is an issue, but is not surfaced"), diagnostic);
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Set the severity to 'Info' for information not indicating a problem", c => DiagnosticSeverityInfo(context.Document, declaration, c), "Set the severity to 'Info' for information not indicating a problem"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.MissingIdDeclaration:
+                        IEnumerable<VariableDeclaratorSyntax> missingIdDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<VariableDeclaratorSyntax>();
+                        if (missingIdDeclarations.Count() != 0)
+                        {
+                            VariableDeclaratorSyntax declaration = missingIdDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Declare the diagnostic ID as a public constant string", c => MissingIdDeclarationAsync(context.Document, declaration, c), "Declare the diagnostic ID as a public constant string"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.IdDeclTypeError:
+                        IEnumerable<ClassDeclarationSyntax> declDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>();
+                        if (declDeclarations.Count() != 0)
+                        {
+                            ClassDeclarationSyntax classDeclaration = declDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Declare the diagnostic ID as a public constant string", c => IdDeclTypeAsync(context.Document, classDeclaration, c), "Declare the diagnostic ID as a public constant string"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.IfStatementIncorrect:
+                        IEnumerable<StatementSyntax> ifDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>();
+                        if (ifDeclarations.Count() != 0)
+                        {
+                            StatementSyntax declaration = ifDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the IfStatementSyntax Node from the context", c => IncorrectIfAsync(context.Document, declaration, c), "Extract the IfStatementSyntax Node from the context"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.IfStatementMissing:
+                        IEnumerable<MethodDeclarationSyntax> ifMissingDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
+                        if (ifMissingDeclarations.Count() != 0)
+                        {
+                            MethodDeclarationSyntax declaration = ifMissingDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the IfStatementSyntax Node from the context", c => MissingIfAsync(context.Document, declaration, c), "Extract the IfStatementSyntax Node from the context"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.IncorrectInitSig:
+                        IEnumerable<MethodDeclarationSyntax> initSigDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
+                        if (initSigDeclarations.Count() != 0)
+                        {
+                            MethodDeclarationSyntax declaration = initSigDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Implement the correct signature for the Initialize method", c => IncorrectSigAsync(context.Document, declaration, c), "Implement the correct signature for the Initialize method"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.IfKeywordIncorrect:
+                        IEnumerable<StatementSyntax> keywordDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>();
+                        if (keywordDeclarations.Count() != 0)
+                        {
+                            StatementSyntax declaration = keywordDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the if-keyword from the if-statement", c => IncorrectKeywordAsync(context.Document, declaration, c), "Extract the if-keyword from the if-statement"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.IfKeywordMissing:
+                        IEnumerable<MethodDeclarationSyntax> keywordMissingDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
+                        if (keywordMissingDeclarations.Count() != 0)
+                        {
+                            MethodDeclarationSyntax declaration = keywordMissingDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the if-keyword from the if-statement", c => MissingKeywordAsync(context.Document, declaration, c), "Extract the if-keyword from the if-statement"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect:
+                        IEnumerable<MethodDeclarationSyntax> checkDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
+                        if (checkDeclarations.Count() != 0)
+                        {
+                            MethodDeclarationSyntax declaration = checkDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check if the if-keyword has trailing trivia", c => TrailingCheckIncorrectAsync(context.Document, declaration, c), "Check if the if-keyword has trailing trivia"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.TrailingTriviaCheckMissing:
+                        IEnumerable<MethodDeclarationSyntax> checkMissingDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
+                        if (checkMissingDeclarations.Count() != 0)
+                        {
+                            MethodDeclarationSyntax declaration = checkMissingDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check if the if-keyword has trailing trivia", c => TrailingCheckMissingAsync(context.Document, declaration, c), "Check if the if-keyword has trailing trivia"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.TrailingTriviaVarMissing:
+                        IEnumerable<MethodDeclarationSyntax> varMissingDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
+                        if (varMissingDeclarations.Count() != 0)
+                        {
+                            MethodDeclarationSyntax declaration = varMissingDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the last trailing trivia into a variable", c => TrailingVarMissingAsync(context.Document, declaration, c), "Extract the last trailing trivia into a variable"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.TrailingTriviaVarIncorrect:
+                        IEnumerable<MethodDeclarationSyntax> varDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
+                        if (varDeclarations.Count() != 0)
+                        {
+                            MethodDeclarationSyntax declaration = varDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the last trailing trivia into a variable", c => TrailingVarIncorrectAsync(context.Document, declaration, c), "Extract the last trailing trivia into a variable"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect:
+                        IEnumerable<IfStatementSyntax> kindDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>();
+                        if (kindDeclarations.Count() != 0)
+                        {
+                            IfStatementSyntax declaration = kindDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check the kind of the last trailing trivia", c => TrailingKindCheckIncorrectAsync(context.Document, declaration, c), "Check the kind of the last trailing trivia"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.TrailingTriviaKindCheckMissing:
+                        IEnumerable<IfStatementSyntax> kindMissingDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>();
+                        if (kindMissingDeclarations.Count() != 0)
+                        {
+                            IfStatementSyntax declaration = kindMissingDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check the kind of the last trailing trivia", c => TrailingKindCheckMissingAsync(context.Document, declaration, c), "Check the kind of the last trailing trivia"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.WhitespaceCheckIncorrect:
+                        IEnumerable<IfStatementSyntax> whitespaceDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>();
+                        if (whitespaceDeclarations.Count() != 0)
+                        {
+                            IfStatementSyntax declaration = whitespaceDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check if the whitespace is a single space", c => WhitespaceCheckIncorrectAsync(context.Document, declaration, c), "Check if the whitespace is a single space"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.ReturnStatementIncorrect:
+                        IEnumerable<IfStatementSyntax> statementDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>();
+                        if (statementDeclarations.Count() != 0)
+                        {
+                            IfStatementSyntax declaration = statementDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Return from the method", c => ReturnIncorrectAsync(context.Document, declaration, c), "Return from the method"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.ReturnStatementMissing:
+                        IEnumerable<IfStatementSyntax> statementMissingDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>();
+                        if (statementMissingDeclarations.Count() != 0)
+                        {
+                            IfStatementSyntax declaration = statementMissingDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Return from the method", c => ReturnMissingAsync(context.Document, declaration, c), "Return from the method"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.WhitespaceCheckMissing:
+                        IEnumerable<IfStatementSyntax> whitespaceMissingDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>();
+                        if (whitespaceMissingDeclarations.Count() != 0)
+                        {
+                            IfStatementSyntax declaration = whitespaceMissingDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check if the whitespace is a single space", c => WhitespaceCheckMissingAsync(context.Document, declaration, c), "Check if the whitespace is a single space"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.LocationMissing:
+                        IEnumerable<MethodDeclarationSyntax> locationMissingDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
+                        if (locationMissingDeclarations.Count() != 0)
+                        {
+                            MethodDeclarationSyntax declaration = locationMissingDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a diagnostic location", c => AddLocationAsync(context.Document, declaration, c), "Create a diagnostic location"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.LocationIncorrect:
+                        IEnumerable<StatementSyntax> locationDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>();
+                        if (locationDeclarations.Count() != 0)
+                        {
+                            StatementSyntax declaration = locationDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a diagnostic location", c => ReplaceLocationAsync(context.Document, declaration, c), "Create a diagnostic location"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.SpanMissing:
+                        IEnumerable<MethodDeclarationSyntax> spanMissingDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
+                        if (spanMissingDeclarations.Count() != 0)
+                        {
+                            MethodDeclarationSyntax declaration = spanMissingDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a diagnostic span", c => AddSpanAsync(context.Document, declaration, c), "Create a diagnostic span"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.SpanIncorrect:
+                        IEnumerable<StatementSyntax> spanDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>();
+                        if (spanDeclarations.Count() != 0)
+                        {
+                            StatementSyntax declaration = spanDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a diagnostic span", c => ReplaceSpanAsync(context.Document, declaration, c), "Create a diagnostic span"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.EndSpanMissing:
+                        IEnumerable<MethodDeclarationSyntax> endMissingDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
+                        if (endMissingDeclarations.Count() != 0)
+                        {
+                            MethodDeclarationSyntax declaration = endMissingDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a variable representing the end of the diagnostic span", c => AddEndSpanAsync(context.Document, declaration, c), "Create a variable representing the end of the diagnostic span"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.EndSpanIncorrect:
+                        IEnumerable<StatementSyntax> endDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>();
+                        if (endDeclarations.Count() != 0)
+                        {
+                            StatementSyntax declaration = endDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a variable representing the end of the diagnostic span", c => ReplaceEndSpanAsync(context.Document, declaration, c), "Create a variable representing the end of the diagnostic span"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.StartSpanMissing:
+                        IEnumerable<MethodDeclarationSyntax> startMissingDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
+                        if (startMissingDeclarations.Count() != 0)
+                        {
+                            MethodDeclarationSyntax declaration = startMissingDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a variable representing the start of the diagnostic span", c => AddStartSpanAsync(context.Document, declaration, c), "Create a variable representing the start of the diagnostic span"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.StartSpanIncorrect:
+                        IEnumerable<StatementSyntax> startDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>();
+                        if (startDeclarations.Count() != 0)
+                        {
+                            StatementSyntax declaration = startDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create a variable representing the start of the diagnostic span", c => ReplaceStartSpanAsync(context.Document, declaration, c), "Create a variable representing the start of the diagnostic span"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.OpenParenMissing:
+                        IEnumerable<MethodDeclarationSyntax> openMissingDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
+                        if (openMissingDeclarations.Count() != 0)
+                        {
+                            MethodDeclarationSyntax declaration = openMissingDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the open parenthesis from the if-statement", c => AddOpenParenAsync(context.Document, declaration, c), "Extract the open parenthesis from the if-statement"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.OpenParenIncorrect:
+                        IEnumerable<StatementSyntax> openDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>();
+                        if (openDeclarations.Count() != 0)
+                        {
+                            StatementSyntax declaration = openDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the open parenthesis from the if-statement", c => ReplaceOpenParenAsync(context.Document, declaration, c), "Extract the open parenthesis from the if-statement"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.DiagnosticMissing:
+                        IEnumerable<ClassDeclarationSyntax> diagnosticMissingDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>();
+                        if (diagnosticMissingDeclarations.Count() != 0)
+                        {
+                            ClassDeclarationSyntax declaration = diagnosticMissingDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create the diagnostic that is going to be reported", c => AddDiagnosticAsync(context.Document, declaration, c), "Create the diagnostic that is going to be reported"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.DiagnosticIncorrect:
+                        IEnumerable<StatementSyntax> diagnosticDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>();
+                        if (diagnosticDeclarations.Count() != 0)
+                        {
+                            StatementSyntax declaration = diagnosticDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Create the diagnostic that is going to be reported", c => ReplaceDiagnosticAsync(context.Document, declaration, c), "Create the diagnostic that is going to be reported"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.DiagnosticReportMissing:
+                        IEnumerable<MethodDeclarationSyntax> reportMissingDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
+                        if (reportMissingDeclarations.Count() != 0)
+                        {
+                            MethodDeclarationSyntax declaration = reportMissingDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Report the diagnostic to the SyntaxNodeAnalysisContext", c => AddDiagnosticReportAsync(context.Document, declaration, c), "Report the diagnostic to the SyntaxNodeAnalysisContext"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.DiagnosticReportIncorrect:
+                        IEnumerable<StatementSyntax> reportDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<StatementSyntax>();
+                        if (reportDeclarations.Count() != 0)
+                        {
+                            StatementSyntax declaration = reportDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Report the diagnostic to the SyntaxNodeAnalysisContext", c => ReplaceDiagnosticReportAsync(context.Document, declaration, c), "Report the diagnostic to the SyntaxNodeAnalysisContext"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.IncorrectSigSuppDiag:
+                        IEnumerable<PropertyDeclarationSyntax> sigSuppDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<PropertyDeclarationSyntax>();
+                        if (sigSuppDeclarations.Count() != 0)
+                        {
+                            PropertyDeclarationSyntax declaration = sigSuppDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Implement the correct signature for the SupportedDiagnostics property", c => IncorrectSigSuppDiagAsync(context.Document, declaration, c), "Implement the correct signature for the SupportedDiagnostics property"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.MissingAccessor:
+                        IEnumerable<PropertyDeclarationSyntax> accessorDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<PropertyDeclarationSyntax>();
+                        if (accessorDeclarations.Count() != 0)
+                        {
+                            PropertyDeclarationSyntax declaration = accessorDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Add a get-accessor to the SupportedDiagnostics property", c => MissingAccessorAsync(context.Document, declaration, c), "Add a get-accessor to the SupportedDiagnostics property"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.TooManyAccessors:
+                        IEnumerable<PropertyDeclarationSyntax> manyAccessorsDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<PropertyDeclarationSyntax>();
+                        if (manyAccessorsDeclarations.Count() != 0)
+                        {
+                            PropertyDeclarationSyntax declaration = manyAccessorsDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Remove unnecessary accessors from the SupportedDiagnostics property", c => TooManyAccessorsAsync(context.Document, declaration, c), "Remove unnecessary accessors from the SupportedDiagnostics property"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.SuppDiagReturnValue:
+                    case MetaCompilationAnalyzer.IncorrectAccessorReturn:
+                        IEnumerable<PropertyDeclarationSyntax> incorrectAccessorDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<PropertyDeclarationSyntax>();
+                        if (incorrectAccessorDeclarations.Count() != 0)
+                        {
+                            PropertyDeclarationSyntax declaration = incorrectAccessorDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Return an ImmutableArray of DiagnosticDescriptors from SupportedDiagnostics", c => AccessorReturnValueAsync(context.Document, declaration, c), "Return an ImmutableArray of DiagnosticDescriptors from SupportedDiagnostics"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.SupportedRules:
+                        IEnumerable<ClassDeclarationSyntax> rulesDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>();
+                        if (rulesDeclarations.Count() != 0)
+                        {
+                            ClassDeclarationSyntax declaration = rulesDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Return a list of all diagnostics that can be reported by this analyzer", c => SupportedRulesAsync(context.Document, declaration, c), "Return a list of all diagnostics that can be reported by this analyzer"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.MissingSuppDiag:
+                        IEnumerable<ClassDeclarationSyntax> suppDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>();
+                        if (suppDeclarations.Count() != 0)
+                        {
+                            ClassDeclarationSyntax declaration = suppDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Add the required SupportedDiagnostics property", c => AddSuppDiagAsync(context.Document, declaration, c), "Add the required SupportedDiagnostics property"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.MissingRule:
+                        IEnumerable<ClassDeclarationSyntax> missingRuleDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>();
+                        if (missingRuleDeclarations.Count() != 0)
+                        {
+                            ClassDeclarationSyntax declaration = missingRuleDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Add a DiagnosticDescriptor rule to create the diagnostic", c => AddRuleAsync(context.Document, declaration, c), "Add a DiagnosticDescriptor rule to create the diagnostic"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.IncorrectKind:
+                        IEnumerable<ArgumentListSyntax> incorrectKindDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ArgumentListSyntax>();
+                        if (incorrectKindDeclarations.Count() != 0)
+                        {
+                            ArgumentListSyntax declaration = incorrectKindDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Analyze the correct SyntaxKind", c => CorrectKindAsync(context.Document, declaration, c), "Analyze the correct SyntaxKind"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.IncorrectRegister:
+                        IEnumerable<IdentifierNameSyntax> incorrectRegisterDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IdentifierNameSyntax>();
+                        if (incorrectRegisterDeclarations.Count() != 0)
+                        {
+                            IdentifierNameSyntax declaration = incorrectRegisterDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Register an action of kind SyntaxNodeAnalysis", c => CorrectRegisterAsync(context.Document, declaration, c), "Register an action of kind SyntaxNodeAnalysis"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.IncorrectArguments:
+                        IEnumerable<InvocationExpressionSyntax> argsDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<InvocationExpressionSyntax>();
+                        if (argsDeclarations.Count() != 0)
+                        {
+                            InvocationExpressionSyntax declaration = argsDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Add the correct arguments to the Initialize method", c => CorrectArgumentsAsync(context.Document, declaration, c), "Add the correct arguments to the Initialize method"), diagnostic);
+                        }
+                        break;
                 }
             }
         }
