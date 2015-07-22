@@ -12,6 +12,7 @@ using Microsoft.CodeAnalysis.VisualBasic;
 using Roslyn.Test.Utilities;
 using Roslyn.Utilities;
 using Xunit;
+using TestResources.NetFX;
 
 namespace Microsoft.CodeAnalysis.UnitTests
 {
@@ -36,6 +37,49 @@ namespace Microsoft.CodeAnalysis.UnitTests
 
         protected abstract DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer();
         protected abstract DiagnosticAnalyzer GetBasicDiagnosticAnalyzer();
+
+        private static MetadataReference s_systemRuntimeFacadeRef;
+        public static MetadataReference SystemRuntimeFacadeRef
+        {
+            get
+            {
+                if (s_systemRuntimeFacadeRef == null)
+                {
+                    s_systemRuntimeFacadeRef = AssemblyMetadata.CreateFromImage(ReferenceAssemblies_V45_Facades.System_Runtime).GetReference(display: "System.Runtime.dll");
+                }
+
+                return s_systemRuntimeFacadeRef;
+            }
+        }
+
+        private static MetadataReference s_systemThreadingFacadeRef;
+        public static MetadataReference SystemThreadingFacadeRef
+        {
+            get
+            {
+                if (s_systemThreadingFacadeRef == null)
+                {
+                    s_systemThreadingFacadeRef = AssemblyMetadata.CreateFromImage(ReferenceAssemblies_V45_Facades.System_Threading).GetReference(display: "System.Threading.dll");
+                }
+
+                return s_systemThreadingFacadeRef;
+            }
+        }
+
+        private static MetadataReference s_systemThreadingTasksFacadeRef;
+        public static MetadataReference SystemThreadingTaskFacadeRef
+        {
+            get
+            {
+                if (s_systemThreadingTasksFacadeRef == null)
+                {
+                    s_systemThreadingTasksFacadeRef = AssemblyMetadata.CreateFromImage(ReferenceAssemblies_V45_Facades.System_Threading_Tasks).GetReference(display: "System.Threading.Tasks.dll");
+                }
+
+                return s_systemThreadingTasksFacadeRef;
+            }
+        }
+
 
         protected static DiagnosticResult GetGlobalResult(string id, string message)
         {
@@ -261,11 +305,15 @@ namespace Microsoft.CodeAnalysis.UnitTests
 
             var projectId = ProjectId.CreateNewId(debugName: TestProjectName);
 
+
             var solution = (addToSolution ?? new AdhocWorkspace().CurrentSolution)
                 .AddProject(projectId, TestProjectName, TestProjectName, language)
                 .AddMetadataReference(projectId, s_corlibReference)
                 .AddMetadataReference(projectId, s_systemCoreReference)
                 .AddMetadataReference(projectId, s_codeAnalysisReference)
+                .AddMetadataReference(projectId, SystemRuntimeFacadeRef)
+                .AddMetadataReference(projectId, SystemThreadingFacadeRef)
+                .AddMetadataReference(projectId, SystemThreadingTaskFacadeRef)
                 //.AddMetadataReference(projectId, TestBase.SystemRef)
                 //.AddMetadataReference(projectId, TestBase.SystemRuntimeFacadeRef)
                 //.AddMetadataReference(projectId, TestBase.SystemThreadingFacadeRef)
