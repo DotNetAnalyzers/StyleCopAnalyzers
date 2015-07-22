@@ -73,15 +73,7 @@ namespace StyleCop.Analyzers
         /// <c>&lt;auto-generated</c>.</item>
         /// <item>The code is contained in a file with a name matching certain patterns (case-insensitive):
         /// <list type="bullet">
-        /// <item>service.cs</item>
-        /// <item>TemporaryGeneratedFile_*.cs</item>
-        /// <item>assemblyinfo.cs</item>
-        /// <item>assemblyattributes.cs</item>
-        /// <item>*.g.cs</item>
-        /// <item>*.g.i.cs</item>
         /// <item>*.designer.cs</item>
-        /// <item>*.generated.cs</item>
-        /// <item>*.assemblyattributes.cs</item>
         /// </list>
         /// </item>
         /// </list>
