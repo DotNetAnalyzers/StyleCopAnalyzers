@@ -33,7 +33,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1013.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -58,27 +58,33 @@
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
             {
-                switch (token.Kind())
+                if (token.IsKind(SyntaxKind.CloseBraceToken))
                 {
-                case SyntaxKind.CloseBraceToken:
-                    this.HandleCloseBraceToken(context, token);
-                    break;
-
-                default:
-                    break;
+                    HandleCloseBraceToken(context, token);
                 }
             }
         }
 
-        private void HandleCloseBraceToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private static void HandleCloseBraceToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
             {
                 return;
             }
 
-            bool firstInLine = token.IsFirstInLine();
-            bool precededBySpace = firstInLine || token.IsPrecededByWhitespace();
+            bool precededBySpace = token.IsFirstInLine() || token.IsPrecededByWhitespace();
+
+            if (token.Parent is InterpolationSyntax)
+            {
+                if (precededBySpace)
+                {
+                    // Closing curly bracket must{ not} be {preceded} by a space.
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), " not", "preceded"));
+                }
+
+                return;
+            }
+
             bool followedBySpace = token.IsFollowedByWhitespace();
             bool lastInLine = token.IsLastInLine();
             bool precedesSpecialCharacter;
@@ -96,30 +102,16 @@
                 precedesSpecialCharacter = false;
             }
 
-            if (token.Parent is InterpolationSyntax)
-            {
-                // Don't report for interpolation string inlets
-                return;
-            }
-
-            if (!firstInLine && !precededBySpace)
+            if (!precededBySpace)
             {
                 // Closing curly bracket must{} be {preceded} by a space.
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "preceded"));
             }
 
-            if (!lastInLine)
+            if (!lastInLine && !precedesSpecialCharacter && !followedBySpace)
             {
-                if (!precedesSpecialCharacter && !followedBySpace)
-                {
-                    // Closing curly bracket must{} be {followed} by a space.
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "followed"));
-                }
-                else if (precedesSpecialCharacter && followedBySpace)
-                {
-                    // Closing curly bracket must{ not} be {followed} by a space.
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), " not", "followed"));
-                }
+                // Closing curly bracket must{} be {followed} by a space.
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "followed"));
             }
         }
     }
