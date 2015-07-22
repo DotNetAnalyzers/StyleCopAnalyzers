@@ -59,19 +59,14 @@
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
             {
-                switch (token.Kind())
+                if (token.IsKind(SyntaxKind.OpenBraceToken))
                 {
-                case SyntaxKind.OpenBraceToken:
-                    this.HandleOpenBraceToken(context, token);
-                    break;
-
-                default:
-                    break;
+                    HandleOpenBraceToken(context, token);
                 }
             }
         }
 
-        private void HandleOpenBraceToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private static void HandleOpenBraceToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
             {
