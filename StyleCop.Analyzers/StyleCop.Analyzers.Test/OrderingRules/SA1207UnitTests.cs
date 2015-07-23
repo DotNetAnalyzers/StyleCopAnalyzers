@@ -41,7 +41,8 @@ public class Foo
                 return
                     from invalidAndFixedAccessModifier in InvalidAndFixedAccessModifiers
                     from declarationWithoutAccessModifier in DeclarationsWithoutAccessModifier
-                    select new object[] {
+                    select new object[]
+                    {
                         invalidAndFixedAccessModifier.Item1 + " " + declarationWithoutAccessModifier,
                         invalidAndFixedAccessModifier.Item2 + " " + declarationWithoutAccessModifier
                     };
