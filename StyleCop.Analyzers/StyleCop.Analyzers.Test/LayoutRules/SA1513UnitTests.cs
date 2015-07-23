@@ -34,6 +34,7 @@
         {
             var testCode = @"using System;
 using System.Linq;
+using System.Collections.Generic;
 
 public class Foo
 {
@@ -338,6 +339,15 @@ public class Foo
         add
         {
         }
+    }
+
+    // Valid #28 - Test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1020
+    private static IEnumerable<object> Method()
+    {
+        yield return new
+        {
+            prop = ""A""
+        };
     }
 
     // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/784
