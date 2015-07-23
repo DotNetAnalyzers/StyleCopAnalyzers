@@ -272,18 +272,18 @@ namespace MetaCompilation
                         }
                         break;
                     case MetaCompilationAnalyzer.TrailingTriviaVarMissing:
-                        IEnumerable<MethodDeclarationSyntax> varMissingDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
+                        IEnumerable<IfStatementSyntax> varMissingDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>();
                         if (varMissingDeclarations.Count() != 0)
                         {
-                            MethodDeclarationSyntax declaration = varMissingDeclarations.First();
+                            IfStatementSyntax declaration = varMissingDeclarations.First();
                             context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the last trailing trivia into a variable", c => TrailingVarMissingAsync(context.Document, declaration, c), "Extract the last trailing trivia into a variable"), diagnostic);
                         }
                         break;
                     case MetaCompilationAnalyzer.TrailingTriviaVarIncorrect:
-                        IEnumerable<MethodDeclarationSyntax> varDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>();
+                        IEnumerable<IfStatementSyntax> varDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<IfStatementSyntax>();
                         if (varDeclarations.Count() != 0)
                         {
-                            MethodDeclarationSyntax declaration = varDeclarations.First();
+                            IfStatementSyntax declaration = varDeclarations.First();
                             context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the last trailing trivia into a variable", c => TrailingVarIncorrectAsync(context.Document, declaration, c), "Extract the last trailing trivia into a variable"), diagnostic);
                         }
                         break;
@@ -1543,27 +1543,27 @@ namespace MetaCompilation
             return await ReplaceNode(oldBlock, newBlock, document);
         }
         
-        private async Task<Document> TrailingVarMissingAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> TrailingVarMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            var ifStatement = declaration.Body.Statements[2] as IfStatementSyntax;
+            var ifStatement = declaration.Parent.Parent as IfStatementSyntax;
             var localDeclaration = new SyntaxList<SyntaxNode>().Add(CodeFixNodeCreator.TriviaVarMissingHelper(generator, ifStatement));
 
-            var oldBlock = ifStatement.Statement as BlockSyntax;
+            var oldBlock = declaration.Statement as BlockSyntax;
             var newBlock = oldBlock.WithStatements(localDeclaration);
 
             return await ReplaceNode(oldBlock, newBlock, document);
         }
         
-        private async Task<Document> TrailingVarIncorrectAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> TrailingVarIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            var ifStatement = declaration.Body.Statements[2] as IfStatementSyntax;
-            var localDeclaration = CodeFixNodeCreator.TriviaVarMissingHelper(generator, ifStatement) as LocalDeclarationStatementSyntax;
+            var ifStatement = declaration.Parent.Parent as IfStatementSyntax;
+            var localDeclaration = CodeFixNodeCreator.TriviaVarMissingHelper(generator, declaration) as LocalDeclarationStatementSyntax;
 
-            var oldBlock = ifStatement.Statement as BlockSyntax;
+            var oldBlock = declaration.Statement as BlockSyntax;
             var oldStatement = oldBlock.Statements[0];
             var newStatements = oldBlock.Statements.Replace(oldStatement, localDeclaration);
             var newBlock = oldBlock.WithStatements(newStatements);
