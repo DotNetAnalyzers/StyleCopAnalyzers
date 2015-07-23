@@ -1,9 +1,11 @@
 ﻿namespace StyleCop.Analyzers.Test.OrderingRules
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.OrderingRules;
     using TestHelper;
@@ -37,9 +39,12 @@ public class Foo
             get
             {
                 return
-                    from accessModifier in InvalidAccessModifiers
+                    from invalidAndFixedAccessModifier in InvalidAndFixedAccessModifiers
                     from declarationWithoutAccessModifier in DeclarationsWithoutAccessModifier
-                    select new object[] { accessModifier + " " + declarationWithoutAccessModifier };
+                    select new object[] {
+                        invalidAndFixedAccessModifier.Item1 + " " + declarationWithoutAccessModifier,
+                        invalidAndFixedAccessModifier.Item2 + " " + declarationWithoutAccessModifier
+                    };
             }
         }
 
@@ -54,11 +59,11 @@ public class Foo
             }
         }
 
-        private static IEnumerable<string> InvalidAccessModifiers
+        private static IEnumerable<Tuple<string, string>> InvalidAndFixedAccessModifiers
         {
             get
             {
-                yield return "internal protected";
+                yield return Tuple.Create("internal protected", "protected internal");
             }
         }
 
@@ -104,25 +109,33 @@ public class Foo
         }
 
         /// <summary>
-        /// Verifies that an invalid type declaration will produce a diagnostic.
+        /// Verifies that an invalid type declaration will produce a diagnostic and that the code fix will solve it.
         /// </summary>
-        /// <param name="declaration">The declaration to verify.</param>
+        /// <param name="invalidDeclaration">The declaration to verify.</param>
+        /// <param name="fixedDeclaration">The declaration as fixed by the code fix provider.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(InvalidDeclarations))]
-        public async Task TestInvalidDeclarationAsync(string declaration)
+        public async Task TestInvalidDeclarationAsync(string invalidDeclaration, string fixedDeclaration)
         {
-            var testCode = TestCodeTemplate.Replace("$$", declaration);
-            ////var fixedTestCode = FixedTestCodeTemplate.Replace("##", "internal").Replace("$$", declaration);
+            var testCode = TestCodeTemplate.Replace("$$", invalidDeclaration);
+            var fixedTestCode = TestCodeTemplate.Replace("$$", fixedDeclaration);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, this.CSharpDiagnostic().WithLocation(4, 14), CancellationToken.None).ConfigureAwait(false);
-            ////await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1207ProtectedMustComeBeforeInternal();
+        }
+
+        /// <inheritdoc/>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1207CodeFixProvider();
         }
     }
 }

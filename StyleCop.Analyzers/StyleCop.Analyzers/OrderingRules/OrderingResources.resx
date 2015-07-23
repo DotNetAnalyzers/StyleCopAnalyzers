@@ -120,4 +120,7 @@
   <data name="SA1205CodeFix" xml:space="preserve">
     <value>Add access modifier</value>
   </data>
+  <data name="SA1207CodeFix" xml:space="preserve">
+    <value>Place keyword 'protected' before keyword 'internal'</value>
+  </data>
 </root>
