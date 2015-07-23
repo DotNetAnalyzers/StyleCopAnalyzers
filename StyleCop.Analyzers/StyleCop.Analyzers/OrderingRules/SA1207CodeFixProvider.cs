@@ -61,22 +61,19 @@
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
 
-        // QUESTION: Why two tokens as argument?
-        // QUESTION: Which token should we use?
-        // QUESTION: We don't need to verify that the original order of protected and internal is incorrect, do we?
         private static SyntaxToken ComputeReplacementToken(SyntaxToken originalToken, SyntaxToken rewrittenToken)
         {
-            if (rewrittenToken.IsKind(SyntaxKind.InternalKeyword))
+            if (originalToken.IsKind(SyntaxKind.InternalKeyword))
             {
                 return SyntaxFactory.Token(SyntaxKind.ProtectedKeyword);
             }
-            else if (rewrittenToken.IsKind(SyntaxKind.ProtectedKeyword))
+            else if (originalToken.IsKind(SyntaxKind.ProtectedKeyword))
             {
                 return SyntaxFactory.Token(SyntaxKind.InternalKeyword);
             }
             else
             {
-                return rewrittenToken;
+                return originalToken;
             }
         }
     }
