@@ -3,6 +3,7 @@
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
 
@@ -33,7 +34,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1011.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -58,19 +59,14 @@
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
             {
-                switch (token.Kind())
+                if (token.IsKind(SyntaxKind.CloseBracketToken))
                 {
-                case SyntaxKind.CloseBracketToken:
-                    this.HandleCloseBracketToken(context, token);
-                    break;
-
-                default:
-                    break;
+                    HandleCloseBracketToken(context, token);
                 }
             }
         }
 
-        private void HandleCloseBracketToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private static void HandleCloseBracketToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
             {
@@ -105,12 +101,12 @@
                     precedesSpecialCharacter = true;
                     break;
 
-                case SyntaxKind.GreaterThanToken:
-                    precedesSpecialCharacter = nextToken.Parent.IsKind(SyntaxKind.TypeArgumentList);
-                    break;
-
                 case SyntaxKind.QuestionToken:
                     precedesSpecialCharacter = nextToken.Parent.IsKind(SyntaxKind.ConditionalAccessExpression);
+                    break;
+
+                case SyntaxKind.CloseBraceToken:
+                    precedesSpecialCharacter = nextToken.Parent is InterpolationSyntax;
                     break;
 
                 default:
@@ -129,18 +125,10 @@
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), " not", "preceded"));
             }
 
-            if (!lastInLine)
+            if (!lastInLine && !precedesSpecialCharacter && !followedBySpace)
             {
-                if (!precedesSpecialCharacter && !followedBySpace)
-                {
-                    // Closing square bracket must{} be {followed} by a space.
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "followed"));
-                }
-                else if (precedesSpecialCharacter && followedBySpace)
-                {
-                    // Closing square bracket must{ not} be {followed} by a space.
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), " not", "followed"));
-                }
+                // Closing square bracket must{} be {followed} by a space.
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "followed"));
             }
         }
     }
