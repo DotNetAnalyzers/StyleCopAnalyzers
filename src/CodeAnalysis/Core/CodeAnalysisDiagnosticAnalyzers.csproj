@@ -31,7 +31,11 @@
     <InternalsVisibleToTest Include="Roslyn.CodeAnalysis.Analyzers.UnitTests" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Diagnostic.nuspec" />
+    <None Include="install.ps1" />
     <None Include="packages.config" />
+    <None Include="ThirdPartyNotices.rtf" />
+    <None Include="uninstall.ps1" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="CodeAnalysisDiagnosticsResources.resx">
