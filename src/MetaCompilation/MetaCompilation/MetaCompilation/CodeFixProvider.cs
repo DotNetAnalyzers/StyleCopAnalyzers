@@ -2130,7 +2130,7 @@ namespace MetaCompilation
                 statements = statements.Add(generator.ThrowStatement(generator.ObjectCreationExpression(notImplementedException)));
 
                 SyntaxNode newMethodDeclaration = generator.MethodDeclaration(methodName, parameters: parameters, accessibility: Accessibility.Private, statements: statements);
-                return newMethodDeclaration;
+                return newMethodDeclaration.WithLeadingTrivia(SyntaxFactory.ParseLeadingTrivia("//This method, which is the method that is registered within Initialize, performs the analysis of the Syntax Tree when an IfStatementSyntax Node is found. If the analysis finds an error, a diagnostic is reported").ElementAt(0), SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("//In this tutorial, this method will walk through the Syntax Tree seen in IfSyntaxTree.jpg and determine if the if-statement being analyzed has the correct spacing").ElementAt(0), SyntaxFactory.CarriageReturnLineFeed);
             }
         }
     }
