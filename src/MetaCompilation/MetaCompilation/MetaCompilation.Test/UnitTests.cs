@@ -73,13 +73,16 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                if (ifKeyword.TrailingTrivia.Count == 1)
                 {
-                    if (trailingTrivia.ToString() == "" "")
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
-                        return;
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -156,13 +159,16 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                if (ifKeyword.TrailingTrivia.Count == 1)
                 {
-                    if (trailingTrivia.ToString() == "" "")
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
-                        return;
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -6665,6 +6671,9 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                    }
                 }
             }
         }
@@ -6675,7 +6684,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarMissing,
                 Message = TrailingTriviaVarMissingMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 17) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 41, 21) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -6720,8 +6729,11 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-            }
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                }
+                }
             }
         }
     }";
@@ -6773,6 +6785,9 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                    }
                 }
                 var trailing = ifKeyword.TrailingTrivia.First();
             }
@@ -6784,7 +6799,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarMissing,
                 Message = TrailingTriviaVarMissingMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 17) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 41, 21) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -6829,8 +6844,11 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-            }
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                }
+                }
                 var trailing = ifKeyword.TrailingTrivia.First();
             }
         }
@@ -6883,7 +6901,10 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    //var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                        //var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    }
                 }
             }
         }
@@ -6894,7 +6915,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarMissing,
                 Message = TrailingTriviaVarMissingMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 17) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 41, 21) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -6939,9 +6960,12 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                //var trailingTrivia = ifKeyword.TrailingTrivia.First();
-            }
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    //var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                }
+                }
             }
         }
     }";
@@ -6998,7 +7022,10 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia;
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                        var trailingTrivia;
+                    }
                 }
             }
         }
@@ -7009,7 +7036,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
                 Message = TrailingTriviaVarIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 41, 21) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 25) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -7054,8 +7081,11 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-            }
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                }
+                }
             }
         }
     }";
@@ -7107,7 +7137,10 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword;
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                        var trailingTrivia = ifKeyword;
+                    }
                 }
             }
         }
@@ -7118,7 +7151,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
                 Message = TrailingTriviaVarIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 41, 21) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 25) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -7163,8 +7196,11 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-            }
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                }
+                }
             }
         }
     }";
@@ -7216,7 +7252,10 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia;
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                        var trailingTrivia = ifKeyword.TrailingTrivia;
+                    }
                 }
             }
         }
@@ -7227,7 +7266,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
                 Message = TrailingTriviaVarIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 41, 21) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 25) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -7272,8 +7311,11 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-            }
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                }
+                }
             }
         }
     }";
@@ -7324,7 +7366,10 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.First().TrailingTrivia;
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                        var trailingTrivia = ifKeyword.First().TrailingTrivia;
+                    }
                 }
             }
         }
@@ -7335,7 +7380,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
                 Message = TrailingTriviaVarIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 41, 21) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 25) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -7380,8 +7425,11 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-            }
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                }
+                }
             }
         }
     }";
@@ -7433,7 +7481,10 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    throw new NotImplementedException();
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                        throw new NotImplementedException();
+                    }
                 }
             }
         }
@@ -7444,7 +7495,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
                 Message = TrailingTriviaVarIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 41, 21) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 25) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -7489,8 +7540,11 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-            }
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                }
+                }
             }
         }
     }";
@@ -7542,7 +7596,10 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifStatement.TrailingTrivia.First();
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                        var trailingTrivia = ifStatement.TrailingTrivia.First();
+                    }
                 }
             }
         }
@@ -7553,7 +7610,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
                 Message = TrailingTriviaVarIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 41, 21) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 25) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -7598,8 +7655,11 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-            }
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                }
+                }
             }
         }
     }";
@@ -7651,7 +7711,10 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifStatement.TrailingTrivia.First();
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                        var trailingTrivia = ifStatement.TrailingTrivia.First();
+                    }
                 }
                 var openParen = ifStatement.OpenParenToken;
             }
@@ -7663,7 +7726,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
                 Message = TrailingTriviaVarIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 41, 21) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 25) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -7708,8 +7771,11 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-            }
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                }
+                }
                 var openParen = ifStatement.OpenParenToken;
             }
         }
@@ -7762,9 +7828,12 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifStatement.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
+                        var trailingTrivia = ifStatement.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                        {
+                        }
                     }
                 }
             }
@@ -7776,7 +7845,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
                 Message = TrailingTriviaVarIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 41, 21) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 25) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -7821,9 +7890,12 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                        {
+                        }
                     }
                 }
             }
@@ -7877,8 +7949,11 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                        {
+                        }
                     }
                 }
             }
@@ -7890,7 +7965,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
                 Message = TrailingTriviaVarIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 41, 21) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 25) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -7935,8 +8010,11 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-            }
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                }
+                }
             }
         }
     }";
@@ -10051,12 +10129,15 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                if (ifKeyword.TrailingTrivia.Count == 1)
                 {
-                    if (trailingTrivia.ToString() == "" "")
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
-                        return;
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -10120,12 +10201,15 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                if (ifKeyword.TrailingTrivia.Count == 1)
                 {
-                    if (trailingTrivia.ToString() == "" "")
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
-                        return;
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -10187,12 +10271,15 @@ namespace SyntaxNodeAnalyzer
 
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                        if (trailingTrivia.ToString() == "" "")
-                    {
-                            return;
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                        {
+                            if (trailingTrivia.ToString() == "" "")
+                            {
+                                return;
+                            }
                         }
                     }
                 }
@@ -10207,7 +10294,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.OpenParenIncorrect,
                 Message = IncorrectOpenParenMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 57, 17) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 60, 17) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -10258,12 +10345,15 @@ namespace SyntaxNodeAnalyzer
 
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                        if (trailingTrivia.ToString() == "" "")
-                    {
-                            return;
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                        {
+                            if (trailingTrivia.ToString() == "" "")
+                            {
+                                return;
+                            }
                         }
                     }
                 }
@@ -12376,12 +12466,15 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                if (ifKeyword.TrailingTrivia.Count == 1)
                 {
-                    if (trailingTrivia.ToString() == "" "")
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
-                        return;
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -12396,7 +12489,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.StartSpanMissing,
                 Message = StartSpanMissingMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 57, 13) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 60, 13) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -12447,12 +12540,15 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                if (ifKeyword.TrailingTrivia.Count == 1)
                 {
-                    if (trailingTrivia.ToString() == "" "")
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
-                        return;
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -12516,12 +12612,15 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                if (ifKeyword.TrailingTrivia.Count == 1)
                 {
-                    if (trailingTrivia.ToString() == "" "")
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
-                        return;
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -12537,7 +12636,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.StartSpanIncorrect,
                 Message = StartSpanIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 58, 13) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 61, 13) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -12588,12 +12687,15 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                if (ifKeyword.TrailingTrivia.Count == 1)
                 {
-                    if (trailingTrivia.ToString() == "" "")
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
-                        return;
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -12663,12 +12765,15 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                if (ifKeyword.TrailingTrivia.Count == 1)
                 {
-                    if (trailingTrivia.ToString() == "" "")
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
-                        return;
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -12684,7 +12789,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.EndSpanMissing,
                 Message = EndSpanMissingMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 58, 13) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 61, 13) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -12735,12 +12840,15 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                if (ifKeyword.TrailingTrivia.Count == 1)
                 {
-                    if (trailingTrivia.ToString() == "" "")
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
-                        return;
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -12805,12 +12913,15 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                if (ifKeyword.TrailingTrivia.Count == 1)
                 {
-                    if (trailingTrivia.ToString() == "" "")
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
-                        return;
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -12827,7 +12938,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.EndSpanIncorrect,
                 Message = EndSpanIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 59, 13) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 62, 13) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -12878,12 +12989,15 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                if (ifKeyword.TrailingTrivia.Count == 1)
                 {
-                    if (trailingTrivia.ToString() == "" "")
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
-                        return;
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -12954,12 +13068,15 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                if (ifKeyword.TrailingTrivia.Count == 1)
                 {
-                    if (trailingTrivia.ToString() == "" "")
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
-                        return;
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -12976,7 +13093,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.SpanMissing,
                 Message = SpanMissingMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 59, 13) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 62, 13) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -13027,12 +13144,15 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                if (ifKeyword.TrailingTrivia.Count == 1)
                 {
-                    if (trailingTrivia.ToString() == "" "")
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
-                        return;
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -13098,12 +13218,15 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                if (ifKeyword.TrailingTrivia.Count == 1)
                 {
-                    if (trailingTrivia.ToString() == "" "")
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
-                        return;
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -13121,7 +13244,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.SpanIncorrect,
                 Message = SpanIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 60, 13) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 63, 13) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -13172,12 +13295,15 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                if (ifKeyword.TrailingTrivia.Count == 1)
                 {
-                    if (trailingTrivia.ToString() == "" "")
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
-                        return;
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -13249,12 +13375,15 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                if (ifKeyword.TrailingTrivia.Count == 1)
                 {
-                    if (trailingTrivia.ToString() == "" "")
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
-                        return;
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -13272,7 +13401,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.LocationMissing,
                 Message = LocationMissingMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 60, 13) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 63, 13) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -13323,12 +13452,15 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                if (ifKeyword.TrailingTrivia.Count == 1)
                 {
-                    if (trailingTrivia.ToString() == "" "")
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
-                        return;
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -13395,12 +13527,15 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                if (ifKeyword.TrailingTrivia.Count == 1)
                 {
-                    if (trailingTrivia.ToString() == "" "")
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
-                        return;
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -13419,7 +13554,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.LocationIncorrect,
                 Message = LocationIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 61, 13) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 64, 13) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -13470,12 +13605,15 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                if (ifKeyword.TrailingTrivia.Count == 1)
                 {
-                    if (trailingTrivia.ToString() == "" "")
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
-                        return;
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -13548,12 +13686,15 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                if (ifKeyword.TrailingTrivia.Count == 1)
                 {
-                    if (trailingTrivia.ToString() == "" "")
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
-                        return;
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -13572,7 +13713,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.DiagnosticMissing,
                 Message = DiagnosticMissingMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 61, 13) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 64, 13) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -13623,12 +13764,15 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                if (ifKeyword.TrailingTrivia.Count == 1)
                 {
-                    if (trailingTrivia.ToString() == "" "")
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
-                        return;
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -13696,12 +13840,15 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                if (ifKeyword.TrailingTrivia.Count == 1)
                 {
-                    if (trailingTrivia.ToString() == "" "")
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
-                        return;
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -13721,7 +13868,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.DiagnosticIncorrect,
                 Message = DiagnosticIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 62, 13) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 65, 13) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -13772,12 +13919,15 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                if (ifKeyword.TrailingTrivia.Count == 1)
                 {
-                    if (trailingTrivia.ToString() == "" "")
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
-                        return;
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -13844,7 +13994,10 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    }
                 }
             }
         }
@@ -13855,7 +14008,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckMissing,
                 Message = TrailingTriviaKindCheckMissingMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 41, 21) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 25) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -13900,11 +14053,14 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
-                {
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    {
+                    }
                 }
-            }
+                }
             }
         }
     }";
@@ -13961,8 +14117,11 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    var ifCheck = true;
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        var ifCheck = true;
+                    }
                 }
             }
         }
@@ -13973,7 +14132,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
                 Message = TrailingTriviaKindCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -14018,11 +14177,14 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
-                {
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    {
+                    }
                 }
-            }
+                }
             }
         }
     }";
@@ -14074,9 +14236,12 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (ifKeyword.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (ifKeyword.Kind() == SyntaxKind.WhitespaceTrivia)
+                        {
+                        }
                     }
                 }
             }
@@ -14088,7 +14253,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
                 Message = TrailingTriviaKindCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -14133,11 +14298,14 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
-                {
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    {
+                    }
                 }
-            }
+                }
             }
         }
     }";
@@ -14189,9 +14357,12 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind == SyntaxKind.WhitespaceTrivia)
+                        {
+                        }
                     }
                 }
             }
@@ -14203,7 +14374,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
                 Message = TrailingTriviaKindCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -14248,11 +14419,14 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
-                {
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    {
+                    }
                 }
-            }
+                }
             }
         }
     }";
@@ -14304,9 +14478,12 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.IsKind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.IsKind() == SyntaxKind.WhitespaceTrivia)
+                        {
+                        }
                     }
                 }
             }
@@ -14318,7 +14495,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
                 Message = TrailingTriviaKindCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -14363,11 +14540,14 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
-                {
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    {
+                    }
                 }
-            }
+                }
             }
         }
     }";
@@ -14419,9 +14599,12 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() = SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() = SyntaxKind.WhitespaceTrivia)
+                        {
+                        }
                     }
                 }
             }
@@ -14433,7 +14616,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
                 Message = TrailingTriviaKindCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -14478,11 +14661,14 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
-                {
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    {
+                    }
                 }
-            }
+                }
             }
         }
     }";
@@ -14534,9 +14720,12 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SymbolKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SymbolKind.WhitespaceTrivia)
+                        {
+                        }
                     }
                 }
             }
@@ -14548,7 +14737,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
                 Message = TrailingTriviaKindCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -14593,11 +14782,14 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
-                {
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    {
+                    }
                 }
-            }
+                }
             }
         }
     }";
@@ -14649,9 +14841,12 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.IfStatement)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.IfStatement)
+                        {
+                        }
                     }
                 }
             }
@@ -14663,7 +14858,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
                 Message = TrailingTriviaKindCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -14708,11 +14903,14 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
-                {
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    {
+                    }
                 }
-            }
+                }
             }
         }
     }";
@@ -14764,9 +14962,12 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia == SyntaxKind.WhitespaceTrivia)
+                        {
+                        }
                     }
                 }
             }
@@ -14778,7 +14979,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
                 Message = TrailingTriviaKindCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -14823,11 +15024,14 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
-                {
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    {
+                    }
                 }
-            }
+                }
             }
         }
     }";
@@ -14879,9 +15083,12 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind)
+                        {
+                        }
                     }
                 }
             }
@@ -14893,7 +15100,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
                 Message = TrailingTriviaKindCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -14938,11 +15145,14 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
-                {
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    {
+                    }
                 }
-            }
+                }
             }
         }
     }";
@@ -14994,9 +15204,12 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if ()
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if ()
+                        {
+                        }
                     }
                 }
             }
@@ -15008,7 +15221,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
                 Message = TrailingTriviaKindCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -15053,11 +15266,14 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
-                {
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    {
+                    }
                 }
-            }
+                }
             }
         }
     }";
@@ -15109,9 +15325,12 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.ToString() == "" "")
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                        }
                     }
                 }
             }
@@ -15123,7 +15342,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
                 Message = TrailingTriviaKindCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -15168,11 +15387,14 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
-                {
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    {
+                    }
                 }
-            }
+                }
             }
         }
     }";
@@ -15224,11 +15446,14 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                        var one = 1;
-                        one++;
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia == SyntaxKind.WhitespaceTrivia)
+                        {
+                            var one = 1;
+                            one++;
+                        }
                     }
                 }
             }
@@ -15240,7 +15465,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
                 Message = TrailingTriviaKindCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -15285,13 +15510,16 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
-                {
-                    var one = 1;
-                        one++;
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    {
+                        var one = 1;
+                            one++;
+                    }
                 }
-            }
+                }
             }
         }
     }";
@@ -15347,9 +15575,12 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                        {
+                        }
                     }
                 }
             }
@@ -15361,7 +15592,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.WhitespaceCheckMissing,
                 Message = WhitespaceCheckMissingMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 21) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -15406,13 +15637,16 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                    if (trailingTrivia.ToString() == "" "")
-                    {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                        {
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                        }
                     }
-                }
+                    }
                 }
             }
         }
@@ -15470,10 +15704,13 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                        var one = 1;
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                        {
+                            int one = 1;
+                        }
                     }
                 }
             }
@@ -15485,7 +15722,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
                 Message = WhitespaceCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -15530,13 +15767,16 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                    if (trailingTrivia.ToString() == "" "")
-                    {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                        {
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                        }
                     }
-                }
+                    }
                 }
             }
         }
@@ -15589,11 +15829,14 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                        if (ifKeyword.ToString() == "" "")
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                         {
+                            if (ifKeyword.ToString() == "" "")
+                            {
+                            }
                         }
                     }
                 }
@@ -15606,7 +15849,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
                 Message = WhitespaceCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -15651,13 +15894,16 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                    if (trailingTrivia.ToString() == "" "")
-                    {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                        {
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                        }
                     }
-                }
+                    }
                 }
             }
         }
@@ -15710,11 +15956,14 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                        if (trailingTrivia.FullSpan == "" "")
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                         {
+                            if (trailingTrivia.FullSpan == "" "")
+                            {
+                            }
                         }
                     }
                 }
@@ -15727,7 +15976,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
                 Message = WhitespaceCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -15772,13 +16021,16 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                    if (trailingTrivia.ToString() == "" "")
-                    {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                        {
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                        }
                     }
-                }
+                    }
                 }
             }
         }
@@ -15831,11 +16083,14 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                        if (trailingTrivia == "" "")
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                         {
+                            if (trailingTrivia == "" "")
+                            {
+                            }
                         }
                     }
                 }
@@ -15848,7 +16103,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
                 Message = WhitespaceCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -15893,13 +16148,16 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                    if (trailingTrivia.ToString() == "" "")
-                    {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                        {
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                        }
                     }
-                }
+                    }
                 }
             }
         }
@@ -15952,11 +16210,14 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                        if (trailingTrivia.ToString() = "" "")
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                         {
+                            if (trailingTrivia.ToString() = "" "")
+                            {
+                            }
                         }
                     }
                 }
@@ -15969,7 +16230,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
                 Message = WhitespaceCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -16014,13 +16275,16 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                    if (trailingTrivia.ToString() == "" "")
-                    {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                        {
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                        }
                     }
-                }
+                    }
                 }
             }
         }
@@ -16073,11 +16337,14 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                        if (trailingTrivia.ToString() == ""trailingTrivia.ToString()"")
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                         {
+                            if (trailingTrivia.ToString() == ""trailingTrivia.ToString()"")
+                            {
+                            }
                         }
                     }
                 }
@@ -16090,7 +16357,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
                 Message = WhitespaceCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -16135,13 +16402,16 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                    if (trailingTrivia.ToString() == "" "")
-                    {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                        {
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                        }
                     }
-                }
+                    }
                 }
             }
         }
@@ -16194,11 +16464,14 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                        if ()
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                         {
+                            if ()
+                            {
+                            }
                         }
                     }
                 }
@@ -16211,7 +16484,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
                 Message = WhitespaceCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -16256,13 +16529,16 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                    if (trailingTrivia.ToString() == "" "")
-                    {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                        {
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                        }
                     }
-                }
+                    }
                 }
             }
         }
@@ -16315,11 +16591,14 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
                         if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                         {
+                            if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                            {
+                            }
                         }
                     }
                 }
@@ -16332,7 +16611,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
                 Message = WhitespaceCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -16377,13 +16656,16 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                    if (trailingTrivia.ToString() == "" "")
-                    {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                        {
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                        }
                     }
-                }
+                    }
                 }
             }
         }
@@ -16436,10 +16718,13 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                        return;
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -16451,7 +16736,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
                 Message = WhitespaceCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -16496,13 +16781,16 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                    if (trailingTrivia.ToString() == "" "")
-                    {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                        {
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                        }
                     }
-                }
+                    }
                 }
             }
         }
@@ -16555,12 +16843,15 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                        if (trailingTrivia == "" "")
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                         {
-                            return;
+                            if (trailingTrivia == "" "")
+                            {
+                                return;
+                            }
                         }
                     }
                 }
@@ -16573,7 +16864,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
                 Message = WhitespaceCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -16618,14 +16909,17 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                    if (trailingTrivia.ToString() == "" "")
-                    {
-                        return;
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                        {
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                            return;
+                        }
                     }
-                }
+                    }
                 }
             }
         }
@@ -16788,11 +17082,14 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                        if (trailingTrivia.ToString() == "" "")
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                         {
+                            if (trailingTrivia.ToString() == "" "")
+                            {
+                            }
                         }
                     }
                 }
@@ -16805,7 +17102,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.ReturnStatementMissing,
                 Message = ReturnStatementMissingMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -16850,14 +17147,17 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                        if (trailingTrivia.ToString() == "" "")
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                         {
-                        //If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic
-                        return;
-                    }
+                            if (trailingTrivia.ToString() == "" "")
+                            {
+                            //If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic
+                            return;
+                        }
+                        }
                     }
                 }
             }
@@ -16916,12 +17216,15 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                        if (trailingTrivia.ToString() == "" "")
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                         {
-                            throw new NotImplementedException();
+                            if (trailingTrivia.ToString() == "" "")
+                            {
+                                throw new NotImplementedException();
+                            }
                         }
                     }
                 }
@@ -16934,7 +17237,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.ReturnStatementIncorrect,
                 Message = ReturnStatementIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 48, 33) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -16979,14 +17282,17 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                        if (trailingTrivia.ToString() == "" "")
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                         {
-                        //If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic
-                        return;
-                    }
+                            if (trailingTrivia.ToString() == "" "")
+                            {
+                            //If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic
+                            return;
+                        }
+                        }
                     }
                 }
             }
@@ -17040,13 +17346,16 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                        if (trailingTrivia.ToString() == "" "")
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                         {
-                            var one = 1;
-                            return;
+                            if (trailingTrivia.ToString() == "" "")
+                            {
+                                var one = 1;
+                                return;
+                            }
                         }
                     }
                 }
@@ -17059,7 +17368,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.ReturnStatementIncorrect,
                 Message = ReturnStatementIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 48, 33) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -17104,14 +17413,17 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                        if (trailingTrivia.ToString() == "" "")
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                         {
-                        //If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic
-                        return;
-                        return;
+                            if (trailingTrivia.ToString() == "" "")
+                            {
+                            //If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic
+                            return;
+                            return;
+                            }
                         }
                     }
                 }
@@ -17166,12 +17478,15 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                        if (trailingTrivia.ToString() == "" "")
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                         {
-                            var openParen = ifStatement.OpenParenToken;
+                            if (trailingTrivia.ToString() == "" "")
+                            {
+                                var openParen = ifStatement.OpenParenToken;
+                            }
                         }
                     }
                 }
@@ -17184,7 +17499,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.ReturnStatementIncorrect,
                 Message = ReturnStatementIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 48, 33) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -17229,14 +17544,17 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                        if (trailingTrivia.ToString() == "" "")
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                         {
-                        //If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic
-                        return;
-                    }
+                            if (trailingTrivia.ToString() == "" "")
+                            {
+                            //If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic
+                            return;
+                        }
+                        }
                     }
                 }
             }
@@ -17290,12 +17608,15 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                        if (trailingTrivia.ToString() == "" "")
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                         {
-                            var one = 1;
+                            if (trailingTrivia.ToString() == "" "")
+                            {
+                                var one = 1;
+                            }
                         }
                     }
                 }
@@ -17309,7 +17630,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.ReturnStatementIncorrect,
                 Message = ReturnStatementIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 48, 33) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -17354,14 +17675,17 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
-                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (ifKeyword.TrailingTrivia.Count == 1)
                     {
-                        if (trailingTrivia.ToString() == "" "")
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                         {
-                        //If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic
-                        return;
-                    }
+                            if (trailingTrivia.ToString() == "" "")
+                            {
+                            //If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic
+                            return;
+                        }
+                        }
                     }
                 }
                 var openParen = ifStatement.OpenParenToken;

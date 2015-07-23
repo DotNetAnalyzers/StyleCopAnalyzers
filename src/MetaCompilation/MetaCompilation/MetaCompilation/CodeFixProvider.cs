@@ -1560,10 +1560,19 @@ namespace MetaCompilation
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            var ifStatement = declaration.Parent.Parent as IfStatementSyntax;
-            var localDeclaration = CodeFixNodeCreator.TriviaVarMissingHelper(generator, declaration) as LocalDeclarationStatementSyntax;
+            IfStatementSyntax ifStatement;
+            if (declaration.Parent.Parent.Parent.Parent.Kind() == SyntaxKind.MethodDeclaration)
+            {
+                ifStatement = declaration as IfStatementSyntax;
+            }
+            else
+            {
+                ifStatement = declaration.Parent.Parent as IfStatementSyntax;
+            }
 
-            var oldBlock = declaration.Statement as BlockSyntax;
+            var localDeclaration = CodeFixNodeCreator.TriviaVarMissingHelper(generator, ifStatement) as LocalDeclarationStatementSyntax;
+
+            var oldBlock = ifStatement.Statement as BlockSyntax;
             var oldStatement = oldBlock.Statements[0];
             var newStatements = oldBlock.Statements.Replace(oldStatement, localDeclaration);
             var newBlock = oldBlock.WithStatements(newStatements);
@@ -1577,7 +1586,7 @@ namespace MetaCompilation
 
             IfStatementSyntax ifStatement;
             var ifBlockStatements = new SyntaxList<SyntaxNode>();
-            if (declaration.Parent.Parent.Kind() == SyntaxKind.MethodDeclaration)
+            if (declaration.Parent.Parent.Parent.Parent.Kind() == SyntaxKind.MethodDeclaration)
             {
                 ifStatement = declaration as IfStatementSyntax;
             }
@@ -1621,7 +1630,7 @@ namespace MetaCompilation
             IfStatementSyntax ifStatement;
             var ifBlockStatements = new SyntaxList<SyntaxNode>();
 
-            if (declaration.Parent.Parent.Parent.Parent.Kind() == SyntaxKind.MethodDeclaration)
+            if (declaration.Parent.Parent.Parent.Parent.Parent.Parent.Kind() == SyntaxKind.MethodDeclaration)
             {
                 ifStatement = declaration as IfStatementSyntax;
             }
@@ -1663,13 +1672,13 @@ namespace MetaCompilation
             var generator = SyntaxGenerator.GetGenerator(document);
 
             IfStatementSyntax ifStatement;
-            if (declaration.Parent.Parent.Parent.Parent.Parent.Parent.Kind() != SyntaxKind.MethodDeclaration)
+            if (declaration.Parent.Parent.Parent.Parent.Parent.Parent.Parent.Parent.Kind() != SyntaxKind.MethodDeclaration)
             {
                 ifStatement = declaration.Parent.Parent as IfStatementSyntax;
             }
             else
             {
-                ifStatement = declaration;
+                ifStatement = declaration as IfStatementSyntax;
             }
 
             var returnStatement = generator.ReturnStatement() as ReturnStatementSyntax;
