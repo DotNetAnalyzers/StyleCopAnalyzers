@@ -79,7 +79,9 @@ namespace MetaCompilation
                                              MetaCompilationAnalyzer.MissingSuppDiag,
                                              MetaCompilationAnalyzer.IncorrectKind,
                                              MetaCompilationAnalyzer.IncorrectRegister,
-                                             MetaCompilationAnalyzer.IncorrectArguments);
+                                             MetaCompilationAnalyzer.IncorrectArguments,
+                                             MetaCompilationAnalyzer.TrailingTriviaCountMissing,
+                                             MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect);
             }
         }
 
