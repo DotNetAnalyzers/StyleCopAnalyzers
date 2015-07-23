@@ -135,7 +135,7 @@
             var lastAttribute = attributeList.Attributes
                                 .Last();
 
-            if (!attributeList.CloseBracketToken.IsMissing)
+            if (!attributeList.CloseBracketToken.IsMissing && lastAttribute.ArgumentList != null)
             {
                 CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(context, lastAttribute,
                     attributeList.CloseBracketToken);

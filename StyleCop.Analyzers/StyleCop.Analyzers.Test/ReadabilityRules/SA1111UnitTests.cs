@@ -852,7 +852,26 @@ public class FooAttribute : System.Attribute
         public async Task TestAttributeOneParameterOnTheSameLineAsClosingBracketAsync()
         {
             var testCode = @"
-[System.Serializable]
+using System.Diagnostics;
+[Conditional(""DEBUG"")]
+public class FooAttribute: System.Attribute
+{
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Asserts that an attribute with a single parameter does not report if the open and close brackets are on sepsrate lines
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestAttributeOneParameterOnPreviousLineAsClosingBracketAsync()
+        {
+            var testCode = @"
+[
+System.Serializable
+]
 public class Foo
 {
 }";
