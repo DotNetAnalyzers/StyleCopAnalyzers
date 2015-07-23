@@ -687,7 +687,7 @@ namespace MetaCompilation
             FieldDeclarationSyntax fieldDeclaration = CodeFixNodeCreator.CreateEmptyRule(generator);
 
             var newNode = new SyntaxList<SyntaxNode>();
-            newNode = newNode.Add(fieldDeclaration.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//If the analyzer finds an issue, it will report the DiagnosticDescriptor rule").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
+            newNode = newNode.Add(fieldDeclaration.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseLeadingTrivia("//If the analyzer finds an issue, it will report the DiagnosticDescriptor rule").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "))));
 
             var root = await document.GetSyntaxRootAsync();
             if (insertPointNode != null)
@@ -1947,33 +1947,54 @@ namespace MetaCompilation
 
                 var type = SyntaxFactory.ParseTypeName("DiagnosticDescriptor");
 
-                var arguments = new SyntaxNode[6];
+                var arguments = new ArgumentSyntax[6];
+                var whitespace = "            ";
 
                 var id = generator.LiteralExpression(idName);
-                var idArg = generator.Argument("id", RefKind.None, id);
+                var idArg = generator.Argument("id", RefKind.None, id).WithLeadingTrivia(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.Whitespace(whitespace)) as ArgumentSyntax;
                 arguments[0] = idArg;
 
                 var title = generator.LiteralExpression(titleDefault);
-                var titleArg = generator.Argument("title", RefKind.None, title);
+                var titleArg = generator.Argument("title", RefKind.None, title).WithLeadingTrivia(SyntaxFactory.Whitespace(whitespace)) as ArgumentSyntax;
                 arguments[1] = titleArg;
 
                 var message = generator.LiteralExpression(messageDefault);
-                var messageArg = generator.Argument("messageFormat", RefKind.None, message);
+                var messageArg = generator.Argument("messageFormat", RefKind.None, message).WithLeadingTrivia(SyntaxFactory.Whitespace(whitespace)) as ArgumentSyntax;
                 arguments[2] = messageArg;
 
                 var category = generator.LiteralExpression(categoryDefault);
-                var categoryArg = generator.Argument("category", RefKind.None, category);
+                var categoryArg = generator.Argument("category", RefKind.None, category).WithLeadingTrivia(SyntaxFactory.Whitespace(whitespace)) as ArgumentSyntax;
                 arguments[3] = categoryArg;
 
-                var defaultSeverityArg = generator.Argument("defaultSeverity", RefKind.None, severityDefault);
+                var defaultSeverityArg = generator.Argument("defaultSeverity", RefKind.None, severityDefault).WithLeadingTrivia(SyntaxFactory.Whitespace(whitespace)) as ArgumentSyntax;
                 arguments[4] = defaultSeverityArg;
 
-                var enabledArg = generator.Argument("isEnabledByDefault", RefKind.None, enabledDefault);
+                var enabledArg = generator.Argument("isEnabledByDefault", RefKind.None, enabledDefault).WithLeadingTrivia(SyntaxFactory.Whitespace(whitespace)) as ArgumentSyntax;
                 arguments[5] = enabledArg;
+                
+                var identifier = SyntaxFactory.ParseToken("spacingRule");
 
-                var initializer = generator.ObjectCreationExpression(type, arguments);
+                var separators = new List<SyntaxToken>();
+                var separator = SyntaxFactory.ParseToken(",").WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed);
+                separators.Add(separator);
+                separators.Add(separator);
+                separators.Add(separator);
+                separators.Add(separator);
+                separators.Add(separator);
 
-                var rule = generator.FieldDeclaration("spacingRule", type, accessibility: Accessibility.Internal, modifiers: DeclarationModifiers.Static, initializer: initializer) as FieldDeclarationSyntax;
+                var argumentsNewLines = SyntaxFactory.SeparatedList(arguments, separators);
+                var argumentList = SyntaxFactory.ArgumentList(argumentsNewLines);
+                var value = SyntaxFactory.ObjectCreationExpression(type, argumentList, null);
+                var initializer = SyntaxFactory.EqualsValueClause(value);
+                
+
+                var variables = new SeparatedSyntaxList<VariableDeclaratorSyntax>();
+                var variable = SyntaxFactory.VariableDeclarator(identifier, null, initializer);
+                variables = variables.Add(variable);
+
+                var declaration = SyntaxFactory.VariableDeclaration(type.WithTrailingTrivia(SyntaxFactory.Whitespace(" ")), variables);
+                var modifiers = SyntaxFactory.TokenList(SyntaxFactory.ParseToken("internal").WithTrailingTrivia(SyntaxFactory.Whitespace(" ")), SyntaxFactory.ParseToken("static").WithTrailingTrivia(SyntaxFactory.Whitespace(" ")));
+                var rule = SyntaxFactory.FieldDeclaration(new SyntaxList<AttributeListSyntax>(), modifiers, declaration);
                 return rule;
             }
 
