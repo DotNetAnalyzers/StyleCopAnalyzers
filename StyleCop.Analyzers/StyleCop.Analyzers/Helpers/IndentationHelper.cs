@@ -1,6 +1,5 @@
 ﻿namespace StyleCop.Analyzers.Helpers
 {
-    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
 
@@ -92,19 +91,23 @@
 
         private static int GetIndentationSteps(IndentationOptions indentationOptions, SyntaxTriviaList leadingTrivia)
         {
-            var indentationString = string.Empty;
-            for (var i = leadingTrivia.Count - 1; (i >= 0) && leadingTrivia[i].IsKind(SyntaxKind.WhitespaceTrivia); i--)
+            SyntaxTriviaList.Reversed reversed = leadingTrivia.Reverse();
+            int indentationCount = 0;
+
+            foreach (SyntaxTrivia trivia in reversed)
             {
-                indentationString = string.Concat(leadingTrivia[i].ToFullString(), indentationString);
+                if (!trivia.IsKind(SyntaxKind.WhitespaceTrivia))
+                {
+                    break;
+                }
+
+                foreach (char c in trivia.ToFullString())
+                {
+                    indentationCount += c == '\t' ? indentationOptions.TabSize : 1;
+                }
             }
 
-            var indentationCount = indentationString.ToCharArray().Sum(c => IndentationAmount(c, indentationOptions));
             return indentationCount / indentationOptions.IndentationSize;
-        }
-
-        private static int IndentationAmount(char c, IndentationOptions indentationOptions)
-        {
-            return c == '\t' ? indentationOptions.TabSize : 1;
         }
     }
 }
