@@ -65,11 +65,11 @@
         {
             if (originalToken.IsKind(SyntaxKind.InternalKeyword))
             {
-                return SyntaxFactory.Token(SyntaxKind.ProtectedKeyword);
+                return SyntaxFactory.Token(SyntaxKind.ProtectedKeyword).WithTriviaFrom(rewrittenToken);
             }
             else if (originalToken.IsKind(SyntaxKind.ProtectedKeyword))
             {
-                return SyntaxFactory.Token(SyntaxKind.InternalKeyword);
+                return SyntaxFactory.Token(SyntaxKind.InternalKeyword).WithTriviaFrom(rewrittenToken);
             }
             else
             {
