@@ -45,7 +45,6 @@
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
             var originalDeclarationNode = syntaxRoot.FindNode(diagnostic.Location.SourceSpan) as MemberDeclarationSyntax;
 
