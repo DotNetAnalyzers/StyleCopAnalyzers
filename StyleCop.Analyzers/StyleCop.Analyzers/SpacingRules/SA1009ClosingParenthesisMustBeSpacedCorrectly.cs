@@ -3,6 +3,7 @@
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
 
@@ -59,19 +60,14 @@
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
             {
-                switch (token.Kind())
+                if (token.IsKind(SyntaxKind.CloseParenToken))
                 {
-                case SyntaxKind.CloseParenToken:
-                    this.HandleCloseParenToken(context, token);
-                    break;
-
-                default:
-                    break;
+                    HandleCloseParenToken(context, token);
                 }
             }
         }
 
-        private void HandleCloseParenToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private static void HandleCloseParenToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
             {
@@ -144,6 +140,10 @@
             case SyntaxKind.MinusMinusToken:
                 precedesStickyCharacter = true;
                 suppressFollowingSpaceError = false;
+                break;
+
+            case SyntaxKind.CloseBraceToken:
+                precedesStickyCharacter = nextToken.Parent is InterpolationSyntax;
                 break;
 
             default:

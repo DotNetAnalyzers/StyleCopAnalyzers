@@ -461,6 +461,24 @@ public class Foo
             await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, expected).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestNoSpaceFollowingInInterpolatedStringAsync()
+        {
+            var validStatement = @"var x = $""{typeof(string).ToString()}"";";
+
+            await this.TestWhitespaceInStatementOrDeclAsync(validStatement, EmptyDiagnosticResults).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestWithSpaceFollowingInInterpolatedStringAsync()
+        {
+            var validStatement = @"var x = $""{typeof(string).ToString() }"";";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 48);
+
+            await this.TestWhitespaceInStatementOrDeclAsync(validStatement, expected).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
