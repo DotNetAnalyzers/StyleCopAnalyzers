@@ -72,7 +72,7 @@
             }
             else
             {
-                return originalToken;
+                return rewrittenToken;
             }
         }
     }
