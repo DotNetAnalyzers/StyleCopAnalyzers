@@ -786,11 +786,20 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
         {
+        public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, //make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
+            category: ""Syntax"", //make the category specific
+            defaultSeverity: DiagnosticSeverity.Error, //possible options
+            isEnabledByDefault: true);
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
             {
                 get
                 {
-                    throw new NotImplementedException();
+                    return ImmutableArray.Create(Rule);
                 }
             }
         }
@@ -823,11 +832,20 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
         {
+        public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, //make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
+            category: ""Syntax"", //make the category specific
+            defaultSeverity: DiagnosticSeverity.Error, //possible options
+            isEnabledByDefault: true);
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
             {
                 get
                 {
-                    throw new NotImplementedException();
+                    return ImmutableArray.Create(Rule);
                 }
             }
 
@@ -837,6 +855,8 @@ namespace SyntaxNodeAnalyzer
         }
     }
     }";
+
+
 
             VerifyCSharpFix(test, fixtest);
         }
@@ -857,19 +877,27 @@ namespace SyntaxNodeAnalyzer
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
 
-    namespace SyntaxNodeAnalyzer
+       namespace SyntaxNodeAnalyzer
     {
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
         {
+        public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, //make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
+            category: ""Syntax"", //make the category specific
+            defaultSeverity: DiagnosticSeverity.Error, //possible options
+            isEnabledByDefault: true);
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
             {
                 get
                 {
-                    throw new NotImplementedException();
+                    return ImmutableArray.Create(Rule);
                 }
             }
-
             public override void initialize(AnalysisContext context)
             {
                 throw new NotImplementedException();
@@ -899,19 +927,27 @@ namespace SyntaxNodeAnalyzer
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
 
-    namespace SyntaxNodeAnalyzer
+       namespace SyntaxNodeAnalyzer
     {
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
         {
+        public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, //make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", //allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", //allow any message
+            category: ""Syntax"", //make the category specific
+            defaultSeverity: DiagnosticSeverity.Error, //possible options
+            isEnabledByDefault: true);
             public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
             {
                 get
                 {
-                    throw new NotImplementedException();
+                    return ImmutableArray.Create(Rule);
                 }
             }
-
             public override void initialize(AnalysisContext context)
             {
                 throw new NotImplementedException();
@@ -1099,11 +1135,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -1118,7 +1163,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.MissingRegisterStatement,
                 Message = MissingRegisterStatementMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 30) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 30) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -1139,11 +1184,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -1183,11 +1237,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -1203,7 +1266,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.MissingRegisterStatement,
                 Message = MissingRegisterStatementMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 30) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 30) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -1224,11 +1287,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -1273,11 +1345,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -1294,7 +1375,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TooManyInitStatements,
                 Message = TooManyInitStatementsMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 30) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 30) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -1315,11 +1396,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -1353,11 +1443,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -1374,7 +1473,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TooManyInitStatements,
                 Message = TooManyInitStatementsMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 30) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 30) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -1395,11 +1494,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -1433,11 +1541,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -1454,7 +1571,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TooManyInitStatements,
                 Message = TooManyInitStatementsMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 30) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 30) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -1475,11 +1592,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -1513,11 +1639,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -1535,7 +1670,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TooManyInitStatements,
                 Message = TooManyInitStatementsMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 30) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 30) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -1556,11 +1691,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -1594,11 +1738,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -1616,7 +1769,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TooManyInitStatements,
                 Message = TooManyInitStatementsMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 30) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 30) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -1637,11 +1790,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -1672,11 +1834,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -1693,7 +1864,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.TooManyInitStatements,
                 Message = TooManyInitStatementsMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 22, 30) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 31, 30) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -1711,11 +1882,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -1751,11 +1931,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -1771,7 +1960,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.InvalidStatement,
                 Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 24, 12) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 33, 12) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -1789,11 +1978,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -1803,7 +2001,7 @@ namespace SyntaxNodeAnalyzer
     }
 }";
 
-            VerifyCSharpFix(test, fixtest);
+            VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
         }
 
         // invalid break statement
@@ -1823,11 +2021,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -1844,7 +2051,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.InvalidStatement,
                 Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 12) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 12) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -1862,11 +2069,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -1897,11 +2113,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -1918,7 +2143,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.InvalidStatement,
                 Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 12) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 12) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -1936,11 +2161,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -1971,11 +2205,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -1992,7 +2235,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.InvalidStatement,
                 Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 12) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 12) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -2010,11 +2253,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -2045,11 +2297,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -2066,7 +2327,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.InvalidStatement,
                 Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 12) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 12) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -2084,11 +2345,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -2119,11 +2389,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -2140,7 +2419,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.InvalidStatement,
                 Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 12) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 12) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -2158,11 +2437,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -2193,11 +2481,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -2214,7 +2511,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.InvalidStatement,
                 Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 12) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 12) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -2232,11 +2529,20 @@ namespace SyntaxNodeAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -2267,13 +2573,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
             public override void Initialize(AnalysisContext context)
             {
@@ -2288,7 +2603,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.InvalidStatement,
                 Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 17) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -2306,13 +2621,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
             public override void Initialize(AnalysisContext context)
             {
@@ -2341,13 +2665,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
             public override void Initialize(AnalysisContext context)
             {
@@ -2362,7 +2695,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.InvalidStatement,
                 Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 17) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -2380,13 +2713,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
             public override void Initialize(AnalysisContext context)
             {
@@ -2415,13 +2757,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
             public override void Initialize(AnalysisContext context)
             {
@@ -2436,7 +2787,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.InvalidStatement,
                 Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 17) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -2454,13 +2805,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
             public override void Initialize(AnalysisContext context)
             {
@@ -2489,13 +2849,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
             public override void Initialize(AnalysisContext context)
             {
@@ -2510,7 +2879,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.InvalidStatement,
                 Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 17) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -2528,13 +2897,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
             public override void Initialize(AnalysisContext context)
             {
@@ -2563,13 +2941,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
             public override void Initialize(AnalysisContext context)
             {
@@ -2584,7 +2971,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.InvalidStatement,
                 Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 17) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -2602,13 +2989,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
             public override void Initialize(AnalysisContext context)
             {
@@ -2637,13 +3033,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
             public override void Initialize(AnalysisContext context)
             {
@@ -2658,7 +3063,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.InvalidStatement,
                 Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 17) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -2676,13 +3081,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
             public override void Initialize(AnalysisContext context)
             {
@@ -2711,13 +3125,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
             public override void Initialize(AnalysisContext context)
             {
@@ -2733,7 +3156,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.InvalidStatement,
                 Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 17) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -2751,13 +3174,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
             public override void Initialize(AnalysisContext context)
             {
@@ -2787,13 +3219,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
             public override void Initialize(AnalysisContext context)
             {
@@ -2807,7 +3248,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.InvalidStatement,
                 Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 24, 17) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 33, 17) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -2825,13 +3266,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
             public override void Initialize(AnalysisContext context)
             {
@@ -2859,13 +3309,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
             public override void Initialize(AnalysisContext context)
             {
@@ -2880,7 +3339,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.InvalidStatement,
                 Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 24, 17) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 33, 17) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -2898,13 +3357,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
             public override void Initialize(AnalysisContext context)
             {
@@ -2933,13 +3401,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
             public override void Initialize(AnalysisContext context)
             {
@@ -2956,7 +3433,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.InvalidStatement,
                 Message = InvalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 17) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 35, 17) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -2974,13 +3451,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
             public override void Initialize(AnalysisContext context)
             {
@@ -3016,13 +3502,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
             public override void Initialize(AnalysisContext context)
             {
@@ -3036,7 +3531,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.IncorrectKind,
                 Message = IncorrectKindMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 70) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 70) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -3055,13 +3550,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
             public override void Initialize(AnalysisContext context)
             {
@@ -3096,13 +3600,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
             public override void Initialize(AnalysisContext context)
             {
@@ -3116,7 +3629,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.IncorrectArguments,
                 Message = IncorrectArgumentsMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 17) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 17) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -3135,13 +3648,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
             public override void Initialize(AnalysisContext context)
             {
@@ -3180,13 +3702,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
         public override void Initialize(AnalysisContext context, int i)
         {
@@ -3200,7 +3731,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.IncorrectInitSig,
                 Message = IncorrectInitSigMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 30) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 35, 30) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -3222,13 +3753,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
         public override void Initialize(AnalysisContext context)
         {
@@ -3261,13 +3801,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
         public override void Initialize(int context)
         {
@@ -3281,7 +3830,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.IncorrectInitSig,
                 Message = IncorrectInitSigMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 30) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 35, 30) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -3303,13 +3852,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
         public override void Initialize(AnalysisContext context)
         {
@@ -3342,13 +3900,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
         private override void Initialize(AnalysisContext context)
         {
@@ -3362,7 +3929,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.IncorrectInitSig,
                 Message = IncorrectInitSigMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 31) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 35, 31) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -3384,13 +3951,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
         public override void Initialize(AnalysisContext context)
         {
@@ -3423,13 +3999,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
         public void Initialize(AnalysisContext context)
         {
@@ -3443,7 +4028,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.IncorrectInitSig,
                 Message = IncorrectInitSigMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 21) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 35, 21) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -3465,13 +4050,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
         public override void Initialize(AnalysisContext context)
         {
@@ -3504,13 +4098,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
         public override int Initialize(AnalysisContext context)
         {
@@ -3524,7 +4127,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.IncorrectInitSig,
                 Message = IncorrectInitSigMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 29) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 35, 29) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -3546,13 +4149,22 @@ namespace SyntaxNodeAnalyzer
         [DiagnosticAnalyzer(LanguageNames.CSharp)]
         public class SyntaxNodeAnalyzer : DiagnosticAnalyzer
         {
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                return ImmutableArray.Create(Rule);
             }
+        }
 
         public override void Initialize(AnalysisContext context)
         {
@@ -17392,11 +18004,20 @@ namespace SyntaxNodeAnalyzerAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -17412,7 +18033,7 @@ namespace SyntaxNodeAnalyzerAnalyzer
                 Id = MetaCompilationAnalyzer.MissingAnalysisMethod,
                 Message = MissingAnalysisMethodMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 27, 46) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 36, 46) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -17433,11 +18054,20 @@ namespace SyntaxNodeAnalyzerAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -17479,11 +18109,20 @@ namespace SyntaxNodeAnalyzerAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -17504,7 +18143,7 @@ namespace SyntaxNodeAnalyzerAnalyzer
                 Id = MetaCompilationAnalyzer.IncorrectAnalysisAccessibility,
                 Message = IncorrectAnalysisAccessibilityMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 21) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 21) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -17525,11 +18164,20 @@ namespace SyntaxNodeAnalyzerAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -17567,11 +18215,20 @@ namespace SyntaxNodeAnalyzerAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -17592,7 +18249,7 @@ namespace SyntaxNodeAnalyzerAnalyzer
                 Id = MetaCompilationAnalyzer.IncorrectAnalysisAccessibility,
                 Message = IncorrectAnalysisAccessibilityMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 15) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 15) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -17613,11 +18270,20 @@ namespace SyntaxNodeAnalyzerAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -17660,11 +18326,20 @@ namespace SyntaxNodeAnalyzerAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -17685,7 +18360,7 @@ namespace SyntaxNodeAnalyzerAnalyzer
                 Id = MetaCompilationAnalyzer.IncorrectAnalysisReturnType,
                 Message = IncorrectAnalysisReturnTypeMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 22) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 22) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -17706,11 +18381,20 @@ namespace SyntaxNodeAnalyzerAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -17748,11 +18432,20 @@ namespace SyntaxNodeAnalyzerAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -17773,7 +18466,7 @@ namespace SyntaxNodeAnalyzerAnalyzer
                 Id = MetaCompilationAnalyzer.IncorrectAnalysisReturnType,
                 Message = IncorrectAnalysisReturnTypeMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 17) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 17) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -17794,11 +18487,20 @@ namespace SyntaxNodeAnalyzerAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -17841,11 +18543,20 @@ namespace SyntaxNodeAnalyzerAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -17866,7 +18577,7 @@ namespace SyntaxNodeAnalyzerAnalyzer
                 Id = MetaCompilationAnalyzer.IncorrectAnalysisParameter,
                 Message = IncorrectAnalysisParameterMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 40) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 40) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -17887,11 +18598,20 @@ namespace SyntaxNodeAnalyzerAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -17929,11 +18649,20 @@ namespace SyntaxNodeAnalyzerAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -17954,7 +18683,7 @@ namespace SyntaxNodeAnalyzerAnalyzer
                 Id = MetaCompilationAnalyzer.IncorrectAnalysisParameter,
                 Message = IncorrectAnalysisParameterMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 40) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 40) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -17975,11 +18704,20 @@ namespace SyntaxNodeAnalyzerAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -18017,11 +18755,20 @@ namespace SyntaxNodeAnalyzerAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -18042,7 +18789,7 @@ namespace SyntaxNodeAnalyzerAnalyzer
                 Id = MetaCompilationAnalyzer.IncorrectAnalysisParameter,
                 Message = IncorrectAnalysisParameterMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 40) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 40) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -18063,11 +18810,20 @@ namespace SyntaxNodeAnalyzerAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                throw new NotImplementedException();
+                return ImmutableArray.Create(Rule);
             }
         }
 

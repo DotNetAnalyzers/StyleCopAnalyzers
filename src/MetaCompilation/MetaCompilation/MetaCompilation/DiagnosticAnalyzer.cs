@@ -340,71 +340,6 @@ namespace MetaCompilation
                     return;
                 }
 
-                //gather initialize info
-                #region Initialize
-                //List<object> registerInfo = CheckInitialize(context);
-                //if (registerInfo == null)
-                //{
-                //    return;
-                //}
-
-                //var registerSymbol = (IMethodSymbol)registerInfo[0];
-                //if (registerSymbol == null)
-                //{
-                //    return;
-                //}
-
-                //var registerArgs = (List<ISymbol>)registerInfo[1];
-                //if (registerArgs == null)
-                //{
-                //    return;
-                //}
-
-                //if (registerArgs.Count == 0)
-                //{
-                //    return;
-                //}
-
-                //IMethodSymbol analysisMethodSymbol = null;
-                //if (registerArgs.Count > 0)
-                //{
-                //    analysisMethodSymbol = (IMethodSymbol)registerArgs[0];
-                //}
-
-                //IFieldSymbol kind = null;
-                //if (registerArgs.Count > 1)
-                //{
-                //    kind = (IFieldSymbol)registerArgs[1];
-                //}
-                //else
-                //{
-                //    return;
-                //}
-
-                //var invocationExpression = (InvocationExpressionSyntax)registerInfo[2];
-                //if (invocationExpression == null)
-                //{
-                //    return;
-                //}
-                #endregion
-
-                ////interpret initialize info
-                //if (_branchesDict.ContainsKey(registerSymbol.Name))//don't need to check for branch
-                //{
-                //    string kindName = null;
-                //    if (kind != null)
-                //    {
-                //        kindName = kind.Name;
-                //    }
-
-                //    if (kindName == null || allowedKinds.Contains(kindName))
-                //    {
-                //        //look for and interpret analysis methods
-                //        bool analysisMethodFound = CheckMethods(_branchesDict[registerSymbol.Name], kindName, invocationExpression, context);
-
-                //if (analysisMethodFound)
-                //{
-
                 //look for and interpret id fields
                 List<string> idNames = CheckIds(context);
 
@@ -420,7 +355,7 @@ namespace MetaCompilation
 
                         if (supportedDiagnosticsCorrect)
                         {
-                            //this is where we check initialize and method
+                            //gather initialize info
                             List<object> registerInfo = CheckInitialize(context);
                             if (registerInfo == null)
                             {
@@ -466,9 +401,8 @@ namespace MetaCompilation
                                 return;
                             }
 
-
                             //interpret initialize info
-                            if (_branchesDict.ContainsKey(registerSymbol.Name))//don't need to check for branch
+                            if (_branchesDict.ContainsKey(registerSymbol.Name))
                             {
                                 string kindName = null;
                                 if (kind != null)
@@ -483,7 +417,6 @@ namespace MetaCompilation
 
                                     if (analysisMethodFound)
                                     {
-
                                         //check the SyntaxNode, Symbol, Compilation, CodeBlock, etc analysis method(s)
                                         bool analysisCorrect = CheckAnalysis(_branchesDict[registerSymbol.Name], kindName, ruleNames, context, analysisMethodSymbol);
 
@@ -522,7 +455,6 @@ namespace MetaCompilation
                             {
                                 return;
                             }
-
                         }
                         else
                         {
@@ -534,45 +466,13 @@ namespace MetaCompilation
                     {
                         return;
                     }
-
                 }
-
-
                 else
                 {
                     ReportDiagnostic(context, MissingIdRule, _analyzerClassSymbol.Locations[0], _analyzerClassSymbol.Name.ToString());
                 }
-
-                //            }
-                //            else
-                //            {
-                //                return;
-                //            }
-                //        }
-                //        else
-                //        {
-                //            Location loc = null;
-                //            if (kindName == null)
-                //            {
-                //                loc = invocationExpression.ArgumentList.GetLocation();
-                //            }
-                //            else
-                //            {
-                //                loc = invocationExpression.ArgumentList.Arguments[1].GetLocation();
-                //            }
-
-                //            ReportDiagnostic(context, IncorrectKindRule, loc);
-                //        }
-                //    }
-                //    else
-                //    {
-                //        return;
-                //    }
             }
-
-
-
-
+            
             //checks the syntax tree analysis part of the user analyzer, returns a bool representing whether the check was successful or not
             internal bool CheckAnalysis(string branch, string kind, List<string> ruleNames, CompilationAnalysisContext context, IMethodSymbol analysisMethodSymbol)
             {
