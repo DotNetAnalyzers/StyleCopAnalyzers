@@ -44,11 +44,13 @@ If you would like to try your analyzer out, or if you would like to debug at any
 Syntax Trees
 ------------
 If you would like to see the syntax tree of your if-statement being analyzed you can follow the steps below.
-	* Go to *Tools -> Extensions and Updates -> Online*, and install Roslyn Syntax Visualizer.
-	* Restart Visual Studio.
-	* Again, you can open a new C# console app and write an if-statement.
-	* Go to *View -> Other Windows -> Roslyn Syntax Visualizer* to see the if-statement syntax tree.
-	* Right-click on any node and selected *View Directed Syntax Graph* to see a visual representation of the syntax tree starting at your selected node.
+
+* Go to *Tools -> Extensions and Updates -> Online*, and install Roslyn Syntax Visualizer.
+* Restart Visual Studio.
+* Again, you can open a new C# console app and write an if-statement.
+* Go to *View -> Other Windows -> Roslyn Syntax Visualizer* to see the if-statement syntax tree.
+* Right-click on any node and selected *View Directed Syntax Graph* to see a visual representation of the syntax tree starting at your selected node.
+
 The Roslyn Syntax Visualizer is extremely useful when writing analyzers as it helps you determine exactly which syntax node you need to locate for a particular diagnostic.
 
 More Information

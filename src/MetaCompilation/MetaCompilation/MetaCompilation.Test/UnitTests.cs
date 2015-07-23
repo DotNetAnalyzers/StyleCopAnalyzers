@@ -16708,7 +16708,13 @@ namespace SyntaxNodeAnalyzerAnalyzer
     {
         public const string spacingRuleId = ""IfSpacing"";
         //If the analyzer finds an issue, it will report the DiagnosticDescriptor rule
-        internal static DiagnosticDescriptor spacingRule = new DiagnosticDescriptor(id: ""Change me to the name of the above constant"", title: ""Enter a title for this diagnostic"", messageFormat: ""Enter a message to be displayed with this diagnostic"", category: ""Enter a category for this diagnostic (e.g. Formatting)"", defaultSeverity: default(DiagnosticSeverity), isEnabledByDefault: default(bool));
+        internal static DiagnosticDescriptor spacingRule = new DiagnosticDescriptor(
+            id: ""Change me to the name of the above constant"",
+            title: ""Enter a title for this diagnostic"",
+            messageFormat: ""Enter a message to be displayed with this diagnostic"",
+            category: ""Enter a category for this diagnostic (e.g. Formatting)"",
+            defaultSeverity: default(DiagnosticSeverity),
+            isEnabledByDefault: default(bool));
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
