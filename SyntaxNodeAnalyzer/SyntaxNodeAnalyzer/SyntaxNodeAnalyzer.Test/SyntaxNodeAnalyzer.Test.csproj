@@ -6,7 +6,7 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{F72FFEC7-640A-4F39-BD70-71EC8181DA04}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SyntaxNodeAnalyzer.Test</RootNamespace>
     <AssemblyName>SyntaxNodeAnalyzer.Test</AssemblyName>
