@@ -1395,16 +1395,46 @@ namespace MetaCompilation
                     return emptyResult;
                 }
 
-                var expressionName = memberExpression.Expression as IdentifierNameSyntax;
-                if (expressionName == null || expressionName.Identifier.Text != keywordIdentifierToken.Text)
+                var identifierExpressionName = memberExpression.Expression as IdentifierNameSyntax;
+                var memberExpressionName = memberExpression.Expression as MemberAccessExpressionSyntax;
+                if (identifierExpressionName == null && memberExpressionName == null)
                 {
                     return emptyResult;
                 }
 
-                var expressionMember = memberExpression.Name as IdentifierNameSyntax;
-                if (expressionMember == null || expressionMember.Identifier.Text != "SpanStart")
+                if (identifierExpressionName != null)
                 {
-                    return emptyResult;
+                    if (identifierExpressionName.Identifier.Text != keywordIdentifierToken.Text)
+                    {
+                        return emptyResult;
+                    }
+
+                    var expressionMember = memberExpression.Name as IdentifierNameSyntax;
+                    if (expressionMember == null || expressionMember.Identifier.Text != "SpanStart")
+                    {
+                        return emptyResult;
+                    }
+                }
+
+                if (memberExpressionName != null)
+                {
+                    var identifierExpression = memberExpressionName.Expression as IdentifierNameSyntax;
+                    if (identifierExpression == null || identifierExpression.Identifier.Text != keywordIdentifierToken.Text)
+                    {
+                        return emptyResult;
+                    }
+
+                    var memberName = memberExpressionName.Name as IdentifierNameSyntax;
+                    if (memberName == null || memberName.Identifier.Text != "Span")
+                    {
+                        return emptyResult;
+                    }
+
+                    var finalName = memberExpression.Name as IdentifierNameSyntax;
+                    if (finalName == null || finalName.Identifier.Text != "Start")
+                    {
+                        return emptyResult;
+                    }
                 }
 
                 return startToken;
@@ -1439,16 +1469,46 @@ namespace MetaCompilation
                     return emptyResult;
                 }
 
-                var expressionName = memberExpression.Expression as IdentifierNameSyntax;
-                if (expressionName == null || expressionName.Identifier.Text != openParenToken.Text)
+                var identifierExpressionName = memberExpression.Expression as IdentifierNameSyntax;
+                var memberExpressionName = memberExpression.Expression as MemberAccessExpressionSyntax;
+                if (identifierExpressionName == null && memberExpressionName == null)
                 {
                     return emptyResult;
                 }
 
-                var expressionMember = memberExpression.Name as IdentifierNameSyntax;
-                if (expressionMember == null || expressionMember.Identifier.Text != "SpanStart")
+                if (identifierExpressionName != null)
                 {
-                    return emptyResult;
+                    if (identifierExpressionName.Identifier.Text != openParenToken.Text)
+                    {
+                        return emptyResult;
+                    }
+
+                    var expressionMember = memberExpression.Name as IdentifierNameSyntax;
+                    if (expressionMember == null || expressionMember.Identifier.Text != "SpanStart")
+                    {
+                        return emptyResult;
+                    }
+                }
+
+                if (memberExpressionName != null)
+                {
+                    var identifierExpression = memberExpressionName.Expression as IdentifierNameSyntax;
+                    if (identifierExpression == null || identifierExpression.Identifier.Text != openParenToken.Text)
+                    {
+                        return emptyResult;
+                    }
+
+                    var memberName = memberExpressionName.Name as IdentifierNameSyntax;
+                    if (memberName == null || memberName.Identifier.Text != "Span")
+                    {
+                        return emptyResult;
+                    }
+
+                    var finalName = memberExpression.Name as IdentifierNameSyntax;
+                    if (finalName == null || finalName.Identifier.Text != "Start")
+                    {
+                        return emptyResult;
+                    }
                 }
 
                 return endToken;
