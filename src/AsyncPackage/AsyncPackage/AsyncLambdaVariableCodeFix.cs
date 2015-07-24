@@ -86,6 +86,14 @@ namespace AsyncPackage
             {
                 return _generateDocument(cancellationToken);
             }
+
+            public override string EquivalenceKey
+            {
+                get
+                {
+                    return nameof(AsyncLambdaVariableCodeAction);
+                }
+            }
         }
     }
 }

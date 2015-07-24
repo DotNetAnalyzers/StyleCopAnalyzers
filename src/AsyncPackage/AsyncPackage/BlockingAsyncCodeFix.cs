@@ -242,6 +242,14 @@ namespace AsyncPackage
             {
                 return _generateDocument(cancellationToken);
             }
+
+            public override string EquivalenceKey
+            {
+                get
+                {
+                    return nameof(CodeActionToDelayWhenAnyWhenAllAsync);
+                }
+            }
         }
 
         private class CodeActionChangetoAwaitAsync : CodeAction
@@ -261,6 +269,14 @@ namespace AsyncPackage
             {
                 return _generateDocument(cancellationToken);
             }
+
+            public override string EquivalenceKey
+            {
+                get
+                {
+                    return nameof(CodeActionChangetoAwaitAsync);
+                }
+            }
         }
 
         private class CodeActionChangetoAwaitGetAwaiterAsync : CodeAction
@@ -279,6 +295,14 @@ namespace AsyncPackage
             protected override Task<Document> GetChangedDocumentAsync(CancellationToken cancellationToken)
             {
                 return _generateDocument(cancellationToken);
+            }
+
+            public override string EquivalenceKey
+            {
+                get
+                {
+                    return nameof(CodeActionChangetoAwaitGetAwaiterAsync);
+                }
             }
         }
     }
