@@ -195,8 +195,6 @@ namespace MetaCompilation
                             ArgumentSyntax declaration = severityDeclarations.First();
                             context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Set the severity to 'Error' if something is not allowed", c => DiagnosticSeverityError(context.Document, declaration, c), "Set the severity to 'Error' if something is not allowed"), diagnostic);
                             context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Set the severity to 'Warning' if something is suspicious but allowed", c => DiagnosticSeverityWarning(context.Document, declaration, c), "Set the severity to 'Warning' if something is suspicious but allowed"), diagnostic);
-                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Set the severity to 'Hidden' if something is an issue, but is not surfaced", c => DiagnosticSeverityHidden(context.Document, declaration, c), "Set the severity to 'Hidden' if something is an issue, but is not surfaced"), diagnostic);
-                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Set the severity to 'Info' for information not indicating a problem", c => DiagnosticSeverityInfo(context.Document, declaration, c), "Set the severity to 'Info' for information not indicating a problem"), diagnostic);
                         }
                         break;
                     case MetaCompilationAnalyzer.MissingIdDeclaration:

@@ -101,7 +101,7 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor MissingIdDeclarationRule = CreateRule(MissingIdDeclaration, "Missing Diagnostic id declaration", MessagePrefix + "This diagnostic id should be the constant string declared above", "The id parameter of a DiagnosticDescriptor should be a string constant previously declared. This ensures that the diagnostic id is accessible from the CodeFixProvider.cs file.");
 
         public const string DefaultSeverityError = "MetaAnalyzer016";
-        internal static DiagnosticDescriptor DefaultSeverityErrorRule = CreateRule(DefaultSeverityError, "Incorrect defaultSeverity", MessagePrefix + "The 'defaultSeverity' should be of the form: DiagnosticSeverity.[severity]", "There are four option for the severity of the diagnostic: error, warning, hidden, and info. An error is completely not allowed and causes build errors. A warning is something that might be a problem, but is not a build error. An info diagnostic is simply information and is not actually a problem. A hidden diagnostic is raised as an issue, but it is not accessible through normal means. In simple analyzers, the most common severities are error and warning.");
+        internal static DiagnosticDescriptor DefaultSeverityErrorRule = CreateRule(DefaultSeverityError, "Incorrect defaultSeverity", MessagePrefix + "The 'defaultSeverity' should be either DiagnosticSeverity.Error or DiagnosticSeverity.Warning", "There are four option for the severity of the diagnostic: error, warning, hidden, and info. An error is completely not allowed and causes build errors. A warning is something that might be a problem, but is not a build error. An info diagnostic is simply information and is not actually a problem. A hidden diagnostic is raised as an issue, but it is not accessible through normal means. In simple analyzers, the most common severities are error and warning.");
 
         public const string EnabledByDefaultError = "MetaAnalyzer017";
         internal static DiagnosticDescriptor EnabledByDefaultErrorRule = CreateRule(EnabledByDefaultError, "Incorrect isEnabledByDefault", MessagePrefix + "The 'isEnabledByDefault' field should be set to true", "The 'isEnabledByDefault' field determines whether the diagnostic is enabled by default or the user of the analyzer has to manually enable the diagnostic. Generally, it will be set to true.");
@@ -2256,7 +2256,7 @@ namespace MetaCompilation
                                     {
                                         string identifierExpr = memberAccessExpr.Expression.ToString();
                                         string identifierName = memberAccessExpr.Name.Identifier.Text;
-                                        List<string> severities = new List<string> { "Warning", "Error", "Hidden", "Info" };
+                                        List<string> severities = new List<string> { "Warning", "Error" };
 
                                         if (identifierExpr != "DiagnosticSeverity")
                                         {
