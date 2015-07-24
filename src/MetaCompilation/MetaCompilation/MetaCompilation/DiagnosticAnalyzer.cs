@@ -349,7 +349,7 @@ namespace MetaCompilation
                 }
 
                 //look for and interpret id fields
-                List<string> idNames = CheckIds(context);
+                List<string> idNames = CheckIds();
 
                 if (idNames.Count > 0)
                 {
@@ -496,9 +496,10 @@ namespace MetaCompilation
             }
 
             #region CheckAnalysis for IfStatement
-            //checks the AnalyzeIfStatement of the user's analyzer, returns a bool representing whether the check was successful or not
+            // checks the AnalyzeIfStatement of the user's analyzer, returns a bool representing whether the check was successful or not
             internal bool CheckIfStatementAnalysis(string branch, string kind, List<string> ruleNames, CompilationAnalysisContext context, IMethodSymbol analysisMethodSymbol)
             {
+                // branch name unnecessary, never used
                 var getStatements = AnalysisGetStatements(analysisMethodSymbol);
                 if (getStatements.Count == 0)
                 {
@@ -2345,19 +2346,18 @@ namespace MetaCompilation
             }
 
             //returns a list of id names, empty if none found
-            internal List<string> CheckIds(CompilationAnalysisContext context)
+            internal List<string> CheckIds()
             {
                 List<string> idNames = new List<string>();
                 foreach (IFieldSymbol field in _analyzerFieldSymbols)
                 {
                     if (field.IsStatic && field.DeclaredAccessibility == Accessibility.Public && field.Type.SpecialType == SpecialType.System_String)
                     {
-                        if (field.Name == null)
+                        if (field.Name != null)
                         {
-                            continue;
+                            idNames.Add(field.Name);
                         }
 
-                        idNames.Add(field.Name);
                     }
                 }
 
