@@ -161,5 +161,17 @@
             result.locations[result.locations.Length - 1] = new DiagnosticResultLocation(path, line, column);
             return result;
         }
+
+        public DiagnosticResult WithLineOffset(int offset)
+        {
+            DiagnosticResult result = this;
+            Array.Resize(ref result.locations, result.locations?.Length ?? 0);
+            for (int i = 0; i < result.locations.Length; i++)
+            {
+                result.locations[i].Line += offset;
+            }
+
+            return result;
+        }
     }
 }

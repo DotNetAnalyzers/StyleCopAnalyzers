@@ -143,11 +143,6 @@
                 throw new ArgumentException("Unsupported Language");
             }
 
-            for (int i = 0; i < sources.Length; i++)
-            {
-                string fileName = language == LanguageNames.CSharp ? "Test" + i + ".cs" : "Test" + i + ".vb";
-            }
-
             var project = this.CreateProject(sources, language);
             var documents = project.Documents.ToArray();
 
