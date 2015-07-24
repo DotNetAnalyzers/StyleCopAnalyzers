@@ -277,6 +277,7 @@
     <Compile Include="SpacingRules\SA1011UnitTests.cs" />
     <Compile Include="SpacingRules\SA1012UnitTests.cs" />
     <Compile Include="SpacingRules\SA1013UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1014UnitTests.cs" />
     <Compile Include="SpacingRules\SA1016UnitTests.cs" />
     <Compile Include="SpacingRules\SA1017UnitTests.cs" />
     <Compile Include="SpacingRules\SA1018UnitTests.cs" />

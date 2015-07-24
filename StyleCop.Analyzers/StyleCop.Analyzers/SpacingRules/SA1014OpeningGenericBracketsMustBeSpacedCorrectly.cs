@@ -29,7 +29,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1014.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -54,19 +54,14 @@
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
             {
-                switch (token.Kind())
+                if (token.IsKind(SyntaxKind.LessThanToken))
                 {
-                case SyntaxKind.LessThanToken:
-                    this.HandleLessThanToken(context, token);
-                    break;
-
-                default:
-                    break;
+                    HandleLessThanToken(context, token);
                 }
             }
         }
 
-        private void HandleLessThanToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private static void HandleLessThanToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
             {
