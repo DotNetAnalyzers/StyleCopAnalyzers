@@ -51,14 +51,17 @@ namespace SyntaxNodeAnalyzer
 
             if (ifKeyword.HasTrailingTrivia)
             {
-                var trailingTrivia = ifKeyword.TrailingTrivia.Last();
-
-                if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                if (ifKeyword.TrailingTrivia.Count == 1)
                 {
-                    if (trailingTrivia.ToString() == " ")
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                     {
-                        //If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic
-                        return;
+                        if (trailingTrivia.ToString() == " ")
+                        {
+                            //If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic
+                            return;
+                        }
                     }
                 }
             }

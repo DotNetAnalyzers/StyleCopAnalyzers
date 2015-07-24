@@ -133,10 +133,10 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor TrailingTriviaCheckIncorrectRule = CreateRule(TrailingTriviaCheckIncorrect, "Incorrect trailing trivia check", MessagePrefix + "This statement should be an if-statement that checks to see if '{0}' has trailing trivia", "Syntax trivia are all the things that aren't actually code (i.e. comments, whitespace, end of line tokens, etc). The first step in checking for a single space between the if-keyword and '(' is to check if the if-keyword SyntaxToken has any trailing trivia");
 
         public const string TrailingTriviaVarMissing = "MetaAnalyzer026";
-        internal static DiagnosticDescriptor TrailingTriviaVarMissingRule = CreateRule(TrailingTriviaVarMissing, "Missing trailing trivia extraction", MessagePrefix + "Next, extract the last trailing trivia of '{0}' into a variable", "The last trailing trivia of the if-keyword should be a single whitespace");
+        internal static DiagnosticDescriptor TrailingTriviaVarMissingRule = CreateRule(TrailingTriviaVarMissing, "Missing trailing trivia extraction", MessagePrefix + "Next, extract the first trailing trivia of '{0}' into a variable", "The first trailing trivia of the if-keyword should be a single whitespace");
 
         public const string TrailingTriviaVarIncorrect = "MetaAnalyzer027";
-        internal static DiagnosticDescriptor TrailingTriviaVarIncorrectRule = CreateRule(TrailingTriviaVarIncorrect, "Incorrect trailing trivia extraction", MessagePrefix + "This statement should extract the last trailing trivia of '{0}' into a variable", "The last trailing trivia of the if-keyword should be a single whitespace");
+        internal static DiagnosticDescriptor TrailingTriviaVarIncorrectRule = CreateRule(TrailingTriviaVarIncorrect, "Incorrect trailing trivia extraction", MessagePrefix + "This statement should extract the first trailing trivia of '{0}' into a variable", "The first trailing trivia of the if-keyword should be a single whitespace");
 
         public const string TrailingTriviaKindCheckMissing = "MetaAnalyzer028";
         internal static DiagnosticDescriptor TrailingTriviaKindCheckMissingRule = CreateRule(TrailingTriviaKindCheckMissing, "Missing SyntaxKind check", MessagePrefix + "Next, check if the kind of '{0}' is whitespace trivia");
@@ -185,6 +185,12 @@ namespace MetaCompilation
 
         public const string LocationIncorrect = "MetaAnalyzer043";
         internal static DiagnosticDescriptor LocationIncorrectRule = CreateRule(LocationIncorrect, "Diagnostic location variable incorrect", MessagePrefix + "This statement should use Location.Create, '{0}', and '{1}' to create the location of the diagnostic", "A location can be created by combining a span with a syntax tree. The span is applied to the given syntax tree so that the location within the syntax tree is determined");
+
+        public const string TrailingTriviaCountMissing = "MetaAnalyzer057";
+        internal static DiagnosticDescriptor TriviaCountMissingRule = CreateRule(TrailingTriviaCountMissing, "Trailing trivia count missing", MessagePrefix + "Next, check that '{0}' only has one trailing trivia element");
+
+        public const string TrailingTriviaCountIncorrect = "MetaAnalyzer058";
+        internal static DiagnosticDescriptor TriviaCountIncorrectRule = CreateRule(TrailingTriviaCountIncorrect, "Trailing trivia count incorrect", MessagePrefix + "This statement should check that '{0}' only has one trailing trivia element");
         #endregion
 
         #region analysis rules
@@ -284,7 +290,9 @@ namespace MetaCompilation
                                              GoToCodeFixRule,
                                              IncorrectKindRule,
                                              IncorrectRegisterRule,
-                                             IncorrectArgumentsRule);
+                                             IncorrectArgumentsRule,
+                                             TriviaCountMissingRule,
+                                             TriviaCountIncorrectRule);
             }
         }
 
@@ -525,7 +533,7 @@ namespace MetaCompilation
                             return false;
                         }
 
-                        //outer if statement in user analyzer
+                        // HasTrailingTrivia if-statement in user analyzer
                         if (statementCount > 2)
                         {
                             var triviaBlock = IfStatementAnalysis3(context, statements, keywordIdentifierToken) as BlockSyntax;
@@ -543,64 +551,98 @@ namespace MetaCompilation
                                 var endDiagnosticSpan = ifStatement.CloseParenToken.SpanStart;
                                 var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
                                 var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
-                                ReportDiagnostic(context, TrailingTriviaVarMissingRule, diagnosticLocation, keywordIdentifierToken.Text);
+                                ReportDiagnostic(context, TriviaCountMissingRule, diagnosticLocation, keywordIdentifierToken.Text);
                                 return false;
                             }
 
                             if (triviaBlockStatements.Count > 0)
                             {
-                                SyntaxToken triviaIdentifierToken = IfStatementAnalysis4(context, triviaBlockStatements, keywordIdentifierToken);
-                                if (triviaIdentifierToken.Text == "")
+                                BlockSyntax triviaCountBlock = IfStatementAnalysis8(context, triviaBlockStatements, keywordIdentifierToken);
+                                if (triviaCountBlock == null)
                                 {
-                                    ReportDiagnostic(context, TrailingTriviaVarIncorrectRule, triviaBlockStatements[0].GetLocation(), keywordIdentifierToken.Text);
+                                    ReportDiagnostic(context, TriviaCountIncorrectRule, triviaBlockStatements[0].GetLocation(), keywordIdentifierToken.Text);
                                     return false;
                                 }
 
-                                //inner if statement in user analyzer
-                                if (triviaBlockStatements.Count > 1)
+                                SyntaxList<StatementSyntax> triviaCountBlockStatements = triviaCountBlock.Statements;
+                                if (triviaCountBlockStatements.Count > 0)
                                 {
-                                    BlockSyntax triviaKindCheckBlock = IfStatementAnalysis5(context, triviaBlockStatements, triviaIdentifierToken);
-                                    if (triviaKindCheckBlock == null)
+                                    SyntaxToken triviaIdentifierToken = IfStatementAnalysis4(context, triviaCountBlockStatements, keywordIdentifierToken);
+                                    if (triviaIdentifierToken.Text == "")
                                     {
-                                        ReportDiagnostic(context, TrailingTriviaKindCheckIncorrectRule, triviaBlockStatements[1].GetLocation(), triviaIdentifierToken.Text);
+                                        ReportDiagnostic(context, TrailingTriviaVarIncorrectRule, triviaCountBlockStatements[0].GetLocation(), keywordIdentifierToken.Text);
                                         return false;
                                     }
 
-                                    SyntaxList<StatementSyntax> triviaKindCheckBlockStatements = triviaKindCheckBlock.Statements;
-                                    if (triviaKindCheckBlockStatements == null)
+                                    // Kind if-statement in user analyzer
+                                    if (triviaCountBlockStatements.Count > 1)
                                     {
-                                        ReportDiagnostic(context, TrailingTriviaKindCheckIncorrectRule, triviaBlockStatements[1].GetLocation(), triviaIdentifierToken.Text);
-                                        return false;
-                                    }
-
-                                    //inner inner if statement in user analyzer
-                                    if (triviaKindCheckBlockStatements.Count > 0)
-                                    {
-                                        BlockSyntax triviaCheckBlock = IfStatementAnalysis6(context, triviaKindCheckBlock.Statements, triviaIdentifierToken);
-                                        if (triviaCheckBlock == null)
+                                        BlockSyntax triviaKindCheckBlock = IfStatementAnalysis5(context, triviaCountBlockStatements, triviaIdentifierToken);
+                                        if (triviaKindCheckBlock == null)
                                         {
-                                            ReportDiagnostic(context, WhitespaceCheckIncorrectRule, triviaKindCheckBlockStatements[0].GetLocation(), triviaIdentifierToken);
+                                            ReportDiagnostic(context, TrailingTriviaKindCheckIncorrectRule, triviaCountBlockStatements[1].GetLocation(), triviaIdentifierToken.Text);
                                             return false;
                                         }
 
-                                        SyntaxList<StatementSyntax> triviaCheckBlockStatements = triviaCheckBlock.Statements;
-                                        if (triviaCheckBlockStatements == null)
+                                        SyntaxList<StatementSyntax> triviaKindCheckBlockStatements = triviaKindCheckBlock.Statements;
+                                        if (triviaKindCheckBlockStatements == null)
                                         {
-                                            ReportDiagnostic(context, WhitespaceCheckIncorrectRule, triviaKindCheckBlockStatements[0].GetLocation(), triviaIdentifierToken);
+                                            ReportDiagnostic(context, TrailingTriviaKindCheckIncorrectRule, triviaCountBlockStatements[1].GetLocation(), triviaIdentifierToken.Text);
                                             return false;
                                         }
 
-                                        if (triviaCheckBlockStatements.Count > 0)
+                                        // Whitespace if-statement in user analyzer
+                                        if (triviaKindCheckBlockStatements.Count > 0)
                                         {
-                                            if (!IfStatementAnalysis7(context, triviaCheckBlockStatements))
+                                            BlockSyntax triviaCheckBlock = IfStatementAnalysis6(context, triviaKindCheckBlock.Statements, triviaIdentifierToken);
+                                            if (triviaCheckBlock == null)
                                             {
-                                                ReportDiagnostic(context, ReturnStatementIncorrectRule, triviaCheckBlockStatements[0].GetLocation(), methodDeclaration.Identifier.Text);
+                                                ReportDiagnostic(context, WhitespaceCheckIncorrectRule, triviaKindCheckBlockStatements[0].GetLocation(), triviaIdentifierToken);
                                                 return false;
                                             }
 
-                                            if (triviaCheckBlockStatements.Count > 1)
+                                            SyntaxList<StatementSyntax> triviaCheckBlockStatements = triviaCheckBlock.Statements;
+                                            if (triviaCheckBlockStatements == null)
+                                            {
+                                                ReportDiagnostic(context, WhitespaceCheckIncorrectRule, triviaKindCheckBlockStatements[0].GetLocation(), triviaIdentifierToken);
+                                                return false;
+                                            }
+
+                                            if (triviaCheckBlockStatements.Count > 0)
+                                            {
+                                                if (!IfStatementAnalysis7(context, triviaCheckBlockStatements))
+                                                {
+                                                    ReportDiagnostic(context, ReturnStatementIncorrectRule, triviaCheckBlockStatements[0].GetLocation(), methodDeclaration.Identifier.Text);
+                                                    return false;
+                                                }
+
+                                                if (triviaCheckBlockStatements.Count > 1)
+                                                {
+                                                    IfStatementSyntax ifStatement = triviaCheckBlock.Parent as IfStatementSyntax;
+                                                    var startDiagnosticSpan = ifStatement.SpanStart;
+                                                    var endDiagnosticSpan = ifStatement.CloseParenToken.SpanStart;
+                                                    var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+                                                    var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
+                                                    ReportDiagnostic(context, TooManyStatementsRule, diagnosticLocation, "if block", "1");
+                                                    return false;
+                                                }
+
+                                                //successfully through if-statement checks
+                                            }
+                                            else
                                             {
                                                 IfStatementSyntax ifStatement = triviaCheckBlock.Parent as IfStatementSyntax;
+                                                var startDiagnosticSpan = ifStatement.SpanStart;
+                                                var endDiagnosticSpan = ifStatement.CloseParenToken.SpanStart;
+                                                var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+                                                var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
+                                                ReportDiagnostic(context, ReturnStatementMissingRule, diagnosticLocation, methodDeclaration.Identifier.Text);
+                                                return false;
+                                            }
+
+                                            if (triviaKindCheckBlockStatements.Count > 1)
+                                            {
+                                                IfStatementSyntax ifStatement = triviaKindCheckBlock.Parent as IfStatementSyntax;
                                                 var startDiagnosticSpan = ifStatement.SpanStart;
                                                 var endDiagnosticSpan = ifStatement.CloseParenToken.SpanStart;
                                                 var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
@@ -608,56 +650,54 @@ namespace MetaCompilation
                                                 ReportDiagnostic(context, TooManyStatementsRule, diagnosticLocation, "if block", "1");
                                                 return false;
                                             }
-                                            
-                                            //successfully through if statement checks
                                         }
                                         else
-                                        {
-                                            IfStatementSyntax ifStatement = triviaCheckBlock.Parent as IfStatementSyntax;
-                                            var startDiagnosticSpan = ifStatement.SpanStart;
-                                            var endDiagnosticSpan = ifStatement.CloseParenToken.SpanStart;
-                                            var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
-                                            var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
-                                            ReportDiagnostic(context, ReturnStatementMissingRule, diagnosticLocation, methodDeclaration.Identifier.Text);
-                                            return false;
-                                        }
-
-                                        if (triviaKindCheckBlockStatements.Count > 1)
                                         {
                                             IfStatementSyntax ifStatement = triviaKindCheckBlock.Parent as IfStatementSyntax;
                                             var startDiagnosticSpan = ifStatement.SpanStart;
                                             var endDiagnosticSpan = ifStatement.CloseParenToken.SpanStart;
                                             var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
                                             var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
-                                            ReportDiagnostic(context, TooManyStatementsRule, diagnosticLocation, "if block", "1");
+                                            ReportDiagnostic(context, WhitespaceCheckMissingRule, diagnosticLocation, triviaIdentifierToken);
+                                            return false;
+                                        }
+
+                                        if (triviaCountBlockStatements.Count > 2)
+                                        {
+                                            IfStatementSyntax ifStatement = triviaCountBlock.Parent as IfStatementSyntax;
+                                            var startDiagnosticSpan = ifStatement.SpanStart;
+                                            var endDiagnosticSpan = ifStatement.CloseParenToken.SpanStart;
+                                            var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+                                            var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
+                                            ReportDiagnostic(context, TooManyStatementsRule, diagnosticLocation, "if-block", "2");
                                             return false;
                                         }
                                     }
                                     else
                                     {
-                                        IfStatementSyntax ifStatement = triviaKindCheckBlock.Parent as IfStatementSyntax;
-                                        var startDiagnosticSpan = ifStatement.SpanStart;
-                                        var endDiagnosticSpan = ifStatement.CloseParenToken.SpanStart;
-                                        var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
-                                        var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
-                                        ReportDiagnostic(context, WhitespaceCheckMissingRule, diagnosticLocation, triviaIdentifierToken);
-                                        return false;
-                                    }
-
-                                    if (triviaBlockStatements.Count > 2)
-                                    {
-                                        IfStatementSyntax ifStatement = triviaBlock.Parent as IfStatementSyntax;
-                                        var startDiagnosticSpan = ifStatement.SpanStart;
-                                        var endDiagnosticSpan = ifStatement.CloseParenToken.SpanStart;
-                                        var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
-                                        var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
-                                        ReportDiagnostic(context, TooManyStatementsRule, diagnosticLocation, "if block", "2");
+                                        ReportDiagnostic(context, TrailingTriviaKindCheckMissingRule, triviaCountBlockStatements[0].GetLocation(), triviaIdentifierToken.Text);
                                         return false;
                                     }
                                 }
                                 else
                                 {
-                                    ReportDiagnostic(context, TrailingTriviaKindCheckMissingRule, triviaBlockStatements[0].GetLocation(), triviaIdentifierToken.Text);
+                                    IfStatementSyntax ifStatement = triviaCountBlock.Parent as IfStatementSyntax;
+                                    var startDiagnosticSpan = ifStatement.SpanStart;
+                                    var endDiagnosticSpan = ifStatement.CloseParenToken.SpanStart;
+                                    var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+                                    var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
+                                    ReportDiagnostic(context, TrailingTriviaVarMissingRule, diagnosticLocation, keywordIdentifierToken.Text);
+                                    return false;
+                                }
+
+                                if (triviaBlockStatements.Count > 1)
+                                {
+                                    IfStatementSyntax ifStatement = triviaBlock.Parent as IfStatementSyntax;
+                                    var startDiagnosticSpan = ifStatement.SpanStart;
+                                    var endDiagnosticSpan = ifStatement.CloseParenToken.SpanStart;
+                                    var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
+                                    var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
+                                    ReportDiagnostic(context, TooManyStatementsRule, diagnosticLocation, "if-block", "1");
                                     return false;
                                 }
                             }
@@ -668,7 +708,7 @@ namespace MetaCompilation
                                 var endDiagnosticSpan = ifStatement.CloseParenToken.SpanStart;
                                 var diagnosticSpan = TextSpan.FromBounds(startDiagnosticSpan, endDiagnosticSpan);
                                 var diagnosticLocation = Location.Create(ifStatement.SyntaxTree, diagnosticSpan);
-                                ReportDiagnostic(context, TrailingTriviaVarMissingRule, diagnosticLocation, keywordIdentifierToken.Text);
+                                ReportDiagnostic(context, TriviaCountMissingRule, diagnosticLocation, keywordIdentifierToken.Text);
                                 return false;
                             }
 
@@ -936,7 +976,7 @@ namespace MetaCompilation
                 }
 
                 var memberExprName = memberExpr.Name as IdentifierNameSyntax;
-                if (memberExprName == null || memberExprName.Identifier.Text != "Last")
+                if (memberExprName == null || memberExprName.Identifier.Text != "First")
                 {
                     return emptyResult;
                 }
@@ -1107,6 +1147,74 @@ namespace MetaCompilation
                 }
 
                 return true;
+            }
+
+            // checks the count if-statement of user's AnalyzeIfStatement method, returns the statements within that if-statement if correct
+            internal BlockSyntax IfStatementAnalysis8(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, SyntaxToken triviaIdentifierToken)
+            {
+                BlockSyntax emptyResult = null;
+
+                var statement = statements[0] as IfStatementSyntax;
+                if (statement == null)
+                {
+                    return emptyResult;
+                }
+
+                var booleanExpression = statement.Condition as BinaryExpressionSyntax;
+                if (booleanExpression == null)
+                {
+                    return emptyResult;
+                }
+
+                var left = booleanExpression.Left as MemberAccessExpressionSyntax;
+                if (left == null)
+                {
+                    return null;
+                }
+
+                var leftExpression = left.Expression as MemberAccessExpressionSyntax;
+                if (leftExpression == null)
+                {
+                    return emptyResult;
+                }
+
+                var leftExpressionIdentifier = leftExpression.Expression as IdentifierNameSyntax;
+                if (leftExpressionIdentifier == null || leftExpressionIdentifier.Identifier.ValueText != triviaIdentifierToken.ValueText)
+                {
+                    return emptyResult;
+                }
+
+                var leftExpressionName = leftExpression.Name as IdentifierNameSyntax;
+                if (leftExpressionName == null || leftExpressionName.Identifier.ValueText != "TrailingTrivia")
+                {
+                    return emptyResult;
+                }
+
+                var leftName = left.Name as IdentifierNameSyntax;
+                if (leftName == null)
+                {
+                    return emptyResult;
+                }
+
+                var right = booleanExpression.Right as LiteralExpressionSyntax;
+                if (right == null)
+                {
+                    return emptyResult;
+                }
+
+                SyntaxToken rightToken = right.Token;
+                if (rightToken == null || rightToken.ValueText != "1")
+                {
+                    return emptyResult;
+                }
+
+                var block = statement.Statement as BlockSyntax;
+                if (block == null)
+                {
+                    return emptyResult;
+                }
+
+                return block;
             }
 
             //checks the buildup steps of creating a diagnostic, returns a bool representing whether or not analysis failed
