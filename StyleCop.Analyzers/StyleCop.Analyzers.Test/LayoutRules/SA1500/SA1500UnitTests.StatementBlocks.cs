@@ -8,7 +8,7 @@
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/>.
+    /// Unit tests for <see cref="SA1500CurlyBracesForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
     public partial class SA1500UnitTests
     {

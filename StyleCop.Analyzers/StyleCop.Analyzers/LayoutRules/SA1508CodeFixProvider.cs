@@ -13,14 +13,14 @@
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// Implements a code fix for <see cref="SA1508ClosingCurlyBracketsMustNotBePrecededByBlankLine"/>.
+    /// Implements a code fix for <see cref="SA1508ClosingCurlyBacesMustNotBePrecededByBlankLine"/>.
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1508CodeFixProvider))]
     [Shared]
     public class SA1508CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1508ClosingCurlyBracketsMustNotBePrecededByBlankLine.DiagnosticId);
+            ImmutableArray.Create(SA1508ClosingCurlyBacesMustNotBePrecededByBlankLine.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;

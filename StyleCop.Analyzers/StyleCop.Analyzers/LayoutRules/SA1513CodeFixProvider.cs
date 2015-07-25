@@ -12,17 +12,17 @@
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// Implements a code fix for <see cref="SA1513ClosingCurlyBracketMustBeFollowedByBlankLine"/>.
+    /// Implements a code fix for <see cref="SA1513ClosingCurlyBraceMustBeFollowedByBlankLine"/>.
     /// </summary>
     /// <remarks>
-    /// <para>To fix a violation of this rule, ensure a blank line follows closing curly brackets.</para>
+    /// <para>To fix a violation of this rule, ensure a blank line follows closing curly braces.</para>
     /// </remarks>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1513CodeFixProvider))]
     [Shared]
     public class SA1513CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1513ClosingCurlyBracketMustBeFollowedByBlankLine.DiagnosticId);
+            ImmutableArray.Create(SA1513ClosingCurlyBraceMustBeFollowedByBlankLine.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
