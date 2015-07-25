@@ -23,7 +23,7 @@ public class Foo
 }
 ";
 
-        public static IEnumerable<object[]> ValidDeclarations
+        public static IEnumerable<object[]> GeneratedValidDeclarations
         {
             get
             {
@@ -34,7 +34,7 @@ public class Foo
             }
         }
 
-        public static IEnumerable<object[]> InvalidDeclarations
+        public static IEnumerable<object[]> GeneratedInvalidDeclarations
         {
             get
             {
@@ -44,8 +44,20 @@ public class Foo
                     select new object[]
                     {
                         invalidAndFixedAccessModifier.Item1 + " " + declarationWithoutAccessModifier,
-                        invalidAndFixedAccessModifier.Item2 + " " + declarationWithoutAccessModifier
+                        invalidAndFixedAccessModifier.Item2,
+                        invalidAndFixedAccessModifier.Item3 + " " + declarationWithoutAccessModifier
                     };
+            }
+        }
+
+        public static IEnumerable<object[]> ManualInvalidDeclarations
+        {
+            get
+            {
+                yield return new object[] { "internal static protected int Bar;", 17, "protected static internal int Bar;" };
+                yield return new object[] { "abstract class Qux { internal protected abstract void Bar(); }", 31, "abstract class Qux { protected internal abstract void Bar(); }" };
+                yield return new object[] { "/*comment*/internal /* 2 */ protected /*3*/ int Bar;", 29, "/*comment*/protected /* 2 */ internal /*3*/ int Bar;" };
+                yield return new object[] { "internal protected class Bar { protected internal int Qux; }", 10, "protected internal class Bar { protected internal int Qux; }" };
             }
         }
 
@@ -60,11 +72,11 @@ public class Foo
             }
         }
 
-        private static IEnumerable<Tuple<string, string>> InvalidAndFixedAccessModifiers
+        private static IEnumerable<Tuple<string, int, string>> InvalidAndFixedAccessModifiers
         {
             get
             {
-                yield return Tuple.Create("internal protected", "protected internal");
+                yield return Tuple.Create("internal protected", 10, "protected internal");
             }
         }
 
@@ -102,7 +114,7 @@ public class Foo
         /// <param name="declaration">The declaration to verify.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(ValidDeclarations))]
+        [MemberData(nameof(GeneratedValidDeclarations))]
         public async Task TestValidDeclarationAsync(string declaration)
         {
             var testCode = TestCodeTemplate.Replace("$$", declaration);
@@ -113,16 +125,18 @@ public class Foo
         /// Verifies that an invalid type declaration will produce a diagnostic and that the code fix will solve it.
         /// </summary>
         /// <param name="invalidDeclaration">The declaration to verify.</param>
+        /// <param name="diagnosticColumn">The column in parameter <paramref name="invalidDeclaration"/> at which the diagnostic is expected to occur.</param>
         /// <param name="fixedDeclaration">The declaration as fixed by the code fix provider.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [MemberData(nameof(InvalidDeclarations))]
-        public async Task TestInvalidDeclarationAsync(string invalidDeclaration, string fixedDeclaration)
+        [MemberData(nameof(GeneratedInvalidDeclarations))]
+        [MemberData(nameof(ManualInvalidDeclarations))]
+        public async Task TestInvalidDeclarationAsync(string invalidDeclaration, int diagnosticColumn, string fixedDeclaration)
         {
             var testCode = TestCodeTemplate.Replace("$$", invalidDeclaration);
             var fixedTestCode = TestCodeTemplate.Replace("$$", fixedDeclaration);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, this.CSharpDiagnostic().WithLocation(4, 14), CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.CSharpDiagnostic().WithLocation(4, 4 + diagnosticColumn), CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
