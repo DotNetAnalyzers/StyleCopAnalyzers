@@ -5,17 +5,16 @@
 
 namespace StyleCop.Analyzers
 {
-    using System;
     using System.IO;
     using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Text.RegularExpressions;
     using System.Threading;
+    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Helpers;
 
     internal static class GeneratedCodeAnalysisExtensions
     {

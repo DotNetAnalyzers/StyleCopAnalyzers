@@ -146,6 +146,7 @@
     <Compile Include="Helpers\CodeFixVerifier.Helper.cs" />
     <Compile Include="Helpers\DiagnosticResult.cs" />
     <Compile Include="Helpers\DiagnosticVerifier.Helper.cs" />
+    <Compile Include="Helpers\ExclusionTestAnalyzer.cs" />
     <Compile Include="LayoutRules\SA1500\SA1500UnitTests.Blocks.cs" />
     <Compile Include="LayoutRules\SA1500\SA1500UnitTests.Classes.cs" />
     <Compile Include="LayoutRules\SA1500\SA1500UnitTests.Constructors.cs" />
@@ -179,6 +180,7 @@
     <Compile Include="LayoutRules\SA1502\SA1502UnitTests.Namespaces.cs" />
     <Compile Include="LayoutRules\SA1502\SA1502UnitTests.Properties.cs" />
     <Compile Include="LayoutRules\SA1502\SA1502UnitTests.TypeDeclarations.cs" />
+    <Compile Include="ExclusionTests.cs" />
     <Compile Include="LayoutRules\SA1503UnitTests.cs" />
     <Compile Include="LayoutRules\SA1504UnitTests.cs" />
     <Compile Include="LayoutRules\SA1505UnitTests.cs" />
