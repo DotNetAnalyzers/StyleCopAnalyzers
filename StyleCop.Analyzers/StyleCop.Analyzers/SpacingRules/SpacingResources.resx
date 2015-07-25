@@ -129,6 +129,9 @@
   <data name="SA1003CodeFix" xml:space="preserve">
     <value>Fix spacing</value>
   </data>
+  <data name="SA1004CodeFix" xml:space="preserve">
+    <value>Fix spacing</value>
+  </data>
   <data name="SA1004Description" xml:space="preserve">
     <value>A line within a documentation header above a C# element does not begin with a single space.</value>
   </data>

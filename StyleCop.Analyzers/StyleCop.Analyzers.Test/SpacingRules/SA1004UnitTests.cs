@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.SpacingRules;
     using TestHelper;
@@ -11,7 +12,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1004DocumentationLinesMustBeginWithSingleSpace"/>.
     /// </summary>
-    public class SA1004UnitTests : DiagnosticVerifier
+    public class SA1004UnitTests : CodeFixVerifier
     {
         /// <summary>
         /// Verifies that the analyzer will properly handle an empty source.
@@ -61,6 +62,20 @@ public class TypeName
 }
 ";
 
+            string fixedCode = @"
+public class TypeName
+{
+    /// <summary>
+    /// The summary text.
+    /// </summary>
+    ///   <param name=""x"">The document root.</param>
+    ///    <param name=""y"">The XML header token.</param>
+    private void Method1(int x, int y)
+    {
+    }
+}
+";
+
             // Currently the extra indentation for <param> elements is not checked.
             DiagnosticResult[] expected =
             {
@@ -70,8 +85,11 @@ public class TypeName
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
+        [Fact]
         public async Task TestEmptyCommentLinesAsync()
         {
             string testCode = @"
@@ -107,6 +125,12 @@ public class TypeName
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1004DocumentationLinesMustBeginWithSingleSpace();
+        }
+
+        /// <inheritdoc/>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1004CodeFixProvider();
         }
     }
 }
