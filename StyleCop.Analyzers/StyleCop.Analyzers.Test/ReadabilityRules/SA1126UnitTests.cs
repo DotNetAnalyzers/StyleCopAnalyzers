@@ -16,13 +16,6 @@
     public class SA1126UnitTests : DiagnosticVerifier
     {
         [Fact]
-        public async Task TestEmptySourceAsync()
-        {
-            var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
         public void TestDisabledByDefaultAndNotConfigurable()
         {
             var analyzer = this.GetCSharpDiagnosticAnalyzers().Single();

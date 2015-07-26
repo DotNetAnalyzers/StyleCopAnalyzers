@@ -18,17 +18,6 @@
         private DocumentationMode documentationMode = DocumentationMode.Diagnose;
 
         /// <summary>
-        /// Verifies that the analyzer will properly handle an empty source.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestEmptySourceAsync()
-        {
-            var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <summary>
         /// Verify that a correct single line comment will not trigger a diagnostic.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>

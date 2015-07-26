@@ -41,17 +41,6 @@ public class Foo<T> : object where T : IFormattable
 }";
 
         /// <summary>
-        /// Verifies that the analyzer will properly handle an empty source.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestEmptySourceAsync()
-        {
-            var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <summary>
         /// Verifies that the analyzer will not produce the proper diagnostics when the colons spaced correctly on same line.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>

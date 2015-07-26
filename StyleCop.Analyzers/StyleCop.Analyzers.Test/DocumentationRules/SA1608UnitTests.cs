@@ -13,13 +13,6 @@
     /// </summary>
     public class SA1608UnitTests : CodeFixVerifier
     {
-        [Fact]
-        public async Task TestEmptySourceAsync()
-        {
-            var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
         [Theory]
         [InlineData("class")]
         [InlineData("struct")]

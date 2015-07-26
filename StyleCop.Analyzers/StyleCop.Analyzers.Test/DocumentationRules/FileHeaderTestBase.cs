@@ -33,17 +33,6 @@
         }
 
         /// <summary>
-        /// Verifies that the analyzer will properly handle an empty source file and produce the correct diagnostics (if any)
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestEmptySourceAsync()
-        {
-            var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <summary>
         /// Verifies that the analyzer will report the correct diagnostics (none for the default case) for a file without a header.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>

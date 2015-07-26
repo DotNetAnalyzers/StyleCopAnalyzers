@@ -12,13 +12,6 @@
     public class SA1304UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySourceAsync()
-        {
-            var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
         public async Task TestPublicReadonlyFieldStartingWithLowerCaseAsync()
         {
             // Should be reported by SA1307 instead

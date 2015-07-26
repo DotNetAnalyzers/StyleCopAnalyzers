@@ -11,13 +11,6 @@
     public class SA1110UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestEmptySourceAsync()
-        {
-            var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
         public async Task TestMethodDeclarationOpeningBracketInTheNextLineAsync()
         {
             var testCode = @"

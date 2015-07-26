@@ -54,17 +54,6 @@
 ";
 
         /// <summary>
-        /// Verifies that the analyzer will properly handle an empty source.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestEmptySourceAsync()
-        {
-            var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <summary>
         /// Verifies that empty lines at the start of the file do not trigger any diagnostics.
         /// (This will be handled by SA1517)
         /// </summary>

@@ -32,17 +32,6 @@
         }
 
         /// <summary>
-        /// Verifies that the analyzer will properly handle an empty source.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestEmptySourceAsync()
-        {
-            var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <summary>
         /// Verifies that a statement followed by a block without curly braces will produce a warning.
         /// </summary>
         /// <param name="statementText">The source code for the first part of a compound statement whose child can be

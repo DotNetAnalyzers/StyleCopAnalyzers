@@ -80,17 +80,6 @@ public class Foo
         }
 
         /// <summary>
-        /// Verify that the analyzer accepts an empty source.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestEmptySourceAsync()
-        {
-            var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <summary>
         /// Verifies that a valid declaration will not produce a diagnostic.
         /// </summary>
         /// <param name="declaration">The declaration to verify.</param>
