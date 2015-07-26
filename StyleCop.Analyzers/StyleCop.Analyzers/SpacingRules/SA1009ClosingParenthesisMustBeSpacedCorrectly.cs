@@ -30,14 +30,6 @@
         /// The ID for diagnostics produced by the <see cref="SA1009ClosingParenthesisMustBeSpacedCorrectly"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1009";
-
-        internal const string LocationKey = "location";
-        internal const string ActionKey = "action";
-        internal const string LocationPreceding = "preceding";
-        internal const string LocationFollowing = "following";
-        internal const string ActionInsert = "insert";
-        internal const string ActionRemove = "remove";
-
         private const string Title = "Closing parenthesis must be spaced correctly";
         private const string MessageFormat = "Closing parenthesis must{0} be {1} by a space.";
         private const string Description = "A closing parenthesis within a C# statement is not spaced correctly.";
@@ -175,8 +167,8 @@
                 // Closing parenthesis must{ not} be {preceded} by a space.
                 var properties = new Dictionary<string, string>
                 {
-                    [LocationKey] = LocationPreceding,
-                    [ActionKey] = ActionRemove
+                    [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationPreceding,
+                    [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove
                 };
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), " not", "preceded"));
             }
@@ -188,8 +180,8 @@
                     // Closing parenthesis must{} be {followed} by a space.
                     var properties = new Dictionary<string, string>
                     {
-                        [LocationKey] = LocationFollowing,
-                        [ActionKey] = ActionInsert
+                        [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationFollowing,
+                        [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionInsert
                     };
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), string.Empty, "followed"));
                 }
@@ -198,8 +190,8 @@
                     // Closing parenthesis must{ not} be {followed} by a space.
                     var properties = new Dictionary<string, string>
                     {
-                        [LocationKey] = LocationFollowing,
-                        [ActionKey] = ActionRemove
+                        [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationFollowing,
+                        [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove
                     };
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), " not", "followed"));
                 }

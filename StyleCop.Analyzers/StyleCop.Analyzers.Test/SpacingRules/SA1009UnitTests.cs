@@ -434,7 +434,7 @@ public class Foo
         /// <inheritdoc/>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1009CodeFixProvider();
+            return new OpenCloseSpacingCodeFixProvider();
         }
 
         private async Task TestWhitespaceInStatementOrDeclAsync(string originalStatement, string fixedStatement, params DiagnosticResult[] expected)
