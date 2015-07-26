@@ -225,6 +225,7 @@
     <Compile Include="MaintainabilityRules\SA1406UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1407UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1408UnitTests.cs" />
+    <Compile Include="MaintainabilityRules\SA1409UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1410UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1411UnitTests.cs" />
     <Compile Include="NamingRules\SA1300UnitTests.cs" />
