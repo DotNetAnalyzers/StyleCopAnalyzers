@@ -68,6 +68,11 @@
 
         private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
+            if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+            {
+                return;
+            }
+
             BaseTypeDeclarationSyntax declaration = context.Node as BaseTypeDeclarationSyntax;
 
             bool isNestedInClassOrStruct = this.IsNestedType(declaration);
@@ -83,6 +88,11 @@
 
         private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
+            if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+            {
+                return;
+            }
+
             MethodDeclarationSyntax declaration = context.Node as MethodDeclarationSyntax;
             SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
 
@@ -102,6 +112,11 @@
 
         private void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
         {
+            if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+            {
+                return;
+            }
+
             ConstructorDeclarationSyntax declaration = context.Node as ConstructorDeclarationSyntax;
 
             if (declaration != null && this.NeedsComment(declaration.Modifiers, SyntaxKind.PrivateKeyword))
@@ -115,6 +130,11 @@
 
         private void HandleDestructorDeclaration(SyntaxNodeAnalysisContext context)
         {
+            if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+            {
+                return;
+            }
+
             DestructorDeclarationSyntax declaration = context.Node as DestructorDeclarationSyntax;
 
             if (declaration != null)
@@ -128,6 +148,11 @@
 
         private void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
         {
+            if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+            {
+                return;
+            }
+
             PropertyDeclarationSyntax declaration = context.Node as PropertyDeclarationSyntax;
             SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
 
@@ -147,6 +172,11 @@
 
         private void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)
         {
+            if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+            {
+                return;
+            }
+
             IndexerDeclarationSyntax declaration = context.Node as IndexerDeclarationSyntax;
             SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
 
@@ -166,6 +196,11 @@
 
         private void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
         {
+            if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+            {
+                return;
+            }
+
             FieldDeclarationSyntax declaration = context.Node as FieldDeclarationSyntax;
             var variableDeclaration = declaration?.Declaration;
 
@@ -184,6 +219,11 @@
 
         private void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
         {
+            if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+            {
+                return;
+            }
+
             DelegateDeclarationSyntax declaration = context.Node as DelegateDeclarationSyntax;
 
             bool isNestedInClassOrStruct = this.IsNestedType(declaration);
@@ -199,6 +239,11 @@
 
         private void HandleEventDeclaration(SyntaxNodeAnalysisContext context)
         {
+            if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+            {
+                return;
+            }
+
             EventDeclarationSyntax declaration = context.Node as EventDeclarationSyntax;
             SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
 
@@ -218,6 +263,11 @@
 
         private void HandleEventFieldDeclaration(SyntaxNodeAnalysisContext context)
         {
+            if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+            {
+                return;
+            }
+
             EventFieldDeclarationSyntax declaration = context.Node as EventFieldDeclarationSyntax;
             SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
 
