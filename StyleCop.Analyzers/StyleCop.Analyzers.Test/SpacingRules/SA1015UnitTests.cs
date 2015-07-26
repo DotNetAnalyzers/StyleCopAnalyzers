@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.SpacingRules;
     using TestHelper;
@@ -11,7 +12,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1015ClosingGenericBracketsMustBeSpacedCorrectly"/>
     /// </summary>
-    public class SA1015UnitTests : DiagnosticVerifier
+    public class SA1015UnitTests : CodeFixVerifier
     {
         /// <summary>
         /// Verifies that the analyzer will properly handle an empty source.
@@ -65,7 +66,22 @@ public class TestClass2<T > where T : IEnumerable<object >
 {
 }
 
-public class TestClass3<T>where T : IEnumerable <object>
+public class TestClass3<T>where T : IEnumerable<object>
+{
+}
+";
+
+            var fixedCode = @"using System.Collections.Generic;
+
+public class TestClass1<T> where T : IEnumerable<object>
+{
+}
+
+public class TestClass2<T> where T : IEnumerable<object>
+{
+}
+
+public class TestClass3<T> where T : IEnumerable<object>
 {
 }
 ";
@@ -78,6 +94,8 @@ public class TestClass3<T>where T : IEnumerable <object>
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -99,6 +117,18 @@ public class TestClass
 }
 ";
 
+            var fixedCode = @"using System;
+
+public class TestClass
+{
+    public Action<Action<object>> TestProperty1 { get; set; }
+    public Action<Action<object>> TestProperty2 { get; set; }
+    public Action<Action<object>> TestProperty3 { get; set; }
+    public Action<Action<object>> TestProperty4 { get; set; }
+    public Action<Action<object>> TestProperty5 { get; set; }
+}
+";
+
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(6, 33).WithArguments(" not", "preceded"),
@@ -110,6 +140,8 @@ public class TestClass
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -150,6 +182,37 @@ public class TestClass
 }
 ";
 
+            var fixedCode = @"using System;
+
+public class TestClass
+{
+    public Action<Action<object>> TestMethod1<T>()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Action<Action<object>> TestMethod2 <T>()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Action<Action<object>> TestMethod3<T>()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Action<Action<object>> TestMethod4<T>()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Action<Action<object>> TestMethod5<T>()
+    {
+        throw new NotImplementedException();
+    }
+}
+";
+
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(10, 33).WithArguments(" not", "preceded"),
@@ -166,6 +229,8 @@ public class TestClass
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -202,6 +267,33 @@ public class TestClass
 }
 ";
 
+            var fixedCode = @"using System;
+
+public class TestClass
+{
+    public void TestMethod1<T>()
+    {
+    }
+
+    public void TestMethod2()
+    {
+        var x = typeof(Action<,>);
+        x = typeof(Action<,>);
+        x = typeof(Action<,> );
+        x = typeof(Action<,> ); 
+        x = typeof(Action<Action<object>, object>);
+
+        TestMethod1<object>();
+        TestMethod1<object>();
+        TestMethod1<object>();
+        TestMethod1<object>();
+
+        var y = new Action<object>[] { };
+        System.Action<object>.Equals(new object(), new object());
+    }
+}
+";
+
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(12, 29).WithArguments(" not", "preceded"),
@@ -217,6 +309,8 @@ public class TestClass
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -283,6 +377,12 @@ public class TestClass
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1015ClosingGenericBracketsMustBeSpacedCorrectly();
+        }
+
+        /// <inheritdoc/>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new OpenCloseSpacingCodeFixProvider();
         }
     }
 }
