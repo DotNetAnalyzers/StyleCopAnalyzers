@@ -88,7 +88,7 @@
 
             var modifiers = memberSyntax.GetModifiers();
 
-            if (modifiers == null || modifiers.Value.Any(SyntaxKind.OverrideKeyword))
+            if (modifiers.Any(SyntaxKind.OverrideKeyword))
             {
                 return;
             }

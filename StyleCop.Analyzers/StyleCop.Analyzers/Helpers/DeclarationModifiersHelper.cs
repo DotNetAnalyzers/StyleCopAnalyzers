@@ -68,14 +68,34 @@
             return modifiers;
         }
 
-        internal static SyntaxTokenList? GetModifiers(this MemberDeclarationSyntax syntax)
+        internal static SyntaxTokenList GetModifiers(this MemberDeclarationSyntax syntax)
         {
-            return (syntax as BaseMethodDeclarationSyntax)?.Modifiers
-                ?? (syntax as BasePropertyDeclarationSyntax)?.Modifiers
-                ?? (syntax as BaseTypeDeclarationSyntax)?.Modifiers
-                ?? (syntax as BaseFieldDeclarationSyntax)?.Modifiers
-                ?? (syntax as DelegateDeclarationSyntax)?.Modifiers
-                ?? (syntax as IncompleteMemberSyntax)?.Modifiers;
+            if (syntax is BaseMethodDeclarationSyntax)
+            {
+                return ((BaseMethodDeclarationSyntax)syntax).Modifiers;
+            }
+            else if (syntax is BasePropertyDeclarationSyntax)
+            {
+                return ((BasePropertyDeclarationSyntax)syntax).Modifiers;
+            }
+            else if (syntax is BaseTypeDeclarationSyntax)
+            {
+                return ((BaseTypeDeclarationSyntax)syntax).Modifiers;
+            }
+            else if (syntax is BaseFieldDeclarationSyntax)
+            {
+                return ((BaseFieldDeclarationSyntax)syntax).Modifiers;
+            }
+            else if (syntax is DelegateDeclarationSyntax)
+            {
+                return ((DelegateDeclarationSyntax)syntax).Modifiers;
+            }
+            else if (syntax is IncompleteMemberSyntax)
+            {
+                return ((IncompleteMemberSyntax)syntax).Modifiers;
+            }
+
+            return default(SyntaxTokenList);
         }
     }
 }
