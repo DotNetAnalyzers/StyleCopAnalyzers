@@ -295,6 +295,7 @@
     <Compile Include="ReadabilityRules\SA1125UseShorthandForNullableTypes.cs" />
     <Compile Include="ReadabilityRules\SA1126PrefixCallsCorrectly.cs" />
     <Compile Include="ReadabilityRules\SA1102CodeFixProvider.cs" />
+    <Compile Include="SpacingRules\OpenCloseSpacingCodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1000CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1000KeywordsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1001CodeFixProvider.cs" />

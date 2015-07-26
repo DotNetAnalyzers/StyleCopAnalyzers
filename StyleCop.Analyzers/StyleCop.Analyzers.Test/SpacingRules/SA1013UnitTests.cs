@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.SpacingRules;
     using TestHelper;
@@ -11,7 +12,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1013ClosingCurlyBracketsMustBeSpacedCorrectly"/>
     /// </summary>
-    public class SA1013UnitTests : DiagnosticVerifier
+    public class SA1013UnitTests : CodeFixVerifier
     {
         /// <summary>
         /// Verifies that the analyzer will properly handle an empty source.
@@ -73,6 +74,24 @@
 }
 ";
 
+            var fixedCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod()
+        {
+            var test = 2;
+            var x = $""{test}"";
+            x = $""{test}"";
+            x = $""({test})"";
+            x = $""({test} )"";
+            x = $""{test}"";
+            x = $""{test} "";
+        }
+    }
+}
+";
+
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(12, 25).WithArguments(" not", "preceded"),
@@ -80,6 +99,8 @@
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -99,12 +120,24 @@
 }
 ";
 
+            var fixedCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public int TestProperty1 { get; set; }
+        public int TestProperty2 { get; set; }
+    }
+}
+";
+
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(6, 45).WithArguments(string.Empty, "preceded")
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -131,6 +164,23 @@
 }
 ";
 
+            var fixedCode = @"namespace TestNamespace
+{
+    using System.Collections.Generic;
+
+    public class TestClass
+    {
+        public void TestMethod()
+        {
+            new Dictionary<int, int> { { 1, 1 } };
+            new Dictionary<int, int> { { 1, 1 } };
+            new Dictionary<int, int> { { 1, 1 } };
+            new Dictionary<int, int> { { 1, 1 } };
+        }
+    }
+}
+";
+
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(10, 46).WithArguments(string.Empty, "preceded"),
@@ -142,6 +192,8 @@
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -217,6 +269,25 @@
 }
 ";
 
+            var fixedCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod1(object[] a)
+        {
+        }        
+
+        public void TestMethod2()
+        {
+            TestMethod1(new object[] { });
+            TestMethod1(new object[] { });
+            TestMethod1(new object[] { } );
+            TestMethod1(new object[] { } );
+        }
+    }
+}
+";
+
             // space between closing curly bracket and closing parenthesis should be reported by SA1009
             DiagnosticResult[] expected =
             {
@@ -225,12 +296,20 @@
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1013ClosingCurlyBracketsMustBeSpacedCorrectly();
+        }
+
+        /// <inheritdoc/>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new OpenCloseSpacingCodeFixProvider();
         }
     }
 }
