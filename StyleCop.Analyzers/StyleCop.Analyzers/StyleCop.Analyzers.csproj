@@ -303,6 +303,7 @@
     <Compile Include="SpacingRules\SA1002SemicolonsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1003CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1003SymbolsMustBeSpacedCorrectly.cs" />
+    <Compile Include="SpacingRules\SA1004CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1004DocumentationLinesMustBeginWithSingleSpace.cs" />
     <Compile Include="SpacingRules\SA1005CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1005SingleLineCommentsMustBeginWithSingleSpace.cs" />
