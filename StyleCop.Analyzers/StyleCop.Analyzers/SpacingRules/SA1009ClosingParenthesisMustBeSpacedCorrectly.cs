@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.SpacingRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -172,9 +173,11 @@
             if (precededBySpace)
             {
                 // Closing parenthesis must{ not} be {preceded} by a space.
-                var properties = ImmutableDictionary.Create<string, string>()
-                    .Add(LocationKey, LocationPreceding)
-                    .Add(ActionKey, ActionRemove);
+                var properties = new Dictionary<string, string>
+                {
+                    [LocationKey] = LocationPreceding,
+                    [ActionKey] = ActionRemove
+                };
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), " not", "preceded"));
             }
 
@@ -183,17 +186,21 @@
                 if (!precedesStickyCharacter && !followedBySpace && !lastInLine)
                 {
                     // Closing parenthesis must{} be {followed} by a space.
-                    var properties = ImmutableDictionary.Create<string, string>()
-                    .Add(LocationKey, LocationFollowing)
-                    .Add(ActionKey, ActionInsert);
+                    var properties = new Dictionary<string, string>
+                    {
+                        [LocationKey] = LocationFollowing,
+                        [ActionKey] = ActionInsert
+                    };
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), string.Empty, "followed"));
                 }
                 else if (precedesStickyCharacter && followedBySpace && (!lastInLine || !allowEndOfLine))
                 {
                     // Closing parenthesis must{ not} be {followed} by a space.
-                    var properties = ImmutableDictionary.Create<string, string>()
-                    .Add(LocationKey, LocationFollowing)
-                    .Add(ActionKey, ActionRemove);
+                    var properties = new Dictionary<string, string>
+                    {
+                        [LocationKey] = LocationFollowing,
+                        [ActionKey] = ActionRemove
+                    };
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), " not", "followed"));
                 }
             }
