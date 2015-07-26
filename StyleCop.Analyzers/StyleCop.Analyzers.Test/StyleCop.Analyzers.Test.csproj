@@ -139,6 +139,10 @@
     <Compile Include="DocumentationRules\SA1621UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1622UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1626UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1628UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1630UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1631UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1632UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1633UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1634UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1635UnitTests.cs" />
@@ -149,6 +153,7 @@
     <Compile Include="DocumentationRules\SA1642UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1643UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1648UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1650UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1651UnitTests.cs" />
     <Compile Include="ExclusionTests.cs" />
     <Compile Include="ExportCodeFixProviderAttributeNameTest.cs" />
