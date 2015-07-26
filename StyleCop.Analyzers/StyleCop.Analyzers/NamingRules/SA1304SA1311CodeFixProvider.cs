@@ -45,7 +45,7 @@
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!FixableDiagnostics.Any(d => diagnostic.Id.Equals(d)))
+                if (!FixableDiagnostics.Contains(diagnostic.Id))
                 {
                     continue;
                 }
@@ -56,7 +56,7 @@
                     continue;
                 }
 
-                var newName = char.ToUpper(token.ValueText[0]) + token.ValueText.Substring(1);
+                var newName = char.ToUpper(token.ValueText[0]).ToString() + token.ValueText.Substring(1);
                 var typeSyntax = this.GetParentTypeDeclaration(token);
 
                 if (typeSyntax != null)

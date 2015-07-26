@@ -171,7 +171,7 @@
 
             foreach (var item in textElement.TextTokens)
             {
-                stringBuilder.Append(item);
+                stringBuilder.Append(item.ToString());
             }
 
             string result = stringBuilder.ToString();

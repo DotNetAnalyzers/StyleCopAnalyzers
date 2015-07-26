@@ -52,7 +52,7 @@
 
                 if (!string.IsNullOrEmpty(token.ValueText))
                 {
-                    var newName = char.ToLower(token.ValueText[0]) + token.ValueText.Substring(1);
+                    var newName = char.ToLower(token.ValueText[0]).ToString() + token.ValueText.Substring(1);
                     context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.SA1306CodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken)), diagnostic);
                 }
             }

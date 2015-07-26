@@ -15,7 +15,12 @@
 
         private static bool ExcludeGlobalKeyword(IdentifierNameSyntax token) => !token.Identifier.IsKind(SyntaxKind.GlobalKeyword);
 
-        private static SyntaxToken? GetFirstIdentifierInUsingDirective(UsingDirectiveSyntax usingDirective) => usingDirective.DescendantNodes().OfType<IdentifierNameSyntax>().FirstOrDefault(ExcludeGlobalKeyword)?.Identifier;
+        private static SyntaxToken? GetFirstIdentifierInUsingDirective(UsingDirectiveSyntax usingDirective)
+        {
+            return usingDirective.DescendantNodes()
+                .OfType<IdentifierNameSyntax>()
+                .FirstOrDefault(x => ExcludeGlobalKeyword(x))?.Identifier;
+        }
 
         /// <summary>
         /// Check if <see cref="UsingDirectiveSyntax"/> is system using directive.

@@ -146,7 +146,7 @@
             return typeSymbol != null && typeSymbol.AllInterfaces
                 .SelectMany(m => m.GetMembers(memberSymbol.Name))
                 .Select(typeSymbol.FindImplementationForInterfaceMember)
-                .Any(x => memberSymbol.Equals(x));
+                .Contains(memberSymbol);
         }
     }
 }
