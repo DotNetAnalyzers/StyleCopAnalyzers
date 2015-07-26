@@ -28,6 +28,7 @@
 
         private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(
+                SA1009ClosingParenthesisMustBeSpacedCorrectly.DiagnosticId,
                 SA1012OpeningCurlyBracketsMustBeSpacedCorrectly.DiagnosticId,
                 SA1013ClosingCurlyBracketsMustBeSpacedCorrectly.DiagnosticId,
                 SA1014OpeningGenericBracketsMustBeSpacedCorrectly.DiagnosticId,
