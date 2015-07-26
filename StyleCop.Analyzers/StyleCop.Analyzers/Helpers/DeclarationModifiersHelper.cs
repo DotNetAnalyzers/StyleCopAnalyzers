@@ -2,6 +2,7 @@
 {
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class DeclarationModifiersHelper
     {
@@ -65,6 +66,36 @@
             }
 
             return modifiers;
+        }
+
+        internal static SyntaxTokenList GetModifiers(this MemberDeclarationSyntax syntax)
+        {
+            if (syntax is BaseMethodDeclarationSyntax)
+            {
+                return ((BaseMethodDeclarationSyntax)syntax).Modifiers;
+            }
+            else if (syntax is BasePropertyDeclarationSyntax)
+            {
+                return ((BasePropertyDeclarationSyntax)syntax).Modifiers;
+            }
+            else if (syntax is BaseTypeDeclarationSyntax)
+            {
+                return ((BaseTypeDeclarationSyntax)syntax).Modifiers;
+            }
+            else if (syntax is BaseFieldDeclarationSyntax)
+            {
+                return ((BaseFieldDeclarationSyntax)syntax).Modifiers;
+            }
+            else if (syntax is DelegateDeclarationSyntax)
+            {
+                return ((DelegateDeclarationSyntax)syntax).Modifiers;
+            }
+            else if (syntax is IncompleteMemberSyntax)
+            {
+                return ((IncompleteMemberSyntax)syntax).Modifiers;
+            }
+
+            return default(SyntaxTokenList);
         }
     }
 }

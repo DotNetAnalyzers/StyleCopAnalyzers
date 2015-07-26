@@ -148,6 +148,7 @@
     <Compile Include="DocumentationRules\SA1640UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1642UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1643UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1648UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1651UnitTests.cs" />
     <Compile Include="ExclusionTests.cs" />
     <Compile Include="ExportCodeFixProviderAttributeNameTest.cs" />
