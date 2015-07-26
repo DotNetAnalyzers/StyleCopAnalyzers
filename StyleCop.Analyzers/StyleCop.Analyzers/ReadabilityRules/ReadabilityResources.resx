@@ -219,6 +219,9 @@
   <data name="SA1108Title" xml:space="preserve">
     <value>Block statements must not contain embedded comments</value>
   </data>
+  <data name="SA1109CodeFix" xml:space="preserve">
+    <value />
+  </data>
   <data name="SA1109Description" xml:space="preserve">
     <value>A C# statement contains a region tag between the declaration of the statement and the opening curly bracket of the statement.</value>
   </data>

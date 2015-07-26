@@ -274,6 +274,7 @@
     <Compile Include="ReadabilityRules\SA1107FixAllProvider.cs" />
     <Compile Include="ReadabilityRules\SA1108BlockStatementsMustNotContainEmbeddedComments.cs" />
     <Compile Include="ReadabilityRules\SA1109BlockStatementsMustNotContainEmbeddedRegions.cs" />
+    <Compile Include="ReadabilityRules\SA1109CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA110xQueryClauses.cs" />
     <Compile Include="ReadabilityRules\SA1110OpeningParenthesisMustBeOnDeclarationLine.cs" />
     <Compile Include="ReadabilityRules\SA1111ClosingParenthesisMustBeOnLineOfLastParameter.cs" />
