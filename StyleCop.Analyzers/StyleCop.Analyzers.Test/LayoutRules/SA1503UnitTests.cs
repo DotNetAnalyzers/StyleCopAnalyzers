@@ -10,7 +10,7 @@
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1503CurlyBracketsMustNotBeOmitted"/>.
+    /// Unit tests for <see cref="SA1503CurlyBracesMustNotBeOmitted"/>.
     /// </summary>
     public class SA1503UnitTests : CodeFixVerifier
     {
@@ -50,7 +50,7 @@
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TestStatements))]
-        public async Task TestStatementWithoutCurlyBracketsAsync(string statementText)
+        public async Task TestStatementWithoutCurlyBracesAsync(string statementText)
         {
             var expected = this.CSharpDiagnostic().WithLocation(7, 13);
             await this.VerifyCSharpDiagnosticAsync(this.GenerateTestStatement(statementText), expected, CancellationToken.None).ConfigureAwait(false);
@@ -101,7 +101,7 @@ public class Foo
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TestStatements))]
-        public async Task TestStatementWithCurlyBracketsAsync(string statementText)
+        public async Task TestStatementWithCurlyBracesAsync(string statementText)
         {
             await this.VerifyCSharpDiagnosticAsync(this.GenerateFixedTestStatement(statementText), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
@@ -111,7 +111,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestIfElseStatementWithoutCurlyBracketsAsync()
+        public async Task TestIfElseStatementWithoutCurlyBracesAsync()
         {
             var testCode = @"using System.Diagnostics;
 public class Foo
@@ -139,7 +139,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestIfElseStatementWithCurlyBracketsAsync()
+        public async Task TestIfElseStatementWithCurlyBracesAsync()
         {
             var testCode = @"using System.Diagnostics;
 public class Foo
@@ -165,7 +165,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestIfElseIfElseStatementWithCurlyBracketsAsync()
+        public async Task TestIfElseIfElseStatementWithCurlyBracesAsync()
         {
             var testCode = @"using System.Diagnostics;
 public class Foo
@@ -195,7 +195,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestMultipleIfStatementsWithoutCurlyBracketsAsync()
+        public async Task TestMultipleIfStatementsWithoutCurlyBracesAsync()
         {
             var testCode = @"using System.Diagnostics;
 public class Foo
@@ -333,7 +333,7 @@ public class Foo
         }
 
         /// <summary>
-        /// Verifies that the codefix provider will work properly handle multiple cases of missing brackets.
+        /// Verifies that the codefix provider will work properly handle multiple cases of missing curly braces.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -392,7 +392,7 @@ public class Foo
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1503CurlyBracketsMustNotBeOmitted();
+            yield return new SA1503CurlyBracesMustNotBeOmitted();
         }
 
         /// <inheritdoc/>

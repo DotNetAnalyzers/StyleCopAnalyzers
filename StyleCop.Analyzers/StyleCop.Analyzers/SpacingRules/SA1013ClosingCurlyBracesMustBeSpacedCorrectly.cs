@@ -8,28 +8,28 @@
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// A closing curly bracket within a C# element is not spaced correctly.
+    /// A closing curly brace within a C# element is not spaced correctly.
     /// </summary>
     /// <remarks>
-    /// <para>A violation of this rule occurs when the spacing around a closing curly bracket is not correct.</para>
+    /// <para>A violation of this rule occurs when the spacing around a closing curly brace is not correct.</para>
     ///
-    /// <para>A closing curly bracket should always be followed by a single space, unless it is the last character on
+    /// <para>A closing curly brace should always be followed by a single space, unless it is the last character on
     /// the line, or unless it is followed by a closing parenthesis, a comma, or a semicolon.</para>
     ///
-    /// <para>A closing curly bracket must always be preceded by a single space, unless it is the first character on the
+    /// <para>A closing curly brace must always be preceded by a single space, unless it is the first character on the
     /// line.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1013ClosingCurlyBracketsMustBeSpacedCorrectly : DiagnosticAnalyzer
+    public class SA1013ClosingCurlyBracesMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
         /// <summary>
-        /// The ID for diagnostics produced by the <see cref="SA1013ClosingCurlyBracketsMustBeSpacedCorrectly"/>
+        /// The ID for diagnostics produced by the <see cref="SA1013ClosingCurlyBracesMustBeSpacedCorrectly"/>
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1013";
-        private const string Title = "Closing curly brackets must be spaced correctly";
-        private const string MessageFormat = "Closing curly bracket must{0} be {1} by a space.";
-        private const string Description = "A closing curly bracket within a C# element is not spaced correctly.";
+        private const string Title = "Closing curly braces must be spaced correctly";
+        private const string MessageFormat = "Closing curly brace must{0} be {1} by a space.";
+        private const string Description = "A closing curly brace within a C# element is not spaced correctly.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1013.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
@@ -78,7 +78,7 @@
             {
                 if (precededBySpace)
                 {
-                    // Closing curly bracket must{ not} be {preceded} by a space.
+                    // Closing curly brace must{ not} be {preceded} by a space.
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), " not", "preceded"));
                 }
 
@@ -104,13 +104,13 @@
 
             if (!precededBySpace)
             {
-                // Closing curly bracket must{} be {preceded} by a space.
+                // Closing curly brace must{} be {preceded} by a space.
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "preceded"));
             }
 
             if (!lastInLine && !precedesSpecialCharacter && !followedBySpace)
             {
-                // Closing curly bracket must{} be {followed} by a space.
+                // Closing curly brace must{} be {followed} by a space.
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "followed"));
             }
         }

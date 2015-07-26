@@ -146,7 +146,7 @@ public class Foo
         /// <summary>
         /// Verifies that the code fix provider will strip trailing blank lines.
         /// </summary>
-        /// <remarks>The CRLF after the last curly bracket will not be stripped!</remarks>
+        /// <remarks>The CRLF after the last curly brace will not be stripped!</remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestCodeFixProviderStripsTrailingBlankLinesAsync()
@@ -160,7 +160,7 @@ public class Foo
         /// <summary>
         /// Verifies that the code fix provider will strip trailing blank lines that include whitespace.
         /// </summary>
-        /// <remarks>The CRLF after the last curly bracket will not be stripped!</remarks>
+        /// <remarks>The CRLF after the last curly brace will not be stripped!</remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestCodeFixProviderStripsTrailingBlankLinesIncludingWhitespaceAsync()
@@ -174,7 +174,7 @@ public class Foo
         /// <summary>
         /// Verifies that the code fix provider will strip trailing linefeed only blank lines that include whitespace.
         /// </summary>
-        /// <remarks>The LF after the last curly bracket will not be stripped!</remarks>
+        /// <remarks>The LF after the last curly brace will not be stripped!</remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestCodeFixProviderStripsTrailingLinefeedOnlyBlankLinesIncludingWhitespaceAsync()

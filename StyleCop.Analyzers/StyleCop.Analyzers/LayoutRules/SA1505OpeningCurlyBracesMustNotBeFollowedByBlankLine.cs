@@ -6,45 +6,46 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.SpacingRules;
 
     /// <summary>
-    /// A closing curly bracket within a C# element, statement, or expression is preceded by a blank line.
+    /// An opening curly brace within a C# element, statement, or expression is followed by a blank line.
     /// </summary>
     /// <remarks>
     /// <para>To improve the readability of the code, StyleCop requires blank lines in certain situations, and prohibits
     /// blank lines in other situations. This results in a consistent visual pattern across the code, which can improve
     /// recognition and readability of unfamiliar code.</para>
     ///
-    /// <para>A violation of this rule occurs when a closing curly bracket is preceded by a blank line. For
+    /// <para>A violation of this rule occurs when an opening curly brace is followed by a blank line. For
     /// example:</para>
     ///
-    /// <code language="csharp">
+    /// <code>
     /// public bool Enabled
     /// {
+    ///
     ///     get
     ///     {
+    ///
     ///         return this.enabled;
-    ///
     ///     }
-    ///
     /// }
     /// </code>
     ///
-    /// <para>The code above would generate two instances of this violation, since there are two places where closing
-    /// curly brackets are preceded by blank lines.</para>
+    /// <para>The code above would generate two instances of this violation, since there are two places where opening
+    /// curly braces are followed by blank lines.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1508ClosingCurlyBracketsMustNotBePrecededByBlankLine : DiagnosticAnalyzer
+    public class SA1505OpeningCurlyBracesMustNotBeFollowedByBlankLine : DiagnosticAnalyzer
     {
         /// <summary>
-        /// The ID for diagnostics produced by the <see cref="SA1508ClosingCurlyBracketsMustNotBePrecededByBlankLine"/>
+        /// The ID for diagnostics produced by the <see cref="SA1505OpeningCurlyBracesMustNotBeFollowedByBlankLine"/>
         /// analyzer.
         /// </summary>
-        public const string DiagnosticId = "SA1508";
-        private const string Title = "Closing curly brackets must not be preceded by blank line";
-        private const string MessageFormat = "A closing curly bracket must not be preceded by a blank line.";
-        private const string Description = "A closing curly bracket within a C# element, statement, or expression is preceded by a blank line.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1508.html";
+        public const string DiagnosticId = "SA1505";
+        private const string Title = "Opening curly braces must not be followed by blank line";
+        private const string MessageFormat = "An opening curly brace must not be followed by a blank line.";
+        private const string Description = "An opening curly brace within a C# element, statement, or expression is followed by a blank line.";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1505.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -70,68 +71,75 @@
         private void HandleBlock(SyntaxNodeAnalysisContext context)
         {
             var block = (BlockSyntax)context.Node;
-            this.AnalyzeCloseBrace(context, block.CloseBraceToken);
+            this.AnalyzeOpenBrace(context, block.OpenBraceToken);
         }
 
         private void HandleInitializers(SyntaxNodeAnalysisContext context)
         {
             var expression = (InitializerExpressionSyntax)context.Node;
-            this.AnalyzeCloseBrace(context, expression.CloseBraceToken);
+            this.AnalyzeOpenBrace(context, expression.OpenBraceToken);
         }
 
         private void HandleAnonymousObjectCreation(SyntaxNodeAnalysisContext context)
         {
             var expression = (AnonymousObjectCreationExpressionSyntax)context.Node;
-            this.AnalyzeCloseBrace(context, expression.CloseBraceToken);
+            this.AnalyzeOpenBrace(context, expression.OpenBraceToken);
         }
 
         private void HandleSwitchStatement(SyntaxNodeAnalysisContext context)
         {
             var switchStatement = (SwitchStatementSyntax)context.Node;
-            this.AnalyzeCloseBrace(context, switchStatement.CloseBraceToken);
+            this.AnalyzeOpenBrace(context, switchStatement.OpenBraceToken);
         }
 
         private void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context)
         {
             var namespaceDeclaration = (NamespaceDeclarationSyntax)context.Node;
-            this.AnalyzeCloseBrace(context, namespaceDeclaration.CloseBraceToken);
+            this.AnalyzeOpenBrace(context, namespaceDeclaration.OpenBraceToken);
         }
 
         private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
             var typeDeclaration = (BaseTypeDeclarationSyntax)context.Node;
-            this.AnalyzeCloseBrace(context, typeDeclaration.CloseBraceToken);
+            this.AnalyzeOpenBrace(context, typeDeclaration.OpenBraceToken);
         }
 
         private void HandleAccessorList(SyntaxNodeAnalysisContext context)
         {
             var accessorList = (AccessorListSyntax)context.Node;
-            this.AnalyzeCloseBrace(context, accessorList.CloseBraceToken);
+            this.AnalyzeOpenBrace(context, accessorList.OpenBraceToken);
         }
 
-        private void AnalyzeCloseBrace(SyntaxNodeAnalysisContext context, SyntaxToken closeBraceToken)
+        private void AnalyzeOpenBrace(SyntaxNodeAnalysisContext context, SyntaxToken openBraceToken)
         {
-            var previousToken = closeBraceToken.GetPreviousToken();
-            if ((closeBraceToken.GetLineSpan().StartLinePosition.Line - previousToken.GetLineSpan().EndLinePosition.Line) < 2)
+            var nextToken = openBraceToken.GetNextToken();
+            if (nextToken.IsMissingOrDefault())
             {
-                // there will be no blank lines when the closing brace and the preceding token are not at least two lines apart.
                 return;
             }
 
-            var separatingTrivia = TriviaHelper.MergeTriviaLists(previousToken.TrailingTrivia, closeBraceToken.LeadingTrivia);
-
-            // skip all leading whitespace for the close brace
-            var index = separatingTrivia.Count - 1;
-            while (separatingTrivia[index].IsKind(SyntaxKind.WhitespaceTrivia))
+            if ((GetLine(nextToken) - GetLine(openBraceToken)) < 2)
             {
-                index--;
+                // there will be no blank lines when the opening brace and the following token are not at least two lines apart.
+                return;
             }
+
+            var separatingTrivia = TriviaHelper.MergeTriviaLists(openBraceToken.TrailingTrivia, nextToken.LeadingTrivia);
+
+            // skip everything until the first end of line (as this is considered part of the line of the opening brace)
+            var startIndex = 0;
+            while ((startIndex < separatingTrivia.Count) && !separatingTrivia[startIndex].IsKind(SyntaxKind.EndOfLineTrivia))
+            {
+                startIndex++;
+            }
+
+            startIndex = (startIndex == separatingTrivia.Count) ? 0 : startIndex + 1;
 
             var done = false;
             var eolCount = 0;
-            while (!done && index >= 0)
+            for (var i = startIndex; !done && (i < separatingTrivia.Count); i++)
             {
-                switch (separatingTrivia[index].Kind())
+                switch (separatingTrivia[i].Kind())
                 {
                 case SyntaxKind.WhitespaceTrivia:
                     break;
@@ -142,14 +150,17 @@
                     done = true;
                     break;
                 }
-
-                index--;
             }
 
-            if (eolCount > 1)
+            if (eolCount > 0)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, closeBraceToken.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, openBraceToken.GetLocation()));
             }
+        }
+
+        private static int GetLine(SyntaxToken token)
+        {
+            return token.GetLineSpan().StartLinePosition.Line;
         }
     }
 }

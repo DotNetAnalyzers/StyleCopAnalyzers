@@ -7,10 +7,10 @@
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
-    /// A C# statement containing opening and closing curly brackets is written completely on a single line.
+    /// A C# statement containing opening and closing curly braces is written completely on a single line.
     /// </summary>
     /// <remarks>
-    /// <para>A violation of this rule occurs when a statement that is wrapped in opening and closing curly brackets is
+    /// <para>A violation of this rule occurs when a statement that is wrapped in opening and closing curly braces is
     /// written on a single line. For example:</para>
     ///
     /// <code language="csharp">
@@ -22,7 +22,7 @@
     ///
     /// <para>When StyleCop checks this code, a violation of this rule will occur because the entire lock statement is
     /// written on one line. The statement should be written across multiple lines, with the opening and closing curly
-    /// brackets each on their own line, as follows:</para>
+    /// braces each on their own line, as follows:</para>
     ///
     /// <code language="csharp">
     /// public object Method()
@@ -43,7 +43,7 @@
         public const string DiagnosticId = "SA1501";
         private const string Title = "Statement must not be on a single line";
         private const string MessageFormat = "Statement must not be on a single line";
-        private const string Description = "A C# statement containing opening and closing curly brackets is written completely on a single line.";
+        private const string Description = "A C# statement containing opening and closing curly braces is written completely on a single line.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1501.html";
 
         private static readonly DiagnosticDescriptor Descriptor =

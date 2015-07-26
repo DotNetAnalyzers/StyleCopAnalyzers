@@ -16,14 +16,14 @@
     using StyleCop.Analyzers.SpacingRules;
 
     /// <summary>
-    /// Implements a code fix for <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/>.
+    /// Implements a code fix for <see cref="SA1500CurlyBracesForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1500CodeFixProvider))]
     [Shared]
     public class SA1500CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine.DiagnosticId);
+            ImmutableArray.Create(SA1500CurlyBracesForMultiLineStatementsMustNotShareLine.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds
@@ -79,7 +79,7 @@
             }
             else
             {
-                // Check if we need to apply a fix before the curly bracket
+                // Check if we need to apply a fix before the curly brace
                 if (previousToken.GetLineSpan().StartLinePosition.Line == curlyBracketLine)
                 {
                     var sharedTrivia = curlyBracketReplacementToken.LeadingTrivia.WithoutTrailingWhitespace();
@@ -93,8 +93,8 @@
                     curlyBracketReplacementToken = curlyBracketReplacementToken.WithLeadingTrivia(IndentationHelper.GenerateWhitespaceTrivia(indentationOptions, indentationSteps));
                 }
 
-                // Check if we need to apply a fix after the curly bracket
-                // if a closing curly bracket is followed by a semi-colon or closing paren, no fix is needed.
+                // Check if we need to apply a fix after the curly brace
+                // if a closing curly brace is followed by a semi-colon or closing paren, no fix is needed.
                 if ((nextToken.GetLineSpan().StartLinePosition.Line == curlyBracketLine) &&
                     (!curlyBracketToken.IsKind(SyntaxKind.CloseBraceToken) || !IsValidFollowingToken(nextToken)))
                 {
@@ -186,7 +186,7 @@
 
         private static int DetermineIndentationSteps(IndentationOptions indentationOptions, SyntaxToken token)
         {
-            // For a closing curly bracket use the indentation of the corresponding opening curly bracket
+            // For a closing curly brace use the indentation of the corresponding opening curly brace
             if (token.IsKind(SyntaxKind.CloseBraceToken))
             {
                 var depth = 1;

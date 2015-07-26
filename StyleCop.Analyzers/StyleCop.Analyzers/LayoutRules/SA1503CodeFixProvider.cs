@@ -12,7 +12,7 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Implements a code fix for <see cref="SA1503CurlyBracketsMustNotBeOmitted"/>.
+    /// Implements a code fix for <see cref="SA1503CurlyBracesMustNotBeOmitted"/>.
     /// </summary>
     /// <remarks>
     /// <para>To fix a violation of this rule, the violating statement will be converted to a block statement.</para>
@@ -22,7 +22,7 @@
     public class SA1503CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1503CurlyBracketsMustNotBeOmitted.DiagnosticId, SA1519CurlyBracketsMustNotBeOmittedFromMultiLineChildStatement.DiagnosticId, SA1520UseCurlyBracketsConsistently.DiagnosticId);
+            ImmutableArray.Create(SA1503CurlyBracesMustNotBeOmitted.DiagnosticId, SA1519CurlyBracesMustNotBeOmittedFromMultiLineChildStatement.DiagnosticId, SA1520UseCurlyBracesConsistently.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds

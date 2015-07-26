@@ -8,29 +8,29 @@
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// An opening curly bracket within a C# element is not spaced correctly.
+    /// An opening curly brace within a C# element is not spaced correctly.
     /// </summary>
     /// <remarks>
-    /// <para>A violation of this rule occurs when the spacing around an opening curly bracket is not correct.</para>
+    /// <para>A violation of this rule occurs when the spacing around an opening curly brace is not correct.</para>
     ///
-    /// <para>An opening curly bracket should always be preceded by a single space, unless it is the first character on
+    /// <para>An opening curly brace should always be preceded by a single space, unless it is the first character on
     /// the line, or unless it is preceded by an opening parenthesis, in which case there should be no space between the
-    /// parenthesis and the curly bracket.</para>
+    /// parenthesis and the curly brace.</para>
     ///
-    /// <para>An opening curly bracket must always be followed by a single space, unless it is the last character on the
+    /// <para>An opening curly brace must always be followed by a single space, unless it is the last character on the
     /// line.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1012OpeningCurlyBracketsMustBeSpacedCorrectly : DiagnosticAnalyzer
+    public class SA1012OpeningCurlyBracesMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
         /// <summary>
-        /// The ID for diagnostics produced by the <see cref="SA1012OpeningCurlyBracketsMustBeSpacedCorrectly"/>
+        /// The ID for diagnostics produced by the <see cref="SA1012OpeningCurlyBracesMustBeSpacedCorrectly"/>
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1012";
-        private const string Title = "Opening curly brackets must be spaced correctly";
-        private const string MessageFormat = "Opening curly bracket must{0} be {1} by a space.";
-        private const string Description = "An opening curly bracket within a C# element is not spaced correctly.";
+        private const string Title = "Opening curly braces must be spaced correctly";
+        private const string MessageFormat = "Opening curly brace must{0} be {1} by a space.";
+        private const string Description = "An opening curly brace within a C# element is not spaced correctly.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1012.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
@@ -79,7 +79,7 @@
             {
                 if (followedBySpace)
                 {
-                    // Opening curly bracket must{} be {followed} by a space.
+                    // Opening curly brace must{} be {followed} by a space.
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), " not", "followed"));
                 }
 
@@ -90,13 +90,13 @@
 
             if (!precededBySpace)
             {
-                // Opening curly bracket must{} be {preceded} by a space.
+                // Opening curly brace must{} be {preceded} by a space.
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "preceded"));
             }
 
             if (!token.IsLastInLine() && !followedBySpace)
             {
-                // Opening curly bracket must{} be {followed} by a space.
+                // Opening curly brace must{} be {followed} by a space.
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "followed"));
             }
         }
