@@ -14,13 +14,6 @@
         private const string Tab = "\t";
 
         [Fact]
-        public async Task TestEmptySourceAsync()
-        {
-            var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
         public async Task TestClassDeclarationAsync()
         {
             await this.TestTypeDeclarationAsync("class").ConfigureAwait(false);

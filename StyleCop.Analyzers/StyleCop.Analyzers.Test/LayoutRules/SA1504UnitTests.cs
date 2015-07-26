@@ -11,13 +11,6 @@
     public class SA1504UnitTests : DiagnosticVerifier
     {
         [Fact]
-        public async Task TestEmptySourceAsync()
-        {
-            var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
         public async Task TestPropertyGetInOneLineSetInMultipleLinesAsync()
         {
             var testCode = @"

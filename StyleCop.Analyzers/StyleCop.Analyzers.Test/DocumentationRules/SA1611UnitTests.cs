@@ -30,13 +30,6 @@
             }
         }
 
-        [Fact]
-        public async Task TestEmptySourceAsync()
-        {
-            var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
         [Theory]
         [MemberData(nameof(Data))]
         public async Task TestWithAllDocumentationAsync(string p)

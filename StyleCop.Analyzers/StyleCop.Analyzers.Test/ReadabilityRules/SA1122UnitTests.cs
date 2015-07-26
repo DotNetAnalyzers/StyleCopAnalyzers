@@ -15,13 +15,6 @@
     /// </summary>
     public class SA1122UnitTests : CodeFixVerifier
     {
-        [Fact]
-        public async Task TestEmptySourceAsync()
-        {
-            var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
         private async Task TestEmptyStringLiteralAsync(bool useVerbatimLiteral)
         {
             var testCode = @"public class Foo
