@@ -8,6 +8,8 @@
     /// A section of the XML header documentation for a C# element does not contain enough alphabetic characters.
     /// </summary>
     /// <remarks>
+    /// <para>This diagnostic is not implemented in StyleCopAnalyzers.</para>
+    ///
     /// <para>C# syntax provides a mechanism for inserting documentation for classes and elements directly into the
     /// code, through the use of XML documentation headers. For an introduction to these headers and a description of
     /// the header syntax, see the following article:
@@ -31,6 +33,7 @@
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    [NoDiagnostic("This diagnostic was determined to be too subjective and/or misleading to developers.")]
     [NoCodeFix("Cannot generate documentation")]
     public class SA1631DocumentationMustMeetCharacterPercentage : DiagnosticAnalyzer
     {
@@ -45,7 +48,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1631.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledByDefault, Description, HelpLink, WellKnownDiagnosticTags.NotConfigurable);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -62,7 +65,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            // This diagnostic is not implemented (by design) in StyleCopAnalyzers.
         }
     }
 }
