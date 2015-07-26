@@ -125,7 +125,7 @@ class Test : TestBase
     string this [string f] {{ get; }}
     event System.Action FooBar;
 }}
-class Test : ITest
+{0} Test : ITest
 {{
     /// <inheritdoc/>
     void ITest.Foo() {{ }}
@@ -152,7 +152,7 @@ class Test : ITest
     string this [string f] {{ get; }}
     event System.Action FooBar;
 }}
-class Test : ITest
+{0} Test : ITest
 {{
     /// <inheritdoc/>
     public void Foo() {{ }}
