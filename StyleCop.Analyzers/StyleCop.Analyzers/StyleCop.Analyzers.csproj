@@ -311,6 +311,7 @@
     <Compile Include="SpacingRules\SA1006PreprocessorKeywordsMustNotBePrecededBySpace.cs" />
     <Compile Include="SpacingRules\SA1007CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1007OperatorKeywordMustBeFollowedBySpace.cs" />
+    <Compile Include="SpacingRules\SA1009CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1008CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1008OpeningParenthesisMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1009ClosingParenthesisMustBeSpacedCorrectly.cs" />

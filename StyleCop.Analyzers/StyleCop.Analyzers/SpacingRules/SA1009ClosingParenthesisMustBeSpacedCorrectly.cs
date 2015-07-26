@@ -29,6 +29,14 @@
         /// The ID for diagnostics produced by the <see cref="SA1009ClosingParenthesisMustBeSpacedCorrectly"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1009";
+
+        internal const string LocationKey = "location";
+        internal const string ActionKey = "action";
+        internal const string LocationPreceding = "preceding";
+        internal const string LocationFollowing = "following";
+        internal const string ActionInsert = "insert";
+        internal const string ActionRemove = "remove";
+
         private const string Title = "Closing parenthesis must be spaced correctly";
         private const string MessageFormat = "Closing parenthesis must{0} be {1} by a space.";
         private const string Description = "A closing parenthesis within a C# statement is not spaced correctly.";
@@ -164,7 +172,10 @@
             if (precededBySpace)
             {
                 // Closing parenthesis must{ not} be {preceded} by a space.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), " not", "preceded"));
+                var properties = ImmutableDictionary.Create<string, string>()
+                    .Add(LocationKey, LocationPreceding)
+                    .Add(ActionKey, ActionRemove);
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), " not", "preceded"));
             }
 
             if (!suppressFollowingSpaceError)
@@ -172,12 +183,18 @@
                 if (!precedesStickyCharacter && !followedBySpace && !lastInLine)
                 {
                     // Closing parenthesis must{} be {followed} by a space.
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "followed"));
+                    var properties = ImmutableDictionary.Create<string, string>()
+                    .Add(LocationKey, LocationFollowing)
+                    .Add(ActionKey, ActionInsert);
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), string.Empty, "followed"));
                 }
                 else if (precedesStickyCharacter && followedBySpace && (!lastInLine || !allowEndOfLine))
                 {
                     // Closing parenthesis must{ not} be {followed} by a space.
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), " not", "followed"));
+                    var properties = ImmutableDictionary.Create<string, string>()
+                    .Add(LocationKey, LocationFollowing)
+                    .Add(ActionKey, ActionRemove);
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), " not", "followed"));
                 }
             }
         }
