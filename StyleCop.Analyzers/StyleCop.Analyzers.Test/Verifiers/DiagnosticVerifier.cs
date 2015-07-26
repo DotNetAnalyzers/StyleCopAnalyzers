@@ -35,10 +35,11 @@
         /// <param name="expected">A <see cref="DiagnosticResult"/>s describing the <see cref="Diagnostic"/> that should
         /// be reported by the analyzer for the specified source.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
+        /// <param name="filename">The filename or null if the default filename should be used</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
+        protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken, string filename = null)
         {
-            return this.VerifyCSharpDiagnosticAsync(source, new[] { expected }, cancellationToken);
+            return this.VerifyCSharpDiagnosticAsync(source, new[] { expected }, cancellationToken, filename);
         }
 
         /// <summary>
@@ -51,10 +52,11 @@
         /// <param name="expected">A collection of <see cref="DiagnosticResult"/>s describing the
         /// <see cref="Diagnostic"/>s that should be reported by the analyzer for the specified source.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
+        /// <param name="filename">The filename or null if the default filename should be used</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken, string filename = null)
         {
-            return this.VerifyDiagnosticsAsync(new[] { source }, LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), expected, cancellationToken);
+            return this.VerifyDiagnosticsAsync(new[] { source }, LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), expected, cancellationToken, new[] { filename });
         }
 
         /// <summary>
@@ -68,10 +70,11 @@
         /// <param name="expected">A collection of <see cref="DiagnosticResult"/>s describing the
         /// <see cref="Diagnostic"/>s that should be reported by the analyzer for the specified sources.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
+        /// <param name="filenames">The filenames or null if the default filename should be used</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        protected Task VerifyCSharpDiagnosticAsync(string[] sources, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        protected Task VerifyCSharpDiagnosticAsync(string[] sources, DiagnosticResult[] expected, CancellationToken cancellationToken, string[] filenames = null)
         {
-            return this.VerifyDiagnosticsAsync(sources, LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), expected, cancellationToken);
+            return this.VerifyDiagnosticsAsync(sources, LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), expected, cancellationToken, filenames);
         }
 
         /// <summary>
@@ -84,11 +87,28 @@
         /// <param name="expected">A collection of <see cref="DiagnosticResult"/>s that should appear after the analyzer
         /// is run on the sources.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
+        /// <param name="filenames">The filenames or null if the default filename should be used</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        private async Task VerifyDiagnosticsAsync(string[] sources, string language, ImmutableArray<DiagnosticAnalyzer> analyzers, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        private async Task VerifyDiagnosticsAsync(string[] sources, string language, ImmutableArray<DiagnosticAnalyzer> analyzers, DiagnosticResult[] expected, CancellationToken cancellationToken, string[] filenames)
         {
-            var diagnostics = await this.GetSortedDiagnosticsAsync(sources, language, analyzers, cancellationToken).ConfigureAwait(false);
-            VerifyDiagnosticResults(diagnostics, analyzers, expected);
+            VerifyDiagnosticResults(await this.GetSortedDiagnosticsAsync(sources, language, analyzers, cancellationToken, filenames).ConfigureAwait(false), analyzers, expected);
+
+            // If filenames is null we want to test for exclusions too
+            if (filenames == null)
+            {
+                // Also check if the analyzer honors exclusions
+                if (expected.Any(x => x.Id.StartsWith("SA") || x.Id.StartsWith("SX")))
+                {
+                    // We want to look at non-stylecop diagnostics only. We also insert a new line at the beginning
+                    // so we have to move all diagnostic location down by one line
+                    var expectedResults = expected
+                        .Where(x => !x.Id.StartsWith("SA") && !x.Id.StartsWith("SX"))
+                        .Select(x => x.WithLineOffset(1))
+                        .ToArray();
+
+                    VerifyDiagnosticResults(await this.GetSortedDiagnosticsAsync(sources.Select(x => " // <auto-generated>\r\n" + x).ToArray(), language, analyzers, cancellationToken, null).ConfigureAwait(false), analyzers, expectedResults);
+                }
+            }
         }
 
         /// <summary>
@@ -103,7 +123,7 @@
         /// <param name="analyzers">The analyzers that have been run on the sources.</param>
         /// <param name="expectedResults">A collection of <see cref="DiagnosticResult"/>s describing the expected
         /// diagnostics for the sources.</param>
-        private static void VerifyDiagnosticResults(IEnumerable<Diagnostic> actualResults, ImmutableArray<DiagnosticAnalyzer> analyzers, params DiagnosticResult[] expectedResults)
+        private static void VerifyDiagnosticResults(IEnumerable<Diagnostic> actualResults, ImmutableArray<DiagnosticAnalyzer> analyzers, DiagnosticResult[] expectedResults)
         {
             int expectedCount = expectedResults.Count();
             int actualCount = actualResults.Count();

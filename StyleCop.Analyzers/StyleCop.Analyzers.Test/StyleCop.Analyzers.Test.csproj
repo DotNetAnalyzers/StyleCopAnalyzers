@@ -142,10 +142,12 @@
     <Compile Include="DocumentationRules\SA1642UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1643UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1651UnitTests.cs" />
+    <Compile Include="ExclusionTests.cs" />
     <Compile Include="ExportCodeFixProviderAttributeNameTest.cs" />
     <Compile Include="Helpers\CodeFixVerifier.Helper.cs" />
     <Compile Include="Helpers\DiagnosticResult.cs" />
     <Compile Include="Helpers\DiagnosticVerifier.Helper.cs" />
+    <Compile Include="Helpers\ExclusionTestAnalyzer.cs" />
     <Compile Include="LayoutRules\SA1500\SA1500UnitTests.Blocks.cs" />
     <Compile Include="LayoutRules\SA1500\SA1500UnitTests.Classes.cs" />
     <Compile Include="LayoutRules\SA1500\SA1500UnitTests.Constructors.cs" />

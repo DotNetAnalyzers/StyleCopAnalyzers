@@ -40,11 +40,12 @@
         /// <see cref="LanguageNames"/> class.</param>
         /// <param name="analyzers">The analyzers to be run on the sources.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
+        /// <param name="filenames">The filenames or null if the default filename should be used</param>
         /// <returns>A collection of <see cref="Diagnostic"/>s that surfaced in the source code, sorted by
         /// <see cref="Diagnostic.Location"/>.</returns>
-        private Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsAsync(string[] sources, string language, ImmutableArray<DiagnosticAnalyzer> analyzers, CancellationToken cancellationToken)
+        private Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsAsync(string[] sources, string language, ImmutableArray<DiagnosticAnalyzer> analyzers, CancellationToken cancellationToken, string[] filenames)
         {
-            return GetSortedDiagnosticsFromDocumentsAsync(analyzers, this.GetDocuments(sources, language), cancellationToken);
+            return GetSortedDiagnosticsFromDocumentsAsync(analyzers, this.GetDocuments(sources, language, filenames), cancellationToken);
         }
 
         /// <summary>
@@ -135,20 +136,16 @@
         /// <param name="sources">Classes in the form of strings.</param>
         /// <param name="language">The language the source classes are in. Values may be taken from the
         /// <see cref="LanguageNames"/> class.</param>
+        /// <param name="filenames">The filenames or null if the default filename should be used</param>
         /// <returns>A collection of <see cref="Document"/>s representing the sources.</returns>
-        private Document[] GetDocuments(string[] sources, string language)
+        private Document[] GetDocuments(string[] sources, string language, string[] filenames)
         {
             if (language != LanguageNames.CSharp && language != LanguageNames.VisualBasic)
             {
                 throw new ArgumentException("Unsupported Language");
             }
 
-            for (int i = 0; i < sources.Length; i++)
-            {
-                string fileName = language == LanguageNames.CSharp ? "Test" + i + ".cs" : "Test" + i + ".vb";
-            }
-
-            var project = this.CreateProject(sources, language);
+            var project = this.CreateProject(sources, language, filenames);
             var documents = project.Documents.ToArray();
 
             if (sources.Length != documents.Length)
@@ -177,9 +174,10 @@
         /// <param name="sources">Classes in the form of strings.</param>
         /// <param name="language">The language the source classes are in. Values may be taken from the
         /// <see cref="LanguageNames"/> class.</param>
+        /// <param name="filenames">The filenames or null if the default filename should be used</param>
         /// <returns>A <see cref="Project"/> created out of the <see cref="Document"/>s created from the source
         /// strings.</returns>
-        private Project CreateProject(string[] sources, string language = LanguageNames.CSharp)
+        private Project CreateProject(string[] sources, string language = LanguageNames.CSharp, string[] filenames = null)
         {
             string fileNamePrefix = DefaultFilePathPrefix;
             string fileExt = language == LanguageNames.CSharp ? CSharpDefaultFileExt : VisualBasicDefaultExt;
@@ -188,9 +186,10 @@
             var solution = this.CreateSolution(projectId, language);
 
             int count = 0;
-            foreach (var source in sources)
+            for (int i = 0; i < sources.Length; i++)
             {
-                var newFileName = fileNamePrefix + count + "." + fileExt;
+                string source = sources[i];
+                var newFileName = filenames?[i] ?? fileNamePrefix + count + "." + fileExt;
                 var documentId = DocumentId.CreateNewId(projectId, debugName: newFileName);
                 solution = solution.AddDocument(documentId, newFileName, SourceText.From(source));
                 count++;
