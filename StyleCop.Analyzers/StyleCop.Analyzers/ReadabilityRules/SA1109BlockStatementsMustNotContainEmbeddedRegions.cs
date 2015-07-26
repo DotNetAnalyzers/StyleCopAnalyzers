@@ -9,6 +9,8 @@
     /// the statement.
     /// </summary>
     /// <remarks>
+    /// <para>This diagnostic is not implemented in StyleCopAnalyzers.</para>
+    ///
     /// <para>A violation of this rule occurs when the code contains a region tag in between the declaration and the
     /// opening curly bracket. For example:</para>
     /// <code language="csharp">
@@ -21,6 +23,7 @@
     /// <para>This will result in the body of the statement being hidden when the region is collapsed.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    [NoDiagnostic("This diagnostic is rarely-occurring specialization of SA1123; the latter is now preferred in all cases.")]
     public class SA1109BlockStatementsMustNotContainEmbeddedRegions : DiagnosticAnalyzer
     {
         /// <summary>
@@ -34,7 +37,7 @@
         private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1109.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledByDefault, Description, HelpLink, WellKnownDiagnosticTags.NotConfigurable);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -51,7 +54,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            // This diagnostic is not implemented (by design) in StyleCopAnalyzers.
         }
     }
 }
