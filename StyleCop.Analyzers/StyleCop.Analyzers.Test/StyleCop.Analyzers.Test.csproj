@@ -142,6 +142,7 @@
     <Compile Include="DocumentationRules\SA1642UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1643UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1651UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1652UnitTests.cs" />
     <Compile Include="ExclusionTests.cs" />
     <Compile Include="ExportCodeFixProviderAttributeNameTest.cs" />
     <Compile Include="Helpers\CodeFixVerifier.Helper.cs" />
