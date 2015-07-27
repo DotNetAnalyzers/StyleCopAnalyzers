@@ -41,7 +41,7 @@
                 var leadingTrivia = node?.GetLeadingTrivia();
                 if (leadingTrivia != null)
                 {
-                    context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1516CodeFix, token => GetTransformedDocumentAsync(context, syntaxRoot, node, (SyntaxTriviaList)leadingTrivia)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1516CodeFix, token => GetTransformedDocumentAsync(context, syntaxRoot, node, (SyntaxTriviaList)leadingTrivia), equivalenceKey: nameof(SA1516CodeFixProvider)), diagnostic);
                 }
             }
         }

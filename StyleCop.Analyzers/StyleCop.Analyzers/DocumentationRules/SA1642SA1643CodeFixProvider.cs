@@ -56,7 +56,7 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create(DocumentationResources.SA1642SA1643CodeFix, token => GetTransformedDocumentAsync(context.Document, root, node)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(DocumentationResources.SA1642SA1643CodeFix, token => GetTransformedDocumentAsync(context.Document, root, node), equivalenceKey: nameof(SA1642SA1643CodeFixProvider)), diagnostic);
             }
         }
 

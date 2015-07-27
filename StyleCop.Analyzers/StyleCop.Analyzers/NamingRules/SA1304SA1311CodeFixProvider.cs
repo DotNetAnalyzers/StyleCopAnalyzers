@@ -74,7 +74,7 @@
                         newName = newName + Suffix;
                     }
 
-                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.SA1304SA1311CodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.SA1304SA1311CodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken), equivalenceKey: nameof(SA1304SA1311CodeFixProvider)), diagnostic);
                 }
             }
         }

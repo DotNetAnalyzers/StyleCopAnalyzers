@@ -37,7 +37,7 @@
         {
             foreach (var diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                context.RegisterCodeFix(CodeAction.Create(ReadabilityResources.SA1104SA1105CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(ReadabilityResources.SA1104SA1105CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token), equivalenceKey: nameof(SA1104SA1105CodeFixProvider)), diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;

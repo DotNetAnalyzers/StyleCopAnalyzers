@@ -46,7 +46,8 @@
 
                 context.RegisterCodeFix(
                     CodeAction.Create(SpacingResources.SA1010CodeFix,
-                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken)),
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
+                        equivalenceKey: nameof(SA1010CodeFixProvider)),
                         diagnostic);
             }
 

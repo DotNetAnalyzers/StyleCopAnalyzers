@@ -65,7 +65,7 @@
                 }
 
                 string description = DocumentationResources.SA1651CodeFix;
-                context.RegisterCodeFix(CodeAction.Create(description, cancellationToken => this.GetTransformedDocumentAsync(context.Document, xmlElementSyntax, cancellationToken)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(description, cancellationToken => this.GetTransformedDocumentAsync(context.Document, xmlElementSyntax, cancellationToken), equivalenceKey: nameof(SA1651CodeFixProvider)), diagnostic);
             }
         }
 

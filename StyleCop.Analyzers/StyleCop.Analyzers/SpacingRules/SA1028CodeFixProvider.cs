@@ -50,7 +50,8 @@
                     context.RegisterCodeFix(
                         CodeAction.Create(
                             SpacingResources.SA1028CodeFix,
-                            ct => RemoveWhitespaceAsync(context.Document, diagnostic, ct)),
+                            ct => RemoveWhitespaceAsync(context.Document, diagnostic, ct),
+                            equivalenceKey: nameof(SA1028CodeFixProvider)),
                         diagnostic);
                     break;
                 default:
@@ -61,7 +62,8 @@
                         context.RegisterCodeFix(
                             CodeAction.Create(
                                 SpacingResources.SA1028CodeFix,
-                                ct => RemoveWhitespaceAsync(context.Document, diagnostic, ct)),
+                                ct => RemoveWhitespaceAsync(context.Document, diagnostic, ct),
+                                equivalenceKey: nameof(SA1028CodeFixProvider)),
                             diagnostic);
                         break;
                     }

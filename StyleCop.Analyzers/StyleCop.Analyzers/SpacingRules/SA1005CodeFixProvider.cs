@@ -50,7 +50,7 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1005CodeFix, t => GetTransformedDocumentAsync(context.Document, root, trivia)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1005CodeFix, t => GetTransformedDocumentAsync(context.Document, root, trivia), equivalenceKey: nameof(SA1005CodeFixProvider)), diagnostic);
             }
         }
 

@@ -39,7 +39,8 @@
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         LayoutResources.SA1509CodeFix,
-                        token => this.GetTransformedDocumentAsync(context.Document, diagnostic, token)),
+                        token => this.GetTransformedDocumentAsync(context.Document, diagnostic, token),
+                        equivalenceKey: nameof(SA1509CodeFixProvider)),
                     diagnostic);
             }
 

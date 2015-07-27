@@ -44,7 +44,7 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1002CodeFix, t => GetTransformedDocumentAsync(context.Document, diagnostic, t)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1002CodeFix, t => GetTransformedDocumentAsync(context.Document, diagnostic, t), equivalenceKey: nameof(SA1002CodeFixProvider)), diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;
