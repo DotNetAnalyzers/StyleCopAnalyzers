@@ -597,6 +597,8 @@ namespace MetaCompilation
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
+            string methodName = "AnalyzeIfStatement";
+
             var argList = declaration.ArgumentList;
             if (argList != null)
             {
@@ -609,16 +611,12 @@ namespace MetaCompilation
                         var name = nameArg.Expression as IdentifierNameSyntax;
                         if (name != null)
                         {
-                            SyntaxNode statementKeepArg = CodeFixNodeCreator.CreateRegister(generator, declaration.Parent.Parent.Parent as MethodDeclarationSyntax, name.Identifier.Text);
-                            SyntaxNode expressionKeepArg = generator.ExpressionStatement(statementKeepArg);
-
-                            return await ReplaceNode(declaration.Parent, expressionKeepArg.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
+                            methodName = name.Identifier.Text;
                         }
                     }
                 }
             }
-
-            string methodName = "AnalyzeIfStatement";
+            
             SyntaxNode statement = CodeFixNodeCreator.CreateRegister(generator, declaration.Parent.Parent.Parent as MethodDeclarationSyntax, methodName);
             SyntaxNode expression = generator.ExpressionStatement(statement);
 
@@ -990,18 +988,45 @@ namespace MetaCompilation
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
+            ClassDeclarationSyntax classDeclaration = declaration.Parent as ClassDeclarationSyntax;
+            IEnumerable<MethodDeclarationSyntax> methods = classDeclaration.Members.OfType<MethodDeclarationSyntax>();
+            SemanticModel semanticModel = await document.GetSemanticModelAsync();
+
             string methodName = "AnalyzeIfStatement";
+            bool newAnalysisRequired = true;
+
+            foreach (MethodDeclarationSyntax method in methods)
+            {
+                var parameterList = method.ParameterList;
+                if (parameterList != null)
+                {
+                    var parameters = parameterList.Parameters;
+                    if (parameters != null)
+                    {
+                        if (parameters.Count > 0)
+                        {
+                            var parameterType = parameters.First().Type;
+                            if (parameterType != null && parameterType.ToString() == "SyntaxNodeAnalysisContext")
+                            {
+                                methodName = method.Identifier.Text;
+                                newAnalysisRequired = false;
+                            }
+                        }
+                    }
+                }
+            }
+
             SyntaxNode invocationExpression = CodeFixNodeCreator.CreateRegister(generator, declaration, methodName);
             SyntaxList<SyntaxNode> statements = new SyntaxList<SyntaxNode>().Add(invocationExpression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("//Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
-            
             SyntaxNode newInitializeMethod = generator.MethodDeclaration("Initialize", declaration.ParameterList.Parameters, accessibility: Accessibility.Public, modifiers: DeclarationModifiers.Override, statements: statements);
 
-            ClassDeclarationSyntax classDeclaration = declaration.Parent as ClassDeclarationSyntax;
             ClassDeclarationSyntax newClassDecl = classDeclaration.ReplaceNode(declaration, newInitializeMethod);
 
-            SemanticModel semanticModel = await document.GetSemanticModelAsync();
+            if (newAnalysisRequired)
+            {
             SyntaxNode newAnalysisMethod = CodeFixNodeCreator.CreateAnalysisMethod(generator, methodName, semanticModel);
             newClassDecl = generator.AddMembers(newClassDecl, newAnalysisMethod) as ClassDeclarationSyntax;
+            }
 
             return await ReplaceNode(classDeclaration, newClassDecl, document);
         }
