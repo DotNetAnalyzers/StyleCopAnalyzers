@@ -548,18 +548,12 @@ namespace MetaCompilation
             }
         }
 
-        //sets the analysis to take context of type SyntaxNodeAnalysisContext
+        //sets the analysis method to take a parameter of type SyntaxNodeAnalysisContext
         private async Task<Document> IncorrectAnalysisParameterAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            var type = SyntaxFactory.ParseTypeName("SyntaxNodeAnalysisContext");
-            var parameters = new[] { generator.ParameterDeclaration("context", type) };
-            string methodName = declaration.Identifier.Text;
-            var returnType = declaration.ReturnType;
-            var statements = declaration.Body.Statements;
-
-            var newDeclaration = generator.MethodDeclaration(methodName, parameters, returnType: returnType, accessibility: Accessibility.Private, statements: statements);
+            var newDeclaration = CodeFixNodeCreator.CreateMethodWithContextParameter(generator, declaration);
 
             return await ReplaceNode(declaration, newDeclaration, document);
         }
@@ -1905,7 +1899,6 @@ namespace MetaCompilation
                 return newField;
             }
 
-            //creates the diagnostic location statement
             internal static SyntaxNode CreateLocation(SyntaxGenerator generator, string ifStatementIdentifier, string spanIdentifier)
             {
                 string name = "diagnosticLocation";
@@ -1931,7 +1924,6 @@ namespace MetaCompilation
                 return localDeclaration;
             }
 
-            //creates the diagnostic span statement
             internal static SyntaxNode CreateSpan(SyntaxGenerator generator, string startIdentifier, string endIdentifier)
             {
                 string name = "diagnosticSpan";
@@ -1953,7 +1945,6 @@ namespace MetaCompilation
                 return localDeclaration;
             }
 
-            //creates an end or start span statement
             internal static SyntaxNode CreateEndOrStartSpan(SyntaxGenerator generator, string identifierString, string variableName)
             {
                 SyntaxNode identifier = generator.IdentifierName(identifierString);
@@ -1965,7 +1956,6 @@ namespace MetaCompilation
                 return localDeclaration;
             }
 
-            //creates the open parenthesis statement
             internal static SyntaxNode CreateOpenParen(SyntaxGenerator generator, string expressionString)
             {
                 string name = "openParen";
@@ -2189,6 +2179,18 @@ namespace MetaCompilation
                 }
 
                 return methodName;
+            }
+
+            internal static SyntaxNode CreateMethodWithContextParameter(SyntaxGenerator generator, MethodDeclarationSyntax methodDeclaration)
+            {
+                var type = SyntaxFactory.ParseTypeName("SyntaxNodeAnalysisContext");
+                var parameters = new[] { generator.ParameterDeclaration("context", type) };
+                string methodName = methodDeclaration.Identifier.Text;
+                var returnType = methodDeclaration.ReturnType;
+                var statements = methodDeclaration.Body.Statements;
+
+                var newDeclaration = generator.MethodDeclaration(methodName, parameters, returnType: returnType, accessibility: Accessibility.Private, statements: statements);
+                return newDeclaration;
             }
         }
     }
