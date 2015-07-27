@@ -488,7 +488,7 @@ namespace MetaCompilation
                 {
                     if (kind == "IfStatement")
                     {
-                        return CheckIfStatementAnalysis(branch, kind, ruleNames, context, analysisMethodSymbol);
+                        return CheckIfStatementAnalysis(ruleNames, context, analysisMethodSymbol);
                     }
                 }
 
@@ -497,9 +497,8 @@ namespace MetaCompilation
 
             #region CheckAnalysis for IfStatement
             // checks the AnalyzeIfStatement of the user's analyzer, returns a bool representing whether the check was successful or not
-            internal bool CheckIfStatementAnalysis(string branch, string kind, List<string> ruleNames, CompilationAnalysisContext context, IMethodSymbol analysisMethodSymbol)
+            internal bool CheckIfStatementAnalysis(List<string> ruleNames, CompilationAnalysisContext context, IMethodSymbol analysisMethodSymbol)
             {
-                // branch name unnecessary, never used
                 var getStatements = AnalysisGetStatements(analysisMethodSymbol);
                 if (getStatements.Count == 0)
                 {
