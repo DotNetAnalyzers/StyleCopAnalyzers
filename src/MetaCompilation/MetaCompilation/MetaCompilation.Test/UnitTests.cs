@@ -10766,7 +10766,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.OpenParenMissing,
                 Message = MissingOpenParenMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 45, 17) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 45, 13) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
