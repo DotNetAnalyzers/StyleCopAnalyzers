@@ -101,6 +101,10 @@
                     precedesSpecialCharacter = true;
                     break;
 
+                case SyntaxKind.GreaterThanToken:
+                    precedesSpecialCharacter = nextToken.Parent.IsKind(SyntaxKind.TypeArgumentList);
+                    break;
+
                 case SyntaxKind.QuestionToken:
                     precedesSpecialCharacter = nextToken.Parent.IsKind(SyntaxKind.ConditionalAccessExpression);
                     break;
