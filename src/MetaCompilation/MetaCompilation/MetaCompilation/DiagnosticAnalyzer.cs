@@ -207,7 +207,7 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor IncorrectAnalysisParameterRule = CreateRule(IncorrectAnalysisParameter, "Incorrect parameter to analysis method", MessagePrefix + "The '{0}' method should take one parameter of type SyntaxNodeAnalysisContext");
 
         public const string TooManyStatements = "MetaAnalyzer045";
-        internal static DiagnosticDescriptor TooManyStatementsRule = CreateRule(TooManyStatements, "Too many statements", MessagePrefix + "This {0} should only have {1} statement(s)", "For the purpose of this tutorial there are too many statements here, use the code fixes to guide you through the creation of this section");
+        internal static DiagnosticDescriptor TooManyStatementsRule = CreateRule(TooManyStatements, "Too many statements", MessagePrefix + "This {0} should only have {1} statement(s), which should {2}", "For the purpose of this tutorial there are too many statements here, use the code fixes to guide you through the creation of this section");
 
         public const string DiagnosticMissing = "MetaAnalyzer046";
         internal static DiagnosticDescriptor DiagnosticMissingRule = CreateRule(DiagnosticMissing, "Diagnostic variable missing", MessagePrefix + "Next, use Diagnostic.Create to create the diagnostic", "This is the diagnostic that will be reported to the user as an error squiggle");
@@ -613,7 +613,7 @@ namespace MetaCompilation
 
                                                 if (triviaCheckBlockStatements.Count > 1)
                                                 {
-                                                    IfDiagnostic(context, triviaCheckBlock.Parent as StatementSyntax, TooManyStatementsRule, "if-block", "1");
+                                                    IfDiagnostic(context, triviaCheckBlock.Parent as StatementSyntax, TooManyStatementsRule, "if-block", "1", "return from the method");
                                                     return false;
                                                 }
 
@@ -627,7 +627,7 @@ namespace MetaCompilation
 
                                             if (triviaKindCheckBlockStatements.Count > 1)
                                             {
-                                                IfDiagnostic(context, triviaKindCheckBlock.Parent as StatementSyntax, TooManyStatementsRule, "if-block", "1");
+                                                IfDiagnostic(context, triviaKindCheckBlock.Parent as StatementSyntax, TooManyStatementsRule, "if-block", "1", "check if the trivia is a single space");
                                                 return false;
                                             }
                                         }
@@ -639,7 +639,7 @@ namespace MetaCompilation
 
                                         if (triviaCountBlockStatements.Count > 2)
                                         {
-                                            IfDiagnostic(context, triviaCountBlock.Parent as StatementSyntax, TooManyStatementsRule, "if-block", "2");
+                                            IfDiagnostic(context, triviaCountBlock.Parent as StatementSyntax, TooManyStatementsRule, "if-block", "2", "extract the first trivia of the if-keyword and check its kind");
                                             return false;
                                         }
                                     }
@@ -657,7 +657,7 @@ namespace MetaCompilation
 
                                 if (triviaBlockStatements.Count > 1)
                                 {
-                                    IfDiagnostic(context, triviaBlock.Parent as StatementSyntax, TooManyStatementsRule, "if-block", "1");
+                                    IfDiagnostic(context, triviaBlock.Parent as StatementSyntax, TooManyStatementsRule, "if-block", "1", "check the number of trailing trivia on the if-keyword");
                                     return false;
                                 }
                             }
@@ -678,7 +678,7 @@ namespace MetaCompilation
 
                                 if (statementCount > 10)
                                 {
-                                    ReportDiagnostic(context, TooManyStatementsRule, methodDeclaration.Identifier.GetLocation(), "method", "10");
+                                    ReportDiagnostic(context, TooManyStatementsRule, methodDeclaration.Identifier.GetLocation(), "method", "10", "walk through the Syntax Tree and check the spacing of the if-statement");
                                     return false;
                                 }
                             }
@@ -1956,7 +1956,7 @@ namespace MetaCompilation
                 if (statements.Count > 2)
                 {
                     AccessorListSyntax propertyAccessorList = propertyDeclaration.AccessorList as AccessorListSyntax;
-                    ReportDiagnostic(context, TooManyStatementsRule,propertyAccessorList.Accessors[0].Keyword.GetLocation(), "get accessor", "1 or 2");
+                    ReportDiagnostic(context, TooManyStatementsRule,propertyAccessorList.Accessors[0].Keyword.GetLocation(), "get accessor", "1 or 2", "create and return an ImmutableArray containing all DiagnosticDescriptors");
                     return false;
                 }
 
