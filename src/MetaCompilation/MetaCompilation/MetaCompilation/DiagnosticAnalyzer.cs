@@ -421,7 +421,7 @@ namespace MetaCompilation
                                 if (kindName == null || allowedKinds.Contains(kindName))
                                 {
                                     //look for and interpret analysis methods
-                                    bool analysisMethodFound = CheckMethods(_branchesDict[registerSymbol.Name], kindName, invocationExpression, context);
+                                    bool analysisMethodFound = CheckMethods(invocationExpression, context);
 
                                     if (analysisMethodFound)
                                     {
@@ -2397,7 +2397,7 @@ namespace MetaCompilation
             }
 
             //returns true if the method called upon registering an action exists and is correct
-            internal bool CheckMethods(string branch, string kindName, InvocationExpressionSyntax invocationExpression, CompilationAnalysisContext context)
+            internal bool CheckMethods(InvocationExpressionSyntax invocationExpression, CompilationAnalysisContext context)
             {
                 IMethodSymbol analysisMethod = null;
                 bool analysisMethodFound = false;
