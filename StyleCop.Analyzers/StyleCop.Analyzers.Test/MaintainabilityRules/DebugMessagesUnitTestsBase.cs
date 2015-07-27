@@ -11,6 +11,8 @@
 
     public abstract class DebugMessagesUnitTestsBase : CodeFixVerifier
     {
+        protected bool IncludeSystemDll { get; set; } = true;
+
         protected abstract string MethodName
         {
             get;
@@ -382,6 +384,22 @@ public class Foo
             }
 
             return string.Format(format, this.MethodName, argumentList);
+        }
+
+        protected override Solution CreateSolution(ProjectId projectId, string language)
+        {
+            Solution solution = base.CreateSolution(projectId, language);
+
+            if (this.IncludeSystemDll)
+            {
+                return solution;
+            }
+            else
+            {
+                IEnumerable<MetadataReference> references = solution.Projects.First().MetadataReferences;
+
+                return solution.WithProjectMetadataReferences(solution.ProjectIds[0], references.Where(x => !x.Display.Contains("System.dll")));
+            }
         }
     }
 }
