@@ -503,14 +503,19 @@ namespace MetaCompilation
             // checks the AnalyzeIfStatement of the user's analyzer, returns a bool representing whether the check was successful or not
             internal bool CheckIfStatementAnalysis(List<string> ruleNames, CompilationAnalysisContext context, IMethodSymbol analysisMethodSymbol)
             {
-                var getStatements = AnalysisGetStatements(analysisMethodSymbol);
-                if (getStatements.Count == 0)
+                var methodDeclaration = AnalysisGetStatements(analysisMethodSymbol) as MethodDeclarationSyntax;
+                var body = methodDeclaration.Body as BlockSyntax;
+                if (body == null)
                 {
                     return false;
                 }
 
-                var methodDeclaration = getStatements[0] as MethodDeclarationSyntax;
-                var statements = (SyntaxList<StatementSyntax>)getStatements[1];
+                var statements = body.Statements;
+                if (statements == null)
+                {
+                    return false;
+                }
+
                 var contextParameter = methodDeclaration.ParameterList.Parameters[0] as ParameterSyntax;
                 if (contextParameter == null)
                 {
@@ -1902,9 +1907,9 @@ namespace MetaCompilation
             }
 
             //returns a list containing the method declaration, and the statements within the method, returns an empty list if failed
-            internal List<object> AnalysisGetStatements(IMethodSymbol analysisMethodSymbol)
+            internal MethodDeclarationSyntax AnalysisGetStatements(IMethodSymbol analysisMethodSymbol)
             {
-                List<object> result = new List<object>();
+                MethodDeclarationSyntax result = null;
 
                 if (analysisMethodSymbol == null)
                 {
@@ -1917,22 +1922,7 @@ namespace MetaCompilation
                     return result;
                 }
 
-                var body = methodDeclaration.Body as BlockSyntax;
-                if (body == null)
-                {
-                    return result;
-                }
-
-                SyntaxList<StatementSyntax> statements = body.Statements;
-                if (statements == null)
-                {
-                    return result;
-                }
-
-                result.Add(methodDeclaration);
-                result.Add(statements);
-
-                return result;
+                return methodDeclaration;
             }
 
             //returns a boolean based on whether or not the SupportedDiagnostics property is correct
