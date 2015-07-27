@@ -33,7 +33,8 @@
                 SA1013ClosingCurlyBracketsMustBeSpacedCorrectly.DiagnosticId,
                 SA1014OpeningGenericBracketsMustBeSpacedCorrectly.DiagnosticId,
                 SA1015ClosingGenericBracketsMustBeSpacedCorrectly.DiagnosticId,
-                SA1019MemberAccessSymbolsMustBeSpacedCorrectly.DiagnosticId);
+                SA1019MemberAccessSymbolsMustBeSpacedCorrectly.DiagnosticId,
+                SA1020IncrementDecrementSymbolsMustBeSpacedCorrectly.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
