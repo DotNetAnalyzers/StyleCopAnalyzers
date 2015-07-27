@@ -11,7 +11,7 @@
     <!-- clean our output directory -->
     <MakeDir Directories="$(NuGetOutDir)" Condition="!Exists('$(NuGetOutDir)')" />
     <!-- package! -->
-    <Exec Command="..\..\..\.nuget\NuGet Pack %(NuSpec.Identity) -OutputDirectory $(NuGetOutDir) $(NuGetArguments)" />
+    <Exec Command="$(MSBuildThisFileDirectory)\..\..\src\.nuget\NuGet Pack %(NuSpec.Identity) -OutputDirectory $(NuGetOutDir) $(NuGetArguments)" />
   </Target>
   
   <Target Name="_BuildPreRelease" Inputs="$(MSBuildProjectFile);@(NuSpec)" Outputs="@(NuSpec-&gt;NuGet\PreRelease\%(Filename).$(NuGetPreReleaseVersion).nupkg">
@@ -22,7 +22,7 @@
     <!-- clean our output directory -->
     <MakeDir Directories="$(NuGetOutDir)" Condition="!Exists('$(NuGetOutDir)')" />
     <!-- package! -->
-    <Exec Command="..\..\..\.nuget\NuGet Pack %(NuSpec.Identity) -OutputDirectory $(NuGetOutDir) $(NuGetArguments)" />
+    <Exec Command="$(MSBuildThisFileDirectory)\..\..\src\.nuget\NuGet Pack %(NuSpec.Identity) -OutputDirectory $(NuGetOutDir) $(NuGetArguments)" />
   </Target>
   
   <Target Name="_BuildRelease" Inputs="$(MSBuildProjectFile);@(NuSpec)" Outputs="@(NuSpec-&gt;NuGet\Release\%(Filename).$(NuGetReleaseVersion).nupkg">
@@ -33,7 +33,7 @@
     <!-- clean our output directory -->
     <MakeDir Directories="$(NuGetOutDir)" Condition="!Exists('$(NuGetOutDir)')" />
     <!-- package! -->
-    <Exec Command="..\..\..\.nuget\NuGet Pack %(NuSpec.Identity) -OutputDirectory $(NuGetOutDir) $(NuGetArguments)" />
+    <Exec Command="$(MSBuildThisFileDirectory)\..\..\src\.nuget\NuGet Pack %(NuSpec.Identity) -OutputDirectory $(NuGetOutDir) $(NuGetArguments)" />
   </Target>
 
   <Target Name="Build" DependsOnTargets="_BuildPerBuildPreRelease;_BuildPreRelease;_BuildRelease" />
