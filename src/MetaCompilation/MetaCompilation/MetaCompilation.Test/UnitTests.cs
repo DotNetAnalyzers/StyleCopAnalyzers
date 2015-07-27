@@ -9878,6 +9878,7 @@ namespace SyntaxNodeAnalyzer
         #region IdDeclTypeError
 
         public const string IdDeclTypeErrorMessage = MessagePrefix + "The diagnostic id should be the constant string declared above";
+        public const string IdStringLiteralMessage = MessagePrefix + "The ID should not be a string literal, because the ID must be accessible from the code fix provider";
 
         [Fact]
         public void IdDeclType1() // id set to a literal string
@@ -9931,8 +9932,8 @@ namespace SyntaxNodeAnalyzer
 
             var expected = new DiagnosticResult
             {
-                Id = MetaCompilationAnalyzer.IdDeclTypeError,
-                Message = IdDeclTypeErrorMessage,
+                Id = MetaCompilationAnalyzer.IdStringLiteral,
+                Message = IdStringLiteralMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 21, 17) }
             };
