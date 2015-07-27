@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.SpacingRules;
     using TestHelper;
@@ -11,7 +12,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1020IncrementDecrementSymbolsMustBeSpacedCorrectly"/>.
     /// </summary>
-    public class SA1020UnitTests : DiagnosticVerifier
+    public class SA1020UnitTests : CodeFixVerifier
     {
         /// <summary>
         /// Verifies that the analyzer will properly valid symbol spacing.
@@ -78,6 +79,28 @@ class ClassName
 }}
 ";
 
+            var fixedCode = $@"
+class ClassName
+{{
+    void MethodName()
+    {{
+        int x = 0;
+        x{symbol};
+        {symbol}x;
+        for (int y = 0; y < 30; {symbol}x, y{symbol})
+        {{
+        }}
+
+        x{symbol};
+        {symbol}x;
+        for (int y = 0; y < 30; {symbol}x,
+            y{symbol})
+        {{
+        }}
+    }}
+}}
+";
+
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(7, 11).WithArguments(symbolName, symbol, "preceded"),
@@ -91,12 +114,20 @@ class ClassName
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1020IncrementDecrementSymbolsMustBeSpacedCorrectly();
+        }
+
+        /// <inheritdoc/>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new OpenCloseSpacingCodeFixProvider();
         }
     }
 }

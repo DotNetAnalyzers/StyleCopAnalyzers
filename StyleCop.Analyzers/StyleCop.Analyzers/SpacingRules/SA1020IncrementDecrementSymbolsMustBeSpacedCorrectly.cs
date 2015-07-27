@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.SpacingRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -91,7 +92,12 @@
                     }
 
                     // {Increment|Decrement} symbol '{++|--}' must not be {followed} by a space.
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), symbolName, token.Text, "followed"));
+                    var properties = new Dictionary<string, string>
+                    {
+                        [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationFollowing,
+                        [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove,
+                    };
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), symbolName, token.Text, "followed"));
                 }
 
                 break;
@@ -112,7 +118,12 @@
                     }
 
                     // {Increment|Decrement} symbol '{++|--}' must not be {preceded} by a space.
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), symbolName, token.Text, "preceded"));
+                    var properties = new Dictionary<string, string>
+                    {
+                        [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationPreceding,
+                        [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove,
+                    };
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), symbolName, token.Text, "preceded"));
                 }
 
                 break;
