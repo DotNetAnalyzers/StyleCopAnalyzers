@@ -319,7 +319,6 @@
     <Compile Include="SpacingRules\SA1010CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1010OpeningSquareBracketsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1011ClosingSquareBracketsMustBeSpacedCorrectly.cs" />
-    <Compile Include="SpacingRules\SA1011CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1012OpeningCurlyBracketsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1013ClosingCurlyBracketsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1014OpeningGenericBracketsMustBeSpacedCorrectly.cs" />
