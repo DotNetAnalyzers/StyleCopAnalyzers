@@ -41,7 +41,6 @@
   <ItemGroup>
     <None Include="Diagnostic.nuspec">
       <SubType>Designer</SubType>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
     <None Include="tools\install.ps1">
