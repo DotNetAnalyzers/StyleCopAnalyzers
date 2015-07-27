@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.SpacingRules;
     using TestHelper;
@@ -11,7 +12,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1025CodeMustNotContainMultipleWhitespaceInARow"/>
     /// </summary>
-    public class SA1025UnitTests : DiagnosticVerifier
+    public class SA1025UnitTests : CodeFixVerifier
     {
         /// <summary>
         /// Verifies that the analyzer will not produce diagnostics with single whitespace characters in code.
@@ -63,9 +64,16 @@
 }
 ";
 
+            var fixedCode = @"namespace TestNamespace
+{
+}
+";
+
             DiagnosticResult[] expected = { this.CSharpDiagnostic().WithLocation(1, 10) };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -83,6 +91,14 @@
 }
 ";
 
+            var fixedCode = @"namespace TestNamespace
+{
+    using System;
+    using static System.Math;
+    using Action = System.Action;
+}
+";
+
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(3, 10),
@@ -94,6 +110,8 @@
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -106,6 +124,14 @@
             var testCode = @"namespace TestNamespace
 {
     public  class  TestClass<T>  :  object  where  T  :  struct
+    {
+    }
+}
+";
+
+            var fixedCode = @"namespace TestNamespace
+{
+    public class TestClass<T> : object where T : struct
     {
     }
 }
@@ -124,6 +150,8 @@
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -143,6 +171,18 @@
     }
 }
 ";
+
+            var fixedCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod(int a,  int b)
+        {
+        }
+    }
+}
+";
+
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(5, 15),
@@ -152,6 +192,8 @@
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -173,6 +215,20 @@
     }
 }
 ";
+
+            var fixedCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public int TestMethod(int a, int b)
+        {
+            var x = 10 + 20;
+            return TestMethod(x,  100);
+        }
+    }
+}
+";
+
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(7, 16),
@@ -184,6 +240,8 @@
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -203,6 +261,18 @@
     }
 }
 ";
+
+            var fixedCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public int TestProperty1 { get;  }
+        public int TestProperty2 { get;  private set; }
+        public int TestProperty3 => 10;
+    }
+}
+";
+
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(5, 15),
@@ -215,6 +285,8 @@
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -237,6 +309,21 @@
     }
 }
 ";
+
+            var fixedCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod()
+        {
+            for(var i = 0;  i < 10;  i++)
+            {
+            }
+        }
+    }
+}
+";
+
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(7, 20),
@@ -247,12 +334,73 @@
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix will preserve comments.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestPreservesCommentsAsync()
+        {
+            var testCode = @"namespace  /*comment*/  TestNamespace
+{
+    public  /*comment*/  class TestClass
+    {
+        public int TestMethod(int a, int b)
+        {
+            var     /*comment*/  x  =  10  +  20;
+            return  TestMethod(x,  100);
+        }
+    }
+}
+";
+
+            var fixedCode = @"namespace /*comment*/ TestNamespace
+{
+    public /*comment*/ class TestClass
+    {
+        public int TestMethod(int a, int b)
+        {
+            var /*comment*/ x = 10 + 20;
+            return TestMethod(x,  100);
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(1, 10),
+                this.CSharpDiagnostic().WithLocation(1, 23),
+                this.CSharpDiagnostic().WithLocation(3, 11),
+                this.CSharpDiagnostic().WithLocation(3, 24),
+                this.CSharpDiagnostic().WithLocation(7, 16),
+                this.CSharpDiagnostic().WithLocation(7, 32),
+                this.CSharpDiagnostic().WithLocation(7, 35),
+                this.CSharpDiagnostic().WithLocation(7, 38),
+                this.CSharpDiagnostic().WithLocation(7, 42),
+                this.CSharpDiagnostic().WithLocation(7, 45),
+                this.CSharpDiagnostic().WithLocation(8, 19)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1025CodeMustNotContainMultipleWhitespaceInARow();
+        }
+
+        /// <inheritdoc/>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1025CodeFixProvider();
         }
     }
 }

@@ -413,6 +413,15 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fix spacing.
+        /// </summary>
+        internal static string SA1025CodeFix {
+            get {
+                return ResourceManager.GetString("SA1025CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The code contains multiple whitespace characters in a row..
         /// </summary>
         internal static string SA1025Description {
