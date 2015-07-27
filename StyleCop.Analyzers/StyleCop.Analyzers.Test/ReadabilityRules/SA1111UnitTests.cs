@@ -845,12 +845,51 @@ public class FooAttribute : System.Attribute
         public async Task TestAttributeOneParameterOnTheSameLineAsClosingBracketAsync()
         {
             var testCode = @"
-[System.Serializable]
+using System.Diagnostics;
+[Conditional(""DEBUG"")]
+public class FooAttribute: System.Attribute
+{
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Asserts that an attribute with a no parameters does not report if the open and close brackets are on separate lines
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestAttributeOneParameterOnPreviousLineAsClosingBracketAsync()
+        {
+            var testCode = @"
+[
+System.Serializable
+]
 public class Foo
 {
 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Asserts that an attribute with one argument reports if the argument and close parenthesis are on separate
+        /// lines.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestAttributeOneParameterOnPreviousLineAsClosingParenthesisAsync()
+        {
+            var testCode = @"using System.Diagnostics;
+[
+Conditional(""DEBUG""
+)]
+public class Foo : System.Attribute
+{
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 1);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
