@@ -81,7 +81,8 @@ namespace MetaCompilation
                                              MetaCompilationAnalyzer.IncorrectRegister,
                                              MetaCompilationAnalyzer.IncorrectArguments,
                                              MetaCompilationAnalyzer.TrailingTriviaCountMissing,
-                                             MetaCompilationAnalyzer.TrailingTriviaCountIncorrect);
+                                             MetaCompilationAnalyzer.TrailingTriviaCountIncorrect,
+                                             MetaCompilationAnalyzer.IdStringLiteral);
             }
         }
 
@@ -205,6 +206,7 @@ namespace MetaCompilation
                             context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Declare the diagnostic ID as a public constant string", c => MissingIdDeclarationAsync(context.Document, declaration, c), "Declare the diagnostic ID as a public constant string"), diagnostic);
                         }
                         break;
+                    case MetaCompilationAnalyzer.IdStringLiteral:
                     case MetaCompilationAnalyzer.IdDeclTypeError:
                         IEnumerable<ClassDeclarationSyntax> declDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>();
                         if (declDeclarations.Count() != 0)
