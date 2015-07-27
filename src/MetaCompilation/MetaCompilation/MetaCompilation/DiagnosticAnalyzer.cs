@@ -517,7 +517,7 @@ namespace MetaCompilation
 
                 if (statementCount > 0)
                 {
-                    SyntaxToken statementIdentifierToken = IfStatementAnalysis1(context, statements, contextParameter);
+                    SyntaxToken statementIdentifierToken = IfStatementAnalysis1(statements, contextParameter);
                     if (statementIdentifierToken.Text == "")
                     {
                         IfDiagnostic(context, statements[0], IfStatementIncorrectRule, contextParameter.Identifier.Text);
@@ -526,7 +526,7 @@ namespace MetaCompilation
 
                     if (statementCount > 1)
                     {
-                        SyntaxToken keywordIdentifierToken = IfStatementAnalysis2(context, statements, statementIdentifierToken);
+                        SyntaxToken keywordIdentifierToken = IfStatementAnalysis2(statements, statementIdentifierToken);
                         if (keywordIdentifierToken.Text == "")
                         {
                             IfDiagnostic(context, statements[1], IfKeywordIncorrectRule, statementIdentifierToken.Text);
@@ -536,7 +536,7 @@ namespace MetaCompilation
                         // HasTrailingTrivia if-statement in user analyzer
                         if (statementCount > 2)
                         {
-                            var triviaBlock = IfStatementAnalysis3(context, statements, keywordIdentifierToken) as BlockSyntax;
+                            var triviaBlock = IfStatementAnalysis3(statements, keywordIdentifierToken) as BlockSyntax;
                             if (triviaBlock == null)
                             {
                                 IfDiagnostic(context, statements[2], TrailingTriviaCheckIncorrectRule, keywordIdentifierToken.Text);
@@ -552,7 +552,7 @@ namespace MetaCompilation
 
                             if (triviaBlockStatements.Count > 0)
                             {
-                                BlockSyntax triviaCountBlock = IfStatementAnalysis8(context, triviaBlockStatements, keywordIdentifierToken);
+                                BlockSyntax triviaCountBlock = IfStatementAnalysis8(triviaBlockStatements, keywordIdentifierToken);
                                 if (triviaCountBlock == null)
                                 {
                                     IfDiagnostic(context, triviaBlockStatements[0], TriviaCountIncorrectRule, keywordIdentifierToken.Text);
@@ -562,7 +562,7 @@ namespace MetaCompilation
                                 SyntaxList<StatementSyntax> triviaCountBlockStatements = triviaCountBlock.Statements;
                                 if (triviaCountBlockStatements.Count > 0)
                                 {
-                                    SyntaxToken triviaIdentifierToken = IfStatementAnalysis4(context, triviaCountBlockStatements, keywordIdentifierToken);
+                                    SyntaxToken triviaIdentifierToken = IfStatementAnalysis4(triviaCountBlockStatements, keywordIdentifierToken);
                                     if (triviaIdentifierToken.Text == "")
                                     {
                                         IfDiagnostic(context, triviaCountBlockStatements[0], TrailingTriviaVarIncorrectRule, keywordIdentifierToken.Text);
@@ -572,7 +572,7 @@ namespace MetaCompilation
                                     // Kind if-statement in user analyzer
                                     if (triviaCountBlockStatements.Count > 1)
                                     {
-                                        BlockSyntax triviaKindCheckBlock = IfStatementAnalysis5(context, triviaCountBlockStatements, triviaIdentifierToken);
+                                        BlockSyntax triviaKindCheckBlock = IfStatementAnalysis5(triviaCountBlockStatements, triviaIdentifierToken);
                                         if (triviaKindCheckBlock == null)
                                         {
                                             IfDiagnostic(context, triviaCountBlockStatements[1], TrailingTriviaKindCheckIncorrectRule, triviaIdentifierToken.Text);
@@ -589,7 +589,7 @@ namespace MetaCompilation
                                         // Whitespace if-statement in user analyzer
                                         if (triviaKindCheckBlockStatements.Count > 0)
                                         {
-                                            BlockSyntax triviaCheckBlock = IfStatementAnalysis6(context, triviaKindCheckBlock.Statements, triviaIdentifierToken);
+                                            BlockSyntax triviaCheckBlock = IfStatementAnalysis6(triviaKindCheckBlock.Statements, triviaIdentifierToken);
                                             if (triviaCheckBlock == null)
                                             {
                                                 IfDiagnostic(context, triviaKindCheckBlockStatements[0], WhitespaceCheckIncorrectRule, triviaIdentifierToken.Text);
@@ -605,7 +605,7 @@ namespace MetaCompilation
 
                                             if (triviaCheckBlockStatements.Count > 0)
                                             {
-                                                if (!IfStatementAnalysis7(context, triviaCheckBlockStatements))
+                                                if (!IfStatementAnalysis7(triviaCheckBlockStatements))
                                                 {
                                                     IfDiagnostic(context, triviaCheckBlockStatements[0], ReturnStatementIncorrectRule, methodDeclaration.Identifier.Text);
                                                     return false;
@@ -710,7 +710,7 @@ namespace MetaCompilation
             }
 
             //checks step one of the user's AnalyzerIfStatement method, returns a SyntaxToken of "" if analysis failed
-            internal SyntaxToken IfStatementAnalysis1(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, ParameterSyntax contextParameter)
+            internal SyntaxToken IfStatementAnalysis1(SyntaxList<StatementSyntax> statements, ParameterSyntax contextParameter)
             {
                 var emptyResult = SyntaxFactory.Identifier("");
 
@@ -796,7 +796,7 @@ namespace MetaCompilation
             }
 
             //checks step two of the user's AnalyzerIfStatement method, returns a SyntaxToken of "" if analysis failed
-            internal SyntaxToken IfStatementAnalysis2(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, SyntaxToken statementIdentifierToken)
+            internal SyntaxToken IfStatementAnalysis2(SyntaxList<StatementSyntax> statements, SyntaxToken statementIdentifierToken)
             {
                 var emptyResult = SyntaxFactory.Identifier("");
 
@@ -840,7 +840,7 @@ namespace MetaCompilation
             }
 
             //checks step three of the user's AnalyzerIfStatement method, returns null if analysis failed
-            internal BlockSyntax IfStatementAnalysis3(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, SyntaxToken keywordIdentifierToken)
+            internal BlockSyntax IfStatementAnalysis3(SyntaxList<StatementSyntax> statements, SyntaxToken keywordIdentifierToken)
             {
                 BlockSyntax emptyResult = null;
 
@@ -878,7 +878,7 @@ namespace MetaCompilation
             }
 
             //checks step four of the user's AnalyzerIfStatement method, returns a SyntaxToken of "" if analysis failed
-            internal SyntaxToken IfStatementAnalysis4(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, SyntaxToken keywordIdentifierToken)
+            internal SyntaxToken IfStatementAnalysis4(SyntaxList<StatementSyntax> statements, SyntaxToken keywordIdentifierToken)
             {
                 var emptyResult = SyntaxFactory.Identifier("");
 
@@ -940,7 +940,7 @@ namespace MetaCompilation
             }
 
             //checks step five of the user's AnalyzerIfStatement method, returns null if analysis failed
-            internal BlockSyntax IfStatementAnalysis5(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, SyntaxToken triviaIdentifierToken)
+            internal BlockSyntax IfStatementAnalysis5(SyntaxList<StatementSyntax> statements, SyntaxToken triviaIdentifierToken)
             {
                 BlockSyntax emptyResult = null;
 
@@ -1019,7 +1019,7 @@ namespace MetaCompilation
             }
 
             //checks step six of the user's AnalyzerIfStatement method, returns null if analysis failed
-            internal BlockSyntax IfStatementAnalysis6(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, SyntaxToken triviaIdentifierToken)
+            internal BlockSyntax IfStatementAnalysis6(SyntaxList<StatementSyntax> statements, SyntaxToken triviaIdentifierToken)
             {
                 BlockSyntax emptyResult = null;
 
@@ -1093,7 +1093,7 @@ namespace MetaCompilation
             }
 
             //checks step seven of the user's AnalyzerIfStatement method, returns a bool representing whether or not analysis failed
-            internal bool IfStatementAnalysis7(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements)
+            internal bool IfStatementAnalysis7(SyntaxList<StatementSyntax> statements)
             {
                 var statement = statements[0] as ReturnStatementSyntax;
                 if (statement == null)
@@ -1105,7 +1105,7 @@ namespace MetaCompilation
             }
 
             // checks the count if-statement of user's AnalyzeIfStatement method, returns the statements within that if-statement if correct
-            internal BlockSyntax IfStatementAnalysis8(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements, SyntaxToken triviaIdentifierToken)
+            internal BlockSyntax IfStatementAnalysis8(SyntaxList<StatementSyntax> statements, SyntaxToken triviaIdentifierToken)
             {
                 BlockSyntax emptyResult = null;
 
@@ -1194,7 +1194,7 @@ namespace MetaCompilation
             {
                 int statementCount = statements.Count;
 
-                SyntaxToken openParenToken = OpenParenAnalysis(context, statementIdentifierToken, statements);
+                SyntaxToken openParenToken = OpenParenAnalysis(statementIdentifierToken, statements);
                 if (openParenToken.Text == "")
                 {
                     IfDiagnostic(context, statements[3], OpenParenIncorrectRule, statementIdentifierToken.Text);
@@ -1203,7 +1203,7 @@ namespace MetaCompilation
 
                 if (statementCount > 4)
                 {
-                    SyntaxToken startToken = StartAnalysis(context, keywordIdentifierToken, statements);
+                    SyntaxToken startToken = StartAnalysis(keywordIdentifierToken, statements);
                     if (startToken.Text == "")
                     {
                         IfDiagnostic(context, statements[4], StartSpanIncorrectRule, keywordIdentifierToken.Text);
@@ -1212,7 +1212,7 @@ namespace MetaCompilation
 
                     if (statementCount > 5)
                     {
-                        SyntaxToken endToken = EndAnalysis(context, openParenToken, statements);
+                        SyntaxToken endToken = EndAnalysis(openParenToken, statements);
                         if (endToken.Text == "")
                         {
                             IfDiagnostic(context, statements[5], EndSpanIncorrectRule, openParenToken.Text);
@@ -1221,7 +1221,7 @@ namespace MetaCompilation
 
                         if (statementCount > 6)
                         {
-                            SyntaxToken spanToken = SpanAnalysis(context, startToken, endToken, statements);
+                            SyntaxToken spanToken = SpanAnalysis(startToken, endToken, statements);
                             if (spanToken.Text == "")
                             {
                                 IfDiagnostic(context, statements[6], SpanIncorrectRule, startToken.Text, endToken.Text);
@@ -1230,7 +1230,7 @@ namespace MetaCompilation
 
                             if (statementCount > 7)
                             {
-                                SyntaxToken locationToken = LocationAnalysis(context, statementIdentifierToken, spanToken, statements);
+                                SyntaxToken locationToken = LocationAnalysis(statementIdentifierToken, spanToken, statements);
                                 if (locationToken.Text == "")
                                 {
                                     IfDiagnostic(context, statements[7], LocationIncorrectRule, statementIdentifierToken.Text, spanToken.Text);
@@ -1239,7 +1239,7 @@ namespace MetaCompilation
 
                                 if (statementCount > 8)
                                 {
-                                    SyntaxToken diagnosticToken = DiagnosticCreationCheck(context, ruleNames, locationToken, statements, contextParameter);
+                                    SyntaxToken diagnosticToken = DiagnosticCreationCheck(ruleNames, locationToken, statements);
                                     if (diagnosticToken == null || diagnosticToken.Text == "")
                                     {
                                         IfDiagnostic(context, statements[8], DiagnosticIncorrectRule, ruleNames[0], locationToken.Text);
@@ -1295,7 +1295,7 @@ namespace MetaCompilation
             }
 
             //checks the open parenthesis variable, returns a SyntaxToken of "" if analysis failed
-            internal SyntaxToken OpenParenAnalysis(CompilationAnalysisContext context, SyntaxToken statementIdentifierToken, SyntaxList<StatementSyntax> statements)
+            internal SyntaxToken OpenParenAnalysis(SyntaxToken statementIdentifierToken, SyntaxList<StatementSyntax> statements)
             {
                 var emptyResult = SyntaxFactory.Identifier("");
 
@@ -1339,7 +1339,7 @@ namespace MetaCompilation
             }
 
             //checks the start of the diagnostic span, returns a SyntaxToken of "" if analysis failed
-            internal SyntaxToken StartAnalysis(CompilationAnalysisContext context, SyntaxToken keywordIdentifierToken, SyntaxList<StatementSyntax> statements)
+            internal SyntaxToken StartAnalysis(SyntaxToken keywordIdentifierToken, SyntaxList<StatementSyntax> statements)
             {
                 var emptyResult = SyntaxFactory.Identifier("");
 
@@ -1413,7 +1413,7 @@ namespace MetaCompilation
             }
 
             //checks the end of the diagnostic span, returns a SyntaxToken of "" if analysis failed
-            internal SyntaxToken EndAnalysis(CompilationAnalysisContext context, SyntaxToken openParenToken, SyntaxList<StatementSyntax> statements)
+            internal SyntaxToken EndAnalysis(SyntaxToken openParenToken, SyntaxList<StatementSyntax> statements)
             {
                 var emptyResult = SyntaxFactory.Identifier("");
 
@@ -1487,7 +1487,7 @@ namespace MetaCompilation
             }
 
             //checks the creation of the diagnostic span, returns a SyntaxToken of "" if analysis failed
-            internal SyntaxToken SpanAnalysis(CompilationAnalysisContext context, SyntaxToken startToken, SyntaxToken endToken, SyntaxList<StatementSyntax> statements)
+            internal SyntaxToken SpanAnalysis(SyntaxToken startToken, SyntaxToken endToken, SyntaxList<StatementSyntax> statements)
             {
                 var emptyResult = SyntaxFactory.Identifier("");
 
@@ -1573,7 +1573,7 @@ namespace MetaCompilation
             }
 
             //checks the creation of the diagnostics location, returns a SyntaxToken of "" if analysis failed
-            internal SyntaxToken LocationAnalysis(CompilationAnalysisContext context, SyntaxToken statementIdentifierToken, SyntaxToken spanToken, SyntaxList<StatementSyntax> statements)
+            internal SyntaxToken LocationAnalysis(SyntaxToken statementIdentifierToken, SyntaxToken spanToken, SyntaxList<StatementSyntax> statements)
             {
                 var emptyResult = SyntaxFactory.Identifier("");
 
@@ -1671,7 +1671,7 @@ namespace MetaCompilation
             }
 
             //checks the creation of the diagnostic itself, returns a SyntaxToken of "" if analysis failed
-            internal SyntaxToken DiagnosticCreationCheck(CompilationAnalysisContext context, List<string> ruleNames, SyntaxToken locationToken, SyntaxList<StatementSyntax> statements, ParameterSyntax contextParameter)
+            internal SyntaxToken DiagnosticCreationCheck(List<string> ruleNames, SyntaxToken locationToken, SyntaxList<StatementSyntax> statements)
             {
                 var emptyResult = SyntaxFactory.Identifier("");
 
