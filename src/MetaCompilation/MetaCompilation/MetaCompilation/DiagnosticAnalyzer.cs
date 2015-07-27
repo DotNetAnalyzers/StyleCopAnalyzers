@@ -111,6 +111,9 @@ namespace MetaCompilation
 
         public const string MissingRule = "MetaAnalyzer019";
         internal static DiagnosticDescriptor MissingRuleRule = CreateRule(MissingRule, "Missing DiagnosticDescriptor", MessagePrefix + "The analyzer should have at least one DiagnosticDescriptor rule", "The DiagnosticDescriptor rule is what is reported by the analyzer when it finds a problem, so there must be at least one. It should have an id to differentiate the diagnostic, a default severity level, a boolean describing if it's enabled by default, a title, a message, and a category.");
+
+        public const string IdStringLiteral = "MetaAnalyzer059";
+        internal static DiagnosticDescriptor IdStringLiteralRule = CreateRule(IdStringLiteral, "ID string literal", MessagePrefix + "The ID should not be a string literal, because the ID must be accessible from the code fix provider");
         #endregion
 
         #region analysis for IfStatement rules
@@ -292,7 +295,8 @@ namespace MetaCompilation
                                              IncorrectRegisterRule,
                                              IncorrectArgumentsRule,
                                              TriviaCountMissingRule,
-                                             TriviaCountIncorrectRule);
+                                             TriviaCountIncorrectRule,
+                                             IdStringLiteralRule);
             }
         }
 
@@ -2312,6 +2316,12 @@ namespace MetaCompilation
                                     if (currentArgExpr.ToString() == "")
                                     {
                                         ReportDiagnostic(context, IdDeclTypeErrorRule, currentArg.GetLocation());
+                                        return emptyRuleNames;
+                                    }
+
+                                    if(currentArgExpr.IsKind(SyntaxKind.StringLiteralExpression))
+                                    {
+                                        ReportDiagnostic(context, IdStringLiteralRule, currentArgExpr.GetLocation());
                                         return emptyRuleNames;
                                     }
 
