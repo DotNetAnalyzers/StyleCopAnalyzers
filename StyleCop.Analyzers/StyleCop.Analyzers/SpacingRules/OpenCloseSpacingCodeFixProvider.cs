@@ -49,7 +49,7 @@
         {
             foreach (var diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                context.RegisterCodeFix(CodeAction.Create(SpacingResources.OpenCloseSpacingCodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(SpacingResources.OpenCloseSpacingCodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token), equivalenceKey: nameof(OpenCloseSpacingCodeFixProvider)), diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;

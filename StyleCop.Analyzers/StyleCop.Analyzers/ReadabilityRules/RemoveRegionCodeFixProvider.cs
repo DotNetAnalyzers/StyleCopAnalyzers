@@ -43,7 +43,7 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Remove region", token => GetTransformedDocumentAsync(context.Document, diagnostic)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Remove region", token => GetTransformedDocumentAsync(context.Document, diagnostic), equivalenceKey: nameof(RemoveRegionCodeFixProvider)), diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;

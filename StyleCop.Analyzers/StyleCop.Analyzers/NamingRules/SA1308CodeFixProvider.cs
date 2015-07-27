@@ -78,7 +78,7 @@
                 if (!string.IsNullOrEmpty(token.ValueText))
                 {
                     var newName = token.ValueText.Substring(numberOfCharsToRemove);
-                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.SA1308CodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.SA1308CodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken), equivalenceKey: nameof(SA1308CodeFixProvider)), diagnostic);
                 }
             }
         }

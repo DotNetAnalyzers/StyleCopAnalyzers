@@ -65,7 +65,7 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create(ReadabilityResources.SA1121CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(ReadabilityResources.SA1121CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token), equivalenceKey: nameof(SA1121CodeFixProvider)), diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;

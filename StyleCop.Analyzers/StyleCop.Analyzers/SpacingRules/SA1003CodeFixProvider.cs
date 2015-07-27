@@ -42,7 +42,7 @@
             {
                 if (diagnostic.Properties.ContainsKey(SA1003SymbolsMustBeSpacedCorrectly.CodeFixAction))
                 {
-                    context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1003CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1003CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token), equivalenceKey: nameof(SA1003CodeFixProvider)), diagnostic);
                 }
             }
 

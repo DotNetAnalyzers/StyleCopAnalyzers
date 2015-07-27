@@ -55,7 +55,7 @@
                 if (!string.IsNullOrEmpty(token.ValueText))
                 {
                     string newName = '_' + token.ValueText;
-                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.SX1309CodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.SX1309CodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken), equivalenceKey: nameof(SX1309CodeFixProvider)), diagnostic);
                 }
             }
         }

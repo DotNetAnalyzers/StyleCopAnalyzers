@@ -50,7 +50,7 @@
 
                 if (node?.Parent as BlockSyntax != null)
                 {
-                    context.RegisterCodeFix(CodeAction.Create(ReadabilityResources.SA1107CodeFix, token => GetTransformedDocumentAsync(context.Document, root, node)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create(ReadabilityResources.SA1107CodeFix, token => GetTransformedDocumentAsync(context.Document, root, node), equivalenceKey: nameof(SA1107CodeFixProvider)), diagnostic);
                 }
             }
         }

@@ -44,10 +44,10 @@
 
                 if (queryExpression.DescendantTrivia().All(AcceptableSingleLineTrivia))
                 {
-                    context.RegisterCodeFix(CodeAction.Create(ReadabilityResources.SA1103CodeFixSingleLine, token => GetTransformedDocumentFromSingleLineAsync(context.Document, diagnostic, token)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create(ReadabilityResources.SA1103CodeFixSingleLine, token => GetTransformedDocumentFromSingleLineAsync(context.Document, diagnostic, token), equivalenceKey: nameof(SA1103CodeFixProvider) + "Single"), diagnostic);
                 }
 
-                context.RegisterCodeFix(CodeAction.Create(ReadabilityResources.SA1103CodeFixMultipleLines, token => GetTransformedDocumentForMultipleLinesAsync(context.Document, diagnostic, token)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(ReadabilityResources.SA1103CodeFixMultipleLines, token => GetTransformedDocumentForMultipleLinesAsync(context.Document, diagnostic, token), equivalenceKey: nameof(SA1103CodeFixProvider) + "Multiple"), diagnostic);
             }
         }
 
