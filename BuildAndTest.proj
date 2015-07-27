@@ -26,7 +26,7 @@
   <Target Name="Build" DependsOnTargets="RestorePackages">
     <MSBuild BuildInParallel="true"
              Projects="$(SolutionFile)"
-             Properties="RestorePackages=false"
+             Properties="RestorePackages=false;TreatWarningsAsErrors=true"
              Targets="Build"/>
   </Target>
 
@@ -42,7 +42,7 @@
   <Target Name="Rebuild">
     <MSBuild BuildInParallel="true"
              Projects="$(SolutionFile)"
-             Properties="RestorePackages=false"
+             Properties="RestorePackages=false;TreatWarningsAsErrors=true"
              Targets="Rebuild"/>
   </Target>
 
@@ -59,7 +59,6 @@
     </ItemGroup>
 
     <Exec Command="&quot;$(PackagesDirectory)\xunit.runner.console.2.0.0\tools\xunit.console.x86.exe&quot; @(TestAssemblies, ' ') $(RunTestArgs)" />
-    <!-- <Exec Command="mstest.exe $(RunTestArgs) @(TestAssemblies->'/testcontainer:%(FullPath)', ' ')" />-->
 
   </Target>
 
