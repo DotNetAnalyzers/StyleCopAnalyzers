@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.SpacingRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -103,13 +104,23 @@
             if (!firstInLine && precededBySpace)
             {
                 // Member access symbol '{.}' must not be {preceded} by a space.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), token.Text, "preceded"));
+                var properties = new Dictionary<string, string>
+                {
+                    [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationPreceding,
+                    [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove,
+                };
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), token.Text, "preceded"));
             }
 
             if (followedBySpace)
             {
                 // Member access symbol '{.}' must not be {followed} by a space.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), token.Text, "followed"));
+                var properties = new Dictionary<string, string>
+                {
+                    [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationFollowing,
+                    [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove,
+                };
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), token.Text, "followed"));
             }
         }
     }

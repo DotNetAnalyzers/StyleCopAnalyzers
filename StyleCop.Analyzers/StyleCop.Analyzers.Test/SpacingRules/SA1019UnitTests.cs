@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.SpacingRules;
     using TestHelper;
@@ -38,8 +39,13 @@
         public async Task TestSpaceBeforeOperatorAsync(string op)
         {
             string template = this.GetTemplate($" {op}");
+            var fixedCode = this.GetTemplate($"{op}");
+
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(16, 27).WithArguments(op[0], "preceded");
+
             await this.VerifyCSharpDiagnosticAsync(template, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(template, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -52,8 +58,12 @@
         public async Task TestSpaceAfterOperatorAsync(string op)
         {
             string template = this.GetTemplate($"{op} ");
+            string fixedCode = this.GetTemplate($"{op}");
+
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(16, 25 + op.Length).WithArguments(op.Last(), "followed");
             await this.VerifyCSharpDiagnosticAsync(template, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(template, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -179,6 +189,12 @@
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1019MemberAccessSymbolsMustBeSpacedCorrectly();
+        }
+
+        /// <inheritdoc/>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new OpenCloseSpacingCodeFixProvider();
         }
 
         /// <summary>
