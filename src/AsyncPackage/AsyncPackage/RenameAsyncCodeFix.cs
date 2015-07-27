@@ -128,6 +128,14 @@ namespace AsyncPackage
             {
                 return _generateSolution(cancellationToken);
             }
+
+            public override string EquivalenceKey
+            {
+                get
+                {
+                    return nameof(RenameAsyncCodeAction);
+                }
+            }
         }
     }
 }

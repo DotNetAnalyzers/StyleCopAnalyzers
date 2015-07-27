@@ -30,7 +30,7 @@
   <!-- Import the global NuGet packages -->
   <PropertyGroup>
     <ToolsetCompilerPackageName>Microsoft.Net.Compilers</ToolsetCompilerPackageName>
-    <ToolsetCompilerPropsFilePath>$(NuGetPackagesPath)\Microsoft.Net.Compilers.1.0.0-rc3\build\Microsoft.Net.Compilers.props</ToolsetCompilerPropsFilePath>
+    <ToolsetCompilerPropsFilePath>$(NuGetPackagesPath)\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props</ToolsetCompilerPropsFilePath>
   </PropertyGroup>
   
   <!-- Use the compiler server -->

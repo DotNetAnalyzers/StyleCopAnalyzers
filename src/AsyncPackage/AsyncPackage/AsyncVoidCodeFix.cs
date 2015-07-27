@@ -80,6 +80,14 @@ namespace AsyncPackage
             {
                 return _createDocument(cancellationToken);
             }
+
+            public override string EquivalenceKey
+            {
+                get
+                {
+                    return nameof(AsyncVoidCodeAction);
+                }
+            }
         }
     }
 }
