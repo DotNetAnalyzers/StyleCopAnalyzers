@@ -36,7 +36,7 @@
                     if (symbolInfo.ContainingType == debugType
                         && symbolInfo.Name == methodName)
                     {
-                        if (symbolInfo.Parameters.Length <= parameterIndex)
+                        if ((invocationExpressionSyntax.ArgumentList?.Arguments.Count ?? 0) <= parameterIndex)
                         {
                             // Wrong overload was used, e.g. Debug.Assert(bool condition)
                             context.ReportDiagnostic(Diagnostic.Create(descriptor, invocationExpressionSyntax.GetLocation()));
