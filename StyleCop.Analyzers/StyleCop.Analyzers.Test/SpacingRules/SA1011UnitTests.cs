@@ -3,15 +3,16 @@
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.SpacingRules;
     using TestHelper;
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1011ClosingSquareBracketsMustBeSpacedCorrectly"/>
+    /// Unit tests for <see cref="SA1011ClosingSquareBracketsMustBeSpacedCorrectly"/>.
     /// </summary>
-    public class SA1011UnitTests : DiagnosticVerifier
+    public class SA1011UnitTests : CodeFixVerifier
     {
         /// <summary>
         /// Verifies that the analyzer will properly handles valid closing square brackets.
@@ -67,6 +68,24 @@ public class Foo
         }
     }
 }";
+            const string fixedCode = @"using System;
+
+public class Foo
+{
+    public int this[[CLSCompliant(true) ]int index]
+    {
+        get
+        {
+            int[][] ints = new int [][
+]
+            {
+                new int[5], new int
+[5]
+            };
+            return ints[0][0];
+        }
+    }
+}";
 
             DiagnosticResult[] expected =
             {
@@ -82,6 +101,8 @@ public class Foo
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -175,6 +196,16 @@ public class Foo
         return ints;
     }
 }";
+            const string fixedCode = @"using System;
+
+public class Foo
+{
+    public int[] TestMethod(int[] a)
+    {
+        int[] ints  = new int[] { };
+        return ints;
+    }
+}";
 
             DiagnosticResult[] expected =
             {
@@ -185,12 +216,55 @@ public class Foo
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1066.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestClosingBracketInGenericArgumentAsync()
+        {
+            string testCode = @"using System.Collections.Generic;
+public class ClassName
+{
+    public void TestMethod()
+    {
+        IEnumerable<object[]> a;
+        IEnumerable<object[] > b;
+        Dictionary<object[], object[ ]> c;
+    }
+}";
+            string fixedCode = @"using System.Collections.Generic;
+public class ClassName
+{
+    public void TestMethod()
+    {
+        IEnumerable<object[]> a;
+        IEnumerable<object[] > b;
+        Dictionary<object[], object[]> c;
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 38).WithArguments(" not", "preceded");
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1011ClosingSquareBracketsMustBeSpacedCorrectly();
+        }
+
+        /// <inheritdoc/>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new OpenCloseSpacingCodeFixProvider();
         }
     }
 }

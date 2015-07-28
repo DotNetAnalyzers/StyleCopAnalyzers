@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.SpacingRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -101,6 +102,10 @@
                     precedesSpecialCharacter = true;
                     break;
 
+                case SyntaxKind.GreaterThanToken:
+                    precedesSpecialCharacter = nextToken.Parent.IsKind(SyntaxKind.TypeArgumentList);
+                    break;
+
                 case SyntaxKind.QuestionToken:
                     precedesSpecialCharacter = nextToken.Parent.IsKind(SyntaxKind.ConditionalAccessExpression);
                     break;
@@ -122,13 +127,23 @@
             if (!firstInLine && precededBySpace)
             {
                 // Closing square bracket must{ not} be {preceded} by a space.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), " not", "preceded"));
+                var properties = new Dictionary<string, string>
+                {
+                    [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationPreceding,
+                    [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove
+                };
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), " not", "preceded"));
             }
 
             if (!lastInLine && !precedesSpecialCharacter && !followedBySpace)
             {
                 // Closing square bracket must{} be {followed} by a space.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "followed"));
+                var properties = new Dictionary<string, string>
+                {
+                    [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationFollowing,
+                    [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionInsert
+                };
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), string.Empty, "followed"));
             }
         }
     }
