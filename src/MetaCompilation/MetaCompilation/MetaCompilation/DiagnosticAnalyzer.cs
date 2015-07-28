@@ -2288,6 +2288,14 @@ namespace MetaCompilation
                                 }
                                 else if (currentArgName == "defaultSeverity")
                                 {
+                                    if (currentArgExprIdentifier != null)
+                                    {
+                                        if (currentArgExprIdentifier.Identifier.Text == "")
+                                        {
+                                            ReportDiagnostic(context, DefaultSeverityErrorRule, currentArg.GetLocation());
+                                            return emptyRuleNames;
+                                        }
+                                    }
 
                                     var memberAccessExpr = currentArgExpr as MemberAccessExpressionSyntax;
                                     if (memberAccessExpr == null)
@@ -2326,6 +2334,16 @@ namespace MetaCompilation
                                 }
                                 else if (currentArgName == "id")
                                 {
+                                    if (currentArgExprIdentifier != null)
+                                    {
+                                    if (currentArgExprIdentifier.Identifier.Text == "")
+                                    {
+                                        ReportDiagnostic(context, IdDeclTypeErrorRule, currentArg.GetLocation());
+                                        return emptyRuleNames;
+                                    }
+                                    }
+
+
                                     if (currentArgExpr.IsKind(SyntaxKind.StringLiteralExpression))
                                     {
                                         ReportDiagnostic(context, IdStringLiteralRule, currentArgExpr.GetLocation());
