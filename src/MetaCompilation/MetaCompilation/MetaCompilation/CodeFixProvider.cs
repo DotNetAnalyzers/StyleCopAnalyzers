@@ -774,6 +774,7 @@ namespace MetaCompilation
             }
         }
 
+        // replaces a node in the document
         private async Task<Document> ReplaceNode(SyntaxNode oldNode, SyntaxNode newNode, Document document)
         {
             var root = await document.GetSyntaxRootAsync();
@@ -860,6 +861,7 @@ namespace MetaCompilation
 
             string expressionString = (declaration.Body.Statements[0] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
             SyntaxNode openParen = CodeFixNodeCreator.CreateOpenParen(generator, expressionString);
+
             var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
             var newStatements = oldStatements.Add(openParen.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Extracts the opening parenthesis of the if-statement condition").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
             var newMethod = generator.WithStatements(declaration, newStatements);
@@ -987,6 +989,7 @@ namespace MetaCompilation
         #endregion
 
         #region initialize code fix
+        // adds the Initialize method
         private async Task<Document> MissingInitAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -1034,7 +1037,6 @@ namespace MetaCompilation
 
             return await ReplaceNode(classDeclaration, newClassDecl, document);
         }
-
 
         private async Task<Document> MultipleStatementsAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
@@ -1211,6 +1213,7 @@ namespace MetaCompilation
                     break;
                 }
             }
+
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
             var expressionKind = SyntaxFactory.ParseExpression("\"DescriptiveId\"") as ExpressionSyntax;
@@ -1498,6 +1501,7 @@ namespace MetaCompilation
         }
         #endregion
 
+        // replaces the incorrect statement with the keyword statement
         private async Task<Document> IncorrectKeywordAsync(Document document, StatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -1531,6 +1535,7 @@ namespace MetaCompilation
             return await ReplaceNode(oldBlock, newBlock, document);
         }
 
+        // adds the keyword statement
         private async Task<Document> MissingKeywordAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
