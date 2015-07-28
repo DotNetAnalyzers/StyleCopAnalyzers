@@ -1990,16 +1990,20 @@ namespace MetaCompilation
                 else if (returnExpression is IdentifierNameSyntax)
                 {
                     SymbolInfo returnSymbolInfo = context.Compilation.GetSemanticModel(returnStatement.SyntaxTree).GetSymbolInfo(returnExpression as IdentifierNameSyntax);
-                    List<object> symbolResult = SuppDiagReturnSymbol(context, returnSymbolInfo, getAccessorKeywordLocation);
+                    SuppDiagReturnSymbolInfo symbolResult = SuppDiagReturnSymbol(context, returnSymbolInfo, getAccessorKeywordLocation);
 
-                    if (symbolResult.Count == 0)
+                    if (symbolResult == null)
                     {
                         return false;
                     }
 
-                    InvocationExpressionSyntax valueClause = symbolResult[0] as InvocationExpressionSyntax;
-                    //VariableDeclaratorSyntax returnDeclaration = symbolResult[1] as VariableDeclaratorSyntax;
-                    ReturnStatementSyntax returnDeclaration = symbolResult[1] as ReturnStatementSyntax;
+                    if (symbolResult.ValueClause == null && symbolResult.ReturnDeclaration == null)
+                    {
+                        return false;
+                    }
+
+                    InvocationExpressionSyntax valueClause = symbolResult.ValueClause as InvocationExpressionSyntax;
+                    ReturnStatementSyntax returnDeclaration = symbolResult.ReturnDeclaration as ReturnStatementSyntax;
                     var suppDiagReturnCheck = SuppDiagReturnCheck(context, valueClause, returnDeclaration, ruleNames, propertyDeclaration);
                     if (!suppDiagReturnCheck)
                     {
@@ -2151,9 +2155,9 @@ namespace MetaCompilation
             }
 
             //returns the valueClause of the return statement from SupportedDiagnostics and the return declaration, empty list if failed
-            internal List<object> SuppDiagReturnSymbol(CompilationAnalysisContext context, SymbolInfo returnSymbolInfo, Location getAccessorKeywordLocation)
+            internal SuppDiagReturnSymbolInfo SuppDiagReturnSymbol(CompilationAnalysisContext context, SymbolInfo returnSymbolInfo, Location getAccessorKeywordLocation)
             {
-                List<object> result = new List<object>();
+                SuppDiagReturnSymbolInfo result = new SuppDiagReturnSymbolInfo();
 
                 ILocalSymbol returnSymbol = null;
                 if (returnSymbolInfo.CandidateSymbols.Count() == 0)
@@ -2199,8 +2203,8 @@ namespace MetaCompilation
                     return result;
                 }
 
-                result.Add(valueClause);
-                result.Add(returnDeclaration);
+                result.ValueClause = valueClause;
+                result.ReturnDeclaration = returnDeclaration;
 
                 return result;
             }
@@ -2878,6 +2882,26 @@ namespace MetaCompilation
             {
                 Diagnostic diagnostic = Diagnostic.Create(rule, location, messageArgs);
                 context.ReportDiagnostic(diagnostic);
+            }
+
+            public class SuppDiagReturnSymbolInfo
+            {
+                public InvocationExpressionSyntax ValueClause
+                {
+                    get;
+                    set;
+                }
+                public ReturnStatementSyntax ReturnDeclaration
+                {
+                    get;
+                    set;
+                }
+                
+                public SuppDiagReturnSymbolInfo(InvocationExpressionSyntax valueClause = null, ReturnStatementSyntax returnDeclaration = null)
+                {
+                    ValueClause = valueClause;
+                    ReturnDeclaration = returnDeclaration;
+                } 
             }
         }
     }
