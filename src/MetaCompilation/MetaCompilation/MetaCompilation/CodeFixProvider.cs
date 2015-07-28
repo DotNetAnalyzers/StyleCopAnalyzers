@@ -1901,12 +1901,13 @@ namespace MetaCompilation
                 return newIfStatement;
             }
 
+            // builds an Initialize method
             internal static SyntaxNode BuildInitialize(SyntaxGenerator generator, INamedTypeSymbol notImplementedException, SyntaxList<StatementSyntax> statements, string name)
             {
                 TypeSyntax type = SyntaxFactory.ParseTypeName("AnalysisContext");
                 SyntaxNode[] parameters = new[] { generator.ParameterDeclaration(name, type) };
 
-                if (notImplementedException != null)
+                if (notImplementedException != null && statements.Count == 0)
                 {
                     statements = statements.Add(generator.ThrowStatement(generator.ObjectCreationExpression(notImplementedException)) as StatementSyntax);
                 }
@@ -2118,7 +2119,7 @@ namespace MetaCompilation
                 separators.Add(separator);
 
                 SeparatedSyntaxList<ArgumentSyntax> argumentsNewLines = SyntaxFactory.SeparatedList(arguments, separators);
-                argumentListSyntax argumentList = SyntaxFactory.ArgumentList(argumentsNewLines);
+                ArgumentListSyntax argumentList = SyntaxFactory.ArgumentList(argumentsNewLines);
                 ObjectCreationExpressionSyntax value = SyntaxFactory.ObjectCreationExpression(type, argumentList, null);
                 EqualsValueClauseSyntax initializer = SyntaxFactory.EqualsValueClause(value);
 
