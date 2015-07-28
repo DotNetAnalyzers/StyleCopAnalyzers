@@ -822,6 +822,10 @@ namespace MetaCompilation
 
             string locationName = (methodDeclaration.Body.Statements[7] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
             string ruleName = CodeFixHelper.GetFirstRuleName(classDeclaration);
+            if (ruleName == null)
+            {
+                return document;
+            }
 
             SyntaxNode diagnostic = CodeFixHelper.CreateDiagnostic(generator, locationName, ruleName);
 
@@ -833,7 +837,17 @@ namespace MetaCompilation
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
             string ruleName = CodeFixHelper.GetFirstRuleName(declaration);
+            if (ruleName == null)
+            {
+                return document;
+            }
+
             MethodDeclarationSyntax analysis = CodeFixHelper.GetAnalysis(declaration);
+            if (analysis == null)
+            {
+                return document;
+            }
+
             string locationName = (analysis.Body.Statements[7] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
 
             SyntaxNode diagnostic = CodeFixHelper.CreateDiagnostic(generator, locationName, ruleName);
@@ -2042,21 +2056,57 @@ namespace MetaCompilation
                 return rule.Declaration.Variables[0].Identifier.Text;
             }
 
+            // gets the analysis method
             internal static MethodDeclarationSyntax GetAnalysis(ClassDeclarationSyntax declaration)
             {
                 SyntaxList<MemberDeclarationSyntax> members = declaration.Members;
-                MethodDeclarationSyntax analysis = null;
+                MethodDeclarationSyntax analysisMethod = null;
 
                 foreach (MemberDeclarationSyntax member in members)
                 {
-                    analysis = member as MethodDeclarationSyntax;
-                    if (analysis != null && analysis.Identifier.Text != "Initialize")
+                    analysisMethod = IsSyntaxNodeAnalysisMethod(member);
+                    if (analysisMethod != null)
                     {
                         break;
                     }
                 }
 
-                return analysis;
+                return analysisMethod;
+            }
+
+            // check if the member is the SyntaxNodeAnalysis method, returns the MethodDeclarationSyntax if it is, null if not
+            internal static MethodDeclarationSyntax IsSyntaxNodeAnalysisMethod(MemberDeclarationSyntax member)
+            {
+                MethodDeclarationSyntax analysisMethod = member as MethodDeclarationSyntax;
+                if (analysisMethod == null)
+                {
+                    return null;
+                }
+
+                if (analysisMethod.Identifier.Text == "Initialize")
+                {
+                    return null;
+                }
+
+                ParameterListSyntax parameterList = analysisMethod.ParameterList;
+                if (parameterList == null)
+                {
+                    return null;
+                }
+
+                SeparatedSyntaxList<ParameterSyntax> parameters = parameterList.Parameters;
+                if (parameters == null || parameters.Count < 1)
+                {
+                    return null;
+                }
+
+                ParameterSyntax contextParameter = parameters[0];
+                if (contextParameter.Type.ToString() != "SyntaxNodeAnalysisContext")
+                {
+                    return null;
+                }
+
+                return analysisMethod;
             }
 
             // creates a statement that reports a diagnostic
