@@ -53,36 +53,32 @@
             var nodesToRemove = new List<SyntaxTrivia>();
             nodesToRemove.Add(node);
 
-            // If the comment is the first non-whitespace item in the trivia list, we are going to remove all of the leading whitespace.
-            var firstIndex = TriviaHelper.IndexOfFirstNonWhitespaceTrivia(triviaList);
+            // If there is trialing content on the line, we don't want to remove the leading whitespace
+            bool hasTrailingContent = TriviaHasTrailingContentOnLine(root, triviaList);
 
-            bool removedLeadingWhitespace = false;
-
-            if (firstIndex == diagnosticIndex)
+            if (diagnosticIndex>0 && !hasTrailingContent)
             {
-                removedLeadingWhitespace = true;
-                for (int i = diagnosticIndex; i >= 0; i--)
+                var previousStart = triviaList[diagnosticIndex - 1].SpanStart;
+                var previousNode = root.FindTrivia(previousStart, true);
+                nodesToRemove.Add(previousNode);
+            }
+
+            // If there is leading content on the line, then we don't want to remove the trailing end of lines
+            bool hasLeadingContent = TriviaHasLeadingContentOnLine(root, triviaList);
+
+            if (diagnosticIndex < triviaList.Count-1)
+            {
+                var nextStart = triviaList[diagnosticIndex + 1].SpanStart;
+                var nextNode = root.FindTrivia(nextStart, true);
+
+                if (nextNode.IsKind(SyntaxKind.EndOfLineTrivia) && !hasLeadingContent)
                 {
-                    var start = diagnostic.Location.SourceSpan.Start - (triviaList[diagnosticIndex].SpanStart - triviaList[i].SpanStart);
-                    var prevNode = root.FindTrivia(start, true);
-                    nodesToRemove.Add(prevNode);
+                    nodesToRemove.Add(nextNode);
                 }
             }
 
-            var lastIndex = TriviaHelper.IndexOfTrailingWhitespace(triviaList);
-
-            // If the comment is the last non-whitespace item in the trivia list and it also wasn't the first non-whitespace item in the trivia list, then we remove the trailing whitespace.
-            if (diagnosticIndex+node.Span.Length==lastIndex && !removedLeadingWhitespace)
-            {
-                for (int i = diagnosticIndex; i<triviaList.Count; i++)
-                {
-                    var start = diagnostic.Location.SourceSpan.Start + (triviaList[i].SpanStart- triviaList[diagnosticIndex].SpanStart);
-                    var nextNodes = root.FindTrivia(start, true);
-                    nodesToRemove.Add(nextNodes);
-                }
-            }
-
-            var newRoot = root.ReplaceTrivia(nodesToRemove, (a, b) =>
+            // Replace all roots with an empty node
+            var newRoot = root.ReplaceTrivia(nodesToRemove, (original, rewritten) =>
             {
                 return new SyntaxTrivia();
             });
@@ -102,6 +98,32 @@
                 default:
                     return false;
             }
+        }
+
+        private static bool TriviaHasLeadingContentOnLine(SyntaxNode root, IReadOnlyList<SyntaxTrivia> triviaList)
+        {
+            var nodeBeforeStart = triviaList[0].SpanStart - 1;
+            var nodeBefore = root.FindNode(new Microsoft.CodeAnalysis.Text.TextSpan(nodeBeforeStart, 1));
+
+            if (nodeBefore.GetLineSpan().EndLinePosition.Line == triviaList[0].GetLineSpan().StartLinePosition.Line)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool TriviaHasTrailingContentOnLine(SyntaxNode root, IReadOnlyList<SyntaxTrivia> triviaList)
+        {
+            var nodeAfterTriviaStart = triviaList[triviaList.Count-1].SpanStart - 1;
+            var nodeAfterTrivia = root.FindNode(new Microsoft.CodeAnalysis.Text.TextSpan(nodeAfterTriviaStart, 1));
+
+            if (nodeAfterTrivia.GetLineSpan().StartLinePosition.Line == triviaList[triviaList.Count - 1].GetLineSpan().EndLinePosition.Line)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

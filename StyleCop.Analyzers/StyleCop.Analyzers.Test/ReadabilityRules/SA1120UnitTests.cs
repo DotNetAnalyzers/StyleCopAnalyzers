@@ -217,6 +217,36 @@ class Foo
         }
 
         [Fact]
+        public async Task TestViolationWithTrailingContentOnLineAsync()
+        {
+            var testCode = @"
+using System;
+class Foo
+{
+    public void Bar()
+    {
+        /* */Console.WriteLine(""baz"");
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 9);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var expectedFixedCode = @"
+using System;
+class Foo
+{
+    public void Bar()
+    {
+        Console.WriteLine(""baz"");
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, expectedFixedCode).ConfigureAwait(false);
+        }
+
+
+        [Fact]
         public async Task TestCodeBlockNoDiagnosticOnInternalBlankLinesAsync()
         {
             var testCode = @"
