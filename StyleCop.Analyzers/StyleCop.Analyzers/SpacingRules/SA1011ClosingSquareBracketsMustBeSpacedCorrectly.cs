@@ -86,7 +86,10 @@
             bool lastInLine = token.IsLastInLine();
             bool precedesSpecialCharacter;
 
-            if (!followedBySpace && !lastInLine)
+            // Tests for this rule have a lot of exclusions which are supposed to be caught by other rules
+            bool suppressFollowingSpaceError = true;
+
+            if (!lastInLine)
             {
                 SyntaxToken nextToken = token.GetNextToken();
                 switch (nextToken.Kind())
@@ -101,8 +104,13 @@
                 case SyntaxKind.CloseParenToken:
                     precedesSpecialCharacter = true;
                     break;
+                case SyntaxKind.PlusPlusToken:
+                case SyntaxKind.MinusMinusToken:
+                    precedesSpecialCharacter = true;
+                    suppressFollowingSpaceError = false;
+                    break;
 
-                case SyntaxKind.GreaterThanToken:
+                    case SyntaxKind.GreaterThanToken:
                     precedesSpecialCharacter = nextToken.Parent.IsKind(SyntaxKind.TypeArgumentList);
                     break;
 
@@ -135,15 +143,28 @@
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), " not", "preceded"));
             }
 
-            if (!lastInLine && !precedesSpecialCharacter && !followedBySpace)
+            if (!lastInLine)
             {
-                // Closing square bracket must{} be {followed} by a space.
-                var properties = new Dictionary<string, string>
+                if (!precedesSpecialCharacter && !followedBySpace)
                 {
-                    [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationFollowing,
-                    [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionInsert
-                };
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), string.Empty, "followed"));
+                    // Closing square bracket must{} be {followed} by a space.
+                    var properties = new Dictionary<string, string>
+                    {
+                        [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationFollowing,
+                        [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionInsert
+                    };
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), string.Empty, "followed"));
+                }
+                else if (precedesSpecialCharacter && followedBySpace && !suppressFollowingSpaceError)
+                {
+                    // Closing square brackets must {not} be {followed} by a space
+                    var properties = new Dictionary<string, string>
+                    {
+                        [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationFollowing,
+                        [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove
+                    };
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), " not", "followed"));
+                }
             }
         }
     }

@@ -255,6 +255,57 @@ public class ClassName
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Theory]
+        [InlineData("++")]
+        [InlineData("--")]
+        public async Task TestClosingBracketFollowedByNoSpaceAndIncrementOrDecrementOperatorAsync(string operatorText)
+        {
+            string validStatament = string.Format(@"var i = new int[1];
+            i[0]{0};", operatorText);
+
+            await this.TestWhitespaceInStatementOrDeclAsync(validStatament, string.Empty, EmptyDiagnosticResults).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("++")]
+        [InlineData("--")]
+        public async Task TestClosingBracketFollowedBySpaceAndIncrementOrDecrementOperatorAsync(string operatorText)
+        {
+            string invalidStatament = string.Format(@"var i = new int[1];
+            i[0] {0};", operatorText);
+
+            string fixedStatament = string.Format(@"var i = new int[1];
+            i[0]{0};", operatorText);
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 16).WithArguments(" not", "followed");
+
+            await this.TestWhitespaceInStatementOrDeclAsync(invalidStatament, fixedStatament, expected).ConfigureAwait(false);
+        }
+
+        private async Task TestWhitespaceInStatementOrDeclAsync(string originalStatement, string fixedStatement, params DiagnosticResult[] expected)
+        {
+            string template = @"namespace Foo
+{{
+    class Bar
+    {{
+        void DoIt()
+        {{
+            {0}
+        }}
+    }}
+}}
+";
+            string originalCode = string.Format(template, originalStatement);
+            string fixedCode = string.Format(template, fixedStatement);
+
+            await this.VerifyCSharpDiagnosticAsync(originalCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            if (!string.IsNullOrEmpty(fixedStatement))
+            {
+                await this.VerifyCSharpFixAsync(originalCode, fixedCode).ConfigureAwait(false);
+            }
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
