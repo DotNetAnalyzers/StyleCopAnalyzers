@@ -101,7 +101,7 @@
                 new DiagnosticResult
                 {
                     Id = "CS1503",
-                    Message = $"Argument {1 + this.InitialArguments.Count() }: cannot convert from 'int' to 'string'",
+                    Message = $"Argument {1 + this.InitialArguments.Count()}: cannot convert from 'int' to 'string'",
                     Severity = DiagnosticSeverity.Error,
                     Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 16 + this.MethodName.Length + this.InitialArguments.Sum(i => i.Length + ", ".Length)) }
                 }

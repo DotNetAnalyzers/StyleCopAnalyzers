@@ -157,8 +157,8 @@ public class ClassName
 
             var expected = new[]
             {
-                diagnostic .WithLocation(10, 26).WithArguments("Tb", 2),
-                diagnostic .WithLocation(11, 26).WithArguments("Ta", 1)
+                diagnostic.WithLocation(10, 26).WithArguments("Tb", 2),
+                diagnostic.WithLocation(11, 26).WithArguments("Ta", 1)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);
