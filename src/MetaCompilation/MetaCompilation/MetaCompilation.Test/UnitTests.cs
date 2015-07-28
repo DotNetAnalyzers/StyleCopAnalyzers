@@ -11,7 +11,7 @@ namespace MetaCompilation.Test
 {
     public class UnitTest : CodeFixVerifier
     {
-        public const string MessagePrefix = "T: ";
+        private const string s_messagePrefix = "T: ";
         
         #region default no diagnostics tests
         // no diagnostics
@@ -101,7 +101,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.GoToCodeFix,
-                Message = MessagePrefix + "Congratulations! You have written an analyzer! If you would like to explore a code fix for your diagnostic, open up CodeFixProvider.cs and take a look!",
+                Message = s_messagePrefix + "Congratulations! You have written an analyzer! If you would like to explore a code fix for your diagnostic, open up CodeFixProvider.cs and take a look!",
                 Severity = DiagnosticSeverity.Info,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 18) }
             };
@@ -187,7 +187,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.GoToCodeFix,
-                Message = MessagePrefix + "Congratulations! You have written an analyzer! If you would like to explore a code fix for your diagnostic, open up CodeFixProvider.cs and take a look!",
+                Message = s_messagePrefix + "Congratulations! You have written an analyzer! If you would like to explore a code fix for your diagnostic, open up CodeFixProvider.cs and take a look!",
                 Severity = DiagnosticSeverity.Info,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 18) }
             };
@@ -198,7 +198,7 @@ namespace SyntaxNodeAnalyzer
 
         #region MissingId
 
-        public const string MissingIdMessage = MessagePrefix + "'SyntaxNodeAnalyzer' should have a diagnostic id (a public, constant string uniquely identifying each diagnostic)";
+        private const string s_missingIdMessage = s_messagePrefix + "'SyntaxNodeAnalyzer' should have a diagnostic id (a public, constant string uniquely identifying each diagnostic)";
 
         // no id, nothing else after
         [Fact]
@@ -243,7 +243,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingId,
-                Message = MissingIdMessage,
+                Message = s_missingIdMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 22) }
             };
@@ -343,7 +343,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingId,
-                Message = MissingIdMessage,
+                Message = s_missingIdMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 22) }
             };
@@ -442,7 +442,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingId,
-                Message = MissingIdMessage,
+                Message = s_missingIdMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 22) }
             };
@@ -534,7 +534,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingId,
-                Message = MissingIdMessage,
+                Message = s_missingIdMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 22) }
             };
@@ -626,7 +626,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingId,
-                Message = MissingIdMessage,
+                Message = s_missingIdMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 22) }
             };
@@ -718,7 +718,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingId,
-                Message = MissingIdMessage,
+                Message = s_missingIdMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 22) }
             };
@@ -770,7 +770,7 @@ namespace SyntaxNodeAnalyzer
 
         #region MissingInit
 
-        public const string MissingInitMessage = MessagePrefix + "'SyntaxNodeAnalyzer' is missing the required inherited Initialize method, needed to register analysis actions";
+        private const string s_missingInitMessage = s_messagePrefix + "'SyntaxNodeAnalyzer' is missing the required inherited Initialize method, needed to register analysis actions";
 
         [Fact]
         public void MissingInit1()
@@ -814,7 +814,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingInit,
-                Message = MissingInitMessage,
+                Message = s_missingInitMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 16, 22) }
             };
@@ -914,7 +914,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingInit,
-                Message = MissingInitMessage,
+                Message = s_missingInitMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 16, 22) }
             };
@@ -1039,7 +1039,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingInit,
-                Message = MissingInitMessage,
+                Message = s_missingInitMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 18) }
             };
@@ -1120,7 +1120,7 @@ namespace SyntaxNodeAnalyzer
 
         #region MissingRegisterStatement
 
-        public const string MissingRegisterStatementMessage = MessagePrefix + "A syntax node action should be registered within the 'Initialize' method";
+        private const string s_missingRegisterStatementMessage = s_messagePrefix + "A syntax node action should be registered within the 'Initialize' method";
 
         [Fact]
         public void MissingRegister1()
@@ -1167,7 +1167,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingRegisterStatement,
-                Message = MissingRegisterStatementMessage,
+                Message = s_missingRegisterStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 30) }
             };
@@ -1272,7 +1272,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingRegisterStatement,
-                Message = MissingRegisterStatementMessage,
+                Message = s_missingRegisterStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 30) }
             };
@@ -1379,7 +1379,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingRegisterStatement,
-                Message = MissingRegisterStatementMessage,
+                Message = s_missingRegisterStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 30) }
             };
@@ -1438,7 +1438,7 @@ namespace SyntaxNodeAnalyzer
 
         #region TooManyInitStatements
 
-        public const string TooManyInitStatementsMessage = MessagePrefix + "For this tutorial, the 'Initialize' method should only register one action";
+        public const string s_tooManyInitStatementsMessage = s_messagePrefix + "For this tutorial, the 'Initialize' method should only register one action";
 
         //  statement below, incorrect method name
         [Fact]
@@ -1488,7 +1488,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyInitStatements,
-                Message = TooManyInitStatementsMessage,
+                Message = s_tooManyInitStatementsMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 30) }
             };
@@ -1586,7 +1586,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyInitStatements,
-                Message = TooManyInitStatementsMessage,
+                Message = s_tooManyInitStatementsMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 30) }
             };
@@ -1684,7 +1684,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyInitStatements,
-                Message = TooManyInitStatementsMessage,
+                Message = s_tooManyInitStatementsMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 30) }
             };
@@ -1783,7 +1783,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyInitStatements,
-                Message = TooManyInitStatementsMessage,
+                Message = s_tooManyInitStatementsMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 30) }
             };
@@ -1882,7 +1882,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyInitStatements,
-                Message = TooManyInitStatementsMessage,
+                Message = s_tooManyInitStatementsMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 30) }
             };
@@ -1977,7 +1977,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyInitStatements,
-                Message = TooManyInitStatementsMessage,
+                Message = s_tooManyInitStatementsMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 31, 30) }
             };
@@ -2027,7 +2027,7 @@ namespace SyntaxNodeAnalyzer
 
         #region InvalidStatement
 
-        public const string InvalidStatementMessage = MessagePrefix + "The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect";
+        private const string s_invalidStatementMessage = s_messagePrefix + "The Initialize method only registers actions, therefore any other statement placed in Initialize is incorrect";
 
         //  invalid throw statement
         [Fact]
@@ -2073,7 +2073,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = InvalidStatementMessage,
+                Message = s_invalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 33, 12) }
             };
@@ -2164,7 +2164,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = InvalidStatementMessage,
+                Message = s_invalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 12) }
             };
@@ -2256,7 +2256,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = InvalidStatementMessage,
+                Message = s_invalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 12) }
             };
@@ -2348,7 +2348,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = InvalidStatementMessage,
+                Message = s_invalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 12) }
             };
@@ -2440,7 +2440,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = InvalidStatementMessage,
+                Message = s_invalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 12) }
             };
@@ -2532,7 +2532,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = InvalidStatementMessage,
+                Message = s_invalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 12) }
             };
@@ -2624,7 +2624,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = InvalidStatementMessage,
+                Message = s_invalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 12) }
             };
@@ -2716,7 +2716,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = InvalidStatementMessage,
+                Message = s_invalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 17) }
             };
@@ -2808,7 +2808,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = InvalidStatementMessage,
+                Message = s_invalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 17) }
             };
@@ -2900,7 +2900,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = InvalidStatementMessage,
+                Message = s_invalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 17) }
             };
@@ -2992,7 +2992,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = InvalidStatementMessage,
+                Message = s_invalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 17) }
             };
@@ -3084,7 +3084,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = InvalidStatementMessage,
+                Message = s_invalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 17) }
             };
@@ -3176,7 +3176,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = InvalidStatementMessage,
+                Message = s_invalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 17) }
             };
@@ -3269,7 +3269,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = InvalidStatementMessage,
+                Message = s_invalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 17) }
             };
@@ -3361,7 +3361,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = InvalidStatementMessage,
+                Message = s_invalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 33, 17) }
             };
@@ -3452,7 +3452,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = InvalidStatementMessage,
+                Message = s_invalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 33, 17) }
             };
@@ -3546,7 +3546,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InvalidStatement,
-                Message = InvalidStatementMessage,
+                Message = s_invalidStatementMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 35, 17) }
             };
@@ -3598,7 +3598,7 @@ namespace SyntaxNodeAnalyzer
 
         #region IncorrectKind
 
-        public const string IncorrectKindMessage = MessagePrefix + "This tutorial only allows registering for SyntaxKind.IfStatement";
+        private const string s_incorrectKindMessage = s_messagePrefix + "This tutorial only allows registering for SyntaxKind.IfStatement";
 
         [Fact]
         public void IncorrectKind()
@@ -3644,7 +3644,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectKind,
-                Message = IncorrectKindMessage,
+                Message = s_incorrectKindMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 70) }
             };
@@ -3696,7 +3696,7 @@ namespace SyntaxNodeAnalyzer
 
         #region IncorrectArguments
 
-        public const string IncorrectArgumentsMessage = MessagePrefix + "The method RegisterSyntaxNodeAction requires 2 arguments: a method and a SyntaxKind";
+        private const string s_incorrectArgumentsMessage = s_messagePrefix + "The method RegisterSyntaxNodeAction requires 2 arguments: a method and a SyntaxKind";
 
         [Fact]
         public void IncorrectArguments1()
@@ -3742,7 +3742,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectArguments,
-                Message = IncorrectArgumentsMessage,
+                Message = s_incorrectArgumentsMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 17) }
             };
@@ -3840,7 +3840,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectArguments,
-                Message = IncorrectArgumentsMessage,
+                Message = s_incorrectArgumentsMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 13) }
             };
@@ -3943,7 +3943,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectArguments,
-                Message = IncorrectArgumentsMessage,
+                Message = s_incorrectArgumentsMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 34, 13) }
             };
@@ -4000,7 +4000,7 @@ namespace SyntaxNodeAnalyzer
 
         #region IncorrectInitSig
 
-        public const string IncorrectInitSigMessage = MessagePrefix + "The 'Initialize' method should return void, have the 'override' modifier, and have a single parameter of type 'AnalysisContext'";
+        private const string s_incorrectInitSigMessage = s_messagePrefix + "The 'Initialize' method should return void, have the 'override' modifier, and have a single parameter of type 'AnalysisContext'";
 
         //  more than one parameter
         [Fact]
@@ -4050,7 +4050,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectInitSig,
-                Message = IncorrectInitSigMessage,
+                Message = s_incorrectInitSigMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 35, 30) }
             };
@@ -4149,7 +4149,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectInitSig,
-                Message = IncorrectInitSigMessage,
+                Message = s_incorrectInitSigMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 35, 30) }
             };
@@ -4248,7 +4248,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectInitSig,
-                Message = IncorrectInitSigMessage,
+                Message = s_incorrectInitSigMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 35, 31) }
             };
@@ -4347,7 +4347,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectInitSig,
-                Message = IncorrectInitSigMessage,
+                Message = s_incorrectInitSigMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 35, 21) }
             };
@@ -4446,7 +4446,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectInitSig,
-                Message = IncorrectInitSigMessage,
+                Message = s_incorrectInitSigMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 35, 29) }
             };
@@ -4500,7 +4500,7 @@ namespace SyntaxNodeAnalyzer
 
         #region IfStatementIncorrect
 
-        public const string IfStatementIncorrectMessage = MessagePrefix + "This statement should extract the if-statement being analyzed by casting context.Node to IfStatementSyntax";
+        private const string s_ifStatementIncorrectMessage = s_messagePrefix + "This statement should extract the if-statement being analyzed by casting context.Node to IfStatementSyntax";
 
         //  No identifier for statement
         [Fact]
@@ -4555,7 +4555,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfStatementIncorrect,
-                Message = IfStatementIncorrectMessage,
+                Message = s_ifStatementIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 13) }
             };
@@ -4665,7 +4665,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfStatementIncorrect,
-                Message = IfStatementIncorrectMessage,
+                Message = s_ifStatementIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 13) }
             };
@@ -4775,7 +4775,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfStatementIncorrect,
-                Message = IfStatementIncorrectMessage,
+                Message = s_ifStatementIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 17) }
             };
@@ -4885,7 +4885,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfStatementIncorrect,
-                Message = IfStatementIncorrectMessage,
+                Message = s_ifStatementIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 17) }
             };
@@ -4995,7 +4995,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfStatementIncorrect,
-                Message = IfStatementIncorrectMessage,
+                Message = s_ifStatementIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 17) }
             };
@@ -5105,7 +5105,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfStatementIncorrect,
-                Message = IfStatementIncorrectMessage,
+                Message = s_ifStatementIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 17) }
             };
@@ -5215,7 +5215,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfStatementIncorrect,
-                Message = IfStatementIncorrectMessage,
+                Message = s_ifStatementIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 17) }
             };
@@ -5326,7 +5326,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfStatementIncorrect,
-                Message = IfStatementIncorrectMessage,
+                Message = s_ifStatementIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 17) }
             };
@@ -5387,9 +5387,9 @@ namespace SyntaxNodeAnalyzer
 
         #region IfKeywordIncorrect
 
-        public const string IfKeywordIncorrectMessage = MessagePrefix + "This statement should extract the if-keyword SyntaxToken from 'ifStatement'";
+        private const string s_ifKeywordIncorrectMessage = s_messagePrefix + "This statement should extract the if-keyword SyntaxToken from 'ifStatement'";
 
-        //  not initialized
+        // not initialized
         [Fact]
         public void IfKeywordIncorrect1()
         {
@@ -5443,7 +5443,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfKeywordIncorrect,
-                Message = IfKeywordIncorrectMessage,
+                Message = s_ifKeywordIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 17) }
             };
@@ -5555,7 +5555,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfKeywordIncorrect,
-                Message = IfKeywordIncorrectMessage,
+                Message = s_ifKeywordIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 17) }
             };
@@ -5667,7 +5667,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfKeywordIncorrect,
-                Message = IfKeywordIncorrectMessage,
+                Message = s_ifKeywordIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 17) }
             };
@@ -5779,7 +5779,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfKeywordIncorrect,
-                Message = IfKeywordIncorrectMessage,
+                Message = s_ifKeywordIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 17) }
             };
@@ -5891,7 +5891,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfKeywordIncorrect,
-                Message = IfKeywordIncorrectMessage,
+                Message = s_ifKeywordIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 17) }
             };
@@ -6006,7 +6006,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfKeywordIncorrect,
-                Message = IfKeywordIncorrectMessage,
+                Message = s_ifKeywordIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 17) }
             };
@@ -6070,7 +6070,7 @@ namespace SyntaxNodeAnalyzer
 
         #region IfStatementMissing
 
-        public const string IfStatementMissingMessage = MessagePrefix + "The first step of the SyntaxNode analysis is to extract the if-statement from 'context' by casting context.Node to IfStatementSyntax";
+        private const string s_ifStatementMissingMessage = s_messagePrefix + "The first step of the SyntaxNode analysis is to extract the if-statement from 'context' by casting context.Node to IfStatementSyntax";
 
         //  no statements in analyze method
         [Fact]
@@ -6124,7 +6124,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfStatementMissing,
-                Message = IfStatementMissingMessage,
+                Message = s_ifStatementMissingMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 40, 26) }
             };
@@ -6234,7 +6234,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfStatementMissing,
-                Message = IfStatementMissingMessage,
+                Message = s_ifStatementMissingMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 40, 26) }
             };
@@ -6295,7 +6295,7 @@ namespace SyntaxNodeAnalyzer
 
         #region IfKeywordMissing
 
-        public const string IfKeywordMissingMessage = MessagePrefix + "Next, extract the if-keyword SyntaxToken from 'ifStatement'";
+        private const string s_ifKeywordMissingMessage = s_messagePrefix + "Next, extract the if-keyword SyntaxToken from 'ifStatement'";
 
         //  no 2nd statement
         [Fact]
@@ -6350,7 +6350,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfKeywordMissing,
-                Message = IfKeywordMissingMessage,
+                Message = s_ifKeywordMissingMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 17) }
             };
@@ -6462,7 +6462,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IfKeywordMissing,
-                Message = IfKeywordMissingMessage,
+                Message = s_ifKeywordMissingMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 42, 17) }
             };
@@ -6524,7 +6524,7 @@ namespace SyntaxNodeAnalyzer
 
         #region TrailingTriviaCheckMissing
 
-        public const string TrailingTriviaCheckMissingMessage = MessagePrefix + "Next, begin looking for the space between 'if' and '(' by checking if 'ifKeyword' has trailing trivia";
+        private const string s_trailingTriviaCheckMissingMessage = s_messagePrefix + "Next, begin looking for the space between 'if' and '(' by checking if 'ifKeyword' has trailing trivia";
 
         //  no 3rd statement
         [Fact]
@@ -6580,7 +6580,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaCheckMissing,
-                Message = TrailingTriviaCheckMissingMessage,
+                Message = s_trailingTriviaCheckMissingMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 17) }
             };
@@ -6697,7 +6697,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaCheckMissing,
-                Message = TrailingTriviaCheckMissingMessage,
+                Message = s_trailingTriviaCheckMissingMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 17) }
             };
@@ -6762,7 +6762,7 @@ namespace SyntaxNodeAnalyzer
 
         #region TrailingTriviaCheckIncorrect
 
-        public const string TrailingTriviaCheckIncorrectMessage = MessagePrefix + "This statement should be an if-statement that checks to see if 'ifKeyword' has trailing trivia";
+        private const string s_trailingTriviaCheckIncorrectMessage = s_messagePrefix + "This statement should be an if-statement that checks to see if 'ifKeyword' has trailing trivia";
 
         //  no if statement
         [Fact]
@@ -6821,7 +6821,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect,
-                Message = TrailingTriviaCheckIncorrectMessage,
+                Message = s_trailingTriviaCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 17) }
             };
@@ -6941,7 +6941,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect,
-                Message = TrailingTriviaCheckIncorrectMessage,
+                Message = s_trailingTriviaCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 17) }
             };
@@ -7058,7 +7058,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect,
-                Message = TrailingTriviaCheckIncorrectMessage,
+                Message = s_trailingTriviaCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 17) }
             };
@@ -7168,7 +7168,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect,
-                Message = TrailingTriviaCheckIncorrectMessage,
+                Message = s_trailingTriviaCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 17) }
             };
@@ -7276,7 +7276,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect,
-                Message = TrailingTriviaCheckIncorrectMessage,
+                Message = s_trailingTriviaCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 17) }
             };
@@ -7386,7 +7386,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect,
-                Message = TrailingTriviaCheckIncorrectMessage,
+                Message = s_trailingTriviaCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 17) }
             };
@@ -7494,7 +7494,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaCheckIncorrect,
-                Message = TrailingTriviaCheckIncorrectMessage,
+                Message = s_trailingTriviaCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 17) }
             };
@@ -7552,7 +7552,7 @@ namespace SyntaxNodeAnalyzer
 
         #region TrailingTriviaVarMissing
 
-        public const string TrailingTriviaVarMissingMessage = MessagePrefix + "Next, extract the first trailing trivia of 'ifKeyword' into a variable";
+        private const string s_trailingTriviaVarMissingMessage = s_messagePrefix + "Next, extract the first trailing trivia of 'ifKeyword' into a variable";
 
         //  no variable declaration
         [Fact]
@@ -7609,7 +7609,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarMissing,
-                Message = TrailingTriviaVarMissingMessage,
+                Message = s_trailingTriviaVarMissingMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 41, 21) }
             };
@@ -7724,7 +7724,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarMissing,
-                Message = TrailingTriviaVarMissingMessage,
+                Message = s_trailingTriviaVarMissingMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 41, 21) }
             };
@@ -7840,7 +7840,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarMissing,
-                Message = TrailingTriviaVarMissingMessage,
+                Message = s_trailingTriviaVarMissingMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 41, 21) }
             };
@@ -7903,7 +7903,7 @@ namespace SyntaxNodeAnalyzer
 
         #region TrailingTriviaVarIncorrect
 
-        public const string TrailingTriviaVarIncorrectMessage = MessagePrefix + "This statement should extract the first trailing trivia of 'ifKeyword' into a variable";
+        private const string s_trailingTriviaVarIncorrectMessage = s_messagePrefix + "This statement should extract the first trailing trivia of 'ifKeyword' into a variable";
 
         //  not initialized
         [Fact]
@@ -7961,7 +7961,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
-                Message = TrailingTriviaVarIncorrectMessage,
+                Message = s_trailingTriviaVarIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 25) }
             };
@@ -8076,7 +8076,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
-                Message = TrailingTriviaVarIncorrectMessage,
+                Message = s_trailingTriviaVarIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 25) }
             };
@@ -8191,7 +8191,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
-                Message = TrailingTriviaVarIncorrectMessage,
+                Message = s_trailingTriviaVarIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 25) }
             };
@@ -8305,7 +8305,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
-                Message = TrailingTriviaVarIncorrectMessage,
+                Message = s_trailingTriviaVarIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 25) }
             };
@@ -8420,7 +8420,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
-                Message = TrailingTriviaVarIncorrectMessage,
+                Message = s_trailingTriviaVarIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 25) }
             };
@@ -8535,7 +8535,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
-                Message = TrailingTriviaVarIncorrectMessage,
+                Message = s_trailingTriviaVarIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 25) }
             };
@@ -8651,7 +8651,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
-                Message = TrailingTriviaVarIncorrectMessage,
+                Message = s_trailingTriviaVarIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 25) }
             };
@@ -8770,7 +8770,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
-                Message = TrailingTriviaVarIncorrectMessage,
+                Message = s_trailingTriviaVarIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 25) }
             };
@@ -8890,7 +8890,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaVarIncorrect,
-                Message = TrailingTriviaVarIncorrectMessage,
+                Message = s_trailingTriviaVarIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 25) }
             };
@@ -8952,7 +8952,7 @@ namespace SyntaxNodeAnalyzer
 
         #region InternalAndStaticError
 
-        public const string InternalAndStaticErrorMessage = MessagePrefix + "The 'Rule' field should be internal and static";
+        private const string s_internalAndStaticErrorMessage = s_messagePrefix + "The 'Rule' field should be internal and static";
 
         [Fact]
         public void InternalAndStatic1() // missing internal modifier
@@ -9006,7 +9006,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InternalAndStaticError,
-                Message = InternalAndStaticErrorMessage,
+                Message = s_internalAndStaticErrorMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 19, 37) }
             };
@@ -9114,7 +9114,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InternalAndStaticError,
-                Message = InternalAndStaticErrorMessage,
+                Message = s_internalAndStaticErrorMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 19, 39) }
             };
@@ -9222,7 +9222,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.InternalAndStaticError,
-                Message = InternalAndStaticErrorMessage,
+                Message = s_internalAndStaticErrorMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 19, 31) }
             };
@@ -9282,7 +9282,7 @@ namespace SyntaxNodeAnalyzer
 
         #region EnabledByDefault
 
-        public const string EnabledByDefaultMessage = MessagePrefix + "The 'isEnabledByDefault' field should be set to true";
+        private const string s_enabledByDefaultMessage = s_messagePrefix + "The 'isEnabledByDefault' field should be set to true";
 
         [Fact]
         public void EnabledByDefault1() // isEnabledByDefault set to false
@@ -9338,7 +9338,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.EnabledByDefaultError,
-                Message = EnabledByDefaultMessage,
+                Message = s_enabledByDefaultMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 33) }
             };
@@ -9450,7 +9450,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.EnabledByDefaultError,
-                Message = EnabledByDefaultMessage,
+                Message = s_enabledByDefaultMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 33) }
             };
@@ -9560,7 +9560,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.EnabledByDefaultError,
-                Message = EnabledByDefaultMessage,
+                Message = s_enabledByDefaultMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 33) }
             };
@@ -9665,7 +9665,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.EnabledByDefaultError,
-                Message = EnabledByDefaultMessage,
+                Message = s_enabledByDefaultMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 23, 13) }
             };
@@ -9721,7 +9721,7 @@ namespace SyntaxNodeAnalyzer
 
         #region DefaultSeverityError
 
-        public const string DefaultSeverityErrorMessage = MessagePrefix + "The 'defaultSeverity' should be either DiagnosticSeverity.Error or DiagnosticSeverity.Warning";
+        private const string s_defaultSeverityErrorMessage = s_messagePrefix + "The 'defaultSeverity' should be either DiagnosticSeverity.Error or DiagnosticSeverity.Warning";
 
         [Fact]
         public void DefaultSeverity1() // defaultSeverity set to undeclared variable.
@@ -9776,7 +9776,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.DefaultSeverityError,
-                Message = DefaultSeverityErrorMessage,
+                Message = s_defaultSeverityErrorMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 25, 30) }
             };
@@ -9935,7 +9935,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.DefaultSeverityError,
-                Message = DefaultSeverityErrorMessage,
+                Message = s_defaultSeverityErrorMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 24, 30) }
             };
@@ -10088,7 +10088,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.DefaultSeverityError,
-                Message = DefaultSeverityErrorMessage,
+                Message = s_defaultSeverityErrorMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 22, 13) }
             };
@@ -10188,8 +10188,8 @@ namespace SyntaxNodeAnalyzer
 
         #region IdDeclTypeError
 
-        public const string IdDeclTypeErrorMessage = MessagePrefix + "The diagnostic id should be the constant string declared above";
-        public const string IdStringLiteralMessage = MessagePrefix + "The ID should not be a string literal, because the ID must be accessible from the code fix provider";
+        private const string s_idDeclTypeErrorMessage = s_messagePrefix + "The diagnostic id should be the constant string declared above";
+        private const string s_idStringLiteralMessage = s_messagePrefix + "The ID should not be a string literal, because the ID must be accessible from the code fix provider";
 
         [Fact]
         public void IdDeclType1() // id set to a literal string
@@ -10244,7 +10244,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IdStringLiteral,
-                Message = IdStringLiteralMessage,
+                Message = s_idStringLiteralMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 21, 17) }
             };
@@ -10350,7 +10350,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IdDeclTypeError,
-                Message = IdDeclTypeErrorMessage,
+                Message = s_idDeclTypeErrorMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 18, 17) }
             };
@@ -10451,7 +10451,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IdDeclTypeError,
-                Message = IdDeclTypeErrorMessage,
+                Message = s_idDeclTypeErrorMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 18, 17) }
             };
@@ -10552,7 +10552,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IdDeclTypeError,
-                Message = IdDeclTypeErrorMessage,
+                Message = s_idDeclTypeErrorMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 18, 13) }
             };
@@ -10608,7 +10608,7 @@ namespace SyntaxNodeAnalyzer
 
         #region MissingIdDeclaration
 
-        public const string MissingIdDeclarationMessage = MessagePrefix + "This diagnostic id should be the constant string declared above";
+        private const string s_missingIdDeclarationMessage = s_messagePrefix + "This diagnostic id should be the constant string declared above";
 
         [Fact]
         public void MissingIdDeclaration1() // id set to undeclared variable
@@ -10662,7 +10662,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingIdDeclaration,
-                Message = MissingIdDeclarationMessage,
+                Message = s_missingIdDeclarationMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 20, 17) }
             };
@@ -10723,8 +10723,8 @@ namespace SyntaxNodeAnalyzer
 
         #region OpenParenTests
 
-        public const string MissingOpenParenMessage = MessagePrefix + "Moving on to the creation and reporting of the diagnostic, extract the open parenthesis of 'ifState' into a variable to use as the end of the diagnostic span";
-        public const string IncorrectOpenParenMessage = MessagePrefix + "This statement should extract the open parenthesis of 'ifState' to use as the end of the diagnostic span";
+        private const string s_missingOpenParenMessage = s_messagePrefix + "Moving on to the creation and reporting of the diagnostic, extract the open parenthesis of 'ifState' into a variable to use as the end of the diagnostic span";
+        private const string s_incorrectOpenParenMessage = s_messagePrefix + "This statement should extract the open parenthesis of 'ifState' to use as the end of the diagnostic span";
 
         [Fact]
         public void MissingOpenParen() // no DiagnosticDescriptor field
@@ -10794,7 +10794,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.OpenParenMissing,
-                Message = MissingOpenParenMessage,
+                Message = s_missingOpenParenMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 45, 13) }
             };
@@ -10938,7 +10938,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.OpenParenIncorrect,
-                Message = IncorrectOpenParenMessage,
+                Message = s_incorrectOpenParenMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 60, 17) }
             };
@@ -11015,7 +11015,7 @@ namespace SyntaxNodeAnalyzer
 
         #region MissingSuppDiag
 
-        public const string MissingSuppDiagMessage = MessagePrefix + "You are missing the required inherited SupportedDiagnostics property";
+        private const string s_missingSuppDiagMessage = s_messagePrefix + "You are missing the required inherited SupportedDiagnostics property";
 
         [Fact]
         public void MissingSuppDiag1() // no SupportedDiagnostics property
@@ -11060,7 +11060,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingSuppDiag,
-                Message = MissingSuppDiagMessage,
+                Message = s_missingSuppDiagMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 18) }
             };
@@ -11118,7 +11118,7 @@ namespace SyntaxNodeAnalyzer
 
         #region IncorrectSigSuppDiag
 
-        public const string IncorrectSigSuppDiagMessage = MessagePrefix + "The overriden SupportedDiagnostics property should return an Immutable Array of Diagnostic Descriptors";
+        private const string s_incorrectSigSuppDiagMessage = s_messagePrefix + "The overriden SupportedDiagnostics property should return an Immutable Array of Diagnostic Descriptors";
 
         [Fact]
         public void IncorrectSigSuppDiag1() // no public modifier
@@ -11171,7 +11171,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectSigSuppDiag,
-                Message = IncorrectSigSuppDiagMessage,
+                Message = s_incorrectSigSuppDiagMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 55) }
             };
@@ -11277,7 +11277,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectSigSuppDiag,
-                Message = IncorrectSigSuppDiagMessage,
+                Message = s_incorrectSigSuppDiagMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 53) }
             };
@@ -11383,7 +11383,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectSigSuppDiag,
-                Message = IncorrectSigSuppDiagMessage,
+                Message = s_incorrectSigSuppDiagMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 46) }
             };
@@ -11441,7 +11441,7 @@ namespace SyntaxNodeAnalyzer
 
         #region MissingAccessor
 
-        public const string MissingAccessorMessage = MessagePrefix + "The 'SupportedDiagnostics' property is missing a get-accessor to return a list of supported diagnostics";
+        private const string s_missingAccessorMessage = s_messagePrefix + "The 'SupportedDiagnostics' property is missing a get-accessor to return a list of supported diagnostics";
 
         [Fact]
         public void MissingAccessor1() // empty SupportedDiagnostics property
@@ -11491,7 +11491,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingAccessor,
-                Message = MissingAccessorMessage,
+                Message = s_missingAccessorMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 62) }
             };
@@ -11597,7 +11597,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingAccessor,
-                Message = MissingAccessorMessage,
+                Message = s_missingAccessorMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 62) }
             };
@@ -11655,7 +11655,7 @@ namespace SyntaxNodeAnalyzer
 
         #region TooManyAccessors
 
-        public const string TooManyAccessorsMessage = MessagePrefix + "The 'SupportedDiagnostics' property needs only a single get-accessor";
+        private const string s_tooManyAccessorsMessage = s_messagePrefix + "The 'SupportedDiagnostics' property needs only a single get-accessor";
 
         [Fact]
         public void TooManyAccessors1() // SupportedDiagnostics property with get and then set accessors
@@ -11712,7 +11712,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyAccessors,
-                Message = TooManyAccessorsMessage,
+                Message = s_tooManyAccessorsMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 32, 13) }
             };
@@ -11822,7 +11822,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyAccessors,
-                Message = TooManyAccessorsMessage,
+                Message = s_tooManyAccessorsMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 32, 13) }
             };
@@ -11932,7 +11932,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyAccessors,
-                Message = TooManyAccessorsMessage,
+                Message = s_tooManyAccessorsMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 32, 13) }
             };
@@ -11990,8 +11990,8 @@ namespace SyntaxNodeAnalyzer
 
         #region AccessorReturnValue (fix for IncorrectAccessorReturn & SuppDiagReturn)
         
-        public const string IncorrectAccessorReturnMessage = MessagePrefix + "The get-accessor should return an ImmutableArray containing all of the DiagnosticDescriptor rules";
-        public const string SuppDiagReturnValueMessage = MessagePrefix + "The 'SupportedDiagnostics' property's get-accessor should return an ImmutableArray containing all DiagnosticDescriptor rules";
+        private const string s_incorrectAccessorReturnMessage = s_messagePrefix + "The get-accessor should return an ImmutableArray containing all of the DiagnosticDescriptor rules";
+        private const string s_suppDiagReturnValueMessage = s_messagePrefix + "The 'SupportedDiagnostics' property's get-accessor should return an ImmutableArray containing all DiagnosticDescriptor rules";
 
         [Fact]
         public void IncorrectAccessorReturn1() // empty get accessor
@@ -12044,7 +12044,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectAccessorReturn,
-                Message = IncorrectAccessorReturnMessage,
+                Message = s_incorrectAccessorReturnMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 26, 62) }
             };
@@ -12151,7 +12151,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectAccessorReturn,
-                Message = IncorrectAccessorReturnMessage,
+                Message = s_incorrectAccessorReturnMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 28, 13) }
             };
@@ -12258,7 +12258,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectAccessorReturn,
-                Message = IncorrectAccessorReturnMessage,
+                Message = s_incorrectAccessorReturnMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 17) }
             };
@@ -12365,7 +12365,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectAccessorReturn,
-                Message = IncorrectAccessorReturnMessage,
+                Message = s_incorrectAccessorReturnMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 17) }
             };
@@ -12472,7 +12472,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.SuppDiagReturnValue,
-                Message = SuppDiagReturnValueMessage,
+                Message = s_suppDiagReturnValueMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 17) }
             };
@@ -12530,8 +12530,7 @@ namespace SyntaxNodeAnalyzer
         #endregion
 
         #region SupportedRules
-
-        public const string SupportedRulesMessage = MessagePrefix + "The ImmutableArray should contain every DiagnosticDescriptor rule that was created";
+        private const string s_supportedRulesMessage = s_messagePrefix + "The ImmutableArray should contain every DiagnosticDescriptor rule that was created";
 
         [Fact]
         public void SupportedRules1() // invocation expression form with no arguments
@@ -12584,7 +12583,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.SupportedRules,
-                Message = SupportedRulesMessage,
+                Message = s_supportedRulesMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 24) }
             };
@@ -12692,7 +12691,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.SupportedRules,
-                Message = SupportedRulesMessage,
+                Message = s_supportedRulesMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 29) }
             };
@@ -12808,7 +12807,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.SupportedRules,
-                Message = SupportedRulesMessage,
+                Message = s_supportedRulesMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 38, 24) }
             };
@@ -12932,7 +12931,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.SupportedRules,
-                Message = SupportedRulesMessage,
+                Message = s_supportedRulesMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 38, 29) }
             };
@@ -13049,7 +13048,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.SupportedRules,
-                Message = SupportedRulesMessage,
+                Message = s_supportedRulesMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 29) }
             };
@@ -13060,8 +13059,8 @@ namespace SyntaxNodeAnalyzer
 
         #region StartSpanTests
 
-        public const string StartSpanMissingMessage = MessagePrefix + "Next, extract the start of the span of 'ifKeyword' into a variable, to be used as the start of the diagnostic span";
-        public const string StartSpanIncorrectMessage = MessagePrefix + "This statement should extract the start of the span of 'ifKeyword' into a variable, to be used as the start of the diagnostic span";
+        private const string s_startSpanMissingMessage = s_messagePrefix + "Next, extract the start of the span of 'ifKeyword' into a variable, to be used as the start of the diagnostic span";
+        private const string s_startSpanIncorrectMessage = s_messagePrefix + "This statement should extract the start of the span of 'ifKeyword' into a variable, to be used as the start of the diagnostic span";
 
         [Fact]
         public void MissingStartSpan()
@@ -13133,7 +13132,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.StartSpanMissing,
-                Message = StartSpanMissingMessage,
+                Message = s_startSpanMissingMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 60, 13) }
             };
@@ -13280,7 +13279,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.StartSpanIncorrect,
-                Message = StartSpanIncorrectMessage,
+                Message = s_startSpanIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 61, 13) }
             };
@@ -13434,7 +13433,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.GoToCodeFix,
-                Message = MessagePrefix + "Congratulations! You have written an analyzer! If you would like to explore a code fix for your diagnostic, open up CodeFixProvider.cs and take a look!",
+                Message = s_messagePrefix + "Congratulations! You have written an analyzer! If you would like to explore a code fix for your diagnostic, open up CodeFixProvider.cs and take a look!",
                 Severity = DiagnosticSeverity.Info,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 18) }
             };
@@ -13445,8 +13444,8 @@ namespace SyntaxNodeAnalyzer
 
         #region EndSpanTests
 
-        public const string EndSpanMissingMessage = MessagePrefix + "Next, determine the end of the span of the diagnostic that is going to be reported";
-        public const string EndSpanIncorrectMessage = MessagePrefix + "This statement should extract the start of the span of 'open' into a variable, to be used as the end of the diagnostic span";
+        private const string s_endSpanMissingMessage = s_messagePrefix + "Next, determine the end of the span of the diagnostic that is going to be reported";
+        private const string s_endSpanIncorrectMessage = s_messagePrefix + "This statement should extract the start of the span of 'open' into a variable, to be used as the end of the diagnostic span";
 
         [Fact]
         public void MissingEndSpan()
@@ -13519,7 +13518,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.EndSpanMissing,
-                Message = EndSpanMissingMessage,
+                Message = s_endSpanMissingMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 61, 13) }
             };
@@ -13668,7 +13667,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.EndSpanIncorrect,
-                Message = EndSpanIncorrectMessage,
+                Message = s_endSpanIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 62, 13) }
             };
@@ -13823,7 +13822,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.GoToCodeFix,
-                Message = MessagePrefix + "Congratulations! You have written an analyzer! If you would like to explore a code fix for your diagnostic, open up CodeFixProvider.cs and take a look!",
+                Message = s_messagePrefix + "Congratulations! You have written an analyzer! If you would like to explore a code fix for your diagnostic, open up CodeFixProvider.cs and take a look!",
                 Severity = DiagnosticSeverity.Info,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 15, 18) }
             };
@@ -13834,8 +13833,8 @@ namespace SyntaxNodeAnalyzer
 
         #region SpanTests
 
-        public const string SpanMissingMessage = MessagePrefix + "Next, using TextSpan.FromBounds, create a variable that is the span of the diagnostic that will be reported";
-        public const string SpanIncorrectMessage = MessagePrefix + "This statement should use TextSpan.FromBounds, 'start', and 'end' to create the span of the diagnostic that will be reported";
+        private const string s_spanMissingMessage = s_messagePrefix + "Next, using TextSpan.FromBounds, create a variable that is the span of the diagnostic that will be reported";
+        private const string s_spanIncorrectMessage = s_messagePrefix + "This statement should use TextSpan.FromBounds, 'start', and 'end' to create the span of the diagnostic that will be reported";
 
         [Fact]
         public void MissingSpan()
@@ -13909,7 +13908,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.SpanMissing,
-                Message = SpanMissingMessage,
+                Message = s_spanMissingMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 62, 13) }
             };
@@ -14060,7 +14059,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.SpanIncorrect,
-                Message = SpanIncorrectMessage,
+                Message = s_spanIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 63, 13) }
             };
@@ -14141,8 +14140,8 @@ namespace SyntaxNodeAnalyzer
 
         #region LocationTests
 
-        public const string LocationMissingMessage = MessagePrefix + "Next, using Location.Create, create a location for the diagnostic";
-        public const string LocationIncorrectMessage = MessagePrefix + "This statement should use Location.Create, 'ifState', and 'span' to create the location of the diagnostic";
+        private const string s_locationMissingMessage = s_messagePrefix + "Next, using Location.Create, create a location for the diagnostic";
+        private const string s_locationIncorrectMessage = s_messagePrefix + "This statement should use Location.Create, 'ifState', and 'span' to create the location of the diagnostic";
 
         [Fact]
         public void MissingLocation()
@@ -14217,7 +14216,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.LocationMissing,
-                Message = LocationMissingMessage,
+                Message = s_locationMissingMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 63, 13) }
             };
@@ -14370,7 +14369,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.LocationIncorrect,
-                Message = LocationIncorrectMessage,
+                Message = s_locationIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 64, 13) }
             };
@@ -14452,8 +14451,8 @@ namespace SyntaxNodeAnalyzer
 
         #region DiagnosticTests
 
-        public const string DiagnosticMissingMessage = MessagePrefix + "Next, use Diagnostic.Create to create the diagnostic";
-        public const string DiagnosticIncorrectMessage = MessagePrefix + "This statement should use Diagnostic.Create, 'spacingRule', and 'location' to create the diagnostic that will be reported";
+        private const string s_diagnosticMissingMessage = s_messagePrefix + "Next, use Diagnostic.Create to create the diagnostic";
+        private const string s_diagnosticIncorrectMessage = s_messagePrefix + "This statement should use Diagnostic.Create, 'spacingRule', and 'location' to create the diagnostic that will be reported";
 
         [Fact]
         public void MissingDiagnostic()
@@ -14529,7 +14528,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.DiagnosticMissing,
-                Message = DiagnosticMissingMessage,
+                Message = s_diagnosticMissingMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 64, 13) }
             };
@@ -14684,7 +14683,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.DiagnosticIncorrect,
-                Message = DiagnosticIncorrectMessage,
+                Message = s_diagnosticIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 65, 13) }
             };
@@ -14767,7 +14766,7 @@ namespace SyntaxNodeAnalyzer
 
         #region TrailingTriviaKindCheckMissing
 
-        public const string TrailingTriviaKindCheckMissingMessage = MessagePrefix + "Next, check if the kind of 'trailingTrivia' is whitespace trivia";
+        private const string s_trailingTriviaKindCheckMissingMessage = s_messagePrefix + "Next, check if the kind of 'trailingTrivia' is whitespace trivia";
 
         [Fact]
         public void TrailingKindMissing1() //  no whitespace check
@@ -14824,7 +14823,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckMissing,
-                Message = TrailingTriviaKindCheckMissingMessage,
+                Message = s_trailingTriviaKindCheckMissingMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 43, 25) }
             };
@@ -14889,7 +14888,7 @@ namespace SyntaxNodeAnalyzer
 
         #region TrailingTriviaKindCheckIncorrect
 
-        public const string TrailingTriviaKindCheckIncorrectMessage = MessagePrefix + "This statement should check to see if the kind of 'trailingTrivia' is whitespace trivia";
+        private const string s_trailingTriviaKindCheckIncorrectMessage = s_messagePrefix + "This statement should check to see if the kind of 'trailingTrivia' is whitespace trivia";
 
         // random variable declaration
         [Fact]
@@ -14948,7 +14947,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             { 
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                Message = TrailingTriviaKindCheckIncorrectMessage,
+                Message = s_trailingTriviaKindCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
@@ -15069,7 +15068,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             { 
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                Message = TrailingTriviaKindCheckIncorrectMessage,
+                Message = s_trailingTriviaKindCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
@@ -15190,7 +15189,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                Message = TrailingTriviaKindCheckIncorrectMessage,
+                Message = s_trailingTriviaKindCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
@@ -15311,7 +15310,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                Message = TrailingTriviaKindCheckIncorrectMessage,
+                Message = s_trailingTriviaKindCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
@@ -15432,7 +15431,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             { 
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                Message = TrailingTriviaKindCheckIncorrectMessage,
+                Message = s_trailingTriviaKindCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
@@ -15553,7 +15552,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                Message = TrailingTriviaKindCheckIncorrectMessage,
+                Message = s_trailingTriviaKindCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
@@ -15674,7 +15673,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                Message = TrailingTriviaKindCheckIncorrectMessage,
+                Message = s_trailingTriviaKindCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
@@ -15795,7 +15794,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                Message = TrailingTriviaKindCheckIncorrectMessage,
+                Message = s_trailingTriviaKindCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
@@ -15916,7 +15915,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                Message = TrailingTriviaKindCheckIncorrectMessage,
+                Message = s_trailingTriviaKindCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
@@ -16037,7 +16036,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                Message = TrailingTriviaKindCheckIncorrectMessage,
+                Message = s_trailingTriviaKindCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
@@ -16158,7 +16157,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                Message = TrailingTriviaKindCheckIncorrectMessage,
+                Message = s_trailingTriviaKindCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
@@ -16281,7 +16280,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect,
-                Message = TrailingTriviaKindCheckIncorrectMessage,
+                Message = s_trailingTriviaKindCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
@@ -16347,7 +16346,7 @@ namespace SyntaxNodeAnalyzer
 
         #region WhitespaceCheckMissing
 
-        public const string WhitespaceCheckMissingMessage = MessagePrefix + "Next, check if 'trailingTrivia' is a single whitespace, which is the desired formatting";
+        private const string s_whitespaceCheckMissingMessage = s_messagePrefix + "Next, check if 'trailingTrivia' is a single whitespace, which is the desired formatting";
 
         //  no whitespace check
         [Fact]
@@ -16408,7 +16407,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckMissing,
-                Message = WhitespaceCheckMissingMessage,
+                Message = s_whitespaceCheckMissingMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
@@ -16476,7 +16475,7 @@ namespace SyntaxNodeAnalyzer
 
         #region WhitespaceCheckIncorrect
 
-        public const string WhitespaceCheckIncorrectMessage = MessagePrefix + "This statement should check to see if 'trailingTrivia' is a single whitespace, which is the desired formatting";
+        private const string s_whitespaceCheckIncorrectMessage = s_messagePrefix + "This statement should check to see if 'trailingTrivia' is a single whitespace, which is the desired formatting";
 
         //  random variable declaration
         [Fact]
@@ -16538,7 +16537,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
-                Message = WhitespaceCheckIncorrectMessage,
+                Message = s_whitespaceCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
@@ -16665,7 +16664,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
-                Message = WhitespaceCheckIncorrectMessage,
+                Message = s_whitespaceCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
@@ -16792,7 +16791,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
-                Message = WhitespaceCheckIncorrectMessage,
+                Message = s_whitespaceCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
@@ -16919,7 +16918,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
-                Message = WhitespaceCheckIncorrectMessage,
+                Message = s_whitespaceCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
@@ -17046,7 +17045,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
-                Message = WhitespaceCheckIncorrectMessage,
+                Message = s_whitespaceCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
@@ -17173,7 +17172,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
-                Message = WhitespaceCheckIncorrectMessage,
+                Message = s_whitespaceCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
@@ -17300,7 +17299,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
-                Message = WhitespaceCheckIncorrectMessage,
+                Message = s_whitespaceCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
@@ -17427,7 +17426,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
-                Message = WhitespaceCheckIncorrectMessage,
+                Message = s_whitespaceCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
@@ -17552,7 +17551,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
-                Message = WhitespaceCheckIncorrectMessage,
+                Message = s_whitespaceCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
@@ -17680,7 +17679,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.WhitespaceCheckIncorrect,
-                Message = WhitespaceCheckIncorrectMessage,
+                Message = s_whitespaceCheckIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
@@ -17749,7 +17748,7 @@ namespace SyntaxNodeAnalyzer
 
         #region MissingRule
 
-        public const string MissingRuleMessage = MessagePrefix + "The analyzer should have at least one DiagnosticDescriptor rule";
+        private const string s_missingRuleMessage = s_messagePrefix + "The analyzer should have at least one DiagnosticDescriptor rule";
 
         [Fact]
         public void MissingRule1() // Rule id but no rule
@@ -17795,7 +17794,7 @@ namespace SyntaxNodeAnalyzerAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingRule,
-                Message = MissingRuleMessage,
+                Message = s_missingRuleMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 17, 29) }
             };
@@ -17854,7 +17853,7 @@ namespace SyntaxNodeAnalyzerAnalyzer
 
         #region ReturnStatementMissing
 
-        public const string ReturnStatementMissingMessage = MessagePrefix + "Next, since if the code reaches this point the formatting must be correct, return from 'AnalyzeIfStatement'";
+        private const string s_returnStatementMissingMessage = s_messagePrefix + "Next, since if the code reaches this point the formatting must be correct, return from 'AnalyzeIfStatement'";
 
         // no return statement
         [Fact]
@@ -17918,7 +17917,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.ReturnStatementMissing,
-                Message = ReturnStatementMissingMessage,
+                Message = s_returnStatementMissingMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
@@ -17988,7 +17987,7 @@ namespace SyntaxNodeAnalyzer
 
         #region ReturnStatementIncorrect
 
-        public const string ReturnStatementIncorrectMessage = MessagePrefix + "This statement should return from 'AnalyzeIfStatement', because reaching this point in the code means that the if-statement being analyzed has the correct spacing";
+        private const string s_returnStatementIncorrectMessage = s_messagePrefix + "This statement should return from 'AnalyzeIfStatement', because reaching this point in the code means that the if-statement being analyzed has the correct spacing";
 
         //  throw new NotImplementedException statement
         [Fact]
@@ -18053,7 +18052,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.ReturnStatementIncorrect,
-                Message = ReturnStatementIncorrectMessage,
+                Message = s_returnStatementIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 48, 33) }
             };
@@ -18184,7 +18183,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.ReturnStatementIncorrect,
-                Message = ReturnStatementIncorrectMessage,
+                Message = s_returnStatementIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 48, 33) }
             };
@@ -18315,7 +18314,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.ReturnStatementIncorrect,
-                Message = ReturnStatementIncorrectMessage,
+                Message = s_returnStatementIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 48, 33) }
             };
@@ -18446,7 +18445,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.ReturnStatementIncorrect,
-                Message = ReturnStatementIncorrectMessage,
+                Message = s_returnStatementIncorrectMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 48, 33) }
             };
@@ -18519,7 +18518,7 @@ namespace SyntaxNodeAnalyzer
 
         #region MissingAnalysisMethod
 
-        public const string MissingAnalysisMethodMessage = MessagePrefix + "The method 'AnalyzeIfStatement' that was registered to perform the analysis is missing";
+        private const string s_missingAnalysisMethodMessage = s_messagePrefix + "The method 'AnalyzeIfStatement' that was registered to perform the analysis is missing";
 
         [Fact]
         public void MissingAnalysisMethod1() // missing the analysis method called in Initialize
@@ -18567,7 +18566,7 @@ namespace SyntaxNodeAnalyzerAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.MissingAnalysisMethod,
-                Message = MissingAnalysisMethodMessage,
+                Message = s_missingAnalysisMethodMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 36, 46) }
             };
@@ -18625,7 +18624,7 @@ namespace SyntaxNodeAnalyzerAnalyzer
         #endregion
 
         #region IncorrectAnalysisAccessibility
-        public const string IncorrectAnalysisAccessibilityMessage = MessagePrefix + "The 'AnalyzeIfStatement' method should be private";
+        private const string s_incorrectAnalysisAccessibilityMessage = s_messagePrefix + "The 'AnalyzeIfStatement' method should be private";
 
         [Fact]
         public void IncorrectAnalysisAccessibility1() // analysis method public
@@ -18678,7 +18677,7 @@ namespace SyntaxNodeAnalyzerAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectAnalysisAccessibility,
-                Message = IncorrectAnalysisAccessibilityMessage,
+                Message = s_incorrectAnalysisAccessibilityMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 21) }
             };
@@ -18784,7 +18783,7 @@ namespace SyntaxNodeAnalyzerAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectAnalysisAccessibility,
-                Message = IncorrectAnalysisAccessibilityMessage,
+                Message = s_incorrectAnalysisAccessibilityMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 15) }
             };
@@ -18842,7 +18841,7 @@ namespace SyntaxNodeAnalyzerAnalyzer
         #endregion
 
         #region IncorrectAnalysisReturnType
-        public const string IncorrectAnalysisReturnTypeMessage = MessagePrefix + "The 'AnalyzeIfStatement' method should have a void return type";
+        private const string s_incorrectAnalysisReturnTypeMessage = s_messagePrefix + "The 'AnalyzeIfStatement' method should have a void return type";
 
         [Fact]
         public void IncorrectAnalysisReturnType1() // analysis method returning incorrect type
@@ -18895,7 +18894,7 @@ namespace SyntaxNodeAnalyzerAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectAnalysisReturnType,
-                Message = IncorrectAnalysisReturnTypeMessage,
+                Message = s_incorrectAnalysisReturnTypeMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 22) }
             };
@@ -19001,7 +19000,7 @@ namespace SyntaxNodeAnalyzerAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectAnalysisReturnType,
-                Message = IncorrectAnalysisReturnTypeMessage,
+                Message = s_incorrectAnalysisReturnTypeMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 17) }
             };
@@ -19059,7 +19058,8 @@ namespace SyntaxNodeAnalyzerAnalyzer
         #endregion
 
         #region IncorrectAnalysisParameter
-        public const string IncorrectAnalysisParameterMessage = MessagePrefix + "The 'AnalyzeIfStatement' method should take one parameter of type SyntaxNodeAnalysisContext";
+
+        private const string s_incorrectAnalysisParameterMessage = s_messagePrefix + "The 'AnalyzeIfStatement' method should take one parameter of type SyntaxNodeAnalysisContext";
 
         [Fact]
         public void IncorrectAnalysisParameter1() // analysis method taking incorrect parameter type
@@ -19112,7 +19112,7 @@ namespace SyntaxNodeAnalyzerAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectAnalysisParameter,
-                Message = IncorrectAnalysisParameterMessage,
+                Message = s_incorrectAnalysisParameterMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 40) }
             };
@@ -19218,7 +19218,7 @@ namespace SyntaxNodeAnalyzerAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectAnalysisParameter,
-                Message = IncorrectAnalysisParameterMessage,
+                Message = s_incorrectAnalysisParameterMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 40) }
             };
@@ -19324,7 +19324,7 @@ namespace SyntaxNodeAnalyzerAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectAnalysisParameter,
-                Message = IncorrectAnalysisParameterMessage,
+                Message = s_incorrectAnalysisParameterMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 40) }
             };
