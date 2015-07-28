@@ -615,6 +615,9 @@ namespace MetaCompilation
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
+            string methodName = "AnalyzeIfStatement";
+            bool useExistingAnalysis = false;
+
             var argList = declaration.ArgumentList;
             if (argList != null)
             {
@@ -627,16 +630,29 @@ namespace MetaCompilation
                         var name = nameArg.Expression as IdentifierNameSyntax;
                         if (name != null)
                         {
-                            SyntaxNode statementKeepArg = CodeFixNodeCreator.CreateRegister(generator, declaration.Parent.Parent.Parent as MethodDeclarationSyntax, name.Identifier.Text);
-                            SyntaxNode expressionKeepArg = generator.ExpressionStatement(statementKeepArg);
-
-                            return await ReplaceNode(declaration.Parent, expressionKeepArg.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
+                            methodName = name.Identifier.Text;
                         }
+                        else
+                        {
+                            useExistingAnalysis = true;
+                        }
+                    }
+                    else if (args.Count == 0)
+                    {
+                        useExistingAnalysis = true;
                     }
                 }
             }
+            if (useExistingAnalysis)
+            {
+                ClassDeclarationSyntax classDeclaration = declaration.AncestorsAndSelf().OfType<ClassDeclarationSyntax>().First();
+                methodName = CodeFixNodeCreator.ExistingAnalysisMethod(classDeclaration);
+            }
+            if (methodName == null)
+            {
+                methodName = "AnalyzeIfStatement";
+            }
 
-            string methodName = "AnalyzeIfStatement";
             SyntaxNode statement = CodeFixNodeCreator.CreateRegister(generator, declaration.Parent.Parent.Parent as MethodDeclarationSyntax, methodName);
             SyntaxNode expression = generator.ExpressionStatement(statement);
 
@@ -1008,21 +1024,35 @@ namespace MetaCompilation
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            string methodName = "AnalyzeIfStatement";
+            ClassDeclarationSyntax classDeclaration = declaration.Parent as ClassDeclarationSyntax;
+            SemanticModel semanticModel = await document.GetSemanticModelAsync();
+            bool newAnalysisRequired = true;
+
+            string methodName = CodeFixNodeCreator.ExistingAnalysisMethod(classDeclaration);
+
+            if (methodName == null)
+            { 
+                methodName = "AnalyzeIfStatement";
+            }
+            else
+            {
+                newAnalysisRequired = false;
+            }
+
             SyntaxNode invocationExpression = CodeFixNodeCreator.CreateRegister(generator, declaration, methodName);
             SyntaxList<SyntaxNode> statements = new SyntaxList<SyntaxNode>().Add(invocationExpression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
-            
             SyntaxNode newInitializeMethod = generator.MethodDeclaration("Initialize", declaration.ParameterList.Parameters, accessibility: Accessibility.Public, modifiers: DeclarationModifiers.Override, statements: statements);
-
-            ClassDeclarationSyntax classDeclaration = declaration.Parent as ClassDeclarationSyntax;
             ClassDeclarationSyntax newClassDecl = classDeclaration.ReplaceNode(declaration, newInitializeMethod);
 
-            SemanticModel semanticModel = await document.GetSemanticModelAsync();
+            if (newAnalysisRequired)
+            {
             SyntaxNode newAnalysisMethod = CodeFixNodeCreator.CreateAnalysisMethod(generator, methodName, semanticModel);
             newClassDecl = generator.AddMembers(newClassDecl, newAnalysisMethod) as ClassDeclarationSyntax;
+            }
 
             return await ReplaceNode(classDeclaration, newClassDecl, document);
         }
+
 
         private async Task<Document> MultipleStatementsAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
@@ -2131,6 +2161,34 @@ namespace MetaCompilation
 
                 SyntaxNode newMethodDeclaration = generator.MethodDeclaration(methodName, parameters: parameters, accessibility: Accessibility.Private, statements: statements);
                 return newMethodDeclaration.WithLeadingTrivia(SyntaxFactory.ParseLeadingTrivia("// This method, which is the method that is registered within Initialize, performs the analysis of the Syntax Tree when an IfStatementSyntax Node is found. If the analysis finds an error, a diagnostic is reported").ElementAt(0), SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// In this tutorial, this method will walk through the Syntax Tree seen in IfSyntaxTree.jpg and determine if the if-statement being analyzed has the correct spacing").ElementAt(0), SyntaxFactory.CarriageReturnLineFeed);
+            }
+
+            internal static string ExistingAnalysisMethod(ClassDeclarationSyntax classDeclaration)
+            {
+                IEnumerable<MethodDeclarationSyntax> methods = classDeclaration.Members.OfType<MethodDeclarationSyntax>();
+                string methodName = null;
+
+                foreach (MethodDeclarationSyntax method in methods)
+                {
+                    var parameterList = method.ParameterList;
+                    if (parameterList != null)
+                    {
+                        var parameters = parameterList.Parameters;
+                        if (parameters != null)
+                        {
+                            if (parameters.Count > 0)
+                            {
+                                var parameterType = parameters.First().Type;
+                                if (parameterType != null && parameterType.ToString() == "SyntaxNodeAnalysisContext")
+                                {
+                                    return methodName = method.Identifier.Text;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return methodName;
             }
         }
     }
