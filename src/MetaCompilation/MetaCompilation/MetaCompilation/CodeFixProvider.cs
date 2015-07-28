@@ -566,11 +566,12 @@ namespace MetaCompilation
             return await ReplaceNode(declaration, newDeclaration, document);
         }
 
+        // sets the method accessibility to private
         private async Task<Document> IncorrectAnalysisAccessibilityAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            MethodDeclarationSyntax newDeclaration = generator.WithAccessibility(declaration, Accessibility.Private) as MethodDeclarationSyntax;
+            SyntaxNode newDeclaration = CodeFixHelper.MethodAccessibility(generator, declaration, Accessibility.Private);
 
             return await ReplaceNode(declaration, newDeclaration, document);
         }
@@ -1775,7 +1776,14 @@ namespace MetaCompilation
 
         class CodeFixHelper
         {
-            // set method return type to void
+            // set method accessibility to accessibility
+            internal static SyntaxNode MethodAccessibility(SyntaxGenerator generator, MethodDeclarationSyntax methodDeclaration, Accessibility accessibility)
+            {
+                SyntaxNode newMethod = generator.WithAccessibility(methodDeclaration, accessibility);
+                return newMethod;
+            }
+            
+            // set method return type to returnType
             internal static SyntaxNode MethodReturnType(MethodDeclarationSyntax methodDeclaration, string returnType)
             {
                 TypeSyntax voidType = SyntaxFactory.ParseTypeName(returnType).WithTrailingTrivia(SyntaxFactory.Whitespace(" "));
