@@ -2017,6 +2017,7 @@ namespace MetaCompilation
                 return localDeclaration;
             }
 
+            // gets the name of the first rule, or null if none is found
             internal static string GetFirstRuleName(ClassDeclarationSyntax declaration)
             {
                 SyntaxList<MemberDeclarationSyntax> members = declaration.Members;
@@ -2029,6 +2030,13 @@ namespace MetaCompilation
                     {
                         break;
                     }
+
+                    rule = null;
+                }
+
+                if (rule == null)
+                {
+                    return null;
                 }
 
                 return rule.Declaration.Variables[0].Identifier.Text;
