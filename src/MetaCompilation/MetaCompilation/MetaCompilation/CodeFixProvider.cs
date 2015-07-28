@@ -548,7 +548,7 @@ namespace MetaCompilation
             }
         }
 
-        //sets the analysis method to take a parameter of type SyntaxNodeAnalysisContext
+        // sets the analysis method to take a parameter of type SyntaxNodeAnalysisContext
         private async Task<Document> IncorrectAnalysisParameterAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -558,16 +558,10 @@ namespace MetaCompilation
             return await ReplaceNode(declaration, newDeclaration, document);
         }
 
+        // sets the return type of the method to void
         private async Task<Document> IncorrectAnalysisReturnTypeAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-
-            string methodName = declaration.Identifier.Text;
-            SeparatedSyntaxList<ParameterSyntax> parameters = declaration.ParameterList.Parameters;
-            TypeSyntax returnType = SyntaxFactory.ParseTypeName("void");
-            SyntaxList<StatementSyntax> statements = declaration.Body.Statements;
-
-            SyntaxNode newDeclaration = generator.MethodDeclaration(methodName, parameters, returnType: returnType, accessibility: Accessibility.Private, statements: statements);
+            SyntaxNode newDeclaration = CodeFixHelper.MethodReturnTypeVoid(declaration);
 
             return await ReplaceNode(declaration, newDeclaration, document);
         }
@@ -639,7 +633,7 @@ namespace MetaCompilation
             if (useExistingAnalysis)
             {
                 ClassDeclarationSyntax classDeclaration = declaration.AncestorsAndSelf().OfType<ClassDeclarationSyntax>().First();
-                methodName = CodeFixHelper.ExistingAnalysisMethod(classDeclaration);
+                methodName = CodeFixHelper.GetExistingAnalysisMethodName(classDeclaration);
             }
 
             if (methodName == null)
@@ -1027,7 +1021,7 @@ namespace MetaCompilation
             SemanticModel semanticModel = await document.GetSemanticModelAsync();
             bool newAnalysisRequired = true;
 
-            string methodName = CodeFixHelper.ExistingAnalysisMethod(classDeclaration);
+            string methodName = CodeFixHelper.GetExistingAnalysisMethodName(classDeclaration);
 
             if (methodName == null)
             { 
@@ -1781,6 +1775,14 @@ namespace MetaCompilation
 
         class CodeFixHelper
         {
+            // set method return type to void
+            internal static SyntaxNode MethodReturnTypeVoid(MethodDeclarationSyntax methodDeclaration)
+            {
+                TypeSyntax voidType = SyntaxFactory.ParseTypeName("void").WithTrailingTrivia(SyntaxFactory.Whitespace(" "));
+                methodDeclaration = methodDeclaration.WithReturnType(voidType);
+                return methodDeclaration;
+            }
+
             // gets the name of the if-statement variable
             internal static string GetIfStatementName(BlockSyntax methodBlock)
             {
@@ -2235,6 +2237,7 @@ namespace MetaCompilation
                 return invocationExpression;
             }
 
+            // creates the SyntaxNode analysis method
             internal static SyntaxNode CreateAnalysisMethod(SyntaxGenerator generator, string methodName, SemanticModel semanticModel)
             {
                 TypeSyntax type = SyntaxFactory.ParseTypeName("SyntaxNodeAnalysisContext");
@@ -2247,7 +2250,8 @@ namespace MetaCompilation
                 return newMethodDeclaration.WithLeadingTrivia(SyntaxFactory.ParseLeadingTrivia("// This method, which is the method that is registered within Initialize, performs the analysis of the Syntax Tree when an IfStatementSyntax Node is found. If the analysis finds an error, a diagnostic is reported").ElementAt(0), SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// In this tutorial, this method will walk through the Syntax Tree seen in IfSyntaxTree.jpg and determine if the if-statement being analyzed has the correct spacing").ElementAt(0), SyntaxFactory.CarriageReturnLineFeed);
             }
 
-            internal static string ExistingAnalysisMethod(ClassDeclarationSyntax classDeclaration)
+            // gets the name of an existing analysis method, or null if none is found
+            internal static string GetExistingAnalysisMethodName(ClassDeclarationSyntax classDeclaration)
             {
                 IEnumerable<MethodDeclarationSyntax> methods = classDeclaration.Members.OfType<MethodDeclarationSyntax>();
                 string methodName = null;
