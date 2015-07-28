@@ -1768,6 +1768,38 @@ namespace MetaCompilation
 
         class CodeFixHelper
         {
+            // gets the name of the if-statement variable
+            internal static string GetIfStatementName(BlockSyntax methodBlock)
+            {
+                var firstStatement = methodBlock.Statements[0] as LocalDeclarationStatementSyntax;
+                var variableName = firstStatement.Declaration.Variables[0].Identifier.ValueText;
+                return variableName;
+            }
+
+            // gets the name of the if-keyword variable
+            internal static string GetIfKeywordName(BlockSyntax methodBlock)
+            {
+                var secondStatement = methodBlock.Statements[1] as LocalDeclarationStatementSyntax;
+                var variableName = secondStatement.Declaration.Variables[0].Identifier.ValueText;
+                return variableName;
+            }
+
+            // gets the name of the trailing trivia variable
+            internal static string GetTrailingTriviaName(BlockSyntax ifBlock)
+            {
+                var trailingTriviaDeclaration = ifBlock.Statements[0] as LocalDeclarationStatementSyntax;
+                var variableName = trailingTriviaDeclaration.Declaration.Variables[0].Identifier.ValueText;
+                return variableName;
+            }
+
+            // gets the name of the first parameter of the method
+            internal static string GetFirstParameterName(MethodDeclarationSyntax methodDeclaration)
+            {
+                var firstParameter = methodDeclaration.ParameterList.Parameters[0];
+                var name = firstParameter.Identifier.Text;
+                return name;
+            }
+            
             // creates an if-statement checking the count of trailing trivia
             internal static SyntaxNode TriviaCountHelper(SyntaxGenerator generator, string name, SyntaxList<StatementSyntax> ifBlockStatements)
             {
@@ -1793,35 +1825,38 @@ namespace MetaCompilation
                 return ifStatement;
             }
 
+            // creates the if-keyword statement
             internal static SyntaxNode KeywordHelper(SyntaxGenerator generator, BlockSyntax methodBlock)
             {
-                var firstStatement = methodBlock.Statements[0] as LocalDeclarationStatementSyntax;
-                var variableName = generator.IdentifierName(firstStatement.Declaration.Variables[0].Identifier.ValueText);
-                var initializer = generator.MemberAccessExpression(variableName, "IfKeyword");
+                var variableName = GetIfStatementName(methodBlock);
+                var identifierName = generator.IdentifierName(variableName);
+                var initializer = generator.MemberAccessExpression(identifierName, "IfKeyword");
                 var ifKeyword = generator.LocalDeclarationStatement("ifKeyword", initializer);
 
                 return ifKeyword;
             }
             
+            // creates the HasTrailingTrivia check
             internal static SyntaxNode TriviaCheckHelper(SyntaxGenerator generator, BlockSyntax methodBlock, SyntaxList<StatementSyntax> ifBlockStatements)
             {
-                var secondStatement = methodBlock.Statements[1] as LocalDeclarationStatementSyntax;
-
-                var variableName = generator.IdentifierName(secondStatement.Declaration.Variables[0].Identifier.ValueText);
-                var conditional = generator.MemberAccessExpression(variableName, "HasTrailingTrivia");
+                var variableName = GetIfKeywordName(methodBlock);
+                var identifierName = generator.IdentifierName(variableName);
+                var conditional = generator.MemberAccessExpression(identifierName, "HasTrailingTrivia");
                 var ifStatement = generator.IfStatement(conditional, ifBlockStatements);
 
                 return ifStatement;
             }
 
+            // creates the first trailing trivia variable
             internal static SyntaxNode TriviaVarMissingHelper(SyntaxGenerator generator, IfStatementSyntax declaration)
             {
                 var methodDecl = declaration.Parent.AncestorsAndSelf().OfType<MethodDeclarationSyntax>().First();
                 var methodBlock = methodDecl.Body as BlockSyntax;
-                var secondStatement = methodBlock.Statements[1] as LocalDeclarationStatementSyntax;
-                var variableName = generator.IdentifierName(secondStatement.Declaration.Variables[0].Identifier.ValueText);
 
-                var ifTrailing = generator.MemberAccessExpression(variableName, "TrailingTrivia");
+                var variableName = GetIfKeywordName(methodBlock);
+                var identifierName = generator.IdentifierName(variableName);
+
+                var ifTrailing = generator.MemberAccessExpression(identifierName, "TrailingTrivia");
                 var fullVariable = generator.MemberAccessExpression(ifTrailing, "First");
                 var parameters = new SyntaxList<SyntaxNode>();
                 var variableExpression = generator.InvocationExpression(fullVariable, parameters);
@@ -1830,14 +1865,15 @@ namespace MetaCompilation
                 return localDeclaration;
             }
 
+            // creates the trivia kind check
             internal static SyntaxNode TriviaKindCheckHelper(SyntaxGenerator generator, IfStatementSyntax ifStatement, SyntaxList<SyntaxNode> ifBlockStatements)
             {
-                var ifOneBlock = ifStatement.Statement as BlockSyntax;
-                var trailingTriviaDeclaration = ifOneBlock.Statements[0] as LocalDeclarationStatementSyntax;
-                var trailingTrivia = generator.IdentifierName(trailingTriviaDeclaration.Declaration.Variables[0].Identifier.ValueText);
+                var ifBlock = ifStatement.Statement as BlockSyntax;
+                var variableName = GetTrailingTriviaName(ifBlock);
+                var identifierName = generator.IdentifierName(variableName);
 
                 var arguments = new SyntaxList<SyntaxNode>();
-                var trailingTriviaKind = generator.InvocationExpression(generator.MemberAccessExpression(trailingTrivia, "Kind"), arguments);
+                var trailingTriviaKind = generator.InvocationExpression(generator.MemberAccessExpression(identifierName, "Kind"), arguments);
                 var whitespaceTrivia = generator.MemberAccessExpression(generator.IdentifierName("SyntaxKind"), "WhitespaceTrivia");
                 var equalsExpression = generator.ValueEqualsExpression(trailingTriviaKind, whitespaceTrivia);
 
@@ -1846,15 +1882,15 @@ namespace MetaCompilation
                 return newIfStatement;
             }
 
+            // creates the whitespace check
             internal static SyntaxNode WhitespaceCheckHelper(SyntaxGenerator generator, IfStatementSyntax ifStatement, SyntaxList<SyntaxNode> ifBlockStatements)
             {
-                var ifOneBlock = ifStatement.Parent as BlockSyntax;
-
-                var trailingTriviaDeclaration = ifOneBlock.Statements[0] as LocalDeclarationStatementSyntax;
-                var trailingTrivia = generator.IdentifierName(trailingTriviaDeclaration.Declaration.Variables[0].Identifier.ValueText);
+                var ifBlock = ifStatement.Parent as BlockSyntax;
+                var variableName = GetTrailingTriviaName(ifBlock);
+                var identifierName = generator.IdentifierName(variableName);
 
                 var arguments = new SyntaxList<SyntaxNode>();
-                var trailingTriviaToString = generator.InvocationExpression(generator.MemberAccessExpression(trailingTrivia, "ToString"), arguments);
+                var trailingTriviaToString = generator.InvocationExpression(generator.MemberAccessExpression(identifierName, "ToString"), arguments);
                 var rightSide = generator.LiteralExpression(" ");
                 var equalsExpression = generator.ValueEqualsExpression(trailingTriviaToString, rightSide);
 
@@ -2122,14 +2158,18 @@ namespace MetaCompilation
                 return argument;
             }
 
+            // creates a correct register statement
             internal static SyntaxNode CreateRegister(SyntaxGenerator generator, MethodDeclarationSyntax declaration, string methodName)
             {
                 SyntaxNode argument1 = generator.IdentifierName(methodName);
                 SyntaxNode argument2 = generator.MemberAccessExpression(generator.IdentifierName("SyntaxKind"), "IfStatement");
-                SyntaxList<SyntaxNode> arguments = new SyntaxList<SyntaxNode>().Add(argument1).Add(argument2);
+                SyntaxList<SyntaxNode> arguments = new SyntaxList<SyntaxNode>();
+                arguments = arguments.Add(argument1);
+                arguments = arguments.Add(argument2);
 
-                SyntaxNode expression = generator.IdentifierName(declaration.ParameterList.Parameters[0].Identifier.ValueText);
-                SyntaxNode memberAccessExpression = generator.MemberAccessExpression(expression, "RegisterSyntaxNodeAction");
+                var parameterName = GetFirstParameterName(declaration);
+                var identifierName = generator.IdentifierName(parameterName);
+                SyntaxNode memberAccessExpression = generator.MemberAccessExpression(identifierName, "RegisterSyntaxNodeAction");
                 SyntaxNode invocationExpression = generator.InvocationExpression(memberAccessExpression, arguments);
 
                 return invocationExpression;
