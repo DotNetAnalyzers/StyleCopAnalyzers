@@ -374,13 +374,13 @@ namespace MetaCompilation
                                 return;
                             }
 
-                            var registerSymbol = (IMethodSymbol)registerInfo.RegisterMethod;
+                            var registerSymbol = registerInfo.RegisterMethod;
                             if (registerSymbol == null)
                             {
                                 return;
                             }
 
-                            var registerArgs = (List<ISymbol>)registerInfo.RegisterArgs;
+                            var registerArgs = registerInfo.RegisterArgs;
                             if (registerArgs == null)
                             {
                                 return;
@@ -407,7 +407,7 @@ namespace MetaCompilation
                                 return;
                             }
 
-                            var invocationExpression = (InvocationExpressionSyntax)registerInfo.InvocationExpr;
+                            var invocationExpression = registerInfo.InvocationExpr;
                             if (invocationExpression == null)
                             {
                                 return;
@@ -1297,7 +1297,7 @@ namespace MetaCompilation
                 }
                 else
                 {
-                    ReportDiagnostic(context, StartSpanMissingRule, statements[3].GetLocation(), keywordIdentifierToken);
+                    ReportDiagnostic(context, StartSpanMissingRule, statements[3].GetLocation(), keywordIdentifierToken.Text);
                     return false;
                 }
 
@@ -2621,28 +2621,28 @@ namespace MetaCompilation
                 var statement = statements[0] as ExpressionStatementSyntax;
                 if (statement == null)
                 {
-                    ReportDiagnostic(context, InvalidStatementRule, statements[0].GetLocation(), statements[0]);
+                    ReportDiagnostic(context, InvalidStatementRule, statements[0].GetLocation());
                     return null;
                 }
 
                 var invocationExpr = statement.Expression as InvocationExpressionSyntax;
                 if (invocationExpr == null)
                 {
-                    ReportDiagnostic(context, InvalidStatementRule, statements[0].GetLocation(), statements[0]);
+                    ReportDiagnostic(context, InvalidStatementRule, statements[0].GetLocation());
                     return null;
                 }
 
                 var memberExpr = invocationExpr.Expression as MemberAccessExpressionSyntax;
                 if (memberExpr == null)
                 {
-                    ReportDiagnostic(context, InvalidStatementRule, statements[0].GetLocation(), statements[0]);
+                    ReportDiagnostic(context, InvalidStatementRule, statements[0].GetLocation());
                     return null;
                 }
 
                 var memberExprContext = memberExpr.Expression as IdentifierNameSyntax;
                 if (memberExprContext == null)
                 {
-                    ReportDiagnostic(context, InvalidStatementRule, statements[0].GetLocation(), statements[0]);
+                    ReportDiagnostic(context, InvalidStatementRule, statements[0].GetLocation());
                     return null;
                 }
 
@@ -2650,14 +2650,14 @@ namespace MetaCompilation
                 ParameterSyntax parameter = methodDeclaration.ParameterList.Parameters[0] as ParameterSyntax;
                 if (memberExprContext.Identifier.Text != parameter.Identifier.ValueText)
                 {
-                    ReportDiagnostic(context, InvalidStatementRule, statements[0].GetLocation(), statements[0]);
+                    ReportDiagnostic(context, InvalidStatementRule, statements[0].GetLocation());
                     return null;
                 }
 
                 var memberExprRegister = memberExpr.Name as IdentifierNameSyntax;
                 if (memberExprRegister == null)
                 {
-                    ReportDiagnostic(context, InvalidStatementRule, statements[0].GetLocation(), statements[0]);
+                    ReportDiagnostic(context, InvalidStatementRule, statements[0].GetLocation());
                     return null;
                 }
 
@@ -2879,12 +2879,13 @@ namespace MetaCompilation
             }
 
             //reports a diagnostics
-            public static void ReportDiagnostic(CompilationAnalysisContext context, DiagnosticDescriptor rule, Location location, params object[] messageArgs)
+            public static void ReportDiagnostic(CompilationAnalysisContext context, DiagnosticDescriptor rule, Location location, params string[] messageArgs)
             {
                 Diagnostic diagnostic = Diagnostic.Create(rule, location, messageArgs);
                 context.ReportDiagnostic(diagnostic);
             }
 
+            // Provides information to SuppDiagReturnSymbol method
             public class SuppDiagReturnSymbolInfo
             {
                 public InvocationExpressionSyntax ValueClause
@@ -2905,6 +2906,7 @@ namespace MetaCompilation
                 }
             }
 
+            // Provides information to InitializeBody method
             public class InitializeBodyInfo
             {
                 public InvocationExpressionSyntax InvocationExpr
@@ -2925,6 +2927,7 @@ namespace MetaCompilation
                 }
             }
 
+            // Provides information to CheckInitialize method
             public class CheckInitializeInfo
             {
                 public IMethodSymbol RegisterMethod
