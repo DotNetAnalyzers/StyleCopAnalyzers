@@ -21,7 +21,7 @@
 {
 }
 ";
-            var expected = this.CSharpDiagnostic().WithLocation(1, 10).WithArguments("access modifier", "other");
+            var expected = this.CSharpDiagnostic().WithLocation(1, 10).WithArguments("public", "abstract");
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
@@ -35,9 +35,9 @@
 }";
             DiagnosticResult[] expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(3, 11).WithArguments("static", "other"),
-                this.CSharpDiagnostic().WithLocation(3, 18).WithArguments("access modifier", "static"),
-                this.CSharpDiagnostic().WithLocation(3, 18).WithArguments("access modifier", "other")
+                this.CSharpDiagnostic().WithLocation(3, 11).WithArguments("static", "async"),
+                this.CSharpDiagnostic().WithLocation(3, 18).WithArguments("public", "static"),
+                this.CSharpDiagnostic().WithLocation(3, 18).WithArguments("public", "async")
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -65,20 +65,20 @@
 
             DiagnosticResult[] expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(4, 13).WithArguments("access modifier", "other"),
-                this.CSharpDiagnostic().WithLocation(5, 12).WithArguments("access modifier", "static"),
-                this.CSharpDiagnostic().WithLocation(7, 17).WithArguments("access modifier", "other"),
-                this.CSharpDiagnostic().WithLocation(7, 32).WithArguments("access modifier", "other"),
-                this.CSharpDiagnostic().WithLocation(8, 16).WithArguments("static", "other"),
-                this.CSharpDiagnostic().WithLocation(9, 9).WithArguments("static", "other"),
-                this.CSharpDiagnostic().WithLocation(9, 16).WithArguments("access modifier", "static"),
-                this.CSharpDiagnostic().WithLocation(9, 16).WithArguments("access modifier", "other"),
-                this.CSharpDiagnostic().WithLocation(10, 13).WithArguments("access modifier", "other"),
-                this.CSharpDiagnostic().WithLocation(11, 12).WithArguments("access modifier", "other"),
-                this.CSharpDiagnostic().WithLocation(12, 12).WithArguments("access modifier", "other"),
-                this.CSharpDiagnostic().WithLocation(13, 12).WithArguments("static", "other"),
-                this.CSharpDiagnostic().WithLocation(14, 14).WithArguments("access modifier", "other"),
-                this.CSharpDiagnostic().WithLocation(14, 23).WithArguments("static", "other")
+                this.CSharpDiagnostic().WithLocation(4, 13).WithArguments("public", "virtual"),
+                this.CSharpDiagnostic().WithLocation(5, 12).WithArguments("public", "static"),
+                this.CSharpDiagnostic().WithLocation(7, 17).WithArguments("internal", "new"),
+                this.CSharpDiagnostic().WithLocation(7, 32).WithArguments("protected", "async"),
+                this.CSharpDiagnostic().WithLocation(8, 16).WithArguments("static", "new"),
+                this.CSharpDiagnostic().WithLocation(9, 9).WithArguments("static", "new"),
+                this.CSharpDiagnostic().WithLocation(9, 16).WithArguments("public", "static"),
+                this.CSharpDiagnostic().WithLocation(9, 16).WithArguments("public", "new"),
+                this.CSharpDiagnostic().WithLocation(10, 13).WithArguments("public", "virtual"),
+                this.CSharpDiagnostic().WithLocation(11, 12).WithArguments("public", "extern"),
+                this.CSharpDiagnostic().WithLocation(12, 12).WithArguments("public", "extern"),
+                this.CSharpDiagnostic().WithLocation(13, 12).WithArguments("static", "extern"),
+                this.CSharpDiagnostic().WithLocation(14, 14).WithArguments("internal", "volatile"),
+                this.CSharpDiagnostic().WithLocation(14, 23).WithArguments("static", "volatile")
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -103,7 +103,7 @@ public class ExtendedTestClass : TestClass
     {
     }
 }";
-            var expected = this.CSharpDiagnostic().WithLocation(10, 9).WithArguments("access modifier", "other");
+            var expected = this.CSharpDiagnostic().WithLocation(10, 9).WithArguments("protected", "new");
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
@@ -120,7 +120,7 @@ public class ExtendedTestClass : TestClass
 {
     new protected delegate void SomeDelegate(int a);
 }";
-            var expected = this.CSharpDiagnostic().WithLocation(8, 9).WithArguments("access modifier", "other");
+            var expected = this.CSharpDiagnostic().WithLocation(8, 9).WithArguments("protected", "new");
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
@@ -137,7 +137,7 @@ public class ExtendedClass : TestClass
 {
     new public const string Empty = """";
 }";
-            var expected = this.CSharpDiagnostic().WithLocation(8, 9).WithArguments("access modifier", "other");
+            var expected = this.CSharpDiagnostic().WithLocation(8, 9).WithArguments("public", "new");
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
@@ -153,12 +153,12 @@ public class ExtendedClass : TestClass
 }";
             DiagnosticResult[] expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(3, 12).WithArguments("access modifier", "other"),
-                this.CSharpDiagnostic().WithLocation(3, 19).WithArguments("static", "other"),
-                this.CSharpDiagnostic().WithLocation(4, 12).WithArguments("static", "other"),
-                this.CSharpDiagnostic().WithLocation(4, 19).WithArguments("access modifier", "static"),
-                this.CSharpDiagnostic().WithLocation(4, 19).WithArguments("access modifier", "other"),
-                this.CSharpDiagnostic().WithLocation(5, 19).WithArguments("static", "other")
+                this.CSharpDiagnostic().WithLocation(3, 12).WithArguments("public", "extern"),
+                this.CSharpDiagnostic().WithLocation(3, 19).WithArguments("static", "extern"),
+                this.CSharpDiagnostic().WithLocation(4, 12).WithArguments("static", "extern"),
+                this.CSharpDiagnostic().WithLocation(4, 19).WithArguments("public", "static"),
+                this.CSharpDiagnostic().WithLocation(4, 19).WithArguments("public", "extern"),
+                this.CSharpDiagnostic().WithLocation(5, 19).WithArguments("static", "extern")
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -173,8 +173,8 @@ public class ExtendedClass : TestClass
 }";
             DiagnosticResult[] expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(1, 8).WithArguments("access modifier", "other"),
-                this.CSharpDiagnostic().WithLocation(3, 12).WithArguments("access modifier", "other")
+                this.CSharpDiagnostic().WithLocation(1, 8).WithArguments("public", "unsafe"),
+                this.CSharpDiagnostic().WithLocation(3, 12).WithArguments("public", "unsafe")
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

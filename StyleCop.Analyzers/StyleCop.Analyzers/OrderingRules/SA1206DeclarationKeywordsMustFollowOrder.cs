@@ -33,7 +33,7 @@
         /// </summary>
         public const string DiagnosticId = "SA1206";
         private const string Title = "Declaration keywords must follow order";
-        private const string MessageFormat = "The {0} keyword must come before the '{1}' keyword in the element declaration.";
+        private const string MessageFormat = "The '{0}' modifier must appear before '{1}'";
         private const string Description = "The keywords within the declaration of an element do not follow a standard ordering scheme.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1206.html";
 
@@ -131,6 +131,8 @@
         {
             var previousModifierType = ModifierType.None;
             var otherModifiersAppearEarlier = false;
+            SyntaxToken previousModifier = default(SyntaxToken);
+            SyntaxToken previousOtherModifier = default(SyntaxToken);
 
             foreach (var modifier in modifiers)
             {
@@ -138,20 +140,22 @@
 
                 if (CompareModifiersType(currentModifierType, previousModifierType) < 0)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, modifier.GetLocation(), GetModifierTypeText(currentModifierType), GetModifierTypeText(previousModifierType)));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, modifier.GetLocation(), modifier.ValueText, previousModifier.ValueText));
                 }
 
                 if (AccessOrStaticModifierNotFollowingOtherModifier(currentModifierType, previousModifierType) && otherModifiersAppearEarlier)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, modifier.GetLocation(), GetModifierTypeText(currentModifierType), GetModifierTypeText(ModifierType.Other)));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, modifier.GetLocation(), modifier.ValueText, previousOtherModifier.ValueText));
                 }
 
-                if (!otherModifiersAppearEarlier)
+                if (!otherModifiersAppearEarlier && currentModifierType == ModifierType.Other)
                 {
-                    otherModifiersAppearEarlier = currentModifierType == ModifierType.Other;
+                    otherModifiersAppearEarlier = true;
+                    previousOtherModifier = modifier;
                 }
 
                 previousModifierType = currentModifierType;
+                previousModifier = modifier;
             }
         }
 
