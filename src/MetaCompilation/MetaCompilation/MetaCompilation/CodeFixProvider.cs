@@ -561,7 +561,7 @@ namespace MetaCompilation
         // sets the return type of the method to void
         private async Task<Document> IncorrectAnalysisReturnTypeAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
-            SyntaxNode newDeclaration = CodeFixHelper.MethodReturnTypeVoid(declaration);
+            SyntaxNode newDeclaration = CodeFixHelper.MethodReturnType(declaration, "void");
 
             return await ReplaceNode(declaration, newDeclaration, document);
         }
@@ -1776,9 +1776,9 @@ namespace MetaCompilation
         class CodeFixHelper
         {
             // set method return type to void
-            internal static SyntaxNode MethodReturnTypeVoid(MethodDeclarationSyntax methodDeclaration)
+            internal static SyntaxNode MethodReturnType(MethodDeclarationSyntax methodDeclaration, string returnType)
             {
-                TypeSyntax voidType = SyntaxFactory.ParseTypeName("void").WithTrailingTrivia(SyntaxFactory.Whitespace(" "));
+                TypeSyntax voidType = SyntaxFactory.ParseTypeName(returnType).WithTrailingTrivia(SyntaxFactory.Whitespace(" "));
                 methodDeclaration = methodDeclaration.WithReturnType(voidType);
                 return methodDeclaration;
             }
