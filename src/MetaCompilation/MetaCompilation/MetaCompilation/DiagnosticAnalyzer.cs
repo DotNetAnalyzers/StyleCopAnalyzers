@@ -368,19 +368,19 @@ namespace MetaCompilation
                         if (supportedDiagnosticsCorrect)
                         {
                             //gather initialize info
-                            List<object> registerInfo = CheckInitialize(context);
+                            CheckInitializeInfo registerInfo = CheckInitialize(context);
                             if (registerInfo == null)
                             {
                                 return;
                             }
 
-                            var registerSymbol = (IMethodSymbol)registerInfo[0];
+                            var registerSymbol = (IMethodSymbol)registerInfo.RegisterMethod;
                             if (registerSymbol == null)
                             {
                                 return;
                             }
 
-                            var registerArgs = (List<ISymbol>)registerInfo[1];
+                            var registerArgs = (List<ISymbol>)registerInfo.RegisterArgs;
                             if (registerArgs == null)
                             {
                                 return;
@@ -407,7 +407,7 @@ namespace MetaCompilation
                                 return;
                             }
 
-                            var invocationExpression = (InvocationExpressionSyntax)registerInfo[2];
+                            var invocationExpression = (InvocationExpressionSyntax)registerInfo.InvocationExpr;
                             if (invocationExpression == null)
                             {
                                 return;
@@ -484,7 +484,7 @@ namespace MetaCompilation
                     ReportDiagnostic(context, MissingIdRule, _analyzerClassSymbol.Locations[0], _analyzerClassSymbol.Name.ToString());
                 }
             }
-            
+
             //checks the syntax tree analysis part of the user analyzer, returns a bool representing whether the check was successful or not
             internal bool CheckAnalysis(string branch, string kind, List<string> ruleNames, CompilationAnalysisContext context, IMethodSymbol analysisMethodSymbol)
             {
@@ -1014,7 +1014,8 @@ namespace MetaCompilation
                 }
 
                 var rightName = right.Name as IdentifierNameSyntax;
-                if (rightName == null || rightName.Identifier.Text != "WhitespaceTrivia") {
+                if (rightName == null || rightName.Identifier.Text != "WhitespaceTrivia")
+                {
                     return emptyResult;
                 }
 
@@ -1950,7 +1951,7 @@ namespace MetaCompilation
                 if (statements.Count > 2)
                 {
                     AccessorListSyntax propertyAccessorList = propertyDeclaration.AccessorList as AccessorListSyntax;
-                    ReportDiagnostic(context, TooManyStatementsRule,propertyAccessorList.Accessors[0].Keyword.GetLocation(), "get accessor", "1 or 2", "create and return an ImmutableArray containing all DiagnosticDescriptors");
+                    ReportDiagnostic(context, TooManyStatementsRule, propertyAccessorList.Accessors[0].Keyword.GetLocation(), "get accessor", "1 or 2", "create and return an ImmutableArray containing all DiagnosticDescriptors");
                     return false;
                 }
 
@@ -2313,7 +2314,7 @@ namespace MetaCompilation
                                         return emptyRuleNames;
                                     }
 
-                                    if(currentArgExpr.IsKind(SyntaxKind.StringLiteralExpression))
+                                    if (currentArgExpr.IsKind(SyntaxKind.StringLiteralExpression))
                                     {
                                         ReportDiagnostic(context, IdStringLiteralRule, currentArgExpr.GetLocation());
                                         return emptyRuleNames;
@@ -2450,7 +2451,7 @@ namespace MetaCompilation
             }
 
             //returns a symbol for the register call, and a list of the arguments
-            internal List<object> CheckInitialize(CompilationAnalysisContext context)
+            internal CheckInitializeInfo CheckInitialize(CompilationAnalysisContext context)
             {
                 //default values for returning
                 IMethodSymbol registerCall = null;
@@ -2461,7 +2462,7 @@ namespace MetaCompilation
                 {
                     //the initialize method was not found
                     ReportDiagnostic(context, MissingInitRule, _analyzerClassSymbol.Locations[0], _analyzerClassSymbol.Name.ToString());
-                    return new List<object>(new object[] { registerCall, registerArgs });
+                    return new CheckInitializeInfo();
                 }
                 else
                 {
@@ -2469,7 +2470,7 @@ namespace MetaCompilation
                     var codeBlock = InitializeOverview(context) as BlockSyntax;
                     if (codeBlock == null)
                     {
-                        return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
+                        return new CheckInitializeInfo();
                     }
 
                     SyntaxList<StatementSyntax> statements = codeBlock.Statements;
@@ -2477,7 +2478,7 @@ namespace MetaCompilation
                     {
                         //no statements inside initiailize
                         ReportDiagnostic(context, MissingRegisterRule, _initializeSymbol.Locations[0], _initializeSymbol.Name.ToString());
-                        return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
+                        return new CheckInitializeInfo();
                     }
                     else if (statements.Count > 1)
                     {
@@ -2486,7 +2487,7 @@ namespace MetaCompilation
                             if (statement.Kind() != SyntaxKind.ExpressionStatement)
                             {
                                 ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
-                                return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
+                                return new CheckInitializeInfo();
                             }
                         }
                         foreach (ExpressionStatementSyntax statement in statements)
@@ -2495,46 +2496,46 @@ namespace MetaCompilation
                             if (expression == null)
                             {
                                 ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
-                                return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
+                                return new CheckInitializeInfo();
                             }
 
                             var expressionStart = expression.Expression as MemberAccessExpressionSyntax;
                             if (expressionStart == null || expressionStart.Name == null)
                             {
                                 ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
-                                return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
+                                return new CheckInitializeInfo();
                             }
 
                             var preExpressionStart = expressionStart.Expression as IdentifierNameSyntax;
                             if (preExpressionStart == null || preExpressionStart.Identifier == null || preExpressionStart.Identifier.ValueText != _initializeSymbol.Parameters.First().Name.ToString())
                             {
                                 ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
-                                return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
+                                return new CheckInitializeInfo();
                             }
 
                             var name = expressionStart.Name.ToString();
                             if (!_branchesDict.ContainsKey(name))
                             {
                                 ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
-                                return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
+                                return new CheckInitializeInfo();
                             }
                         }
-                            
+
                         //too many statements inside initialize
                         ReportDiagnostic(context, TooManyInitStatementsRule, _initializeSymbol.Locations[0], _initializeSymbol.Name.ToString());
-                        return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
+                        return new CheckInitializeInfo();
                     }
                     //only one statement inside initialize
                     else
                     {
-                        List<object> bodyResults = InitializeBody(context, statements);
+                        InitializeBodyInfo bodyResults = InitializeBody(context, statements);
                         if (bodyResults == null)
                         {
-                            return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
+                            return new CheckInitializeInfo();
                         }
 
-                        var invocationExpr = bodyResults[0] as InvocationExpressionSyntax;
-                        var memberExpr = bodyResults[1] as MemberAccessExpressionSyntax;
+                        var invocationExpr = bodyResults.InvocationExpr as InvocationExpressionSyntax;
+                        var memberExpr = bodyResults.MemberExpr as MemberAccessExpressionSyntax;
                         invocExpr = invocationExpr;
 
                         if (context.Compilation.GetSemanticModel(invocationExpr.SyntaxTree).GetSymbolInfo(memberExpr).CandidateSymbols.Count() == 0)
@@ -2548,14 +2549,14 @@ namespace MetaCompilation
 
                         if (registerCall == null)
                         {
-                            return new List<object>(new object[] { registerCall, registerArgs });
+                            return new CheckInitializeInfo(registerCall, invocationExpr: invocExpr);
                         }
 
                         SeparatedSyntaxList<ArgumentSyntax> arguments = invocationExpr.ArgumentList.Arguments;
                         if (arguments == null || arguments.Count == 0)
                         {
                             ReportDiagnostic(context, IncorrectArgumentsRule, invocationExpr.Expression.GetLocation());
-                            return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
+                            return new CheckInitializeInfo(registerCall, invocationExpr: invocExpr);
                         }
 
                         if (arguments.Count > 0)
@@ -2568,7 +2569,7 @@ namespace MetaCompilation
                                 IFieldSymbol kindSymbol = context.Compilation.GetSemanticModel(invocationExpr.SyntaxTree).GetSymbolInfo(arguments[1].Expression).Symbol as IFieldSymbol;
                                 if (kindSymbol == null)
                                 {
-                                    return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
+                                    return new CheckInitializeInfo(registerCall, registerArgs, invocExpr);
                                 }
                                 else
                                 {
@@ -2583,7 +2584,7 @@ namespace MetaCompilation
                     }
                 }
 
-                return new List<object>(new object[] { registerCall, registerArgs, invocExpr });
+                return new CheckInitializeInfo(registerCall, registerArgs, invocExpr);
             }
 
             #region CheckInitialize helpers
@@ -2615,7 +2616,7 @@ namespace MetaCompilation
             }
 
             //checks the body of initializer, returns the invocation expression and member expression of the register statements, null if failed
-            internal List<object> InitializeBody(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements)
+            internal InitializeBodyInfo InitializeBody(CompilationAnalysisContext context, SyntaxList<StatementSyntax> statements)
             {
                 var statement = statements[0] as ExpressionStatementSyntax;
                 if (statement == null)
@@ -2666,7 +2667,7 @@ namespace MetaCompilation
                     return null;
                 }
 
-                return new List<object>(new object[] { invocationExpr, memberExpr });
+                return new InitializeBodyInfo(invocationExpr, memberExpr);
             }
             #endregion
 
@@ -2860,7 +2861,7 @@ namespace MetaCompilation
                 {
                     return;
                 }
-                
+
             }
             #endregion
 
@@ -2896,12 +2897,58 @@ namespace MetaCompilation
                     get;
                     set;
                 }
-                
+
                 public SuppDiagReturnSymbolInfo(InvocationExpressionSyntax valueClause = null, ReturnStatementSyntax returnDeclaration = null)
                 {
                     ValueClause = valueClause;
                     ReturnDeclaration = returnDeclaration;
-                } 
+                }
+            }
+
+            public class InitializeBodyInfo
+            {
+                public InvocationExpressionSyntax InvocationExpr
+                {
+                    get;
+                    set;
+                }
+                public MemberAccessExpressionSyntax MemberExpr
+                {
+                    get;
+                    set;
+                }
+
+                public InitializeBodyInfo(InvocationExpressionSyntax invocationExpr = null, MemberAccessExpressionSyntax memberExpr = null)
+                {
+                    InvocationExpr = invocationExpr;
+                    MemberExpr = memberExpr;
+                }
+            }
+
+            public class CheckInitializeInfo
+            {
+                public IMethodSymbol RegisterMethod
+                {
+                    get;
+                    set;
+                }
+                public List<ISymbol> RegisterArgs
+                {
+                    get;
+                    set;
+                }
+                public InvocationExpressionSyntax InvocationExpr
+                {
+                    get;
+                    set;
+                }
+
+                public CheckInitializeInfo(IMethodSymbol registerMethod = null, List<ISymbol> registerArgs = null, InvocationExpressionSyntax invocationExpr = null)
+                {
+                    RegisterMethod = registerMethod;
+                    RegisterArgs = registerArgs;
+                    InvocationExpr = invocationExpr;
+                }
             }
         }
     }
