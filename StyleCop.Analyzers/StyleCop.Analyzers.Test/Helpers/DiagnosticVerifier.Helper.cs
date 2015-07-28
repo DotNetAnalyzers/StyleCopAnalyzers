@@ -206,7 +206,7 @@
         /// <returns>The created solution.</returns>
         protected virtual Solution CreateSolution(ProjectId projectId, string language)
         {
-            return new AdhocWorkspace()
+            Solution solution = new AdhocWorkspace()
                 .CurrentSolution
                 .AddProject(projectId, TestProjectName, TestProjectName, language)
                 .WithProjectCompilationOptions(projectId, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true))
@@ -215,6 +215,9 @@
                 .AddMetadataReference(projectId, SystemCoreReference)
                 .AddMetadataReference(projectId, CSharpSymbolsReference)
                 .AddMetadataReference(projectId, CodeAnalysisReference);
+
+            ParseOptions parseOptions = solution.GetProject(projectId).ParseOptions;
+            return solution.WithProjectParseOptions(projectId, parseOptions.WithDocumentationMode(DocumentationMode.Diagnose));
         }
 
         protected DiagnosticResult CSharpDiagnostic(string diagnosticId = null)

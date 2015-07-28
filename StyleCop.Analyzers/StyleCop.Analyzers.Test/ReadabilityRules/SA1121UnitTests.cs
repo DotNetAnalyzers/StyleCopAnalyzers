@@ -635,10 +635,11 @@ public class Foo
         [MemberData(nameof(AllTypes))]
         public async Task TestDocumentationCommentDirectReferenceCodeFixAsync(string predefined, string fullName)
         {
-            string testCode = @"using System;
+            string testCode = @"namespace System {{
 /// <seealso cref=""{0}""/>
 public class Foo
 {{
+}}
 }}";
 
             await this.VerifyCSharpFixAsync(string.Format(testCode, fullName), string.Format(testCode, predefined), cancellationToken: CancellationToken.None).ConfigureAwait(false);
