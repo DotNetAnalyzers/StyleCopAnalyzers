@@ -107,7 +107,7 @@ namespace Test
     class A
     {
     }
-}"};
+}" };
 
             var expected = new[]
             {
