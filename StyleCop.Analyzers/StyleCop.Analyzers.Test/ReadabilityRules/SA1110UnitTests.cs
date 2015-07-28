@@ -1,7 +1,6 @@
 ﻿namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -766,7 +765,7 @@ public class Foo
             .Reverse<object>();
         }
 }";
-            
+
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
