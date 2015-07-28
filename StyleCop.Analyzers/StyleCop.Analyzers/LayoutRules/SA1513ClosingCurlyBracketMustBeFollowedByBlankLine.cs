@@ -160,6 +160,8 @@
                     if (nextToken.IsKind(SyntaxKind.SemicolonToken) &&
                         (this.IsPartOf<VariableDeclaratorSyntax>(token) ||
                          this.IsPartOf<YieldStatementSyntax>(token) ||
+                         this.IsPartOf<ArrowExpressionClauseSyntax>(token) ||
+                         this.IsPartOf<EqualsValueClauseSyntax>(token) ||
                          this.IsPartOf<AssignmentExpressionSyntax>(token) ||
                          this.IsPartOf<ReturnStatementSyntax>(token)))
                     {

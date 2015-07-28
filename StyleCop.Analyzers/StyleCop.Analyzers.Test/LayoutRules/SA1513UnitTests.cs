@@ -354,6 +354,32 @@ public class Foo
                                   Not = ""Food""
                               }).ToList();
     }
+
+    // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1049
+    public object[] ExpressionBodiedProperty =>
+        new[]
+        {
+            new object()
+        };
+
+    // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1049
+    public object[] ExpressionBodiedMethod() =>
+        new[]
+        {
+            new object()
+        };
+
+    // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1049
+    public object[] GetterOnlyAutoProperty1 { get; } =
+        new[]
+        {
+            new object()
+        };
+
+    // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1049
+    public object[] GetterOnlyAutoProperty2 { get; } =
+        {
+        };
 }
 ";
 
