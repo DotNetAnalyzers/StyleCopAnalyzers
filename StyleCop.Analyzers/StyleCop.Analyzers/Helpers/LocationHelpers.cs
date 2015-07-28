@@ -58,6 +58,16 @@
         }
 
         /// <summary>
+        /// Gets the end line of token.
+        /// </summary>
+        /// <param name="token">The token to use.</param>
+        /// <returns>The line on which the given token ends.</returns>
+        internal static int GetEndLine(this SyntaxToken token)
+        {
+            return token.GetLineSpan().EndLinePosition.Line;
+        }
+
+        /// <summary>
         /// Gets the end line of node.
         /// </summary>
         /// <param name="node">The node to use.</param>

@@ -16,7 +16,7 @@
         internal static bool IsFirstInLine(this SyntaxToken token)
         {
             SyntaxToken previousToken = token.GetPreviousToken();
-            return previousToken.IsKind(SyntaxKind.None) || previousToken.GetLine() < token.GetLine();
+            return previousToken.IsKind(SyntaxKind.None) || previousToken.GetEndLine() < token.GetLine();
         }
 
         /// <summary>
@@ -27,7 +27,7 @@
         internal static bool IsLastInLine(this SyntaxToken token)
         {
             SyntaxToken nextToken = token.GetNextToken();
-            return nextToken.IsKind(SyntaxKind.None) || token.GetLine() < nextToken.GetLine();
+            return nextToken.IsKind(SyntaxKind.None) || token.GetEndLine() < nextToken.GetLine();
         }
 
         /// <summary>
