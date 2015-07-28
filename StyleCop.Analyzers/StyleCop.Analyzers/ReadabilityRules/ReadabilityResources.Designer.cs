@@ -638,6 +638,15 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Remove empty comment.
+        /// </summary>
+        internal static string SA1120CodeFix {
+            get {
+                return ResourceManager.GetString("SA1120CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The C# comment does not contain any comment text..
         /// </summary>
         internal static string SA1120Description {

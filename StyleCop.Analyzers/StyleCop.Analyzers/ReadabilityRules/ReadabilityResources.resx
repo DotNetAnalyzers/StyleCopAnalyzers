@@ -309,6 +309,9 @@
   <data name="SA1118Title" xml:space="preserve">
     <value>Parameter must not span multiple lines</value>
   </data>
+  <data name="SA1120CodeFix" xml:space="preserve">
+    <value>Remove empty comment</value>
+  </data>
   <data name="SA1120Description" xml:space="preserve">
     <value>The C# comment does not contain any comment text.</value>
   </data>
