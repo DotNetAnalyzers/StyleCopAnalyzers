@@ -580,22 +580,14 @@ namespace MetaCompilation
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            var statements = declaration.Body.Statements.First() as ExpressionStatementSyntax;
-            var invocationExpression = statements.Expression as InvocationExpressionSyntax;
-            string methodName = invocationExpression.ArgumentList.Arguments[0].ToString();
+            string analysisMethodName = CodeFixHelper.AnalysisMethodName(declaration);
 
             SemanticModel semanticModel = await document.GetSemanticModelAsync();
-            SyntaxNode newAnalysisMethod = CodeFixHelper.CreateAnalysisMethod(generator, methodName, semanticModel);
+            var newAnalysisMethod = CodeFixHelper.CreateAnalysisMethod(generator, analysisMethodName, semanticModel) as MethodDeclarationSyntax;
 
-            ClassDeclarationSyntax classDeclaration = declaration.Parent as ClassDeclarationSyntax;
-            ClassDeclarationSyntax newClassDecl = classDeclaration as ClassDeclarationSyntax;
+            ClassDeclarationSyntax classDeclaration = declaration.Ancestors().OfType<ClassDeclarationSyntax>().First();
 
-            if (newAnalysisMethod != null)
-            {
-                newClassDecl = generator.AddMembers(classDeclaration, newAnalysisMethod) as ClassDeclarationSyntax;
-            }
-
-            return await ReplaceNode(classDeclaration, newClassDecl, document);
+            return await ReplaceNode(classDeclaration, classDeclaration.AddMembers(newAnalysisMethod), document);
         }
 
         private async Task<Document> CorrectArgumentsAsync(Document document, InvocationExpressionSyntax declaration, CancellationToken c)
@@ -1776,6 +1768,16 @@ namespace MetaCompilation
 
         class CodeFixHelper
         {
+            // gets the name of the analysis method
+            internal static string AnalysisMethodName(MethodDeclarationSyntax methodDeclaration)
+            {
+                var statements = methodDeclaration.Body.Statements.First() as ExpressionStatementSyntax;
+                var invocationExpression = statements.Expression as InvocationExpressionSyntax;
+                var methodIdentifier = invocationExpression.ArgumentList.Arguments[0].Expression as IdentifierNameSyntax;
+                string methodName = methodIdentifier.Identifier.Text;
+                return methodName;
+            }
+            
             // set method accessibility to accessibility
             internal static SyntaxNode MethodAccessibility(SyntaxGenerator generator, MethodDeclarationSyntax methodDeclaration, Accessibility accessibility)
             {
