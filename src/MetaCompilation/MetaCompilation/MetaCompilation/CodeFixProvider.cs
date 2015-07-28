@@ -576,6 +576,7 @@ namespace MetaCompilation
             return await ReplaceNode(declaration, newDeclaration, document);
         }
 
+        // adds an analysis method to the enclosing class
         private async Task<Document> MissingAnalysisMethodAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -590,51 +591,22 @@ namespace MetaCompilation
             return await ReplaceNode(classDeclaration, classDeclaration.AddMembers(newAnalysisMethod), document);
         }
 
+        // puts the correct arguments in the register statement
         private async Task<Document> CorrectArgumentsAsync(Document document, InvocationExpressionSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            string methodName = "AnalyzeIfStatement";
-            bool useExistingAnalysis = false;
+            string methodName = CodeFixHelper.GetRegisterMethodName(declaration);
 
-            ArgumentListSyntax argList = declaration.ArgumentList;
-            if (argList != null)
-            {
-                SeparatedSyntaxList<ArgumentSyntax> args = argList.Arguments;
-                if (args != null)
-                {
-                    if (args.Count > 0)
-                    {
-                        ArgumentSyntax nameArg = args[0];
-                        var name = nameArg.Expression as IdentifierNameSyntax;
-                        if (name != null)
-                        {
-                            methodName = name.Identifier.Text;
-                        }
-                        else
-                        {
-                            useExistingAnalysis = true;
-                        }
-                    }
-                    else if (args.Count == 0)
-                    {
-                        useExistingAnalysis = true;
-                    }
-                }
-            }
-
-            if (useExistingAnalysis)
-            {
-                ClassDeclarationSyntax classDeclaration = declaration.AncestorsAndSelf().OfType<ClassDeclarationSyntax>().First();
-                methodName = CodeFixHelper.GetExistingAnalysisMethodName(classDeclaration);
-            }
+            ClassDeclarationSyntax classDeclaration = declaration.AncestorsAndSelf().OfType<ClassDeclarationSyntax>().First();
+            methodName = CodeFixHelper.GetExistingAnalysisMethodName(classDeclaration);
 
             if (methodName == null)
             {
                 methodName = "AnalyzeIfStatement";
             }
 
-            SyntaxNode statement = CodeFixHelper.CreateRegister(generator, declaration.Parent.Parent.Parent as MethodDeclarationSyntax, methodName);
+            SyntaxNode statement = CodeFixHelper.CreateRegister(generator, declaration.Ancestors().OfType<MethodDeclarationSyntax>().First(), methodName);
             SyntaxNode expression = generator.ExpressionStatement(statement);
 
             return await ReplaceNode(declaration.Parent, expression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
@@ -1768,6 +1740,31 @@ namespace MetaCompilation
 
         class CodeFixHelper
         {
+            // gets the name of the method registered, null if none found
+            internal static string GetRegisterMethodName(InvocationExpressionSyntax invocationExpression)
+            {
+                string methodName = null;
+                ArgumentListSyntax argList = invocationExpression.ArgumentList;
+                if (argList != null)
+                {
+                    SeparatedSyntaxList<ArgumentSyntax> args = argList.Arguments;
+                    if (args != null)
+                    {
+                        if (args.Count > 0)
+                        {
+                            ArgumentSyntax nameArg = args[0];
+                            var name = nameArg.Expression as IdentifierNameSyntax;
+                            if (name != null)
+                            {
+                                methodName = name.Identifier.Text;
+                            }
+                        }
+                    }
+                }
+
+                return methodName;
+            }
+            
             // gets the name of the analysis method
             internal static string AnalysisMethodName(MethodDeclarationSyntax methodDeclaration)
             {
