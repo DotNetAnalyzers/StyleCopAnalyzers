@@ -980,9 +980,7 @@ namespace MetaCompilation
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            var expressionKind = SyntaxFactory.ParseExpression("\"IfSpacing001\"") as ExpressionSyntax;
-
-            SyntaxNode newField = CodeFixHelper.NewIdCreator(generator, "spacingRuleId", expressionKind).WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Each analyzer needs a public id to identify each DiagnosticDescriptor and subsequently fix diagnostics in CodeFixProvider.cs").ElementAt(0), SyntaxFactory.EndOfLine("\r\n")));
+            SyntaxNode newField = CodeFixHelper.NewIdCreator(generator, "spacingRuleId", "IfSpacing001").WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Each analyzer needs a public id to identify each DiagnosticDescriptor and subsequently fix diagnostics in CodeFixProvider.cs").ElementAt(0), SyntaxFactory.EndOfLine("\r\n")));
             var newClass = generator.InsertMembers(declaration, 0, newField) as ClassDeclarationSyntax;
             ClassDeclarationSyntax triviaClass = newClass.ReplaceNode(newClass.Members[0], newField);
 
@@ -1218,8 +1216,7 @@ namespace MetaCompilation
 
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            var expressionKind = SyntaxFactory.ParseExpression("\"DescriptiveId\"") as ExpressionSyntax;
-            SyntaxNode newField = CodeFixHelper.NewIdCreator(generator, currentRuleId, expressionKind).WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Each analyzer needs a public id to identify each DiagnosticDescriptor and subsequently fix diagnostics in CodeFixProvider.cs").ElementAt(0), SyntaxFactory.EndOfLine("\r\n")));
+            SyntaxNode newField = CodeFixHelper.NewIdCreator(generator, currentRuleId, "DescriptiveId").WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Each analyzer needs a public id to identify each DiagnosticDescriptor and subsequently fix diagnostics in CodeFixProvider.cs").ElementAt(0), SyntaxFactory.EndOfLine("\r\n")));
 
             var newClass = generator.InsertMembers(classDeclaration, 0, newField) as ClassDeclarationSyntax;
             ClassDeclarationSyntax triviaClass = newClass.ReplaceNode(newClass.Members[0], newField);
@@ -1916,8 +1913,10 @@ namespace MetaCompilation
                 return initializeDeclaration;
             }
 
-            internal static SyntaxNode NewIdCreator(SyntaxGenerator generator, string fieldName, SyntaxNode initializer)
+            // creates a new id with the provided name as a literal expression
+            internal static SyntaxNode NewIdCreator(SyntaxGenerator generator, string fieldName, string idName)
             {
+                SyntaxNode initializer = generator.LiteralExpression(idName);
                 SyntaxNode newField = generator.FieldDeclaration(fieldName, generator.TypeExpression(SpecialType.System_String), Accessibility.Public, DeclarationModifiers.Const, initializer);
 
                 return newField;
