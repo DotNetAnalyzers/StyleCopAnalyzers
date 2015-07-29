@@ -778,6 +778,7 @@ namespace MetaCompilation
             return await ReplaceNode(declaration, newMethod, document);
         }
 
+        // replace the diagnostic creation statement
         private async Task<Document> ReplaceDiagnosticAsync(Document document, StatementSyntax declaration, CancellationToken c)
         {
             var methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
@@ -785,7 +786,7 @@ namespace MetaCompilation
 
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            string locationName = (methodDeclaration.Body.Statements[7] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+            string locationName = CodeFixHelper.GetLocationName(methodDeclaration);
             string ruleName = CodeFixHelper.GetFirstRuleName(classDeclaration);
             if (ruleName == null)
             {
@@ -797,6 +798,7 @@ namespace MetaCompilation
             return await ReplaceNode(declaration, diagnostic.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Holds the diagnostic and all necessary information to be reported").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
+        // adds the diagnostic creation statement
         private async Task<Document> AddDiagnosticAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -813,13 +815,10 @@ namespace MetaCompilation
                 return document;
             }
 
-            string locationName = (analysis.Body.Statements[7] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+            string locationName = CodeFixHelper.GetLocationName(analysis);
 
             SyntaxNode diagnostic = CodeFixHelper.CreateDiagnostic(generator, locationName, ruleName);
-
-            var oldStatements = (SyntaxList<SyntaxNode>)analysis.Body.Statements;
-            SyntaxList<SyntaxNode> newStatements = oldStatements.Add(diagnostic.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Holds the diagnostic and all necessary information to be reported").ElementAt(0), SyntaxFactory.EndOfLine(" \r\n"))));
-            SyntaxNode newMethod = generator.WithStatements(analysis, newStatements);
+            SyntaxNode newMethod = CodeFixHelper.AddStatementToMethod(generator, analysis, diagnostic.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Holds the diagnostic and all necessary information to be reported").ElementAt(0), SyntaxFactory.EndOfLine(" \r\n"))));
 
             return await ReplaceNode(analysis, newMethod, document);
         }
@@ -1746,6 +1745,13 @@ namespace MetaCompilation
 
         class CodeFixHelper
         {
+            // gets the name of the location variable
+            internal static string GetLocationName(MethodDeclarationSyntax methodDecl)
+            {
+                string locationName = (methodDecl.Body.Statements[7] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+                return locationName;
+            }
+
             // adds a statement to the provided method
             internal static SyntaxNode AddStatementToMethod(SyntaxGenerator generator, MethodDeclarationSyntax methodDecl, SyntaxNode statement)
             {
@@ -1758,14 +1764,14 @@ namespace MetaCompilation
             // gets the name of the diagnostic variable
             internal static string GetDiagnosticName(MethodDeclarationSyntax methodDecl)
             {
-                var diagnosticName = (methodDecl.Body.Statements[8] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+                string diagnosticName = (methodDecl.Body.Statements[8] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
                 return diagnosticName;
             }
 
             // gets the context parameter of the analysis method
             internal static string GetContextParameter(MethodDeclarationSyntax methodDecl)
             {
-                var contextName = methodDecl.ParameterList.Parameters[0].Identifier.Text;
+                string contextName = methodDecl.ParameterList.Parameters[0].Identifier.Text;
                 return contextName;
             }
             
