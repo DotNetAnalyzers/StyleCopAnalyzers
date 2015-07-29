@@ -15,7 +15,8 @@
     /// <para>A violation of this rule occurs when the spacing around a closing curly bracket is not correct.</para>
     ///
     /// <para>A closing curly bracket should always be followed by a single space, unless it is the last character on
-    /// the line, or unless it is followed by a closing parenthesis, a comma, or a semicolon.</para>
+    /// the line, or unless it is followed by a closing parenthesis, a comma, a semicolon, or a member access
+    /// operator.</para>
     ///
     /// <para>A closing curly bracket must always be preceded by a single space, unless it is the first character on the
     /// line.</para>
@@ -101,7 +102,9 @@
                 precedesSpecialCharacter =
                     nextToken.IsKind(SyntaxKind.CloseParenToken)
                     || nextToken.IsKind(SyntaxKind.CommaToken)
-                    || nextToken.IsKind(SyntaxKind.SemicolonToken);
+                    || nextToken.IsKind(SyntaxKind.SemicolonToken)
+                    || nextToken.IsKind(SyntaxKind.DotToken)
+                    || (nextToken.IsKind(SyntaxKind.QuestionToken) && nextToken.GetNextToken(includeZeroWidth: true).IsKind(SyntaxKind.DotToken));
             }
             else
             {
