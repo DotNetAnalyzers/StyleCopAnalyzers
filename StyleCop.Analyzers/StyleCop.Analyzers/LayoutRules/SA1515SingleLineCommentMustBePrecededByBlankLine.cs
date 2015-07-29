@@ -208,6 +208,12 @@
 
             while ((eolCount < 2) && (index >= 0))
             {
+                if (triviaList[index].IsDirective)
+                {
+                    // directive trivia are special, as they have a 'built-in' end-of-line.
+                    return eolCount > 0;
+                }
+
                 switch (triviaList[index].Kind())
                 {
                 case SyntaxKind.WhitespaceTrivia:
@@ -218,13 +224,6 @@
                     eolCount++;
                     index--;
                     break;
-
-                case SyntaxKind.IfDirectiveTrivia:
-                case SyntaxKind.ElifDirectiveTrivia:
-                case SyntaxKind.ElseDirectiveTrivia:
-                case SyntaxKind.EndIfDirectiveTrivia:
-                    // directive trivia are special, as they have a 'built-in' end-of-line.
-                    return eolCount > 0;
 
                 default:
                     return false;

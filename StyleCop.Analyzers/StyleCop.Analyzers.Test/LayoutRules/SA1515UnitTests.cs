@@ -151,6 +151,41 @@ namespace Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1083 "SA1515 fires after some directives
+        /// when it shouldn't".
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestPreprocessorInteractionAsync()
+        {
+            string testCode = @"#region Test
+
+// Inside region
+using System;
+
+#endregion
+
+// After region
+#pragma warning restore 1234
+
+// After pragma
+using System.Reflection;
+
+#if DEBUG
+
+// After if
+using System.Resources;
+
+#endif
+
+// After endif
+using System.Runtime.InteropServices;
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
