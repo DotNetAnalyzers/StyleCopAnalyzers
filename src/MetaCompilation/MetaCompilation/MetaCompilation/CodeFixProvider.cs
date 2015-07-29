@@ -619,16 +619,17 @@ namespace MetaCompilation
 
             var memberExpression = declaration.Parent as MemberAccessExpressionSyntax;
             var invocationExpression = memberExpression.Parent as InvocationExpressionSyntax;
-            var methodName = CodeFixHelper.GetRegisterMethodName(invocationExpression);
+            string methodName = CodeFixHelper.GetRegisterMethodName(invocationExpression);
             if (methodName == null)
             {
                 methodName = "AnalyzeIfStatement";
             }
 
-            var newExpression = CodeFixHelper.CreateRegister(generator, declaration.Ancestors().OfType<MethodDeclarationSyntax>().First(), methodName);
+            SyntaxNode newExpression = CodeFixHelper.CreateRegister(generator, declaration.Ancestors().OfType<MethodDeclarationSyntax>().First(), methodName);
             return await ReplaceNode(declaration.FirstAncestorOrSelf<ExpressionStatementSyntax>(), newExpression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
+        // corrects the kind argument of the register statement to be SyntaxKind.IfStatement
         private async Task<Document> CorrectKindAsync(Document document, ArgumentListSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -645,13 +646,10 @@ namespace MetaCompilation
             }
 
             ArgumentListSyntax argList = SyntaxFactory.ArgumentList(arguments);
+            string contextParameter = (((declaration.Parent as InvocationExpressionSyntax).Expression as MemberAccessExpressionSyntax).Expression as IdentifierNameSyntax).Identifier.Text;
+            SyntaxNode newExpr = CodeFixHelper.BuildRegister(generator, contextParameter, "RegisterSyntaxNodeAction", argList);
 
-            SyntaxNode newRegister = generator.IdentifierName("RegisterSyntaxNodeAction");
-            SyntaxNode newMemberExpr = generator.MemberAccessExpression(((declaration.Parent as InvocationExpressionSyntax).Expression as MemberAccessExpressionSyntax).Expression, newRegister);
-            SyntaxNode newInvocationExpr = generator.InvocationExpression(newMemberExpr, argList.Arguments);
-            SyntaxNode newExpression = generator.ExpressionStatement(newInvocationExpr);
-
-            return await ReplaceNode(declaration.Ancestors().OfType<ExpressionStatementSyntax>().First(), newExpression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("            "), SyntaxFactory.ParseLeadingTrivia("// Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("            "))), document);
+            return await ReplaceNode(declaration.Ancestors().OfType<InvocationExpressionSyntax>().First(), newExpr.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("            "), SyntaxFactory.ParseLeadingTrivia("// Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("            "))), document);
         }
 
         private async Task<Document> AddRuleAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
@@ -1746,6 +1744,16 @@ namespace MetaCompilation
 
         class CodeFixHelper
         {
+            // builds a register statement
+            internal static SyntaxNode BuildRegister(SyntaxGenerator generator, string context, string register, ArgumentListSyntax argumentList)
+            {
+                SyntaxNode registerIdentifier = generator.IdentifierName(register);
+                SyntaxNode contextIdentifier = generator.IdentifierName(context);
+                SyntaxNode memberExpr = generator.MemberAccessExpression(contextIdentifier, registerIdentifier);
+                SyntaxNode invocationExpr = generator.InvocationExpression(memberExpr, argumentList.Arguments);
+                return invocationExpr;
+            }
+
             // gets the name of the method registered, null if none found
             internal static string GetRegisterMethodName(InvocationExpressionSyntax invocationExpression)
             {
@@ -2236,18 +2244,16 @@ namespace MetaCompilation
             // creates a correct register statement
             internal static SyntaxNode CreateRegister(SyntaxGenerator generator, MethodDeclarationSyntax declaration, string methodName)
             {
-                SyntaxNode argument1 = generator.IdentifierName(methodName);
-                SyntaxNode argument2 = generator.MemberAccessExpression(generator.IdentifierName("SyntaxKind"), "IfStatement");
-                SyntaxList<SyntaxNode> arguments = new SyntaxList<SyntaxNode>();
+                var argument1 = generator.Argument(generator.IdentifierName(methodName)) as ArgumentSyntax;
+                var argument2 = generator.Argument(generator.MemberAccessExpression(generator.IdentifierName("SyntaxKind"), "IfStatement")) as ArgumentSyntax;
+                SeparatedSyntaxList<ArgumentSyntax> arguments = new SeparatedSyntaxList<ArgumentSyntax>();
                 arguments = arguments.Add(argument1);
                 arguments = arguments.Add(argument2);
+                ArgumentListSyntax argumentList = SyntaxFactory.ArgumentList(arguments);
 
                 string parameterName = GetFirstParameterName(declaration);
-                SyntaxNode identifierName = generator.IdentifierName(parameterName);
-                SyntaxNode memberAccessExpression = generator.MemberAccessExpression(identifierName, "RegisterSyntaxNodeAction");
-                SyntaxNode invocationExpression = generator.InvocationExpression(memberAccessExpression, arguments);
-
-                return invocationExpression;
+                SyntaxNode invocationExpr = BuildRegister(generator, parameterName, "RegisterSyntaxNodeAction", argumentList);
+                return invocationExpr;
             }
 
             // creates the SyntaxNode analysis method
