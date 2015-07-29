@@ -90,7 +90,7 @@
 
             if (parameterListSyntax != null && !parameterListSyntax.OpenParenToken.IsMissing)
             {
-                CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(context, parameterListSyntax.OpenParenToken, identifierName.Identifier);
+                CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, parameterListSyntax.OpenParenToken);
             }
         }
 
@@ -107,7 +107,7 @@
 
             if (parameterListSyntax != null && !parameterListSyntax.OpenParenToken.IsMissing)
             {
-                CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(context, parameterListSyntax.OpenParenToken, operatorDeclaration.OperatorToken);
+                CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, parameterListSyntax.OpenParenToken);
             }
         }
 
@@ -126,7 +126,7 @@
 
             if (!firstSize.OpenBracketToken.IsMissing)
             {
-                CheckIfLocationOfExpressionAndOpenTokenAreTheSame(context, firstSize.OpenBracketToken, array.Type.ElementType);
+                CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, firstSize.OpenBracketToken);
             }
         }
 
@@ -142,7 +142,7 @@
                 return;
             }
 
-            CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(context, anonymousMethod.ParameterList.OpenParenToken, anonymousMethod.DelegateKeyword);
+            CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, anonymousMethod.ParameterList.OpenParenToken);
         }
 
         private void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
@@ -153,8 +153,7 @@
                 delegateDeclaration.ParameterList != null &&
                 !delegateDeclaration.ParameterList.OpenParenToken.IsMissing)
             {
-                CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(context,
-                    delegateDeclaration.ParameterList.OpenParenToken, delegateDeclaration.Identifier);
+                CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, delegateDeclaration.ParameterList.OpenParenToken);
             }
         }
 
@@ -179,8 +178,7 @@
                     !attribute.ArgumentList.OpenParenToken.IsMissing &&
                     !identifierNameSyntax.Identifier.IsMissing)
                 {
-                    CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(context,
-                        attribute.ArgumentList.OpenParenToken, identifierNameSyntax.Identifier);
+                    CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, attribute.ArgumentList.OpenParenToken);
                 }
             }
         }
@@ -196,8 +194,7 @@
                 return;
             }
 
-            CheckIfLocationOfExpressionAndOpenTokenAreTheSame(context,
-                elementAccess.ArgumentList.OpenBracketToken, elementAccess.Expression);
+            CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, elementAccess.ArgumentList.OpenBracketToken);
         }
 
         private void HandleIndexerDeclaration(SyntaxNodeAnalysisContext obj)
@@ -209,7 +206,7 @@
                 !indexerDeclaration.ParameterList.IsMissing &&
                 !indexerDeclaration.ParameterList.OpenBracketToken.IsMissing)
             {
-                CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(obj, indexerDeclaration.ParameterList.OpenBracketToken, indexerDeclaration.ThisKeyword);
+                CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(obj, indexerDeclaration.ParameterList.OpenBracketToken);
             }
         }
 
@@ -227,7 +224,7 @@
             if (objectCreation.ArgumentList != null
                 && !objectCreation.ArgumentList.OpenParenToken.IsMissing)
             {
-                CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(context, objectCreation.ArgumentList.OpenParenToken, identifier.Value);
+                CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, objectCreation.ArgumentList.OpenParenToken);
             }
         }
 
@@ -264,8 +261,7 @@
                     !invocationExpression.ArgumentList.OpenParenToken.IsMissing &&
                     !identifierNameSyntax.Identifier.IsMissing)
                 {
-                    CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(context,
-                        invocationExpression.ArgumentList.OpenParenToken, identifierNameSyntax.Identifier);
+                    CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, invocationExpression.ArgumentList.OpenParenToken);
                 }
             }
         }
@@ -277,7 +273,7 @@
                 && !constructotDeclarationSyntax.ParameterList.OpenParenToken.IsMissing
                 && !constructotDeclarationSyntax.Identifier.IsMissing)
             {
-                CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(context, constructotDeclarationSyntax.ParameterList.OpenParenToken, constructotDeclarationSyntax.Identifier);
+                CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, constructotDeclarationSyntax.ParameterList.OpenParenToken);
             }
         }
 
@@ -288,29 +284,23 @@
                 && !methodDeclaration.ParameterList.OpenParenToken.IsMissing
                 && !methodDeclaration.Identifier.IsMissing)
             {
-                CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(context, methodDeclaration.ParameterList.OpenParenToken, methodDeclaration.Identifier);
+                CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, methodDeclaration.ParameterList.OpenParenToken);
             }
         }
 
-        private static void CheckIfLocationOfIdentifierNameAndOpenTokenAreTheSame(SyntaxNodeAnalysisContext context, SyntaxToken openToken, SyntaxToken identifierToken)
+        private static void CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(SyntaxNodeAnalysisContext context, SyntaxToken openToken)
         {
-            var identifierLine = identifierToken.GetLineSpan();
-            var openParenLine = openToken.GetLineSpan();
-            if (identifierLine.IsValid &&
-                openParenLine.IsValid &&
-                openParenLine.StartLinePosition.Line != identifierLine.StartLinePosition.Line)
+            var previousToken = openToken.GetPreviousToken();
+            if (previousToken.IsMissing)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, openToken.GetLocation()));
+                return;
             }
-        }
 
-        private static void CheckIfLocationOfExpressionAndOpenTokenAreTheSame(SyntaxNodeAnalysisContext context, SyntaxToken openToken, ExpressionSyntax expression)
-        {
-            var identifierLine = expression.GetLineSpan();
+            var prevTokenLine = previousToken.GetLineSpan();
             var openParenLine = openToken.GetLineSpan();
-            if (identifierLine.IsValid &&
+            if (prevTokenLine.IsValid &&
                 openParenLine.IsValid &&
-                openParenLine.StartLinePosition.Line != identifierLine.StartLinePosition.Line)
+                openParenLine.StartLinePosition.Line != prevTokenLine.StartLinePosition.Line)
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, openToken.GetLocation()));
             }

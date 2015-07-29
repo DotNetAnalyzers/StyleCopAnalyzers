@@ -750,6 +750,25 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestGenericMethodOpeningParenthesisAsync()
+        {
+            var testCode = @"using System.Collections.Generic;
+using System.Linq;
+
+public class Foo
+{
+        public void TestMethod()
+        {
+            IEnumerable<object> x = null;
+            x
+            .Reverse<object>();
+        }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1110OpeningParenthesisMustBeOnDeclarationLine();
