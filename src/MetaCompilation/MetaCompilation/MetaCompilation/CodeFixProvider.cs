@@ -823,28 +823,27 @@ namespace MetaCompilation
             return await ReplaceNode(analysis, newMethod, document);
         }
 
+        // replaces the open paren statement
         private async Task<Document> ReplaceOpenParenAsync(Document document, StatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
             var methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
-            string expressionString = (methodDeclaration.Body.Statements[0] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+            string expressionString = CodeFixHelper.GetIfStatementName(methodDeclaration.Body);
 
             SyntaxNode openParen = CodeFixHelper.CreateOpenParen(generator, expressionString);
 
             return await ReplaceNode(declaration, openParen.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Extracts the opening parenthesis of the if-statement condition").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
-
+        
+        // adds the open paren statement
         private async Task<Document> AddOpenParenAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            string expressionString = (declaration.Body.Statements[0] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+            string expressionString = CodeFixHelper.GetIfStatementName(declaration.Body);
             SyntaxNode openParen = CodeFixHelper.CreateOpenParen(generator, expressionString);
-
-            var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
-            SyntaxList<SyntaxNode> newStatements = oldStatements.Add(openParen.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Extracts the opening parenthesis of the if-statement condition").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
-            SyntaxNode newMethod = generator.WithStatements(declaration, newStatements);
+            SyntaxNode newMethod = CodeFixHelper.AddStatementToMethod(generator, declaration, openParen.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Extracts the opening parenthesis of the if-statement condition").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
 
             return await ReplaceNode(declaration, newMethod, document);
         }
