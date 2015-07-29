@@ -481,7 +481,7 @@ namespace MetaCompilation
                 }
                 else
                 {
-                    ReportDiagnostic(context, MissingIdRule, _analyzerClassSymbol.Locations[0], _analyzerClassSymbol.Name.ToString());
+                    ReportDiagnostic(context, MissingIdRule, _analyzerClassSymbol.Locations[0], _analyzerClassSymbol.Name);
                 }
             }
 
@@ -777,8 +777,8 @@ namespace MetaCompilation
                     return statementName;
                 }
 
-                var statementIdentifier = statementCastExpression.Type as TypeSyntax;
-                if (statementIdentifier == null || statementIdentifier.ToString() != "IfStatementSyntax")
+                var statementIdentifier = statementCastExpression.Type as IdentifierNameSyntax;
+                if (statementIdentifier == null || statementIdentifier.Identifier.Text != "IfStatementSyntax")
                 {
                     return emptyResult;
                 }
@@ -2102,8 +2102,11 @@ namespace MetaCompilation
                     ReportDiagnostic(context, IncorrectAccessorReturnRule, returnDeclarationLocation.ReturnKeyword.GetLocation());
                     return false;
                 }
+                
+                var valueExprExpr = valueExpression.Expression as IdentifierNameSyntax;
+                var valueExprName = valueExpression.Name as IdentifierNameSyntax;
 
-                if (valueExpression.ToString() != "ImmutableArray.Create")
+                if (valueExprExpr == null || valueExprName == null || valueExprExpr.Identifier.Text != "ImmutableArray" || valueExprName.Identifier.Text != "Create")
                 {
                     ReportDiagnostic(context, SuppDiagReturnValueRule, returnDeclarationLocation.ReturnKeyword.GetLocation(), propertyDeclaration.Identifier.Text);
                     return false;
@@ -2141,9 +2144,13 @@ namespace MetaCompilation
                     bool foundRule = false;
                     foreach (string ruleName in ruleNames)
                     {
-                        if (arg.ToString() == ruleName)
+                        var argExpression = arg.Expression as IdentifierNameSyntax;
+                        if (argExpression != null)
                         {
-                            foundRule = true;
+                            if (argExpression.Identifier.Text == ruleName)
+                            {
+                                foundRule = true;
+                            }
                         }
                     }
                     if (!foundRule)
@@ -2255,15 +2262,20 @@ namespace MetaCompilation
                             {
                                 string currentArgName = currentArg.NameColon.Name.Identifier.Text;
                                 var currentArgExpr = currentArg.Expression;
+                                var currentArgExprIdentifier = currentArgExpr as IdentifierNameSyntax;
 
                                 if (currentArgName == "isEnabledByDefault")
                                 {
-                                    if (currentArgExpr.ToString() == "")
+                                    if (currentArgExprIdentifier != null)
                                     {
-                                        ReportDiagnostic(context, EnabledByDefaultErrorRule, currentArg.GetLocation());
-                                        return emptyRuleNames;
+                                        if (currentArgExprIdentifier.Identifier.Text == "")
+                                        {
+                                            ReportDiagnostic(context, EnabledByDefaultErrorRule, currentArg.GetLocation());
+                                            return emptyRuleNames;
+                                        }
                                     }
-                                    else if (!currentArgExpr.IsKind(SyntaxKind.TrueLiteralExpression))
+
+                                    if (!currentArgExpr.IsKind(SyntaxKind.TrueLiteralExpression))
                                     {
                                         ReportDiagnostic(context, EnabledByDefaultErrorRule, currentArgExpr.GetLocation());
                                         return emptyRuleNames;
@@ -2271,10 +2283,13 @@ namespace MetaCompilation
                                 }
                                 else if (currentArgName == "defaultSeverity")
                                 {
-                                    if (currentArgExpr.ToString() == "")
+                                    if (currentArgExprIdentifier != null)
                                     {
-                                        ReportDiagnostic(context, DefaultSeverityErrorRule, currentArg.GetLocation());
-                                        return emptyRuleNames;
+                                        if (currentArgExprIdentifier.Identifier.Text == "")
+                                        {
+                                            ReportDiagnostic(context, DefaultSeverityErrorRule, currentArg.GetLocation());
+                                            return emptyRuleNames;
+                                        }
                                     }
 
                                     var memberAccessExpr = currentArgExpr as MemberAccessExpressionSyntax;
@@ -2285,16 +2300,22 @@ namespace MetaCompilation
                                     }
                                     else if (memberAccessExpr.Expression != null && memberAccessExpr.Name != null)
                                     {
-                                        string identifierExpr = memberAccessExpr.Expression.ToString();
+                                        var expressionIdentifier = memberAccessExpr.Expression as IdentifierNameSyntax;
+                                        string expressionText = null;
+                                        if (expressionIdentifier != null)
+                                        {
+                                            expressionText = expressionIdentifier.Identifier.Text;
+                                        }
+
                                         string identifierName = memberAccessExpr.Name.Identifier.Text;
                                         List<string> severities = new List<string> { "Warning", "Error" };
 
-                                        if (identifierExpr != "DiagnosticSeverity")
+                                        if (expressionText != "DiagnosticSeverity")
                                         {
                                             ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation());
                                             return emptyRuleNames;
                                         }
-                                        else if (identifierExpr == "DiagnosticSeverity" && !severities.Contains(identifierName))
+                                        else if (expressionText == "DiagnosticSeverity" && !severities.Contains(identifierName))
                                         {
                                             ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation());
                                             return emptyRuleNames;
@@ -2308,11 +2329,15 @@ namespace MetaCompilation
                                 }
                                 else if (currentArgName == "id")
                                 {
-                                    if (currentArgExpr.ToString() == "")
+                                    if (currentArgExprIdentifier != null)
+                                    {
+                                    if (currentArgExprIdentifier.Identifier.Text == "")
                                     {
                                         ReportDiagnostic(context, IdDeclTypeErrorRule, currentArg.GetLocation());
                                         return emptyRuleNames;
                                     }
+                                    }
+
 
                                     if (currentArgExpr.IsKind(SyntaxKind.StringLiteralExpression))
                                     {
@@ -2330,9 +2355,9 @@ namespace MetaCompilation
                                     {
                                         return emptyRuleNames;
                                     }
-
-                                    var foundId = currentArgExpr.ToString();
-                                    var foundRule = fieldSymbol.Name.ToString();
+                                    
+                                    var foundId = currentArgExprIdentifier.Identifier.Text;
+                                    var foundRule = fieldSymbol.Name;
                                     bool ruleIdFound = false;
 
                                     foreach (string idName in idNames)
@@ -2368,7 +2393,7 @@ namespace MetaCompilation
                     var idLocation = analyzerClass.Identifier.GetLocation();
                     foreach (IFieldSymbol field in _analyzerFieldSymbols)
                     {
-                        if (idNames.Contains(field.Name.ToString()))
+                        if (idNames.Contains(field.Name))
                         {
                             var idField = field.DeclaringSyntaxReferences[0].GetSyntax() as VariableDeclaratorSyntax;
                             idLocation = idField.Identifier.GetLocation();
@@ -2407,11 +2432,12 @@ namespace MetaCompilation
                 bool analysisMethodFound = false;
 
                 var argList = invocationExpression.ArgumentList;
-                var calledMethodName = argList.Arguments.First();
+                var calledMethodName = argList.Arguments.First().Expression as IdentifierNameSyntax;
 
                 foreach (IMethodSymbol currentMethod in _analyzerMethodSymbols)
                 {
-                    if (calledMethodName.Expression.ToString() == currentMethod.MetadataName.ToString())
+
+                    if (calledMethodName.Identifier.Text == currentMethod.Name)
                     {
                         analysisMethod = currentMethod;
                         analysisMethodFound = true;
@@ -2422,7 +2448,7 @@ namespace MetaCompilation
                 if (analysisMethodFound)
                 {
                     MethodDeclarationSyntax analysisMethodSyntax = analysisMethod.DeclaringSyntaxReferences[0].GetSyntax() as MethodDeclarationSyntax;
-                    if (analysisMethodSyntax.Modifiers.Count == 0 || analysisMethodSyntax.Modifiers.First().ToString() != "private" || analysisMethod.DeclaredAccessibility != Accessibility.Private)
+                    if (analysisMethodSyntax.Modifiers.Count == 0 || analysisMethodSyntax.Modifiers.First().Text != "private" || analysisMethod.DeclaredAccessibility != Accessibility.Private)
                     {
                         ReportDiagnostic(context, IncorrectAnalysisAccessibilityRule, analysisMethodSyntax.Identifier.GetLocation(), analysisMethodSyntax.Identifier.ValueText);
                         return false;
@@ -2444,7 +2470,7 @@ namespace MetaCompilation
                 }
                 else
                 {
-                    ReportDiagnostic(context, MissingAnalysisMethodRule, calledMethodName.GetLocation(), calledMethodName.Expression.ToString());
+                    ReportDiagnostic(context, MissingAnalysisMethodRule, calledMethodName.GetLocation(), calledMethodName.Identifier.Text);
                     return false;
                 }
 
@@ -2461,7 +2487,7 @@ namespace MetaCompilation
                 if (_initializeSymbol == null)
                 {
                     //the initialize method was not found
-                    ReportDiagnostic(context, MissingInitRule, _analyzerClassSymbol.Locations[0], _analyzerClassSymbol.Name.ToString());
+                    ReportDiagnostic(context, MissingInitRule, _analyzerClassSymbol.Locations[0], _analyzerClassSymbol.Name);
                     return new CheckInitializeInfo();
                 }
                 else
@@ -2477,7 +2503,7 @@ namespace MetaCompilation
                     if (statements.Count == 0)
                     {
                         //no statements inside initiailize
-                        ReportDiagnostic(context, MissingRegisterRule, _initializeSymbol.Locations[0], _initializeSymbol.Name.ToString());
+                        ReportDiagnostic(context, MissingRegisterRule, _initializeSymbol.Locations[0], _initializeSymbol.Name);
                         return new CheckInitializeInfo();
                     }
                     else if (statements.Count > 1)
@@ -2486,7 +2512,7 @@ namespace MetaCompilation
                         {
                             if (statement.Kind() != SyntaxKind.ExpressionStatement)
                             {
-                                ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
+                                ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation());
                                 return new CheckInitializeInfo();
                             }
                         }
@@ -2495,34 +2521,34 @@ namespace MetaCompilation
                             var expression = statement.Expression as InvocationExpressionSyntax;
                             if (expression == null)
                             {
-                                ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
+                                ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation());
                                 return new CheckInitializeInfo();
                             }
 
                             var expressionStart = expression.Expression as MemberAccessExpressionSyntax;
                             if (expressionStart == null || expressionStart.Name == null)
                             {
-                                ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
+                                ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation());
                                 return new CheckInitializeInfo();
                             }
 
                             var preExpressionStart = expressionStart.Expression as IdentifierNameSyntax;
-                            if (preExpressionStart == null || preExpressionStart.Identifier == null || preExpressionStart.Identifier.ValueText != _initializeSymbol.Parameters.First().Name.ToString())
+                            if (preExpressionStart == null || preExpressionStart.Identifier == null || preExpressionStart.Identifier.ValueText != _initializeSymbol.Parameters.First().Name)
                             {
-                                ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
+                                ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation());
                                 return new CheckInitializeInfo();
                             }
 
-                            var name = expressionStart.Name.ToString();
+                            var name = expressionStart.Name.Identifier.Text;
                             if (!_branchesDict.ContainsKey(name))
                             {
-                                ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation(), statement.ToString());
+                                ReportDiagnostic(context, InvalidStatementRule, statement.GetLocation());
                                 return new CheckInitializeInfo();
                             }
                         }
 
                         //too many statements inside initialize
-                        ReportDiagnostic(context, TooManyInitStatementsRule, _initializeSymbol.Locations[0], _initializeSymbol.Name.ToString());
+                        ReportDiagnostic(context, TooManyInitStatementsRule, _initializeSymbol.Locations[0], _initializeSymbol.Name);
                         return new CheckInitializeInfo();
                     }
                     //only one statement inside initialize
@@ -2595,7 +2621,7 @@ namespace MetaCompilation
                 if (parameters.Count() != 1 || parameters[0].Type != context.Compilation.GetTypeByMetadataName("Microsoft.CodeAnalysis.Diagnostics.AnalysisContext")
                     || _initializeSymbol.DeclaredAccessibility != Accessibility.Public || !_initializeSymbol.IsOverride || !_initializeSymbol.ReturnsVoid)
                 {
-                    ReportDiagnostic(context, IncorrectInitSigRule, _initializeSymbol.Locations[0], _initializeSymbol.Name.ToString());
+                    ReportDiagnostic(context, IncorrectInitSigRule, _initializeSymbol.Locations[0], _initializeSymbol.Name);
                     return null;
                 }
 
@@ -2661,7 +2687,7 @@ namespace MetaCompilation
                     return null;
                 }
 
-                if (!_branchesDict.ContainsKey(memberExprRegister.ToString()))
+                if (!_branchesDict.ContainsKey(memberExprRegister.Identifier.Text))
                 {
                     ReportDiagnostic(context, IncorrectRegisterRule, memberExprRegister.GetLocation());
                     return null;
