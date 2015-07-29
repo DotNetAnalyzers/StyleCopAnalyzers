@@ -286,6 +286,7 @@
     <Compile Include="ReadabilityRules\SA1116SplitParametersMustStartOnLineAfterDeclaration.cs" />
     <Compile Include="ReadabilityRules\SA1117ParametersMustBeOnSameLineOrSeparateLines.cs" />
     <Compile Include="ReadabilityRules\SA1118ParameterMustNotSpanMultipleLines.cs" />
+    <Compile Include="ReadabilityRules\SA1120CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1120CommentsMustContainText.cs" />
     <Compile Include="ReadabilityRules\SA1121CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1121UseBuiltInTypeAlias.cs" />
