@@ -696,6 +696,7 @@ namespace MetaCompilation
             }
         }
 
+        // adds a SupportedDiagnostics property to the class
         private async Task<Document> AddSuppDiagAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxList<MemberDeclarationSyntax> members = declaration.Members;
@@ -717,8 +718,8 @@ namespace MetaCompilation
             SyntaxNode insertPointNode = insertPoint as SyntaxNode;
 
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-            SemanticModel semanticModel = await document.GetSemanticModelAsync();
 
+            SemanticModel semanticModel = await document.GetSemanticModelAsync();
             INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException");
             PropertyDeclarationSyntax propertyDeclaration = CodeFixHelper.CreateSupportedDiagnostics(generator, notImplementedException);
 
@@ -749,30 +750,30 @@ namespace MetaCompilation
             return newDocument;
         }
 
+        // replaces the diagnostic report statement
         private async Task<Document> ReplaceDiagnosticReportAsync(Document document, StatementSyntax declaration, CancellationToken c)
         {
             var methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
 
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            string argumentName = (methodDeclaration.Body.Statements[8] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
-            string contextName = (methodDeclaration.ParameterList.Parameters[0].Identifier.Text);
+            string argumentName = CodeFixHelper.GetDiagnosticName(methodDeclaration);
+            string contextName = CodeFixHelper.GetContextParameter(methodDeclaration);
 
             SyntaxNode diagnosticReport = CodeFixHelper.CreateDiagnosticReport(generator, argumentName, contextName);
 
             return await ReplaceNode(declaration, diagnosticReport.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Sends diagnostic information to the IDE to be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
+        // adds the diagnostic report statement
         private async Task<Document> AddDiagnosticReportAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            string argumentName = (declaration.Body.Statements[8] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
-            string contextName = (declaration.ParameterList.Parameters[0].Identifier.Text);
+            string argumentName = CodeFixHelper.GetDiagnosticName(declaration);
+            string contextName = CodeFixHelper.GetContextParameter(declaration);
             SyntaxNode diagnosticReport = CodeFixHelper.CreateDiagnosticReport(generator, argumentName, contextName);
-            var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
-            SyntaxList<SyntaxNode> newStatements = oldStatements.Add(diagnosticReport.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Sends diagnostic information to the IDE to be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
-            SyntaxNode newMethod = generator.WithStatements(declaration, newStatements);
+            SyntaxNode newMethod = CodeFixHelper.AddStatementToMethod(generator, declaration, diagnosticReport.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Sends diagnostic information to the IDE to be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
 
             return await ReplaceNode(declaration, newMethod, document);
         }
@@ -1745,6 +1746,29 @@ namespace MetaCompilation
 
         class CodeFixHelper
         {
+            // adds a statement to the provided method
+            internal static SyntaxNode AddStatementToMethod(SyntaxGenerator generator, MethodDeclarationSyntax methodDecl, SyntaxNode statement)
+            {
+                var oldStatements = (SyntaxList<SyntaxNode>)methodDecl.Body.Statements;
+                SyntaxList<SyntaxNode> newStatements = oldStatements.Add(statement);
+                SyntaxNode newMethod = generator.WithStatements(methodDecl, newStatements);
+                return newMethod;
+            }
+
+            // gets the name of the diagnostic variable
+            internal static string GetDiagnosticName(MethodDeclarationSyntax methodDecl)
+            {
+                var diagnosticName = (methodDecl.Body.Statements[8] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+                return diagnosticName;
+            }
+
+            // gets the context parameter of the analysis method
+            internal static string GetContextParameter(MethodDeclarationSyntax methodDecl)
+            {
+                var contextName = methodDecl.ParameterList.Parameters[0].Identifier.Text;
+                return contextName;
+            }
+            
             // builds a register statement
             internal static SyntaxNode BuildRegister(SyntaxGenerator generator, string context, string register, ArgumentListSyntax argumentList)
             {
