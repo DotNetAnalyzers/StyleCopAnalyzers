@@ -612,14 +612,20 @@ namespace MetaCompilation
             return await ReplaceNode(declaration.Parent, expression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
+        // corrects the register statement to be RegisterSyntaxNodeAction
         private async Task<Document> CorrectRegisterAsync(Document document, IdentifierNameSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-            SyntaxNode newRegister = generator.IdentifierName("RegisterSyntaxNodeAction");
-            SyntaxNode newMemberExpr = generator.MemberAccessExpression((declaration.Parent as MemberAccessExpressionSyntax).Expression, newRegister);
-            SyntaxNode newInvocationExpr = generator.InvocationExpression(newMemberExpr, ((declaration.Parent as MemberAccessExpressionSyntax).Parent as InvocationExpressionSyntax).ArgumentList.Arguments);
-            SyntaxNode newExpression = generator.ExpressionStatement(newInvocationExpr);
 
+            var memberExpression = declaration.Parent as MemberAccessExpressionSyntax;
+            var invocationExpression = memberExpression.Parent as InvocationExpressionSyntax;
+            var methodName = CodeFixHelper.GetRegisterMethodName(invocationExpression);
+            if (methodName == null)
+            {
+                methodName = "AnalyzeIfStatement";
+            }
+
+            var newExpression = CodeFixHelper.CreateRegister(generator, declaration.Ancestors().OfType<MethodDeclarationSyntax>().First(), methodName);
             return await ReplaceNode(declaration.FirstAncestorOrSelf<ExpressionStatementSyntax>(), newExpression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
