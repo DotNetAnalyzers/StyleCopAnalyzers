@@ -233,6 +233,54 @@
         }
 
         /// <summary>
+        /// Verifies that the analyzer will properly handle closing curly brackets with a trailing dot.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestTrailingDotAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod()
+        {
+            new object { }.ToString();
+            new object[] { }.ToString();
+        }
+    }
+}
+";
+
+            // space between closing curly bracket and dot should be reported by SA1019
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer will properly handle closing curly brackets with a trailing question dot token.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestTrailingQuestionDotAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod()
+        {
+            new object { }?.ToString();
+            new object[] { }?.ToString();
+        }
+    }
+}
+";
+
+            // space between closing curly bracket and question dot should be reported by SA1019
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that the analyzer will properly handle closing curly brackets in parentheses.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
