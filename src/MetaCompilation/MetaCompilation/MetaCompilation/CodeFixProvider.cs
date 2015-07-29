@@ -872,54 +872,54 @@ namespace MetaCompilation
             return await ReplaceNode(declaration, newMethod, document);
         }
 
+        // replaces the end span statement
         private async Task<Document> ReplaceEndSpanAsync(Document document, StatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
             var methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
-            string identifierString = (methodDeclaration.Body.Statements[3] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+            string identifierString = CodeFixHelper.GetOpenParenName(methodDeclaration);
 
             SyntaxNode endSpan = CodeFixHelper.CreateEndOrStartSpan(generator, identifierString, "endDiagnosticSpan");
 
             return await ReplaceNode(declaration, endSpan.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Determines the end of the span of the diagnostic that will be reported").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
+        // adds the end span statement
         private async Task<Document> AddEndSpanAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            string identifierString = (declaration.Body.Statements[3] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+            string identifierString = CodeFixHelper.GetOpenParenName(declaration);
             SyntaxNode endSpan = CodeFixHelper.CreateEndOrStartSpan(generator, identifierString, "endDiagnosticSpan");
-            var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
-            SyntaxList<SyntaxNode> newStatements = oldStatements.Add(endSpan.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Determines the end of the span of the diagnostic that will be reported").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
-            SyntaxNode newMethod = generator.WithStatements(declaration, newStatements);
+            SyntaxNode newMethod = CodeFixHelper.AddStatementToMethod(generator, declaration, endSpan.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Determines the end of the span of the diagnostic that will be reported").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
 
             return await ReplaceNode(declaration, newMethod, document);
         }
 
+        // replaces the span statement
         private async Task<Document> ReplaceSpanAsync(Document document, StatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
             var methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
-            string startIdentifier = (methodDeclaration.Body.Statements[4] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
-            string endIdentifier = (methodDeclaration.Body.Statements[5] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+            string startIdentifier = CodeFixHelper.GetStartSpanName(methodDeclaration);
+            string endIdentifier = CodeFixHelper.GetEndSpanName(methodDeclaration);
 
             SyntaxNode span = CodeFixHelper.CreateSpan(generator, startIdentifier, endIdentifier);
 
             return await ReplaceNode(declaration, span.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// The span is the range of integers that define the position of the characters the red squiggle will underline").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
+        // adds the span statement
         private async Task<Document> AddSpanAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            string startIdentifier = (declaration.Body.Statements[4] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
-            string endIdentifier = (declaration.Body.Statements[5] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+            string startIdentifier = CodeFixHelper.GetStartSpanName(declaration);
+            string endIdentifier = CodeFixHelper.GetEndSpanName(declaration);
             SyntaxNode span = CodeFixHelper.CreateSpan(generator, startIdentifier, endIdentifier);
-            var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
-            SyntaxList<SyntaxNode> newStatements = oldStatements.Add(span.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// The span is the range of integers that define the position of the characters the red squiggle will underline").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
-            SyntaxNode newMethod = generator.WithStatements(declaration, newStatements);
+            SyntaxNode newMethod = CodeFixHelper.AddStatementToMethod(generator, declaration, span.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// The span is the range of integers that define the position of the characters the red squiggle will underline").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
 
             return await ReplaceNode(declaration, newMethod, document);
         }
@@ -1743,6 +1743,28 @@ namespace MetaCompilation
 
         class CodeFixHelper
         {
+            // gets the name of the start span variable
+            internal static string GetStartSpanName(MethodDeclarationSyntax methodDecl)
+            {
+                string startIdentifier = (methodDecl.Body.Statements[4] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+                return startIdentifier;
+                
+            }
+
+            // gets the name of the end span variable
+            internal static string GetEndSpanName(MethodDeclarationSyntax methodDecl)
+            {
+                string endIdentifier = (methodDecl.Body.Statements[5] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+                return endIdentifier;
+            }
+
+            // gets the name of the open paren variable
+            internal static string GetOpenParenName(MethodDeclarationSyntax methodDecl)
+            {
+                string openParenName = (methodDecl.Body.Statements[3] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+                return openParenName;
+            }
+            
             // gets the name of the location variable
             internal static string GetLocationName(MethodDeclarationSyntax methodDecl)
             {
