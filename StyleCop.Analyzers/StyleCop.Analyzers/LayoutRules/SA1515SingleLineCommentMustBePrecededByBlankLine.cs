@@ -223,6 +223,12 @@
                 case SyntaxKind.ElifDirectiveTrivia:
                 case SyntaxKind.ElseDirectiveTrivia:
                 case SyntaxKind.EndIfDirectiveTrivia:
+                case SyntaxKind.PragmaWarningDirectiveTrivia:
+                case SyntaxKind.ErrorDirectiveTrivia:
+                case SyntaxKind.WarningDirectiveTrivia:
+                case SyntaxKind.RegionDirectiveTrivia:
+                case SyntaxKind.EndRegionDirectiveTrivia:
+                case SyntaxKind.LineDirectiveTrivia:
                     // directive trivia are special, as they have a 'built-in' end-of-line.
                     return eolCount > 0;
 
