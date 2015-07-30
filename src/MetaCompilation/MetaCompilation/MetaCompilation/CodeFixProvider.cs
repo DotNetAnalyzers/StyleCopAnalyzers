@@ -1012,44 +1012,25 @@ namespace MetaCompilation
             return await ReplaceNode(classDeclaration, newClassDecl, document);
         }
 
+        // gets ride of multiple statement inside Initialize, keeping one correct statement
         private async Task<Document> MultipleStatementsAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxList<StatementSyntax> statements = new SyntaxList<StatementSyntax>();
             SyntaxList<StatementSyntax> initializeStatements = declaration.Body.Statements;
 
-            BlockSyntax newBlock = declaration.Body;
-
             foreach (ExpressionStatementSyntax statement in initializeStatements)
             {
-                var expression = statement.Expression as InvocationExpressionSyntax;
-                var expressionStart = expression.Expression as MemberAccessExpressionSyntax;
-                if (expressionStart == null || expressionStart.Name == null ||
-                    expressionStart.Name.ToString() != "RegisterSyntaxNodeAction")
-                {
-                    continue;
-                }
+                bool correctRegister = CodeFixHelper.IsCorrectRegister(statement);
 
-                if (expression.ArgumentList == null || expression.ArgumentList.Arguments.Count() != 2)
+                if (correctRegister)
                 {
-                    continue;
+                    statements = statements.Add(statement);
+                    break;
                 }
-
-                var argumentMethod = expression.ArgumentList.Arguments[0].Expression as IdentifierNameSyntax;
-                var argumentKind = expression.ArgumentList.Arguments[1].Expression as MemberAccessExpressionSyntax;
-                var preArgumentKind = argumentKind.Expression as IdentifierNameSyntax;
-                if (argumentMethod.Identifier == null || argumentKind.Name == null || preArgumentKind.Identifier == null || argumentKind.Name.Identifier.Text != "IfStatement" ||
-                    preArgumentKind.Identifier.ValueText != "SyntaxKind")
-                {
-                    continue;
-                }
-
-                statements = statements.Add(statement);
             }
 
-            SyntaxList<StatementSyntax> statementsToAdd = new SyntaxList<StatementSyntax>();
-            statementsToAdd = statementsToAdd.Add(statements[0]);
-
-            newBlock = newBlock.WithStatements(statementsToAdd);
+            BlockSyntax newBlock = declaration.Body;
+            newBlock = newBlock.WithStatements(statements);
             MethodDeclarationSyntax newDeclaration = declaration.WithBody(newBlock);
 
             return await ReplaceNode(declaration, newDeclaration, document);
@@ -1741,6 +1722,47 @@ namespace MetaCompilation
 
         class CodeFixHelper
         {
+            // checks if the statement is a correct regsiter statement
+            internal static bool IsCorrectRegister(ExpressionStatementSyntax statement)
+            {
+                var expression = statement.Expression as InvocationExpressionSyntax;
+                if (expression == null)
+                {
+                    return false;
+                }
+
+                var expressionStart = expression.Expression as MemberAccessExpressionSyntax;
+                if (expressionStart == null || expressionStart.Name == null || expressionStart.Name.Identifier.Text != "RegisterSyntaxNodeAction")
+                {
+                    return false;
+                }
+
+                if (expression.ArgumentList == null || expression.ArgumentList.Arguments.Count() != 2)
+                {
+                    return false;
+                }
+
+                var argumentMethod = expression.ArgumentList.Arguments[0].Expression as IdentifierNameSyntax;
+                if (argumentMethod == null || argumentMethod.Identifier == null)
+                {
+                    return false;
+                }
+
+                var argumentKind = expression.ArgumentList.Arguments[1].Expression as MemberAccessExpressionSyntax;
+                if (argumentKind == null || argumentKind.Name == null || argumentKind.Name.Identifier.Text != "IfStatement")
+                {
+                    return false;
+                }
+
+                var preArgumentKind = argumentKind.Expression as IdentifierNameSyntax;
+                if (preArgumentKind.Identifier == null || preArgumentKind.Identifier.ValueText != "SyntaxKind")
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            
             // gets the name of the span variable
             internal static string GetSpanName(MethodDeclarationSyntax methodDecl)
             {
