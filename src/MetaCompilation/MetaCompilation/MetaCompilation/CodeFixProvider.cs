@@ -924,34 +924,34 @@ namespace MetaCompilation
             return await ReplaceNode(declaration, newMethod, document);
         }
 
+        // replaces the location statement
         private async Task<Document> ReplaceLocationAsync(Document document, StatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
             var methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
-            string ifStatementIdentifier = (methodDeclaration.Body.Statements[0] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
-            string spanIdentifier = (methodDeclaration.Body.Statements[6] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
-
+            string ifStatementIdentifier = CodeFixHelper.GetIfStatementName(methodDeclaration.Body);
+            string spanIdentifier = CodeFixHelper.GetSpanName(methodDeclaration);
             SyntaxNode location = CodeFixHelper.CreateLocation(generator, ifStatementIdentifier, spanIdentifier);
 
             return await ReplaceNode(declaration, location.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Uses the span created above to create a location for the diagnostic squiggle to appear within the syntax tree passed in as an argument").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
+        // adds the location statement
         private async Task<Document> AddLocationAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            string ifStatementIdentifier = (declaration.Body.Statements[0] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
-            string spanIdentifier = (declaration.Body.Statements[6] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+            string ifStatementIdentifier = CodeFixHelper.GetIfStatementName(declaration.Body);
+            string spanIdentifier = CodeFixHelper.GetSpanName(declaration);
             SyntaxNode location = CodeFixHelper.CreateLocation(generator, ifStatementIdentifier, spanIdentifier);
-            var oldStatements = (SyntaxList<SyntaxNode>)declaration.Body.Statements;
-            SyntaxList<SyntaxNode> newStatements = oldStatements.Add(location.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Uses the span created above to create a location for the diagnostic squiggle to appear within the syntax tree passed in as an argument").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
-            SyntaxNode newMethod = generator.WithStatements(declaration, newStatements);
+            SyntaxNode newMethod = CodeFixHelper.AddStatementToMethod(generator, declaration, location.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Uses the span created above to create a location for the diagnostic squiggle to appear within the syntax tree passed in as an argument").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
 
             return await ReplaceNode(declaration, newMethod, document);
         }
 
         #region id code fix
+        // adds an id to the class
         private async Task<Document> MissingIdAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -981,23 +981,21 @@ namespace MetaCompilation
             return await ReplaceNode(declaration, newClassDeclaration, document);
         }
 
+        // adds a register statement and analysis method if necessary
         private async Task<Document> MissingRegisterAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
             ClassDeclarationSyntax classDeclaration = declaration.Parent as ClassDeclarationSyntax;
             SemanticModel semanticModel = await document.GetSemanticModelAsync();
-            bool newAnalysisRequired = true;
+            bool newAnalysisRequired = false;
 
             string methodName = CodeFixHelper.GetExistingAnalysisMethodName(classDeclaration);
 
             if (methodName == null)
-            { 
-                methodName = "AnalyzeIfStatement";
-            }
-            else
             {
-                newAnalysisRequired = false;
+                methodName = "AnalyzeIfStatement";
+                newAnalysisRequired = true;
             }
 
             SyntaxNode invocationExpression = CodeFixHelper.CreateRegister(generator, declaration, methodName);
@@ -1743,6 +1741,13 @@ namespace MetaCompilation
 
         class CodeFixHelper
         {
+            // gets the name of the span variable
+            internal static string GetSpanName(MethodDeclarationSyntax methodDecl)
+            {
+                string spanName = (methodDecl.Body.Statements[6] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
+                return spanName;
+            }
+            
             // gets the name of the start span variable
             internal static string GetStartSpanName(MethodDeclarationSyntax methodDecl)
             {
