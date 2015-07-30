@@ -1043,15 +1043,14 @@ namespace MetaCompilation
             return await ReplaceNode(declaration.Ancestors().OfType<MethodDeclarationSyntax>().First(), newInitializeDeclaration, document);
         }
 
+        // replaces the old Initialize declaration with one with a correct signature
         private async Task<Document> IncorrectSigAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            SyntaxNode initializeDeclaration = null;
-            SyntaxList<StatementSyntax> statements = new SyntaxList<StatementSyntax>();
-            string name = declaration.ParameterList.Parameters[0].Identifier.ValueText;
-            statements = declaration.Body.Statements;
-            initializeDeclaration = CodeFixHelper.BuildInitialize(generator, null, statements, name);
+            string name = CodeFixHelper.GetContextParameter(declaration);
+            SyntaxList<StatementSyntax> statements = declaration.Body.Statements;
+            SyntaxNode initializeDeclaration = CodeFixHelper.BuildInitialize(generator, null, statements, name);
 
             return await ReplaceNode(declaration, initializeDeclaration, document);
         }
