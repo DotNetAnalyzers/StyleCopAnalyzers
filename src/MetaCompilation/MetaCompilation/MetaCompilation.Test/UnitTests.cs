@@ -19529,6 +19529,358 @@ namespace SyntaxNodeAnalyzer
             VerifyCSharpDiagnostic(test, expected);
         }
 
+        // Trivia kind check block
+        [Fact]
+        public void TooManyStatements3()
+        {
+            var test = @"using System.Collections.Immutable;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.CSharp;
+            using Microsoft.CodeAnalysis.CSharp.Syntax;
+            using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, // make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", // allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", // allow any message
+            category: ""Syntax"", // make the category specific
+            defaultSeverity: DiagnosticSeverity.Warning, // possible options
+            isEnabledByDefault: true);
+
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    return ImmutableArray.Create(Rule);
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            }
+
+            private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+            {
+                var ifStatement = (IfStatementSyntax)context.Node;
+                var ifKeyword = ifStatement.IfKeyword;
+                if (ifKeyword.HasTrailingTrivia)
+                {
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                        {
+                            if (trailingTrivia.ToString() == "" "")
+                            {
+                                 return;
+                            }
+                            var openParen = ifStatement.OpenParenToken;
+                        }
+                    }
+                }
+            }
+        }
+    }";
+
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.TooManyStatements,
+                Message = MessagePrefix + "This if-block should only have 1 statement(s), which should check if the trivia is a single space",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+        }
+
+        // Return block
+        [Fact]
+        public void TooManyStatements4()
+        {
+            var test = @"using System.Collections.Immutable;
+            using Microsoft.CodeAnalysis;
+            using Microsoft.CodeAnalysis.CSharp;
+            using Microsoft.CodeAnalysis.CSharp.Syntax;
+            using Microsoft.CodeAnalysis.Diagnostics;
+
+namespace SyntaxNodeAnalyzer
+    {
+        [DiagnosticAnalyzer(LanguageNames.CSharp)]
+        public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+        {
+            public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId, // make the id specific
+            title: ""If statement must have a space between 'if' and the boolean expression"", // allow any title
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"", // allow any message
+            category: ""Syntax"", // make the category specific
+            defaultSeverity: DiagnosticSeverity.Warning, // possible options
+            isEnabledByDefault: true);
+
+            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+            {
+                get
+                {
+                    return ImmutableArray.Create(Rule);
+                }
+            }
+
+            public override void Initialize(AnalysisContext context)
+            {
+                context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+            }
+
+            private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+            {
+                var ifStatement = (IfStatementSyntax)context.Node;
+                var ifKeyword = ifStatement.IfKeyword;
+                if (ifKeyword.HasTrailingTrivia)
+                {
+                    if (ifKeyword.TrailingTrivia.Count == 1)
+                    {
+                        var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                        if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                        {
+                            if (trailingTrivia.ToString() == "" "")
+                            {
+                                return;
+                                var openParen = ifStatement.OpenParenToken;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }";
+
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.TooManyStatements,
+                Message = MessagePrefix + "This if-block should only have 1 statement(s), which should return from the method",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+        }
+
+        // Method declaration (all statements)
+        [Fact]
+        public void TooManyStatements5()
+        {
+            var test = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public const string spacingRuleId = ""IfSpacing"";
+
+        internal static DiagnosticDescriptor spacingRule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""If statement must have a space between 'if' and the boolean expression"",
+            messageFormat: ""If statements must contain a space between the 'if' keyword and the boolean expression"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                return ImmutableArray.Create(spacingRule);
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+        {
+            var ifState = (IfStatementSyntax)context.Node;
+            var ifKeyword = ifState.IfKeyword;
+
+            if (ifKeyword.HasTrailingTrivia)
+            {
+                if (ifKeyword.TrailingTrivia.Count == 1)
+                {
+                    var trailingTrivia = ifKeyword.TrailingTrivia.First();
+                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    {
+                        if (trailingTrivia.ToString() == "" "")
+                        {
+                            return;
+                        }
+                    }
+                }
+            }
+
+            var open = ifState.OpenParenToken;
+            var start = ifKeyword.SpanStart;
+            var end = open.SpanStart;
+            var span = TextSpan.FromBounds(start, end);
+            var location = Location.Create(ifState.SyntaxTree, span);
+            var diagnostic = Diagnostic.Create(spacingRule, location);
+            context.ReportDiagnostic(diagnostic);
+            return;
+        }
+    }
+}";
+
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.TooManyStatements,
+                Message = MessagePrefix + "This method should only have 10 statement(s), which should walk through the Syntax Tree and check the spacing of the if-statement",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 40, 22) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+        }
+
+        // Too many get-accessor statements, using one single return line
+        [Fact]
+        public void TooManyStatements6()
+        {
+            var test = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                var one = 1;
+                return ImmutableArray.Create(Rule);
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.TooManyStatements,
+                Message = MessagePrefix + "This get accessor should only have 1 or 2 statement(s), which should create and return an ImmutableArray containing all DiagnosticDescriptors",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 28, 13) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+        }
+
+        // Too many get-accessor statements, create array then return
+        [Fact]
+        public void TooManyStatements7()
+        {
+            var test = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                var array = ImmutableArray.Create(Rule);
+                var one = 1;
+                return array;
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.TooManyStatements,
+                Message = MessagePrefix + "This get accessor should only have 1 or 2 statement(s), which should create and return an ImmutableArray containing all DiagnosticDescriptors",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 28, 13) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+        }
+
         #endregion
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

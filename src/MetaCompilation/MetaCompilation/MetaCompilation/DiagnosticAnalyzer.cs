@@ -1987,6 +1987,13 @@ namespace MetaCompilation
                     {
                         return false;
                     }
+
+                    if (statements.Count > 1)
+                    {
+                        AccessorListSyntax propertyAccessorList = propertyDeclaration.AccessorList as AccessorListSyntax;
+                        ReportDiagnostic(context, TooManyStatementsRule, propertyAccessorList.Accessors[0].Keyword.GetLocation(), "get accessor", "1 or 2", "create and return an ImmutableArray containing all DiagnosticDescriptors");
+                        return false;
+                    }
                 }
                 else if (returnExpression is IdentifierNameSyntax)
                 {
