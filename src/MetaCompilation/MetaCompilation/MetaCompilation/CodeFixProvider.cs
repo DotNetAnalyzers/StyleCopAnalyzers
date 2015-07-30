@@ -601,22 +601,24 @@ namespace MetaCompilation
             return await ReplaceNode(classDeclaration, classDeclaration.AddMembers(newAnalysisMethod), document);
         }
 
+        // replaces the if statement variable
         private async Task<Document> IncorrectIfAsync(Document document, StatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            MethodDeclarationSyntax methodDeclaration = declaration.Parent.Parent as MethodDeclarationSyntax;
-            string name = methodDeclaration.ParameterList.Parameters[0].Identifier.ValueText as string;
+            MethodDeclarationSyntax methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
+            string name = CodeFixHelper.GetContextParameter(methodDeclaration);
             SyntaxNode ifStatement = CodeFixHelper.IfHelper(generator, name);
 
             return await ReplaceNode(declaration, ifStatement.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
+        // adds the if statement variable
         private async Task<Document> MissingIfAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            string name = declaration.ParameterList.Parameters[0].Identifier.ValueText as string;
+            string name = CodeFixHelper.GetContextParameter(declaration);
             StatementSyntax ifStatement = CodeFixHelper.IfHelper(generator, name) as StatementSyntax;
 
             var oldBlock = declaration.Body as BlockSyntax;
@@ -648,6 +650,7 @@ namespace MetaCompilation
             return await ReplaceNode(methodBlock, newBlock, document);
         }
 
+        // replaces the trailing trivia check
         private async Task<Document> TrailingCheckIncorrectAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -671,6 +674,7 @@ namespace MetaCompilation
             return await ReplaceNode(oldBlock, newBlock, document);
         }
 
+        // adds the trailing trivia check
         private async Task<Document> TrailingCheckMissingAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -679,17 +683,17 @@ namespace MetaCompilation
             StatementSyntax ifStatement = CodeFixHelper.TriviaCheckHelper(generator, declaration.Body, ifBlockStatements) as StatementSyntax;
 
             BlockSyntax oldBlock = declaration.Body;
-            BlockSyntax newBlock = declaration.Body.WithStatements(declaration.Body.Statements.Add(ifStatement));
+            BlockSyntax newBlock = oldBlock.WithStatements(declaration.Body.Statements.Add(ifStatement));
 
             return await ReplaceNode(oldBlock, newBlock, document);
         }
 
+        // adds the trivia count check
         private async Task<Document> TriviaCountMissingAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            var nameStatement = declaration.Body.Statements[1] as LocalDeclarationStatementSyntax;
-            string name = nameStatement.Declaration.Variables[0].Identifier.ValueText;
+            string name = CodeFixHelper.GetIfKeywordName(declaration.Body);
             var ifBlockStatements = new SyntaxList<StatementSyntax>();
 
             var ifStatement = declaration.Body.Statements[2] as IfStatementSyntax;
@@ -701,12 +705,12 @@ namespace MetaCompilation
             return await ReplaceNode(oldBlock, newBlock, document);
         }
 
+        // replaces the trivia count check
         private async Task<Document> TriviaCountIncorrectAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            var nameStatement = declaration.Body.Statements[1] as LocalDeclarationStatementSyntax;
-            string name = nameStatement.Declaration.Variables[0].Identifier.ValueText;
+            string name = CodeFixHelper.GetIfKeywordName(declaration.Body);
             var ifStatement = declaration.Body.Statements[2] as IfStatementSyntax;
 
             var ifBlockStatements = new SyntaxList<StatementSyntax>();
@@ -731,6 +735,7 @@ namespace MetaCompilation
             return await ReplaceNode(oldBlock, newBlock, document);
         }
 
+        // adds the trailing trivia variable
         private async Task<Document> TrailingVarMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -744,6 +749,7 @@ namespace MetaCompilation
             return await ReplaceNode(oldBlock, newBlock, document);
         }
 
+        // replaces the trailing trivia variable
         private async Task<Document> TrailingVarIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -768,6 +774,7 @@ namespace MetaCompilation
             return await ReplaceNode(oldBlock, newBlock, document);
         }
 
+        // replaces the trailing trivia kind check
         private async Task<Document> TrailingKindCheckIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -798,6 +805,7 @@ namespace MetaCompilation
             return await ReplaceNode(oldBlock, newBlock, document);
         }
 
+        // adds the trailing trivia kind check
         private async Task<Document> TrailingKindCheckMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -811,6 +819,7 @@ namespace MetaCompilation
             return await ReplaceNode(oldBlock, newBlock, document);
         }
 
+        // replaces the whitespace check
         private async Task<Document> WhitespaceCheckIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -842,6 +851,7 @@ namespace MetaCompilation
             return await ReplaceNode(oldBlock, newBlock, document);
         }
 
+        // adds the whitespace check
         private async Task<Document> WhitespaceCheckMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -855,6 +865,7 @@ namespace MetaCompilation
             return await ReplaceNode(oldBlock, newBlock, document);
         }
 
+        // replaces the return statement
         private async Task<Document> ReturnIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -878,6 +889,7 @@ namespace MetaCompilation
             return await ReplaceNode(oldBlock, newBlock, document);
         }
 
+        // adds the return statement
         private async Task<Document> ReturnMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
