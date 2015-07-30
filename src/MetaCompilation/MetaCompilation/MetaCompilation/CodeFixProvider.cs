@@ -1036,15 +1036,11 @@ namespace MetaCompilation
             return await ReplaceNode(declaration, newDeclaration, document);
         }
 
+        // removes the invalid statement from the method
         private async Task<Document> InvalidStatementAsync(Document document, StatementSyntax declaration, CancellationToken c)
         {
-            BlockSyntax initializeCodeBlock = declaration.Parent as BlockSyntax;
-            MethodDeclarationSyntax initializeDeclaration = initializeCodeBlock.Parent as MethodDeclarationSyntax;
-
-            BlockSyntax newCodeBlock = initializeCodeBlock.WithStatements(initializeCodeBlock.Statements.Remove(declaration));
-            MethodDeclarationSyntax newInitializeDeclaration = initializeDeclaration.WithBody(newCodeBlock);
-
-            return await ReplaceNode(initializeDeclaration, newInitializeDeclaration, document);
+            SyntaxNode newInitializeDeclaration = CodeFixHelper.RemoveStatement(declaration);
+            return await ReplaceNode(declaration.Ancestors().OfType<MethodDeclarationSyntax>().First(), newInitializeDeclaration, document);
         }
 
         private async Task<Document> IncorrectSigAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
@@ -1722,6 +1718,14 @@ namespace MetaCompilation
 
         class CodeFixHelper
         {
+            // removes the provided statement from the method that it is in
+            internal static SyntaxNode RemoveStatement(StatementSyntax statement)
+            {
+                MethodDeclarationSyntax initializeDeclaration = statement.Ancestors().OfType<MethodDeclarationSyntax>().First();
+                MethodDeclarationSyntax newInitializeDeclaration = initializeDeclaration.RemoveNode(statement, 0);
+                return newInitializeDeclaration as SyntaxNode;
+            }
+            
             // checks if the statement is a correct regsiter statement
             internal static bool IsCorrectRegister(ExpressionStatementSyntax statement)
             {
