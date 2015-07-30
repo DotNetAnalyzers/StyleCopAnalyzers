@@ -1271,6 +1271,7 @@ namespace MetaCompilation
         #endregion
 
         #region rule code fixes
+        // adds the internal and static modifiers to the property
         private async Task<Document> InternalStaticAsync(Document document, FieldDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -1278,6 +1279,7 @@ namespace MetaCompilation
             return await ReplaceNode(declaration, newFieldDecl, document);
         }
 
+        // sets the isEnabledByDefault parameter to true
         private async Task<Document> EnabledByDefaultAsync(Document document, ArgumentSyntax argument, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -1288,6 +1290,7 @@ namespace MetaCompilation
             return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("// isEnabledByDefault: Determines whether the analyzer is enabled by default or if the user must manually enable it. Generally set to true").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document);
         }
 
+        // sets the diagnosticSeverity parameter to warning
         private async Task<Document> DiagnosticSeverityWarning(Document document, ArgumentSyntax argument, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -1300,6 +1303,7 @@ namespace MetaCompilation
             return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("// defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document);
         }
 
+        // sets the diagnosticSeverity parameter to hidden
         private async Task<Document> DiagnosticSeverityHidden(Document document, ArgumentSyntax argument, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -1312,6 +1316,7 @@ namespace MetaCompilation
             return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("// defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document);
         }
 
+        // sets the diagnosticSeverity parameter to info
         private async Task<Document> DiagnosticSeverityInfo(Document document, ArgumentSyntax argument, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -1324,6 +1329,7 @@ namespace MetaCompilation
             return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("// defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document);
         }
 
+        // sets the diagnosticSeverity parameter to error
         private async Task<Document> DiagnosticSeverityError(Document document, ArgumentSyntax argument, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -1336,6 +1342,7 @@ namespace MetaCompilation
             return await ReplaceNode(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>(), newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("// defaultSeverity: Is set to DiagnosticSeverity.[severity] where severity can be Error, Warning, Hidden or Info, but can only be Error or Warning for the purposes of this tutorial").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(argument.FirstAncestorOrSelf<FieldDeclarationSyntax>().GetLeadingTrivia()), document);
         }
 
+        // adds a declaration for the id
         private async Task<Document> MissingIdDeclarationAsync(Document document, VariableDeclaratorSyntax ruleDeclarationField, CancellationToken c)
         {
             var classDeclaration = ruleDeclarationField.Parent.Parent.Parent as ClassDeclarationSyntax;
@@ -1349,7 +1356,8 @@ namespace MetaCompilation
                 string currentArgName = currentArg.NameColon.Name.Identifier.Text;
                 if (currentArgName == "id")
                 {
-                    currentRuleId = currentArg.Expression.ToString();
+                    var currentRuleIdentifier = currentArg.Expression as IdentifierNameSyntax;
+                    currentRuleId = currentRuleIdentifier.Identifier.Text;
                     break;
                 }
             }
@@ -1364,6 +1372,7 @@ namespace MetaCompilation
             return await ReplaceNode(classDeclaration, triviaClass, document);
         }
 
+        // corrects the id declaration
         private async Task<Document> IdDeclTypeAsync(Document document, ClassDeclarationSyntax classDeclaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -1381,7 +1390,8 @@ namespace MetaCompilation
                     continue;
                 }
 
-                if (fieldDeclaration.Declaration.Type != null && fieldDeclaration.Declaration.Type.ToString() == "DiagnosticDescriptor")
+                var fieldType = fieldDeclaration.Declaration.Type as IdentifierNameSyntax;
+                if (fieldType != null && fieldType.Identifier.Text == "DiagnosticDescriptor")
                 {
                     rule = fieldDeclaration;
 
@@ -1427,9 +1437,8 @@ namespace MetaCompilation
 
                 if (isPublic && isConst)
                 {
-                    FieldDeclarationSyntax ruleIdSymbol = fieldDeclaration;
-                    var ruleIdSyntax = ruleIdSymbol.Declaration.Variables[0] as VariableDeclaratorSyntax;
-                    string newIdIdentifier = ruleIdSyntax.Identifier.ToString();
+                    var ruleIdSyntax = fieldDeclaration.Declaration.Variables[0] as VariableDeclaratorSyntax;
+                    string newIdIdentifier = ruleIdSyntax.Identifier.Text;
                     newIdName = generator.IdentifierName(newIdIdentifier) as IdentifierNameSyntax;
                 }
             }
@@ -1485,6 +1494,7 @@ namespace MetaCompilation
         #endregion
 
         #region supported diagnostics code fixes
+        // fixes the signature of the SupportedDiagnostics property
         private async Task<Document> IncorrectSigSuppDiagAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -1506,6 +1516,7 @@ namespace MetaCompilation
             return await ReplaceNode(declaration, newPropertyDecl, document);
         }
 
+        // adds the get accessor
         private async Task<Document> MissingAccessorAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken c)
         {
             var generator = SyntaxGenerator.GetGenerator(document);
@@ -1521,6 +1532,7 @@ namespace MetaCompilation
             return await ReplaceNode(declaration, newPropertyDeclaration, document);
         }
 
+        // removes all unnecessary accessors
         private async Task<Document> TooManyAccessorsAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -1558,6 +1570,7 @@ namespace MetaCompilation
             return await ReplaceNode(declaration, newPropertyDeclaration, document);
         }
 
+        // return an ImmutableArray fromt the get accessor
         private async Task<Document> AccessorReturnValueAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -1605,14 +1618,15 @@ namespace MetaCompilation
             return newDocument;
         }
 
+        // adds all rules to the SupportedDiagnostics ImmutableArray
         private async Task<Document> SupportedRulesAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
         {
             List<string> ruleNames = new List<string>();
             var fieldMembers = declaration.Members.OfType<FieldDeclarationSyntax>();
             foreach (FieldDeclarationSyntax fieldSyntax in fieldMembers)
             {
-                TypeSyntax fieldType = fieldSyntax.Declaration.Type;
-                if (fieldType != null && fieldType.ToString() == "DiagnosticDescriptor")
+                var fieldType = fieldSyntax.Declaration.Type as IdentifierNameSyntax;
+                if (fieldType != null && fieldType.Identifier.Text == "DiagnosticDescriptor")
                 {
                     string ruleName = fieldSyntax.Declaration.Variables[0].Identifier.Text;
                     ruleNames.Add(ruleName);
@@ -2158,7 +2172,8 @@ namespace MetaCompilation
                 foreach (MemberDeclarationSyntax member in members)
                 {
                     rule = member as FieldDeclarationSyntax;
-                    if (rule != null && rule.Declaration.Type.ToString() == "DiagnosticDescriptor")
+                    var ruleType = rule.Declaration.Type as IdentifierNameSyntax;
+                    if (rule != null && ruleType != null && ruleType.Identifier.Text == "DiagnosticDescriptor")
                     {
                         break;
                     }
@@ -2219,7 +2234,8 @@ namespace MetaCompilation
                 }
 
                 ParameterSyntax contextParameter = parameters[0];
-                if (contextParameter.Type.ToString() != "SyntaxNodeAnalysisContext")
+                var parameterType = contextParameter.Type as IdentifierNameSyntax;
+                if (parameterType != null && parameterType.Identifier.Text != "SyntaxNodeAnalysisContext")
                 {
                     return null;
                 }
@@ -2380,8 +2396,8 @@ namespace MetaCompilation
                         {
                             if (parameters.Count > 0)
                             {
-                                TypeSyntax parameterType = parameters.First().Type;
-                                if (parameterType != null && parameterType.ToString() == "SyntaxNodeAnalysisContext")
+                                var parameterType = parameters.First().Type as IdentifierNameSyntax;
+                                if (parameterType != null && parameterType.Identifier.Text == "SyntaxNodeAnalysisContext")
                                 {
                                     return methodName = method.Identifier.Text;
                                 }
