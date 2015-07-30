@@ -548,6 +548,16 @@ namespace MetaCompilation
             }
         }
 
+        // replaces a node in the document
+        private async Task<Document> ReplaceNode(SyntaxNode oldNode, SyntaxNode newNode, Document document)
+        {
+            SyntaxNode root = await document.GetSyntaxRootAsync();
+            SyntaxNode newRoot = root.ReplaceNode(oldNode, newNode);
+            Document newDocument = document.WithSyntaxRoot(newRoot);
+            return newDocument;
+        }
+
+        #region analysis method fixes
         // sets the analysis method to take a parameter of type SyntaxNodeAnalysisContext
         private async Task<Document> IncorrectAnalysisParameterAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
@@ -591,236 +601,293 @@ namespace MetaCompilation
             return await ReplaceNode(classDeclaration, classDeclaration.AddMembers(newAnalysisMethod), document);
         }
 
-        // puts the correct arguments in the register statement
-        private async Task<Document> CorrectArgumentsAsync(Document document, InvocationExpressionSyntax declaration, CancellationToken c)
+        private async Task<Document> IncorrectIfAsync(Document document, StatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            string methodName = CodeFixHelper.GetRegisterMethodName(declaration);
+            MethodDeclarationSyntax methodDeclaration = declaration.Parent.Parent as MethodDeclarationSyntax;
+            string name = methodDeclaration.ParameterList.Parameters[0].Identifier.ValueText as string;
+            SyntaxNode ifStatement = CodeFixHelper.IfHelper(generator, name);
 
-            ClassDeclarationSyntax classDeclaration = declaration.AncestorsAndSelf().OfType<ClassDeclarationSyntax>().First();
-            methodName = CodeFixHelper.GetExistingAnalysisMethodName(classDeclaration);
-
-            if (methodName == null)
-            {
-                methodName = "AnalyzeIfStatement";
-            }
-
-            SyntaxNode statement = CodeFixHelper.CreateRegister(generator, declaration.Ancestors().OfType<MethodDeclarationSyntax>().First(), methodName);
-            SyntaxNode expression = generator.ExpressionStatement(statement);
-
-            return await ReplaceNode(declaration.Parent, expression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
+            return await ReplaceNode(declaration, ifStatement.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
-        // corrects the register statement to be RegisterSyntaxNodeAction
-        private async Task<Document> CorrectRegisterAsync(Document document, IdentifierNameSyntax declaration, CancellationToken c)
+        private async Task<Document> MissingIfAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            var memberExpression = declaration.Parent as MemberAccessExpressionSyntax;
-            var invocationExpression = memberExpression.Parent as InvocationExpressionSyntax;
-            string methodName = CodeFixHelper.GetRegisterMethodName(invocationExpression);
-            if (methodName == null)
-            {
-                methodName = "AnalyzeIfStatement";
-            }
+            string name = declaration.ParameterList.Parameters[0].Identifier.ValueText as string;
+            StatementSyntax ifStatement = CodeFixHelper.IfHelper(generator, name) as StatementSyntax;
 
-            SyntaxNode newExpression = CodeFixHelper.CreateRegister(generator, declaration.Ancestors().OfType<MethodDeclarationSyntax>().First(), methodName);
-            return await ReplaceNode(declaration.FirstAncestorOrSelf<ExpressionStatementSyntax>(), newExpression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
+            var oldBlock = declaration.Body as BlockSyntax;
+            var newBlock = oldBlock.AddStatements(ifStatement.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
+
+            return await ReplaceNode(oldBlock, newBlock, document);
         }
 
-        // corrects the kind argument of the register statement to be SyntaxKind.IfStatement
-        private async Task<Document> CorrectKindAsync(Document document, ArgumentListSyntax declaration, CancellationToken c)
+        // replaces the incorrect statement with the keyword statement
+        private async Task<Document> IncorrectKeywordAsync(Document document, StatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            ArgumentSyntax argument = CodeFixHelper.CreateSyntaxKindIfStatement(generator);
-            SeparatedSyntaxList<ArgumentSyntax> arguments = declaration.Arguments;
-            if (arguments.Count < 2)
+            var block = declaration.Parent as BlockSyntax;
+            SyntaxNode ifKeyword = CodeFixHelper.KeywordHelper(generator, block);
+
+            return await ReplaceNode(declaration, ifKeyword.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// This statement navigates down the syntax tree one level to extract the 'if' keyword").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
+        }
+
+        // adds the keyword statement
+        private async Task<Document> MissingKeywordAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            var methodBlock = declaration.Body as BlockSyntax;
+            var ifKeyword = CodeFixHelper.KeywordHelper(generator, methodBlock) as StatementSyntax;
+            BlockSyntax newBlock = methodBlock.AddStatements(ifKeyword.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// This statement navigates down the syntax tree one level to extract the 'if' keyword").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
+
+            return await ReplaceNode(methodBlock, newBlock, document);
+        }
+
+        private async Task<Document> TrailingCheckIncorrectAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            var ifBlockStatements = new SyntaxList<StatementSyntax>();
+            if (declaration.Body.Statements[2].Kind() == SyntaxKind.IfStatement)
             {
-                arguments = arguments.Add(argument);
+                var ifDeclaration = declaration.Body.Statements[2] as IfStatementSyntax;
+                var ifBlock = ifDeclaration.Statement as BlockSyntax;
+                if (ifBlock != null)
+                {
+                    ifBlockStatements = ifBlock.Statements;
+                }
+            }
+
+            StatementSyntax ifStatement = CodeFixHelper.TriviaCheckHelper(generator, declaration.Body, ifBlockStatements) as StatementSyntax;
+
+            BlockSyntax oldBlock = declaration.Body;
+            BlockSyntax newBlock = declaration.Body.WithStatements(declaration.Body.Statements.Replace(declaration.Body.Statements[2], ifStatement));
+
+            return await ReplaceNode(oldBlock, newBlock, document);
+        }
+
+        private async Task<Document> TrailingCheckMissingAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            var ifBlockStatements = new SyntaxList<StatementSyntax>();
+            StatementSyntax ifStatement = CodeFixHelper.TriviaCheckHelper(generator, declaration.Body, ifBlockStatements) as StatementSyntax;
+
+            BlockSyntax oldBlock = declaration.Body;
+            BlockSyntax newBlock = declaration.Body.WithStatements(declaration.Body.Statements.Add(ifStatement));
+
+            return await ReplaceNode(oldBlock, newBlock, document);
+        }
+
+        private async Task<Document> TriviaCountMissingAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            var nameStatement = declaration.Body.Statements[1] as LocalDeclarationStatementSyntax;
+            string name = nameStatement.Declaration.Variables[0].Identifier.ValueText;
+            var ifBlockStatements = new SyntaxList<StatementSyntax>();
+
+            var ifStatement = declaration.Body.Statements[2] as IfStatementSyntax;
+            var localDeclaration = new SyntaxList<SyntaxNode>().Add(CodeFixHelper.TriviaCountHelper(generator, name, ifBlockStatements));
+
+            var oldBlock = ifStatement.Statement as BlockSyntax;
+            BlockSyntax newBlock = oldBlock.WithStatements(localDeclaration);
+
+            return await ReplaceNode(oldBlock, newBlock, document);
+        }
+
+        private async Task<Document> TriviaCountIncorrectAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            var nameStatement = declaration.Body.Statements[1] as LocalDeclarationStatementSyntax;
+            string name = nameStatement.Declaration.Variables[0].Identifier.ValueText;
+            var ifStatement = declaration.Body.Statements[2] as IfStatementSyntax;
+
+            var ifBlockStatements = new SyntaxList<StatementSyntax>();
+            if (declaration.Body.Statements[2].Kind() == SyntaxKind.IfStatement)
+            {
+                var ifDeclaration = ifStatement.Statement as BlockSyntax;
+                var ifBlockStatement = ifDeclaration.Statements[0] as IfStatementSyntax;
+                var ifBlock = ifBlockStatement.Statement as BlockSyntax;
+                if (ifBlock != null)
+                {
+                    ifBlockStatements = ifBlock.Statements;
+                }
+            }
+
+            var localDeclaration = CodeFixHelper.TriviaCountHelper(generator, name, ifBlockStatements) as StatementSyntax;
+
+            var oldBlock = ifStatement.Statement as BlockSyntax;
+            StatementSyntax oldStatement = oldBlock.Statements[0];
+            SyntaxList<StatementSyntax> newStatements = oldBlock.Statements.Replace(oldStatement, localDeclaration);
+            BlockSyntax newBlock = oldBlock.WithStatements(newStatements);
+
+            return await ReplaceNode(oldBlock, newBlock, document);
+        }
+
+        private async Task<Document> TrailingVarMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            var ifStatement = declaration.Parent.Parent as IfStatementSyntax;
+            var localDeclaration = new SyntaxList<SyntaxNode>().Add(CodeFixHelper.TriviaVarMissingHelper(generator, ifStatement));
+
+            var oldBlock = declaration.Statement as BlockSyntax;
+            BlockSyntax newBlock = oldBlock.WithStatements(localDeclaration);
+
+            return await ReplaceNode(oldBlock, newBlock, document);
+        }
+
+        private async Task<Document> TrailingVarIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            IfStatementSyntax ifStatement;
+            if (declaration.Parent.Parent.Parent.Parent.Kind() == SyntaxKind.MethodDeclaration)
+            {
+                ifStatement = declaration as IfStatementSyntax;
             }
             else
             {
-                arguments = arguments.Replace(arguments[1], argument);
+                ifStatement = declaration.Parent.Parent as IfStatementSyntax;
             }
 
-            ArgumentListSyntax argList = SyntaxFactory.ArgumentList(arguments);
-            string contextParameter = (((declaration.Parent as InvocationExpressionSyntax).Expression as MemberAccessExpressionSyntax).Expression as IdentifierNameSyntax).Identifier.Text;
-            SyntaxNode newExpr = CodeFixHelper.BuildRegister(generator, contextParameter, "RegisterSyntaxNodeAction", argList);
+            var localDeclaration = CodeFixHelper.TriviaVarMissingHelper(generator, ifStatement) as LocalDeclarationStatementSyntax;
 
-            return await ReplaceNode(declaration.Ancestors().OfType<InvocationExpressionSyntax>().First(), newExpr.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("            "), SyntaxFactory.ParseLeadingTrivia("// Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("            "))), document);
+            var oldBlock = ifStatement.Statement as BlockSyntax;
+            StatementSyntax oldStatement = oldBlock.Statements[0];
+            SyntaxList<StatementSyntax> newStatements = oldBlock.Statements.Replace(oldStatement, localDeclaration);
+            BlockSyntax newBlock = oldBlock.WithStatements(newStatements);
+
+            return await ReplaceNode(oldBlock, newBlock, document);
         }
 
-        // adds a DiagnosticDescriptor rule to the class
-        private async Task<Document> AddRuleAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> TrailingKindCheckIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            SyntaxList<MemberDeclarationSyntax> members = declaration.Members;
-            PropertyDeclarationSyntax insertPoint = null;
-
-            foreach (MemberDeclarationSyntax member in members)
+            IfStatementSyntax ifStatement;
+            var ifBlockStatements = new SyntaxList<SyntaxNode>();
+            if (declaration.Parent.Parent.Parent.Parent.Kind() == SyntaxKind.MethodDeclaration)
             {
-                insertPoint = member as PropertyDeclarationSyntax;
-                if (insertPoint == null || insertPoint.Identifier.Text != "SupportedDiagnostics")
-                {
-                    insertPoint = null;
-                    continue;
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            SyntaxNode insertPointNode = insertPoint as SyntaxNode;
-
-            FieldDeclarationSyntax fieldDeclaration = CodeFixHelper.CreateEmptyRule(generator);
-
-            var newNodes = new SyntaxList<SyntaxNode>();
-            newNodes = newNodes.Add(fieldDeclaration.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseLeadingTrivia("// If the analyzer finds an issue, it will report the DiagnosticDescriptor rule").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "))));
-
-            SyntaxNode root = await document.GetSyntaxRootAsync();
-            if (insertPointNode != null)
-            {
-                SyntaxNode newRoot = root.InsertNodesBefore(insertPointNode, newNodes);
-                Document newDocument = document.WithSyntaxRoot(newRoot);
-                return newDocument;
+                ifStatement = declaration as IfStatementSyntax;
             }
             else
             {
-                SyntaxNode newRoot = root.ReplaceNode(declaration, declaration.AddMembers(fieldDeclaration.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// If the analyzer finds an issue, it will report the DiagnosticDescriptor rule").ElementAt(0), SyntaxFactory.EndOfLine("\r\n")))));
-                Document newDocument = document.WithSyntaxRoot(newRoot);
-                return newDocument;
+                ifStatement = declaration.Parent.Parent as IfStatementSyntax;
+                var ifBlock = declaration.Statement as BlockSyntax;
+                if (ifBlock != null)
+                {
+                    ifBlockStatements = ifBlock.Statements;
+                }
             }
+
+            var newIfStatement = CodeFixHelper.TriviaKindCheckHelper(generator, ifStatement, ifBlockStatements) as StatementSyntax;
+
+            var oldBlock = ifStatement.Statement as BlockSyntax;
+            StatementSyntax oldStatement = oldBlock.Statements[1];
+            SyntaxList<StatementSyntax> newStatements = oldBlock.Statements.Replace(oldStatement, newIfStatement);
+            BlockSyntax newBlock = oldBlock.WithStatements(newStatements);
+
+            return await ReplaceNode(oldBlock, newBlock, document);
         }
 
-        // adds a SupportedDiagnostics property to the class
-        private async Task<Document> AddSuppDiagAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> TrailingKindCheckMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
-            SyntaxList<MemberDeclarationSyntax> members = declaration.Members;
-            MethodDeclarationSyntax insertPoint = null;
-
-            foreach (MemberDeclarationSyntax member in members)
-            {
-                insertPoint = member as MethodDeclarationSyntax;
-                if (insertPoint == null || insertPoint.Identifier.Text != "Initialize")
-                {
-                    continue;
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            SyntaxNode insertPointNode = insertPoint as SyntaxNode;
-
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            SemanticModel semanticModel = await document.GetSemanticModelAsync();
-            INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException");
-            PropertyDeclarationSyntax propertyDeclaration = CodeFixHelper.CreateSupportedDiagnostics(generator, notImplementedException);
+            var ifBlockStatements = new SyntaxList<SyntaxNode>();
+            var newIfStatement = CodeFixHelper.TriviaKindCheckHelper(generator, declaration, ifBlockStatements) as StatementSyntax;
 
-            var newNodes = new SyntaxList<SyntaxNode>();
-            newNodes = newNodes.Add(propertyDeclaration);
+            var oldBlock = declaration.Statement as BlockSyntax;
+            BlockSyntax newBlock = oldBlock.AddStatements(newIfStatement);
 
-            SyntaxNode root = await document.GetSyntaxRootAsync();
-            if (insertPoint != null)
+            return await ReplaceNode(oldBlock, newBlock, document);
+        }
+
+        private async Task<Document> WhitespaceCheckIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            IfStatementSyntax ifStatement;
+            var ifBlockStatements = new SyntaxList<SyntaxNode>();
+
+            if (declaration.Parent.Parent.Parent.Parent.Parent.Parent.Kind() == SyntaxKind.MethodDeclaration)
             {
-                SyntaxNode newRoot = root.InsertNodesBefore(insertPointNode, newNodes);
-                Document newDocument = document.WithSyntaxRoot(newRoot);
-                return newDocument;
+                ifStatement = declaration as IfStatementSyntax;
             }
             else
             {
-                SyntaxNode newRoot = root.ReplaceNode(declaration, declaration.AddMembers(propertyDeclaration));
-                Document newDocument = document.WithSyntaxRoot(newRoot);
-                return newDocument;
+                ifStatement = declaration.Parent.Parent as IfStatementSyntax;
+                var ifBlock = declaration.Statement as BlockSyntax;
+                if (ifBlock != null)
+                {
+                    ifBlockStatements = ifBlock.Statements;
+                }
             }
+
+            var newIfStatement = CodeFixHelper.WhitespaceCheckHelper(generator, ifStatement, ifBlockStatements) as StatementSyntax;
+
+            var oldBlock = ifStatement.Statement as BlockSyntax;
+            StatementSyntax oldStatement = oldBlock.Statements[0];
+            SyntaxList<StatementSyntax> newStatements = oldBlock.Statements.Replace(oldStatement, newIfStatement);
+            BlockSyntax newBlock = oldBlock.WithStatements(newStatements);
+
+            return await ReplaceNode(oldBlock, newBlock, document);
         }
 
-        // replaces a node in the document
-        private async Task<Document> ReplaceNode(SyntaxNode oldNode, SyntaxNode newNode, Document document)
-        {
-            SyntaxNode root = await document.GetSyntaxRootAsync();
-            SyntaxNode newRoot = root.ReplaceNode(oldNode, newNode);
-            Document newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
-        }
-
-        // replaces the diagnostic report statement
-        private async Task<Document> ReplaceDiagnosticReportAsync(Document document, StatementSyntax declaration, CancellationToken c)
-        {
-            var methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
-
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-
-            string argumentName = CodeFixHelper.GetDiagnosticName(methodDeclaration);
-            string contextName = CodeFixHelper.GetContextParameter(methodDeclaration);
-
-            SyntaxNode diagnosticReport = CodeFixHelper.CreateDiagnosticReport(generator, argumentName, contextName);
-
-            return await ReplaceNode(declaration, diagnosticReport.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Sends diagnostic information to the IDE to be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
-        }
-
-        // adds the diagnostic report statement
-        private async Task<Document> AddDiagnosticReportAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> WhitespaceCheckMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            string argumentName = CodeFixHelper.GetDiagnosticName(declaration);
-            string contextName = CodeFixHelper.GetContextParameter(declaration);
-            SyntaxNode diagnosticReport = CodeFixHelper.CreateDiagnosticReport(generator, argumentName, contextName);
-            SyntaxNode newMethod = CodeFixHelper.AddStatementToMethod(generator, declaration, diagnosticReport.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Sends diagnostic information to the IDE to be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
+            var ifBlockStatements = new SyntaxList<SyntaxNode>();
+            var newIfStatement = new SyntaxList<SyntaxNode>().Add(CodeFixHelper.WhitespaceCheckHelper(generator, declaration, ifBlockStatements) as StatementSyntax);
 
-            return await ReplaceNode(declaration, newMethod, document);
+            var oldBlock = declaration.Statement as BlockSyntax;
+            BlockSyntax newBlock = oldBlock.WithStatements(newIfStatement);
+
+            return await ReplaceNode(oldBlock, newBlock, document);
         }
 
-        // replace the diagnostic creation statement
-        private async Task<Document> ReplaceDiagnosticAsync(Document document, StatementSyntax declaration, CancellationToken c)
+        private async Task<Document> ReturnIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
-            var methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
-            var classDeclaration = methodDeclaration.Ancestors().OfType<ClassDeclarationSyntax>().First();
-
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            string locationName = CodeFixHelper.GetLocationName(methodDeclaration);
-            string ruleName = CodeFixHelper.GetFirstRuleName(classDeclaration);
-            if (ruleName == null)
+            IfStatementSyntax ifStatement;
+            if (declaration.Parent.Parent.Parent.Parent.Parent.Parent.Parent.Parent.Kind() != SyntaxKind.MethodDeclaration)
             {
-                return document;
+                ifStatement = declaration.Parent.Parent as IfStatementSyntax;
+            }
+            else
+            {
+                ifStatement = declaration as IfStatementSyntax;
             }
 
-            SyntaxNode diagnostic = CodeFixHelper.CreateDiagnostic(generator, locationName, ruleName);
+            var returnStatement = generator.ReturnStatement() as ReturnStatementSyntax;
 
-            return await ReplaceNode(declaration, diagnostic.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Holds the diagnostic and all necessary information to be reported").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
+            var oldBlock = ifStatement.Statement as BlockSyntax;
+            SyntaxList<StatementSyntax> newStatements = oldBlock.Statements.Replace(oldBlock.Statements[0], returnStatement.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
+            BlockSyntax newBlock = oldBlock.WithStatements(newStatements);
+
+            return await ReplaceNode(oldBlock, newBlock, document);
         }
 
-        // adds the diagnostic creation statement
-        private async Task<Document> AddDiagnosticAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
+        private async Task<Document> ReturnMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            string ruleName = CodeFixHelper.GetFirstRuleName(declaration);
-            if (ruleName == null)
-            {
-                return document;
-            }
+            var returnStatements = new SyntaxList<SyntaxNode>().Add(generator.ReturnStatement().WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
 
-            MethodDeclarationSyntax analysis = CodeFixHelper.GetAnalysis(declaration);
-            if (analysis == null)
-            {
-                return document;
-            }
+            var oldBlock = declaration.Statement as BlockSyntax;
+            BlockSyntax newBlock = oldBlock.WithStatements(returnStatements);
 
-            string locationName = CodeFixHelper.GetLocationName(analysis);
-
-            SyntaxNode diagnostic = CodeFixHelper.CreateDiagnostic(generator, locationName, ruleName);
-            SyntaxNode newMethod = CodeFixHelper.AddStatementToMethod(generator, analysis, diagnostic.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Holds the diagnostic and all necessary information to be reported").ElementAt(0), SyntaxFactory.EndOfLine(" \r\n"))));
-
-            return await ReplaceNode(analysis, newMethod, document);
+            return await ReplaceNode(oldBlock, newBlock, document);
         }
 
         // replaces the open paren statement
@@ -835,7 +902,7 @@ namespace MetaCompilation
 
             return await ReplaceNode(declaration, openParen.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Extracts the opening parenthesis of the if-statement condition").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
-        
+
         // adds the open paren statement
         private async Task<Document> AddOpenParenAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
         {
@@ -950,7 +1017,81 @@ namespace MetaCompilation
             return await ReplaceNode(declaration, newMethod, document);
         }
 
-        #region id code fix
+        // replace the diagnostic creation statement
+        private async Task<Document> ReplaceDiagnosticAsync(Document document, StatementSyntax declaration, CancellationToken c)
+        {
+            var methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
+            var classDeclaration = methodDeclaration.Ancestors().OfType<ClassDeclarationSyntax>().First();
+
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            string locationName = CodeFixHelper.GetLocationName(methodDeclaration);
+            string ruleName = CodeFixHelper.GetFirstRuleName(classDeclaration);
+            if (ruleName == null)
+            {
+                return document;
+            }
+
+            SyntaxNode diagnostic = CodeFixHelper.CreateDiagnostic(generator, locationName, ruleName);
+
+            return await ReplaceNode(declaration, diagnostic.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Holds the diagnostic and all necessary information to be reported").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
+        }
+
+        // adds the diagnostic creation statement
+        private async Task<Document> AddDiagnosticAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            string ruleName = CodeFixHelper.GetFirstRuleName(declaration);
+            if (ruleName == null)
+            {
+                return document;
+            }
+
+            MethodDeclarationSyntax analysis = CodeFixHelper.GetAnalysis(declaration);
+            if (analysis == null)
+            {
+                return document;
+            }
+
+            string locationName = CodeFixHelper.GetLocationName(analysis);
+
+            SyntaxNode diagnostic = CodeFixHelper.CreateDiagnostic(generator, locationName, ruleName);
+            SyntaxNode newMethod = CodeFixHelper.AddStatementToMethod(generator, analysis, diagnostic.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Holds the diagnostic and all necessary information to be reported").ElementAt(0), SyntaxFactory.EndOfLine(" \r\n"))));
+
+            return await ReplaceNode(analysis, newMethod, document);
+        }
+
+        // replaces the diagnostic report statement
+        private async Task<Document> ReplaceDiagnosticReportAsync(Document document, StatementSyntax declaration, CancellationToken c)
+        {
+            var methodDeclaration = declaration.Ancestors().OfType<MethodDeclarationSyntax>().First();
+
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            string argumentName = CodeFixHelper.GetDiagnosticName(methodDeclaration);
+            string contextName = CodeFixHelper.GetContextParameter(methodDeclaration);
+
+            SyntaxNode diagnosticReport = CodeFixHelper.CreateDiagnosticReport(generator, argumentName, contextName);
+
+            return await ReplaceNode(declaration, diagnosticReport.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Sends diagnostic information to the IDE to be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
+        }
+
+        // adds the diagnostic report statement
+        private async Task<Document> AddDiagnosticReportAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            string argumentName = CodeFixHelper.GetDiagnosticName(declaration);
+            string contextName = CodeFixHelper.GetContextParameter(declaration);
+            SyntaxNode diagnosticReport = CodeFixHelper.CreateDiagnosticReport(generator, argumentName, contextName);
+            SyntaxNode newMethod = CodeFixHelper.AddStatementToMethod(generator, declaration, diagnosticReport.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Sends diagnostic information to the IDE to be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
+
+            return await ReplaceNode(declaration, newMethod, document);
+        }
+        #endregion
+
+        #region id code fixes
         // adds an id to the class
         private async Task<Document> MissingIdAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
         {
@@ -964,7 +1105,7 @@ namespace MetaCompilation
         }
         #endregion
 
-        #region initialize code fix
+        #region initialize code fixes
         // adds the Initialize method
         private async Task<Document> MissingInitAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
         {
@@ -1055,32 +1196,69 @@ namespace MetaCompilation
             return await ReplaceNode(declaration, initializeDeclaration, document);
         }
 
-        private async Task<Document> IncorrectIfAsync(Document document, StatementSyntax declaration, CancellationToken c)
+        // puts the correct arguments in the register statement
+        private async Task<Document> CorrectArgumentsAsync(Document document, InvocationExpressionSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            MethodDeclarationSyntax methodDeclaration = declaration.Parent.Parent as MethodDeclarationSyntax;
-            string name = methodDeclaration.ParameterList.Parameters[0].Identifier.ValueText as string;
-            SyntaxNode ifStatement = CodeFixHelper.IfHelper(generator, name);
+            string methodName = CodeFixHelper.GetRegisterMethodName(declaration);
 
-            return await ReplaceNode(declaration, ifStatement.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
+            ClassDeclarationSyntax classDeclaration = declaration.AncestorsAndSelf().OfType<ClassDeclarationSyntax>().First();
+            methodName = CodeFixHelper.GetExistingAnalysisMethodName(classDeclaration);
+
+            if (methodName == null)
+            {
+                methodName = "AnalyzeIfStatement";
+            }
+
+            SyntaxNode statement = CodeFixHelper.CreateRegister(generator, declaration.Ancestors().OfType<MethodDeclarationSyntax>().First(), methodName);
+            SyntaxNode expression = generator.ExpressionStatement(statement);
+
+            return await ReplaceNode(declaration.Parent, expression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
         }
 
-        private async Task<Document> MissingIfAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
+        // corrects the register statement to be RegisterSyntaxNodeAction
+        private async Task<Document> CorrectRegisterAsync(Document document, IdentifierNameSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
-            string name = declaration.ParameterList.Parameters[0].Identifier.ValueText as string;
-            StatementSyntax ifStatement = CodeFixHelper.IfHelper(generator, name) as StatementSyntax;
+            var memberExpression = declaration.Parent as MemberAccessExpressionSyntax;
+            var invocationExpression = memberExpression.Parent as InvocationExpressionSyntax;
+            string methodName = CodeFixHelper.GetRegisterMethodName(invocationExpression);
+            if (methodName == null)
+            {
+                methodName = "AnalyzeIfStatement";
+            }
 
-            var oldBlock = declaration.Body as BlockSyntax;
-            var newBlock = oldBlock.AddStatements(ifStatement.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// The SyntaxNode found by the Initialize method should be cast to the expected type. Here, this type is IfStatementSyntax").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
+            SyntaxNode newExpression = CodeFixHelper.CreateRegister(generator, declaration.Ancestors().OfType<MethodDeclarationSyntax>().First(), methodName);
+            return await ReplaceNode(declaration.FirstAncestorOrSelf<ExpressionStatementSyntax>(), newExpression.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
+        }
 
-            return await ReplaceNode(oldBlock, newBlock, document);
+        // corrects the kind argument of the register statement to be SyntaxKind.IfStatement
+        private async Task<Document> CorrectKindAsync(Document document, ArgumentListSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            ArgumentSyntax argument = CodeFixHelper.CreateSyntaxKindIfStatement(generator);
+            SeparatedSyntaxList<ArgumentSyntax> arguments = declaration.Arguments;
+            if (arguments.Count < 2)
+            {
+                arguments = arguments.Add(argument);
+            }
+            else
+            {
+                arguments = arguments.Replace(arguments[1], argument);
+            }
+
+            ArgumentListSyntax argList = SyntaxFactory.ArgumentList(arguments);
+            string contextParameter = (((declaration.Parent as InvocationExpressionSyntax).Expression as MemberAccessExpressionSyntax).Expression as IdentifierNameSyntax).Identifier.Text;
+            SyntaxNode newExpr = CodeFixHelper.BuildRegister(generator, contextParameter, "RegisterSyntaxNodeAction", argList);
+
+            return await ReplaceNode(declaration.Ancestors().OfType<InvocationExpressionSyntax>().First(), newExpr.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("            "), SyntaxFactory.ParseLeadingTrivia("// Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("            "))), document);
         }
         #endregion
 
-        #region rule code fix
+        #region rule code fixes
         private async Task<Document> InternalStaticAsync(Document document, FieldDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -1248,9 +1426,53 @@ namespace MetaCompilation
 
             return await ReplaceNode(rule, newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("// id: Identifies each rule. Same as the public constant declared above").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(rule.GetLeadingTrivia()), document);
         }
+
+        // adds a DiagnosticDescriptor rule to the class
+        private async Task<Document> AddRuleAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            SyntaxList<MemberDeclarationSyntax> members = declaration.Members;
+            PropertyDeclarationSyntax insertPoint = null;
+
+            foreach (MemberDeclarationSyntax member in members)
+            {
+                insertPoint = member as PropertyDeclarationSyntax;
+                if (insertPoint == null || insertPoint.Identifier.Text != "SupportedDiagnostics")
+                {
+                    insertPoint = null;
+                    continue;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            SyntaxNode insertPointNode = insertPoint as SyntaxNode;
+
+            FieldDeclarationSyntax fieldDeclaration = CodeFixHelper.CreateEmptyRule(generator);
+
+            var newNodes = new SyntaxList<SyntaxNode>();
+            newNodes = newNodes.Add(fieldDeclaration.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseLeadingTrivia("// If the analyzer finds an issue, it will report the DiagnosticDescriptor rule").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "))));
+
+            SyntaxNode root = await document.GetSyntaxRootAsync();
+            if (insertPointNode != null)
+            {
+                SyntaxNode newRoot = root.InsertNodesBefore(insertPointNode, newNodes);
+                Document newDocument = document.WithSyntaxRoot(newRoot);
+                return newDocument;
+            }
+            else
+            {
+                SyntaxNode newRoot = root.ReplaceNode(declaration, declaration.AddMembers(fieldDeclaration.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// If the analyzer finds an issue, it will report the DiagnosticDescriptor rule").ElementAt(0), SyntaxFactory.EndOfLine("\r\n")))));
+                Document newDocument = document.WithSyntaxRoot(newRoot);
+                return newDocument;
+            }
+        }
         #endregion
 
-        #region supported diagnostics code fix
+        #region supported diagnostics code fixes
         private async Task<Document> IncorrectSigSuppDiagAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -1448,272 +1670,52 @@ namespace MetaCompilation
 
            return document;
         }
+
+        // adds a SupportedDiagnostics property to the class
+        private async Task<Document> AddSuppDiagAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
+        {
+            SyntaxList<MemberDeclarationSyntax> members = declaration.Members;
+            MethodDeclarationSyntax insertPoint = null;
+
+            foreach (MemberDeclarationSyntax member in members)
+            {
+                insertPoint = member as MethodDeclarationSyntax;
+                if (insertPoint == null || insertPoint.Identifier.Text != "Initialize")
+                {
+                    continue;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            SyntaxNode insertPointNode = insertPoint as SyntaxNode;
+
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+            SemanticModel semanticModel = await document.GetSemanticModelAsync();
+            INamedTypeSymbol notImplementedException = semanticModel.Compilation.GetTypeByMetadataName("System.NotImplementedException");
+            PropertyDeclarationSyntax propertyDeclaration = CodeFixHelper.CreateSupportedDiagnostics(generator, notImplementedException);
+
+            var newNodes = new SyntaxList<SyntaxNode>();
+            newNodes = newNodes.Add(propertyDeclaration);
+
+            SyntaxNode root = await document.GetSyntaxRootAsync();
+            if (insertPoint != null)
+            {
+                SyntaxNode newRoot = root.InsertNodesBefore(insertPointNode, newNodes);
+                Document newDocument = document.WithSyntaxRoot(newRoot);
+                return newDocument;
+            }
+            else
+            {
+                SyntaxNode newRoot = root.ReplaceNode(declaration, declaration.AddMembers(propertyDeclaration));
+                Document newDocument = document.WithSyntaxRoot(newRoot);
+                return newDocument;
+            }
+        }
         #endregion
-
-        // replaces the incorrect statement with the keyword statement
-        private async Task<Document> IncorrectKeywordAsync(Document document, StatementSyntax declaration, CancellationToken c)
-        {
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-
-            var block = declaration.Parent as BlockSyntax;
-            SyntaxNode ifKeyword = CodeFixHelper.KeywordHelper(generator, block);
-
-            return await ReplaceNode(declaration, ifKeyword.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// This statement navigates down the syntax tree one level to extract the 'if' keyword").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
-        }
-
-        private async Task<Document> TrailingCheckIncorrectAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
-        {
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-
-            var ifBlockStatements = new SyntaxList<StatementSyntax>();
-            if (declaration.Body.Statements[2].Kind() == SyntaxKind.IfStatement)
-            {
-                var ifDeclaration = declaration.Body.Statements[2] as IfStatementSyntax;
-                var ifBlock = ifDeclaration.Statement as BlockSyntax;
-                if (ifBlock != null)
-                {
-                    ifBlockStatements = ifBlock.Statements;
-                }
-            }
-
-            StatementSyntax ifStatement = CodeFixHelper.TriviaCheckHelper(generator, declaration.Body, ifBlockStatements) as StatementSyntax;
-
-            BlockSyntax oldBlock = declaration.Body;
-            BlockSyntax newBlock = declaration.Body.WithStatements(declaration.Body.Statements.Replace(declaration.Body.Statements[2], ifStatement));
-
-            return await ReplaceNode(oldBlock, newBlock, document);
-        }
-
-        // adds the keyword statement
-        private async Task<Document> MissingKeywordAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
-        {
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-
-            var methodBlock = declaration.Body as BlockSyntax;
-            var ifKeyword = CodeFixHelper.KeywordHelper(generator, methodBlock) as StatementSyntax;
-            BlockSyntax newBlock = methodBlock.AddStatements(ifKeyword.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// This statement navigates down the syntax tree one level to extract the 'if' keyword").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
-
-            return await ReplaceNode(methodBlock, newBlock, document);
-        }
-
-        private async Task<Document> TrailingCheckMissingAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
-        {
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-
-            var ifBlockStatements = new SyntaxList<StatementSyntax>();
-            StatementSyntax ifStatement = CodeFixHelper.TriviaCheckHelper(generator, declaration.Body, ifBlockStatements) as StatementSyntax;
-
-            BlockSyntax oldBlock = declaration.Body;
-            BlockSyntax newBlock = declaration.Body.WithStatements(declaration.Body.Statements.Add(ifStatement));
-
-            return await ReplaceNode(oldBlock, newBlock, document);
-        }
-        
-        private async Task<Document> TrailingVarMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
-        {
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-
-            var ifStatement = declaration.Parent.Parent as IfStatementSyntax;
-            var localDeclaration = new SyntaxList<SyntaxNode>().Add(CodeFixHelper.TriviaVarMissingHelper(generator, ifStatement));
-
-            var oldBlock = declaration.Statement as BlockSyntax;
-            BlockSyntax newBlock = oldBlock.WithStatements(localDeclaration);
-
-            return await ReplaceNode(oldBlock, newBlock, document);
-        }
-        
-        private async Task<Document> TrailingVarIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
-        {
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-
-            IfStatementSyntax ifStatement;
-            if (declaration.Parent.Parent.Parent.Parent.Kind() == SyntaxKind.MethodDeclaration)
-            {
-                ifStatement = declaration as IfStatementSyntax;
-            }
-            else
-            {
-                ifStatement = declaration.Parent.Parent as IfStatementSyntax;
-            }
-
-            var localDeclaration = CodeFixHelper.TriviaVarMissingHelper(generator, ifStatement) as LocalDeclarationStatementSyntax;
-
-            var oldBlock = ifStatement.Statement as BlockSyntax;
-            StatementSyntax oldStatement = oldBlock.Statements[0];
-            SyntaxList<StatementSyntax> newStatements = oldBlock.Statements.Replace(oldStatement, localDeclaration);
-            BlockSyntax newBlock = oldBlock.WithStatements(newStatements);
-
-            return await ReplaceNode(oldBlock, newBlock, document);
-        }
-
-        private async Task<Document> TrailingKindCheckIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
-        {
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-
-            IfStatementSyntax ifStatement;
-            var ifBlockStatements = new SyntaxList<SyntaxNode>();
-            if (declaration.Parent.Parent.Parent.Parent.Kind() == SyntaxKind.MethodDeclaration)
-            {
-                ifStatement = declaration as IfStatementSyntax;
-            }
-            else
-            {
-                ifStatement = declaration.Parent.Parent as IfStatementSyntax;
-                var ifBlock = declaration.Statement as BlockSyntax;
-                if (ifBlock != null)
-                {
-                    ifBlockStatements = ifBlock.Statements;
-                }
-            }
-
-            var newIfStatement = CodeFixHelper.TriviaKindCheckHelper(generator, ifStatement, ifBlockStatements) as StatementSyntax;
-
-            var oldBlock = ifStatement.Statement as BlockSyntax;
-            StatementSyntax oldStatement = oldBlock.Statements[1];
-            SyntaxList<StatementSyntax> newStatements = oldBlock.Statements.Replace(oldStatement, newIfStatement);
-            BlockSyntax newBlock = oldBlock.WithStatements(newStatements);
-
-            return await ReplaceNode(oldBlock, newBlock, document);
-        }
-
-        private async Task<Document> TrailingKindCheckMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
-        {
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-
-            var ifBlockStatements = new SyntaxList<SyntaxNode>();
-            var newIfStatement = CodeFixHelper.TriviaKindCheckHelper(generator, declaration, ifBlockStatements) as StatementSyntax;
-
-            var oldBlock = declaration.Statement as BlockSyntax;
-            BlockSyntax newBlock = oldBlock.AddStatements(newIfStatement);
-
-            return await ReplaceNode(oldBlock, newBlock, document);
-        }
-
-        private async Task<Document> WhitespaceCheckIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
-        {
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-
-            IfStatementSyntax ifStatement;
-            var ifBlockStatements = new SyntaxList<SyntaxNode>();
-
-            if (declaration.Parent.Parent.Parent.Parent.Parent.Parent.Kind() == SyntaxKind.MethodDeclaration)
-            {
-                ifStatement = declaration as IfStatementSyntax;
-            }
-            else
-            {
-                ifStatement = declaration.Parent.Parent as IfStatementSyntax;
-                var ifBlock = declaration.Statement as BlockSyntax;
-                if (ifBlock != null)
-                {
-                    ifBlockStatements = ifBlock.Statements;
-                }
-            }
-
-            var newIfStatement = CodeFixHelper.WhitespaceCheckHelper(generator, ifStatement, ifBlockStatements) as StatementSyntax;
-
-            var oldBlock = ifStatement.Statement as BlockSyntax;
-            StatementSyntax oldStatement = oldBlock.Statements[0];
-            SyntaxList<StatementSyntax> newStatements = oldBlock.Statements.Replace(oldStatement, newIfStatement);
-            BlockSyntax newBlock = oldBlock.WithStatements(newStatements);
-
-            return await ReplaceNode(oldBlock, newBlock, document);
-        }
-
-        private async Task<Document> WhitespaceCheckMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
-        {
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-
-            var ifBlockStatements = new SyntaxList<SyntaxNode>();
-            var newIfStatement = new SyntaxList<SyntaxNode>().Add(CodeFixHelper.WhitespaceCheckHelper(generator, declaration, ifBlockStatements) as StatementSyntax);
-
-            var oldBlock = declaration.Statement as BlockSyntax;
-            BlockSyntax newBlock = oldBlock.WithStatements(newIfStatement);
-
-            return await ReplaceNode(oldBlock, newBlock, document);
-        }
-
-        private async Task<Document> ReturnIncorrectAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
-        {
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-
-            IfStatementSyntax ifStatement;
-            if (declaration.Parent.Parent.Parent.Parent.Parent.Parent.Parent.Parent.Kind() != SyntaxKind.MethodDeclaration)
-            {
-                ifStatement = declaration.Parent.Parent as IfStatementSyntax;
-            }
-            else
-            {
-                ifStatement = declaration as IfStatementSyntax;
-            }
-
-            var returnStatement = generator.ReturnStatement() as ReturnStatementSyntax;
-
-            var oldBlock = ifStatement.Statement as BlockSyntax;
-            SyntaxList<StatementSyntax> newStatements = oldBlock.Statements.Replace(oldBlock.Statements[0], returnStatement.WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
-            BlockSyntax newBlock = oldBlock.WithStatements(newStatements);
-
-            return await ReplaceNode(oldBlock, newBlock, document);
-        }
-
-        private async Task<Document> ReturnMissingAsync(Document document, IfStatementSyntax declaration, CancellationToken c)
-        {
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-
-            var returnStatements = new SyntaxList<SyntaxNode>().Add(generator.ReturnStatement().WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// If the analyzer is satisfied that there is only a single whitespace between 'if' and '(', it will return from this method without reporting a diagnostic").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))));
-
-            var oldBlock = declaration.Statement as BlockSyntax;
-            BlockSyntax newBlock = oldBlock.WithStatements(returnStatements);
-
-            return await ReplaceNode(oldBlock, newBlock, document);
-        }
-
-        private async Task<Document> TriviaCountMissingAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
-        {
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-
-            var nameStatement = declaration.Body.Statements[1] as LocalDeclarationStatementSyntax;
-            string name = nameStatement.Declaration.Variables[0].Identifier.ValueText;
-            var ifBlockStatements = new SyntaxList<StatementSyntax>();
-
-            var ifStatement = declaration.Body.Statements[2] as IfStatementSyntax;
-            var localDeclaration = new SyntaxList<SyntaxNode>().Add(CodeFixHelper.TriviaCountHelper(generator, name, ifBlockStatements));
-
-            var oldBlock = ifStatement.Statement as BlockSyntax;
-            BlockSyntax newBlock = oldBlock.WithStatements(localDeclaration);
-
-            return await ReplaceNode(oldBlock, newBlock, document);
-        }
-
-        private async Task<Document> TriviaCountIncorrectAsync(Document document, MethodDeclarationSyntax declaration, CancellationToken c)
-        {
-            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
-
-            var nameStatement = declaration.Body.Statements[1] as LocalDeclarationStatementSyntax;
-            string name = nameStatement.Declaration.Variables[0].Identifier.ValueText;
-            var ifStatement = declaration.Body.Statements[2] as IfStatementSyntax;
-
-            var ifBlockStatements = new SyntaxList<StatementSyntax>();
-            if (declaration.Body.Statements[2].Kind() == SyntaxKind.IfStatement)
-            {
-                var ifDeclaration = ifStatement.Statement as BlockSyntax;
-                var ifBlockStatement = ifDeclaration.Statements[0] as IfStatementSyntax;
-                var ifBlock = ifBlockStatement.Statement as BlockSyntax;
-                if (ifBlock != null)
-                {
-                    ifBlockStatements = ifBlock.Statements;
-                }
-            }
-
-            var localDeclaration = CodeFixHelper.TriviaCountHelper(generator, name, ifBlockStatements) as StatementSyntax;
-
-            var oldBlock = ifStatement.Statement as BlockSyntax;
-            StatementSyntax oldStatement = oldBlock.Statements[0];
-            SyntaxList<StatementSyntax> newStatements = oldBlock.Statements.Replace(oldStatement, localDeclaration);
-            BlockSyntax newBlock = oldBlock.WithStatements(newStatements);
-
-            return await ReplaceNode(oldBlock, newBlock, document);
-        }
 
         class CodeFixHelper
         {
