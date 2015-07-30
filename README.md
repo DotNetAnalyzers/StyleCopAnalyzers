@@ -38,7 +38,7 @@ Getting Started
 
 1. Clone the repository
 2. Install NuGet packages: `powershell -executionpolicy bypass src\.nuget\NuGetRestore.ps1`
-3. Build: `src\msbuild Analyzers.sln`
+3. Build: `msbuild src\Analyzers.sln`
 
 Submitting Pull Requests
 ========================
