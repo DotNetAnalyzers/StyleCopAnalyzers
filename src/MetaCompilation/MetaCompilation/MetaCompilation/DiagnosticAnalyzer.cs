@@ -2183,11 +2183,11 @@ namespace MetaCompilation
                     return result;
                 }
 
-                if (returnSymbol.Type.ToString() != "System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor>" && returnSymbol.Type.Kind.ToString() != "ErrorType")
-                {
-                    ReportDiagnostic(context, IncorrectAccessorReturnRule, returnSymbol.Locations[0]);
-                    return result;
-                }
+                //if (returnSymbol.Type.ToString() != "System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor>" && returnSymbol.Type.Kind != SymbolKind.ErrorType)
+                //{
+                //    ReportDiagnostic(context, IncorrectAccessorReturnRule, returnSymbol.Locations[0]);
+                //    return result;
+                //}
 
                 var variableDeclaration = returnSymbol.DeclaringSyntaxReferences[0].GetSyntax() as VariableDeclaratorSyntax;
                 ReturnStatementSyntax returnDeclaration = returnSymbol.DeclaringSyntaxReferences[0].GetSyntax() as ReturnStatementSyntax;
@@ -2200,16 +2200,18 @@ namespace MetaCompilation
                 var equalsValueClause = variableDeclaration.Initializer as EqualsValueClauseSyntax;
                 if (equalsValueClause == null)
                 {
-                    ReportDiagnostic(context, IncorrectAccessorReturnRule, returnDeclaration.ReturnKeyword.GetLocation());
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, variableDeclaration.GetLocation());// returnDeclaration.ReturnKeyword.GetLocation());
                     return result;
                 }
 
                 var valueClause = equalsValueClause.Value as InvocationExpressionSyntax;
                 if (valueClause == null)
                 {
-                    ReportDiagnostic(context, IncorrectAccessorReturnRule, returnDeclaration.GetLocation());
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, variableDeclaration.GetLocation());//returnDeclaration.GetLocation());
                     return result;
                 }
+
+
 
                 result.ValueClause = valueClause;
                 result.ReturnDeclaration = returnDeclaration;

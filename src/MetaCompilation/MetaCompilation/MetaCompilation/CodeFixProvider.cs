@@ -1601,6 +1601,8 @@ namespace MetaCompilation
                 oldStatement = oldStatements.First();
             }
 
+            var oldStatementDeclaration = oldStatement as LocalDeclarationStatementSyntax;
+
             SyntaxNode root = await document.GetSyntaxRootAsync();
             SyntaxNode newRoot = root;
 
@@ -1608,6 +1610,13 @@ namespace MetaCompilation
             {
                 var newAccessorDeclaration = firstAccessor.AddBodyStatements(returnStatement);
                 newRoot = root.ReplaceNode(firstAccessor, newAccessorDeclaration);
+            }
+            else if (oldStatementDeclaration != null)
+            {
+                var oldStatementDeclarator = oldStatementDeclaration.Declaration.Variables[0] as VariableDeclaratorSyntax;
+                SyntaxNode oldVariableName = generator.IdentifierName(oldStatementDeclarator.Identifier.Text);
+                var newStatementDeclaration = generator.LocalDeclarationStatement(oldStatementDeclarator.Identifier.Text, invocationExpression).WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// This array contains all the diagnostics that can be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("\r\n")));
+                newRoot = root.ReplaceNode(oldStatement, newStatementDeclaration);
             }
             else
             {
