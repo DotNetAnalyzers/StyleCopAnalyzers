@@ -45,13 +45,19 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.StructDeclaration);
         }
 
-        private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
             var typeDeclaration = context.Node as TypeDeclarationSyntax;
+
+            if (typeDeclaration == null)
+            {
+                return;
+            }
+
             var members = typeDeclaration.Members;
             bool nonConstFieldFound = false;
 
@@ -69,15 +75,12 @@
 
                 var field = members[i] as FieldDeclarationSyntax;
 
-                bool thisFieldIsConstant = false;
-                foreach (var modifier in field.Modifiers)
+                if (field == null)
                 {
-                    if (modifier.IsKind(SyntaxKind.ConstKeyword))
-                    {
-                        thisFieldIsConstant = true;
-                        break;
-                    }
+                    continue;
                 }
+
+                bool thisFieldIsConstant = field.Modifiers.Any(SyntaxKind.ConstKeyword);
 
                 if (!thisFieldIsConstant)
                 {
