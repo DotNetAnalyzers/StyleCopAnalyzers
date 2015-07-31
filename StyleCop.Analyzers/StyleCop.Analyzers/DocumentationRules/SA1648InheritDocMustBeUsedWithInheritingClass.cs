@@ -100,6 +100,15 @@
             if (inheritDocElement != null)
             {
                 ISymbol declaredSymbol = context.SemanticModel.GetDeclaredSymbol(memberSyntax, context.CancellationToken);
+                if (declaredSymbol == null && memberSyntax.IsKind(SyntaxKind.EventFieldDeclaration))
+                {
+                    var eventFieldDeclarationSyntax = (EventFieldDeclarationSyntax)memberSyntax;
+                    VariableDeclaratorSyntax firstVariable = eventFieldDeclarationSyntax.Declaration?.Variables.FirstOrDefault();
+                    if (firstVariable != null)
+                    {
+                        declaredSymbol = context.SemanticModel.GetDeclaredSymbol(firstVariable, context.CancellationToken);
+                    }
+                }
 
                 // If we don't have a declared symbol we have some kind of field declaration. A field can not override or
                 // implement anything so we want to report a diagnostic.
