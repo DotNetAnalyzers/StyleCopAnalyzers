@@ -94,7 +94,8 @@ interface ITest : IBase { }";
         [InlineData("public override void Foo() { }")]
         [InlineData("public override string Bar { get; set; }")]
         [InlineData("public override string this [string f] { get { return f; } }")]
-        [InlineData("public override event System.Action FooBar { add { } remove { } }")]
+        [InlineData("public override event System.Action EventName1 { add { } remove { } }")]
+        [InlineData("public override event System.Action EventName2 { add { } remove { } }")]
         public async Task TestMemberThatCanHaveInheritDocOverrideAsync(string declaration)
         {
             var testCode = @"class TestBase
@@ -102,7 +103,8 @@ interface ITest : IBase { }";
     public virtual void Foo() {{ }}
     public virtual string Bar {{ get; set; }}
     public virtual string this [string f] {{ get {{ return f; }} }}
-    public virtual event System.Action FooBar {{ add {{ }} remove {{ }} }}
+    public virtual event System.Action EventName1;
+    public virtual event System.Action EventName2 {{ add {{ }} remove {{ }} }}
 }}
 class Test : TestBase
 {{
@@ -123,7 +125,7 @@ class Test : TestBase
     void Foo();
     string Bar {{ get; set; }}
     string this [string f] {{ get; }}
-    event System.Action FooBar;
+    event System.Action EventName;
 }}
 {0} Test : ITest
 {{
@@ -134,7 +136,7 @@ class Test : TestBase
     /// <inheritdoc/>
     string ITest.this [string f] {{ get {{ return f; }} }}
     /// <inheritdoc/>
-    event System.Action ITest.FooBar {{ add {{ }} remove {{ }} }}
+    event System.Action ITest.EventName {{ add {{ }} remove {{ }} }}
 }}";
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, type), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -150,7 +152,8 @@ class Test : TestBase
     void Foo();
     string Bar {{ get; set; }}
     string this [string f] {{ get; }}
-    event System.Action FooBar;
+    event System.Action EventName1;
+    event System.Action EventName2;
 }}
 {0} Test : ITest
 {{
@@ -161,7 +164,9 @@ class Test : TestBase
     /// <inheritdoc/>
     public string this [string f] {{ get {{ return f; }} }}
     /// <inheritdoc/>
-    public event System.Action FooBar {{ add {{ }} remove {{ }} }}
+    public event System.Action EventName1;
+    /// <inheritdoc/>
+    public event System.Action EventName2 {{ add {{ }} remove {{ }} }}
 }}";
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, type), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
