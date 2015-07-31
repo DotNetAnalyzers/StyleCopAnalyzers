@@ -2183,12 +2183,6 @@ namespace MetaCompilation
                     return result;
                 }
 
-                //if (returnSymbol.Type.ToString() != "System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor>" && returnSymbol.Type.Kind != SymbolKind.ErrorType)
-                //{
-                //    ReportDiagnostic(context, IncorrectAccessorReturnRule, returnSymbol.Locations[0]);
-                //    return result;
-                //}
-
                 var variableDeclaration = returnSymbol.DeclaringSyntaxReferences[0].GetSyntax() as VariableDeclaratorSyntax;
                 ReturnStatementSyntax returnDeclaration = returnSymbol.DeclaringSyntaxReferences[0].GetSyntax() as ReturnStatementSyntax;
                 if (variableDeclaration == null)
@@ -2200,18 +2194,31 @@ namespace MetaCompilation
                 var equalsValueClause = variableDeclaration.Initializer as EqualsValueClauseSyntax;
                 if (equalsValueClause == null)
                 {
-                    ReportDiagnostic(context, IncorrectAccessorReturnRule, variableDeclaration.GetLocation());// returnDeclaration.ReturnKeyword.GetLocation());
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, variableDeclaration.GetLocation());
                     return result;
                 }
 
                 var valueClause = equalsValueClause.Value as InvocationExpressionSyntax;
                 if (valueClause == null)
                 {
-                    ReportDiagnostic(context, IncorrectAccessorReturnRule, variableDeclaration.GetLocation());//returnDeclaration.GetLocation());
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, variableDeclaration.GetLocation());
                     return result;
                 }
 
+                var valueClauseMemberAccess = valueClause.Expression as MemberAccessExpressionSyntax;
+                var valueClauseExpression = valueClauseMemberAccess.Expression as IdentifierNameSyntax;
+                if (valueClauseExpression.Identifier.Text != "ImmutableArray")
+                {
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, valueClause.GetLocation());
+                    return result;
+                }
 
+                var valueClauseName = valueClauseMemberAccess.Name as IdentifierNameSyntax;
+                if (valueClauseName.Identifier.Text != "Create")
+                {
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, valueClauseName.GetLocation());
+                    return result;
+                }
 
                 result.ValueClause = valueClause;
                 result.ReturnDeclaration = returnDeclaration;

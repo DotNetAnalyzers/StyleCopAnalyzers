@@ -1570,7 +1570,7 @@ namespace MetaCompilation
             return await ReplaceNode(declaration, newPropertyDeclaration, document);
         }
 
-        // return an ImmutableArray fromt the get accessor
+        // return an ImmutableArray from the get accessor
         private async Task<Document> AccessorReturnValueAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
