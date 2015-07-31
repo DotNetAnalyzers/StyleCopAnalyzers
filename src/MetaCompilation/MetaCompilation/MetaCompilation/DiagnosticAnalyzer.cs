@@ -2206,15 +2206,21 @@ namespace MetaCompilation
                 }
 
                 var valueClauseMemberAccess = valueClause.Expression as MemberAccessExpressionSyntax;
+                if (valueClauseMemberAccess == null)
+                {
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, valueClause.GetLocation());
+                    return result;
+                }
+
                 var valueClauseExpression = valueClauseMemberAccess.Expression as IdentifierNameSyntax;
-                if (valueClauseExpression.Identifier.Text != "ImmutableArray")
+                if (valueClauseExpression == null || valueClauseExpression.Identifier.Text != "ImmutableArray")
                 {
                     ReportDiagnostic(context, IncorrectAccessorReturnRule, valueClause.GetLocation());
                     return result;
                 }
 
                 var valueClauseName = valueClauseMemberAccess.Name as IdentifierNameSyntax;
-                if (valueClauseName.Identifier.Text != "Create")
+                if (valueClauseName == null || valueClauseName.Identifier.Text != "Create")
                 {
                     ReportDiagnostic(context, IncorrectAccessorReturnRule, valueClauseName.GetLocation());
                     return result;
