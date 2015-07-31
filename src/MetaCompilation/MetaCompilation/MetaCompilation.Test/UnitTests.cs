@@ -3686,7 +3686,7 @@ namespace SyntaxNodeAnalyzer
             {
             // Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
-        }
+            }
         }
     }";
 
