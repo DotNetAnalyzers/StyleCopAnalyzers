@@ -1156,13 +1156,18 @@ namespace MetaCompilation
                 }
 
                 var leftName = left.Name as IdentifierNameSyntax;
-                if (leftName == null)
+                if (leftName == null || leftName.Identifier.ValueText != "Count")
                 {
                     return emptyResult;
                 }
 
                 var right = booleanExpression.Right as LiteralExpressionSyntax;
                 if (right == null)
+                {
+                    return emptyResult;
+                }
+
+                if (!right.IsKind(SyntaxKind.NumericLiteralExpression))
                 {
                     return emptyResult;
                 }
