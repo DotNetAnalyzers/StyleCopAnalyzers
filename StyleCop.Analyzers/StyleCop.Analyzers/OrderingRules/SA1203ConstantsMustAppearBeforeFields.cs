@@ -1,11 +1,11 @@
 ﻿namespace StyleCop.Analyzers.OrderingRules
 {
     using System.Collections.Immutable;
+    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Helpers;
 
     /// <summary>
     /// A constant field is placed beneath a non-constant field.
@@ -51,37 +51,20 @@
 
         private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var typeDeclaration = context.Node as TypeDeclarationSyntax;
-
-            if (typeDeclaration == null)
-            {
-                return;
-            }
+            var typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
             var members = typeDeclaration.Members;
             bool nonConstFieldFound = false;
 
             for (int i = 0; i < members.Count; i++)
             {
-                if (members[i].IsKind(SyntaxKind.IncompleteMember))
-                {
-                    continue;
-                }
-
-                if (!members[i].IsKind(SyntaxKind.FieldDeclaration))
-                {
-                    continue;
-                }
-
                 var field = members[i] as FieldDeclarationSyntax;
-
                 if (field == null)
                 {
                     continue;
                 }
 
                 bool thisFieldIsConstant = field.Modifiers.Any(SyntaxKind.ConstKeyword);
-
                 if (!thisFieldIsConstant)
                 {
                     nonConstFieldFound = true;
