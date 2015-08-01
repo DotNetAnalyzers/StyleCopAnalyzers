@@ -243,6 +243,7 @@
     <Compile Include="NamingRules\SX1309SUnitTests.cs" />
     <Compile Include="NamingRules\SX1309UnitTests.cs" />
     <Compile Include="OrderingRules\SA1200UnitTests.cs" />
+    <Compile Include="OrderingRules\SA1202UnitTests.cs" />
     <Compile Include="OrderingRules\SA1201UnitTests.cs" />
     <Compile Include="OrderingRules\SA1205UnitTests.cs" />
     <Compile Include="OrderingRules\SA1206UnitTests.cs" />
