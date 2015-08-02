@@ -9,7 +9,7 @@
     <MicrosoftCodeAnalysisAnalyzersSemanticVersion>1.0.1</MicrosoftCodeAnalysisAnalyzersSemanticVersion>
     <MicrosoftCodeAnalysisAnalyzersPreReleaseVersion>beta1</MicrosoftCodeAnalysisAnalyzersPreReleaseVersion>
 
-    <DesktopAnalyzersSemanticVersion>1.0.1</DesktopAnalyzersSemanticVersion>
+    <DesktopAnalyzersSemanticVersion>1.0.0</DesktopAnalyzersSemanticVersion>
     <DesktopAnalyzersPreReleaseVersion>beta1</DesktopAnalyzersPreReleaseVersion>
 
     <SharedTestSemanticVersion>1.0.0</SharedTestSemanticVersion>

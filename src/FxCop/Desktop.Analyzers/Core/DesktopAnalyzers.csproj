@@ -77,7 +77,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <InternalsVisibleTo Include="Desktop.Analyzers" />
+    <InternalsVisibleTo Include="Desktop.CSharp.Analyzers" />
     <InternalsVisibleTo Include="Desktop.VisualBasic.Analyzers" />
     <InternalsVisibleToTest Include="Desktop.Analyzers.UnitTests" />
   </ItemGroup>

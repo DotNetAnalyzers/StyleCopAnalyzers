@@ -1357,7 +1357,7 @@ namespace Desktop.Analyzers.UnitTests
             ");
         }
 
-        private const string CA2153RuleName = "CA2153";
+        private const string CA2153RuleName = CSharpDoNotCatchCorruptedStateExceptionsAnalyzer.RuleId;
 
         private DiagnosticResult GetCA2153CSharpResultAt(int line, int column, string signature, string typeName)
         {
