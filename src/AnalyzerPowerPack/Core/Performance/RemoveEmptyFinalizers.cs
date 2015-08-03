@@ -28,7 +28,10 @@ namespace Microsoft.AnalyzerPowerPack.Performance
         public override void Initialize(AnalysisContext analysisContext)
         {
             analysisContext.RegisterCodeBlockStartAction<TLanguageKindEnum>(
+                // TODO (tmeschter): Fix this analyzer so the suppression is no longer necessary.
+#pragma warning disable RS1013 // Start action has no registered non-end actions.
                 (context) =>
+#pragma warning restore RS1013 // Start action has no registered non-end actions.
                 {
                     var method = context.OwningSymbol as IMethodSymbol;
                     if (method == null)
