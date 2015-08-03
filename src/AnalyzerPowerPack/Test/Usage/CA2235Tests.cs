@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis.Test.Utilities;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Microsoft.CodeAnalysis.UnitTests;
+using Roslyn.Diagnostics.Test.Utilities;
 
 namespace Microsoft.AnalyzerPowerPack.UnitTests
 {
@@ -25,7 +26,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
         [WorkItem(858655, "DevDiv")]
         #region CA2235
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2235WithOnlySerializableFields()
         {
             VerifyCSharp(@"
@@ -56,7 +57,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
                 End Class");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2235WithNonPublicNonSerializableFields()
         {
             VerifyCSharp(@"
@@ -94,7 +95,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
                 GetCA2235BasicResultAt(13, 29, "s3", "CA2235WithNonPublicNonSerializableFields", "NonSerializableType"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2235WithNonPublicNonSerializableFieldsWithScope()
         {
             VerifyCSharp(@"
@@ -147,7 +148,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
                 GetCA2235BasicResultAt(13, 29, "s3", "CA2235WithNonPublicNonSerializableFields", "NonSerializableType"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2235InternalWithNonPublicNonSerializableFields()
         {
             VerifyCSharp(@"
@@ -185,7 +186,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
                 GetCA2235BasicResultAt(13, 29, "s3", "CA2235InternalWithNonPublicNonSerializableFields", "NonSerializableType"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2235AutoProperties()
         {
             VerifyCSharp(@"

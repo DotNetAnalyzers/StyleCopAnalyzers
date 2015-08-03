@@ -21,7 +21,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
             return new CA1715DiagnosticAnalyzer();
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestInterfaceNamesCSharp()
         {
             VerifyCSharp(@"
@@ -77,7 +77,7 @@ public interface IAmAnInterface
                 GetCA1715CSharpResultAt(34, 22, CA1715InterfaceMessage));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestTypeParameterNamesCSharp()
         {
             VerifyCSharp(@"
@@ -168,7 +168,7 @@ public class Class6<TTypeParameter>
                 GetCA1715CSharpResultAt(58, 28, CA1715TypeParameterMessage));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestInterfaceNamesBasic()
         {
             VerifyBasic(@"
@@ -215,7 +215,7 @@ End Interface
                 GetCA1715BasicResultAt(27, 22, CA1715InterfaceMessage));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestTypeParameterNamesBasic()
         {
             VerifyBasic(@"

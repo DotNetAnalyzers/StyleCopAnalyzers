@@ -136,6 +136,7 @@
     <Compile Include="DiffUtil.cs" />
     <Compile Include="EnsureEnglishUICulture.cs" />
     <Compile Include="MarkupTestFile.cs" />
+    <Compile Include="WorkItemAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

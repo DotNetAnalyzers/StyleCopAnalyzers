@@ -10,6 +10,7 @@ using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
 using Roslyn.Test.Utilities;
 using Xunit;
+using Roslyn.Diagnostics.Test.Utilities;
 
 namespace Microsoft.AnalyzerPowerPack.UnitTests.HardeningAnalyzer
 {
@@ -25,8 +26,8 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests.HardeningAnalyzer
             return new ExceptionThrowingSymbolAnalyzer_ThrowSymbolKindsOfInterest();
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
-        [WorkItem(759)]
+        [Fact]
+        [WorkItem(759, "https://github.com/dotnet/roslyn/issues/759")]
         public void TestTypeParameterNamesCSharp()
         {
             var source = @"

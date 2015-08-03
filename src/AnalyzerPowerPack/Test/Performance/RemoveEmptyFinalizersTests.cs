@@ -5,6 +5,7 @@ using Microsoft.AnalyzerPowerPack.VisualBasic.Performance;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
+using Roslyn.Diagnostics.Test.Utilities;
 using Roslyn.Test.Utilities;
 using Xunit;
 
@@ -22,7 +23,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
             return new CSharpRemoveEmptyFinalizers();
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1821CSharpTestNoWarning()
         {
             VerifyCSharp(@"
@@ -100,7 +101,7 @@ public class Class7
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1821CSharpTestRemoveEmptyFinalizers()
         {
             VerifyCSharp(@"
@@ -125,7 +126,7 @@ public class Class2
                 GetCA1821CSharpResultAt(13, 3));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1821CSharpTestRemoveEmptyFinalizersWithScope()
         {
             VerifyCSharp(@"
@@ -152,7 +153,7 @@ public class Class2
                 GetCA1821CSharpResultAt(6, 3));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1821CSharpTestRemoveEmptyFinalizersWithDebugFail()
         {
             VerifyCSharp(@"
@@ -174,7 +175,7 @@ public class Class1
             GetCA1821CSharpResultAt(11, 3));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1821CSharpTestRemoveEmptyFinalizersWithDebugFailAndDirective()
         {
             VerifyCSharp(@"
@@ -194,7 +195,7 @@ public class Class1
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1821CSharpTestRemoveEmptyFinalizersWithDebugFailAndDirectiveAroundStatements()
         {
             VerifyCSharp(@"
@@ -227,7 +228,7 @@ public class Class2
         }
 
         [WorkItem(820941, "DevDiv")]
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1821CSharpTestRemoveEmptyFinalizersWithNonInvocationBody()
         {
             VerifyCSharp(@"
@@ -292,7 +293,7 @@ End Class
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1821BasicTestRemoveEmptyFinalizers()
         {
             VerifyBasic(@"
@@ -324,7 +325,7 @@ End Class
                 GetCA1821BasicResultAt(20, 29));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1821BasicTestRemoveEmptyFinalizersWithScope()
         {
             VerifyBasic(@"
@@ -354,7 +355,7 @@ End Class
                 GetCA1821BasicResultAt(13, 29));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1821BasicTestRemoveEmptyFinalizersWithDebugFail()
         {
             VerifyBasic(@"

@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
+using Roslyn.Diagnostics.Test.Utilities;
 using Roslyn.Test.Utilities;
 using Xunit;
 
@@ -19,7 +20,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
             return new SerializationRulesDiagnosticAnalyzer();
         }
 
-        [WorkItem(858655)]
+        [WorkItem(858655, "DevDiv")]
         protected override CodeFixProvider GetBasicCodeFixProvider()
         {
             return new BasicMarkAllNonSerializableFieldsFixer();
@@ -30,7 +31,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
             return new SerializationRulesDiagnosticAnalyzer();
         }
 
-        [WorkItem(858655)]
+        [WorkItem(858655, "DevDiv")]
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new CSharpMarkAllNonSerializableFieldsFixer();
@@ -38,7 +39,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
 
         #region CA2235
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2235WithNonSerializableFieldsWithFix()
         {
             VerifyCSharpFix(@"
@@ -84,7 +85,7 @@ End Class",
 codeFixIndex: 0);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2235WithNonSerializableFieldsWithFix1()
         {
             VerifyCSharpFix(@"
@@ -132,7 +133,7 @@ End Class",
 codeFixIndex: 1);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2235WithNonSerializableFieldsWithFix2()
         {
             VerifyCSharpFix(@"
@@ -178,7 +179,7 @@ End Class",
 codeFixIndex: 0);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2235WithNonSerializableFieldsWithFix3()
         {
             VerifyCSharpFix(@"

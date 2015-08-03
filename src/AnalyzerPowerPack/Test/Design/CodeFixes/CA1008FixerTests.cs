@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
+using Roslyn.Diagnostics.Test.Utilities;
 using Roslyn.Test.Utilities;
 using Xunit;
 
@@ -34,8 +35,8 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
             return new CA1008CSharpCodeFixProvider();
         }
 
-        [WorkItem(836193)]
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [WorkItem(836193, "DevDiv")]
+        [Fact]
         public void CSharp_EnumsShouldZeroValueFlagsRename()
         {
             var code = @"
@@ -112,7 +113,7 @@ public enum NoZeroValuedField
             VerifyCSharpFix(code, expectedFixedCode);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CSharp_EnumsShouldZeroValueFlagsMultipleZero()
         {
             var code = @"// Some comment
@@ -144,7 +145,7 @@ internal enum E2
             VerifyCSharpFix(code, expectedFixedCode);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CSharp_EnumsShouldZeroValueNotFlagsNoZeroValue()
         {
             var code = @"
@@ -200,7 +201,7 @@ internal enum E4
             VerifyCSharpFix(code, expectedFixedCode);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void VisualBasic_EnumsShouldZeroValueFlagsRename()
         {
             var code = @"
@@ -257,8 +258,8 @@ End Enum
             VerifyBasicFix(code, expectedFixedCode);
         }
 
-        [WorkItem(836193)]
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [WorkItem(836193, "DevDiv")]
+        [Fact]
         public void VisualBasic_EnumsShouldZeroValueFlagsRename_AttributeListHasTrivia()
         {
             var code = @"
@@ -315,7 +316,7 @@ End Enum
             VerifyBasicFix(code, expectedFixedCode);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void VisualBasic_EnumsShouldZeroValueFlagsMultipleZero()
         {
             var code = @"
@@ -356,7 +357,7 @@ End Enum";
             VerifyBasicFix(code, expectedFixedCode);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void VisualBasic_EnumsShouldZeroValueNotFlagsNoZeroValue()
         {
             var code = @"

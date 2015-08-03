@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
+using Roslyn.Diagnostics.Test.Utilities;
 using Roslyn.Test.Utilities;
 using Xunit;
 
@@ -17,7 +18,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
             return new SerializationRulesDiagnosticAnalyzer();
         }
 
-        [WorkItem(858655)]
+        [WorkItem(858655, "DevDiv")]
         protected override CodeFixProvider GetBasicCodeFixProvider()
         {
             return new MarkTypesWithSerializableFixer();
@@ -28,7 +29,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
             return new SerializationRulesDiagnosticAnalyzer();
         }
 
-        [WorkItem(858655)]
+        [WorkItem(858655, "DevDiv")]
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new MarkTypesWithSerializableFixer();
@@ -36,7 +37,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
 
         #region CA2237
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2237SerializableMissingAttrFix()
         {
             VerifyCSharpFix(@"

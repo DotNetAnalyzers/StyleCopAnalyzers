@@ -23,7 +23,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
 
         #region CA2237
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2237SerializableMissingAttr()
         {
             VerifyCSharp(@"
@@ -54,7 +54,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
                 GetCA2237BasicResultAt(4, 30, "CA2237SerializableMissingAttr"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2237SerializableInternal()
         {
             VerifyCSharp(@"
@@ -83,7 +83,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
                 End Class");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2237SerializableProperWithScope()
         {
             VerifyCSharp(@"
@@ -132,7 +132,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
                 End Class");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2237SerializableWithBase()
         {
             VerifyCSharp(@"
@@ -165,7 +165,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
                 End Class");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2237SerializableWithBaseAttr()
         {
             VerifyCSharp(@"

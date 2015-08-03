@@ -22,7 +22,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
             return new CSharpCA2200DiagnosticAnalyzer();
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2200CSharpTestWithLegalExceptionThrow()
         {
             VerifyCSharp(@"
@@ -44,7 +44,7 @@ class Program
 }");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2200CSharpTestWithLegalExceptionThrowMultiple()
         {
             VerifyCSharp(@"
@@ -68,7 +68,7 @@ class Program
 }");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2200CSharpTestWithLegalExceptionThrowNested()
         {
             VerifyCSharp(@"
@@ -107,7 +107,7 @@ class Program
 }");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2200CSharpTestWithIllegalExceptionThrow()
         {
             VerifyCSharp(@"
@@ -135,7 +135,7 @@ class Program
            GetCA2200CSharpResultAt(14, 13));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2200CSharpTestWithIllegalExceptionThrowwithScope()
         {
             VerifyCSharp(@"
@@ -162,7 +162,7 @@ class Program
 }");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2200CSharpTestWithIllegalExceptionThrowMultiple()
         {
             VerifyCSharp(@"
@@ -195,7 +195,7 @@ class Program
            GetCA2200CSharpResultAt(18, 13));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2200CSharpTestWithIllegalExceptionThrowNested()
         {
             VerifyCSharp(@"
@@ -225,7 +225,7 @@ class Program
            GetCA2200CSharpResultAt(20, 17));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2200yVisualBasicTestWithLegalExceptionThrow()
         {
             VerifyBasic(@"
@@ -241,7 +241,7 @@ Class Program
 End Class");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2200VisualBasicTestWithLegalExceptionThrowMultiple()
         {
             VerifyBasic(@"
@@ -259,7 +259,7 @@ Class Program
 End Class");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2200VisualBasicTestWithLegalExceptionThrowNested()
         {
             VerifyBasic(@"
@@ -285,7 +285,7 @@ Class Program
 End Class");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2200VisualBasicTestWithIllegalExceptionThrow()
         {
             VerifyBasic(@"
@@ -303,7 +303,7 @@ End Class",
            GetCA2200BasicResultAt(9, 13));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2200VisualBasicTestWithIllegalExceptionThrowMultiple()
         {
             VerifyBasic(@"
@@ -324,7 +324,7 @@ End Class",
            GetCA2200BasicResultAt(11, 13));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2200VisualBasicTestWithIllegalExceptionThrowMultipleWithScope()
         {
             VerifyBasic(@"
@@ -344,7 +344,7 @@ End Class",
            GetCA2200BasicResultAt(11, 13));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2200VisualBasicTestWithIllegalExceptionThrowNested()
         {
             VerifyBasic(@"

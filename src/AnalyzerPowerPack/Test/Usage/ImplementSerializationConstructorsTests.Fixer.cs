@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis.Test.Utilities;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Microsoft.CodeAnalysis.UnitTests;
+using Roslyn.Diagnostics.Test.Utilities;
 
 namespace Microsoft.AnalyzerPowerPack.UnitTests
 {
@@ -17,7 +18,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
             return new SerializationRulesDiagnosticAnalyzer();
         }
 
-        [WorkItem(858655)]
+        [WorkItem(858655, "DevDiv")]
         protected override CodeFixProvider GetBasicCodeFixProvider()
         {
             return new ImplementSerializationConstructorsFixer();
@@ -35,7 +36,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
 
         #region CA2229
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2229NoConstructorFix()
         {
             VerifyCSharpFix(@"
@@ -92,7 +93,7 @@ Public Class CA2229NoConstructor
 End Class");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2229HasConstructorWrongAccessibilityFix()
         {
             VerifyCSharpFix(@"
@@ -150,7 +151,7 @@ Public Class CA2229HasConstructorWrongAccessibility
 End Class");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2229HasConstructorWrongAccessibility2Fix()
         {
             VerifyCSharpFix(@"

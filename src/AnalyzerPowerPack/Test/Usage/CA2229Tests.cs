@@ -23,7 +23,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
 
         #region CA2229
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2229NoConstructor()
         {
             VerifyCSharp(@"
@@ -53,7 +53,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
                 GetCA2229BasicResultAt(5, 30, "CA2229NoConstructor", CA2229Message));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2229NoConstructorInternal()
         {
             VerifyCSharp(@"
@@ -81,7 +81,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
                 End Class");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2229HasConstructor()
         {
             VerifyCSharp(@"
@@ -114,7 +114,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
                 End Class");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2229HasConstructor1()
         {
             VerifyCSharp(@"
@@ -147,7 +147,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
                 End Class");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2229HasConstructorWrongAccessibility()
         {
             VerifyCSharp(@"
@@ -182,7 +182,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
                 GetCA2229BasicResultAt(8, 32, "CA2229HasConstructorWrongAccessibility", CA2229MessageUnsealed));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2229HasConstructorWrongAccessibilityWithScope()
         {
             VerifyCSharp(@"
@@ -240,7 +240,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
                 End Class");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2229HasConstructorWrongAccessibility1()
         {
             VerifyCSharp(@"
@@ -275,7 +275,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
                 GetCA2229BasicResultAt(8, 32, "CA2229HasConstructorWrongAccessibility1", CA2229MessageUnsealed));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2229HasConstructorWrongAccessibility2()
         {
             VerifyCSharp(@"
@@ -310,7 +310,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
                 GetCA2229BasicResultAt(8, 42, "CA2229HasConstructorWrongAccessibility2", CA2229MessageSealed));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2229HasConstructorWrongAccessibility3()
         {
             VerifyCSharp(@"
@@ -345,7 +345,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
                 GetCA2229BasicResultAt(8, 42, "CA2229HasConstructorWrongAccessibility3", CA2229MessageUnsealed));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2229HasConstructorWrongOrder()
         {
             VerifyCSharp(@"
@@ -380,7 +380,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
                 GetCA2229BasicResultAt(5, 30, "CA2229HasConstructorWrongOrder", CA2229Message));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2229SerializableProper()
         {
             VerifyCSharp(@"

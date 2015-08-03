@@ -33,7 +33,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
             return new RemoveEmptyFinalizersFixer();
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1821CSharpCodeFixTestRemoveEmptyFinalizers()
         {
             VerifyCSharpFix(@"
@@ -52,7 +52,7 @@ public class Class1
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1821BasicCodeFixTestRemoveEmptyFinalizers()
         {
             VerifyBasicFix(@"

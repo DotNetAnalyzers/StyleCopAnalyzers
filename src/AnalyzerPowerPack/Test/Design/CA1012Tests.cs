@@ -21,7 +21,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
             return new CA1012DiagnosticAnalyzer();
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestCSPublicAbstractClass()
         {
             var code = @"
@@ -35,7 +35,7 @@ public abstract class C
             VerifyCSharp(code, GetCA1012CSharpResultAt(2, 23, "C"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestCSPublicAbstractClassWithScope()
         {
             var code = @"
@@ -57,7 +57,7 @@ public abstract class C
             VerifyCSharp(code);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestVBPublicAbstractClass()
         {
             var code = @"
@@ -69,7 +69,7 @@ End Class
             VerifyBasic(code, GetCA1012BasicResultAt(2, 26, "C"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestCSInternalAbstractClass()
         {
             var code = @"
@@ -83,7 +83,7 @@ abstract class C
             VerifyCSharp(code, GetCA1012CSharpResultAt(2, 16, "C"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestVBInternalAbstractClass()
         {
             var code = @"
@@ -95,7 +95,7 @@ End Class
             VerifyBasic(code, GetCA1012BasicResultAt(2, 19, "C"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestVBInternalAbstractClassWithScope()
         {
             var code = @"
@@ -113,7 +113,7 @@ End Class|]
             VerifyBasic(code);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestCSAbstractClassWithProtectedConstructor()
         {
             var code = @"
@@ -127,7 +127,7 @@ public abstract class C
             VerifyCSharp(code);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestVBAbstractClassWithProtectedConstructor()
         {
             var code = @"
@@ -139,7 +139,7 @@ End Class
             VerifyBasic(code);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestCSNestedAbstractClassWithPublicConstructor1()
         {
             var code = @"
@@ -154,7 +154,7 @@ public struct C
             VerifyCSharp(code, GetCA1012CSharpResultAt(4, 20, "D"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestVBNestedAbstractClassWithPublicConstructor1()
         {
             var code = @"
@@ -168,7 +168,7 @@ End Class
             VerifyBasic(code, GetCA1012BasicResultAt(3, 23, "D"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestNestedAbstractClassWithPublicConstructor2()
         {
             var code = @"
@@ -183,7 +183,7 @@ public abstract class C
             VerifyCSharp(code, GetCA1012CSharpResultAt(4, 27, "D"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestVBNestedAbstractClassWithPublicConstructor2()
         {
             var code = @"
@@ -197,7 +197,7 @@ End Class
             VerifyBasic(code, GetCA1012BasicResultAt(3, 39, "D"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestNestedAbstractClassWithPublicConstructor3()
         {
             var code = @"
@@ -212,7 +212,7 @@ internal abstract class C
             VerifyCSharp(code, GetCA1012CSharpResultAt(4, 27, "D"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestVBNestedAbstractClassWithPublicConstructor3()
         {
             var code = @"

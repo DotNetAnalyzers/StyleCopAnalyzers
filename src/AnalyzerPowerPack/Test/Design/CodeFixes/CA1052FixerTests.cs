@@ -33,7 +33,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests.Design.CodeFixes
             return new CA1052DiagnosticAnalyzer();
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052FixesSealedClassWithOnlyStaticDeclaredMembersCSharp()
         {
             const string Code = @"
@@ -53,7 +53,7 @@ public static class C
             VerifyCSharpFix(Code, FixedCode);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052FixesNonStaticClassWithOnlyStaticDeclaredMembersCSharp()
         {
             const string Code = @"
@@ -73,7 +73,7 @@ public static class C
             VerifyCSharpFix(Code, FixedCode);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052FixesNonStaticClassWithPublicDefaultConstructorAndStaticMethodCSharp()
         {
             const string Code = @"
@@ -94,7 +94,7 @@ public static class C
             VerifyCSharpFix(Code, FixedCode);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052FixesNonStaticClassWithProtectedDefaultConstructorAndStaticMethodCSharp()
         {
             const string Code = @"
@@ -115,7 +115,7 @@ public static class C
             VerifyCSharpFix(Code, FixedCode);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052FixesNonStaticClassWithPrivateDefaultConstructorAndStaticMethodCSharp()
         {
             const string Code = @"
@@ -136,7 +136,7 @@ public static class C
             VerifyCSharpFix(Code, FixedCode);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052FixesNestedPublicNonStaticClassWithPublicDefaultConstructorAndStaticMethodCSharp()
         {
             const string Code = @"
@@ -167,7 +167,7 @@ public class C
             VerifyCSharpFix(Code, FixedCode);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052FixesNonStaticClassWithStaticConstructorCSharp()
         {
             const string Code = @"
@@ -187,7 +187,7 @@ public static class C
             VerifyCSharpFix(Code, FixedCode);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052FixesNonStaticClassWithStaticConstructorAndInstanceConstructorCSharp()
         {
             const string Code = @"
@@ -207,7 +207,7 @@ public static class C
             VerifyCSharpFix(Code, FixedCode);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052FixesNestedPublicClassInOtherwiseEmptyNonStaticClassCSharp()
         {
             const string Code = @"

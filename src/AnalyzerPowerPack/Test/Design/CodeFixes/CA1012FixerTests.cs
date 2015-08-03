@@ -31,7 +31,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
             return new CA1012CodeFixProvider();
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestCSPublicAbstractClass()
         {
             var code = @"
@@ -53,7 +53,7 @@ public abstract class C
             VerifyCSharpFix(code, fix);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestVBPublicAbstractClass()
         {
             var code = @"
@@ -71,7 +71,7 @@ End Class
             VerifyBasicFix(code, fix);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestCSInternalAbstractClass()
         {
             var code = @"
@@ -93,7 +93,7 @@ abstract class C
             VerifyCSharpFix(code, fix);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestVBInternalAbstractClass()
         {
             var code = @"
@@ -111,7 +111,7 @@ End Class
             VerifyBasicFix(code, fix);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestCSNestedAbstractClassWithPublicConstructor1()
         {
             var code = @"
@@ -135,7 +135,7 @@ public struct C
             VerifyCSharpFix(code, fix);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestVBNestedAbstractClassWithPublicConstructor1()
         {
             var code = @"
@@ -157,7 +157,7 @@ End Class
             VerifyBasicFix(code, fix);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestNestedAbstractClassWithPublicConstructor2()
         {
             var code = @"
@@ -181,7 +181,7 @@ public abstract class C
             VerifyCSharpFix(code, fix);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestVBNestedAbstractClassWithPublicConstructor2()
         {
             var code = @"
@@ -203,7 +203,7 @@ End Class
             VerifyBasicFix(code, fix);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestNestedAbstractClassWithPublicConstructor3()
         {
             var code = @"
@@ -227,7 +227,7 @@ internal abstract class C
             VerifyCSharpFix(code, fix);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestVBNestedAbstractClassWithPublicConstructor3()
         {
             var code = @"

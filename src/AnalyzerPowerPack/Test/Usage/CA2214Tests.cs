@@ -23,7 +23,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
             return new CSharpCA2214DiagnosticAnalyzer();
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2214VirtualMethodCSharp()
         {
             VerifyCSharp(@"
@@ -40,7 +40,7 @@ class C
             GetCA2214CSharpResultAt(6, 9));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2214VirtualMethodCSharpWithScope()
         {
             VerifyCSharp(@"
@@ -56,7 +56,7 @@ class C
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2214VirtualMethodBasic()
         {
             VerifyBasic(@"
@@ -71,7 +71,7 @@ End Class
             GetCA2214BasicResultAt(4, 9));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2214VirtualMethodBasicwithScope()
         {
             VerifyBasic(@"
@@ -85,7 +85,7 @@ End Class
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2214AbstractMethodCSharp()
         {
             VerifyCSharp(@"
@@ -102,7 +102,7 @@ class C
             GetCA2214CSharpResultAt(6, 9));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2214AbstractMethodBasic()
         {
             VerifyBasic(@"
@@ -116,7 +116,7 @@ End Class
             GetCA2214BasicResultAt(4, 9));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2214MultipleInstancesCSharp()
         {
             VerifyCSharp(@"
@@ -136,7 +136,7 @@ class C
             GetCA2214CSharpResultAt(7, 9));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2214MultipleInstancesBasic()
         {
             VerifyBasic(@"
@@ -154,7 +154,7 @@ End Class
            GetCA2214BasicResultAt(5, 9));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2214NotTopLevelCSharp()
         {
             VerifyCSharp(@"
@@ -180,7 +180,7 @@ class C
             GetCA2214CSharpResultAt(13, 13));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2214NotTopLevelBasic()
         {
             VerifyBasic(@"
@@ -201,7 +201,7 @@ End Class
             GetCA2214BasicResultAt(9, 13));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2214NoDiagnosticsOutsideConstructorCSharp()
         {
             VerifyCSharp(@"
@@ -217,7 +217,7 @@ class C
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2214NoDiagnosticsOutsideConstructorBasic()
         {
             VerifyBasic(@"
@@ -231,7 +231,7 @@ End Class
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2214SpecialInheritanceCSharp()
         {
             var source = @"
@@ -278,7 +278,7 @@ class E : ControlBase
             GetSortedDiagnostics(analyzer, project.Documents.Single()).Verify(analyzer);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2214SpecialInheritanceBasic()
         {
             var source = @"
@@ -320,7 +320,7 @@ End Class
             GetSortedDiagnostics(analyzer, project.Documents.Single()).Verify(analyzer);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2214VirtualOnOtherClassesCSharp()
         {
             VerifyCSharp(@"
@@ -342,7 +342,7 @@ class C
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA2214VirtualOnOtherClassesBasic()
         {
             VerifyBasic(@"

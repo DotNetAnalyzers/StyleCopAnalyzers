@@ -34,7 +34,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
 
         #endregion
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052NoDiagnosticForEmptyNonStaticClassCSharp()
         {
             VerifyCSharp(@"
@@ -44,7 +44,7 @@ public class C1
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052NoDiagnosticForEmptyInheritableClassBasic()
         {
             VerifyBasic(@"
@@ -53,7 +53,7 @@ End Class
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
 
         public void CA1052NoDiagnosticForStaticClassWithOnlyStaticDeclaredMembersCSharp()
         {
@@ -65,7 +65,7 @@ public static class C2
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052DiagnosticForSealedClassWithOnlyStaticDeclaredMembersCSharp()
         {
             VerifyCSharp(@"
@@ -77,7 +77,7 @@ public sealed class C3
                 CSharpResult(2, 21, "C3"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052DiagnosticForNonInheritableClassWithOnlySharedDeclaredMembersBasic()
         {
             VerifyBasic(@"
@@ -89,7 +89,7 @@ End Class
                 BasicResult(2, 29, "B3"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052DiagnosticForNonStaticClassWithOnlyStaticDeclaredMembersCSharp()
         {
             VerifyCSharp(@"
@@ -101,7 +101,7 @@ public class C4
                 CSharpResult(2, 14, "C4"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052DiagnosticForNonStaticClassWithOnlySharedDeclaredMembersBasic()
         {
             VerifyBasic(@"
@@ -113,7 +113,7 @@ EndClass
                 BasicResult(2, 14, "B4"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052NoDiagnosticForNonStaticClassWithBothStaticAndInstanceDeclaredMembersCSharp()
         {
             VerifyCSharp(@"
@@ -125,7 +125,7 @@ public class C5
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052NoDiagnosticForNonStaticClassWithBothSharedAndInstanceDeclaredMembersBasic()
         {
             VerifyBasic(@"
@@ -140,7 +140,7 @@ EndClass
         }
 
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052NoDiagnosticForInternalClassWithOnlyStaticDeclaredMembersCSharp()
         {
             VerifyCSharp(@"
@@ -151,7 +151,7 @@ internal class C6
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052NoDiagnosticForFriendClassWithOnlySharedDeclaredMembersBasic()
         {
             VerifyBasic(@"
@@ -162,7 +162,7 @@ EndClass
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052NoDiagnosticForNonStaticClassWithUserDefinedOperatorCSharp()
         {
             VerifyCSharp(@"
@@ -176,7 +176,7 @@ public class C7
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052NoDiagnosticForNonStaticClassWithUserDefinedOperatorBasic()
         {
             VerifyBasic(@"
@@ -188,7 +188,7 @@ End Class
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052NoDiagnosticForNonStaticClassWithStaticMethodAndUserDefinedOperatorCSharp()
         {
             VerifyCSharp(@"
@@ -204,7 +204,7 @@ public class C8
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052NoDiagnosticForNonStaticClassWithSharedMethodAndUserDefinedOperatorBasic()
         {
             VerifyBasic(@"
@@ -219,7 +219,7 @@ End Class
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052DiagnosticForNonStaticClassWithPublicDefaultConstructorAndStaticMethodCSharp()
         {
             VerifyCSharp(@"
@@ -233,7 +233,7 @@ public class C9
             CSharpResult(2, 14, "C9"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052DiagnosticForNonStaticClassWithPublicDefaultConstructorAndSharedMethodBasic()
         {
             VerifyBasic(@"
@@ -248,7 +248,7 @@ End Class
             BasicResult(2, 14, "B9"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052DiagnosticForNonStaticClassWithProtectedDefaultConstructorAndStaticMethodCSharp()
         {
             VerifyCSharp(@"
@@ -262,7 +262,7 @@ public class C10
             CSharpResult(2, 14, "C10"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052DiagnosticForNonStaticClassWithProtectedDefaultConstructorAndSharedMethodBasic()
         {
             VerifyBasic(@"
@@ -277,7 +277,7 @@ End Class
             BasicResult(2, 14, "B10"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052DiagnosticForNonStaticClassWithPrivateDefaultConstructorAndStaticMethodCSharp()
         {
             VerifyCSharp(@"
@@ -291,7 +291,7 @@ public class C11
             CSharpResult(2, 14, "C11"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052DiagnosticForNonStaticClassWithPrivateDefaultConstructorAndSharedMethodBasic()
         {
             VerifyBasic(@"
@@ -306,7 +306,7 @@ End Class
             BasicResult(2, 14, "B11"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052NoDiagnosticForNonStaticClassWithPublicNonDefaultConstructorAndStaticMethodCSharp()
         {
             VerifyCSharp(@"
@@ -319,7 +319,7 @@ public class C12
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052NoDiagnosticForNonStaticClassWithPublicNonDefaultConstructorAndSharedMethodBasic()
         {
             VerifyBasic(@"
@@ -333,7 +333,7 @@ End Class
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052NoDiagnosticForNonStaticClassWithPublicNonDefaultConstructorWithDefaultedParametersAndStaticMethodCSharp()
         {
             VerifyCSharp(@"
@@ -346,7 +346,7 @@ public class C13
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052NoDiagnosticForNonStaticClassWithPublicNonDefaultConstructorWithOptionalParametersAndSharedMethodBasic()
         {
             VerifyBasic(@"
@@ -360,7 +360,7 @@ End Class
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052DiagnosticForNestedPublicNonStaticClassWithPublicDefaultConstructorAndStaticMethodCSharp()
         {
             VerifyCSharp(@"
@@ -378,7 +378,7 @@ public class C14
                 CSharpResult(6, 18, "C14Inner"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052DiagnosticForNestedPublicNonStaticClassWithPublicDefaultConstructorAndSharedMethodBasic()
         {
             VerifyBasic(@"
@@ -398,7 +398,7 @@ End Class
                 BasicResult(6, 18, "B14Inner"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052NoDiagnosticForEmptyStaticClassCSharp()
         {
             VerifyCSharp(@"
@@ -408,7 +408,7 @@ public static class C15
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052DiagnosticForNonStaticClassWithStaticConstructorCSharp()
         {
             VerifyCSharp(@"
@@ -420,7 +420,7 @@ public class C16
                 CSharpResult(2, 14, "C16"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052DiagnosticForNonStaticClassWithStaticConstructorBasic()
         {
             VerifyBasic(@"
@@ -432,7 +432,7 @@ End Class
                 BasicResult(2, 14, "B16"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052NoDiagnosticForStaticClassWithStaticConstructorCSharp()
         {
             VerifyCSharp(@"
@@ -443,7 +443,7 @@ public static class C17
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052DiagnosticForNonStaticClassWithStaticConstructorAndInstanceConstructorCSharp()
         {
             VerifyCSharp(@"
@@ -456,7 +456,7 @@ public class C18
                 CSharpResult(2, 14, "C18"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052DiagnosticForNonStaticClassWithStaticConstructorAndInstanceConstructorBasic()
         {
             VerifyBasic(@"
@@ -471,7 +471,7 @@ End Class
                 BasicResult(2, 14, "B18"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052DiagnosticForNestedPublicClassInOtherwiseEmptyNonStaticClassCSharp()
         {
             VerifyCSharp(@"
@@ -485,7 +485,7 @@ public class C19
                 CSharpResult(2, 14, "C19"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052DiagnosticForNestedPublicClassInOtherwiseEmptyNonStaticClassBasic()
         {
             VerifyBasic(@"
@@ -497,7 +497,7 @@ End Class
                 BasicResult(2, 14, "B19"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052NoDiagnosticAnEnumCSharp()
         {
             VerifyCSharp(@"
@@ -508,7 +508,7 @@ public enum E20
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052NoDiagnosticAnEnumBasic()
         {
             VerifyBasic(@"
@@ -518,7 +518,7 @@ End Enum
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052NoDiagnosticOnClassWithOnlyDefaultConstructorCSharp()
         {
             VerifyCSharp(@"
@@ -529,7 +529,7 @@ public class C21
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052NoDiagnosticOnClassWithOnlyDefaultConstructorBasic()
         {
             VerifyBasic(@"
@@ -539,7 +539,7 @@ Public Class B21
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052NoDiagnosticForNestedPrivateNonStaticClassWithPublicDefaultConstructorAndStaticMethodCSharp()
         {
             VerifyCSharp(@"
@@ -556,7 +556,7 @@ public class C22
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1052NoDiagnosticForNestedPrivateNonStaticClassWithPublicDefaultConstructorAndSharedMethodBasic()
         {
             VerifyBasic(@"

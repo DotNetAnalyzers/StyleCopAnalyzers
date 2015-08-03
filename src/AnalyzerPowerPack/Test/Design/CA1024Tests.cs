@@ -22,7 +22,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
             return new CSharpCA1024DiagnosticAnalyzer();
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CSharp_CA1024NoDiagnosticCases()
         {
             VerifyCSharp(@"
@@ -152,7 +152,7 @@ public class Class1 : Base
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CSharp_CA1024DiagnosticCases()
         {
             VerifyCSharp(@"
@@ -187,7 +187,7 @@ public class Class
             GetCA1024CSharpResultAt(21, 22, "GetFileNameProtected"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CSharp_CA1024DiagnosticCasesWithScope()
         {
             VerifyCSharp(@"
@@ -220,7 +220,7 @@ public class Class
             GetCA1024CSharpResultAt(16, 19, "Get123"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void VisualBasic_CA1024NoDiagnosticCases()
         {
             VerifyBasic(@"
@@ -317,7 +317,7 @@ End Class
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void VisualBasic_CA1024DiagnosticCases()
         {
             VerifyBasic(@"
@@ -347,7 +347,7 @@ End Class
             GetCA1024BasicResultAt(17, 24, "GetFileNameProtected"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void VisualBasic_CA1024DiagnosticCaseswithScope()
         {
             VerifyBasic(@"

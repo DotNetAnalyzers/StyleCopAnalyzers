@@ -37,7 +37,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
 
         #region CSharp 
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1033SimpleDiagnosticCasesCSharp()
         {
             VerifyCSharp(@"
@@ -147,7 +147,7 @@ public class ImplementsGeneralThree : IGeneral
             CSharpResult(73, 9, "ImplementsGeneralThree", "IGeneral.get_Name"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1033NestedDiagnosticCasesCSharp()
         {
             VerifyCSharp(@"
@@ -212,7 +212,7 @@ public class NestedExplicitInterfaceImplementation
             CSharpResult(50, 13, "ImplementsNestedGeneral", "NestedExplicitInterfaceImplementation.INestedGeneral.remove_TheEvent"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1033NoDiagnosticCasesCSharp()
         {
             VerifyCSharp(@"
@@ -354,7 +354,7 @@ public class NestedExplicitInterfaceImplementation
 
         #region VisualBasic
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1033SimpleDiagnosticCasesBasic()
         {
             VerifyBasic(@"
@@ -464,7 +464,7 @@ End Class
             BasicResult(74, 9, "ImplementsGeneralThree", "get_IGeneral_Name"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1033NestedDiagnosticCasesBasic()
         {
             VerifyBasic(@"
@@ -533,7 +533,7 @@ End Class
             BasicResult(50, 13, "ImplementsNestedGeneral", "remove_TheEvent"));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1033NoDiagnosticCasesBasic()
         {
             VerifyBasic(@"

@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Test.Utilities;
 using Microsoft.CodeAnalysis.UnitTests;
+using Roslyn.Diagnostics.Test.Utilities;
 using Roslyn.Test.Utilities;
 using Xunit;
 
@@ -36,7 +37,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
 
         #region CSharp
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1033SimpleDiagnosticCasesCSharp_MakeProtected()
         {
             var code = @"
@@ -132,7 +133,7 @@ public class ImplementsGeneralThree : IGeneral
         }
 
         [WorkItem(2616, "https://github.com/dotnet/roslyn/issues/2616")]
-        [Fact(Skip = "2616"), Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact(Skip = "2616")]
         public void CA1033SimpleDiagnosticCasesCSharp_ImplicitImpl()
         {
             var code = @"
@@ -198,7 +199,7 @@ public class ImplementsGeneral  : IGeneral
         }
 
         [WorkItem(2616, "https://github.com/dotnet/roslyn/issues/2616")]
-        [Fact(Skip = "2616"), Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact(Skip = "2616")]
         public void CA1033SimpleDiagnosticCasesCSharp_Indexer()
         {
             var code = @"
@@ -289,7 +290,7 @@ public class ImplementsGeneralThree : IGeneral
             VerifyCSharpFix(code, expectedFixedCode);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1033SimpleDiagnosticCasesCSharp_MakeSealed()
         {
             var code = @"
@@ -379,7 +380,7 @@ public sealed class ImplementsGeneral  : IGeneral
             VerifyCSharpFix(code, expectedFixedCode, codeFixIndex: 1);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1033SimpleDiagnosticCasesCSharp_MakeSealed_2()
         {
             var code = @"
@@ -523,7 +524,7 @@ public sealed class ImplementsGeneralThree : IGeneral
             VerifyCSharpFix(code, expectedFixedCode, codeFixIndex: 1);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1033SimpleDiagnosticCasesCSharp_Events()
         {
             var code = @"
@@ -590,7 +591,7 @@ public class NestedExplicitInterfaceImplementation
         }
 
         [WorkItem(2654, "https://github.com/dotnet/roslyn/issues/2654")]
-        [Fact(Skip = "2654"), Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact(Skip = "2654")]
         public void CA1033SimpleDiagnosticCasesCSharp_Property()
         {
             var code = @"
@@ -664,7 +665,7 @@ public class NestedExplicitInterfaceImplementation
 
         #region VisualBasic
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1033SimpleDiagnosticCasesBasic_MakeProtected()
         {
             var code = @"
@@ -746,7 +747,7 @@ End Class
         }
 
         [WorkItem(2616, "https://github.com/dotnet/roslyn/issues/2616")]
-        [Fact(Skip = "2616"), Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact(Skip = "2616")]
         public void CA1033SimpleDiagnosticCasesBasic_ImplicitImpl()
         {
             var code = @"
@@ -797,7 +798,7 @@ End Class";
         }
 
         [WorkItem(2650, "https://github.com/dotnet/roslyn/issues/2650")]
-        [Fact(Skip = "2650"), Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact(Skip = "2650")]
         public void CA1033SimpleDiagnosticCasesBasic_Indexer()
         {
             var code = @"
@@ -872,7 +873,7 @@ End Class
             VerifyBasicFix(code, expectedFixedCode);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1033SimpleDiagnosticCasesBasic_MakeSealed()
         {
             var code = @"
@@ -938,7 +939,7 @@ End Class
             VerifyBasicFix(code, expectedFixedCode, codeFixIndex: 1);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1033SimpleDiagnosticCasesBasic_MakeSealed_2()
         {
             var code = @"
@@ -1048,7 +1049,7 @@ End Class
             VerifyBasicFix(code, expectedFixedCode, codeFixIndex: 1);
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CA1033SimpleDiagnosticCasesBasic_Events()
         {
             var code = @"
@@ -1127,7 +1128,7 @@ End Class
         }
 
         [WorkItem(2654, "https://github.com/dotnet/roslyn/issues/2654")]
-        [Fact(Skip = "2654"), Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact(Skip = "2654")]
         public void CA1033SimpleDiagnosticCasesBasic_Property()
         {
             var code = @"

@@ -26,7 +26,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
 
         #region Namespace Level
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestGlobalNamespaceNames()
         {
             VerifyCSharp(new string[]
@@ -45,7 +45,7 @@ namespace n
                 GetCA1708CSharpResult(Namespace, GetSymbolDisplayString("n", "N")));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestNestedNamespaceNames()
         {
             VerifyCSharp(new string[]
@@ -74,7 +74,7 @@ namespace n
                 GetCA1708CSharpResult(Namespace, GetSymbolDisplayString("n", "N")));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestGlobalTypeNames()
         {
             VerifyCSharp(new string[]
@@ -94,7 +94,7 @@ public interface nI
                 GetCA1708CSharpResult(Type, GetSymbolDisplayString("nI", "ni", "Ni")));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestGenericClasses()
         {
             VerifyCSharp(new string[]
@@ -117,7 +117,7 @@ public class C<T,X>
                 GetCA1708CSharpResult(Type, GetSymbolDisplayString("c<S>", "C<T>")));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestPartialTypes()
         {
             VerifyCSharp(new string[]
@@ -160,7 +160,7 @@ namespace N
 
         #region Type Level
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestNestedTypeNames()
         {
             VerifyCSharp(@"
@@ -207,7 +207,7 @@ namespace NI
             GetCA1708CSharpResultAt(Member, GetSymbolDisplayString("NI.Ni.C.nd.Ci.foo()", "NI.Ni.C.nd.Ci.Foo()"), 19, 34));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestNestedTypeNamesWithScope()
         {
             VerifyCSharp(@"
@@ -250,7 +250,7 @@ namespace NI
             GetCA1708CSharpResult(Type, GetSymbolDisplayString("NI.Ni", "NI.NI")));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestMethodOverloads()
         {
             VerifyCSharp(@"
@@ -266,7 +266,7 @@ namespace NI
 ");
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestGenericMethods()
         {
             VerifyCSharp(@"
@@ -285,7 +285,7 @@ namespace NI
             GetCA1708CSharpResultAt(Member, GetSymbolDisplayString("NI.C.foo()", "NI.C.foO(int)", "NI.C.fOo(int)", "NI.C.FOO<T>(T)"), 4, 18));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestMembers()
         {
             VerifyCSharp(@"
@@ -320,7 +320,7 @@ namespace NI
             GetCA1708CSharpResultAt(Member, GetSymbolDisplayStringNoSorting("NI.CASE1.CASe1", "NI.CASE1.CAsE1", "NI.CASE1.CAse1(int)", "NI.CASE1.CaSe1<T>(T)", "NI.CASE1.CasE1", "NI.CASE1.Case1", "NI.CASE1.caSE1"), 4, 18));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestCultureSpecificNames()
         {
             VerifyCSharp(@"
@@ -333,7 +333,7 @@ public class C
             GetCA1708CSharpResultAt(Member, GetSymbolDisplayString("C.γ", "C.Γ"), 2, 14));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void TestParameters()
         {
             VerifyCSharp(@"

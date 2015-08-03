@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis.Test.Utilities;
 using Roslyn.Test.Utilities;
 using Xunit;
 using Microsoft.CodeAnalysis.UnitTests;
+using Roslyn.Diagnostics.Test.Utilities;
 
 namespace Microsoft.AnalyzerPowerPack.UnitTests
 {
@@ -23,7 +24,7 @@ namespace Microsoft.AnalyzerPowerPack.UnitTests
         }
 
         [WorkItem(836193, "DevDiv")]
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CSharp_EnumsShouldZeroValueFlagsRename()
         {
             // In enum '{0}', change the name of '{1}' to 'None'.
@@ -74,7 +75,7 @@ public enum NoZeroValuedField
                 GetCSharpResultAt(26, 5, CA1008DiagnosticAnalyzer.RuleId, expectedMessage4));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CSharp_EnumsShouldZeroValueFlagsMultipleZero()
         {
             // Remove all members that have the value zero from {0} except for one member that is named 'None'.
@@ -100,7 +101,7 @@ internal enum E2
                 GetCSharpResultAt(10, 15, CA1008DiagnosticAnalyzer.RuleId, expectedMessage2));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CSharp_EnumsShouldZeroValueFlagsMultipleZeroWithScope()
         {
             // Remove all members that have the value zero from {0} except for one member that is named 'None'.
@@ -125,7 +126,7 @@ internal enum E2
                 GetCSharpResultAt(10, 15, CA1008DiagnosticAnalyzer.RuleId, expectedMessage2));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CSharp_EnumsShouldZeroValueNotFlagsNoZeroValue()
         {
             // Add a member to {0} that has a value of zero with a suggested name of 'None'.
@@ -161,7 +162,7 @@ internal enum E4
                 GetCSharpResultAt(7, 14, CA1008DiagnosticAnalyzer.RuleId, expectedMessage2));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void CSharp_EnumsShouldZeroValueNotFlagsNoZeroValueWithScope()
         {
             // Add a member to {0} that has a value of zero with a suggested name of 'None'.
@@ -199,7 +200,7 @@ class C
                 GetCSharpResultAt(9, 18, CA1008DiagnosticAnalyzer.RuleId, expectedMessage2));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void VisualBasic_EnumsShouldZeroValueFlagsRename()
         {
             // In enum '{0}', change the name of '{1}' to 'None'.
@@ -239,7 +240,7 @@ End Enum
                 GetBasicResultAt(16, 2, CA1008DiagnosticAnalyzer.RuleId, expectedMessage3));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void VisualBasic_EnumsShouldZeroValueFlagsRenameScope()
         {
             // In enum '{0}', change the name of '{1}' to 'None'.
@@ -279,7 +280,7 @@ End Enum
         }
 
         [WorkItem(836193, "DevDiv")]
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void VisualBasic_EnumsShouldZeroValueFlagsRename_AttributeListHasTrivia()
         {
             // In enum '{0}', change the name of '{1}' to 'None'.
@@ -319,7 +320,7 @@ End Enum
                 GetBasicResultAt(16, 2, CA1008DiagnosticAnalyzer.RuleId, expectedMessage3));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void VisualBasic_EnumsShouldZeroValueFlagsMultipleZero()
         {
             // Remove all members that have the value zero from {0} except for one member that is named 'None'.
@@ -352,7 +353,7 @@ End Enum";
                 GetBasicResultAt(15, 13, CA1008DiagnosticAnalyzer.RuleId, expectedMessage3));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void VisualBasic_EnumsShouldZeroValueNotFlagsNoZeroValue()
         {
             // Add a member to {0} that has a value of zero with a suggested name of 'None'.
@@ -385,7 +386,7 @@ End Enum
                 GetBasicResultAt(6, 14, CA1008DiagnosticAnalyzer.RuleId, expectedMessage2));
         }
 
-        [Fact, Trait(Traits.Feature, Traits.Features.Diagnostics)]
+        [Fact]
         public void VisualBasic_EnumsShouldZeroValueNotFlagsNoZeroValueWithScope()
         {
             // Add a member to {0} that has a value of zero with a suggested name of 'None'.
