@@ -26,7 +26,7 @@
   <Target Name="Build" DependsOnTargets="RestorePackages">
     <MSBuild BuildInParallel="true"
              Projects="$(SolutionFile)"
-             Properties="RestorePackages=false;TreatWarningsAsErrors=true"
+             Properties="RestorePackages=false;TreatWarningsAsErrors=true;DeployExtension=false"
              Targets="Build"/>
   </Target>
 
@@ -42,7 +42,7 @@
   <Target Name="Rebuild">
     <MSBuild BuildInParallel="true"
              Projects="$(SolutionFile)"
-             Properties="RestorePackages=false;TreatWarningsAsErrors=true"
+             Properties="RestorePackages=false;TreatWarningsAsErrors=true;DeployExtension=false"
              Targets="Rebuild"/>
   </Target>
 
