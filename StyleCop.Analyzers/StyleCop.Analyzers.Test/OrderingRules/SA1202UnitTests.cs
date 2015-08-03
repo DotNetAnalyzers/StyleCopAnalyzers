@@ -347,6 +347,28 @@ public class TestClass2 { }
         }
 
         /// <summary>
+        /// Verifies that the analyzer will properly handle static and instance members.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestStaticNotComparedToInstanceMembersAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    private static void A()
+    {
+    }
+
+    public void B()
+    {
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that the analyzer will properly handle incomplete members.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
