@@ -12472,7 +12472,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectAccessorReturn,
-                Message = IncorrectAccessorReturnMessage,
+                Message = s_incorrectAccessorReturnMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 17) }
             };
@@ -12580,7 +12580,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectAccessorReturn,
-                Message = IncorrectAccessorReturnMessage,
+                Message = s_incorrectAccessorReturnMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 21) }
             };
@@ -12689,7 +12689,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.IncorrectAccessorReturn,
-                Message = IncorrectAccessorReturnMessage,
+                Message = s_incorrectAccessorReturnMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 44) }
             };
@@ -13372,7 +13372,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.SupportedRules,
-                Message = SupportedRulesMessage,
+                Message = s_supportedRulesMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 24) }
             };
@@ -13480,7 +13480,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.SupportedRules,
-                Message = SupportedRulesMessage,
+                Message = s_supportedRulesMessage,
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 29) }
             };
@@ -19989,7 +19989,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyStatements,
-                Message = MessagePrefix + "This if-block should only have 1 statement(s), which should check the number of trailing trivia on the if-keyword",
+                Message = s_messagePrefix + "This if-block should only have 1 statement(s), which should check the number of trailing trivia on the if-keyword",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 39, 17) }
             };
@@ -20061,7 +20061,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyStatements,
-                Message = MessagePrefix + "This if-block should only have 2 statement(s), which should extract the first trivia of the if-keyword and check its kind",
+                Message = s_messagePrefix + "This if-block should only have 2 statement(s), which should extract the first trivia of the if-keyword and check its kind",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 41, 21) }
             };
@@ -20133,7 +20133,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyStatements,
-                Message = MessagePrefix + "This if-block should only have 1 statement(s), which should check if the trivia is a single space",
+                Message = s_messagePrefix + "This if-block should only have 1 statement(s), which should check if the trivia is a single space",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 44, 25) }
             };
@@ -20205,7 +20205,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyStatements,
-                Message = MessagePrefix + "This if-block should only have 1 statement(s), which should return from the method",
+                Message = s_messagePrefix + "This if-block should only have 1 statement(s), which should return from the method",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 46, 29) }
             };
@@ -20291,7 +20291,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyStatements,
-                Message = MessagePrefix + "This method should only have 10 statement(s), which should walk through the Syntax Tree and check the spacing of the if-statement",
+                Message = s_messagePrefix + "This method should only have 10 statement(s), which should walk through the Syntax Tree and check the spacing of the if-statement",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 40, 22) }
             };
@@ -20352,7 +20352,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyStatements,
-                Message = MessagePrefix + "This get accessor should only have 1 or 2 statement(s), which should create and return an ImmutableArray containing all DiagnosticDescriptors",
+                Message = s_messagePrefix + "This get accessor should only have 1 or 2 statement(s), which should create and return an ImmutableArray containing all DiagnosticDescriptors",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 28, 13) }
             };
@@ -20413,7 +20413,7 @@ namespace SyntaxNodeAnalyzer
             var expected = new DiagnosticResult
             {
                 Id = MetaCompilationAnalyzer.TooManyStatements,
-                Message = MessagePrefix + "This get accessor should only have 1 or 2 statement(s), which should create and return an ImmutableArray containing all DiagnosticDescriptors",
+                Message = s_messagePrefix + "This get accessor should only have 1 or 2 statement(s), which should create and return an ImmutableArray containing all DiagnosticDescriptors",
                 Severity = DiagnosticSeverity.Error,
                 Locations = new[] { new DiagnosticResultLocation("Test0.cs", 28, 13) }
             };
@@ -20425,7 +20425,7 @@ namespace SyntaxNodeAnalyzer
 
         #region DiagnosticReportMissing
 
-        private const string s_diagnosticReportMissingMessage = MessagePrefix + "Next, use 'context'.ReportDiagnostic to report the diagnostic that has been created";
+        private const string s_diagnosticReportMissingMessage = s_messagePrefix + "Next, use 'context'.ReportDiagnostic to report the diagnostic that has been created";
 
         [Fact]
         public void DiagnosticReportMissing1()
@@ -20587,7 +20587,7 @@ namespace SyntaxNodeAnalyzer
 
         #region DiagnosticReportIncorrect
 
-        private const string s_diagnosticReportIncorrectMessage = MessagePrefix + "This statement should use context.ReportDiagnostic to report 'diagnostic'";
+        private const string s_diagnosticReportIncorrectMessage = s_messagePrefix + "This statement should use context.ReportDiagnostic to report 'diagnostic'";
 
         // Incorrect accessor
         [Fact]
@@ -21225,7 +21225,7 @@ namespace SyntaxNodeAnalyzer
 
         #region TrailingTriviaCountMissing
 
-        private const string s_triviaCountMissingMessage = MessagePrefix + "Next, check that 'ifKeyword' only has one trailing trivia element";
+        private const string s_triviaCountMissingMessage = s_messagePrefix + "Next, check that 'ifKeyword' only has one trailing trivia element";
 
         [Fact]
         public void TriviaCountMissing1()
@@ -21340,7 +21340,7 @@ namespace SyntaxNodeAnalyzer
 
         #region TrailingTriviaCountIncorrect
 
-        private const string s_triviaCountIncorrectMessage = MessagePrefix + "This statement should check that 'ifKeyword' only has one trailing trivia element";
+        private const string s_triviaCountIncorrectMessage = s_messagePrefix + "This statement should check that 'ifKeyword' only has one trailing trivia element";
 
         // Wrong initial variable accessor
         [Fact]
