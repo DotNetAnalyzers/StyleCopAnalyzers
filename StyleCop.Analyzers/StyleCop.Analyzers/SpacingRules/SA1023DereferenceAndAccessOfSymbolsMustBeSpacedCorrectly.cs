@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.SpacingRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -47,7 +48,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1023.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -64,27 +65,22 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
         }
 
-        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
             {
-                switch (token.Kind())
+                if (token.IsKind(SyntaxKind.AsteriskToken))
                 {
-                case SyntaxKind.AsteriskToken:
-                    this.HandleAsteriskToken(context, token);
-                    break;
-
-                default:
-                    break;
+                    HandleAsteriskToken(context, token);
                 }
             }
         }
 
-        private void HandleAsteriskToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private static void HandleAsteriskToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
             {
@@ -94,27 +90,44 @@
             bool allowAtLineStart;
             bool allowAtLineEnd;
             bool allowPrecedingSpace;
-            bool allowPrecedingNoSpace;
             bool allowTrailingSpace;
-            bool allowTrailingNoSpace;
             switch (token.Parent.Kind())
             {
             case SyntaxKind.PointerType:
                 allowAtLineStart = false;
                 allowAtLineEnd = true;
-                allowPrecedingNoSpace = true;
                 allowPrecedingSpace = false;
-                allowTrailingNoSpace = true;
-                allowTrailingSpace = true;
+                var nextToken = token.GetNextToken();
+                switch (nextToken.Kind())
+                {
+                case SyntaxKind.OpenBracketToken:
+                case SyntaxKind.OpenParenToken:
+                    allowTrailingSpace = false;
+                    break;
+                default:
+                    allowTrailingSpace = true;
+                    break;
+                }
+
                 break;
 
             case SyntaxKind.PointerIndirectionExpression:
                 allowAtLineStart = true;
                 allowAtLineEnd = false;
-                allowPrecedingNoSpace = true;
-                allowPrecedingSpace = true;
-                allowTrailingNoSpace = true;
                 allowTrailingSpace = false;
+                var prevToken = token.GetPreviousToken();
+                switch (prevToken.Kind())
+                {
+                case SyntaxKind.OpenBracketToken:
+                case SyntaxKind.OpenParenToken:
+                case SyntaxKind.CloseParenToken:
+                    allowPrecedingSpace = false;
+                    break;
+                default:
+                    allowPrecedingSpace = true;
+                    break;
+                }
+
                 break;
 
             default:
@@ -129,35 +142,54 @@
             if (!allowAtLineStart && firstInLine)
             {
                 // Dereference symbol '*' must {not appear at the beginning of a line}.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), "not appear at the beginning of a line"));
+                var properties = new Dictionary<string, string>
+                {
+                    [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationPreceding,
+                    [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove
+                };
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), "not appear at the beginning of a line"));
+            }
+            else if (!allowPrecedingSpace && precededBySpace)
+            {
+                // Dereference symbol '*' must {not be preceded by a space}.
+                var properties = new Dictionary<string, string>
+                {
+                    [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationPreceding,
+                    [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove
+                };
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), "not be preceded by a space"));
             }
 
             if (!allowAtLineEnd && lastInLine)
             {
                 // Dereference symbol '*' must {not appear at the end of a line}.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), "not appear at the end of a line"));
+                var properties = new Dictionary<string, string>
+                {
+                    [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationFollowing,
+                    [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove
+                };
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), "not appear at the end of a line"));
             }
-
-            if (!allowPrecedingSpace && precededBySpace)
-            {
-                // Dereference symbol '*' must {not be preceded by a space}.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), "not be preceded by a space"));
-            }
-            else if (!allowPrecedingNoSpace && !precededBySpace)
-            {
-                // Dereference symbol '*' must {be preceded by a space}.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), "be preceded by a space"));
-            }
-
-            if (!allowTrailingSpace && followedBySpace)
+            else if (!allowTrailingSpace && followedBySpace)
             {
                 // Dereference symbol '*' must {not be followed by a space}.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), "not be followed by a space"));
+                var properties = new Dictionary<string, string>
+                {
+                    [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationFollowing,
+                    [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove
+                };
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), "not be followed by a space"));
             }
-            else if (!allowTrailingNoSpace && !followedBySpace)
+
+            if (!followedBySpace && allowTrailingSpace)
             {
                 // Dereference symbol '*' must {be followed by a space}.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), "be followed by a space"));
+                var properties = new Dictionary<string, string>
+                {
+                    [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationFollowing,
+                    [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionInsert
+                };
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), "be followed by a space"));
             }
         }
     }
