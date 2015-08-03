@@ -53,14 +53,18 @@
         {
             var typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
-            var instanceFields = typeDeclaration.Members.OfType<FieldDeclarationSyntax>().Where(f => !f.Modifiers.Any(SyntaxKind.StaticKeyword)).ToList();
+            var instanceFields = typeDeclaration.Members.OfType<FieldDeclarationSyntax>().Where(f => !f.Modifiers.Any(SyntaxKind.StaticKeyword));
 
-            for (int i = 0; i < instanceFields.Count - 1; ++i)
+            var previousFieldReadonly = true;
+            foreach (var field in instanceFields)
             {
-                if (instanceFields[i + 1].Modifiers.Any(SyntaxKind.ReadOnlyKeyword) && !instanceFields[i].Modifiers.Any(SyntaxKind.ReadOnlyKeyword))
+                var currentFieldReadonly = field.Modifiers.Any(SyntaxKind.ReadOnlyKeyword);
+                if (currentFieldReadonly && !previousFieldReadonly)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(instanceFields[i + 1])));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(field)));
                 }
+
+                previousFieldReadonly = currentFieldReadonly;
             }
         }
     }
