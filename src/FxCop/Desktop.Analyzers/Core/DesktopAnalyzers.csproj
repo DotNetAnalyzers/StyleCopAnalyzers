@@ -82,7 +82,7 @@
     <InternalsVisibleToTest Include="Desktop.Analyzers.UnitTests" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Desktop.Analyzers.Common.props">
+    <Content Include="..\Desktop.Analyzers.Common.props">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

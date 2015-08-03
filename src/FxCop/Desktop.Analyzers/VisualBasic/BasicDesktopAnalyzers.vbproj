@@ -94,7 +94,7 @@
   <ItemGroup>
     <Compile Include="Security\DoNotCatchCorruptedStateExceptionsAnalyzer.vb" />
     <Compile Include="Shared\SyntaxNodeHelper.vb" />
-    <Content Include="Desktop.VisualBasic.Analyzers.props">
+    <Content Include="..\Desktop.Analyzers.Common.props">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config">
