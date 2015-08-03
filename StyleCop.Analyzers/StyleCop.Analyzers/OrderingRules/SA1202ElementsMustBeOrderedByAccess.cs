@@ -40,7 +40,7 @@
         /// </summary>
         public const string DiagnosticId = "SA1202";
         private const string Title = "Elements must be ordered by access";
-        private const string MessageFormat = "{0} {1} must come before {2}.";
+        private const string MessageFormat = "{0}{1} {2} must come before {3}.";
         private const string Description = "An element within a C# code file is out of order within regard to access level, in relation to other elements in the code.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1202.html";
 
@@ -126,108 +126,89 @@
         {
             var compilationUnit = (CompilationUnitSyntax)context.Node;
 
-            HandleMemberList(context, compilationUnit.Members.Where(x => x.IsKind(SyntaxKind.EnumDeclaration)).ToList(), MemberNames[SyntaxKind.EnumDeclaration]);
-            HandleMemberList(context, compilationUnit.Members.Where(x => x.IsKind(SyntaxKind.InterfaceDeclaration)).ToList(), MemberNames[SyntaxKind.InterfaceDeclaration]);
-            HandleMemberList(context, compilationUnit.Members.Where(x => x.IsKind(SyntaxKind.StructDeclaration)).ToList(), MemberNames[SyntaxKind.StructDeclaration]);
-            HandleMemberList(context, compilationUnit.Members.Where(x => x.IsKind(SyntaxKind.ClassDeclaration)).ToList(), MemberNames[SyntaxKind.ClassDeclaration]);
+            HandleMemberList(context, compilationUnit.Members);
         }
 
         private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
             var typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
-            HandleMemberList(
-                context,
-                typeDeclaration.Members.Where(x => x.IsKind(SyntaxKind.FieldDeclaration) && x.GetModifiers().Any(SyntaxKind.ConstKeyword)).ToList(),
-                MemberNames[SyntaxKind.FieldDeclaration]);
-            HandleMemberList(
-                context,
-                typeDeclaration.Members.Where(x => x.IsKind(SyntaxKind.FieldDeclaration) && x.GetModifiers().Any(SyntaxKind.ReadOnlyKeyword)).ToList(),
-                MemberNames[SyntaxKind.FieldDeclaration]);
-            HandleMemberList(
-                context,
-                typeDeclaration.Members.Where(x => x.IsKind(SyntaxKind.FieldDeclaration) && x.GetModifiers().All(field => !field.IsKind(SyntaxKind.ConstKeyword) && !field.IsKind(SyntaxKind.ReadOnlyKeyword))).ToList(),
-                MemberNames[SyntaxKind.FieldDeclaration]);
-
-            HandleMemberList(context, typeDeclaration.Members.Where(x => x.IsKind(SyntaxKind.ConstructorDeclaration)).ToList(), MemberNames[SyntaxKind.ConstructorDeclaration]);
-            HandleMemberList(context, typeDeclaration.Members.Where(x => x.IsKind(SyntaxKind.DelegateDeclaration)).ToList(), MemberNames[SyntaxKind.DelegateDeclaration]);
-            HandleMemberList(
-                context,
-                typeDeclaration.Members.Where(x => x.IsKind(SyntaxKind.EventDeclaration) || x.IsKind(SyntaxKind.EventFieldDeclaration)).ToList(),
-                MemberNames[SyntaxKind.EventDeclaration]);
-            HandleMemberList(context, typeDeclaration.Members.Where(x => x.IsKind(SyntaxKind.EnumDeclaration)).ToList(), MemberNames[SyntaxKind.EnumDeclaration]);
-            HandleMemberList(context, typeDeclaration.Members.Where(x => x.IsKind(SyntaxKind.InterfaceDeclaration)).ToList(), MemberNames[SyntaxKind.InterfaceDeclaration]);
-            HandleMemberList(context, typeDeclaration.Members.Where(x => x.IsKind(SyntaxKind.PropertyDeclaration)).ToList(), MemberNames[SyntaxKind.PropertyDeclaration]);
-            HandleMemberList(context, typeDeclaration.Members.Where(x => x.IsKind(SyntaxKind.IndexerDeclaration)).ToList(), MemberNames[SyntaxKind.IndexerDeclaration]);
-            HandleMemberList(context, typeDeclaration.Members.Where(x => x.IsKind(SyntaxKind.ConversionOperatorDeclaration)).ToList(), MemberNames[SyntaxKind.ConversionOperatorDeclaration]);
-            HandleMemberList(context, typeDeclaration.Members.Where(x => x.IsKind(SyntaxKind.OperatorDeclaration)).ToList(), MemberNames[SyntaxKind.OperatorDeclaration]);
-            HandleMemberList(context, typeDeclaration.Members.Where(x => x.IsKind(SyntaxKind.MethodDeclaration)).ToList(), MemberNames[SyntaxKind.MethodDeclaration]);
-            HandleMemberList(context, typeDeclaration.Members.Where(x => x.IsKind(SyntaxKind.StructDeclaration)).ToList(), MemberNames[SyntaxKind.StructDeclaration]);
-            HandleMemberList(context, typeDeclaration.Members.Where(x => x.IsKind(SyntaxKind.ClassDeclaration)).ToList(), MemberNames[SyntaxKind.ClassDeclaration]);
+            HandleMemberList(context, typeDeclaration.Members);
         }
 
-        private static void HandleMemberList(SyntaxNodeAnalysisContext context, IList<MemberDeclarationSyntax> members, string memberType)
+        private static void HandleMemberList(SyntaxNodeAnalysisContext context, SyntaxList<MemberDeclarationSyntax> members)
         {
-            for (int i = 0; i < members.Count - 1; ++i)
+            var previousMemberStatic = true;
+            var previousMemberReadonly = true;
+            var previousSyntaxKind = SyntaxKind.None;
+            var previousAccessLevel = AccessLevel.NotSpecified;
+
+            foreach (var member in members)
             {
-                var currentAccessLevel = GetAccessLevel(members[i]);
-                if (currentAccessLevel == AccessLevel.NotSpecified)
-                {
-                    continue;
-                }
+                var currentModifiers = member.GetModifiers();
+                var currentMemberStatic = currentModifiers.Any(SyntaxKind.StaticKeyword);
+                var currentMemberReadonly = currentModifiers.Any(SyntaxKind.ReadOnlyKeyword);
+                var currentSyntaxKind = member.Kind();
+                currentSyntaxKind = currentSyntaxKind == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : currentSyntaxKind;
+                var currentAccessLevel = GetAccessLevel(currentModifiers);
 
-                var nextAccessLevel = GetAccessLevel(members[i + 1]);
-                if (nextAccessLevel == AccessLevel.NotSpecified)
-                {
-                    continue;
-                }
-
-                if (currentAccessLevel > nextAccessLevel)
+                if (previousAccessLevel != AccessLevel.NotSpecified
+                    && currentAccessLevel != AccessLevel.NotSpecified
+                    && currentSyntaxKind == previousSyntaxKind
+                    && currentMemberStatic == previousMemberStatic
+                    && currentMemberReadonly == previousMemberReadonly
+                    && currentAccessLevel < previousAccessLevel)
                 {
                     context.ReportDiagnostic(
-                        Diagnostic.Create(Descriptor,
-                        NamedTypeHelpers.GetNameOrIdentifierLocation(members[i + 1]),
-                        UpperAccessLevelNames[nextAccessLevel],
-                        memberType,
-                        LowerAccessLevelNames[currentAccessLevel]));
+                    Diagnostic.Create(Descriptor,
+                    NamedTypeHelpers.GetNameOrIdentifierLocation(member),
+                    UpperAccessLevelNames[currentAccessLevel],
+                    currentMemberStatic ? " static" : string.Empty,
+                    MemberNames[currentSyntaxKind],
+                    LowerAccessLevelNames[previousAccessLevel]));
                 }
+
+                previousMemberStatic = currentMemberStatic;
+                previousMemberReadonly = currentMemberReadonly;
+                previousSyntaxKind = currentSyntaxKind;
+                previousAccessLevel = currentAccessLevel;
             }
         }
 
-        private static AccessLevel GetAccessLevel(MemberDeclarationSyntax member)
+        private static AccessLevel GetAccessLevel(SyntaxTokenList modifiers)
         {
             bool isProtected = false;
             bool isInternal = false;
-            foreach (var modifier in member.GetModifiers())
+            foreach (var modifier in modifiers)
             {
                 switch (modifier.Kind())
                 {
-                case SyntaxKind.PublicKeyword:
-                    return AccessLevel.Public;
-                case SyntaxKind.PrivateKeyword:
-                    return AccessLevel.Private;
-                case SyntaxKind.InternalKeyword:
-                    if (isProtected)
-                    {
-                        return AccessLevel.ProtectedInternal;
-                    }
-                    else
-                    {
-                        isInternal = true;
-                    }
+                    case SyntaxKind.PublicKeyword:
+                        return AccessLevel.Public;
+                    case SyntaxKind.PrivateKeyword:
+                        return AccessLevel.Private;
+                    case SyntaxKind.InternalKeyword:
+                        if (isProtected)
+                        {
+                            return AccessLevel.ProtectedInternal;
+                        }
+                        else
+                        {
+                            isInternal = true;
+                        }
 
-                    break;
-                case SyntaxKind.ProtectedKeyword:
-                    if (isInternal)
-                    {
-                        return AccessLevel.ProtectedInternal;
-                    }
-                    else
-                    {
-                        isProtected = true;
-                    }
+                        break;
+                    case SyntaxKind.ProtectedKeyword:
+                        if (isInternal)
+                        {
+                            return AccessLevel.ProtectedInternal;
+                        }
+                        else
+                        {
+                            isProtected = true;
+                        }
 
-                    break;
+                        break;
                 }
             }
 
