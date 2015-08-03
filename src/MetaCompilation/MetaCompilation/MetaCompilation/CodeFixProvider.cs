@@ -1574,7 +1574,7 @@ namespace MetaCompilation
             return await ReplaceNode(declaration, newPropertyDeclaration, document);
         }
 
-        // return an ImmutableArray fromt the get accessor
+        // return an ImmutableArray from the get accessor
         private async Task<Document> AccessorReturnValueAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -1605,6 +1605,8 @@ namespace MetaCompilation
                 oldStatement = oldStatements.First();
             }
 
+            var oldStatementDeclaration = oldStatement as LocalDeclarationStatementSyntax;
+
             SyntaxNode root = await document.GetSyntaxRootAsync();
             SyntaxNode newRoot = root;
 
@@ -1612,6 +1614,13 @@ namespace MetaCompilation
             {
                 var newAccessorDeclaration = firstAccessor.AddBodyStatements(returnStatement);
                 newRoot = root.ReplaceNode(firstAccessor, newAccessorDeclaration);
+            }
+            else if (oldStatementDeclaration != null)
+            {
+                var oldStatementDeclarator = oldStatementDeclaration.Declaration.Variables[0] as VariableDeclaratorSyntax;
+                SyntaxNode oldVariableName = generator.IdentifierName(oldStatementDeclarator.Identifier.Text);
+                var newStatementDeclaration = generator.LocalDeclarationStatement(oldStatementDeclarator.Identifier.Text, invocationExpression).WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// This array contains all the diagnostics that can be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("\r\n")));
+                newRoot = root.ReplaceNode(oldStatement, newStatementDeclaration);
             }
             else
             {

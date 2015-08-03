@@ -2196,12 +2196,6 @@ namespace MetaCompilation
                     return result;
                 }
 
-                if (returnSymbol.Type.ToString() != "System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.DiagnosticDescriptor>" && returnSymbol.Type.Kind.ToString() != "ErrorType")
-                {
-                    ReportDiagnostic(context, IncorrectAccessorReturnRule, returnSymbol.Locations[0]);
-                    return result;
-                }
-
                 var variableDeclaration = returnSymbol.DeclaringSyntaxReferences[0].GetSyntax() as VariableDeclaratorSyntax;
                 ReturnStatementSyntax returnDeclaration = returnSymbol.DeclaringSyntaxReferences[0].GetSyntax() as ReturnStatementSyntax;
                 if (variableDeclaration == null)
@@ -2213,14 +2207,35 @@ namespace MetaCompilation
                 var equalsValueClause = variableDeclaration.Initializer as EqualsValueClauseSyntax;
                 if (equalsValueClause == null)
                 {
-                    ReportDiagnostic(context, IncorrectAccessorReturnRule, returnDeclaration.ReturnKeyword.GetLocation());
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, variableDeclaration.GetLocation());
                     return result;
                 }
 
                 var valueClause = equalsValueClause.Value as InvocationExpressionSyntax;
                 if (valueClause == null)
                 {
-                    ReportDiagnostic(context, IncorrectAccessorReturnRule, returnDeclaration.GetLocation());
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, variableDeclaration.GetLocation());
+                    return result;
+                }
+
+                var valueClauseMemberAccess = valueClause.Expression as MemberAccessExpressionSyntax;
+                if (valueClauseMemberAccess == null)
+                {
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, valueClause.GetLocation());
+                    return result;
+                }
+
+                var valueClauseExpression = valueClauseMemberAccess.Expression as IdentifierNameSyntax;
+                if (valueClauseExpression == null || valueClauseExpression.Identifier.Text != "ImmutableArray")
+                {
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, valueClause.GetLocation());
+                    return result;
+                }
+
+                var valueClauseName = valueClauseMemberAccess.Name as IdentifierNameSyntax;
+                if (valueClauseName == null || valueClauseName.Identifier.Text != "Create")
+                {
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, valueClauseName.GetLocation());
                     return result;
                 }
 
