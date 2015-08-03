@@ -1156,13 +1156,18 @@ namespace MetaCompilation
                 }
 
                 var leftName = left.Name as IdentifierNameSyntax;
-                if (leftName == null)
+                if (leftName == null || leftName.Identifier.ValueText != "Count")
                 {
                     return emptyResult;
                 }
 
                 var right = booleanExpression.Right as LiteralExpressionSyntax;
                 if (right == null)
+                {
+                    return emptyResult;
+                }
+
+                if (!right.IsKind(SyntaxKind.NumericLiteralExpression))
                 {
                     return emptyResult;
                 }
@@ -1985,6 +1990,13 @@ namespace MetaCompilation
                     var suppDiagReturnCheck = SuppDiagReturnCheck(context, valueClause, returnDeclaration, ruleNames, propertyDeclaration);
                     if (!suppDiagReturnCheck)
                     {
+                        return false;
+                    }
+
+                    if (statements.Count > 1)
+                    {
+                        AccessorListSyntax propertyAccessorList = propertyDeclaration.AccessorList as AccessorListSyntax;
+                        ReportDiagnostic(context, TooManyStatementsRule, propertyAccessorList.Accessors[0].Keyword.GetLocation(), "get accessor", "1 or 2", "create and return an ImmutableArray containing all DiagnosticDescriptors");
                         return false;
                     }
                 }

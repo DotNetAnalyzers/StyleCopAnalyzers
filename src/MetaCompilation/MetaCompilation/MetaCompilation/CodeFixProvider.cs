@@ -714,14 +714,18 @@ namespace MetaCompilation
             var ifStatement = declaration.Body.Statements[2] as IfStatementSyntax;
 
             var ifBlockStatements = new SyntaxList<StatementSyntax>();
-            if (declaration.Body.Statements[2].Kind() == SyntaxKind.IfStatement)
+            if (ifStatement != null)
             {
                 var ifDeclaration = ifStatement.Statement as BlockSyntax;
                 var ifBlockStatement = ifDeclaration.Statements[0] as IfStatementSyntax;
-                var ifBlock = ifBlockStatement.Statement as BlockSyntax;
-                if (ifBlock != null)
+
+                if (ifBlockStatement != null)
                 {
-                    ifBlockStatements = ifBlock.Statements;
+                    var ifBlock = ifBlockStatement.Statement as BlockSyntax;
+                    if (ifBlock != null)
+                    {
+                        ifBlockStatements = ifBlock.Statements;
+                    }
                 }
             }
 
@@ -1845,7 +1849,7 @@ namespace MetaCompilation
                 string diagnosticName = (methodDecl.Body.Statements[8] as LocalDeclarationStatementSyntax).Declaration.Variables[0].Identifier.Text;
                 return diagnosticName;
             }
-
+            
             // gets the context parameter of the analysis method
             internal static string GetContextParameter(MethodDeclarationSyntax methodDecl)
             {
