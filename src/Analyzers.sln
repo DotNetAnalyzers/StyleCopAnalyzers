@@ -50,6 +50,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnalyzerPowerPack.Common", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnalyzerPowerPack.CSharp", "AnalyzerPowerPack\CSharp\AnalyzerPowerPack.CSharp.csproj", "{D212BF08-95D5-4664-AD47-AF9BFE7C48D0}"
 EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "AnalyzerPowerPack.VisualBasic", "AnalyzerPowerPack\VisualBasic\AnalyzerPowerPack.VisualBasic.vbproj", "{45854FF7-A6D5-4B28-87A1-0B75390125C0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -124,6 +126,10 @@ Global
 		{D212BF08-95D5-4664-AD47-AF9BFE7C48D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D212BF08-95D5-4664-AD47-AF9BFE7C48D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D212BF08-95D5-4664-AD47-AF9BFE7C48D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45854FF7-A6D5-4B28-87A1-0B75390125C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45854FF7-A6D5-4B28-87A1-0B75390125C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45854FF7-A6D5-4B28-87A1-0B75390125C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45854FF7-A6D5-4B28-87A1-0B75390125C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -147,5 +153,6 @@ Global
 		{9468F53A-8B08-4DAC-9612-3BBB3BCF0783} = {7D19A3E4-26D1-404D-A036-F22CE93D8519}
 		{CBCD620C-FF07-4BA4-ABC9-2F23C73760DB} = {1D584F5A-3B33-40F9-95D0-DC47E37DCFF1}
 		{D212BF08-95D5-4664-AD47-AF9BFE7C48D0} = {1D584F5A-3B33-40F9-95D0-DC47E37DCFF1}
+		{45854FF7-A6D5-4B28-87A1-0B75390125C0} = {1D584F5A-3B33-40F9-95D0-DC47E37DCFF1}
 	EndGlobalSection
 EndGlobal
