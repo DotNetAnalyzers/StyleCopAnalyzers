@@ -1,7 +1,6 @@
 ﻿namespace StyleCop.Analyzers.OrderingRules
 {
     using System.Collections.Immutable;
-    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -53,14 +52,22 @@
         {
             var typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
-            var instanceFields = typeDeclaration.Members.OfType<FieldDeclarationSyntax>().Where(f => !f.Modifiers.Any(SyntaxKind.StaticKeyword)).ToList();
-
-            for (int i = 0; i < instanceFields.Count - 1; ++i)
+            var previousFieldReadonly = true;
+            foreach (var member in typeDeclaration.Members)
             {
-                if (instanceFields[i + 1].Modifiers.Any(SyntaxKind.ReadOnlyKeyword) && !instanceFields[i].Modifiers.Any(SyntaxKind.ReadOnlyKeyword))
+                var field = member as FieldDeclarationSyntax;
+                if (field == null || field.Modifiers.Any(SyntaxKind.StaticKeyword))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(instanceFields[i + 1])));
+                    continue;
                 }
+
+                var currentFieldReadonly = field.Modifiers.Any(SyntaxKind.ReadOnlyKeyword);
+                if (currentFieldReadonly && !previousFieldReadonly)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(field)));
+                }
+
+                previousFieldReadonly = currentFieldReadonly;
             }
         }
     }
