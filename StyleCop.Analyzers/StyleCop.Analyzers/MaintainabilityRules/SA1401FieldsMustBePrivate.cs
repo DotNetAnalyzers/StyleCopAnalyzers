@@ -16,6 +16,7 @@
     /// <para>Fields located within C# structs are allowed to have any access level.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    [NoCodeFix("The \"Encapsulate Field\" fix is provided by Visual Studio.")]
     public class SA1401FieldsMustBePrivate : DiagnosticAnalyzer
     {
         /// <summary>

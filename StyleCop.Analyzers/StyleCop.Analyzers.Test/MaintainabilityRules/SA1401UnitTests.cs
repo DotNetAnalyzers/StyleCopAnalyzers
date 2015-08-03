@@ -8,7 +8,10 @@
     using TestHelper;
     using Xunit;
 
-    public class SA1401UnitTests : CodeFixVerifier
+    /// <summary>
+    /// This class contains unit tests for <see cref="SA1401FieldsMustBePrivate"/>.
+    /// </summary>
+    public class SA1401UnitTests : DiagnosticVerifier
     {
         [Fact]
         public async Task TestClassWithPublicFieldAsync()
