@@ -260,6 +260,7 @@
     <Compile Include="OrderingRules\SA1212UnitTests.cs" />
     <Compile Include="OrderingRules\SA1213UnitTests.cs" />
     <Compile Include="OrderingRules\SA1214UnitTests.cs" />
+    <Compile Include="OrderingRules\SA1215UnitTests.cs" />
     <Compile Include="OrderingRules\SA1216UnitTests.cs" />
     <Compile Include="OrderingRules\SA1217UnitTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
