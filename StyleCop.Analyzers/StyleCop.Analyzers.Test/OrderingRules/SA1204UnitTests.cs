@@ -9,6 +9,9 @@
     using TestHelper;
     using Xunit;
 
+    /// <summary>
+    /// Unit tests for <see cref="SA1204StaticElementsMustAppearBeforeInstanceElements"/>.
+    /// </summary>
     public class SA1204UnitTests : DiagnosticVerifier
     {
         /// <summary>
@@ -20,8 +23,11 @@
         {
             var testCode = @"public static class TestClass1 { }
 public class TestClass2 {
-    public static int TestField1;
-    public int TestField2;
+    public const int TestField1 = 1;
+    public static readonly int TestField2 = 2;
+    public static int TestField3;
+    public readonly int TestField4;
+    public int TestField5;
     public static int TestProperty1 { get; set; }
     public int TestProperty2 { get; set; }
     public static void TestMethod1() { }
