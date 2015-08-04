@@ -160,12 +160,13 @@
                     && currentAccessLevel < previousAccessLevel)
                 {
                     context.ReportDiagnostic(
-                    Diagnostic.Create(Descriptor,
-                    NamedTypeHelpers.GetNameOrIdentifierLocation(member),
-                    UpperAccessLevelNames[currentAccessLevel],
-                    currentMemberStatic ? " static" : string.Empty,
-                    MemberNames[currentSyntaxKind],
-                    LowerAccessLevelNames[previousAccessLevel]));
+                        Diagnostic.Create(
+                            Descriptor,
+                            NamedTypeHelpers.GetNameOrIdentifierLocation(member),
+                            UpperAccessLevelNames[currentAccessLevel],
+                            currentMemberStatic ? " static" : string.Empty,
+                            MemberNames[currentSyntaxKind],
+                            LowerAccessLevelNames[previousAccessLevel]));
                 }
 
                 previousMemberStatic = currentMemberStatic;
