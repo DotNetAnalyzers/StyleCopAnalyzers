@@ -5492,6 +5492,7 @@ namespace SyntaxNodeAnalyzer
             private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
             {
                 var ifStatement = (IfStatementSyntax)context.Node;
+
             // This statement navigates down the syntax tree one level to extract the 'if' keyword
             var ifKeyword = ifStatement.IfKeyword;
         }
@@ -5604,6 +5605,7 @@ namespace SyntaxNodeAnalyzer
             private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
             {
                 var ifStatement = (IfStatementSyntax)context.Node;
+
             // This statement navigates down the syntax tree one level to extract the 'if' keyword
             var ifKeyword = ifStatement.IfKeyword;
         }
@@ -5716,6 +5718,7 @@ namespace SyntaxNodeAnalyzer
             private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
             {
                 var ifStatement = (IfStatementSyntax)context.Node;
+
             // This statement navigates down the syntax tree one level to extract the 'if' keyword
             var ifKeyword = ifStatement.IfKeyword;
         }
@@ -5828,6 +5831,7 @@ namespace SyntaxNodeAnalyzer
             private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
             {
                 var ifStatement = (IfStatementSyntax)context.Node;
+
             // This statement navigates down the syntax tree one level to extract the 'if' keyword
             var ifKeyword = ifStatement.IfKeyword;
         }
@@ -5940,6 +5944,7 @@ namespace SyntaxNodeAnalyzer
             private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
             {
                 var ifStatement = (IfStatementSyntax)context.Node;
+
             // This statement navigates down the syntax tree one level to extract the 'if' keyword
             var ifKeyword = ifStatement.IfKeyword;
         }
@@ -6055,6 +6060,7 @@ namespace SyntaxNodeAnalyzer
             private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
             {
                 var ifStatement = (IfStatementSyntax)context.Node;
+
             // This statement navigates down the syntax tree one level to extract the 'if' keyword
             var ifKeyword = ifStatement.IfKeyword;
             if (ifKeyword.HasTrailingTrivia)
@@ -6399,6 +6405,7 @@ namespace SyntaxNodeAnalyzer
             private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
             {
                 var ifStatement = (IfStatementSyntax)context.Node;
+
             // This statement navigates down the syntax tree one level to extract the 'if' keyword
             var ifKeyword = ifStatement.IfKeyword;
         }
@@ -6511,6 +6518,7 @@ namespace SyntaxNodeAnalyzer
             private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
             {
                 var ifStatement = (IfStatementSyntax)context.Node;
+
             // This statement navigates down the syntax tree one level to extract the 'if' keyword
             var ifKeyword = ifStatement.IfKeyword;
             // var ifKeyword = ifStatement.IfKeyword;
@@ -10859,6 +10867,7 @@ namespace SyntaxNodeAnalyzer
                     }
                 }
             }
+
             // Extracts the opening parenthesis of the if-statement condition
             var openParen = ifState.OpenParenToken;
         }
@@ -11003,6 +11012,7 @@ namespace SyntaxNodeAnalyzer
                         }
                     }
                 }
+
             // Extracts the opening parenthesis of the if-statement condition
             var openParen = ifState.OpenParenToken;
         }
@@ -13740,6 +13750,7 @@ namespace SyntaxNodeAnalyzer
             }
 
             var open = ifState.OpenParenToken;
+
             // Determines the start of the span of the diagnostic that will be reported, ie the start of the squiggle
             var startDiagnosticSpan = ifKeyword.SpanStart;
         }
@@ -13887,6 +13898,7 @@ namespace SyntaxNodeAnalyzer
             }
 
             var open = ifState.OpenParenToken;
+
             // Determines the start of the span of the diagnostic that will be reported, ie the start of the squiggle
             var startDiagnosticSpan = ifKeyword.SpanStart;
         }
@@ -14127,6 +14139,7 @@ namespace SyntaxNodeAnalyzer
 
             var open = ifState.OpenParenToken;
             var start = ifKeyword.SpanStart;
+
             // Determines the end of the span of the diagnostic that will be reported
             var endDiagnosticSpan = open.SpanStart;
         }
@@ -14276,6 +14289,7 @@ namespace SyntaxNodeAnalyzer
 
             var open = ifState.OpenParenToken;
             var start = ifKeyword.SpanStart;
+
             // Determines the end of the span of the diagnostic that will be reported
             var endDiagnosticSpan = open.SpanStart;
         }
@@ -14518,6 +14532,7 @@ namespace SyntaxNodeAnalyzer
             var open = ifState.OpenParenToken;
             var start = ifKeyword.SpanStart;
             var end = open.SpanStart;
+
             // The span is the range of integers that define the position of the characters the red squiggle will underline
             var diagnosticSpan = TextSpan.FromBounds(start, end);
         }
@@ -14669,6 +14684,7 @@ namespace SyntaxNodeAnalyzer
             var open = ifState.OpenParenToken;
             var start = ifKeyword.SpanStart;
             var end = open.SpanStart;
+
             // The span is the range of integers that define the position of the characters the red squiggle will underline
             var diagnosticSpan = TextSpan.FromBounds(start, end);
         }
@@ -14827,6 +14843,7 @@ namespace SyntaxNodeAnalyzer
             var start = ifKeyword.SpanStart;
             var end = open.SpanStart;
             var span = TextSpan.FromBounds(start, end);
+
             // Uses the span created above to create a location for the diagnostic squiggle to appear within the syntax tree passed in as an argument
             var diagnosticLocation = Location.Create(ifState.SyntaxTree, span);
         }
@@ -14980,6 +14997,7 @@ namespace SyntaxNodeAnalyzer
             var start = ifKeyword.SpanStart;
             var end = open.SpanStart;
             var span = TextSpan.FromBounds(start, end);
+
             // Uses the span created above to create a location for the diagnostic squiggle to appear within the syntax tree passed in as an argument
             var diagnosticLocation = Location.Create(ifState.SyntaxTree, span);
         }
@@ -15140,6 +15158,7 @@ namespace SyntaxNodeAnalyzer
             var end = open.SpanStart;
             var span = TextSpan.FromBounds(start, end);
             var location = Location.Create(ifState.SyntaxTree, span);
+
             // Holds the diagnostic and all necessary information to be reported
             var diagnostic = Diagnostic.Create(spacingRule, location);
         }
@@ -15295,6 +15314,7 @@ namespace SyntaxNodeAnalyzer
             var end = open.SpanStart;
             var span = TextSpan.FromBounds(start, end);
             var location = Location.Create(ifState.SyntaxTree, span);
+
             // Holds the diagnostic and all necessary information to be reported
             var diagnostic = Diagnostic.Create(spacingRule, location);
         }
@@ -18359,6 +18379,7 @@ namespace SyntaxNodeAnalyzerAnalyzer
     public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
     {
         public const string spacingRuleId = ""IfSpacing"";
+
         // If the analyzer finds an issue, it will report the DiagnosticDescriptor rule
         internal static DiagnosticDescriptor spacingRule = new DiagnosticDescriptor(
             id: ""Change me to the name of the above constant"",
@@ -20574,6 +20595,7 @@ namespace SyntaxNodeAnalyzer
             var span = TextSpan.FromBounds(start, end);
             var location = Location.Create(ifState.SyntaxTree, span);
             var diagnostic = Diagnostic.Create(spacingRule, location);
+
             // Sends diagnostic information to the IDE to be shown to the user
             context.ReportDiagnostic(diagnostic);
         }
@@ -20738,6 +20760,7 @@ namespace SyntaxNodeAnalyzer
             var span = TextSpan.FromBounds(start, end);
             var location = Location.Create(ifState.SyntaxTree, span);
             var diagnostic = Diagnostic.Create(spacingRule, location);
+
             // Sends diagnostic information to the IDE to be shown to the user
             context.ReportDiagnostic(diagnostic);
         }
@@ -20896,6 +20919,7 @@ namespace SyntaxNodeAnalyzer
             var span = TextSpan.FromBounds(start, end);
             var location = Location.Create(ifState.SyntaxTree, span);
             var diagnostic = Diagnostic.Create(spacingRule, location);
+
             // Sends diagnostic information to the IDE to be shown to the user
             context.ReportDiagnostic(diagnostic);
         }
@@ -21054,6 +21078,7 @@ namespace SyntaxNodeAnalyzer
             var span = TextSpan.FromBounds(start, end);
             var location = Location.Create(ifState.SyntaxTree, span);
             var diagnostic = Diagnostic.Create(spacingRule, location);
+
             // Sends diagnostic information to the IDE to be shown to the user
             context.ReportDiagnostic(diagnostic);
         }
@@ -21212,6 +21237,7 @@ namespace SyntaxNodeAnalyzer
             var span = TextSpan.FromBounds(start, end);
             var location = Location.Create(ifState.SyntaxTree, span);
             var diagnostic = Diagnostic.Create(spacingRule, location);
+
             // Sends diagnostic information to the IDE to be shown to the user
             context.ReportDiagnostic(diagnostic);
         }
