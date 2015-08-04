@@ -9,6 +9,9 @@
     using TestHelper;
     using Xunit;
 
+    /// <summary>
+    /// Unit tests for <see cref="SA1204StaticElementsMustAppearBeforeInstanceElements"/>.
+    /// </summary>
     public class SA1204UnitTests : DiagnosticVerifier
     {
         /// <summary>
@@ -20,8 +23,11 @@
         {
             var testCode = @"public static class TestClass1 { }
 public class TestClass2 {
-    public static int TestField1;
-    public int TestField2;
+    public const int TestField1 = 1;
+    public static readonly int TestField2 = 2;
+    public static int TestField3;
+    public readonly int TestField4;
+    public int TestField5;
     public static int TestProperty1 { get; set; }
     public int TestProperty2 { get; set; }
     public static void TestMethod1() { }
@@ -131,6 +137,23 @@ public static class TestClass2 { }
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer will properly handle instance members before const.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestConstNotReportedBeforeInstanceMembersAsync()
+        {
+            var testCode = @"public class TestClass {
+    public int TestField1;
+    public const int TestField2 = 1;
+}
+";
+
+            // should be reported by SA1203
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
