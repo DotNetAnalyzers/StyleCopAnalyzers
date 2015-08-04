@@ -9,8 +9,7 @@ Analyzer Information
 Analyzers are tools that produce live diagnostics in Visual Studio, highlighting potential problems in the code. Diagnostics appear as squiggles under the incorrect code. Code Fixes appear as light bulbs with suggestions as to how to fix these errors.
 An analyzer operates by examining the syntax tree representing the corresponding code.
 The information in the syntax tree is built up during compilation, and is exposed by the .NET Compiler Platform (aka Roslyn). An analyzer is triggered when changes are made to the syntax tree, which happens when you edit a piece of code. The analyzer can then walk through the syntax tree, looking at syntax nodes, syntax tokens and syntax trivia, and decide whether or not to surface a diagnostic.
-If the information garnered from the syntactic representation is insufficient to surface a diagnostic, analyzers can also examine the semantic model, a higher-level representation of the code.
-
+Analyzers can also examine the semantic model, a higher-level representation of the code, if the information required to surface a diagnostic cannot be obtained from the syntax tree.
 Tutorial Overview
 ------------
 Writing an analyzer can be broken down into the following high-level steps
