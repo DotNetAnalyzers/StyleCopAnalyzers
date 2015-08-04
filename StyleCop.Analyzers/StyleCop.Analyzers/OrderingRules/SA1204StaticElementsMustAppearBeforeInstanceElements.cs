@@ -86,7 +86,6 @@
         {
             var previousSyntaxKind = SyntaxKind.None;
             var previousMemberStatic = true;
-            var previousMemberConst = true;
             foreach (var member in members)
             {
                 var currentSyntaxKind = member.Kind();
@@ -98,15 +97,13 @@
                 if (currentSyntaxKind == previousSyntaxKind
                     && !previousMemberStatic
                     && currentMemberStatic
-                    && !previousMemberConst
                     && !currentMemberConst)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(member), MemberNames[currentSyntaxKind]));
                 }
 
                 previousSyntaxKind = currentSyntaxKind;
-                previousMemberStatic = currentMemberStatic;
-                previousMemberConst = currentMemberConst;
+                previousMemberStatic = currentMemberStatic || currentMemberConst;
             }
         }
     }
