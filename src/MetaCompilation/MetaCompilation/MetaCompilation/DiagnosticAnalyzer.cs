@@ -967,6 +967,8 @@ namespace MetaCompilation
                     {
                         return emptyResult;
                     }
+
+                    return blockResult;
                 }
 
                 var left = booleanExpression.Left as InvocationExpressionSyntax;
