@@ -962,7 +962,9 @@ namespace MetaCompilation
                 var booleanExpression = statement.Condition as BinaryExpressionSyntax;
                 if (booleanExpression == null)
                 {
-                    return emptyResult;
+                    var blockResult = WhitespaceKindCheckAlternate(statement, triviaIdentifierToken);
+
+                    return blockResult;
                 }
 
                 var left = booleanExpression.Left as InvocationExpressionSyntax;
@@ -1026,6 +1028,80 @@ namespace MetaCompilation
                 }
 
                 return block;
+            }
+
+            // Checks if the whitespace check is .IsKind(SyntaxKind.WhitespaceTrivia)
+            private BlockSyntax WhitespaceKindCheckAlternate(IfStatementSyntax statement, SyntaxToken triviaIdentifierToken)
+            {
+                BlockSyntax emptyResult = null;
+
+                var invocationExpr = statement.Condition as InvocationExpressionSyntax;
+                if (invocationExpr == null)
+                {
+                    return emptyResult;
+                }
+
+                var memberExpr = invocationExpr.Expression as MemberAccessExpressionSyntax;
+                if (memberExpr == null)
+                {
+                    return emptyResult;
+                }
+
+                var triviaIdentifier = memberExpr.Expression as IdentifierNameSyntax;
+                if (triviaIdentifier == null || triviaIdentifier.Identifier.Text != triviaIdentifierToken.ValueText)
+                {
+                    return emptyResult;
+                }
+
+                var isKindIdentifier = memberExpr.Name as IdentifierNameSyntax;
+                if (isKindIdentifier == null || isKindIdentifier.Identifier.Text != "IsKind")
+                {
+                    return emptyResult;
+                }
+
+                ArgumentListSyntax argList = invocationExpr.ArgumentList;
+                if (argList == null)
+                {
+                    return emptyResult;
+                }
+
+                SeparatedSyntaxList<ArgumentSyntax> args = argList.Arguments;
+                if (args == null || args.Count != 1)
+                {
+                    return emptyResult;
+                }
+
+                ArgumentSyntax whitespaceArg = args[0];
+                if (whitespaceArg == null)
+                {
+                    return emptyResult;
+                }
+
+                var whitespaceExpr = whitespaceArg.Expression as MemberAccessExpressionSyntax;
+                if (whitespaceArg == null)
+                {
+                    return emptyResult;
+                }
+
+                var syntaxKindIdentifier = whitespaceExpr.Expression as IdentifierNameSyntax;
+                if (syntaxKindIdentifier == null || syntaxKindIdentifier.Identifier.Text != "SyntaxKind")
+                {
+                    return emptyResult;
+                }
+
+                var whitespaceIdentifier = whitespaceExpr.Name as IdentifierNameSyntax;
+                if (whitespaceIdentifier == null || whitespaceIdentifier.Identifier.Text != "WhitespaceTrivia")
+                {
+                    return emptyResult;
+                }
+
+                var blockResult = statement.Statement as BlockSyntax;
+                if (blockResult == null)
+                {
+                    return emptyResult;
+                }
+
+                return blockResult;
             }
 
             // Checks step six of the user's AnalyzerIfStatement method, returns null if analysis failed
