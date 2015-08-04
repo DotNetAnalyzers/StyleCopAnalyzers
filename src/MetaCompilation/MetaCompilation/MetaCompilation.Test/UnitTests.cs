@@ -11988,10 +11988,9 @@ namespace SyntaxNodeAnalyzer
         }
         #endregion
 
-        #region AccessorReturnValue (fix for IncorrectAccessorReturn & SuppDiagReturn)
+        #region IncorrectAccessorReturn
         
         private const string s_incorrectAccessorReturnMessage = s_messagePrefix + "The get-accessor should return an ImmutableArray containing all of the DiagnosticDescriptor rules";
-        private const string s_suppDiagReturnValueMessage = s_messagePrefix + "The 'SupportedDiagnostics' property's get-accessor should return an ImmutableArray containing all DiagnosticDescriptor rules";
 
         [Fact]
         public void IncorrectAccessorReturn1() // empty get accessor
@@ -12081,7 +12080,7 @@ namespace SyntaxNodeAnalyzer
             get
             {
                 // This array contains all the diagnostics that can be shown to the user
-                return ImmutableArray.Create();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -12188,7 +12187,7 @@ namespace SyntaxNodeAnalyzer
             get
             {
                 // This array contains all the diagnostics that can be shown to the user
-                return ImmutableArray.Create();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -12295,7 +12294,7 @@ namespace SyntaxNodeAnalyzer
             get
             {
                 // This array contains all the diagnostics that can be shown to the user
-                return ImmutableArray.Create();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -12402,7 +12401,7 @@ namespace SyntaxNodeAnalyzer
             get
             {
                 // This array contains all the diagnostics that can be shown to the user
-                return ImmutableArray.Create();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -12509,7 +12508,7 @@ namespace SyntaxNodeAnalyzer
             get
             {
                 // This array contains all the diagnostics that can be shown to the user
-                return ImmutableArray.Create();
+                return ImmutableArray.Create(Rule);
             }
         }
 
@@ -12617,7 +12616,7 @@ namespace SyntaxNodeAnalyzer
             get
             {
                 // This array contains all the diagnostics that can be shown to the user
-                var array = ImmutableArray.Create();
+                var array = ImmutableArray.Create(Rule);
                 return array;
             }
         }
@@ -12636,115 +12635,11 @@ namespace SyntaxNodeAnalyzer
 
             VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
         }
+        #endregion
 
-        [Fact]
-        public void IncorrectAccessorReturn7() // variable declaration form, incorrect invocation expression
-        {
-            var test = @"using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Threading;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Text;
+        #region SuppDiagReturn
 
-namespace SyntaxNodeAnalyzer
-{
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
-    {
-        public const string spacingRuleId = ""IfSpacing"";
-        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
-            id: spacingRuleId,
-            title: ""title"",
-            messageFormat: ""message"",
-            category: ""Syntax"",
-            defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: true);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        {
-            get
-            {
-                var array = ImmutableArray.Equals();
-                return array;
-            }
-        }
-
-        public override void Initialize(AnalysisContext context)
-        {
-            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
-        }
-
-        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
-        {
-            throw new NotImplementedException();
-        }
-    }
-}";
-
-            var expected = new DiagnosticResult
-            {
-                Id = MetaCompilationAnalyzer.IncorrectAccessorReturn,
-                Message = s_incorrectAccessorReturnMessage,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 44) }
-            };
-
-            VerifyCSharpDiagnostic(test, expected);
-
-            var fixtest = @"using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Threading;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Text;
-
-namespace SyntaxNodeAnalyzer
-{
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
-    {
-        public const string spacingRuleId = ""IfSpacing"";
-        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
-            id: spacingRuleId,
-            title: ""title"",
-            messageFormat: ""message"",
-            category: ""Syntax"",
-            defaultSeverity: DiagnosticSeverity.Warning,
-            isEnabledByDefault: true);
-
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        {
-            get
-            {
-                // This array contains all the diagnostics that can be shown to the user
-                var array = ImmutableArray.Create();
-                return array;
-            }
-        }
-
-        public override void Initialize(AnalysisContext context)
-        {
-            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
-        }
-
-        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
-        {
-            throw new NotImplementedException();
-        }
-    }
-}";
-
-            VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
-        }
+        private const string s_suppDiagReturnValueMessage = s_messagePrefix + "The 'SupportedDiagnostics' property's get-accessor should return an ImmutableArray containing all DiagnosticDescriptor rules";
 
         [Fact]
         public void SuppDiagReturn1() // invocation expression form, incorrect invocation expression
@@ -12799,7 +12694,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.SuppDiagReturnValue,
                 Message = s_suppDiagReturnValueMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 17) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 24) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -12835,6 +12730,115 @@ namespace SyntaxNodeAnalyzer
             {
                 // This array contains all the diagnostics that can be shown to the user
                 return ImmutableArray.Create();
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+
+            VerifyCSharpFix(test, fixtest, allowNewCompilerDiagnostics: true);
+        }
+
+        [Fact]
+        public void SuppDiagReturn2() // variable declaration form, incorrect invocation expression
+        {
+            var test = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                var array = ImmutableArray.Equals();
+                return array;
+            }
+        }
+
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
+        }
+
+        private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}";
+
+            var expected = new DiagnosticResult
+            {
+                Id = MetaCompilationAnalyzer.SuppDiagReturnValue,
+                Message = s_suppDiagReturnValueMessage,
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 30, 44) }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+
+            var fixtest = @"using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using System.Threading;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis.Text;
+
+namespace SyntaxNodeAnalyzer
+{
+    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    public class SyntaxNodeAnalyzerAnalyzer : DiagnosticAnalyzer
+    {
+        public const string spacingRuleId = ""IfSpacing"";
+        internal static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
+            id: spacingRuleId,
+            title: ""title"",
+            messageFormat: ""message"",
+            category: ""Syntax"",
+            defaultSeverity: DiagnosticSeverity.Warning,
+            isEnabledByDefault: true);
+
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
+        {
+            get
+            {
+                // This array contains all the diagnostics that can be shown to the user
+                var array = ImmutableArray.Create();
+                return array;
             }
         }
 

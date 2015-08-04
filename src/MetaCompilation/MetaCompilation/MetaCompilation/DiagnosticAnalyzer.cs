@@ -84,13 +84,14 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor TooManyAccessorsRule = CreateRule(TooManyAccessors, "Too many accessors", s_messagePrefix + "The '{0}' property needs only a single get-accessor", "The purpose of the SupportedDiagnostics property is to return a list of all diagnostics that can be reported by a particular analyzer, so it doesn't have a need for any other accessors");
 
         public const string IncorrectAccessorReturn = "MetaAnalyzer011";
-        internal static DiagnosticDescriptor IncorrectAccessorReturnRule = CreateRule(IncorrectAccessorReturn, "Get-accessor return value incorrect", s_messagePrefix + "The get-accessor should return an ImmutableArray containing all of the DiagnosticDescriptor rules", "The purpose of the SupportedDiagnostics property's get-accessor is to return a list of all diagnostics that can be reported by a particular analyzer");
+        internal static DiagnosticDescriptor IncorrectAccessorReturnRule = CreateRule(IncorrectAccessorReturn, "Get accessor missing return value", s_messagePrefix + "The get-accessor should return an ImmutableArray containing all of the DiagnosticDescriptor rules", "The purpose of the SupportedDiagnostics property's get-accessor is to return a list of all diagnostics that can be reported by a particular analyzer");
 
         public const string SuppDiagReturnValue = "MetaAnalyzer012";
         internal static DiagnosticDescriptor SuppDiagReturnValueRule = CreateRule(SuppDiagReturnValue, "SupportedDiagnostics return value incorrect", s_messagePrefix + "The '{0}' property's get-accessor should return an ImmutableArray containing all DiagnosticDescriptor rules", "The purpose of the SupportedDiagnostics property's get-accessor is to return a list of all diagnostics that can be reported by a particular analyzer");
 
         public const string SupportedRules = "MetaAnalyzer013";
         internal static DiagnosticDescriptor SupportedRulesRule = CreateRule(SupportedRules, "ImmutableArray incorrect", s_messagePrefix + "The ImmutableArray should contain every DiagnosticDescriptor rule that was created", "The purpose of the SupportedDiagnostics property is to return a list of all diagnostics that can be reported by a particular analyzer, so it should include every DiagnosticDescriptor rule that is created");
+
         #endregion
 
         #region rule rules
@@ -1963,6 +1964,14 @@ namespace MetaCompilation
 
                 var getAccessorKeywordLocation = propertyDeclaration.AccessorList.Accessors.First().Keyword.GetLocation();
 
+                var throwStatement = statements.First() as ThrowStatementSyntax;
+
+                if (throwStatement != null)
+                {
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, getAccessorKeywordLocation);
+                    return false;
+                }
+
                 IEnumerable<ReturnStatementSyntax> returnStatements = statements.OfType<ReturnStatementSyntax>();
                 if (returnStatements.Count() == 0)
                 {
@@ -2004,7 +2013,7 @@ namespace MetaCompilation
                 else if (returnExpression is IdentifierNameSyntax)
                 {
                     SymbolInfo returnSymbolInfo = context.Compilation.GetSemanticModel(returnStatement.SyntaxTree).GetSymbolInfo(returnExpression as IdentifierNameSyntax);
-                    SuppDiagReturnSymbolInfo symbolResult = SuppDiagReturnSymbol(context, returnSymbolInfo, getAccessorKeywordLocation);
+                    SuppDiagReturnSymbolInfo symbolResult = SuppDiagReturnSymbol(context, returnSymbolInfo, getAccessorKeywordLocation, propertyDeclaration);
 
                     if (symbolResult == null)
                     {
@@ -2119,16 +2128,22 @@ namespace MetaCompilation
                 var valueExprExpr = valueExpression.Expression as IdentifierNameSyntax;
                 var valueExprName = valueExpression.Name as IdentifierNameSyntax;
 
-                if (valueExprExpr == null || valueExprName == null || valueExprExpr.Identifier.Text != "ImmutableArray" || valueExprName.Identifier.Text != "Create")
+                if (valueExprExpr == null || valueExprExpr.Identifier.Text != "ImmutableArray")
                 {
-                    ReportDiagnostic(context, SuppDiagReturnValueRule, returnDeclarationLocation.ReturnKeyword.GetLocation(), propertyDeclaration.Identifier.Text);
+                    ReportDiagnostic(context, IncorrectAccessorReturnRule, valueExpression.GetLocation(), propertyDeclaration.Identifier.Text);
                     return false;
                 }
 
+                if (valueExprName == null || valueExprName.Identifier.Text != "Create")
+                {
+                    ReportDiagnostic(context, SuppDiagReturnValueRule, valueExpression.GetLocation(), propertyDeclaration.Identifier.Text);
+                    return false;
+                }
+                
                 var valueArguments = valueClause.ArgumentList as ArgumentListSyntax;
                 if (valueArguments == null)
                 {
-                    ReportDiagnostic(context, SupportedRulesRule, valueExpression.GetLocation());
+                    ReportDiagnostic(context, SupportedRulesRule, valueExpression.GetLocation(), propertyDeclaration.Identifier.Text);
                     return false;
                 }
 
@@ -2176,7 +2191,7 @@ namespace MetaCompilation
             }
 
             //Returns the valueClause of the return statement from SupportedDiagnostics and the return declaration, empty list if failed
-            private SuppDiagReturnSymbolInfo SuppDiagReturnSymbol(CompilationAnalysisContext context, SymbolInfo returnSymbolInfo, Location getAccessorKeywordLocation)
+            private SuppDiagReturnSymbolInfo SuppDiagReturnSymbol(CompilationAnalysisContext context, SymbolInfo returnSymbolInfo, Location getAccessorKeywordLocation, PropertyDeclarationSyntax propertyDeclaration)
             {
                 SuppDiagReturnSymbolInfo result = new SuppDiagReturnSymbolInfo();
 
@@ -2235,7 +2250,7 @@ namespace MetaCompilation
                 var valueClauseName = valueClauseMemberAccess.Name as IdentifierNameSyntax;
                 if (valueClauseName == null || valueClauseName.Identifier.Text != "Create")
                 {
-                    ReportDiagnostic(context, IncorrectAccessorReturnRule, valueClauseName.GetLocation());
+                    ReportDiagnostic(context, SuppDiagReturnValueRule, valueClauseName.GetLocation(), propertyDeclaration.Identifier.Text);
                     return result;
                 }
 
