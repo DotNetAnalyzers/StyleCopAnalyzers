@@ -472,7 +472,6 @@ namespace MetaCompilation
                         }
                         break;
                     case MetaCompilationAnalyzer.SuppDiagReturnValue:
-                    case MetaCompilationAnalyzer.IncorrectAccessorReturn:
                         IEnumerable<PropertyDeclarationSyntax> incorrectAccessorDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<PropertyDeclarationSyntax>();
                         if (incorrectAccessorDeclarations.Count() != 0)
                         {
@@ -480,12 +479,20 @@ namespace MetaCompilation
                             context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Return an ImmutableArray of DiagnosticDescriptors from SupportedDiagnostics", c => AccessorReturnValueAsync(context.Document, declaration, c), "Return an ImmutableArray of DiagnosticDescriptors from SupportedDiagnostics"), diagnostic);
                         }
                         break;
+                    case MetaCompilationAnalyzer.IncorrectAccessorReturn:
+                        IEnumerable<ClassDeclarationSyntax> accessorReturnDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>();
+                        if (accessorReturnDeclarations.Count() != 0)
+                        {
+                            ClassDeclarationSyntax declaration = accessorReturnDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Return an ImmutableArray of all DiagnosticDescriptors that can be reported", c => AccessorWithRulesAsync(context.Document, declaration, c), "Return an ImmutableArray of all DiagnosticDescriptors that can be reported"), diagnostic);
+                        }
+                        break;
                     case MetaCompilationAnalyzer.SupportedRules:
                         IEnumerable<ClassDeclarationSyntax> rulesDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<ClassDeclarationSyntax>();
                         if (rulesDeclarations.Count() != 0)
                         {
                             ClassDeclarationSyntax declaration = rulesDeclarations.First();
-                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Return a list of all diagnostics that can be reported by this analyzer", c => SupportedRulesAsync(context.Document, declaration, c), "Return a list of all diagnostics that can be reported by this analyzer"), diagnostic);
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Return a list of all diagnostics that can be reported by this analyzer", c => AccessorWithRulesAsync(context.Document, declaration, c), "Return a list of all diagnostics that can be reported by this analyzer"), diagnostic);
                         }
                         break;
                     case MetaCompilationAnalyzer.MissingSuppDiag:
@@ -1574,7 +1581,7 @@ namespace MetaCompilation
             return await ReplaceNode(declaration, newPropertyDeclaration, document);
         }
 
-        // return an ImmutableArray from the get accessor
+        // inserts ImmutableArray.Create()
         private async Task<Document> AccessorReturnValueAsync(Document document, PropertyDeclarationSyntax declaration, CancellationToken c)
         {
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
@@ -1631,20 +1638,10 @@ namespace MetaCompilation
             return newDocument;
         }
 
-        // adds all rules to the SupportedDiagnostics ImmutableArray
-        private async Task<Document> SupportedRulesAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
+        // inserts ImmutableArray.Create(all rules)
+        private async Task<Document> AccessorWithRulesAsync(Document document, ClassDeclarationSyntax declaration, CancellationToken c)
         {
-            List<string> ruleNames = new List<string>();
-            var fieldMembers = declaration.Members.OfType<FieldDeclarationSyntax>();
-            foreach (FieldDeclarationSyntax fieldSyntax in fieldMembers)
-            {
-                var fieldType = fieldSyntax.Declaration.Type as IdentifierNameSyntax;
-                if (fieldType != null && fieldType.Identifier.Text == "DiagnosticDescriptor")
-                {
-                    string ruleName = fieldSyntax.Declaration.Variables[0].Identifier.Text;
-                    ruleNames.Add(ruleName);
-                }
-            }
+            List<string> ruleNames = CodeFixHelper.GetAllRuleNames(declaration);
 
             var propertyMembers = declaration.Members.OfType<PropertyDeclarationSyntax>();
             foreach (PropertyDeclarationSyntax propertySyntax in propertyMembers)
@@ -1654,56 +1651,33 @@ namespace MetaCompilation
                     continue;
                 }
 
-                AccessorDeclarationSyntax getAccessor = propertySyntax.AccessorList.Accessors.First();
-                var returnStatement = getAccessor.Body.Statements.First() as ReturnStatementSyntax;
-                InvocationExpressionSyntax invocationExpression = null;
-                if (returnStatement == null)
-                {
-                    var declarationStatement = getAccessor.Body.Statements.First() as LocalDeclarationStatementSyntax;
-                    if (declarationStatement == null)
-                    {
-                        return document;
-                    }
-
-                    invocationExpression = declarationStatement.Declaration.Variables[0].Initializer.Value as InvocationExpressionSyntax;
-                }
-                else
-                {
-                    invocationExpression = returnStatement.Expression as InvocationExpressionSyntax;
-                }
-
-                var oldArgumentList = invocationExpression.ArgumentList as ArgumentListSyntax;
-
-                string argumentListString = "";
-                foreach (string ruleName in ruleNames)
-                {
-                    if (ruleName == ruleNames.First())
-                    {
-                        argumentListString += ruleName;
-                    }
-                    else
-                    {
-                        argumentListString += ", " + ruleName;
-                    }
-                }
-
-                ArgumentListSyntax argumentListSyntax = SyntaxFactory.ParseArgumentList("(" + argumentListString + ")");
+                SyntaxList<SyntaxNode> nodeArgs = CodeFixHelper.CreateRuleList(document, ruleNames);
                 SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+                var newInvocationExpression = (generator.InvocationExpression(generator.MemberAccessExpression(generator.IdentifierName("ImmutableArray"), "Create"), nodeArgs));
+                var leadingTrivia = SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// This array contains all the diagnostics that can be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"));
+                var newReturnStatement = generator.ReturnStatement(newInvocationExpression).WithLeadingTrivia(leadingTrivia);
+                AccessorDeclarationSyntax getAccessor = propertySyntax.AccessorList.Accessors.First();
 
-                SeparatedSyntaxList<ArgumentSyntax> args = argumentListSyntax.Arguments;
-                var nodeArgs = new SyntaxList<SyntaxNode>();
-                foreach (ArgumentSyntax arg in args)
+                if (getAccessor.Body.Statements.Count == 0)
                 {
-                    nodeArgs = nodeArgs.Add(arg as SyntaxNode);
+                    return await ReplaceNode(getAccessor, getAccessor.AddBodyStatements(newReturnStatement as ReturnStatementSyntax), document);
                 }
 
-                if (invocationExpression.FirstAncestorOrSelf<ReturnStatementSyntax>() == null)
+                var localDeclaration = getAccessor.Body.Statements.First() as LocalDeclarationStatementSyntax;
+                var returnStatement = getAccessor.Body.Statements.First() as ReturnStatementSyntax;
+                var otherStatement = getAccessor.Body.Statements.First();
+
+                if (localDeclaration != null)
                 {
-                    return await ReplaceNode(invocationExpression.FirstAncestorOrSelf<LocalDeclarationStatementSyntax>(), generator.LocalDeclarationStatement(invocationExpression.FirstAncestorOrSelf<LocalDeclarationStatementSyntax>().Declaration.Variables[0].Identifier.Text, generator.InvocationExpression(generator.MemberAccessExpression(generator.IdentifierName("ImmutableArray"), "Create"), nodeArgs)).WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// This array contains all the diagnostics that can be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
+                    return await ReplaceNode(localDeclaration, generator.LocalDeclarationStatement(localDeclaration.Declaration.Variables[0].Identifier.Text, newInvocationExpression).WithLeadingTrivia(leadingTrivia), document);
                 }
-                else
+                else if (returnStatement != null)
                 {
-                    return await ReplaceNode(invocationExpression.Parent, generator.ReturnStatement(generator.InvocationExpression(generator.MemberAccessExpression(generator.IdentifierName("ImmutableArray"), "Create"), nodeArgs)).WithLeadingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// This array contains all the diagnostics that can be shown to the user").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))), document);
+                    return await ReplaceNode(returnStatement, newReturnStatement, document);
+                }
+                else if (otherStatement != null)
+                {
+                    return await ReplaceNode(otherStatement, newReturnStatement, document);
                 }
             }
 
@@ -2435,6 +2409,51 @@ namespace MetaCompilation
 
                 SyntaxNode newDeclaration = generator.MethodDeclaration(methodName, parameters, returnType: returnType, accessibility: Accessibility.Private, statements: statements);
                 return newDeclaration;
+            }
+
+            protected internal static List<string> GetAllRuleNames(ClassDeclarationSyntax declaration)
+            {
+                List<string> ruleNames = new List<string>();
+                var fieldMembers = declaration.Members.OfType<FieldDeclarationSyntax>();
+                foreach (FieldDeclarationSyntax fieldSyntax in fieldMembers)
+                {
+                    var fieldType = fieldSyntax.Declaration.Type as IdentifierNameSyntax;
+                    if (fieldType != null && fieldType.Identifier.Text == "DiagnosticDescriptor")
+                    {
+                        string ruleName = fieldSyntax.Declaration.Variables[0].Identifier.Text;
+                        ruleNames.Add(ruleName);
+                    }
+                }
+                return ruleNames;
+            }
+
+            protected internal static SyntaxList<SyntaxNode> CreateRuleList(Document document, List<string> ruleNames)
+            {
+              
+                string argumentListString = "";
+                foreach (string ruleName in ruleNames)
+                {
+                    if (ruleName == ruleNames.First())
+                    {
+                        argumentListString += ruleName;
+                    }
+                    else
+                    {
+                        argumentListString += ", " + ruleName;
+                    }
+                }
+
+                ArgumentListSyntax argumentListSyntax = SyntaxFactory.ParseArgumentList("(" + argumentListString + ")");
+                SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+
+                SeparatedSyntaxList<ArgumentSyntax> args = argumentListSyntax.Arguments;
+                var nodeArgs = new SyntaxList<SyntaxNode>();
+                foreach (ArgumentSyntax arg in args)
+                {
+                    nodeArgs = nodeArgs.Add(arg as SyntaxNode);
+                }
+
+                return nodeArgs;
             }
         }
     }
