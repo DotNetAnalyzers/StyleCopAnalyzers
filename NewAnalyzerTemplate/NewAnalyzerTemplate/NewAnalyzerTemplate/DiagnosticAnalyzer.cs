@@ -3,7 +3,7 @@ open parenthesis of the condition.
 
 For more information, please reference the ReadMe.
 
-Before you begin, go to Tools->Extensions and Updates->Online, and install .NET compiler SDK
+Before you begin, go to Tools->Extensions and Updates->Online, and install .NET Compiler Platform SDK
 */
 
 using System;

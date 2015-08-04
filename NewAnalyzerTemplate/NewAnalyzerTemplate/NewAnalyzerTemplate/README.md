@@ -1,7 +1,7 @@
 Analyzer Tutorial
 =================
 
-This tutorial is going to guide you to write a diagnostic analyzer that enforces the placement of a single space between the `if` keyword of an if-statement and the open parenthesis of the condition.
+This tutorial is going to guide you to write a diagnostic analyzer that enforces the placement of a single space between the `if` keyword of an if-statement and the opening parenthesis of the condition.
 This tutorial itself was written as an analyzer, meaning that the instructions of the tutorial are presented using the error squiggles and light bulb code fixes in Visual Studio.
 
 Analyzer Information
@@ -9,18 +9,17 @@ Analyzer Information
 Analyzers are tools that produce live diagnostics in Visual Studio, highlighting potential problems in the code. Diagnostics appear as squiggles under the incorrect code. Code Fixes appear as light bulbs with suggestions as to how to fix these errors.
 An analyzer operates by examining the syntax tree representing the corresponding code.
 The information in the syntax tree is built up during compilation, and is exposed by the .NET Compiler Platform (aka Roslyn). An analyzer is triggered when changes are made to the syntax tree, which happens when you edit a piece of code. The analyzer can then walk through the syntax tree, looking at syntax nodes, syntax tokens and syntax trivia, and decide whether or not to surface a diagnostic.
-Analyzers can also examine the semantic model, a higher-level representation of the code, if the information required to surface a diagnostic cannot be represented syntatically.
-
+Analyzers can also examine the semantic model, a higher-level representation of the code, if the information required to surface a diagnostic cannot be obtained from the syntax tree.
 Tutorial Overview
 ------------
 Writing an analyzer can be broken down into the following high-level steps
 
-1. Create an ID to distinguish the diagnostic from other diagnostics as an analyzer can contain several diagnostics
-1. Create a diagnostic rule that is associated with the aforementioned ID and has properties such as a message to display to the user and whether the diagnostic is enabled by default
+1. Create an ID to distinguish the diagnostic from other diagnostics, as an analyzer can contain several diagnostics.
+1. Create a diagnostic rule that is associated with the aforementioned ID and has properties such as a message to display to the user and whether the diagnostic is enabled by default.
 1. Create an array to hold all diagnostics supported by your analyzer.
-1. Use the Initialize method to identify a kind of syntax node (in this case if-statement syntax nodes) and call an analysis function
-1. Within the analysis method, navigate the syntax tree to determine if the spacing of the if-statement is correct. See the image below
-1. If the analysis finds an error, create and report a diagnostic to inform the user of this error
+1. Use the Initialize method to identify a kind of syntax node (in this case if-statement syntax nodes) and call your analysis method.
+1. Within your analysis method, navigate the syntax tree to determine if the spacing of the if-statement is correct. See the image below. This step is the main body of your analyzer.
+1. If the analysis finds an error, create and report a diagnostic to inform the user of this error.
 
 The syntax diagram for a sample if-statement can be found below. You will a write a diagnostic that will surface when the whitespace circled in red is either absent or anything other than a single space. 
 For more information on visualizing syntax trees see [Syntax Trees](https://github.com/dotnet/roslyn-analyzers/blob/master/NewAnalyzerTemplate/NewAnalyzerTemplate/NewAnalyzerTemplate/README.md#syntax-trees).
@@ -28,7 +27,7 @@ For more information on visualizing syntax trees see [Syntax Trees](https://gith
 
 Instructions
 ------------
-* Before you begin, go to *Tools -> Extensions and Updates -> Online* and install .NET Compiler SDK.
+* Before you begin, go to *Tools -> Extensions and Updates -> Online* and install .NET Compiler Platform SDK.
 * Restart Visual Studio.
 * Open the DiagnosticAnalyzer.cs file
 * Open the Solution Explorer, right click on the .Vsix project, click "Set as StartUp project"
@@ -67,9 +66,10 @@ Further information can be found by following the links below:
 Packaging
 ---------
 Building this project will produce an analyzer .dll (dynamic-link library), as well as the following two ways you may wish to package that analyzer:
-	 * A NuGet package (.nupkg file) that will add your assembly as a
+
+- A NuGet package (.nupkg file) that will add your assembly as a
 	   project-local analyzer that participates in builds.
-	 * A VSIX extension (.vsix file) that will apply your analyzer to all projects
+- A VSIX extension (.vsix file) that will apply your analyzer to all projects
 	   and works just in the IDE.
 
 #### Trying out your NuGet Package
