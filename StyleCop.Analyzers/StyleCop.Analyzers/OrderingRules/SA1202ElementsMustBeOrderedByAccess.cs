@@ -183,32 +183,32 @@
             {
                 switch (modifier.Kind())
                 {
-                    case SyntaxKind.PublicKeyword:
-                        return AccessLevel.Public;
-                    case SyntaxKind.PrivateKeyword:
-                        return AccessLevel.Private;
-                    case SyntaxKind.InternalKeyword:
-                        if (isProtected)
-                        {
-                            return AccessLevel.ProtectedInternal;
-                        }
-                        else
-                        {
-                            isInternal = true;
-                        }
+                case SyntaxKind.PublicKeyword:
+                    return AccessLevel.Public;
+                case SyntaxKind.PrivateKeyword:
+                    return AccessLevel.Private;
+                case SyntaxKind.InternalKeyword:
+                    if (isProtected)
+                    {
+                        return AccessLevel.ProtectedInternal;
+                    }
+                    else
+                    {
+                        isInternal = true;
+                    }
 
-                        break;
-                    case SyntaxKind.ProtectedKeyword:
-                        if (isInternal)
-                        {
-                            return AccessLevel.ProtectedInternal;
-                        }
-                        else
-                        {
-                            isProtected = true;
-                        }
+                    break;
+                case SyntaxKind.ProtectedKeyword:
+                    if (isInternal)
+                    {
+                        return AccessLevel.ProtectedInternal;
+                    }
+                    else
+                    {
+                        isProtected = true;
+                    }
 
-                        break;
+                    break;
                 }
             }
 
