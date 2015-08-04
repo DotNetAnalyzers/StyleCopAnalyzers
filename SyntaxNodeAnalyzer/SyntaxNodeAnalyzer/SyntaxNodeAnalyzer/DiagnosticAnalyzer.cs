@@ -55,7 +55,7 @@ namespace SyntaxNodeAnalyzer
                 {
                     var trailingTrivia = ifKeyword.TrailingTrivia.First();
 
-                    if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
+                    if (trailingTrivia.IsKind(SyntaxKind.WhitespaceTrivia))
                     {
                         if (trailingTrivia.ToString() == " ")
                         {
