@@ -140,6 +140,23 @@ public static class TestClass2 { }
         }
 
         /// <summary>
+        /// Verifies that the analyzer will properly handle instance members before const.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestConstNotReportedBeforeInstanceMembersAsync()
+        {
+            var testCode = @"public class TestClass {
+    public int TestField1;
+    public const int TestField2 = 1;
+}
+";
+
+            // should be reported by SA1203
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that the analyzer will properly incomplete members.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>

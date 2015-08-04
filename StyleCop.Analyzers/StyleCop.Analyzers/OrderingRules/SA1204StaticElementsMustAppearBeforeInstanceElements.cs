@@ -84,23 +84,29 @@
 
         private static void HandleMemberList(SyntaxNodeAnalysisContext context, SyntaxList<MemberDeclarationSyntax> members)
         {
-            for (int i = 0; i < members.Count - 1; ++i)
+            var previousSyntaxKind = SyntaxKind.None;
+            var previousMemberStatic = true;
+            var previousMemberConst = true;
+            foreach (var member in members)
             {
-                var currentSyntaxKind = members[i].Kind();
+                var currentSyntaxKind = member.Kind();
                 currentSyntaxKind = currentSyntaxKind == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : currentSyntaxKind;
+                var modifiers = member.GetModifiers();
+                var currentMemberStatic = modifiers.Any(SyntaxKind.StaticKeyword);
+                var currentMemberConst = modifiers.Any(SyntaxKind.ConstKeyword);
 
-                var nextSyntaxKind = members[i + 1].Kind();
-                nextSyntaxKind = nextSyntaxKind == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : nextSyntaxKind;
-
-                if (currentSyntaxKind != nextSyntaxKind)
+                if (currentSyntaxKind == previousSyntaxKind
+                    && !previousMemberStatic
+                    && currentMemberStatic
+                    && !previousMemberConst
+                    && !currentMemberConst)
                 {
-                    continue;
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(member), MemberNames[currentSyntaxKind]));
                 }
 
-                if (!members[i].GetModifiers().Any(SyntaxKind.StaticKeyword) && members[i + 1].GetModifiers().Any(SyntaxKind.StaticKeyword))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(members[i + 1]), MemberNames[currentSyntaxKind]));
-                }
+                previousSyntaxKind = currentSyntaxKind;
+                previousMemberStatic = currentMemberStatic;
+                previousMemberConst = currentMemberConst;
             }
         }
     }
