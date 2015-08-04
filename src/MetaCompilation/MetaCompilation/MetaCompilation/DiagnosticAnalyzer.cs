@@ -962,9 +962,11 @@ namespace MetaCompilation
                 var booleanExpression = statement.Condition as BinaryExpressionSyntax;
                 if (booleanExpression == null)
                 {
-                    var blockResult = WhitespaceKindCheckAlternate(statement, triviaIdentifierToken);
-
-                    return blockResult;
+                    var blockResult = WhitespaceKindCheckAlternate(statement, triviaIdentifierToken) as BlockSyntax;
+                    if (blockResult == null)
+                    {
+                        return emptyResult;
+                    }
                 }
 
                 var left = booleanExpression.Left as InvocationExpressionSyntax;
@@ -1078,7 +1080,7 @@ namespace MetaCompilation
                 }
 
                 var whitespaceExpr = whitespaceArg.Expression as MemberAccessExpressionSyntax;
-                if (whitespaceArg == null)
+                if (whitespaceExpr == null)
                 {
                     return emptyResult;
                 }
