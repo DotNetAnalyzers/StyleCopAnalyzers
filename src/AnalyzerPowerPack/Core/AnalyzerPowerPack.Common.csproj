@@ -153,12 +153,12 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AnalyzerPowerPack.Common.props">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Include="AnalyzerPowerPack.Common.props">
       <SubType>Designer</SubType>
-    </Content>
+    </None>
   </ItemGroup>
   <ItemGroup>
+    <None Include="AnalyzerPowerPack.props" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
