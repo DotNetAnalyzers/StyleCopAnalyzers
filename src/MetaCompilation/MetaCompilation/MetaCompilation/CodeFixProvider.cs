@@ -276,7 +276,7 @@ namespace MetaCompilation
                         if (varMissingDeclarations.Count() != 0)
                         {
                             IfStatementSyntax declaration = varMissingDeclarations.First();
-                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the last trailing trivia into a variable", c => TrailingVarMissingAsync(context.Document, declaration, c), "Extract the last trailing trivia into a variable"), diagnostic);
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the first trailing trivia into a variable", c => TrailingVarMissingAsync(context.Document, declaration, c), "Extract the first trailing trivia into a variable"), diagnostic);
                         }
                         break;
                     case MetaCompilationAnalyzer.TrailingTriviaVarIncorrect:
@@ -284,7 +284,7 @@ namespace MetaCompilation
                         if (varDeclarations.Count() != 0)
                         {
                             IfStatementSyntax declaration = varDeclarations.First();
-                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the last trailing trivia into a variable", c => TrailingVarIncorrectAsync(context.Document, declaration, c), "Extract the last trailing trivia into a variable"), diagnostic);
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Extract the first trailing trivia into a variable", c => TrailingVarIncorrectAsync(context.Document, declaration, c), "Extract the first trailing trivia into a variable"), diagnostic);
                         }
                         break;
                     case MetaCompilationAnalyzer.TrailingTriviaKindCheckIncorrect:
@@ -292,7 +292,7 @@ namespace MetaCompilation
                         if (kindDeclarations.Count() != 0)
                         {
                             IfStatementSyntax declaration = kindDeclarations.First();
-                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check the kind of the first trailing trivia", c => TrailingKindCheckIncorrectAsync(context.Document, declaration, c), "Check the kind of the last trailing trivia"), diagnostic);
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check the kind of the first trailing trivia", c => TrailingKindCheckIncorrectAsync(context.Document, declaration, c), "Check the kind of the first trailing trivia"), diagnostic);
                         }
                         break;
                     case MetaCompilationAnalyzer.TrailingTriviaKindCheckMissing:
@@ -300,7 +300,7 @@ namespace MetaCompilation
                         if (kindMissingDeclarations.Count() != 0)
                         {
                             IfStatementSyntax declaration = kindMissingDeclarations.First();
-                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check the kind of the first trailing trivia", c => TrailingKindCheckMissingAsync(context.Document, declaration, c), "Check the kind of the last trailing trivia"), diagnostic);
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check the kind of the first trailing trivia", c => TrailingKindCheckMissingAsync(context.Document, declaration, c), "Check the kind of the first trailing trivia"), diagnostic);
                         }
                         break;
                     case MetaCompilationAnalyzer.WhitespaceCheckIncorrect:
