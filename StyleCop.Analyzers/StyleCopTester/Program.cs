@@ -20,8 +20,8 @@
     {
         private static void Main(string[] args)
         {
-            // A valid call must have at least two parameters. A solution file and /all or one /id:SAXXXX
-            if (args.Length <= 1)
+            // A valid call must have at least one parameter (a solution file). Optionally it can include /all or /id:SAXXXX.
+            if (args.Length < 1)
             {
                 PrintHelp();
             }
@@ -59,7 +59,20 @@
 
             foreach (var analyzer in analyzers)
             {
-                if (useAll || analyzer.SupportedDiagnostics.Any(y => ids.Contains(y.Id)))
+                if (useAll)
+                {
+                    yield return analyzer;
+                }
+                else if (ids.Count == 0)
+                {
+                    if (analyzer.SupportedDiagnostics.Any(i => i.IsEnabledByDefault))
+                    {
+                        yield return analyzer;
+                    }
+
+                    continue;
+                }
+                else if (analyzer.SupportedDiagnostics.Any(y => ids.Contains(y.Id)))
                 {
                     yield return analyzer;
                 }
