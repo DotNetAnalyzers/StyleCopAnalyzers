@@ -44,6 +44,7 @@ EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "BasicDesktopAnalyzers", "FxCop\Desktop.Analyzers\VisualBasic\BasicDesktopAnalyzers.vbproj", "{219EC670-D9C3-4493-AC28-AD42697CCFAD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DesktopAnalyzersTest", "FxCop\Desktop.Analyzers\Test\DesktopAnalyzersTest.csproj", "{9468F53A-8B08-4DAC-9612-3BBB3BCF0783}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AnalyzerPowerPack", "AnalyzerPowerPack", "{1D584F5A-3B33-40F9-95D0-DC47E37DCFF1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnalyzerPowerPack.Common", "AnalyzerPowerPack\Core\AnalyzerPowerPack.Common.csproj", "{CBCD620C-FF07-4BA4-ABC9-2F23C73760DB}"
