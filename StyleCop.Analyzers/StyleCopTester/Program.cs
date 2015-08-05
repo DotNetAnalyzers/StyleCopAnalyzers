@@ -39,13 +39,14 @@
                 }
 
                 MSBuildWorkspace workspace = MSBuildWorkspace.Create();
-                Solution solution = workspace.OpenSolutionAsync(args[0]).Result;
+                string solutionPath = args.SingleOrDefault(i => !i.StartsWith("/"));
+                Solution solution = workspace.OpenSolutionAsync(solutionPath).Result;
 
                 Console.WriteLine($"Loaded solution in {stopwatch.ElapsedMilliseconds}ms");
 
                 stopwatch.Restart();
 
-                var diagnostics = GetAnalyzerDiagnosticsAsync(solution, args[0], analyzers).Result;
+                var diagnostics = GetAnalyzerDiagnosticsAsync(solution, solutionPath, analyzers).Result;
 
                 Console.WriteLine($"Found {diagnostics.Count} diagnostics in {stopwatch.ElapsedMilliseconds}ms");
 
