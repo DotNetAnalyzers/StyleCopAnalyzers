@@ -6,6 +6,7 @@
 namespace StyleCop.Analyzers
 {
     using System;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -14,11 +15,10 @@ namespace StyleCop.Analyzers
     public static class AnalyzerExtensions
     {
         /// <summary>
-        /// Register an action to be executed at completion of parsing of a code document.
-        /// A syntax tree action reports Microsoft.CodeAnalysis.Diagnostics about the Microsoft.CodeAnalysis.SyntaxTree
-        /// of a document.
+        /// Register an action to be executed at completion of parsing of a code document. A syntax tree action reports
+        /// diagnostics about the <see cref="SyntaxTree"/> of a document.
         /// </summary>
-        /// <remarks>This method honors exclusions</remarks>
+        /// <remarks>This method honors exclusions.</remarks>
         /// <param name="context">The analysis context.</param>
         /// <param name="action">Action to be executed at completion of parsing of a document.</param>
         public static void RegisterSyntaxTreeActionHonorExclusions(this AnalysisContext context, Action<SyntaxTreeAnalysisContext> action)
@@ -40,11 +40,10 @@ namespace StyleCop.Analyzers
         }
 
         /// <summary>
-        /// Register an action to be executed at completion of parsing of a code document.
-        /// A syntax tree action reports Microsoft.CodeAnalysis.Diagnostics about the Microsoft.CodeAnalysis.SyntaxTree
-        /// of a document.
+        /// Register an action to be executed at completion of parsing of a code document. A syntax tree action reports
+        /// diagnostics about the <see cref="SyntaxTree"/> of a document.
         /// </summary>
-        /// <remarks>This method honors exclusions</remarks>
+        /// <remarks>This method honors exclusions.</remarks>
         /// <param name="context">The analysis context.</param>
         /// <param name="action">Action to be executed at completion of parsing of a document.</param>
         public static void RegisterSyntaxTreeActionHonorExclusions(this CompilationStartAnalysisContext context, Action<SyntaxTreeAnalysisContext> action)
@@ -66,17 +65,20 @@ namespace StyleCop.Analyzers
         }
 
         /// <summary>
-        /// Register an action to be executed at completion of semantic analysis of a Microsoft.CodeAnalysis.SyntaxNode
-        /// with an appropriate Kind. A syntax node action can report Microsoft.CodeAnalysis.Diagnostics
-        /// about Microsoft.CodeAnalysis.SyntaxNodes, and can also collect state information
-        /// to be used by other syntax node actions or code block end actions.
+        /// Register an action to be executed at completion of semantic analysis of a <see cref="SyntaxNode"/> with an
+        /// appropriate kind. A syntax node action can report diagnostics about a <see cref="SyntaxNode"/>, and can also
+        /// collect state information to be used by other syntax node actions or code block end actions.
         /// </summary>
-        /// <remarks>This method honors exclusions</remarks>
-        /// <param name="context">Action will be executed only if a Microsoft.CodeAnalysis.SyntaxNode's Kind matches one of the syntax kind values.</param>
-        /// <param name="action">Action to be executed at completion of semantic analysis of a Microsoft.CodeAnalysis.SyntaxNode.</param>
+        /// <remarks>This method honors exclusions.</remarks>
+        /// <param name="context">Action will be executed only if a <see cref="SyntaxNode"/>'s kind matches one of the
+        /// <paramref name="syntaxKinds"/> values.</param>
+        /// <param name="action">Action to be executed at completion of semantic analysis of a
+        /// <see cref="SyntaxNode"/>.</param>
         /// <param name="syntaxKinds">The kinds of syntax that should be analyzed.</param>
-        /// <typeparam name="TLanguageKindEnum">Enum type giving the syntax node kinds of the source language for which the action applies.</typeparam>
-        public static void RegisterSyntaxNodeActionHonorExclusions<TLanguageKindEnum>(this AnalysisContext context, Action<SyntaxNodeAnalysisContext> action, params TLanguageKindEnum[] syntaxKinds) where TLanguageKindEnum : struct
+        /// <typeparam name="TLanguageKindEnum">Enum type giving the syntax node kinds of the source language for which
+        /// the action applies.</typeparam>
+        public static void RegisterSyntaxNodeActionHonorExclusions<TLanguageKindEnum>(this AnalysisContext context, Action<SyntaxNodeAnalysisContext> action, params TLanguageKindEnum[] syntaxKinds)
+            where TLanguageKindEnum : struct
         {
             context.RegisterSyntaxNodeAction(
                 c =>
@@ -96,17 +98,20 @@ namespace StyleCop.Analyzers
         }
 
         /// <summary>
-        /// Register an action to be executed at completion of semantic analysis of a Microsoft.CodeAnalysis.SyntaxNode
-        /// with an appropriate Kind. A syntax node action can report Microsoft.CodeAnalysis.Diagnostics
-        /// about Microsoft.CodeAnalysis.SyntaxNodes, and can also collect state information
-        /// to be used by other syntax node actions or code block end actions.
+        /// Register an action to be executed at completion of semantic analysis of a <see cref="SyntaxNode"/> with an
+        /// appropriate kind. A syntax node action can report diagnostics about a <see cref="SyntaxNode"/>, and can also
+        /// collect state information to be used by other syntax node actions or code block end actions.
         /// </summary>
-        /// <remarks>This method honors exclusions</remarks>
-        /// <param name="context">Action will be executed only if a Microsoft.CodeAnalysis.SyntaxNode's Kind matches one of the syntax kind values.</param>
-        /// <param name="action">Action to be executed at completion of semantic analysis of a Microsoft.CodeAnalysis.SyntaxNode.</param>
+        /// <remarks>This method honors exclusions.</remarks>
+        /// <param name="context">Action will be executed only if the kind of a <see cref="SyntaxNode"/> matches one of
+        /// the <paramref name="syntaxKinds"/> values.</param>
+        /// <param name="action">Action to be executed at completion of semantic analysis of a
+        /// <see cref="SyntaxNode"/>.</param>
         /// <param name="syntaxKinds">The kinds of syntax that should be analyzed.</param>
-        /// <typeparam name="TLanguageKindEnum">Enum type giving the syntax node kinds of the source language for which the action applies.</typeparam>
-        public static void RegisterSyntaxNodeActionHonorExclusions<TLanguageKindEnum>(this CompilationStartAnalysisContext context, Action<SyntaxNodeAnalysisContext> action, params TLanguageKindEnum[] syntaxKinds) where TLanguageKindEnum : struct
+        /// <typeparam name="TLanguageKindEnum">Enum type giving the syntax node kinds of the source language for which
+        /// the action applies.</typeparam>
+        public static void RegisterSyntaxNodeActionHonorExclusions<TLanguageKindEnum>(this CompilationStartAnalysisContext context, Action<SyntaxNodeAnalysisContext> action, params TLanguageKindEnum[] syntaxKinds)
+            where TLanguageKindEnum : struct
         {
             context.RegisterSyntaxNodeAction(
                 c =>
