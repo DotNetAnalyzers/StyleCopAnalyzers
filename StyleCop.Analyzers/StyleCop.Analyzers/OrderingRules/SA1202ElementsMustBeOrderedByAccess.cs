@@ -140,6 +140,7 @@
         {
             var previousMemberStatic = true;
             var previousMemberReadonly = true;
+            var previousMemberConst = true;
             var previousSyntaxKind = SyntaxKind.None;
             var previousAccessLevel = AccessLevel.NotSpecified;
 
@@ -147,9 +148,16 @@
             {
                 var currentModifiers = member.GetModifiers();
                 var currentMemberStatic = currentModifiers.Any(SyntaxKind.StaticKeyword);
-                var currentMemberReadonly = currentModifiers.Any(SyntaxKind.ReadOnlyKeyword);
+                var currentMemberReadonly = false;
+                var currentMemberConst = false;
                 var currentSyntaxKind = member.Kind();
                 currentSyntaxKind = currentSyntaxKind == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : currentSyntaxKind;
+                if (currentSyntaxKind == SyntaxKind.FieldDeclaration)
+                {
+                    currentMemberReadonly = currentModifiers.Any(SyntaxKind.ReadOnlyKeyword);
+                    currentMemberConst = currentModifiers.Any(SyntaxKind.ConstKeyword);
+                }
+
                 var currentAccessLevel = GetAccessLevel(currentModifiers);
 
                 if (previousAccessLevel != AccessLevel.NotSpecified
@@ -157,6 +165,7 @@
                     && currentSyntaxKind == previousSyntaxKind
                     && currentMemberStatic == previousMemberStatic
                     && currentMemberReadonly == previousMemberReadonly
+                    && currentMemberConst == previousMemberConst
                     && currentAccessLevel < previousAccessLevel)
                 {
                     context.ReportDiagnostic(
@@ -164,13 +173,14 @@
                             Descriptor,
                             NamedTypeHelpers.GetNameOrIdentifierLocation(member),
                             UpperAccessLevelNames[currentAccessLevel],
-                            currentMemberStatic ? " static" : string.Empty,
+                            currentMemberStatic ? " static" : currentMemberConst ? " const" : string.Empty,
                             MemberNames[currentSyntaxKind],
                             LowerAccessLevelNames[previousAccessLevel]));
                 }
 
                 previousMemberStatic = currentMemberStatic;
                 previousMemberReadonly = currentMemberReadonly;
+                previousMemberConst = currentMemberConst;
                 previousSyntaxKind = currentSyntaxKind;
                 previousAccessLevel = currentAccessLevel;
             }

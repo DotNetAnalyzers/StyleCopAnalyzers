@@ -23,9 +23,11 @@
         {
             var testCode = @"public class TestClass
 {
-    private const string TestConst = ""Test"";
-
-    protected readonly string TestReadonlyString;
+    private const int TestField1 = 1;
+    protected static readonly int TestField2 = 2;
+    protected internal static int TestField3;
+    internal readonly int TestField4;
+    public int TestField5;
 
     public string TestString;
 
@@ -365,6 +367,26 @@ public class TestClass2 { }
                 this.CSharpDiagnostic().WithLocation(6, 26).WithArguments("Internal", " static", "methods", "protected internal"),
                 this.CSharpDiagnostic().WithLocation(7, 24).WithArguments("Public", " static", "methods", "internal")
             };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer will properly handle const ordering.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestConstOrderingAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    private const int TestConst1 = 1;
+    protected const int TestConst2 = 2;
+    public int TestField;
+}
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(4, 25).WithArguments("Protected", " const", "fields", "private");
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
