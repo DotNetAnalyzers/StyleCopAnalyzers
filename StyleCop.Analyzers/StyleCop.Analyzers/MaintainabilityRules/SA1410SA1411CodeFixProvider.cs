@@ -1,13 +1,12 @@
 ﻿namespace StyleCop.Analyzers.MaintainabilityRules
 {
-    using System;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
+    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
@@ -30,7 +29,7 @@
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return WellKnownFixAllProviders.BatchFixer;
+            return CustomFixAllProviders.BatchFixer;
         }
 
         /// <inheritdoc/>

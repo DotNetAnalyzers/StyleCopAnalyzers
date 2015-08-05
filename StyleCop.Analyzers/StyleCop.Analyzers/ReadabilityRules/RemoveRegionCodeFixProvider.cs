@@ -30,7 +30,7 @@
         public override FixAllProvider GetFixAllProvider()
         {
             // The batch fixer does not do a very good job if regions are stacked in each other
-            return WellKnownFixAllProviders.BatchFixer;
+            return CustomFixAllProviders.BatchFixer;
         }
 
         /// <inheritdoc/>
