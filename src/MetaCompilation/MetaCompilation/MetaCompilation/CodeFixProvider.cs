@@ -687,7 +687,7 @@ namespace MetaCompilation
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
             var ifBlockStatements = new SyntaxList<StatementSyntax>();
-            var leadingTrivia = SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.ParseLeadingTrivia("// Checks if there is any trailing trivia (eg spaces or comments) associated with the if-keyword").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"));
+            var leadingTrivia = SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// Checks if there is any trailing trivia (eg spaces or comments) associated with the if-keyword").ElementAt(0), SyntaxFactory.CarriageReturnLineFeed);
             StatementSyntax ifStatement = (CodeFixHelper.TriviaCheckHelper(generator, declaration.Body, ifBlockStatements) as StatementSyntax).WithLeadingTrivia(leadingTrivia);
 
             BlockSyntax oldBlock = declaration.Body;
@@ -705,7 +705,7 @@ namespace MetaCompilation
             var ifBlockStatements = new SyntaxList<StatementSyntax>();
 
             var ifStatement = declaration.Body.Statements[2] as IfStatementSyntax;
-            var leadingTrivia = SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Checks that there is only one piece of trailing trivia").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"));
+            var leadingTrivia = SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Checks that there is only one piece of trailing trivia").ElementAt(0), SyntaxFactory.CarriageReturnLineFeed);
             var localDeclaration = new SyntaxList<SyntaxNode>().Add((CodeFixHelper.TriviaCountHelper(generator, name, ifBlockStatements)).WithLeadingTrivia(leadingTrivia));
 
             var oldBlock = ifStatement.Statement as BlockSyntax;
@@ -824,7 +824,7 @@ namespace MetaCompilation
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
             var ifBlockStatements = new SyntaxList<SyntaxNode>();
-            var leadingTrivia = SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.ParseLeadingTrivia("// Checks that the single trailing trivia is of kind whitespace (as opposed to a comment for example)").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"));
+            var leadingTrivia = SyntaxFactory.TriviaList(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.ParseLeadingTrivia("// Checks that the single trailing trivia is of kind whitespace (as opposed to a comment for example)").ElementAt(0), SyntaxFactory.CarriageReturnLineFeed);
             var newIfStatement = (CodeFixHelper.TriviaKindCheckHelper(generator, declaration, ifBlockStatements) as StatementSyntax).WithLeadingTrivia(leadingTrivia);
 
             var oldBlock = declaration.Statement as BlockSyntax;
@@ -871,7 +871,7 @@ namespace MetaCompilation
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
             var ifBlockStatements = new SyntaxList<SyntaxNode>();
-            var leadingTrivia = SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Finally, this statement checks that the trailing trivia is one single space").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"));
+            var leadingTrivia = SyntaxFactory.TriviaList(SyntaxFactory.ParseLeadingTrivia("// Finally, this statement checks that the trailing trivia is one single space").ElementAt(0), SyntaxFactory.CarriageReturnLineFeed);
             var newIfStatement = new SyntaxList<SyntaxNode>().Add((CodeFixHelper.WhitespaceCheckHelper(generator, declaration, ifBlockStatements) as StatementSyntax).WithLeadingTrivia(leadingTrivia));
 
             var oldBlock = declaration.Statement as BlockSyntax;
