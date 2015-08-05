@@ -6724,6 +6724,8 @@ namespace SyntaxNodeAnalyzer
             {
                 var ifStatement = (IfStatementSyntax)context.Node;
                 var ifKeyword = ifStatement.IfKeyword;
+
+            // Checks if there is any trailing trivia (eg spaces or comments) associated with the if-keyword
             if (ifKeyword.HasTrailingTrivia)
             {
             }
@@ -6841,6 +6843,8 @@ namespace SyntaxNodeAnalyzer
             {
                 var ifStatement = (IfStatementSyntax)context.Node;
                 var ifKeyword = ifStatement.IfKeyword;
+
+            // Checks if there is any trailing trivia (eg spaces or comments) associated with the if-keyword
             if (ifKeyword.HasTrailingTrivia)
             {
             }                /* if (ifKeyword.HasTrailingTrivia)
@@ -15524,6 +15528,8 @@ namespace SyntaxNodeAnalyzer
                     if (ifKeyword.TrailingTrivia.Count == 1)
                     {
                         var trailingTrivia = ifKeyword.TrailingTrivia.First();
+
+                    // Checks that the single trailing trivia is of kind whitespace (as opposed to a comment for example)
                     if (trailingTrivia.IsKind(SyntaxKind.WhitespaceTrivia))
                     {
                     }
@@ -17110,6 +17116,7 @@ namespace SyntaxNodeAnalyzer
                         var trailingTrivia = ifKeyword.TrailingTrivia.First();
                         if (trailingTrivia.Kind() == SyntaxKind.WhitespaceTrivia)
                         {
+                        // Finally, this statement checks that the trailing trivia is one single space
                         if (trailingTrivia.ToString() == "" "")
                         {
                         }
@@ -21441,6 +21448,7 @@ namespace SyntaxNodeAnalyzer
                 var ifKeyword = ifStatement.IfKeyword;
                 if (ifKeyword.HasTrailingTrivia)
                 {
+                // Checks that there is only one piece of trailing trivia
                 if (ifKeyword.TrailingTrivia.Count == 1)
                 {
                 }
