@@ -41,7 +41,21 @@
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         protected async Task VerifyCSharpFixAsync(string oldSource, string newSource, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false, int maxNumberOfIterations = int.MaxValue, CancellationToken cancellationToken = default(CancellationToken))
         {
-            await this.VerifyFixInternalAsync(LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), this.GetCSharpCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics, maxNumberOfIterations, GetSingleAnalyzerDocumentAsync, cancellationToken).ConfigureAwait(false);
+            var t1 = this.VerifyFixInternalAsync(LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), this.GetCSharpCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics, maxNumberOfIterations, GetSingleAnalyzerDocumentAsync, cancellationToken).ConfigureAwait(false);
+
+            var fixAllProvider = this.GetCSharpCodeFixProvider().GetFixAllProvider();
+
+            if (fixAllProvider == null)
+            {
+                await t1;
+            }
+            else
+            {
+                var t2 = this.VerifyFixInternalAsync(LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), this.GetCSharpCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics, maxNumberOfIterations, GetFixAllAnalyzerDocumentAsync, cancellationToken).ConfigureAwait(false);
+                await t1;
+                cancellationToken.ThrowIfCancellationRequested();
+                await t2;
+            }
         }
 
         /// <summary>
@@ -176,7 +190,8 @@
 
                 FixAllContext.DiagnosticProvider fixAllDiagnosticProvider = TestDiagnosticProvider.Create(analyzerDiagnostics);
 
-                FixAllContext fixAllContext = new FixAllContext(document, codeFixProvider, FixAllScope.Document, null, codeFixProvider.FixableDiagnosticIds, fixAllDiagnosticProvider, cancellationToken);
+                string equivalenceKey = codeFixProvider.GetType().Name;
+                FixAllContext fixAllContext = new FixAllContext(document, codeFixProvider, FixAllScope.Document, equivalenceKey, codeFixProvider.FixableDiagnosticIds, fixAllDiagnosticProvider, cancellationToken);
 
                 CodeAction action = await fixAllProvider.GetFixAsync(fixAllContext).ConfigureAwait(false);
 
