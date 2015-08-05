@@ -48,6 +48,11 @@
                 var diagnostics = GetAnalyzerDiagnosticsAsync(solution, args[0], analyzers).Result;
 
                 Console.WriteLine($"Found {diagnostics.Count} diagnostics in {stopwatch.ElapsedMilliseconds}ms");
+
+                foreach (var group in diagnostics.GroupBy(i => i.Id).OrderBy(i => i.Key, StringComparer.OrdinalIgnoreCase))
+                {
+                    Console.WriteLine($"  {group.Key}: {group.Count()} instances");
+                }
             }
         }
 
