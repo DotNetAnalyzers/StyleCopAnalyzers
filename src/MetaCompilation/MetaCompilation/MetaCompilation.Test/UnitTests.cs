@@ -6725,7 +6725,7 @@ namespace SyntaxNodeAnalyzer
                 var ifStatement = (IfStatementSyntax)context.Node;
                 var ifKeyword = ifStatement.IfKeyword;
 
-            // Checks if there is any trailing trivia associated with the if-keyword
+            // Checks if there is any trailing trivia (eg spaces or comments) associated with the if-keyword
             if (ifKeyword.HasTrailingTrivia)
             {
             }
@@ -6844,7 +6844,7 @@ namespace SyntaxNodeAnalyzer
                 var ifStatement = (IfStatementSyntax)context.Node;
                 var ifKeyword = ifStatement.IfKeyword;
 
-            // Checks if there is any trailing trivia associated with the if-keyword
+            // Checks if there is any trailing trivia (eg spaces or comments) associated with the if-keyword
             if (ifKeyword.HasTrailingTrivia)
             {
             }                /* if (ifKeyword.HasTrailingTrivia)

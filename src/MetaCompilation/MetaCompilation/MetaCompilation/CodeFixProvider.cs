@@ -687,7 +687,7 @@ namespace MetaCompilation
             SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
 
             var ifBlockStatements = new SyntaxList<StatementSyntax>();
-            var leadingTrivia = SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.ParseLeadingTrivia("// Checks if there is any trailing trivia associated with the if-keyword").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"));
+            var leadingTrivia = SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.ParseLeadingTrivia("// Checks if there is any trailing trivia (eg spaces or comments) associated with the if-keyword").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"));
             StatementSyntax ifStatement = (CodeFixHelper.TriviaCheckHelper(generator, declaration.Body, ifBlockStatements) as StatementSyntax).WithLeadingTrivia(leadingTrivia);
 
             BlockSyntax oldBlock = declaration.Body;

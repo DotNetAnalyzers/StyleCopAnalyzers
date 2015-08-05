@@ -49,7 +49,7 @@ namespace SyntaxNodeAnalyzer
             // This statement navigates down the syntax tree one level to extract the 'if' keyword
             var ifKeyword = ifStatement.IfKeyword;
 
-            // Checks if there is any trailing trivia associated with the if-keyword.
+            // Checks if there is any trailing trivia (eg spaces or comments) associated with the if-keyword.
             if (ifKeyword.HasTrailingTrivia)
             {
                 // Checks that there is only one piece of trailing trivia.
