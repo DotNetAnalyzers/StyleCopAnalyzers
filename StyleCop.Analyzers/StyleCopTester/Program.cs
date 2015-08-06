@@ -20,8 +20,8 @@
     {
         private static void Main(string[] args)
         {
-            // A valid call must have at least two parameters. A solution file and /all or one /id:SAXXXX
-            if (args.Length <= 1)
+            // A valid call must have at least one parameter (a solution file). Optionally it can include /all or /id:SAXXXX.
+            if (args.Length < 1)
             {
                 PrintHelp();
             }
@@ -39,15 +39,21 @@
                 }
 
                 MSBuildWorkspace workspace = MSBuildWorkspace.Create();
-                Solution solution = workspace.OpenSolutionAsync(args[0]).Result;
+                string solutionPath = args.SingleOrDefault(i => !i.StartsWith("/"));
+                Solution solution = workspace.OpenSolutionAsync(solutionPath).Result;
 
                 Console.WriteLine($"Loaded solution in {stopwatch.ElapsedMilliseconds}ms");
 
                 stopwatch.Restart();
 
-                var diagnostics = GetAnalyzerDiagnosticsAsync(solution, args[0], analyzers).Result;
+                var diagnostics = GetAnalyzerDiagnosticsAsync(solution, solutionPath, analyzers).Result;
 
                 Console.WriteLine($"Found {diagnostics.Count} diagnostics in {stopwatch.ElapsedMilliseconds}ms");
+
+                foreach (var group in diagnostics.GroupBy(i => i.Id).OrderBy(i => i.Key, StringComparer.OrdinalIgnoreCase))
+                {
+                    Console.WriteLine($"  {group.Key}: {group.Count()} instances");
+                }
             }
         }
 
@@ -59,7 +65,20 @@
 
             foreach (var analyzer in analyzers)
             {
-                if (useAll || analyzer.SupportedDiagnostics.Any(y => ids.Contains(y.Id)))
+                if (useAll)
+                {
+                    yield return analyzer;
+                }
+                else if (ids.Count == 0)
+                {
+                    if (analyzer.SupportedDiagnostics.Any(i => i.IsEnabledByDefault))
+                    {
+                        yield return analyzer;
+                    }
+
+                    continue;
+                }
+                else if (analyzer.SupportedDiagnostics.Any(y => ids.Contains(y.Id)))
                 {
                     yield return analyzer;
                 }
