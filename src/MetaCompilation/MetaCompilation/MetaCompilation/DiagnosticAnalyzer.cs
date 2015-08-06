@@ -230,7 +230,7 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor GoToCodeFixRule = new DiagnosticDescriptor(
             id: GoToCodeFix,
             title: "Analyzer tutorial complete",
-            messageFormat: s_messagePrefix + "Congratulations! You have written an analyzer! If you would like to explore a code fix for your diagnostic, open up CodeFixProvider.cs and take a look!",
+            messageFormat: s_messagePrefix + "Congratulations! You have written an analyzer! If you would like to explore a code fix for your diagnostic, open up CodeFixProvider.cs and take a look! To see your analyzer in action, press F5. A new instance of Visual Studio will open up, in which you can open a new C# console app and write test if-statements.",
             category: s_ruleCategory,
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true);
