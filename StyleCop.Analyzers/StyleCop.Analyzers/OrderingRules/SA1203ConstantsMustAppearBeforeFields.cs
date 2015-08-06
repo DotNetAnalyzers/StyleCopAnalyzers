@@ -54,26 +54,27 @@
             var typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
             var members = typeDeclaration.Members;
-            bool nonConstFieldFound = false;
+            var previousFieldConstant = true;
+            var previousAcccessLevel = AccessLevel.NotSpecified;
 
-            for (int i = 0; i < members.Count; i++)
+            foreach (var member in members)
             {
-                var field = members[i] as FieldDeclarationSyntax;
+                var field = member as FieldDeclarationSyntax;
                 if (field == null)
                 {
                     continue;
                 }
 
-                bool thisFieldIsConstant = field.Modifiers.Any(SyntaxKind.ConstKeyword);
-                if (!thisFieldIsConstant)
+                bool currentFieldConstant = field.Modifiers.Any(SyntaxKind.ConstKeyword);
+                var currentAccessLevel = AccessLevelHelper.GetAccessLevel(field.Modifiers);
+
+                if (currentAccessLevel == previousAcccessLevel && !previousFieldConstant && currentFieldConstant)
                 {
-                    nonConstFieldFound = true;
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(member)));
                 }
 
-                if (thisFieldIsConstant && nonConstFieldFound)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(members[i])));
-                }
+                previousFieldConstant = currentFieldConstant;
+                previousAcccessLevel = currentAccessLevel;
             }
         }
     }

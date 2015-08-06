@@ -85,16 +85,19 @@
         private static void HandleMemberList(SyntaxNodeAnalysisContext context, SyntaxList<MemberDeclarationSyntax> members)
         {
             var previousSyntaxKind = SyntaxKind.None;
+            var previousAccessLevel = AccessLevel.NotSpecified;
             var previousMemberStatic = true;
             foreach (var member in members)
             {
                 var currentSyntaxKind = member.Kind();
                 currentSyntaxKind = currentSyntaxKind == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : currentSyntaxKind;
                 var modifiers = member.GetModifiers();
+                var currentAccessLevel = AccessLevelHelper.GetAccessLevel(modifiers);
                 var currentMemberStatic = modifiers.Any(SyntaxKind.StaticKeyword);
                 var currentMemberConst = modifiers.Any(SyntaxKind.ConstKeyword);
 
                 if (currentSyntaxKind == previousSyntaxKind
+                    && currentAccessLevel == previousAccessLevel
                     && !previousMemberStatic
                     && currentMemberStatic
                     && !currentMemberConst)
@@ -103,6 +106,7 @@
                 }
 
                 previousSyntaxKind = currentSyntaxKind;
+                previousAccessLevel = currentAccessLevel;
                 previousMemberStatic = currentMemberStatic || currentMemberConst;
             }
         }

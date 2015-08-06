@@ -58,42 +58,28 @@
 
         private static void AnalyzeType(SyntaxNodeAnalysisContext context, TypeDeclarationSyntax typeDeclaration)
         {
-            var staticFields = typeDeclaration.Members
-                .OfType<FieldDeclarationSyntax>()
-                .Where(f => f.Modifiers.Any(SyntaxKind.StaticKeyword))
-                .ToList();
-
-            var firstNonReadonlyField =
-                staticFields.FirstOrDefault(f => !f.Modifiers.Any(SyntaxKind.ReadOnlyKeyword));
-
-            if (firstNonReadonlyField == null)
+            var previousFieldReadonly = true;
+            var previousAccessLevel = AccessLevel.NotSpecified;
+            var previousMemberStatic = true;
+            foreach (var member in typeDeclaration.Members)
             {
-                return;
-            }
-
-            var firstNonReadonlyFieldLocation = firstNonReadonlyField.GetLineSpan();
-            if (!firstNonReadonlyFieldLocation.IsValid)
-            {
-                return;
-            }
-
-            var readonlyFieldLocations =
-                staticFields.Where(f => f.Modifiers.Any(SyntaxKind.ReadOnlyKeyword))
-                    .Where(f => f.GetLineSpan().IsValid)
-                    .Where(f => f.Declaration != null && f.Declaration.Variables.Any())
-                    .Select(f => new
-                    {
-                        FieldDeclaration = f,
-                        FieldEndLinePosition = f.GetLineSpan().EndLinePosition
-                    })
-                    .ToList();
-
-            foreach (var location in readonlyFieldLocations)
-            {
-                if (firstNonReadonlyFieldLocation.EndLinePosition < location.FieldEndLinePosition)
+                var field = member as FieldDeclarationSyntax;
+                if (field == null)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, location.FieldDeclaration.GetLocation()));
+                    continue;
                 }
+
+                var currentFieldReadonly = field.Modifiers.Any(SyntaxKind.ReadOnlyKeyword);
+                var currentAccessLevel = AccessLevelHelper.GetAccessLevel(field.Modifiers);
+                var currentMemberStatic = field.Modifiers.Any(SyntaxKind.StaticKeyword);
+                if (currentMemberStatic && previousMemberStatic && currentFieldReadonly && !previousFieldReadonly)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(field)));
+                }
+
+                previousFieldReadonly = currentFieldReadonly;
+                previousAccessLevel = currentAccessLevel;
+                previousMemberStatic = currentMemberStatic;
             }
         }
     }

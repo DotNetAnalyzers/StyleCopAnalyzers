@@ -53,21 +53,27 @@
             var typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
             var previousFieldReadonly = true;
+            var previousAccessLevel = AccessLevel.NotSpecified;
+            var previousMemberStatic = true;
             foreach (var member in typeDeclaration.Members)
             {
                 var field = member as FieldDeclarationSyntax;
-                if (field == null || field.Modifiers.Any(SyntaxKind.StaticKeyword))
+                if (field == null)
                 {
                     continue;
                 }
 
                 var currentFieldReadonly = field.Modifiers.Any(SyntaxKind.ReadOnlyKeyword);
-                if (currentFieldReadonly && !previousFieldReadonly)
+                var currentAccessLevel = AccessLevelHelper.GetAccessLevel(field.Modifiers);
+                var currentMemberStatic = field.Modifiers.Any(SyntaxKind.StaticKeyword);
+                if (!currentMemberStatic && !previousMemberStatic && currentFieldReadonly && !previousFieldReadonly)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(field)));
                 }
 
                 previousFieldReadonly = currentFieldReadonly;
+                previousAccessLevel = currentAccessLevel;
+                previousMemberStatic = currentMemberStatic;
             }
         }
     }
