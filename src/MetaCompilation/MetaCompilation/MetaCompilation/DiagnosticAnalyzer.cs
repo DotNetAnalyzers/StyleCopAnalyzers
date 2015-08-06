@@ -115,6 +115,15 @@ namespace MetaCompilation
 
         public const string IdStringLiteral = "MetaAnalyzer059";
         internal static DiagnosticDescriptor IdStringLiteralRule = CreateRule(IdStringLiteral, "ID string literal", s_messagePrefix + "The ID should not be a string literal, because the ID must be accessible from the code fix provider");
+
+        public const string Title = "MetaAnalyzer060";
+        internal static DiagnosticDescriptor TitleRule = CreateRule(Title, "Change default title", s_messagePrefix + "Please change the title to a string of your choosing");
+
+        public const string Message = "MetaAnalyzer061";
+        internal static DiagnosticDescriptor MessageRule = CreateRule(Message, "Change default message", s_messagePrefix + "Please change the default message to a string of your choosing");
+
+        public const string Category = "MetaAnalyzer062";
+        internal static DiagnosticDescriptor CategoryRule = CreateRule(Category, "Change default category", s_messagePrefix + "Please change the default category to a string of your choosing");
         #endregion
 
         #region analysis for IfStatement rules
@@ -297,7 +306,10 @@ namespace MetaCompilation
                                              IncorrectArgumentsRule,
                                              TriviaCountMissingRule,
                                              TriviaCountIncorrectRule,
-                                             IdStringLiteralRule);
+                                             IdStringLiteralRule,
+                                             TitleRule,
+                                             MessageRule,
+                                             CategoryRule);
             }
         }
 
@@ -2498,14 +2510,45 @@ namespace MetaCompilation
                                         return emptyRuleNames;
                                     }
                                 }
+                                else if (currentArgName == "title" || currentArgName == "messageFormat" || currentArgName == "category")
+                                {
+                                    Dictionary<string, string> argDefaults = new Dictionary<string, string>();
+                                    argDefaults.Add("title", "Enter a title for this diagnostic");
+                                    argDefaults.Add("messageFormat", "Enter a message to be displayed with this diagnostic");
+                                    argDefaults.Add("category", "Enter a category for this diagnostic (e.g. Formatting)");
+
+                                    if (currentArgExpr.IsKind(SyntaxKind.StringLiteralExpression))
+                                    {
+                                        if ((currentArgExpr as LiteralExpressionSyntax).Token.ValueText == argDefaults[currentArgName])
+                                        {
+                                            if (currentArgName == "title")
+                                            {
+                                                ReportDiagnostic(context, TitleRule, currentArgExpr.GetLocation());
+                                                return emptyRuleNames;
+                                            }
+                                            else if (currentArgName == "messageFormat")
+                                            {
+                                                ReportDiagnostic(context, MessageRule, currentArgExpr.GetLocation());
+                                                return emptyRuleNames;
+                                            }
+                                            else if (currentArgName == "category")
+                                            {
+                                                ReportDiagnostic(context, CategoryRule, currentArgExpr.GetLocation());
+                                                return emptyRuleNames;
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
+
                         if (ruleArgumentList.Arguments.Count != 6)
                         {
                             return emptyRuleNames;
                         }
                     }
                 }
+
                 if (foundARule)
                 {
                     return ruleNames;
