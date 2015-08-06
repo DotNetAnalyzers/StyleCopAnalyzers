@@ -44,21 +44,21 @@
         {
             if (documentsAndDiagnosticsToFixMap != null && documentsAndDiagnosticsToFixMap.Any())
             {
-                var fixesBag = new ConcurrentBag<CodeAction>();
-
                 fixAllContext.CancellationToken.ThrowIfCancellationRequested();
 
                 var documents = documentsAndDiagnosticsToFixMap.Keys.ToImmutableArray();
+                var fixesBag = new List<CodeAction>[documents.Length];
                 var options = new ParallelOptions() { CancellationToken = fixAllContext.CancellationToken };
-                Parallel.ForEach(documents, options, document =>
+                Parallel.ForEach(documents, options, (document, state, index) =>
                 {
                     fixAllContext.CancellationToken.ThrowIfCancellationRequested();
-                    this.AddDocumentFixesAsync(document, documentsAndDiagnosticsToFixMap[document], fixesBag.Add, fixAllContext).Wait(fixAllContext.CancellationToken);
+                    fixesBag[index] = new List<CodeAction>();
+                    this.AddDocumentFixesAsync(document, documentsAndDiagnosticsToFixMap[document], fixesBag[index].Add, fixAllContext).Wait(fixAllContext.CancellationToken);
                 });
 
-                if (fixesBag.Any())
+                if (fixesBag.Any(fixes => fixes?.Count > 0))
                 {
-                    return await this.TryGetMergedFixAsync(fixesBag, fixAllContext).ConfigureAwait(false);
+                    return await this.TryGetMergedFixAsync(fixesBag.SelectMany(i => i), fixAllContext).ConfigureAwait(false);
                 }
             }
 
@@ -71,22 +71,24 @@
             var cancellationToken = fixAllContext.CancellationToken;
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var fixerTasks = new Task[diagnostics.Length];
+            var fixes = new List<CodeAction>[diagnostics.Length];
 
             for (var i = 0; i < diagnostics.Length; i++)
             {
+                int currentFixIndex = i;
                 cancellationToken.ThrowIfCancellationRequested();
                 var diagnostic = diagnostics[i];
                 fixerTasks[i] = Task.Run(async () =>
                 {
-                    var fixes = new List<CodeAction>();
+                    var localFixes = new List<CodeAction>();
                     var context = new CodeFixContext(document, diagnostic,
                         (a, d) =>
                         {
                             // TODO: Can we share code between similar lambdas that we pass to this API in BatchFixAllProvider.cs, CodeFixService.cs and CodeRefactoringService.cs?
                             // Serialize access for thread safety - we don't know what thread the fix provider will call this delegate from.
-                            lock (fixes)
+                            lock (localFixes)
                             {
-                                fixes.Add(a);
+                                localFixes.Add(a);
                             }
                         },
                         cancellationToken);
@@ -96,18 +98,25 @@
                     var task = fixAllContext.CodeFixProvider.RegisterCodeFixesAsync(context) ?? SpecializedTasks.CompletedTask;
                     await task.ConfigureAwait(false);
 
-                    foreach (var fix in fixes)
-                    {
-                        cancellationToken.ThrowIfCancellationRequested();
-                        if (fix != null && fix.EquivalenceKey == fixAllContext.CodeActionEquivalenceKey)
-                        {
-                            addFix(fix);
-                        }
-                    }
+                    cancellationToken.ThrowIfCancellationRequested();
+                    localFixes.RemoveAll(action => action.EquivalenceKey != fixAllContext.CodeActionEquivalenceKey);
+                    fixes[currentFixIndex] = localFixes;
                 });
             }
 
-            Task.WaitAll(fixerTasks, cancellationToken);
+            await Task.WhenAll(fixerTasks).ConfigureAwait(false);
+            foreach (List<CodeAction> fix in fixes)
+            {
+                if (fix == null)
+                {
+                    continue;
+                }
+
+                foreach (CodeAction action in fix)
+                {
+                    addFix(action);
+                }
+            }
         }
 
         public virtual async Task<CodeAction> GetFixAsync(
@@ -116,18 +125,19 @@
         {
             if (projectsAndDiagnosticsToFixMap != null && projectsAndDiagnosticsToFixMap.Any())
             {
-                var fixesBag = new ConcurrentBag<CodeAction>();
                 var options = new ParallelOptions() { CancellationToken = fixAllContext.CancellationToken };
-                Parallel.ForEach(projectsAndDiagnosticsToFixMap.Keys, options, project =>
+                var fixesBag = new List<CodeAction>[projectsAndDiagnosticsToFixMap.Count];
+                Parallel.ForEach(projectsAndDiagnosticsToFixMap.Keys, options, (project, state, index) =>
                 {
                     fixAllContext.CancellationToken.ThrowIfCancellationRequested();
                     var diagnostics = projectsAndDiagnosticsToFixMap[project];
-                    this.AddProjectFixesAsync(project, diagnostics, fixesBag.Add, fixAllContext).Wait(fixAllContext.CancellationToken);
+                    fixesBag[index] = new List<CodeAction>();
+                    this.AddProjectFixesAsync(project, diagnostics, fixesBag[index].Add, fixAllContext).Wait(fixAllContext.CancellationToken);
                 });
 
-                if (fixesBag.Any())
+                if (fixesBag.Any(fixes => fixes?.Count > 0))
                 {
-                    return await this.TryGetMergedFixAsync(fixesBag, fixAllContext).ConfigureAwait(false);
+                    return await this.TryGetMergedFixAsync(fixesBag.SelectMany(i => i), fixAllContext).ConfigureAwait(false);
                 }
             }
 
