@@ -241,31 +241,33 @@ public class Foo
         /// Verifies that the code fix provider will correctly expand the block to a multiline statement, when it starts on the same line as the parent.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/660")]
+        [Fact]
         public async Task TestCodeFixProviderCorrectlyExpandsBlockInSourceFileWithTabsAsync()
         {
+            this.UseTabs = true;
+
             string testCode =
                 "using System.Diagnostics;\r\n" +
                 "public class Foo\r\n" +
                 "{\r\n" +
-                "\tpublic void Bar(int i)" +
+                "\tpublic void Bar(int i)\r\n" +
                 "\t{\r\n" +
                 "\t\tlock (this) { Debug.Assert(true); }\r\n" +
-                "\t}" +
-                "}";
+                "\t}\r\n" +
+                "}\r\n";
 
             string fixedTestCode =
                 "using System.Diagnostics;\r\n" +
                 "public class Foo\r\n" +
                 "{\r\n" +
-                "\tpublic void Bar(int i)" +
+                "\tpublic void Bar(int i)\r\n" +
                 "\t{\r\n" +
-                "\t\tlock (this)" +
+                "\t\tlock (this)\r\n" +
                 "\t\t{\r\n" +
                 "\t\t\tDebug.Assert(true);\r\n" +
                 "\t\t}\r\n" +
-                "\t}" +
-                "}";
+                "\t}\r\n" +
+                "}\r\n";
 
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
