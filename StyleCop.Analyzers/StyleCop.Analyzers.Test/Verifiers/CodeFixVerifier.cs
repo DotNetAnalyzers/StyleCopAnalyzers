@@ -20,6 +20,40 @@
     /// </summary>
     public abstract partial class CodeFixVerifier : DiagnosticVerifier
     {
+        private const int DefaultIndentationSize = 4;
+        private const bool DefaultUseTabs = false;
+
+        public CodeFixVerifier()
+        {
+            this.IndentationSize = DefaultIndentationSize;
+            this.UseTabs = DefaultUseTabs;
+        }
+
+        /// <summary>
+        /// Gets or sets the value of the <see cref="FormattingOptions.IndentationSize"/> to apply to the test
+        /// workspace.
+        /// </summary>
+        /// <value>
+        /// The value of the <see cref="FormattingOptions.IndentationSize"/> to apply to the test workspace.
+        /// </value>
+        public int IndentationSize
+        {
+            get;
+            protected set;
+        }
+
+        /// <summary>
+        /// Gets or sets the value of the <see cref="FormattingOptions.UseTabs"/> to apply to the test workspace.
+        /// </summary>
+        /// <value>
+        /// The value of the <see cref="FormattingOptions.UseTabs"/> to apply to the test workspace.
+        /// </value>
+        public bool UseTabs
+        {
+            get;
+            protected set;
+        }
+
         /// <summary>
         /// Returns the code fix being tested (C#) - to be implemented in non-abstract class.
         /// </summary>
@@ -57,6 +91,17 @@
         protected async Task VerifyCSharpFixAllFixAsync(string oldSource, string newSource, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false, int maxNumberOfIterations = int.MaxValue, CancellationToken cancellationToken = default(CancellationToken))
         {
             await this.VerifyFixInternalAsync(LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), this.GetCSharpCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics, maxNumberOfIterations, GetFixAllAnalyzerDocumentAsync, cancellationToken).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
+        protected override Solution CreateSolution(ProjectId projectId, string language)
+        {
+            Solution solution = base.CreateSolution(projectId, language);
+            solution.Workspace.Options =
+                solution.Workspace.Options
+                .WithChangedOption(FormattingOptions.IndentationSize, language, this.IndentationSize)
+                .WithChangedOption(FormattingOptions.UseTabs, language, this.UseTabs);
+            return solution;
         }
 
         private async Task VerifyFixInternalAsync(string language, ImmutableArray<DiagnosticAnalyzer> analyzers, CodeFixProvider codeFixProvider, string oldSource, string newSource, int? codeFixIndex,

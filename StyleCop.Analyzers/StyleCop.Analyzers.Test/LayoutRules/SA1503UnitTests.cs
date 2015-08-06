@@ -259,9 +259,11 @@ public class Foo
         /// Verifies that the codefix provider will properly handle alternate indentations.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/660")]
+        [Fact]
         public async Task TestCodeFixProviderWithAlternateIndentationAsync()
         {
+            this.IndentationSize = 1;
+
             var testCode = @"using System.Diagnostics;
 public class Foo
 {
