@@ -39,6 +39,7 @@ Instructions
 * Congratulations! You have written an analyzer!
 
 If you would like to try your analyzer out, or if you would like to debug at any step of the tutorial, make sure your configuration is set to Debug and press F5. This will launch a second instance of Visual Studio with your analyzer deployed as a VSIX (Visual Studio Extension). You can then open a new C# console app, write an if-statement, and any messages from your analyzer will appear.
+If you would like to explore a code fix for your diagnostic, open up CodeFixProvider.cs. Edit the comment in FixableDiagnosticsId then press F5 again to see the code fix to go with your analyzer message.
 
 Syntax Trees
 ------------
