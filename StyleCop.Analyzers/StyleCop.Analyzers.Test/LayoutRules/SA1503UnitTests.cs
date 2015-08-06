@@ -252,7 +252,24 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            // The batch fixer does correct all problems in one pass.
+            var batchFixedTestCode = @"using System.Diagnostics;
+public class Foo
+{
+    public void Bar(int i)
+    {
+        if (i == 0)
+        {
+            Debug.Assert(true);
+        }
+        else
+        {
+            Debug.Assert(false);
+        }
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, batchNewSource: batchFixedTestCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
