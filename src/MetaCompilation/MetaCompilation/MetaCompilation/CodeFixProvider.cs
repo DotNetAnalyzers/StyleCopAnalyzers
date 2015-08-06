@@ -82,7 +82,10 @@ namespace MetaCompilation
                                              MetaCompilationAnalyzer.IncorrectArguments,
                                              MetaCompilationAnalyzer.TrailingTriviaCountMissing,
                                              MetaCompilationAnalyzer.TrailingTriviaCountIncorrect,
-                                             MetaCompilationAnalyzer.IdStringLiteral);
+                                             MetaCompilationAnalyzer.IdStringLiteral,
+                                             MetaCompilationAnalyzer.Title,
+                                             MetaCompilationAnalyzer.Message,
+                                             MetaCompilationAnalyzer.Category);
             }
         }
 
@@ -551,8 +554,56 @@ namespace MetaCompilation
                             context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check the amount of trailing trivia", c => TriviaCountIncorrectAsync(context.Document, declaration, c), "Check the amount of trailing trivia"), diagnostic);
                         }
                         break;
+                    case MetaCompilationAnalyzer.Title:
+                        IEnumerable<LiteralExpressionSyntax> titleDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<LiteralExpressionSyntax>();
+                        if (titleDeclarations.Count() != 0)
+                        {
+                            LiteralExpressionSyntax declaration = titleDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Replace the title", c => ReplaceTitle(context.Document, declaration, c), "Replace the title"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.Message:
+                        IEnumerable<LiteralExpressionSyntax> messageDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<LiteralExpressionSyntax>();
+                        if (messageDeclarations.Count() != 0)
+                        {
+                            LiteralExpressionSyntax declaration = messageDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Replace the title", c => ReplaceMessage(context.Document, declaration, c), "Replace the title"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.Category:
+                        IEnumerable<LiteralExpressionSyntax> categoryDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<LiteralExpressionSyntax>();
+                        if (categoryDeclarations.Count() != 0)
+                        {
+                            LiteralExpressionSyntax declaration = categoryDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Replace the title", c => ReplaceCategory(context.Document, declaration, c), "Replace the title"), diagnostic);
+                        }
+                        break;
                 }
             }
+        }
+
+        // replace the category string
+        private async Task<Document> ReplaceCategory(Document document, LiteralExpressionSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document); 
+            SyntaxNode newString = generator.LiteralExpression("Formatting");
+            return await ReplaceNode(declaration, newString, document);
+        }
+
+        // replaces the messageFormat string
+        private async Task<Document> ReplaceMessage(Document document, LiteralExpressionSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            SyntaxNode newString = generator.LiteralExpression("The trivia between 'if' and '(' should be a single space");
+            return await ReplaceNode(declaration, newString, document);
+        }
+
+        // replaces the title string
+        private async Task<Document> ReplaceTitle(Document document, LiteralExpressionSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            SyntaxNode newString = generator.LiteralExpression("If-statement spacing");
+            return await ReplaceNode(declaration, newString, document);
         }
 
         // replaces a node in the document
