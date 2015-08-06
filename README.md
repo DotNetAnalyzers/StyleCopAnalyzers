@@ -28,6 +28,11 @@ MetaCompilation
 
 The MetaCompilation Analyzer is an analyzer that functions as a tutorial to teach users how to write an analyzer. It uses diagnostics and code fixes to guide the user through the various steps required to create a simple analyzer. It is designed for a novice analyzer programmer with some previous programming experience.
 
+Microsoft.AnalyzerPowerPack
+---------------------------
+
+General language rules implemented as analyzers using the .NET Compiler Platform ("Roslyn").
+
 Microsoft.CodeAnalysis.Analyzers
 --------------------------------
 
