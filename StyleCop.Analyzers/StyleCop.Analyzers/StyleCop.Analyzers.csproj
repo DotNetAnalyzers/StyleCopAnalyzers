@@ -240,6 +240,7 @@
     <Compile Include="OrderingRules\SA1200UsingDirectivesMustBePlacedWithinNamespace.cs" />
     <Compile Include="OrderingRules\SA1201ElementsMustAppearInTheCorrectOrder.cs" />
     <Compile Include="OrderingRules\SA1202ElementsMustBeOrderedByAccess.cs" />
+    <Compile Include="OrderingRules\SA1203CodeFixProvider.cs" />
     <Compile Include="OrderingRules\SA1203ConstantsMustAppearBeforeFields.cs" />
     <Compile Include="OrderingRules\SA1204StaticElementsMustAppearBeforeInstanceElements.cs" />
     <Compile Include="OrderingRules\SA1205CodeFixProvider.cs" />
@@ -442,6 +443,7 @@
     <EmbeddedResource Include="OrderingRules\OrderingResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>OrderingResources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ReadabilityRules\ReadabilityResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

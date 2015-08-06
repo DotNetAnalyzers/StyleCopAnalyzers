@@ -1,4 +1,6 @@
-﻿namespace StyleCop.Analyzers.Test.OrderingRules
+﻿using Microsoft.CodeAnalysis.CodeFixes;
+
+namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Collections.Generic;
     using System.Threading;
@@ -8,7 +10,7 @@
     using TestHelper;
     using Xunit;
 
-    public class SA1203UnitTests : DiagnosticVerifier
+    public class SA1203UnitTests : CodeFixVerifier
     {
         [Fact]
         public async Task TestNoDiagnosticAsync()
@@ -61,6 +63,60 @@ public class Foo
 }";
             var firstDiagnostic = this.CSharpDiagnostic().WithLocation(6, 23);
             await this.VerifyCSharpDiagnosticAsync(testCode, firstDiagnostic, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix will properly copy over the access modifier defined in another fragment of the partial element.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestCodeFixWithXmlDocumentationAsync()
+        {
+            var testCode = @"public class Foo
+{
+    private const string Before1 = ""test"";
+
+    public const string Before2 = ""test"";
+
+    private int field1;
+
+    private const string After1 = ""test"";
+
+    private int between;
+
+    public const string After2 = ""test"";
+}
+";
+
+            var fixedTestCode = @"public class Foo
+{
+    private const string Before1 = ""test"";
+
+    public const string Before2 = ""test"";
+
+    private const string After1 = ""test"";
+
+    public const string After2 = ""test"";
+
+    private int field1;
+
+    private int between;
+}
+";
+
+            var diagnosticResults = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(9, 26),
+                this.CSharpDiagnostic().WithLocation(13, 25)
+            };
+            await this.VerifyCSharpDiagnosticAsync(testCode, diagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1203CodeFixProvider();
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
