@@ -29,4 +29,4 @@ See [Contributing](CONTRIBUTING.md)
 
 ## Current status
 
-An up-to-date overview of the status can be found [here](http://stylecop.pdelvo.com/).
+An up-to-date list of which StyleCop rules are implemented and which have code fixes can be found [here](http://stylecop.pdelvo.com/).
