@@ -13,10 +13,11 @@
   </Installation>
   <Dependencies>
     <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
+    <Dependency d:Source="Installed" Id="3a012d4e-6057-4e7c-8123-6d4be1d4723c" DisplayName=".NET Compiler Platform SDK" Version="[1.0.0.50618,2.0)" d:InstallSource="Download" />
   </Dependencies>
   <Assets>
     <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="MetaCompilation" Path="|MetaCompilation|"/>
     <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="Project" d:ProjectName="MetaCompilation" Path="|MetaCompilation|"/>
-    <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" d:TargetPath="ProjectTemplates\Analyzer Tutorial Template.zip" />
+    <Asset Type="Microsoft.VisualStudio.ProjectTemplate" d:Source="File" Path="ProjectTemplates" d:TargetPath="ProjectTemplates\AnalyzerTutorialTemplate.zip" />
   </Assets>
 </PackageManifest>

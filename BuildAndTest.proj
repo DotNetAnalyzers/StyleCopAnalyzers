@@ -58,6 +58,7 @@
       <TestAssemblies Include="Binaries\$(Configuration)\Roslyn.CodeAnalysis.Analyzers.UnitTests.dll" />
       <TestAssemblies Include="Binaries\$(Configuration)\Desktop.Analyzers.UnitTests.dll" />
       <TestAssemblies Include="Binaries\$(Configuration)\System.Runtime.Analyzers.UnitTests.dll" />
+      <TestAssemblies Include="Binaries\$(Configuration)\Microsoft.AnalyzerPowerPack.UnitTests.dll" />
     </ItemGroup>
 
     <Exec Command="&quot;$(PackagesDirectory)\xunit.runner.console.2.0.0\tools\xunit.console.x86.exe&quot; @(TestAssemblies, ' ') $(RunTestArgs)" />
@@ -66,5 +67,4 @@
 
   <Target Name="BuildAndTest"
           DependsOnTargets="Build;Package;Test" />
-
 </Project>

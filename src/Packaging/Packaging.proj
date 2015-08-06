@@ -7,6 +7,7 @@
     <Project Include="..\MetaCompilation\MetaCompilation\MetaCompilation.Nuget\MetaCompilation.Nuget.proj" />
     <Project Include="..\CodeAnalysis\NuGet\CodeAnalysisDiagnosticAnalyzers.NuGet.proj" />
     <Project Include="..\FxCop\System.Runtime.Analyzers\NuGet\SystemRuntimeAnalyzers.NuGet.proj" />
+    <Project Include="..\AnalyzerPowerPack\NuGet\AnalyzerPowerPack.NuGet.proj" />
   </ItemGroup>
   <ImportGroup Label="Imports">
     <Import Project="..\..\build\Targets\Analyzers.Imports.targets" />

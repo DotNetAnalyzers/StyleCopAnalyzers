@@ -36,7 +36,7 @@
     <StartArguments>/rootsuffix Roslyn</StartArguments>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="ProjectTemplates\Analyzer Tutorial Template.zip">
+    <Content Include="ProjectTemplates\AnalyzerTutorialTemplate.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>

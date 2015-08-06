@@ -43,13 +43,13 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
+    <None Include="ReadMe.md" />
     <None Include="tools\install.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="tools\uninstall.ps1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\..\..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />

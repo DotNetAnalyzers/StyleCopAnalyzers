@@ -25,6 +25,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
         private static readonly MetadataReference s_codeAnalysisReference = MetadataReference.CreateFromAssemblyInternal(typeof(Compilation).Assembly);
         private static readonly MetadataReference s_workspacesReference = MetadataReference.CreateFromAssemblyInternal(typeof(Workspace).Assembly);
         private static readonly MetadataReference s_immutableCollectionsReference = MetadataReference.CreateFromAssemblyInternal(typeof(ImmutableArray<int>).Assembly);
+        private static readonly MetadataReference s_systemDiagnosticsDebugReference = MetadataReference.CreateFromAssemblyInternal(typeof(System.Diagnostics.Debug).Assembly);
         private static readonly CompilationOptions s_CSharpDefaultOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
         private static readonly CompilationOptions s_visualBasicDefaultOptions = new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
 
@@ -320,6 +321,7 @@ namespace Microsoft.CodeAnalysis.UnitTests
                 //.AddMetadataReference(projectId, TestBase.SystemThreadingTaskFacadeRef)
                 .AddMetadataReference(projectId, s_immutableCollectionsReference)
                 .AddMetadataReference(projectId, s_workspacesReference)
+                .AddMetadataReference(projectId, s_systemDiagnosticsDebugReference)
                 .WithProjectCompilationOptions(projectId, options);
 
             if (addLanguageSpecificCodeAnalysisReference)
