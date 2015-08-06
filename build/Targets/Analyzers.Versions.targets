@@ -12,6 +12,12 @@
     <DesktopAnalyzersSemanticVersion>1.0.0</DesktopAnalyzersSemanticVersion>
     <DesktopAnalyzersPreReleaseVersion>beta1</DesktopAnalyzersPreReleaseVersion>
 
+    <SystemRuntimeAnalyzersSemanticVersion>1.0.2</SystemRuntimeAnalyzersSemanticVersion>
+    <SystemRuntimeAnalyzersPreReleaseVersion>beta1</SystemRuntimeAnalyzersPreReleaseVersion>
+    
+    <SystemRuntimeInteropServicesAnalyzersSemanticVersion>1.0.2</SystemRuntimeInteropServicesAnalyzersSemanticVersion>
+    <SystemRuntimeInteropServicesAnalyzersPreReleaseVersion>beta1</SystemRuntimeInteropServicesAnalyzersPreReleaseVersion>
+
     <SharedTestSemanticVersion>1.0.0</SharedTestSemanticVersion>
     <SharedTestPreReleaseVersion>beta1</SharedTestPreReleaseVersion>
 
