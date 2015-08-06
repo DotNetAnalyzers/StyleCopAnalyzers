@@ -56,7 +56,7 @@
                     this.AddDocumentFixesAsync(document, documentsAndDiagnosticsToFixMap[document], fixesBag[index].Add, fixAllContext).Wait(fixAllContext.CancellationToken);
                 });
 
-                if (fixesBag.Any(fixes => fixes?.Count > 0))
+                if (fixesBag.Any(fixes => fixes.Count > 0))
                 {
                     return await this.TryGetMergedFixAsync(fixesBag.SelectMany(i => i), fixAllContext).ConfigureAwait(false);
                 }
@@ -135,7 +135,7 @@
                     this.AddProjectFixesAsync(project, diagnostics, fixesBag[index].Add, fixAllContext).Wait(fixAllContext.CancellationToken);
                 });
 
-                if (fixesBag.Any(fixes => fixes?.Count > 0))
+                if (fixesBag.Any(fixes => fixes.Count > 0))
                 {
                     return await this.TryGetMergedFixAsync(fixesBag.SelectMany(i => i), fixAllContext).ConfigureAwait(false);
                 }
