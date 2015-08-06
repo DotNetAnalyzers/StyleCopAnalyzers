@@ -2360,11 +2360,12 @@ namespace MetaCompilation
                 List<string> emptyRuleNames = new List<string>();
                 bool foundARule = false;
 
-                foreach (var fieldSymbol in _analyzerFieldSymbols)
+                foreach (IFieldSymbol fieldSymbol in _analyzerFieldSymbols)
                 {
                     if (fieldSymbol.Type != null && fieldSymbol.Type.MetadataName == "DiagnosticDescriptor")
                     {
                         foundARule = true;
+
                         if (fieldSymbol.DeclaredAccessibility != Accessibility.Internal || !fieldSymbol.IsStatic)
                         {
                             ReportDiagnostic(context, InternalAndStaticErrorRule, fieldSymbol.Locations[0], fieldSymbol.Name);
@@ -2377,7 +2378,13 @@ namespace MetaCompilation
                             return emptyRuleNames;
                         }
 
-                        var objectCreationSyntax = declaratorSyntax.Initializer.Value as ObjectCreationExpressionSyntax;
+                        var initializer = declaratorSyntax.Initializer as EqualsValueClauseSyntax;
+                        if (initializer == null)
+                        {
+                            return emptyRuleNames;
+                        }
+
+                        var objectCreationSyntax = initializer.Value as ObjectCreationExpressionSyntax;
                         if (objectCreationSyntax == null)
                         {
                             return emptyRuleNames;
@@ -2433,30 +2440,33 @@ namespace MetaCompilation
                                         ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation());
                                         return emptyRuleNames;
                                     }
-                                    else if (memberAccessExpr.Expression != null && memberAccessExpr.Name != null)
+
+                                    var expressionIdentifier = memberAccessExpr.Expression as IdentifierNameSyntax;
+                                    if (expressionIdentifier == null)
                                     {
-                                        var expressionIdentifier = memberAccessExpr.Expression as IdentifierNameSyntax;
-                                        string expressionText = null;
-                                        if (expressionIdentifier != null)
-                                        {
-                                            expressionText = expressionIdentifier.Identifier.Text;
-                                        }
-
-                                        string identifierName = memberAccessExpr.Name.Identifier.Text;
-                                        List<string> severities = new List<string> { "Warning", "Error" };
-
-                                        if (expressionText != "DiagnosticSeverity")
-                                        {
-                                            ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation());
-                                            return emptyRuleNames;
-                                        }
-                                        else if (expressionText == "DiagnosticSeverity" && !severities.Contains(identifierName))
-                                        {
-                                            ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation());
-                                            return emptyRuleNames;
-                                        }
+                                        ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation());
+                                        return emptyRuleNames;
                                     }
-                                    else
+
+                                    string expressionText = expressionIdentifier.Identifier.Text;
+
+                                    var expressionName = memberAccessExpr.Name as IdentifierNameSyntax;
+                                    if (expressionName == null)
+                                    {
+                                        ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation());
+                                        return emptyRuleNames;
+                                    }
+
+                                    string identifierName = memberAccessExpr.Name.Identifier.Text;
+
+                                    List<string> severities = new List<string> { "Warning", "Error" };
+
+                                    if (expressionText != "DiagnosticSeverity")
+                                    {
+                                        ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation());
+                                        return emptyRuleNames;
+                                    }
+                                    else if (!severities.Contains(identifierName))
                                     {
                                         ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation());
                                         return emptyRuleNames;
@@ -2486,20 +2496,19 @@ namespace MetaCompilation
                                         return emptyRuleNames;
                                     }
 
-                                    if (fieldSymbol.Name == null)
+                                    var ruleName = fieldSymbol.Name as string;
+                                    if (ruleName == null)
                                     {
                                         return emptyRuleNames;
                                     }
-                                    
-                                    var foundId = currentArgExprIdentifier.Identifier.Text;
-                                    var foundRule = fieldSymbol.Name;
+
                                     bool ruleIdFound = false;
 
                                     foreach (string idName in idNames)
                                     {
-                                        if (idName == foundId)
+                                        if (idName == currentArgExprIdentifier.Identifier.Text)
                                         {
-                                            ruleNames.Add(foundRule);
+                                            ruleNames.Add(ruleName);
                                             ruleIdFound = true;
                                         }
                                     }
@@ -2556,7 +2565,7 @@ namespace MetaCompilation
                 else
                 {
                     var analyzerClass = _analyzerClassSymbol.DeclaringSyntaxReferences[0].GetSyntax() as ClassDeclarationSyntax;
-                    var idLocation = analyzerClass.Identifier.GetLocation();
+                    Location idLocation = null;
                     foreach (IFieldSymbol field in _analyzerFieldSymbols)
                     {
                         if (idNames.Contains(field.Name))
