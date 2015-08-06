@@ -82,7 +82,10 @@ namespace MetaCompilation
                                              MetaCompilationAnalyzer.IncorrectArguments,
                                              MetaCompilationAnalyzer.TrailingTriviaCountMissing,
                                              MetaCompilationAnalyzer.TrailingTriviaCountIncorrect,
-                                             MetaCompilationAnalyzer.IdStringLiteral);
+                                             MetaCompilationAnalyzer.IdStringLiteral,
+                                             MetaCompilationAnalyzer.Title,
+                                             MetaCompilationAnalyzer.Message,
+                                             MetaCompilationAnalyzer.Category);
             }
         }
 
@@ -551,8 +554,56 @@ namespace MetaCompilation
                             context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Check the amount of trailing trivia", c => TriviaCountIncorrectAsync(context.Document, declaration, c), "Check the amount of trailing trivia"), diagnostic);
                         }
                         break;
+                    case MetaCompilationAnalyzer.Title:
+                        IEnumerable<LiteralExpressionSyntax> titleDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<LiteralExpressionSyntax>();
+                        if (titleDeclarations.Count() != 0)
+                        {
+                            LiteralExpressionSyntax declaration = titleDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Replace the title", c => ReplaceTitle(context.Document, declaration, c), "Replace the title"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.Message:
+                        IEnumerable<LiteralExpressionSyntax> messageDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<LiteralExpressionSyntax>();
+                        if (messageDeclarations.Count() != 0)
+                        {
+                            LiteralExpressionSyntax declaration = messageDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Replace the title", c => ReplaceMessage(context.Document, declaration, c), "Replace the title"), diagnostic);
+                        }
+                        break;
+                    case MetaCompilationAnalyzer.Category:
+                        IEnumerable<LiteralExpressionSyntax> categoryDeclarations = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<LiteralExpressionSyntax>();
+                        if (categoryDeclarations.Count() != 0)
+                        {
+                            LiteralExpressionSyntax declaration = categoryDeclarations.First();
+                            context.RegisterCodeFix(CodeAction.Create(MessagePrefix + "Replace the title", c => ReplaceCategory(context.Document, declaration, c), "Replace the title"), diagnostic);
+                        }
+                        break;
                 }
             }
+        }
+
+        // replace the category string
+        private async Task<Document> ReplaceCategory(Document document, LiteralExpressionSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document); 
+            SyntaxNode newString = generator.LiteralExpression("Formatting");
+            return await ReplaceNode(declaration, newString, document);
+        }
+
+        // replaces the messageFormat string
+        private async Task<Document> ReplaceMessage(Document document, LiteralExpressionSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            SyntaxNode newString = generator.LiteralExpression("The trivia between 'if' and '(' should be a single space");
+            return await ReplaceNode(declaration, newString, document);
+        }
+
+        // replaces the title string
+        private async Task<Document> ReplaceTitle(Document document, LiteralExpressionSyntax declaration, CancellationToken c)
+        {
+            SyntaxGenerator generator = SyntaxGenerator.GetGenerator(document);
+            SyntaxNode newString = generator.LiteralExpression("If-statement spacing");
+            return await ReplaceNode(declaration, newString, document);
         }
 
         // replaces a node in the document
@@ -1458,7 +1509,8 @@ namespace MetaCompilation
                 }
             }
 
-            FieldDeclarationSyntax newRule = rule.ReplaceNode(oldIdName, newIdName);
+            SyntaxNode newArg = generator.Argument("id", RefKind.None, newIdName).WithLeadingTrivia(SyntaxFactory.Whitespace("            "));
+            FieldDeclarationSyntax newRule = rule.ReplaceNode(oldIdName.Ancestors().OfType<ArgumentSyntax>().First(), newArg);
 
             return await ReplaceNode(rule, newRule.WithTrailingTrivia(SyntaxFactory.TriviaList(SyntaxFactory.EndOfLine("\r\n"), SyntaxFactory.Whitespace("        "), SyntaxFactory.ParseTrailingTrivia("// id: Identifies each rule. Same as the public constant declared above").ElementAt(0), SyntaxFactory.EndOfLine("\r\n"))).WithLeadingTrivia(rule.GetLeadingTrivia()), document);
         }
@@ -2252,7 +2304,7 @@ namespace MetaCompilation
 
             // creates a variable holding a DiagnosticDescriptor
             // uses SyntaxFactory for formatting
-            protected internal static FieldDeclarationSyntax CreateEmptyRule(SyntaxGenerator generator, string idName="Change me to the name of the above constant", string titleDefault="Enter a title for this diagnostic", string messageDefault="Enter a message to be displayed with this diagnostic",
+            protected internal static FieldDeclarationSyntax CreateEmptyRule(SyntaxGenerator generator, string idName="", string titleDefault="Enter a title for this diagnostic", string messageDefault="Enter a message to be displayed with this diagnostic",
                                                                     string categoryDefault="Enter a category for this diagnostic (e.g. Formatting)", ExpressionSyntax severityDefault=null, ExpressionSyntax enabledDefault=null)
             {
                 if (severityDefault == null)
@@ -2269,8 +2321,16 @@ namespace MetaCompilation
 
                 var arguments = new ArgumentSyntax[6];
                 string whitespace = "            ";
+                SyntaxNode id = null;
+                if (idName != "")
+                {
+                    id = generator.LiteralExpression(idName);
+                }
+                else
+                {
+                    id = generator.IdentifierName("").WithTrailingTrivia(SyntaxFactory.ParseTrailingTrivia("/* The ID here should be the public constant declared above */"));
+                }
 
-                SyntaxNode id = generator.LiteralExpression(idName);
                 var idArg = generator.Argument("id", RefKind.None, id).WithLeadingTrivia(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.Whitespace(whitespace)) as ArgumentSyntax;
                 arguments[0] = idArg;
 

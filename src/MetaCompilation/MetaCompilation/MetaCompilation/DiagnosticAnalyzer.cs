@@ -115,6 +115,15 @@ namespace MetaCompilation
 
         public const string IdStringLiteral = "MetaAnalyzer059";
         internal static DiagnosticDescriptor IdStringLiteralRule = CreateRule(IdStringLiteral, "ID string literal", s_messagePrefix + "The ID should not be a string literal, because the ID must be accessible from the code fix provider");
+
+        public const string Title = "MetaAnalyzer060";
+        internal static DiagnosticDescriptor TitleRule = CreateRule(Title, "Change default title", s_messagePrefix + "Please change the title to a string of your choosing");
+
+        public const string Message = "MetaAnalyzer061";
+        internal static DiagnosticDescriptor MessageRule = CreateRule(Message, "Change default message", s_messagePrefix + "Please change the default message to a string of your choosing");
+
+        public const string Category = "MetaAnalyzer062";
+        internal static DiagnosticDescriptor CategoryRule = CreateRule(Category, "Change default category", s_messagePrefix + "Please change the category to a string of your choosing");
         #endregion
 
         #region analysis for IfStatement rules
@@ -297,7 +306,10 @@ namespace MetaCompilation
                                              IncorrectArgumentsRule,
                                              TriviaCountMissingRule,
                                              TriviaCountIncorrectRule,
-                                             IdStringLiteralRule);
+                                             IdStringLiteralRule,
+                                             TitleRule,
+                                             MessageRule,
+                                             CategoryRule);
             }
         }
 
@@ -2348,11 +2360,12 @@ namespace MetaCompilation
                 List<string> emptyRuleNames = new List<string>();
                 bool foundARule = false;
 
-                foreach (var fieldSymbol in _analyzerFieldSymbols)
+                foreach (IFieldSymbol fieldSymbol in _analyzerFieldSymbols)
                 {
                     if (fieldSymbol.Type != null && fieldSymbol.Type.MetadataName == "DiagnosticDescriptor")
                     {
                         foundARule = true;
+
                         if (fieldSymbol.DeclaredAccessibility != Accessibility.Internal || !fieldSymbol.IsStatic)
                         {
                             ReportDiagnostic(context, InternalAndStaticErrorRule, fieldSymbol.Locations[0], fieldSymbol.Name);
@@ -2365,7 +2378,13 @@ namespace MetaCompilation
                             return emptyRuleNames;
                         }
 
-                        var objectCreationSyntax = declaratorSyntax.Initializer.Value as ObjectCreationExpressionSyntax;
+                        var initializer = declaratorSyntax.Initializer as EqualsValueClauseSyntax;
+                        if (initializer == null)
+                        {
+                            return emptyRuleNames;
+                        }
+
+                        var objectCreationSyntax = initializer.Value as ObjectCreationExpressionSyntax;
                         if (objectCreationSyntax == null)
                         {
                             return emptyRuleNames;
@@ -2421,30 +2440,33 @@ namespace MetaCompilation
                                         ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation());
                                         return emptyRuleNames;
                                     }
-                                    else if (memberAccessExpr.Expression != null && memberAccessExpr.Name != null)
+
+                                    var expressionIdentifier = memberAccessExpr.Expression as IdentifierNameSyntax;
+                                    if (expressionIdentifier == null)
                                     {
-                                        var expressionIdentifier = memberAccessExpr.Expression as IdentifierNameSyntax;
-                                        string expressionText = null;
-                                        if (expressionIdentifier != null)
-                                        {
-                                            expressionText = expressionIdentifier.Identifier.Text;
-                                        }
-
-                                        string identifierName = memberAccessExpr.Name.Identifier.Text;
-                                        List<string> severities = new List<string> { "Warning", "Error" };
-
-                                        if (expressionText != "DiagnosticSeverity")
-                                        {
-                                            ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation());
-                                            return emptyRuleNames;
-                                        }
-                                        else if (expressionText == "DiagnosticSeverity" && !severities.Contains(identifierName))
-                                        {
-                                            ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation());
-                                            return emptyRuleNames;
-                                        }
+                                        ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation());
+                                        return emptyRuleNames;
                                     }
-                                    else
+
+                                    string expressionText = expressionIdentifier.Identifier.Text;
+
+                                    var expressionName = memberAccessExpr.Name as IdentifierNameSyntax;
+                                    if (expressionName == null)
+                                    {
+                                        ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation());
+                                        return emptyRuleNames;
+                                    }
+
+                                    string identifierName = memberAccessExpr.Name.Identifier.Text;
+
+                                    List<string> severities = new List<string> { "Warning", "Error" };
+
+                                    if (expressionText != "DiagnosticSeverity")
+                                    {
+                                        ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation());
+                                        return emptyRuleNames;
+                                    }
+                                    else if (!severities.Contains(identifierName))
                                     {
                                         ReportDiagnostic(context, DefaultSeverityErrorRule, currentArgExpr.GetLocation());
                                         return emptyRuleNames;
@@ -2454,11 +2476,11 @@ namespace MetaCompilation
                                 {
                                     if (currentArgExprIdentifier != null)
                                     {
-                                    if (currentArgExprIdentifier.Identifier.Text == "")
-                                    {
-                                        ReportDiagnostic(context, IdDeclTypeErrorRule, currentArg.GetLocation());
-                                        return emptyRuleNames;
-                                    }
+                                        if (currentArgExprIdentifier.Identifier.Text == "")
+                                        {
+                                            ReportDiagnostic(context, IdDeclTypeErrorRule, Location.Create(currentArg.SyntaxTree, currentArg.NameColon.ColonToken.TrailingTrivia.FullSpan));
+                                            return emptyRuleNames;
+                                        }
                                     }
 
 
@@ -2474,20 +2496,19 @@ namespace MetaCompilation
                                         return emptyRuleNames;
                                     }
 
-                                    if (fieldSymbol.Name == null)
+                                    var ruleName = fieldSymbol.Name as string;
+                                    if (ruleName == null)
                                     {
                                         return emptyRuleNames;
                                     }
-                                    
-                                    var foundId = currentArgExprIdentifier.Identifier.Text;
-                                    var foundRule = fieldSymbol.Name;
+
                                     bool ruleIdFound = false;
 
                                     foreach (string idName in idNames)
                                     {
-                                        if (idName == foundId)
+                                        if (idName == currentArgExprIdentifier.Identifier.Text)
                                         {
-                                            ruleNames.Add(foundRule);
+                                            ruleNames.Add(ruleName);
                                             ruleIdFound = true;
                                         }
                                     }
@@ -2498,14 +2519,45 @@ namespace MetaCompilation
                                         return emptyRuleNames;
                                     }
                                 }
+                                else if (currentArgName == "title" || currentArgName == "messageFormat" || currentArgName == "category")
+                                {
+                                    Dictionary<string, string> argDefaults = new Dictionary<string, string>();
+                                    argDefaults.Add("title", "Enter a title for this diagnostic");
+                                    argDefaults.Add("messageFormat", "Enter a message to be displayed with this diagnostic");
+                                    argDefaults.Add("category", "Enter a category for this diagnostic (e.g. Formatting)");
+
+                                    if (currentArgExpr.IsKind(SyntaxKind.StringLiteralExpression))
+                                    {
+                                        if ((currentArgExpr as LiteralExpressionSyntax).Token.ValueText == argDefaults[currentArgName])
+                                        {
+                                            if (currentArgName == "title")
+                                            {
+                                                ReportDiagnostic(context, TitleRule, currentArgExpr.GetLocation());
+                                                return emptyRuleNames;
+                                            }
+                                            else if (currentArgName == "messageFormat")
+                                            {
+                                                ReportDiagnostic(context, MessageRule, currentArgExpr.GetLocation());
+                                                return emptyRuleNames;
+                                            }
+                                            else if (currentArgName == "category")
+                                            {
+                                                ReportDiagnostic(context, CategoryRule, currentArgExpr.GetLocation());
+                                                return emptyRuleNames;
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
+
                         if (ruleArgumentList.Arguments.Count != 6)
                         {
                             return emptyRuleNames;
                         }
                     }
                 }
+
                 if (foundARule)
                 {
                     return ruleNames;
@@ -2513,7 +2565,7 @@ namespace MetaCompilation
                 else
                 {
                     var analyzerClass = _analyzerClassSymbol.DeclaringSyntaxReferences[0].GetSyntax() as ClassDeclarationSyntax;
-                    var idLocation = analyzerClass.Identifier.GetLocation();
+                    Location idLocation = null;
                     foreach (IFieldSymbol field in _analyzerFieldSymbols)
                     {
                         if (idNames.Contains(field.Name))
