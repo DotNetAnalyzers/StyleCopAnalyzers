@@ -68,14 +68,29 @@
         /// </summary>
         /// <param name="oldSource">A class in the form of a string before the code fix was applied to it.</param>
         /// <param name="newSource">A class in the form of a string after the code fix was applied to it.</param>
+        /// <param name="batchNewSource">A class in the form of a string after the batch fixer was applied to it.</param>
         /// <param name="codeFixIndex">Index determining which code fix to apply if there are multiple.</param>
         /// <param name="allowNewCompilerDiagnostics">A value indicating whether or not the test will fail if the code fix introduces other warnings after being applied.</param>
         /// <param name="maxNumberOfIterations">Defines an upper limit for the number of iterations the fixer will be called.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        protected async Task VerifyCSharpFixAsync(string oldSource, string newSource, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false, int maxNumberOfIterations = int.MaxValue, CancellationToken cancellationToken = default(CancellationToken))
+        protected async Task VerifyCSharpFixAsync(string oldSource, string newSource, string batchNewSource = null, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false, int maxNumberOfIterations = int.MaxValue, CancellationToken cancellationToken = default(CancellationToken))
         {
-            await this.VerifyFixInternalAsync(LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), this.GetCSharpCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics, maxNumberOfIterations, GetSingleAnalyzerDocumentAsync, cancellationToken).ConfigureAwait(false);
+            var t1 = this.VerifyFixInternalAsync(LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), this.GetCSharpCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics, maxNumberOfIterations, GetSingleAnalyzerDocumentAsync, cancellationToken).ConfigureAwait(false);
+
+            var fixAllProvider = this.GetCSharpCodeFixProvider().GetFixAllProvider();
+
+            if (fixAllProvider == null)
+            {
+                await t1;
+            }
+            else
+            {
+                var t2 = this.VerifyFixInternalAsync(LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), this.GetCSharpCodeFixProvider(), oldSource, batchNewSource ?? newSource, codeFixIndex, allowNewCompilerDiagnostics, maxNumberOfIterations, GetFixAllAnalyzerDocumentAsync, cancellationToken).ConfigureAwait(false);
+                await t1;
+                cancellationToken.ThrowIfCancellationRequested();
+                await t2;
+            }
         }
 
         /// <summary>
@@ -215,23 +230,34 @@
                     Assert.True(false, "The upper limit for the number of fix all iterations was exceeded");
                 }
 
+                string equivalenceKey = null;
+                foreach (var diagnostic in analyzerDiagnostics)
+                {
+                    var actions = new List<CodeAction>();
+                    var context = new CodeFixContext(document, diagnostic, (a, d) => actions.Add(a), cancellationToken);
+                    await codeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
+                    if (actions.Count > (codeFixIndex ?? 0))
+                    {
+                        equivalenceKey = actions[codeFixIndex ?? 0].EquivalenceKey;
+                        break;
+                    }
+                }
+
                 previousDiagnostics = analyzerDiagnostics;
 
                 done = true;
 
                 FixAllContext.DiagnosticProvider fixAllDiagnosticProvider = TestDiagnosticProvider.Create(analyzerDiagnostics);
 
-                FixAllContext fixAllContext = new FixAllContext(document, codeFixProvider, FixAllScope.Document, null, codeFixProvider.FixableDiagnosticIds, fixAllDiagnosticProvider, cancellationToken);
+                FixAllContext fixAllContext = new FixAllContext(document, codeFixProvider, FixAllScope.Document, equivalenceKey, codeFixProvider.FixableDiagnosticIds, fixAllDiagnosticProvider, cancellationToken);
 
                 CodeAction action = await fixAllProvider.GetFixAsync(fixAllContext).ConfigureAwait(false);
-
                 if (action == null)
                 {
                     return document;
                 }
 
                 var fixedDocument = await ApplyFixAsync(document, action, cancellationToken).ConfigureAwait(false);
-
                 if (fixedDocument != document)
                 {
                     done = false;
