@@ -232,8 +232,8 @@
     <Compile Include="NamingRules\SX1309SStaticFieldNamesMustBeginWithUnderscore.cs" />
     <Compile Include="NoCodeFixAttribute.cs" />
     <Compile Include="NoDiagnosticAttribute.cs" />
-    <Compile Include="OrderingRules\AccessLevel.cs" />
-    <Compile Include="OrderingRules\AccessLevelHelper.cs" />
+    <Compile Include="Helpers\AccessLevel.cs" />
+    <Compile Include="Helpers\AccessLevelHelper.cs" />
     <Compile Include="OrderingRules\OrderingResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

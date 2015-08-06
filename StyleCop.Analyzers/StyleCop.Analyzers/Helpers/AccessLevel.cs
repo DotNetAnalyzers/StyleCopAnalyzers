@@ -1,4 +1,4 @@
-﻿namespace StyleCop.Analyzers.OrderingRules
+﻿namespace StyleCop.Analyzers.Helpers
 {
     /// <summary>
     /// Describes an element's access level

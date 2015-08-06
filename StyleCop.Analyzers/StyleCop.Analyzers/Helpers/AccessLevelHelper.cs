@@ -1,4 +1,4 @@
-﻿namespace StyleCop.Analyzers.OrderingRules
+﻿namespace StyleCop.Analyzers.Helpers
 {
     using System.Collections.Generic;
     using Microsoft.CodeAnalysis;
