@@ -1295,11 +1295,12 @@ namespace SyntaxNodeAnalyzer
 
         public override void Initialize(AnalysisContext context)
         {
-            // Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement
+            // Calls the method (first argument) to perform analysis whenever a SyntaxNode of kind IfStatement is found
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
         }
 
-        // This method, which is the method that is registered within Initialize, performs the analysis of the Syntax Tree when an IfStatementSyntax Node is found. If the analysis finds an error, a diagnostic is reported
+        // This is the method that is registered within Initialize and is called when an IfStatement SyntaxNode is found
+        // First, this method analyzes the Syntax Tree. Then, it reports a diagnostic if an error is found
         // In this tutorial, this method will walk through the Syntax Tree seen in IfSyntaxTree.jpg and determine if the if-statement being analyzed has the correct spacing
         private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
         {
@@ -1400,11 +1401,12 @@ namespace SyntaxNodeAnalyzer
 
         public override void Initialize(AnalysisContext context)
         {
-            // Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement
+            // Calls the method (first argument) to perform analysis whenever a SyntaxNode of kind IfStatement is found
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
         }
 
-        // This method, which is the method that is registered within Initialize, performs the analysis of the Syntax Tree when an IfStatementSyntax Node is found. If the analysis finds an error, a diagnostic is reported
+        // This is the method that is registered within Initialize and is called when an IfStatement SyntaxNode is found
+        // First, this method analyzes the Syntax Tree. Then, it reports a diagnostic if an error is found
         // In this tutorial, this method will walk through the Syntax Tree seen in IfSyntaxTree.jpg and determine if the if-statement being analyzed has the correct spacing
         private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
         {
@@ -1507,7 +1509,7 @@ namespace SyntaxNodeAnalyzer
 
         public override void Initialize(AnalysisContext context)
         {
-            // Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement
+            // Calls the method (first argument) to perform analysis whenever a SyntaxNode of kind IfStatement is found
             context.RegisterSyntaxNodeAction(Method2, SyntaxKind.IfStatement);
         }
 
@@ -3770,7 +3772,7 @@ namespace SyntaxNodeAnalyzer
 
             public override void Initialize(AnalysisContext context)
             {
-            // Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement
+            // Calls the method (first argument) to perform analysis whenever a SyntaxNode of kind IfStatement is found
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
             }
         }
@@ -3868,7 +3870,7 @@ namespace SyntaxNodeAnalyzer
 
             public override void Initialize(AnalysisContext context)
             {
-            // Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement
+            // Calls the method (first argument) to perform analysis whenever a SyntaxNode of kind IfStatement is found
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
         }
         }
@@ -3966,7 +3968,7 @@ namespace SyntaxNodeAnalyzer
 
         public override void Initialize(AnalysisContext context)
         {
-            // Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement
+            // Calls the method (first argument) to perform analysis whenever a SyntaxNode of kind IfStatement is found
             context.RegisterSyntaxNodeAction(Method2, SyntaxKind.IfStatement);
         }
 
@@ -4069,7 +4071,7 @@ namespace SyntaxNodeAnalyzer
 
         public override void Initialize(AnalysisContext context)
         {
-            // Calls the method (first argument) to perform analysis whenever this is a change to a SyntaxNode of kind IfStatement
+            // Calls the method (first argument) to perform analysis whenever a SyntaxNode of kind IfStatement is found
             context.RegisterSyntaxNodeAction(Method2, SyntaxKind.IfStatement);
         }
 
@@ -19269,7 +19271,8 @@ namespace SyntaxNodeAnalyzerAnalyzer
         {
             context.RegisterSyntaxNodeAction(AnalyzeIfStatement, SyntaxKind.IfStatement);
         }
-        // This method, which is the method that is registered within Initialize, performs the analysis of the Syntax Tree when an IfStatementSyntax Node is found. If the analysis finds an error, a diagnostic is reported
+        // This is the method that is registered within Initialize and is called when an IfStatement SyntaxNode is found
+        // First, this method analyzes the Syntax Tree. Then, it reports a diagnostic if an error is found
         // In this tutorial, this method will walk through the Syntax Tree seen in IfSyntaxTree.jpg and determine if the if-statement being analyzed has the correct spacing
         private void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
         {
