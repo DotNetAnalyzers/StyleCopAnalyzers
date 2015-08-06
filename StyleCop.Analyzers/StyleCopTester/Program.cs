@@ -53,6 +53,15 @@
                 foreach (var group in diagnostics.GroupBy(i => i.Id).OrderBy(i => i.Key, StringComparer.OrdinalIgnoreCase))
                 {
                     Console.WriteLine($"  {group.Key}: {group.Count()} instances");
+
+                    // Print out analyzer diagnostics like AD0001 for analyzer exceptions
+                    if (group.Key.StartsWith("AD"))
+                    {
+                        foreach (var item in group)
+                        {
+                            Console.WriteLine(item);
+                        }
+                    }
                 }
             }
         }
@@ -134,7 +143,10 @@
             Compilation compilation = await project.GetCompilationAsync().ConfigureAwait(false);
             CompilationWithAnalyzers compilationWithAnalyzers = compilation.WithAnalyzers(analyzers);
 
-            return await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
+            var allDiagnostics = await compilationWithAnalyzers.GetAllDiagnosticsAsync().ConfigureAwait(false);
+
+            // We want analyzer diagnostics and analyzer exceptions
+            return allDiagnostics.RemoveRange(compilation.GetDiagnostics());
         }
 
         private static void PrintHelp()
