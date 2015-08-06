@@ -184,24 +184,34 @@
                     Assert.True(false, "The upper limit for the number of fix all iterations was exceeded");
                 }
 
+                string equivalenceKey = null;
+                foreach (var diagnostic in analyzerDiagnostics)
+                {
+                    var actions = new List<CodeAction>();
+                    var context = new CodeFixContext(document, diagnostic, (a, d) => actions.Add(a), cancellationToken);
+                    await codeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
+                    if (actions.Count > (codeFixIndex ?? 0))
+                    {
+                        equivalenceKey = actions[codeFixIndex ?? 0].EquivalenceKey;
+                        break;
+                    }
+                }
+
                 previousDiagnostics = analyzerDiagnostics;
 
                 done = true;
 
                 FixAllContext.DiagnosticProvider fixAllDiagnosticProvider = TestDiagnosticProvider.Create(analyzerDiagnostics);
 
-                string equivalenceKey = codeFixProvider.GetType().Name;
                 FixAllContext fixAllContext = new FixAllContext(document, codeFixProvider, FixAllScope.Document, equivalenceKey, codeFixProvider.FixableDiagnosticIds, fixAllDiagnosticProvider, cancellationToken);
 
                 CodeAction action = await fixAllProvider.GetFixAsync(fixAllContext).ConfigureAwait(false);
-
                 if (action == null)
                 {
                     return document;
                 }
 
                 var fixedDocument = await ApplyFixAsync(document, action, cancellationToken).ConfigureAwait(false);
-
                 if (fixedDocument != document)
                 {
                     done = false;
