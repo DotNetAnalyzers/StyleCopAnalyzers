@@ -10648,7 +10648,7 @@ namespace SyntaxNodeAnalyzer
                 Id = MetaCompilationAnalyzer.IdDeclTypeError,
                 Message = s_idDeclTypeErrorMessage,
                 Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 18, 13) }
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 18, 16) }
             };
 
             VerifyCSharpDiagnostic(test, expected);
@@ -18472,7 +18472,7 @@ namespace SyntaxNodeAnalyzerAnalyzer
 
         // If the analyzer finds an issue, it will report the DiagnosticDescriptor rule
         internal static DiagnosticDescriptor spacingRule = new DiagnosticDescriptor(
-            id: ""Change me to the name of the above constant"",
+            id: /* The ID here should be the public constant declared above */,
             title: ""Enter a title for this diagnostic"",
             messageFormat: ""Enter a message to be displayed with this diagnostic"",
             category: ""Enter a category for this diagnostic (e.g. Formatting)"",

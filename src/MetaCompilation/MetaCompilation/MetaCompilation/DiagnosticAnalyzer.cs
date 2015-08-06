@@ -2454,11 +2454,11 @@ namespace MetaCompilation
                                 {
                                     if (currentArgExprIdentifier != null)
                                     {
-                                    if (currentArgExprIdentifier.Identifier.Text == "")
-                                    {
-                                        ReportDiagnostic(context, IdDeclTypeErrorRule, currentArg.GetLocation());
-                                        return emptyRuleNames;
-                                    }
+                                        if (currentArgExprIdentifier.Identifier.Text == "")
+                                        {
+                                            ReportDiagnostic(context, IdDeclTypeErrorRule, Location.Create(currentArg.SyntaxTree, currentArg.NameColon.ColonToken.TrailingTrivia.FullSpan));
+                                            return emptyRuleNames;
+                                        }
                                     }
 
 
