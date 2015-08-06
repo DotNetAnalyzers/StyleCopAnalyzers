@@ -82,6 +82,17 @@ public class TestClass2
     protected void TestMethod8() { }
     private static void TestMethod9() { }
     private void TestMethod10() { }
+
+    public static class TestClass1 { }
+    public class TestClass2a { }
+    internal static class TestClass3 { }
+    internal class TestClass4 { }
+    protected internal static class TestClass5 { }
+    protected internal class TestClass6 { }
+    protected static class TestClass7 { }
+    protected class TestClass8 { }
+    private static class TestClass9 { }
+    private class TestClass10 { }
 }
 ";
 
@@ -101,7 +112,7 @@ public static class TestClass2 { }
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(2, 21).WithArguments("classes")
+                this.CSharpDiagnostic().WithLocation(2, 21).WithArguments("public", "classes")
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -128,9 +139,9 @@ public static class TestClass2 { }
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(4, 23).WithArguments("fields"),
-                this.CSharpDiagnostic().WithLocation(6, 23).WithArguments("properties"),
-                this.CSharpDiagnostic().WithLocation(8, 24).WithArguments("methods")
+                this.CSharpDiagnostic().WithLocation(4, 23).WithArguments("public", "fields"),
+                this.CSharpDiagnostic().WithLocation(6, 23).WithArguments("public", "properties"),
+                this.CSharpDiagnostic().WithLocation(8, 24).WithArguments("public", "methods")
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -157,9 +168,9 @@ public static class TestClass2 { }
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(4, 23).WithArguments("fields"),
-                this.CSharpDiagnostic().WithLocation(6, 23).WithArguments("properties"),
-                this.CSharpDiagnostic().WithLocation(8, 24).WithArguments("methods")
+                this.CSharpDiagnostic().WithLocation(4, 23).WithArguments("public", "fields"),
+                this.CSharpDiagnostic().WithLocation(6, 23).WithArguments("public", "properties"),
+                this.CSharpDiagnostic().WithLocation(8, 24).WithArguments("public", "methods")
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -183,7 +194,7 @@ public static class TestClass2 { }
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(5, 5).WithArguments("events")
+                this.CSharpDiagnostic().WithLocation(5, 5).WithArguments("public", "events")
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -204,6 +215,48 @@ public static class TestClass2 { }
 
             // should be reported by SA1203
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer will properly handle nested class ordering.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestNestedClassesAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    public class TestClass1 { }
+    internal class TestClass2 { }
+    internal static class TestClass3 { }
+}
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(5, 27).WithArguments("internal", "classes");
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer will properly handle class ordering.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestClassesAsync()
+        {
+            var testCode = @"public class TestClass1 { }
+public static class TestClass2 { }
+internal class TestClass3 { }
+internal static class TestClass4 { }
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(2, 21).WithArguments("public", "classes"),
+                this.CSharpDiagnostic().WithLocation(4, 23).WithArguments("internal", "classes"),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>

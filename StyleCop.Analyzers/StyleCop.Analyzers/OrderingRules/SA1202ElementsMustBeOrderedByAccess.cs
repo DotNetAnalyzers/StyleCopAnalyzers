@@ -40,7 +40,7 @@
         /// </summary>
         public const string DiagnosticId = "SA1202";
         private const string Title = "Elements must be ordered by access";
-        private const string MessageFormat = "{0} {1} must come before {2}.";
+        private const string MessageFormat = "All {0} {1} must come before {2} {1}.";
         private const string Description = "An element within a C# code file is out of order within regard to access level, in relation to other elements in the code.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1202.html";
 
@@ -49,24 +49,6 @@
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
-
-        private static readonly Dictionary<AccessLevel, string> UpperAccessLevelNames = new Dictionary<AccessLevel, string>
-        {
-            [AccessLevel.Public] = "Public",
-            [AccessLevel.Internal] = "Internal",
-            [AccessLevel.ProtectedInternal] = "Protected internal",
-            [AccessLevel.Protected] = "Protected",
-            [AccessLevel.Private] = "Private"
-        };
-
-        private static readonly Dictionary<AccessLevel, string> LowerAccessLevelNames = new Dictionary<AccessLevel, string>
-        {
-            [AccessLevel.Public] = "public",
-            [AccessLevel.Internal] = "internal",
-            [AccessLevel.ProtectedInternal] = "protected internal",
-            [AccessLevel.Protected] = "protected",
-            [AccessLevel.Private] = "private"
-        };
 
         private static readonly Dictionary<SyntaxKind, string> MemberNames = new Dictionary<SyntaxKind, string>
         {
@@ -135,9 +117,9 @@
                         Diagnostic.Create(
                             Descriptor,
                             NamedTypeHelpers.GetNameOrIdentifierLocation(member),
-                            UpperAccessLevelNames[currentAccessLevel],
+                            AccessLevelHelper.GetName(currentAccessLevel),
                             MemberNames[currentSyntaxKind],
-                            LowerAccessLevelNames[previousAccessLevel]));
+                            AccessLevelHelper.GetName(previousAccessLevel)));
                 }
 
                 previousSyntaxKind = currentSyntaxKind;

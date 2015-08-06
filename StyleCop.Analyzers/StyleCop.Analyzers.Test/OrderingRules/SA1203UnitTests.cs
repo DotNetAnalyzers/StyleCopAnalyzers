@@ -74,6 +74,17 @@ public class TestClass2
     protected void TestMethod8() { }
     private static void TestMethod9() { }
     private void TestMethod10() { }
+
+    public static class TestClass1 { }
+    public class TestClass2a { }
+    internal static class TestClass3 { }
+    internal class TestClass4 { }
+    protected internal static class TestClass5 { }
+    protected internal class TestClass6 { }
+    protected static class TestClass7 { }
+    protected class TestClass8 { }
+    private static class TestClass9 { }
+    private class TestClass10 { }
 }
 ";
 
@@ -89,7 +100,7 @@ public class Foo
     private int Baz = 1;
     private const int Bar = 2;
 }";
-            var firstDiagnostic = this.CSharpDiagnostic().WithLocation(5, 23);
+            var firstDiagnostic = this.CSharpDiagnostic().WithLocation(5, 23).WithArguments("private");
             await this.VerifyCSharpDiagnosticAsync(testCode, firstDiagnostic, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -102,7 +113,7 @@ public struct Foo
     private int baz;
     private const int Bar = 2;
 }";
-            var firstDiagnostic = this.CSharpDiagnostic().WithLocation(5, 23);
+            var firstDiagnostic = this.CSharpDiagnostic().WithLocation(5, 23).WithArguments("private");
             await this.VerifyCSharpDiagnosticAsync(testCode, firstDiagnostic, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -116,7 +127,7 @@ public class Foo
     private int Baz = 1;
     private const int FooBar = 2;
 }";
-            var firstDiagnostic = this.CSharpDiagnostic().WithLocation(6, 23);
+            var firstDiagnostic = this.CSharpDiagnostic().WithLocation(6, 23).WithArguments("private");
             await this.VerifyCSharpDiagnosticAsync(testCode, firstDiagnostic, CancellationToken.None).ConfigureAwait(false);
         }
 

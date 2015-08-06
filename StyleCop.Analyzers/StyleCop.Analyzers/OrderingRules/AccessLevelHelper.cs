@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.OrderingRules
 {
+    using System.Collections.Generic;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
 
@@ -8,6 +9,15 @@
     /// </summary>
     internal static class AccessLevelHelper
     {
+        private static readonly Dictionary<AccessLevel, string> AccessLevelNames = new Dictionary<AccessLevel, string>
+        {
+            [AccessLevel.Public] = "public",
+            [AccessLevel.Internal] = "internal",
+            [AccessLevel.ProtectedInternal] = "protected internal",
+            [AccessLevel.Protected] = "protected",
+            [AccessLevel.Private] = "private"
+        };
+
         /// <summary>Determines the access level for the given <paramref name="modifiers"/>.</summary>
         /// <param name="modifiers">The modifiers.</param>
         /// <returns>A <see cref="AccessLevel"/> value representing the access level.</returns>
@@ -58,6 +68,14 @@
             }
 
             return AccessLevel.NotSpecified;
+        }
+
+        /// <summary>Gets the name for a given access level.</summary>
+        /// <param name="accessLevel">The access level.</param>
+        /// <returns>The name for a given access level.</returns>
+        internal static string GetName(AccessLevel accessLevel)
+        {
+            return AccessLevelNames[accessLevel];
         }
     }
 }

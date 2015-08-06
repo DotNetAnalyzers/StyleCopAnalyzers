@@ -26,7 +26,7 @@
         /// </summary>
         public const string DiagnosticId = "SA1204";
         private const string Title = "Static elements must appear before instance elements";
-        private const string MessageFormat = "Static {0} must appear before instance {0}.";
+        private const string MessageFormat = "All {0} static {1} must appear before {0} non-static {1}.";
         private const string Description = "A static element is positioned beneath an instance element of the same type.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1204.html";
 
@@ -102,7 +102,12 @@
                     && currentMemberStatic
                     && !currentMemberConst)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(member), MemberNames[currentSyntaxKind]));
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            Descriptor,
+                            NamedTypeHelpers.GetNameOrIdentifierLocation(member),
+                            AccessLevelHelper.GetName(currentAccessLevel),
+                            MemberNames[currentSyntaxKind]));
                 }
 
                 previousSyntaxKind = currentSyntaxKind;

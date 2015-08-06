@@ -24,7 +24,7 @@
         /// </summary>
         public const string DiagnosticId = "SA1214";
         private const string Title = "Static readonly elements must appear before static non-readonly elements";
-        private const string MessageFormat = "Static readonly elements must appear before static non-readonly elements.";
+        private const string MessageFormat = "All {0} static readonly fields must appear before {0} static non-readonly fields.";
         private const string Description = "A static readonly element is positioned beneath a static non-readonly element of the same type.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1214.html";
 
@@ -74,7 +74,7 @@
                 var currentMemberStatic = field.Modifiers.Any(SyntaxKind.StaticKeyword);
                 if (currentMemberStatic && previousMemberStatic && currentFieldReadonly && !previousFieldReadonly)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(field)));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(field), AccessLevelHelper.GetName(currentAccessLevel)));
                 }
 
                 previousFieldReadonly = currentFieldReadonly;

@@ -116,7 +116,7 @@
 }
 ";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 25);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 25).WithArguments("public");
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
@@ -135,7 +135,7 @@
 }
 ";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 25);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 25).WithArguments("public");
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }

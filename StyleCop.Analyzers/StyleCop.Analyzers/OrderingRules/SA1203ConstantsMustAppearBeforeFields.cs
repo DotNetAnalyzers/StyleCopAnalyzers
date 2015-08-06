@@ -23,7 +23,7 @@
         /// </summary>
         public const string DiagnosticId = "SA1203";
         private const string Title = "Constants must appear before fields";
-        private const string MessageFormat = "Constants must appear before fields";
+        private const string MessageFormat = "All {0} constants must appear before {0} fields";
         private const string Description = "A constant field is placed beneath a non-constant field.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1203.html";
 
@@ -70,7 +70,7 @@
 
                 if (currentAccessLevel == previousAcccessLevel && !previousFieldConstant && currentFieldConstant)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(member)));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(member), AccessLevelHelper.GetName(currentAccessLevel)));
                 }
 
                 previousFieldConstant = currentFieldConstant;
