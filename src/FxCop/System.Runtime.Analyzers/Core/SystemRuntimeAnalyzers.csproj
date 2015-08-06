@@ -82,11 +82,15 @@
     <InternalsVisibleToTest Include="System.Runtime.Analyzers.UnitTests" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="SystemRuntimeAnalyzers.nuspec" />
+    <None Include="install.ps1" />
+    <None Include="uninstall.ps1" />
+    <None Include="ThirdPartyNotices.rtf" />
     <Content Include="System.Runtime.Analyzers.Common.props">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AbstractSyntaxNodeAnalyzer.cs" />
