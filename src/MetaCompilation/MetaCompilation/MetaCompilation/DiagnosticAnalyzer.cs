@@ -123,7 +123,7 @@ namespace MetaCompilation
         internal static DiagnosticDescriptor MessageRule = CreateRule(Message, "Change default message", s_messagePrefix + "Please change the default message to a string of your choosing");
 
         public const string Category = "MetaAnalyzer062";
-        internal static DiagnosticDescriptor CategoryRule = CreateRule(Category, "Change default category", s_messagePrefix + "Please change the default category to a string of your choosing");
+        internal static DiagnosticDescriptor CategoryRule = CreateRule(Category, "Change default category", s_messagePrefix + "Please change the category to a string of your choosing");
         #endregion
 
         #region analysis for IfStatement rules
