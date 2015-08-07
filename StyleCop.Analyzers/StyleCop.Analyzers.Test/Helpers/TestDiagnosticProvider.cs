@@ -16,11 +16,6 @@
             this.diagnostics = diagnostics;
         }
 
-        internal static TestDiagnosticProvider Create(ImmutableArray<Diagnostic> diagnostics)
-        {
-            return new TestDiagnosticProvider(diagnostics);
-        }
-
         public override Task<IEnumerable<Diagnostic>> GetAllDiagnosticsAsync(Project project, CancellationToken cancellationToken)
         {
             return Task.FromResult<IEnumerable<Diagnostic>>(this.diagnostics);
@@ -34,6 +29,11 @@
         public override Task<IEnumerable<Diagnostic>> GetProjectDiagnosticsAsync(Project project, CancellationToken cancellationToken)
         {
             return Task.FromResult<IEnumerable<Diagnostic>>(this.diagnostics);
+        }
+
+        internal static TestDiagnosticProvider Create(ImmutableArray<Diagnostic> diagnostics)
+        {
+            return new TestDiagnosticProvider(diagnostics);
         }
     }
 }

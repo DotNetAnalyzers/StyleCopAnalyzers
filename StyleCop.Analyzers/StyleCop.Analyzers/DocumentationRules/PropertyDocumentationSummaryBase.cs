@@ -11,6 +11,12 @@
     /// </summary>
     public abstract class PropertyDocumentationSummaryBase : DiagnosticAnalyzer
     {
+        /// <inheritdoc/>
+        public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandlePropertyDeclaration, SyntaxKind.PropertyDeclaration);
+        }
+
         /// <summary>
         /// Analyzes the top-level <c>&lt;summary&gt;</c> element of a documentation comment.
         /// </summary>
@@ -19,12 +25,6 @@
         /// to examine.</param>
         /// <param name="diagnosticLocations">The location(s) where diagnostics, if any, should be reported.</param>
         protected abstract void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, params Location[] diagnosticLocations);
-
-        /// <inheritdoc/>
-        public override void Initialize(AnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandlePropertyDeclaration, SyntaxKind.PropertyDeclaration);
-        }
 
         private void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
         {

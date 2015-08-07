@@ -205,18 +205,6 @@ public class Foo
         }
 
         /// <summary>
-        /// Verifies that the codefix provider will work properly for a statement.
-        /// </summary>
-        /// <param name="statementText">The source code for the first part of a compound statement whose child can be
-        /// either a statement block or a single statement.</param>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Theory, MemberData(nameof(TestStatements))]
-        private async Task TestCodeFixForStatementAsync(string statementText)
-        {
-            await this.VerifyCSharpFixAsync(this.GenerateTestStatement(statementText), this.GenerateFixedTestStatement(statementText)).ConfigureAwait(false);
-        }
-
-        /// <summary>
         /// Verifies that the codefix provider will work properly for an if .. else statement.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
@@ -407,6 +395,18 @@ public class Foo
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new SA1503CodeFixProvider();
+        }
+
+        /// <summary>
+        /// Verifies that the codefix provider will work properly for a statement.
+        /// </summary>
+        /// <param name="statementText">The source code for the first part of a compound statement whose child can be
+        /// either a statement block or a single statement.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory, MemberData(nameof(TestStatements))]
+        private async Task TestCodeFixForStatementAsync(string statementText)
+        {
+            await this.VerifyCSharpFixAsync(this.GenerateTestStatement(statementText), this.GenerateFixedTestStatement(statementText)).ConfigureAwait(false);
         }
 
         private string GenerateTestStatement(string statementText)

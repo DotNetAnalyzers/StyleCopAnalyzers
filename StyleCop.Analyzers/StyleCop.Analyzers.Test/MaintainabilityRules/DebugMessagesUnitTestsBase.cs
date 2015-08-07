@@ -182,100 +182,6 @@
             await this.TestConstantMessage_Inline_FailAsync("\"  \" + \"  \"").ConfigureAwait(false);
         }
 
-        private async Task TestConstantMessage_Field_PassAsync(string argument, params DiagnosticResult[] expected)
-        {
-            var testCodeFormat = @"using System.Diagnostics;
-public class Foo
-{{{{
-    const string message = {{0}};
-    public void Bar()
-    {{{{
-        Debug.{0}({1}message);
-    }}}}
-}}}}";
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private async Task TestConstantMessage_Local_PassAsync(string argument, params DiagnosticResult[] expected)
-        {
-            var testCodeFormat = @"using System.Diagnostics;
-public class Foo
-{{{{
-    public void Bar()
-    {{{{
-        const string message = {{0}};
-        Debug.{0}({1}message);
-    }}}}
-}}}}";
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private async Task TestConstantMessage_Inline_PassAsync(string argument, params DiagnosticResult[] expected)
-        {
-            var testCodeFormat = @"using System.Diagnostics;
-public class Foo
-{{{{
-    public void Bar()
-    {{{{
-        Debug.{0}({1}{{0}});
-    }}}}
-}}}}";
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private async Task TestConstantMessage_Field_FailAsync(string argument)
-        {
-            var testCodeFormat = @"using System.Diagnostics;
-public class Foo
-{{{{
-    const string message = {{0}};
-    public void Bar()
-    {{{{
-        Debug.{0}({1}message);
-    }}}}
-}}}}";
-
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 9);
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private async Task TestConstantMessage_Local_FailAsync(string argument)
-        {
-            var testCodeFormat = @"using System.Diagnostics;
-public class Foo
-{{{{
-    public void Bar()
-    {{{{
-        const string message = {{0}};
-        Debug.{0}({1}message);
-    }}}}
-}}}}";
-
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 9);
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private async Task TestConstantMessage_Inline_FailAsync(string argument)
-        {
-            var testCodeFormat = @"using System.Diagnostics;
-public class Foo
-{{{{
-    public void Bar()
-    {{{{
-        Debug.{0}({1}{{0}});
-    }}}}
-}}}}";
-
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 9);
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
         [Fact]
         public async Task TestNotConstantMessageAsync()
         {
@@ -400,6 +306,100 @@ public class Foo
 
                 return solution.WithProjectMetadataReferences(solution.ProjectIds[0], references.Where(x => !x.Display.Contains("System.dll")));
             }
+        }
+
+        private async Task TestConstantMessage_Field_PassAsync(string argument, params DiagnosticResult[] expected)
+        {
+            var testCodeFormat = @"using System.Diagnostics;
+public class Foo
+{{{{
+    const string message = {{0}};
+    public void Bar()
+    {{{{
+        Debug.{0}({1}message);
+    }}}}
+}}}}";
+
+            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        private async Task TestConstantMessage_Local_PassAsync(string argument, params DiagnosticResult[] expected)
+        {
+            var testCodeFormat = @"using System.Diagnostics;
+public class Foo
+{{{{
+    public void Bar()
+    {{{{
+        const string message = {{0}};
+        Debug.{0}({1}message);
+    }}}}
+}}}}";
+
+            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        private async Task TestConstantMessage_Inline_PassAsync(string argument, params DiagnosticResult[] expected)
+        {
+            var testCodeFormat = @"using System.Diagnostics;
+public class Foo
+{{{{
+    public void Bar()
+    {{{{
+        Debug.{0}({1}{{0}});
+    }}}}
+}}}}";
+
+            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        private async Task TestConstantMessage_Field_FailAsync(string argument)
+        {
+            var testCodeFormat = @"using System.Diagnostics;
+public class Foo
+{{{{
+    const string message = {{0}};
+    public void Bar()
+    {{{{
+        Debug.{0}({1}message);
+    }}}}
+}}}}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 9);
+
+            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        private async Task TestConstantMessage_Local_FailAsync(string argument)
+        {
+            var testCodeFormat = @"using System.Diagnostics;
+public class Foo
+{{{{
+    public void Bar()
+    {{{{
+        const string message = {{0}};
+        Debug.{0}({1}message);
+    }}}}
+}}}}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 9);
+
+            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        private async Task TestConstantMessage_Inline_FailAsync(string argument)
+        {
+            var testCodeFormat = @"using System.Diagnostics;
+public class Foo
+{{{{
+    public void Bar()
+    {{{{
+        Debug.{0}({1}{{0}});
+    }}}}
+}}}}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 9);
+
+            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

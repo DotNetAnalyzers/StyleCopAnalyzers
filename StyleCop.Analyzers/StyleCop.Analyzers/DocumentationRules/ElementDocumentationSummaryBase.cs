@@ -12,15 +12,6 @@
     /// </summary>
     public abstract class ElementDocumentationSummaryBase : DiagnosticAnalyzer
     {
-        /// <summary>
-        /// Analyzes the top-level <c>&lt;summary&gt;</c> element of a documentation comment.
-        /// </summary>
-        /// <param name="context">The current analysis context.</param>
-        /// <param name="syntax">The <see cref="XmlElementSyntax"/> or <see cref="XmlEmptyElementSyntax"/> of the node
-        /// to examine.</param>
-        /// <param name="diagnosticLocations">The location(s) where diagnostics, if any, should be reported.</param>
-        protected abstract void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, params Location[] diagnosticLocations);
-
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
@@ -38,6 +29,15 @@
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleEventDeclaration, SyntaxKind.EventDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleFieldDeclaration, SyntaxKind.EventFieldDeclaration);
         }
+
+        /// <summary>
+        /// Analyzes the top-level <c>&lt;summary&gt;</c> element of a documentation comment.
+        /// </summary>
+        /// <param name="context">The current analysis context.</param>
+        /// <param name="syntax">The <see cref="XmlElementSyntax"/> or <see cref="XmlEmptyElementSyntax"/> of the node
+        /// to examine.</param>
+        /// <param name="diagnosticLocations">The location(s) where diagnostics, if any, should be reported.</param>
+        protected abstract void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, params Location[] diagnosticLocations);
 
         private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
         {

@@ -159,34 +159,6 @@
             return new DualTriviaListHelper(part1, part2);
         }
 
-        private static int BinarySearch(SyntaxTriviaList leadingTrivia, SyntaxTrivia trivia)
-        {
-            int low = 0;
-            int high = leadingTrivia.Count - 1;
-            while (low <= high)
-            {
-                int index = low + ((high - low) >> 1);
-                int order = leadingTrivia[index].Span.CompareTo(trivia.Span);
-
-                if (order == 0)
-                {
-                    return index;
-                }
-
-                if (order < 0)
-                {
-                    low = index + 1;
-                }
-                else
-                {
-                    high = index - 1;
-                }
-            }
-
-            // Entry was not found
-            return -1;
-        }
-
         /// <summary>
         /// Merges the given trivia lists into a new single trivia list.
         /// </summary>
@@ -303,6 +275,34 @@
 
             var newLeadingTrivia = SyntaxFactory.TriviaList(triviaList.Take(blankLinesStart).Concat(triviaList.Skip(leadingWhitespaceStart)));
             return token.WithLeadingTrivia(newLeadingTrivia);
+        }
+
+        private static int BinarySearch(SyntaxTriviaList leadingTrivia, SyntaxTrivia trivia)
+        {
+            int low = 0;
+            int high = leadingTrivia.Count - 1;
+            while (low <= high)
+            {
+                int index = low + ((high - low) >> 1);
+                int order = leadingTrivia[index].Span.CompareTo(trivia.Span);
+
+                if (order == 0)
+                {
+                    return index;
+                }
+
+                if (order < 0)
+                {
+                    low = index + 1;
+                }
+                else
+                {
+                    high = index - 1;
+                }
+            }
+
+            // Entry was not found
+            return -1;
         }
 
         /// <summary>

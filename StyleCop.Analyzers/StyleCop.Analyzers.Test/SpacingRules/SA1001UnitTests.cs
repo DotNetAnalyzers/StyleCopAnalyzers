@@ -151,6 +151,16 @@
             await this.TestCommaInStatementOrDeclAsync(statement, expected, fixedStatement).ConfigureAwait(false);
         }
 
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        {
+            yield return new SA1001CommasMustBeSpacedCorrectly();
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1001CodeFixProvider();
+        }
+
         private Task TestCommaInStatementOrDeclAsync(string originalStatement, DiagnosticResult expected, string fixedStatement)
         {
             return this.TestCommaInStatementOrDeclAsync(originalStatement, new[] { expected }, fixedStatement);
@@ -177,16 +187,6 @@
 
             await this.VerifyCSharpDiagnosticAsync(originalCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(originalCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1001CommasMustBeSpacedCorrectly();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1001CodeFixProvider();
         }
     }
 }

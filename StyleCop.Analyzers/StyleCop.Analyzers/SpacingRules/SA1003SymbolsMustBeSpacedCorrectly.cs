@@ -45,6 +45,15 @@
         /// The ID for diagnostics produced by the <see cref="SA1003SymbolsMustBeSpacedCorrectly"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1003";
+
+        internal const string CodeFixAction = "Action";
+        internal const string InsertBeforeTag = "InsertBefore";
+        internal const string RemoveBeforeTag = "RemoveBefore";
+        internal const string InsertAfterTag = "InsertAfter";
+        internal const string RemoveAfterTag = "RemoveAfter";
+        internal const string RemoveEndOfLineTag = "RemoveEndOfLine";
+        internal const string RemoveEndOfLineWithTrailingSpaceTag = "RemoveEndOfLineWithTrailingSpace";
+
         private const string Title = "Symbols must be spaced correctly";
         private const string MessageFormatNotFollowedByComment = "Operator '{0}' must not be followed by a comment.";
         private const string MessageFormatPrecededByWhitespace = "Operator '{0}' must be preceded by whitespace.";
@@ -54,14 +63,6 @@
         private const string MessageFormatNotAtEndOfLine = "Operator '{0}' must not appear at the end of a line.";
         private const string Description = "The spacing around an operator symbol is incorrect, within a C# code file.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1003.html";
-
-        internal const string CodeFixAction = "Action";
-        internal const string InsertBeforeTag = "InsertBefore";
-        internal const string RemoveBeforeTag = "RemoveBefore";
-        internal const string InsertAfterTag = "InsertAfter";
-        internal const string RemoveAfterTag = "RemoveAfter";
-        internal const string RemoveEndOfLineTag = "RemoveEndOfLine";
-        internal const string RemoveEndOfLineWithTrailingSpaceTag = "RemoveEndOfLineWithTrailingSpace";
 
         /// <summary>
         /// Gets the descriptor for prefix unary expression that may not be followed by a comment.

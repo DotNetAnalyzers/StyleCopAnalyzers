@@ -32,27 +32,6 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestEmptyConstructorAsync(string typeKind, string modifiers)
-        {
-            var testCode = @"namespace FooNamespace
-{{
-    public {0} Foo<TFoo, TBar>
-    {{
-        /// 
-        /// 
-        /// 
-        {1} 
-        Foo({2})
-        {{
-
-        }}
-    }}
-}}";
-
-            string arguments = typeKind == "struct" && modifiers != "static" ? "int argument" : null;
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKind, modifiers, arguments), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
         [Theory]
         [InlineData("class")]
         [InlineData("struct")]
@@ -75,73 +54,6 @@
         public async Task TestEmptyStaticConstructorAsync(string typeKind)
         {
             await this.TestEmptyConstructorAsync(typeKind, "static").ConfigureAwait(false);
-        }
-
-        private async Task TestConstructorCorrectDocumentationAsync(string typeKind, string modifiers, string part1, string part2, string part3, bool generic)
-        {
-            // First test it all on one line
-            var testCode = @"namespace FooNamespace
-{{
-    public {0} Foo{1}
-    {{
-        /// <summary>
-        /// {3}<see cref=""Foo{2}""/>{4}{5}
-        /// </summary>
-        {6} Foo({7})
-        {{
-
-        }}
-    }}
-}}";
-
-            string arguments = typeKind == "struct" && modifiers != "static" ? "int argument" : null;
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKind, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3, modifiers, arguments), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-
-            // Then test splitting after the <see> element
-            testCode = @"namespace FooNamespace
-{{
-    public {0} Foo{1}
-    {{
-        /// <summary>
-        /// {3}<see cref=""Foo{2}""/>
-        /// {4}{5}
-        /// </summary>
-        {6} Foo({7})
-        {{
-
-        }}
-    }}
-}}";
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKind, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3, modifiers, arguments), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-
-            // Then test splitting before the <see> element
-            testCode = @"namespace FooNamespace
-{{
-    public {0} Foo{1}
-    {{
-        /// <summary>
-        /// {3}
-        /// <see cref=""Foo{2}""/>{4}{5}
-        /// </summary>
-        {6} Foo({7})
-        {{
-
-        }}
-    }}
-}}";
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKind, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3, modifiers, arguments), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private async Task TestConstructorCorrectDocumentationSimpleAsync(string typeKind, string modifiers, string part1, string part2, bool generic)
-        {
-            await this.TestConstructorCorrectDocumentationAsync(typeKind, modifiers, part1, part2, ".", generic).ConfigureAwait(false);
-        }
-
-        private async Task TestConstructorCorrectDocumentationCustomizedAsync(string typeKind, string modifiers, string part1, string part2, bool generic)
-        {
-            await this.TestConstructorCorrectDocumentationAsync(typeKind, modifiers, part1, part2, " with A and B.", generic).ConfigureAwait(false);
         }
 
         [Theory]
@@ -238,49 +150,6 @@
         public async Task TestStaticConstructorCorrectDocumentationGenericAsync(string typeKind)
         {
             await this.TestConstructorCorrectDocumentationAsync(typeKind, "static", StaticConstructorStandardText, $" {typeKind}.", string.Empty, true).ConfigureAwait(false);
-        }
-
-        private async Task TestConstructorMissingDocumentationAsync(string typeKind, string modifiers, string part1, string part2, bool generic)
-        {
-            var testCode = @"namespace FooNamespace
-{{
-    public {0} Foo{1}
-    {{
-        /// <summary>
-        /// </summary>
-        {2}
-        Foo({3})
-        {{
-
-        }}
-    }}
-}}";
-            string arguments = typeKind == "struct" && modifiers != "static" ? "int argument" : null;
-            testCode = string.Format(testCode, typeKind, generic ? "<T1, T2>" : string.Empty, modifiers, arguments);
-
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 13);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode,
-                expected, CancellationToken.None).ConfigureAwait(false);
-
-            var fixedCode = @"namespace FooNamespace
-{{
-    public {0} Foo{1}
-    {{
-        /// <summary>
-        /// {3}<see cref=""Foo{2}""/>{4}{5}
-        /// </summary>
-        {6}
-        Foo({7})
-        {{
-
-        }}
-    }}
-}}";
-
-            string part3 = part2.EndsWith(".") ? string.Empty : ".";
-            fixedCode = string.Format(fixedCode, typeKind, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3, modifiers, arguments);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Theory]
@@ -449,6 +318,137 @@ internal abstract class CustomizableBlockSubscriberBase<TSource, TTarget, TSubsc
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new SA1642SA1643CodeFixProvider();
+        }
+
+        private async Task TestEmptyConstructorAsync(string typeKind, string modifiers)
+        {
+            var testCode = @"namespace FooNamespace
+{{
+    public {0} Foo<TFoo, TBar>
+    {{
+        /// 
+        /// 
+        /// 
+        {1} 
+        Foo({2})
+        {{
+
+        }}
+    }}
+}}";
+
+            string arguments = typeKind == "struct" && modifiers != "static" ? "int argument" : null;
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKind, modifiers, arguments), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        private async Task TestConstructorCorrectDocumentationAsync(string typeKind, string modifiers, string part1, string part2, string part3, bool generic)
+        {
+            // First test it all on one line
+            var testCode = @"namespace FooNamespace
+{{
+    public {0} Foo{1}
+    {{
+        /// <summary>
+        /// {3}<see cref=""Foo{2}""/>{4}{5}
+        /// </summary>
+        {6} Foo({7})
+        {{
+
+        }}
+    }}
+}}";
+
+            string arguments = typeKind == "struct" && modifiers != "static" ? "int argument" : null;
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKind, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3, modifiers, arguments), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+
+            // Then test splitting after the <see> element
+            testCode = @"namespace FooNamespace
+{{
+    public {0} Foo{1}
+    {{
+        /// <summary>
+        /// {3}<see cref=""Foo{2}""/>
+        /// {4}{5}
+        /// </summary>
+        {6} Foo({7})
+        {{
+
+        }}
+    }}
+}}";
+
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKind, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3, modifiers, arguments), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+
+            // Then test splitting before the <see> element
+            testCode = @"namespace FooNamespace
+{{
+    public {0} Foo{1}
+    {{
+        /// <summary>
+        /// {3}
+        /// <see cref=""Foo{2}""/>{4}{5}
+        /// </summary>
+        {6} Foo({7})
+        {{
+
+        }}
+    }}
+}}";
+
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKind, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3, modifiers, arguments), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        private async Task TestConstructorCorrectDocumentationSimpleAsync(string typeKind, string modifiers, string part1, string part2, bool generic)
+        {
+            await this.TestConstructorCorrectDocumentationAsync(typeKind, modifiers, part1, part2, ".", generic).ConfigureAwait(false);
+        }
+
+        private async Task TestConstructorCorrectDocumentationCustomizedAsync(string typeKind, string modifiers, string part1, string part2, bool generic)
+        {
+            await this.TestConstructorCorrectDocumentationAsync(typeKind, modifiers, part1, part2, " with A and B.", generic).ConfigureAwait(false);
+        }
+
+        private async Task TestConstructorMissingDocumentationAsync(string typeKind, string modifiers, string part1, string part2, bool generic)
+        {
+            var testCode = @"namespace FooNamespace
+{{
+    public {0} Foo{1}
+    {{
+        /// <summary>
+        /// </summary>
+        {2}
+        Foo({3})
+        {{
+
+        }}
+    }}
+}}";
+            string arguments = typeKind == "struct" && modifiers != "static" ? "int argument" : null;
+            testCode = string.Format(testCode, typeKind, generic ? "<T1, T2>" : string.Empty, modifiers, arguments);
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 13);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode,
+                expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedCode = @"namespace FooNamespace
+{{
+    public {0} Foo{1}
+    {{
+        /// <summary>
+        /// {3}<see cref=""Foo{2}""/>{4}{5}
+        /// </summary>
+        {6}
+        Foo({7})
+        {{
+
+        }}
+    }}
+}}";
+
+            string part3 = part2.EndsWith(".") ? string.Empty : ".";
+            fixedCode = string.Format(fixedCode, typeKind, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3, modifiers, arguments);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
     }
 }

@@ -31,6 +31,52 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestDestructorCorrectDocumentationSimpleAsync()
+        {
+            await this.TestDestructorCorrectDocumentationSimpleImplAsync(DestructorStandardText[0], DestructorStandardText[1], false).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestDestructorCorrectDocumentationCustomizedAsync()
+        {
+            await this.TestDestructorCorrectDocumentationCustomizedImplAsync(DestructorStandardText[0], DestructorStandardText[1], false).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestNonPrivateConstructorCorrectDocumentationGenericSimpleAsync()
+        {
+            await this.TestDestructorCorrectDocumentationSimpleImplAsync(DestructorStandardText[0], DestructorStandardText[1], true).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestDestructorCorrectDocumentationGenericCustomizedAsync()
+        {
+            await this.TestDestructorCorrectDocumentationCustomizedImplAsync(DestructorStandardText[0], DestructorStandardText[1], true).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestDestructorMissingDocumentationAsync()
+        {
+            await this.TestDestructorMissingDocumentationImplAsync(DestructorStandardText[0], DestructorStandardText[1], false).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestDestructorMissingDocumentationGenericAsync()
+        {
+            await this.TestDestructorMissingDocumentationImplAsync(DestructorStandardText[0], DestructorStandardText[1], true).ConfigureAwait(false);
+        }
+
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        {
+            yield return new SA1643DestructorSummaryDocumentationMustBeginWithStandardText();
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1642SA1643CodeFixProvider();
+        }
+
         private async Task TestEmptyDestructorAsync()
         {
             var testCode = @"namespace FooNamespace
@@ -115,30 +161,6 @@
             await this.TestDestructorCorrectDocumentationAsync(part1, part2, " with A and B.", generic).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestDestructorCorrectDocumentationSimpleAsync()
-        {
-            await this.TestDestructorCorrectDocumentationSimpleImplAsync(DestructorStandardText[0], DestructorStandardText[1], false).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestDestructorCorrectDocumentationCustomizedAsync()
-        {
-            await this.TestDestructorCorrectDocumentationCustomizedImplAsync(DestructorStandardText[0], DestructorStandardText[1], false).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestNonPrivateConstructorCorrectDocumentationGenericSimpleAsync()
-        {
-            await this.TestDestructorCorrectDocumentationSimpleImplAsync(DestructorStandardText[0], DestructorStandardText[1], true).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestDestructorCorrectDocumentationGenericCustomizedAsync()
-        {
-            await this.TestDestructorCorrectDocumentationCustomizedImplAsync(DestructorStandardText[0], DestructorStandardText[1], true).ConfigureAwait(false);
-        }
-
         private async Task TestDestructorMissingDocumentationImplAsync(string part1, string part2, bool generic)
         {
             var testCode = @"namespace FooNamespace
@@ -177,28 +199,6 @@
             string part3 = part2.EndsWith(".") ? string.Empty : ".";
             fixedCode = string.Format(fixedCode, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3);
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestDestructorMissingDocumentationAsync()
-        {
-            await this.TestDestructorMissingDocumentationImplAsync(DestructorStandardText[0], DestructorStandardText[1], false).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestDestructorMissingDocumentationGenericAsync()
-        {
-            await this.TestDestructorMissingDocumentationImplAsync(DestructorStandardText[0], DestructorStandardText[1], true).ConfigureAwait(false);
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1643DestructorSummaryDocumentationMustBeginWithStandardText();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1642SA1643CodeFixProvider();
         }
     }
 }
