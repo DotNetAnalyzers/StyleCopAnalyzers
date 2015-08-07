@@ -48,26 +48,29 @@ namespace StyleCop.Analyzers.OrderingRules
 
             while (true)
             {
-                var typeDeclarationNode = syntaxRoot.FindNode(diagnostic.Location.SourceSpan).Ancestors().OfType<TypeDeclarationSyntax>().First();
-                if (typeDeclarationNode == null)
-                {
-                    return document;
-                }
+                var typeDeclarationNode = syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<TypeDeclarationSyntax>();
 
-                var allFields = typeDeclarationNode.Members.OfType<FieldDeclarationSyntax>().ToArray();
                 var fieldReplaced = false;
 
                 FieldDeclarationSyntax firstNonConst = null;
-                foreach (var field in allFields)
+                foreach (var member in typeDeclarationNode.Members)
                 {
-                    if (firstNonConst != null && field.Modifiers.Any(m => m.IsKind(SyntaxKind.ConstKeyword)))
+                    if (!member.IsKind(SyntaxKind.FieldDeclaration))
+                    {
+                        continue;
+                    }
+
+                    var field = (FieldDeclarationSyntax)member;
+
+                    var fieldIsConst = field.Modifiers.Any(m => m.IsKind(SyntaxKind.ConstKeyword));
+                    if (firstNonConst != null && fieldIsConst)
                     {
                         syntaxRoot = MoveField(syntaxRoot, field, firstNonConst);
                         fieldReplaced = true;
                         break;
                     }
 
-                    if (firstNonConst == null && !field.Modifiers.Any(m => m.IsKind(SyntaxKind.ConstKeyword)))
+                    if (firstNonConst == null && !fieldIsConst)
                     {
                         firstNonConst = field;
                     }

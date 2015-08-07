@@ -1,10 +1,9 @@
-﻿using Microsoft.CodeAnalysis.CodeFixes;
-
-namespace StyleCop.Analyzers.Test.OrderingRules
+﻿namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.OrderingRules;
     using TestHelper;
@@ -104,6 +103,14 @@ public class Foo
 }";
             var firstDiagnostic = this.CSharpDiagnostic().WithLocation(5, 23).WithArguments("private");
             await this.VerifyCSharpDiagnosticAsync(testCode, firstDiagnostic, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedTestCode = @"
+public class Foo
+{
+    private const int Bar = 2;
+    private int Baz = 1;
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -117,6 +124,14 @@ public struct Foo
 }";
             var firstDiagnostic = this.CSharpDiagnostic().WithLocation(5, 23).WithArguments("private");
             await this.VerifyCSharpDiagnosticAsync(testCode, firstDiagnostic, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedTestCode = @"
+public struct Foo
+{
+    private const int Bar = 2;
+    private int baz;
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -131,6 +146,15 @@ public class Foo
 }";
             var firstDiagnostic = this.CSharpDiagnostic().WithLocation(6, 23).WithArguments("private");
             await this.VerifyCSharpDiagnosticAsync(testCode, firstDiagnostic, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedTestCode = @"
+public class Foo
+{
+    private const int Bar = 2;
+    private const int FooBar = 2;
+    private int Baz = 1;
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -151,11 +175,11 @@ public class Test
         }
         
         /// <summary>
-        /// Verifies that the code fix will properly copy over the access modifier defined in another fragment of the partial element.
+        /// Verifies that the code fix will move the non constant fields before the constant ones.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestCodeFixWithXmlDocumentationAsync()
+        public async Task TestCodeFixAsync()
         {
             var testCode = @"public class Foo
 {
