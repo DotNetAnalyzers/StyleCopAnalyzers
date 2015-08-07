@@ -1,5 +1,0 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="AnalyzerPowerPack.Common.props" />
-  <Import Project="AnalyzerPowerPack.CSharp.props" />
-  <Import Project="AnalyzerPowerPack.VisualBasic.props" />
-</Project>

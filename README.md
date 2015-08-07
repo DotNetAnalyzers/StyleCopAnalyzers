@@ -1,54 +1,32 @@
-.NET Compiler Platform ("Roslyn") Analyzers
-===========================================
+# StyleCop Analyzers for the .NET Compiler Platform
 
-This repository contains a number of [Roslyn](https://github.com/dotnet/roslyn) diagnostic analyzers initially developed to help flesh out the design and implementation of the static analysis APIs.
+[![Join the chat at https://gitter.im/DotNetAnalyzers/StyleCopAnalyzers](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/DotNetAnalyzers/StyleCopAnalyzers?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Currently there are only a few projects here. Over time the collection will grow as more are migrated from the [dotnet/roslyn](https://github.com/dotnet/roslyn) repository.
+[![Build status](https://ci.appveyor.com/api/projects/status/8jw2lq431kgg44jl/branch/master?svg=true)](https://ci.appveyor.com/project/sharwell/stylecopanalyzers/branch/master)
 
-Debug | Release
-------|--------
-[![Build Status](http://dotnet-ci.cloudapp.net/job/dotnet_roslyn-analyzers_windows_debug/badge/icon)](http://dotnet-ci.cloudapp.net/job/dotnet_roslyn-analyzers_windows_debug/) | [![Build Status](http://dotnet-ci.cloudapp.net/job/dotnet_roslyn-analyzers_windows_release/badge/icon)](http://dotnet-ci.cloudapp.net/job/dotnet_roslyn-analyzers_windows_release/)
+This repository contains an implementation of the StyleCop rules using the .NET Compiler Platform. Where possible, code fixes are also provided to simplify the process of correcting violations.
 
-[![Join the chat at https://gitter.im/dotnet/roslyn](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/dotnet/roslyn?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+## Using StyleCop.Analyzers
 
-Projects
-========
+The preferable way to use the analyzers is to add the nuget package [StyleCop.Analyzers](http://www.nuget.org/packages/StyleCop.Analyzers/)
+to the project where you want to enforce StyleCop rules.
 
-AsyncPackage
------------
+Currently the only way to configure the rules is to change the severity for them in a ruleset file.
 
-*Created by summer 2014 interns Chardai Page, [Kendra Havens](https://github.com/kendrahavens), and Vivian Morgowicz*
+## Installation
 
-The AsyncPackage analyzer enforces good practices when writing code that makes use of C#'s `async` and `await` language features.
+StyleCopAnalyzers can be installed using the NuGet Package Manager in Visual Studio 2015 RC.
 
-MetaCompilation
----------------
+![Install via nuget](https://cloud.githubusercontent.com/assets/1408396/8233513/491f301a-159c-11e5-8b7a-1e16a0695da6.png)
 
-*Created by summer 2015 interns [Zoë Petard](https://github.com/zoepetard), [Jessica Petty](https://github.com/jepetty), and [Daniel King](https://github.com/daking2014)*
+## Team Considerations
 
-The MetaCompilation Analyzer is an analyzer that functions as a tutorial to teach users how to write an analyzer. It uses diagnostics and code fixes to guide the user through the various steps required to create a simple analyzer. It is designed for a novice analyzer programmer with some previous programming experience.
+If you use older versions of Visual Studio in addition to Visual Studio 2015, you may still install these analyzers. They will be automatically disabled when you open the project back up in Visual Studio 2013 or earlier.
 
-Microsoft.AnalyzerPowerPack
----------------------------
+## Contributing
 
-General language rules implemented as analyzers using the .NET Compiler Platform ("Roslyn").
+See [Contributing](CONTRIBUTING.md)
 
-Microsoft.CodeAnalysis.Analyzers
---------------------------------
+## Current status
 
-Provides guidelines for using .NET Compiler Platform ("Roslyn") APIs.
-
-Getting Started
-===============
-
-1. Clone the repository
-2. Install NuGet packages: `powershell -executionpolicy bypass src\.nuget\NuGetRestore.ps1`
-3. Build: `msbuild src\Analyzers.sln`
-
-Submitting Pull Requests
-========================
-
-Prior to submitting a pull request, ensure the build and all tests pass using BuildAndTest.proj:
-```
-msbuild BuildAndTest.proj
-```
+An up-to-date overview of the status can be found [here](http://stylecop.pdelvo.com/).
