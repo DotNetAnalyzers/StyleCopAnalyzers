@@ -11,6 +11,7 @@
     {
         private static readonly Dictionary<AccessLevel, string> AccessLevelNames = new Dictionary<AccessLevel, string>
         {
+            [AccessLevel.NotSpecified] = "unspecified access",
             [AccessLevel.Public] = "public",
             [AccessLevel.Internal] = "internal",
             [AccessLevel.ProtectedInternal] = "protected internal",

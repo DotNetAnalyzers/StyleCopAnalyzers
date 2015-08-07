@@ -55,7 +55,7 @@
 
             var members = typeDeclaration.Members;
             var previousFieldConstant = true;
-            var previousAcccessLevel = AccessLevel.NotSpecified;
+            var previousAccessLevel = AccessLevel.NotSpecified;
 
             foreach (var member in members)
             {
@@ -67,14 +67,15 @@
 
                 bool currentFieldConstant = field.Modifiers.Any(SyntaxKind.ConstKeyword);
                 var currentAccessLevel = AccessLevelHelper.GetAccessLevel(field.Modifiers);
+                currentAccessLevel = currentAccessLevel == AccessLevel.NotSpecified ? AccessLevel.Private : currentAccessLevel;
 
-                if (currentAccessLevel == previousAcccessLevel && !previousFieldConstant && currentFieldConstant)
+                if (currentAccessLevel == previousAccessLevel && !previousFieldConstant && currentFieldConstant)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(member), AccessLevelHelper.GetName(currentAccessLevel)));
                 }
 
                 previousFieldConstant = currentFieldConstant;
-                previousAcccessLevel = currentAccessLevel;
+                previousAccessLevel = currentAccessLevel;
             }
         }
     }

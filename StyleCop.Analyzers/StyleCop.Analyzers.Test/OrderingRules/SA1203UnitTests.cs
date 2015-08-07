@@ -131,6 +131,22 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, firstDiagnostic, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestUnqualifiedConstAsync()
+        {
+            var testCode = @"
+public class Test
+{
+    private int Test1 = 1;
+    const int Test2 = 2;
+    const int Test3 = 3;
+}";
+
+            var expected = this.CSharpDiagnostic().WithLocation(5, 15).WithArguments("private");
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1203ConstantsMustAppearBeforeFields();

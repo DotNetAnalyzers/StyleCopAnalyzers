@@ -65,8 +65,13 @@
 
                 var currentFieldReadonly = field.Modifiers.Any(SyntaxKind.ReadOnlyKeyword);
                 var currentAccessLevel = AccessLevelHelper.GetAccessLevel(field.Modifiers);
+                currentAccessLevel = currentAccessLevel == AccessLevel.NotSpecified ? AccessLevel.Private : currentAccessLevel;
                 var currentMemberStatic = field.Modifiers.Any(SyntaxKind.StaticKeyword);
-                if (!currentMemberStatic && !previousMemberStatic && currentFieldReadonly && !previousFieldReadonly)
+                if (currentAccessLevel == previousAccessLevel
+                    && !currentMemberStatic
+                    && !previousMemberStatic
+                    && currentFieldReadonly
+                    && !previousFieldReadonly)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(field), AccessLevelHelper.GetName(currentAccessLevel)));
                 }
