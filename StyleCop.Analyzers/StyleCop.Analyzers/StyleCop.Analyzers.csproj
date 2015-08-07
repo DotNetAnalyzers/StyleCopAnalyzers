@@ -443,7 +443,6 @@
     <EmbeddedResource Include="OrderingRules\OrderingResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>OrderingResources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ReadabilityRules\ReadabilityResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
