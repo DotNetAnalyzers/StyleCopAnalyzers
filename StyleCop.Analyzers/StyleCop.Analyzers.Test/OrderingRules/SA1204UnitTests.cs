@@ -297,6 +297,25 @@ static class TestClass2 { }
         }
 
         /// <summary>
+        /// Verifies that the analyzer will properly handle ordering within a namespace.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestNamespaceClassesAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    class TestClass1 { }
+    static class TestClass2 { }
+}
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(4, 18).WithArguments("internal", "classes");
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that the analyzer will properly incomplete members.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>

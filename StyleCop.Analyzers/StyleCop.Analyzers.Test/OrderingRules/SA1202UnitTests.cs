@@ -469,6 +469,31 @@ public class TestClass2 { }
         }
 
         /// <summary>
+        /// Verifies that the analyzer will properly handle ordering within a namespace.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestNamespaceClassesAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    enum TestEnum1 { }
+    public enum TestEnum2 { }
+    class TestClass1 { }
+    public class TestClass2 { }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(4, 17).WithArguments("public", "enums", "internal"),
+                this.CSharpDiagnostic().WithLocation(6, 18).WithArguments("public", "classes", "internal")
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that the analyzer will properly handle incomplete members.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
