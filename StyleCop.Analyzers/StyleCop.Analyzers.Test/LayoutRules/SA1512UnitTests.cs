@@ -254,6 +254,50 @@ namespace Foo
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that the analyzer will properly handle comments followed by single line documentation comments.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestCommentFollowedBySingleLineDocumenationCommentAsync()
+        {
+            var testCode = @"// some comment
+                
+/// <summary>Test summary.</summary>
+public class TestClass
+{
+    // another comment
+
+    /// <summary>Test summary.</summary>
+    public void TestMethod() { }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer will properly handle comments followed by multi-line documentation comments.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestCommentFollowedByMultiLineDocumentationCommentAsync()
+        {
+            var testCode = @"// some comment
+                
+/* <summary>Test summary.</summary> */
+public class TestClass
+{
+    // another comment
+
+    /* <summary>Test summary.</summary> */
+    public void TestMethod() { }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
