@@ -81,61 +81,61 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleNamespaceDeclarationSyntax, SyntaxKind.NamespaceDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleBaseTypeDeclarationSyntax, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleBaseTypeDeclarationSyntax, SyntaxKind.EnumDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleBaseTypeDeclarationSyntax, SyntaxKind.InterfaceDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleBaseTypeDeclarationSyntax, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleAccessorListSyntax, SyntaxKind.AccessorList);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleBlockSyntax, SyntaxKind.Block);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleSwitchStatementSyntax, SyntaxKind.SwitchStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleInitializerExpressionSyntax, SyntaxKind.ObjectInitializerExpression, SyntaxKind.ArrayInitializerExpression, SyntaxKind.CollectionInitializerExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleAnonymousObjectCreationExpressionSyntax, SyntaxKind.AnonymousObjectCreationExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleNamespaceDeclarationSyntax, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleBaseTypeDeclarationSyntax, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleBaseTypeDeclarationSyntax, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleBaseTypeDeclarationSyntax, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleBaseTypeDeclarationSyntax, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleAccessorListSyntax, SyntaxKind.AccessorList);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleBlockSyntax, SyntaxKind.Block);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleSwitchStatementSyntax, SyntaxKind.SwitchStatement);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleInitializerExpressionSyntax, SyntaxKind.ObjectInitializerExpression, SyntaxKind.ArrayInitializerExpression, SyntaxKind.CollectionInitializerExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleAnonymousObjectCreationExpressionSyntax, SyntaxKind.AnonymousObjectCreationExpression);
         }
 
-        private void HandleNamespaceDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleNamespaceDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
             var syntax = (NamespaceDeclarationSyntax)context.Node;
-            this.CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
+            CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
         }
 
-        private void HandleBaseTypeDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleBaseTypeDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
             var syntax = (BaseTypeDeclarationSyntax)context.Node;
-            this.CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
+            CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
         }
 
-        private void HandleAccessorListSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleAccessorListSyntax(SyntaxNodeAnalysisContext context)
         {
             var syntax = (AccessorListSyntax)context.Node;
-            this.CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
+            CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
         }
 
-        private void HandleBlockSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleBlockSyntax(SyntaxNodeAnalysisContext context)
         {
             var syntax = (BlockSyntax)context.Node;
-            this.CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
+            CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
         }
 
-        private void HandleSwitchStatementSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleSwitchStatementSyntax(SyntaxNodeAnalysisContext context)
         {
             var syntax = (SwitchStatementSyntax)context.Node;
-            this.CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
+            CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
         }
 
-        private void HandleInitializerExpressionSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleInitializerExpressionSyntax(SyntaxNodeAnalysisContext context)
         {
             var syntax = (InitializerExpressionSyntax)context.Node;
-            this.CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
+            CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
         }
 
-        private void HandleAnonymousObjectCreationExpressionSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleAnonymousObjectCreationExpressionSyntax(SyntaxNodeAnalysisContext context)
         {
             var syntax = (AnonymousObjectCreationExpressionSyntax)context.Node;
-            this.CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
+            CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
         }
 
-        private void CheckCurlyBraces(SyntaxNodeAnalysisContext context, SyntaxToken openBraceToken, SyntaxToken closeBraceToken)
+        private static void CheckCurlyBraces(SyntaxNodeAnalysisContext context, SyntaxToken openBraceToken, SyntaxToken closeBraceToken)
         {
             bool checkCloseBrace = true;
 
@@ -163,10 +163,10 @@
                 }
             }
 
-            this.CheckCurlyBracketToken(context, openBraceToken);
+            CheckCurlyBracketToken(context, openBraceToken);
             if (checkCloseBrace)
             {
-                this.CheckCurlyBracketToken(context, closeBraceToken);
+                CheckCurlyBracketToken(context, closeBraceToken);
             }
         }
 
@@ -175,7 +175,7 @@
             return token.GetLineSpan().StartLinePosition.Line;
         }
 
-        private void CheckCurlyBracketToken(SyntaxNodeAnalysisContext context, SyntaxToken token)
+        private static void CheckCurlyBracketToken(SyntaxNodeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
             {

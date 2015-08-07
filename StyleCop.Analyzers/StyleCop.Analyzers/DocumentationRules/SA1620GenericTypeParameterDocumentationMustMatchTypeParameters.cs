@@ -60,10 +60,10 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDocumentationTrivia, SyntaxKind.SingleLineDocumentationCommentTrivia);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleDocumentationTrivia, SyntaxKind.SingleLineDocumentationCommentTrivia);
         }
 
-        private void HandleDocumentationTrivia(SyntaxNodeAnalysisContext context)
+        private static void HandleDocumentationTrivia(SyntaxNodeAnalysisContext context)
         {
             DocumentationCommentTriviaSyntax syntax = context.Node as DocumentationCommentTriviaSyntax;
 

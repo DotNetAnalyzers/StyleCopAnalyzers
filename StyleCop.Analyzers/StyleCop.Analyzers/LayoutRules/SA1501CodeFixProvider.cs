@@ -37,13 +37,13 @@
         {
             foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1501CodeFix, cancellationToken => this.GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken), equivalenceKey: nameof(SA1501CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1501CodeFix, cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken), equivalenceKey: nameof(SA1501CodeFixProvider)), diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;
         }
 
-        private async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var block = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) as BlockSyntax;
@@ -52,13 +52,13 @@
                 return document;
             }
 
-            var newSyntaxRoot = this.ReformatBlockAndParent(document, syntaxRoot, block);
+            var newSyntaxRoot = ReformatBlockAndParent(document, syntaxRoot, block);
             var newDocument = document.WithSyntaxRoot(newSyntaxRoot);
 
             return newDocument;
         }
 
-        private SyntaxNode ReformatBlockAndParent(Document document, SyntaxNode syntaxRoot, BlockSyntax block)
+        private static SyntaxNode ReformatBlockAndParent(Document document, SyntaxNode syntaxRoot, BlockSyntax block)
         {
             var parentLastToken = block.OpenBraceToken.GetPreviousToken();
 
@@ -75,14 +75,14 @@
                 newParentLastToken = newParentLastToken.WithTrailingTrivia(newTrailingTrivia);
             }
 
-            var newBlock = this.ReformatBlock(document, block);
+            var newBlock = ReformatBlock(document, block);
             var rewriter = new BlockRewriter(parentLastToken, newParentLastToken, block, newBlock);
 
             var newSyntaxRoot = rewriter.Visit(syntaxRoot);
             return newSyntaxRoot.WithoutFormatting();
         }
 
-        private BlockSyntax ReformatBlock(Document document, BlockSyntax block)
+        private static BlockSyntax ReformatBlock(Document document, BlockSyntax block)
         {
             var indentationOptions = IndentationOptions.FromDocument(document);
             var parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationOptions, GetStatementParent(block.Parent));

@@ -85,7 +85,7 @@
                     var secondText = XmlCommentHelper.GetText(secondTextParSyntaxt);
 
                     if (TextPartsMatch(firstTextPart, secondTextPart, firstTextPartSyntax, secondTextParSyntaxt)
-                        && this.SeeTagIsCorrect(context, classReferencePart, declarationSyntax))
+                        && SeeTagIsCorrect(context, classReferencePart, declarationSyntax))
                     {
                         // We found a correct standard text
                         return MatchResult.FoundMatch;
@@ -102,7 +102,7 @@
             return MatchResult.None;
         }
 
-        private bool SeeTagIsCorrect(SyntaxNodeAnalysisContext context, XmlEmptyElementSyntax classReferencePart, BaseMethodDeclarationSyntax constructorDeclarationSyntax)
+        private static bool SeeTagIsCorrect(SyntaxNodeAnalysisContext context, XmlEmptyElementSyntax classReferencePart, BaseMethodDeclarationSyntax constructorDeclarationSyntax)
         {
             XmlCrefAttributeSyntax crefAttribute = XmlCommentHelper.GetFirstAttributeOrDefault<XmlCrefAttributeSyntax>(classReferencePart);
             CrefSyntax crefSyntax = crefAttribute?.Cref;
@@ -122,7 +122,7 @@
             return actualSymbol.OriginalDefinition == expectedSymbol;
         }
 
-        private string GetName(TypeSyntax name)
+        private static string GetName(TypeSyntax name)
         {
             return (name as SimpleNameSyntax).Identifier.ToString() ?? name.ToString();
         }

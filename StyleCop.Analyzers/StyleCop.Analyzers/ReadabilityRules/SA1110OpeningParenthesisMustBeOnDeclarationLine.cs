@@ -60,21 +60,21 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleInvocationExpression, SyntaxKind.InvocationExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleObjectCreationExpression, SyntaxKind.ObjectCreationExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleElementAccessExpression, SyntaxKind.ElementAccessExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleAttribute, SyntaxKind.Attribute);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleAnonymousMethod, SyntaxKind.AnonymousMethodExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleArrayCreation, SyntaxKind.ArrayCreationExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleOperatorDeclaration, SyntaxKind.OperatorDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleConversionOperatorDeclaration, SyntaxKind.ConversionOperatorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleInvocationExpression, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleObjectCreationExpression, SyntaxKind.ObjectCreationExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleElementAccessExpression, SyntaxKind.ElementAccessExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleAttribute, SyntaxKind.Attribute);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleAnonymousMethod, SyntaxKind.AnonymousMethodExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleArrayCreation, SyntaxKind.ArrayCreationExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleOperatorDeclaration, SyntaxKind.OperatorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleConversionOperatorDeclaration, SyntaxKind.ConversionOperatorDeclaration);
         }
 
-        private void HandleConversionOperatorDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleConversionOperatorDeclaration(SyntaxNodeAnalysisContext context)
         {
             var conversionOperator = (ConversionOperatorDeclarationSyntax)context.Node;
 
@@ -94,7 +94,7 @@
             }
         }
 
-        private void HandleOperatorDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleOperatorDeclaration(SyntaxNodeAnalysisContext context)
         {
             var operatorDeclaration = (OperatorDeclarationSyntax)context.Node;
 
@@ -111,7 +111,7 @@
             }
         }
 
-        private void HandleArrayCreation(SyntaxNodeAnalysisContext context)
+        private static void HandleArrayCreation(SyntaxNodeAnalysisContext context)
         {
             var array = (ArrayCreationExpressionSyntax)context.Node;
 
@@ -130,7 +130,7 @@
             }
         }
 
-        private void HandleAnonymousMethod(SyntaxNodeAnalysisContext context)
+        private static void HandleAnonymousMethod(SyntaxNodeAnalysisContext context)
         {
             var anonymousMethod = (AnonymousMethodExpressionSyntax)context.Node;
 
@@ -145,7 +145,7 @@
             CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, anonymousMethod.ParameterList.OpenParenToken);
         }
 
-        private void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
         {
             var delegateDeclaration = (DelegateDeclarationSyntax)context.Node;
 
@@ -157,7 +157,7 @@
             }
         }
 
-        private void HandleAttribute(SyntaxNodeAnalysisContext context)
+        private static void HandleAttribute(SyntaxNodeAnalysisContext context)
         {
             var attribute = (AttributeSyntax)context.Node;
 
@@ -183,7 +183,7 @@
             }
         }
 
-        private void HandleElementAccessExpression(SyntaxNodeAnalysisContext context)
+        private static void HandleElementAccessExpression(SyntaxNodeAnalysisContext context)
         {
             var elementAccess = (ElementAccessExpressionSyntax)context.Node;
 
@@ -197,7 +197,7 @@
             CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, elementAccess.ArgumentList.OpenBracketToken);
         }
 
-        private void HandleIndexerDeclaration(SyntaxNodeAnalysisContext obj)
+        private static void HandleIndexerDeclaration(SyntaxNodeAnalysisContext obj)
         {
             var indexerDeclaration = (IndexerDeclarationSyntax)obj.Node;
 
@@ -210,10 +210,10 @@
             }
         }
 
-        private void HandleObjectCreationExpression(SyntaxNodeAnalysisContext context)
+        private static void HandleObjectCreationExpression(SyntaxNodeAnalysisContext context)
         {
             var objectCreation = (ObjectCreationExpressionSyntax)context.Node;
-            var identifier = this.GetIdentifier(objectCreation);
+            var identifier = GetIdentifier(objectCreation);
 
             if (!identifier.HasValue
                 || identifier.Value.IsMissing)
@@ -228,7 +228,7 @@
             }
         }
 
-        private SyntaxToken? GetIdentifier(ObjectCreationExpressionSyntax objectCreationExpressionSyntax)
+        private static SyntaxToken? GetIdentifier(ObjectCreationExpressionSyntax objectCreationExpressionSyntax)
         {
             switch (objectCreationExpressionSyntax.Type.Kind())
             {
@@ -248,7 +248,7 @@
             }
         }
 
-        private void HandleInvocationExpression(SyntaxNodeAnalysisContext context)
+        private static void HandleInvocationExpression(SyntaxNodeAnalysisContext context)
         {
             var invocationExpression = (InvocationExpressionSyntax)context.Node;
 
@@ -266,7 +266,7 @@
             }
         }
 
-        private void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
         {
             var constructotDeclarationSyntax = (ConstructorDeclarationSyntax)context.Node;
             if (constructotDeclarationSyntax.ParameterList != null
@@ -277,7 +277,7 @@
             }
         }
 
-        private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
             var methodDeclaration = (MethodDeclarationSyntax)context.Node;
             if (methodDeclaration.ParameterList != null

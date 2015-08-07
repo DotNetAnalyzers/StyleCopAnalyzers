@@ -54,13 +54,13 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleInvocationExpression, SyntaxKind.InvocationExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleObjectCreationExpression, SyntaxKind.ObjectCreationExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleInvocationExpression, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleObjectCreationExpression, SyntaxKind.ObjectCreationExpression);
         }
 
-        private void HandleObjectCreationExpression(SyntaxNodeAnalysisContext context)
+        private static void HandleObjectCreationExpression(SyntaxNodeAnalysisContext context)
         {
             var objectCreation = (ObjectCreationExpressionSyntax)context.Node;
             if (objectCreation.ArgumentList == null ||
@@ -78,7 +78,7 @@
             }
         }
 
-        private void HandleInvocationExpression(SyntaxNodeAnalysisContext context)
+        private static void HandleInvocationExpression(SyntaxNodeAnalysisContext context)
         {
             var invocationExpression = (InvocationExpressionSyntax)context.Node;
             if (invocationExpression.ArgumentList == null ||
@@ -96,13 +96,13 @@
             }
         }
 
-        private void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
         {
             var constructotDeclarationSyntax = (ConstructorDeclarationSyntax)context.Node;
             HandleBaseMethodDeclaration(context, constructotDeclarationSyntax);
         }
 
-        private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
             var methodDeclaration = (MethodDeclarationSyntax)context.Node;
             HandleBaseMethodDeclaration(context, methodDeclaration);

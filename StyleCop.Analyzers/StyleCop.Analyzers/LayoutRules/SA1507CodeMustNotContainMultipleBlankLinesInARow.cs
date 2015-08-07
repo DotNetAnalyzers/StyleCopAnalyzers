@@ -64,10 +64,10 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTreeAnalysis);
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTreeAnalysis);
         }
 
-        private void HandleSyntaxTreeAnalysis(SyntaxTreeAnalysisContext context)
+        private static void HandleSyntaxTreeAnalysis(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens(descendIntoTrivia: false))

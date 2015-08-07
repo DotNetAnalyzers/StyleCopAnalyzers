@@ -119,35 +119,6 @@
             return solution;
         }
 
-        private async Task VerifyFixInternalAsync(string language, ImmutableArray<DiagnosticAnalyzer> analyzers, CodeFixProvider codeFixProvider, string oldSource, string newSource, int? codeFixIndex,
-            bool allowNewCompilerDiagnostics, int maxNumberOfIterations, Func<ImmutableArray<DiagnosticAnalyzer>, CodeFixProvider, int?, CancellationToken, Document, int, Task<Document>> getFixedDocument, CancellationToken cancellationToken)
-        {
-            var document = this.CreateDocument(oldSource, language);
-            var compilerDiagnostics = await GetCompilerDiagnosticsAsync(document, cancellationToken).ConfigureAwait(false);
-
-            document = await getFixedDocument(analyzers, codeFixProvider, codeFixIndex, cancellationToken, document, maxNumberOfIterations).ConfigureAwait(false);
-
-            var newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, await GetCompilerDiagnosticsAsync(document, cancellationToken).ConfigureAwait(false));
-
-            // check if applying the code fix introduced any new compiler diagnostics
-            if (!allowNewCompilerDiagnostics && newCompilerDiagnostics.Any())
-            {
-                // Format and get the compiler diagnostics again so that the locations make sense in the output
-                document = await Formatter.FormatAsync(document, Formatter.Annotation, cancellationToken: cancellationToken).ConfigureAwait(false);
-                newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, await GetCompilerDiagnosticsAsync(document, cancellationToken).ConfigureAwait(false));
-
-                string message =
-                    string.Format("Fix introduced new compiler diagnostics:\r\n{0}\r\n\r\nNew document:\r\n{1}\r\n",
-                        string.Join("\r\n", newCompilerDiagnostics.Select(d => d.ToString())),
-                        (await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false)).ToFullString());
-                Assert.True(false, message);
-            }
-
-            // after applying all of the code fixes, compare the resulting string to the inputted one
-            var actual = await GetStringFromDocumentAsync(document, cancellationToken).ConfigureAwait(false);
-            Assert.Equal(newSource, actual);
-        }
-
         private static async Task<Document> GetSingleAnalyzerDocumentAsync(ImmutableArray<DiagnosticAnalyzer> analyzers, CodeFixProvider codeFixProvider, int? codeFixIndex, CancellationToken cancellationToken, Document document, int maxNumberOfIterations)
         {
             var previousDiagnostics = ImmutableArray.Create<Diagnostic>();
@@ -288,6 +259,35 @@
             }
 
             return false;
+        }
+
+        private async Task VerifyFixInternalAsync(string language, ImmutableArray<DiagnosticAnalyzer> analyzers, CodeFixProvider codeFixProvider, string oldSource, string newSource, int? codeFixIndex,
+            bool allowNewCompilerDiagnostics, int maxNumberOfIterations, Func<ImmutableArray<DiagnosticAnalyzer>, CodeFixProvider, int?, CancellationToken, Document, int, Task<Document>> getFixedDocument, CancellationToken cancellationToken)
+        {
+            var document = this.CreateDocument(oldSource, language);
+            var compilerDiagnostics = await GetCompilerDiagnosticsAsync(document, cancellationToken).ConfigureAwait(false);
+
+            document = await getFixedDocument(analyzers, codeFixProvider, codeFixIndex, cancellationToken, document, maxNumberOfIterations).ConfigureAwait(false);
+
+            var newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, await GetCompilerDiagnosticsAsync(document, cancellationToken).ConfigureAwait(false));
+
+            // check if applying the code fix introduced any new compiler diagnostics
+            if (!allowNewCompilerDiagnostics && newCompilerDiagnostics.Any())
+            {
+                // Format and get the compiler diagnostics again so that the locations make sense in the output
+                document = await Formatter.FormatAsync(document, Formatter.Annotation, cancellationToken: cancellationToken).ConfigureAwait(false);
+                newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, await GetCompilerDiagnosticsAsync(document, cancellationToken).ConfigureAwait(false));
+
+                string message =
+                    string.Format("Fix introduced new compiler diagnostics:\r\n{0}\r\n\r\nNew document:\r\n{1}\r\n",
+                        string.Join("\r\n", newCompilerDiagnostics.Select(d => d.ToString())),
+                        (await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false)).ToFullString());
+                Assert.True(false, message);
+            }
+
+            // after applying all of the code fixes, compare the resulting string to the inputted one
+            var actual = await GetStringFromDocumentAsync(document, cancellationToken).ConfigureAwait(false);
+            Assert.Equal(newSource, actual);
         }
     }
 }

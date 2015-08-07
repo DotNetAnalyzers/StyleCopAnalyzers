@@ -80,7 +80,7 @@
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterSyntaxNodeActionHonorExclusions(
-                this.HandleDeclaration,
+                HandleDeclaration,
                 SyntaxKind.ClassDeclaration,
                 SyntaxKind.StructDeclaration,
                 SyntaxKind.InterfaceDeclaration,
@@ -96,7 +96,7 @@
                 SyntaxKind.EventFieldDeclaration);
         }
 
-        private void HandleDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
         {
             var nodeTriviaList = context.Node.GetLeadingTrivia();
             var documentationHeaderIndex = context.Node.GetLeadingTrivia().IndexOf(SyntaxKind.SingleLineDocumentationCommentTrivia);

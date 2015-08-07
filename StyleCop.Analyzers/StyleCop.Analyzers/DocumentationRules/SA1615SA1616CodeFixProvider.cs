@@ -50,13 +50,13 @@
                 }
 
                 string description = "Document return value";
-                context.RegisterCodeFix(CodeAction.Create(description, cancellationToken => this.GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken), equivalenceKey: nameof(SA1615SA1616CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(description, cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken), equivalenceKey: nameof(SA1615SA1616CodeFixProvider)), diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;
         }
 
-        private async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var documentRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             SyntaxNode syntax = documentRoot.FindNode(diagnostic.Location.SourceSpan);
@@ -86,7 +86,7 @@
             if (methodDeclarationSyntax != null)
             {
                 isTask = IsTaskReturningMethod(semanticModel, methodDeclarationSyntax, cancellationToken);
-                isAsynchronousTestMethod = isTask && this.IsAsynchronousTestMethod(semanticModel, methodDeclarationSyntax, cancellationToken);
+                isAsynchronousTestMethod = isTask && IsAsynchronousTestMethod(semanticModel, methodDeclarationSyntax, cancellationToken);
             }
             else
             {
@@ -193,7 +193,7 @@
             return true;
         }
 
-        private bool IsAsynchronousTestMethod(SemanticModel semanticModel, MethodDeclarationSyntax methodDeclarationSyntax, CancellationToken cancellationToken)
+        private static bool IsAsynchronousTestMethod(SemanticModel semanticModel, MethodDeclarationSyntax methodDeclarationSyntax, CancellationToken cancellationToken)
         {
             foreach (AttributeListSyntax attributeList in methodDeclarationSyntax.AttributeLists)
             {

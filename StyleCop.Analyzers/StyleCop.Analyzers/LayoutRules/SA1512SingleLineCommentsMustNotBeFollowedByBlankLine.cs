@@ -92,16 +92,16 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(this.HandleCompilationStart);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
             var diagnosticOptions = context.Compilation.Options.SpecificDiagnosticOptions;
-            context.RegisterSyntaxTreeActionHonorExclusions(c => this.HandleSyntaxTreeAnalysis(c, diagnosticOptions));
+            context.RegisterSyntaxTreeActionHonorExclusions(c => HandleSyntaxTreeAnalysis(c, diagnosticOptions));
         }
 
-        private void HandleSyntaxTreeAnalysis(SyntaxTreeAnalysisContext context, ImmutableDictionary<string, ReportDiagnostic> specificDiagnosticOptions)
+        private static void HandleSyntaxTreeAnalysis(SyntaxTreeAnalysisContext context, ImmutableDictionary<string, ReportDiagnostic> specificDiagnosticOptions)
         {
             var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
 

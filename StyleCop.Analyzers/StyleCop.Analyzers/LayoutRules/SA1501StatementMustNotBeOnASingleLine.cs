@@ -64,10 +64,10 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleBlock, SyntaxKind.Block);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleBlock, SyntaxKind.Block);
         }
 
-        private void HandleBlock(SyntaxNodeAnalysisContext context)
+        private static void HandleBlock(SyntaxNodeAnalysisContext context)
         {
             var block = context.Node as BlockSyntax;
             if ((block != null) &&
