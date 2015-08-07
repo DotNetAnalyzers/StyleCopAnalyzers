@@ -24,7 +24,7 @@
         /// </summary>
         public const string DiagnosticId = "SA1214";
         private const string Title = "Static readonly elements must appear before static non-readonly elements";
-        private const string MessageFormat = "Static readonly elements must appear before static non-readonly elements.";
+        private const string MessageFormat = "All {0} static readonly fields must appear before {0} static non-readonly fields.";
         private const string Description = "A static readonly element is positioned beneath a static non-readonly element of the same type.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1214.html";
 
@@ -58,42 +58,33 @@
 
         private static void AnalyzeType(SyntaxNodeAnalysisContext context, TypeDeclarationSyntax typeDeclaration)
         {
-            var staticFields = typeDeclaration.Members
-                .OfType<FieldDeclarationSyntax>()
-                .Where(f => f.Modifiers.Any(SyntaxKind.StaticKeyword))
-                .ToList();
-
-            var firstNonReadonlyField =
-                staticFields.FirstOrDefault(f => !f.Modifiers.Any(SyntaxKind.ReadOnlyKeyword));
-
-            if (firstNonReadonlyField == null)
+            var previousFieldReadonly = true;
+            var previousAccessLevel = AccessLevel.NotSpecified;
+            var previousMemberStatic = true;
+            foreach (var member in typeDeclaration.Members)
             {
-                return;
-            }
-
-            var firstNonReadonlyFieldLocation = firstNonReadonlyField.GetLineSpan();
-            if (!firstNonReadonlyFieldLocation.IsValid)
-            {
-                return;
-            }
-
-            var readonlyFieldLocations =
-                staticFields.Where(f => f.Modifiers.Any(SyntaxKind.ReadOnlyKeyword))
-                    .Where(f => f.GetLineSpan().IsValid)
-                    .Where(f => f.Declaration != null && f.Declaration.Variables.Any())
-                    .Select(f => new
-                    {
-                        FieldDeclaration = f,
-                        FieldEndLinePosition = f.GetLineSpan().EndLinePosition
-                    })
-                    .ToList();
-
-            foreach (var location in readonlyFieldLocations)
-            {
-                if (firstNonReadonlyFieldLocation.EndLinePosition < location.FieldEndLinePosition)
+                var field = member as FieldDeclarationSyntax;
+                if (field == null)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, location.FieldDeclaration.GetLocation()));
+                    continue;
                 }
+
+                var currentFieldReadonly = field.Modifiers.Any(SyntaxKind.ReadOnlyKeyword);
+                var currentAccessLevel = AccessLevelHelper.GetAccessLevel(field.Modifiers);
+                currentAccessLevel = currentAccessLevel == AccessLevel.NotSpecified ? AccessLevel.Private : currentAccessLevel;
+                var currentMemberStatic = field.Modifiers.Any(SyntaxKind.StaticKeyword);
+                if (currentAccessLevel == previousAccessLevel
+                    && currentMemberStatic
+                    && previousMemberStatic
+                    && currentFieldReadonly
+                    && !previousFieldReadonly)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(field), AccessLevelHelper.GetName(currentAccessLevel)));
+                }
+
+                previousFieldReadonly = currentFieldReadonly;
+                previousAccessLevel = currentAccessLevel;
+                previousMemberStatic = currentMemberStatic;
             }
         }
     }

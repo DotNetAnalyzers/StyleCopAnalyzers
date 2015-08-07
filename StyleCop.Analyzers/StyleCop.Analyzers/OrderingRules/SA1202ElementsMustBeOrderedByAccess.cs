@@ -2,7 +2,6 @@
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
-    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -40,7 +39,7 @@
         /// </summary>
         public const string DiagnosticId = "SA1202";
         private const string Title = "Elements must be ordered by access";
-        private const string MessageFormat = "{0}{1} {2} must come before {3}.";
+        private const string MessageFormat = "All {0} {1} must come before {2} {1}.";
         private const string Description = "An element within a C# code file is out of order within regard to access level, in relation to other elements in the code.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1202.html";
 
@@ -49,24 +48,6 @@
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
-
-        private static readonly Dictionary<AccessLevel, string> UpperAccessLevelNames = new Dictionary<AccessLevel, string>
-        {
-            [AccessLevel.Public] = "Public",
-            [AccessLevel.Internal] = "Internal",
-            [AccessLevel.ProtectedInternal] = "Protected internal",
-            [AccessLevel.Protected] = "Protected",
-            [AccessLevel.Private] = "Private"
-        };
-
-        private static readonly Dictionary<AccessLevel, string> LowerAccessLevelNames = new Dictionary<AccessLevel, string>
-        {
-            [AccessLevel.Public] = "public",
-            [AccessLevel.Internal] = "internal",
-            [AccessLevel.ProtectedInternal] = "protected internal",
-            [AccessLevel.Protected] = "protected",
-            [AccessLevel.Private] = "private"
-        };
 
         private static readonly Dictionary<SyntaxKind, string> MemberNames = new Dictionary<SyntaxKind, string>
         {
@@ -85,27 +66,6 @@
             [SyntaxKind.OperatorDeclaration] = "operators"
         };
 
-        private enum AccessLevel
-        {
-            /// <summary>No access level specified.</summary>
-            NotSpecified,
-
-            /// <summary>Public access.</summary>
-            Public,
-
-            /// <summary>Internal access.</summary>
-            Internal,
-
-            /// <summary>Protected internal access.</summary>
-            ProtectedInternal,
-
-            /// <summary>Protected access.</summary>
-            Protected,
-
-            /// <summary>Private access.</summary>
-            Private
-        }
-
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -119,6 +79,7 @@
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterSyntaxNodeActionHonorExclusions(HandleCompilationUnit, SyntaxKind.CompilationUnit);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleNamespaceDeclaration, SyntaxKind.NamespaceDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration);
         }
 
@@ -126,113 +87,51 @@
         {
             var compilationUnit = (CompilationUnitSyntax)context.Node;
 
-            HandleMemberList(context, compilationUnit.Members);
+            HandleMemberList(context, compilationUnit.Members, AccessLevel.Internal);
+        }
+
+        private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var compilationUnit = (NamespaceDeclarationSyntax)context.Node;
+
+            HandleMemberList(context, compilationUnit.Members, AccessLevel.Internal);
         }
 
         private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
             var typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
-            HandleMemberList(context, typeDeclaration.Members);
+            HandleMemberList(context, typeDeclaration.Members, AccessLevel.Private);
         }
 
-        private static void HandleMemberList(SyntaxNodeAnalysisContext context, SyntaxList<MemberDeclarationSyntax> members)
+        private static void HandleMemberList(SyntaxNodeAnalysisContext context, SyntaxList<MemberDeclarationSyntax> members, AccessLevel defaultAccessLevel)
         {
-            var previousMemberStatic = true;
-            var previousMemberReadonly = true;
-            var previousMemberConst = true;
             var previousSyntaxKind = SyntaxKind.None;
             var previousAccessLevel = AccessLevel.NotSpecified;
 
             foreach (var member in members)
             {
-                var currentModifiers = member.GetModifiers();
-                var currentMemberStatic = currentModifiers.Any(SyntaxKind.StaticKeyword);
-                var currentMemberReadonly = false;
-                var currentMemberConst = false;
                 var currentSyntaxKind = member.Kind();
                 currentSyntaxKind = currentSyntaxKind == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : currentSyntaxKind;
-                if (currentSyntaxKind == SyntaxKind.FieldDeclaration)
-                {
-                    currentMemberReadonly = currentModifiers.Any(SyntaxKind.ReadOnlyKeyword);
-                    currentMemberConst = currentModifiers.Any(SyntaxKind.ConstKeyword);
-                }
-
-                var currentAccessLevel = GetAccessLevel(currentModifiers);
+                var currentAccessLevel = AccessLevelHelper.GetAccessLevel(member.GetModifiers());
+                currentAccessLevel = currentAccessLevel == AccessLevel.NotSpecified ? defaultAccessLevel : currentAccessLevel;
 
                 if (previousAccessLevel != AccessLevel.NotSpecified
-                    && currentAccessLevel != AccessLevel.NotSpecified
                     && currentSyntaxKind == previousSyntaxKind
-                    && currentMemberStatic == previousMemberStatic
-                    && currentMemberReadonly == previousMemberReadonly
-                    && currentMemberConst == previousMemberConst
                     && currentAccessLevel < previousAccessLevel)
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
                             Descriptor,
                             NamedTypeHelpers.GetNameOrIdentifierLocation(member),
-                            UpperAccessLevelNames[currentAccessLevel],
-                            currentMemberStatic ? " static" : currentMemberConst ? " const" : string.Empty,
+                            AccessLevelHelper.GetName(currentAccessLevel),
                             MemberNames[currentSyntaxKind],
-                            LowerAccessLevelNames[previousAccessLevel]));
+                            AccessLevelHelper.GetName(previousAccessLevel)));
                 }
 
-                previousMemberStatic = currentMemberStatic;
-                previousMemberReadonly = currentMemberReadonly;
-                previousMemberConst = currentMemberConst;
                 previousSyntaxKind = currentSyntaxKind;
                 previousAccessLevel = currentAccessLevel;
             }
-        }
-
-        private static AccessLevel GetAccessLevel(SyntaxTokenList modifiers)
-        {
-            bool isProtected = false;
-            bool isInternal = false;
-            foreach (var modifier in modifiers)
-            {
-                switch (modifier.Kind())
-                {
-                case SyntaxKind.PublicKeyword:
-                    return AccessLevel.Public;
-                case SyntaxKind.PrivateKeyword:
-                    return AccessLevel.Private;
-                case SyntaxKind.InternalKeyword:
-                    if (isProtected)
-                    {
-                        return AccessLevel.ProtectedInternal;
-                    }
-                    else
-                    {
-                        isInternal = true;
-                    }
-
-                    break;
-                case SyntaxKind.ProtectedKeyword:
-                    if (isInternal)
-                    {
-                        return AccessLevel.ProtectedInternal;
-                    }
-                    else
-                    {
-                        isProtected = true;
-                    }
-
-                    break;
-                }
-            }
-
-            if (isProtected)
-            {
-                return AccessLevel.Protected;
-            }
-            else if (isInternal)
-            {
-                return AccessLevel.Internal;
-            }
-
-            return AccessLevel.NotSpecified;
         }
     }
 }

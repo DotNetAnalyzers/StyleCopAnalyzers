@@ -26,7 +26,7 @@
         /// </summary>
         public const string DiagnosticId = "SA1204";
         private const string Title = "Static elements must appear before instance elements";
-        private const string MessageFormat = "Static {0} must appear before instance {0}.";
+        private const string MessageFormat = "All {0} static {1} must appear before {0} non-static {1}.";
         private const string Description = "A static element is positioned beneath an instance element of the same type.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1204.html";
 
@@ -65,6 +65,7 @@
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterSyntaxNodeActionHonorExclusions(HandleCompilationUnit, SyntaxKind.CompilationUnit);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleNamespaceDeclaration, SyntaxKind.NamespaceDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDelcaration, SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration);
         }
 
@@ -72,37 +73,54 @@
         {
             var compilationUnit = (CompilationUnitSyntax)context.Node;
 
-            HandleMemberList(context, compilationUnit.Members);
+            HandleMemberList(context, compilationUnit.Members, AccessLevel.Internal);
+        }
+
+        private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var compilationUnit = (NamespaceDeclarationSyntax)context.Node;
+
+            HandleMemberList(context, compilationUnit.Members, AccessLevel.Internal);
         }
 
         private static void HandleTypeDelcaration(SyntaxNodeAnalysisContext context)
         {
             var typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
-            HandleMemberList(context, typeDeclaration.Members);
+            HandleMemberList(context, typeDeclaration.Members, AccessLevel.Private);
         }
 
-        private static void HandleMemberList(SyntaxNodeAnalysisContext context, SyntaxList<MemberDeclarationSyntax> members)
+        private static void HandleMemberList(SyntaxNodeAnalysisContext context, SyntaxList<MemberDeclarationSyntax> members, AccessLevel defaultAccessLevel)
         {
             var previousSyntaxKind = SyntaxKind.None;
+            var previousAccessLevel = AccessLevel.NotSpecified;
             var previousMemberStatic = true;
             foreach (var member in members)
             {
                 var currentSyntaxKind = member.Kind();
                 currentSyntaxKind = currentSyntaxKind == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : currentSyntaxKind;
                 var modifiers = member.GetModifiers();
+                var currentAccessLevel = AccessLevelHelper.GetAccessLevel(modifiers);
+                currentAccessLevel = currentAccessLevel == AccessLevel.NotSpecified ? defaultAccessLevel : currentAccessLevel;
                 var currentMemberStatic = modifiers.Any(SyntaxKind.StaticKeyword);
                 var currentMemberConst = modifiers.Any(SyntaxKind.ConstKeyword);
 
                 if (currentSyntaxKind == previousSyntaxKind
+                    && currentAccessLevel == previousAccessLevel
                     && !previousMemberStatic
                     && currentMemberStatic
                     && !currentMemberConst)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(member), MemberNames[currentSyntaxKind]));
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            Descriptor,
+                            NamedTypeHelpers.GetNameOrIdentifierLocation(member),
+                            AccessLevelHelper.GetName(currentAccessLevel),
+                            MemberNames[currentSyntaxKind]));
                 }
 
                 previousSyntaxKind = currentSyntaxKind;
+                previousAccessLevel = currentAccessLevel;
                 previousMemberStatic = currentMemberStatic || currentMemberConst;
             }
         }

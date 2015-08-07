@@ -23,13 +23,31 @@
         {
             var testCode = @"public class TestClass
 {
-    private const int TestField1 = 1;
-    protected static readonly int TestField2 = 2;
-    protected internal static int TestField3;
-    internal readonly int TestField4;
-    public int TestField5;
-
-    public string TestString;
+    public const int TestField1 = 1;
+    public static readonly int TestField2 = 1;
+    public static int TestField3 = 1;
+    public readonly int TestField4 = 1;
+    public int TestField5 = 1;
+    internal const int TestField6 = 1;
+    internal static readonly int TestField7 = 1;
+    internal static int TestField8 = 1;
+    internal readonly int TestField9 = 1;
+    internal int TestField10 = 1;
+    protected internal const int TestField11 = 1;
+    protected internal static readonly int TestField12 = 1;
+    protected internal static int TestField13 = 1;
+    protected internal readonly int TestField14 = 1;
+    protected internal int TestField15 = 1;
+    protected const int TestField16 = 1;
+    protected static readonly int TestField17 = 1;
+    protected static int TestField18 = 1;
+    protected readonly int TestField19 = 1;
+    protected int TestField20 = 1;
+    private const int TestField21 = 1;
+    private static readonly int TestField22 = 1;
+    private static int TestField23 = 1;
+    private readonly int TestField24 = 1;
+    private int TestField25 = 1;
 
     public TestClass()
     {
@@ -41,23 +59,38 @@
 
     ~TestClass() { }
     
-    public string TestProperty1 { get; set; }
+    public static int TestProperty1 { get; set; }
+    public int TestProperty2 { get; set; }
+    internal static int TestProperty3 { get; set; }
+    internal int TestProperty4 { get; set; }
+    protected internal static int TestProperty5 { get; set; }
+    protected internal int TestProperty6 { get; set; }
+    protected static int TestProperty7 { get; set; }
+    protected int TestProperty8 { get; set; }
+    private static int TestProperty9 { get; set; }
+    private int TestProperty10 { get; set; }
     
-    internal string TestProperty2 { get; set; }
-    
-    protected internal string TestProperty3 { get; set; }
-    
-    protected string TestProperty4 { get; set; }
-    
-    private string TestProperty5 { get; set; }
-    
-    public void TestMethod1()
-    {
-    }
-    
-    private void TestMethod2()
-    {
-    }
+    public static void TestMethod1() { }
+    public void TestMethod2() { }
+    internal static void TestMethod3() { }
+    internal void TestMethod4() { }
+    protected internal static void TestMethod5() { }
+    protected internal void TestMethod6() { }
+    protected static void TestMethod7() { }
+    protected void TestMethod8() { }
+    private static void TestMethod9() { }
+    private void TestMethod10() { }
+
+    public static class TestClass1 { }
+    public class TestClass2 { }
+    internal static class TestClass3 { }
+    internal class TestClass4 { }
+    protected internal static class TestClass5 { }
+    protected internal class TestClass6 { }
+    protected static class TestClass7 { }
+    protected class TestClass8 { }
+    private static class TestClass9 { }
+    private class TestClass10 { }
 }
 ";
 
@@ -75,7 +108,7 @@
 public class TestClass2 { }
 ";
 
-            var expected = this.CSharpDiagnostic().WithLocation(2, 14).WithArguments("Public", string.Empty, "classes", "internal");
+            var expected = this.CSharpDiagnostic().WithLocation(2, 14).WithArguments("public", "classes", "internal");
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
@@ -113,10 +146,10 @@ public class TestClass2 { }
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(4, 22).WithArguments("Protected", string.Empty, "properties", "private"),
-                this.CSharpDiagnostic().WithLocation(5, 31).WithArguments("Protected internal", string.Empty, "properties", "protected"),
-                this.CSharpDiagnostic().WithLocation(6, 21).WithArguments("Internal", string.Empty, "properties", "protected internal"),
-                this.CSharpDiagnostic().WithLocation(7, 19).WithArguments("Public", string.Empty, "properties", "internal")
+                this.CSharpDiagnostic().WithLocation(4, 22).WithArguments("protected", "properties", "private"),
+                this.CSharpDiagnostic().WithLocation(5, 31).WithArguments("protected internal", "properties", "protected"),
+                this.CSharpDiagnostic().WithLocation(6, 21).WithArguments("internal", "properties", "protected internal"),
+                this.CSharpDiagnostic().WithLocation(7, 19).WithArguments("public", "properties", "internal")
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -141,10 +174,10 @@ public class TestClass2 { }
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(4, 20).WithArguments("Protected", string.Empty, "methods", "private"),
-                this.CSharpDiagnostic().WithLocation(5, 29).WithArguments("Protected internal", string.Empty, "methods", "protected"),
-                this.CSharpDiagnostic().WithLocation(6, 19).WithArguments("Internal", string.Empty, "methods", "protected internal"),
-                this.CSharpDiagnostic().WithLocation(7, 17).WithArguments("Public", string.Empty, "methods", "internal")
+                this.CSharpDiagnostic().WithLocation(4, 20).WithArguments("protected", "methods", "private"),
+                this.CSharpDiagnostic().WithLocation(5, 29).WithArguments("protected internal", "methods", "protected"),
+                this.CSharpDiagnostic().WithLocation(6, 19).WithArguments("internal", "methods", "protected internal"),
+                this.CSharpDiagnostic().WithLocation(7, 17).WithArguments("public", "methods", "internal")
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -164,7 +197,7 @@ public class TestClass2 { }
 }
 ";
 
-            var expected = this.CSharpDiagnostic().WithLocation(4, 5).WithArguments("Public", string.Empty, "events", "protected internal");
+            var expected = this.CSharpDiagnostic().WithLocation(4, 5).WithArguments("public", "events", "protected internal");
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
@@ -183,7 +216,7 @@ public class TestClass2 { }
 }
 ";
 
-            var expected = this.CSharpDiagnostic().WithLocation(4, 19).WithArguments("Public", string.Empty, "fields", "protected");
+            var expected = this.CSharpDiagnostic().WithLocation(4, 19).WithArguments("public", "fields", "protected");
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
@@ -202,7 +235,7 @@ public class TestClass2 { }
 }
 ";
 
-            var expected = this.CSharpDiagnostic().WithLocation(4, 32).WithArguments("Public", string.Empty, "events", "private");
+            var expected = this.CSharpDiagnostic().WithLocation(4, 32).WithArguments("public", "events", "private");
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
@@ -221,7 +254,7 @@ public class TestClass2 { }
 }
 ";
 
-            var expected = this.CSharpDiagnostic().WithLocation(4, 34).WithArguments("Internal", string.Empty, "events", "protected");
+            var expected = this.CSharpDiagnostic().WithLocation(4, 34).WithArguments("internal", "events", "protected");
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
@@ -240,7 +273,7 @@ public class TestClass2 { }
 }
 ";
 
-            var expected = this.CSharpDiagnostic().WithLocation(4, 28).WithArguments("Internal", string.Empty, "delegates", "private");
+            var expected = this.CSharpDiagnostic().WithLocation(4, 28).WithArguments("internal", "delegates", "private");
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
@@ -259,7 +292,7 @@ public class TestClass2 { }
 }
 ";
 
-            var expected = this.CSharpDiagnostic().WithLocation(4, 29).WithArguments("Protected internal", string.Empty, "methods", "private");
+            var expected = this.CSharpDiagnostic().WithLocation(4, 29).WithArguments("protected internal", "methods", "private");
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
@@ -278,7 +311,7 @@ public class TestClass2 { }
 }
 ";
 
-            var expected = this.CSharpDiagnostic().WithLocation(4, 29).WithArguments("Protected internal", string.Empty, "methods", "private");
+            var expected = this.CSharpDiagnostic().WithLocation(4, 29).WithArguments("protected internal", "methods", "private");
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
@@ -288,7 +321,7 @@ public class TestClass2 { }
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestMembersWithoutAccessModifiersSkippedAsync()
+        public async Task TestMembersWithoutAccessModifiersAsync()
         {
             var testCode = @"public class TestClass
 {
@@ -298,7 +331,25 @@ public class TestClass2 { }
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            var expected = this.CSharpDiagnostic().WithLocation(4, 19).WithArguments("public", "fields", "private");
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer will properly handle unqualified classes.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestClassesWithoutAccessModifiersAsync()
+        {
+            var testCode = @"class TestClass1 { }
+public class TestClass2 { }
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(2, 14).WithArguments("public", "classes", "internal");
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -316,7 +367,7 @@ public class TestClass2 { }
 }
 ";
 
-            var expected = this.CSharpDiagnostic().WithLocation(4, 19).WithArguments("Public", string.Empty, "fields", "private");
+            var expected = this.CSharpDiagnostic().WithLocation(4, 19).WithArguments("public", "fields", "private");
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
@@ -340,7 +391,9 @@ public class TestClass2 { }
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            var expected = this.CSharpDiagnostic().WithLocation(7, 17).WithArguments("public", "methods", "private");
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -360,12 +413,12 @@ public class TestClass2 { }
 }
 ";
 
-                DiagnosticResult[] expected =
+            DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(4, 27).WithArguments("Protected", " static", "methods", "private"),
-                this.CSharpDiagnostic().WithLocation(5, 36).WithArguments("Protected internal", " static", "methods", "protected"),
-                this.CSharpDiagnostic().WithLocation(6, 26).WithArguments("Internal", " static", "methods", "protected internal"),
-                this.CSharpDiagnostic().WithLocation(7, 24).WithArguments("Public", " static", "methods", "internal")
+                this.CSharpDiagnostic().WithLocation(4, 27).WithArguments("protected", "methods", "private"),
+                this.CSharpDiagnostic().WithLocation(5, 36).WithArguments("protected internal", "methods", "protected"),
+                this.CSharpDiagnostic().WithLocation(6, 26).WithArguments("internal", "methods", "protected internal"),
+                this.CSharpDiagnostic().WithLocation(7, 24).WithArguments("public", "methods", "internal")
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -386,7 +439,56 @@ public class TestClass2 { }
 }
 ";
 
-            var expected = this.CSharpDiagnostic().WithLocation(4, 25).WithArguments("Protected", " const", "fields", "private");
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(4, 25).WithArguments("protected", "fields", "private"),
+                this.CSharpDiagnostic().WithLocation(5, 16).WithArguments("public", "fields", "protected")
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer will properly handle nested class ordering.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestNestedClassesAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    public class TestClass1 { }
+    private class TestClass2 { }
+    internal class TestClass3 { }
+}
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(5, 20).WithArguments("internal", "classes", "private");
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer will properly handle ordering within a namespace.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestNamespaceClassesAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    enum TestEnum1 { }
+    public enum TestEnum2 { }
+    class TestClass1 { }
+    public class TestClass2 { }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(4, 17).WithArguments("public", "enums", "internal"),
+                this.CSharpDiagnostic().WithLocation(6, 18).WithArguments("public", "classes", "internal")
+            };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }

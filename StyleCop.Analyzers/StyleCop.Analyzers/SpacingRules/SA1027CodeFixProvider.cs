@@ -10,6 +10,7 @@
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
@@ -28,7 +29,7 @@
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return WellKnownFixAllProviders.BatchFixer;
+            return CustomFixAllProviders.BatchFixer;
         }
 
         /// <inheritdoc/>
@@ -51,20 +52,41 @@
 
             var stringBuilder = new StringBuilder();
 
-            var column = violatingTrivia.GetLineSpan().StartLinePosition.Character;
-            foreach (var c in violatingTrivia.ToFullString())
+            int firstTriviaIndex = violatingTrivia.GetLineSpan().StartLinePosition.Character;
+            string relevantText;
+            if (firstTriviaIndex == 0)
             {
+                relevantText = violatingTrivia.ToFullString();
+            }
+            else
+            {
+                SourceText sourceText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+                relevantText = sourceText.ToString(new TextSpan(violatingTrivia.FullSpan.Start - firstTriviaIndex, firstTriviaIndex + violatingTrivia.FullSpan.Length));
+            }
+
+            int column = 0;
+            for (int i = 0; i < relevantText.Length; i++)
+            {
+                char c = relevantText[i];
                 if (c == '\t')
                 {
                     var offsetWithinTabColumn = column % indentationOptions.TabSize;
                     var spaceCount = indentationOptions.TabSize - offsetWithinTabColumn;
 
-                    stringBuilder.Append(' ', spaceCount);
+                    if (i >= firstTriviaIndex)
+                    {
+                        stringBuilder.Append(' ', spaceCount);
+                    }
+
                     column += spaceCount;
                 }
                 else
                 {
-                    stringBuilder.Append(c);
+                    if (i >= firstTriviaIndex)
+                    {
+                        stringBuilder.Append(c);
+                    }
+
                     column++;
                 }
             }

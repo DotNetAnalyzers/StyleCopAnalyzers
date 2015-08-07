@@ -23,7 +23,7 @@
         /// </summary>
         public const string DiagnosticId = "SA1203";
         private const string Title = "Constants must appear before fields";
-        private const string MessageFormat = "Constants must appear before fields";
+        private const string MessageFormat = "All {0} constants must appear before {0} fields";
         private const string Description = "A constant field is placed beneath a non-constant field.";
         private const string HelpLink = "http://www.stylecop.com/docs/SA1203.html";
 
@@ -54,26 +54,28 @@
             var typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
             var members = typeDeclaration.Members;
-            bool nonConstFieldFound = false;
+            var previousFieldConstant = true;
+            var previousAccessLevel = AccessLevel.NotSpecified;
 
-            for (int i = 0; i < members.Count; i++)
+            foreach (var member in members)
             {
-                var field = members[i] as FieldDeclarationSyntax;
+                var field = member as FieldDeclarationSyntax;
                 if (field == null)
                 {
                     continue;
                 }
 
-                bool thisFieldIsConstant = field.Modifiers.Any(SyntaxKind.ConstKeyword);
-                if (!thisFieldIsConstant)
+                bool currentFieldConstant = field.Modifiers.Any(SyntaxKind.ConstKeyword);
+                var currentAccessLevel = AccessLevelHelper.GetAccessLevel(field.Modifiers);
+                currentAccessLevel = currentAccessLevel == AccessLevel.NotSpecified ? AccessLevel.Private : currentAccessLevel;
+
+                if (currentAccessLevel == previousAccessLevel && !previousFieldConstant && currentFieldConstant)
                 {
-                    nonConstFieldFound = true;
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(member), AccessLevelHelper.GetName(currentAccessLevel)));
                 }
 
-                if (thisFieldIsConstant && nonConstFieldFound)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(members[i])));
-                }
+                previousFieldConstant = currentFieldConstant;
+                previousAccessLevel = currentAccessLevel;
             }
         }
     }

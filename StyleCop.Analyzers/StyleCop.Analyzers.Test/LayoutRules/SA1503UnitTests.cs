@@ -252,16 +252,35 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            // The batch fixer does correct all problems in one pass.
+            var batchFixedTestCode = @"using System.Diagnostics;
+public class Foo
+{
+    public void Bar(int i)
+    {
+        if (i == 0)
+        {
+            Debug.Assert(true);
+        }
+        else
+        {
+            Debug.Assert(false);
+        }
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, batchNewSource: batchFixedTestCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Verifies that the codefix provider will properly handle alternate indentations.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/660")]
+        [Fact]
         public async Task TestCodeFixProviderWithAlternateIndentationAsync()
         {
+            this.IndentationSize = 1;
+
             var testCode = @"using System.Diagnostics;
 public class Foo
 {
