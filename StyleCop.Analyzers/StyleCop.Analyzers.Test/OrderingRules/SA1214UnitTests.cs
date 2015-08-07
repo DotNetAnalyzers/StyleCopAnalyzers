@@ -209,6 +209,19 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestStaticFollowedByReadOnlyAtDifferentAccessLevelAsync()
+        {
+            var testCode = @"class TestClass
+{
+    public static int TestField1;
+    internal static readonly int TestField2;
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1214StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements();

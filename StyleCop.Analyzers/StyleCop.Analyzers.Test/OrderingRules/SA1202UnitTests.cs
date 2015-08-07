@@ -321,7 +321,7 @@ public class TestClass2 { }
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestMembersWithoutAccessModifiersSkippedAsync()
+        public async Task TestMembersWithoutAccessModifiersAsync()
         {
             var testCode = @"public class TestClass
 {
@@ -331,7 +331,25 @@ public class TestClass2 { }
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            var expected = this.CSharpDiagnostic().WithLocation(4, 19).WithArguments("public", "fields", "private");
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer will properly handle unqualified classes.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestClassesWithoutAccessModifiersAsync()
+        {
+            var testCode = @"class TestClass1 { }
+public class TestClass2 { }
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(2, 14).WithArguments("public", "classes", "internal");
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>

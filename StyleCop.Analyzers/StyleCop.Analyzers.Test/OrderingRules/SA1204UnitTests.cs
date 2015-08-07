@@ -260,6 +260,43 @@ internal static class TestClass4 { }
         }
 
         /// <summary>
+        /// Verifies that the analyzer will properly handle unqualified members.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestMembersWithoutAccessModifiersAsync()
+        {
+            var testCode = @"class TestClass
+{
+    string TestField1;
+    static string TestField2;
+    string TestField3;
+}
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(4, 19).WithArguments("private", "fields");
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer will properly handle unqualified classes.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestClassesWithoutAccessModifiersAsync()
+        {
+            var testCode = @"
+class TestClass1 { }
+static class TestClass2 { }
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(3, 14).WithArguments("internal", "classes");
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that the analyzer will properly incomplete members.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>

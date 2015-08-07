@@ -72,17 +72,17 @@
         {
             var compilationUnit = (CompilationUnitSyntax)context.Node;
 
-            HandleMemberList(context, compilationUnit.Members);
+            HandleMemberList(context, compilationUnit.Members, AccessLevel.Internal);
         }
 
         private static void HandleTypeDelcaration(SyntaxNodeAnalysisContext context)
         {
             var typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
-            HandleMemberList(context, typeDeclaration.Members);
+            HandleMemberList(context, typeDeclaration.Members, AccessLevel.Private);
         }
 
-        private static void HandleMemberList(SyntaxNodeAnalysisContext context, SyntaxList<MemberDeclarationSyntax> members)
+        private static void HandleMemberList(SyntaxNodeAnalysisContext context, SyntaxList<MemberDeclarationSyntax> members, AccessLevel defaultAccessLevel)
         {
             var previousSyntaxKind = SyntaxKind.None;
             var previousAccessLevel = AccessLevel.NotSpecified;
@@ -93,6 +93,7 @@
                 currentSyntaxKind = currentSyntaxKind == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : currentSyntaxKind;
                 var modifiers = member.GetModifiers();
                 var currentAccessLevel = AccessLevelHelper.GetAccessLevel(modifiers);
+                currentAccessLevel = currentAccessLevel == AccessLevel.NotSpecified ? defaultAccessLevel : currentAccessLevel;
                 var currentMemberStatic = modifiers.Any(SyntaxKind.StaticKeyword);
                 var currentMemberConst = modifiers.Any(SyntaxKind.ConstKeyword);
 
