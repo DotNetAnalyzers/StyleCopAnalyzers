@@ -144,10 +144,17 @@
                 }
                 else
                 {
-                    if ((triviaIndex < triviaList.Count) && triviaList[triviaIndex].IsKind(SyntaxKind.SingleLineCommentTrivia))
+                    if (triviaIndex < triviaList.Count)
                     {
-                        // ignore a single blank line in between two single line comments.
-                        continue;
+                        switch (triviaList[triviaIndex].Kind())
+                        {
+                        case SyntaxKind.SingleLineCommentTrivia:
+                        case SyntaxKind.SingleLineDocumentationCommentTrivia:
+                        case SyntaxKind.MultiLineCommentTrivia:
+                        case SyntaxKind.MultiLineDocumentationCommentTrivia:
+                            // ignore a single blank line in between two comments.
+                            continue;
+                        }
                     }
                 }
 

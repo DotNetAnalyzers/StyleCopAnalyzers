@@ -285,13 +285,36 @@ public class TestClass
         {
             var testCode = @"// some comment
                 
-/* <summary>Test summary.</summary> */
+/** <summary>Test summary.</summary> */
 public class TestClass
 {
     // another comment
 
-    /* <summary>Test summary.</summary> */
+    /** <summary>Test summary.</summary> */
     public void TestMethod() { }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer will properly handle comments followed by multi-line comments.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestCommentFollowedByMultiLineCommentAsync()
+        {
+            var testCode = @"namespace TestNamespace {
+    // some comment
+                
+    /* multi-line comment */
+    internal class TestClass
+    {
+        // another comment
+
+        /* another multi-line comment */
+    }
 }
 ";
 
