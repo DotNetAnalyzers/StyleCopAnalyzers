@@ -133,6 +133,6 @@
     <value>Remove parentheses</value>
   </data>
   <data name="SA1412CodeFix" xml:space="preserve">
-    <value>Fix encoding</value>
+    <value>Change encoding from '{0}' to UTF-8 with byte order mark</value>
   </data>
 </root>

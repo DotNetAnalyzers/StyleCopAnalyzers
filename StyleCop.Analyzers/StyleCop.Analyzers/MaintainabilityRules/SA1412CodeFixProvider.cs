@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.MaintainabilityRules
 {
+    using System;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Text;
@@ -33,7 +34,7 @@
         }
 
         /// <inheritdoc/>
-        public override Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             foreach (var diagnostic in context.Diagnostics)
             {
@@ -42,12 +43,23 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create(MaintainabilityResources.SA1412CodeFix,
-                    token => GetTransformedSolutionAsync(context.Document),
-                    equivalenceKey: nameof(SA1412CodeFixProvider)), diagnostic);
-            }
+                string usedEncoding = await GetEncodingNameForDocumentAsync(context.Document).ConfigureAwait(false);
 
-            return SpecializedTasks.CompletedTask;
+                context.RegisterCodeFix(CodeAction.Create(string.Format(MaintainabilityResources.SA1412CodeFix, usedEncoding),
+                    token => GetTransformedSolutionAsync(context.Document),
+                    equivalenceKey: await GetEquivalenceKeyForDocumentAsync(context.Document).ConfigureAwait(false)), diagnostic);
+            }
+        }
+
+        internal static async Task<string> GetEncodingNameForDocumentAsync(Document document)
+        {
+            return (await document.GetTextAsync().ConfigureAwait(false)).Encoding?.WebName ?? "<null>";
+        }
+
+        internal static async Task<string> GetEquivalenceKeyForDocumentAsync(Document document)
+        {
+            string usedEncoding = await GetEncodingNameForDocumentAsync(document).ConfigureAwait(false);
+            return nameof(SA1412CodeFixProvider) + "." + usedEncoding;
         }
 
         internal static async Task<Solution> GetTransformedSolutionAsync(Document document)

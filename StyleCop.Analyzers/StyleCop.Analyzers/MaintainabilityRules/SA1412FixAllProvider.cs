@@ -36,7 +36,20 @@
                 return null;
             }
 
-            return CodeAction.Create(MaintainabilityResources.SA1412CodeFix, token => Task.FromResult(newSolution));
+            return CodeAction.Create(string.Format(MaintainabilityResources.SA1412CodeFix, await SA1412CodeFixProvider.GetEncodingNameForDocumentAsync(fixAllContext.Document).ConfigureAwait(false)), token => Task.FromResult(newSolution));
+        }
+
+        private static async Task<Solution> FixDocumentAsync(FixAllContext fixAllContext, Document document)
+        {
+            Solution solution = document.Project.Solution;
+            var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
+
+            if (diagnostics.Length == 0 || fixAllContext.CodeActionEquivalenceKey != await SA1412CodeFixProvider.GetEquivalenceKeyForDocumentAsync(document).ConfigureAwait(false))
+            {
+                return solution;
+            }
+
+            return await SA1412CodeFixProvider.GetTransformedSolutionAsync(document).ConfigureAwait(false);
         }
 
         private static async Task<Solution> GetProjectFixesAsync(FixAllContext fixAllContext, Project project)
@@ -51,19 +64,6 @@
             }
 
             return solution;
-        }
-
-        private static async Task<Solution> FixDocumentAsync(FixAllContext fixAllContext, Document document)
-        {
-            Solution solution = document.Project.Solution;
-            var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
-
-            if (diagnostics.Length == 0)
-            {
-                return solution;
-            }
-
-            return await SA1412CodeFixProvider.GetTransformedSolutionAsync(document).ConfigureAwait(false);
         }
     }
 }
