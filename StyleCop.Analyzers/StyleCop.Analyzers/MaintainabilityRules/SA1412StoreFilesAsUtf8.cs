@@ -4,6 +4,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
+    using System.Text;
 
     /// <summary>
     /// Store files as UTF-8 with byte order mark.
@@ -34,7 +35,7 @@
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
 
-        private static byte[] utf8Preamble = new byte[] { 0xEF, 0xBB, 0xBF };
+        private static byte[] utf8Preamble = Encoding.UTF8.GetPreamble();
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics

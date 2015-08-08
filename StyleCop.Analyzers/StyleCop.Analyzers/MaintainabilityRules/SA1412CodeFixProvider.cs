@@ -14,7 +14,7 @@
     /// Implements a code fix for <see cref="SA1412StoreFilesAsUtf8"/>.
     /// </summary>
     /// <remarks>
-    /// <para>To fix a violation of this rule, change the encoding to utf-8 with preamble.</para>
+    /// <para>To fix a violation of this rule, change the encoding to UTF-8 with preamble.</para>
     /// </remarks>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1412CodeFixProvider))]
     [Shared]
@@ -29,14 +29,12 @@
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return null;
         }
 
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!this.FixableDiagnosticIds.Contains(diagnostic.Id))
@@ -44,8 +42,12 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create("Fix encoding", token => GetTransformedSolutionAsync(context.Document), equivalenceKey: nameof(SA1412CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create("Fix encoding",
+                    token => GetTransformedSolutionAsync(context.Document),
+                    equivalenceKey: nameof(SA1412CodeFixProvider)), diagnostic);
             }
+
+            return SpecializedTasks.CompletedTask;
         }
 
         private static async Task<Solution> GetTransformedSolutionAsync(Document document)
