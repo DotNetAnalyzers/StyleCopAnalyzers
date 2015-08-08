@@ -122,11 +122,6 @@
             return actualSymbol.OriginalDefinition == expectedSymbol;
         }
 
-        private static string GetName(TypeSyntax name)
-        {
-            return (name as SimpleNameSyntax).Identifier.ToString() ?? name.ToString();
-        }
-
         private static bool TextPartsMatch(string firstText, string secondText, XmlTextSyntax firstTextPart, XmlTextSyntax secondTextPart)
         {
             string firstTextPartText = XmlCommentHelper.GetText(firstTextPart, normalizeWhitespace: true);
