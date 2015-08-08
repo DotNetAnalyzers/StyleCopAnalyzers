@@ -6,6 +6,7 @@
     using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -44,6 +45,18 @@
 
                 Console.WriteLine($"Loaded solution in {stopwatch.ElapsedMilliseconds}ms");
 
+                if (!args.Contains("/nostats"))
+                {
+                    Console.WriteLine("Number of projects:\t\t" + solution.ProjectIds.Count);
+                    Console.WriteLine("Number of documents:\t\t" + solution.Projects.Sum(x => x.DocumentIds.Count));
+
+                    var statistics = GetAnalyzerStatistics(solution);
+
+                    Console.WriteLine("Number of syntax nodes:\t\t" + statistics.NumberofNodes);
+                    Console.WriteLine("Number of syntax tokens:\t" + statistics.NumberOfTokens);
+                    Console.WriteLine("Number of syntax trivia:\t" + statistics.NumberOfTrivia);
+                }
+
                 stopwatch.Restart();
 
                 var diagnostics = GetAnalyzerDiagnosticsAsync(solution, solutionPath, analyzers).Result;
@@ -64,6 +77,45 @@
                     }
                 }
             }
+        }
+
+        private static Statistic GetAnalyzerStatistics(Solution solution)
+        {
+            ThreadLocal<Statistic> sums = new ThreadLocal<Statistic>(() => new Statistic(0, 0, 0), true);
+
+            foreach (var project in solution.Projects)
+            {
+                Parallel.ForEach(project.Documents, document =>
+                {
+                    var documentStatistics = GetAnalyzerStatistics(document).ConfigureAwait(false).GetAwaiter().GetResult();
+
+                    var value = sums.Value;
+                    sums.Value = value + documentStatistics;
+                });
+            }
+
+            Statistic sum = new Statistic(0, 0, 0);
+            foreach (var value in sums.Values)
+            {
+                sum += value;
+            }
+
+            return sum;
+        }
+
+        private static async Task<Statistic> GetAnalyzerStatistics(Document document)
+        {
+            SyntaxTree tree = await document.GetSyntaxTreeAsync().ConfigureAwait(false);
+
+            SyntaxNode root = await tree.GetRootAsync().ConfigureAwait(false);
+
+            var tokensAndNodes = root.DescendantNodesAndTokensAndSelf(descendIntoTrivia: true);
+
+            int numberOfNodes = tokensAndNodes.Count(x => x.IsNode);
+            int numberOfTokens = tokensAndNodes.Count(x => x.IsToken);
+            int numberOfTrivia = root.DescendantTrivia(descendIntoTrivia: true).Count();
+
+            return new Statistic(numberOfNodes, numberOfTokens, numberOfTrivia);
         }
 
         private static IEnumerable<DiagnosticAnalyzer> FilterAnalyzers(IEnumerable<DiagnosticAnalyzer> analyzers, string[] args)
@@ -159,6 +211,7 @@
             Console.WriteLine("Usage: StyleCopTester [options] <Solution>");
             Console.WriteLine("Options:");
             Console.WriteLine("/all     Run all StyleCopAnalyzers analyzers, including ones that are disabled by default");
+            Console.WriteLine("/nostats Disable the display of statistics");
             Console.WriteLine("/id:<id> Enable analyzer with diagnostic ID < id > (when this is specified, only this analyzer is enabled)");
         }
     }
