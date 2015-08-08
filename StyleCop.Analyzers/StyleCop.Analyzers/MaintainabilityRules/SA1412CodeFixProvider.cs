@@ -29,7 +29,7 @@
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return null;
+            return new SA1412FixAllProvider();
         }
 
         /// <inheritdoc/>
@@ -50,7 +50,7 @@
             return SpecializedTasks.CompletedTask;
         }
 
-        private static async Task<Solution> GetTransformedSolutionAsync(Document document)
+        internal static async Task<Solution> GetTransformedSolutionAsync(Document document)
         {
             SourceText text = await document.GetTextAsync().ConfigureAwait(false);
 
