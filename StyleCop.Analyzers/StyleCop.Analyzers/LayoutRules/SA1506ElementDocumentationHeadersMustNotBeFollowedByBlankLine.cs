@@ -86,6 +86,10 @@
                 case SyntaxKind.EndOfLineTrivia:
                     eolCount++;
                     break;
+                case SyntaxKind.SingleLineCommentTrivia:
+                case SyntaxKind.MultiLineCommentTrivia:
+                    eolCount--;
+                    break;
                 case SyntaxKind.SingleLineDocumentationCommentTrivia:
                     if (eolCount > 0)
                     {

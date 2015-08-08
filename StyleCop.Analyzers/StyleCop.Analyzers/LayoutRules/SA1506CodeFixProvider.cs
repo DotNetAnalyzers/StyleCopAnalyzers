@@ -48,7 +48,16 @@
             var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
             var triviaList = token.LeadingTrivia;
 
-            var index = triviaList.Count - 1;
+            var index = triviaList.IndexOf(SyntaxKind.SingleLineDocumentationCommentTrivia);
+            for (; index < triviaList.Count - 1; index++)
+            {
+                if (triviaList[index].IsKind(SyntaxKind.SingleLineCommentTrivia)
+                    || triviaList[index].IsKind(SyntaxKind.MultiLineCommentTrivia))
+                {
+                    break;
+                }
+            }
+
             while (!triviaList[index].IsKind(SyntaxKind.EndOfLineTrivia))
             {
                 index--;
