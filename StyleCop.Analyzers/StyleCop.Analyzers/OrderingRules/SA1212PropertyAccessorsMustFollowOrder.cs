@@ -63,18 +63,18 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandlePropertyDeclaration, SyntaxKind.PropertyDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandlePropertyDeclaration, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
         }
 
-        private void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)
         {
             var indexerDeclaration = (IndexerDeclarationSyntax)context.Node;
 
             AnalyzeProperty(context, indexerDeclaration);
         }
 
-        private void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
         {
             var propertyDeclaration = (PropertyDeclarationSyntax)context.Node;
 

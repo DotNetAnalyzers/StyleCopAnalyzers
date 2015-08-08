@@ -62,19 +62,19 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleBaseTypeDeclarations, SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.EnumDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandlePropertyLikeDeclarations, SyntaxKind.PropertyDeclaration, SyntaxKind.EventDeclaration, SyntaxKind.IndexerDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMethodLikeDeclarations, SyntaxKind.MethodDeclaration, SyntaxKind.ConstructorDeclaration, SyntaxKind.DestructorDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleNamespaceDeclarations, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleBaseTypeDeclarations, SyntaxKind.ClassDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandlePropertyLikeDeclarations, SyntaxKind.PropertyDeclaration, SyntaxKind.EventDeclaration, SyntaxKind.IndexerDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleMethodLikeDeclarations, SyntaxKind.MethodDeclaration, SyntaxKind.ConstructorDeclaration, SyntaxKind.DestructorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleNamespaceDeclarations, SyntaxKind.NamespaceDeclaration);
         }
 
-        private void HandleBaseTypeDeclarations(SyntaxNodeAnalysisContext context)
+        private static void HandleBaseTypeDeclarations(SyntaxNodeAnalysisContext context)
         {
             var typeDeclaration = (BaseTypeDeclarationSyntax)context.Node;
             CheckViolation(context, typeDeclaration.OpenBraceToken, typeDeclaration.CloseBraceToken);
         }
 
-        private void HandlePropertyLikeDeclarations(SyntaxNodeAnalysisContext context)
+        private static void HandlePropertyLikeDeclarations(SyntaxNodeAnalysisContext context)
         {
             var basePropertyDeclaration = (BasePropertyDeclarationSyntax)context.Node;
 
@@ -89,7 +89,7 @@
             }
         }
 
-        private void HandleMethodLikeDeclarations(SyntaxNodeAnalysisContext context)
+        private static void HandleMethodLikeDeclarations(SyntaxNodeAnalysisContext context)
         {
             var baseMethodDeclaration = (BaseMethodDeclarationSyntax)context.Node;
 
@@ -100,7 +100,7 @@
             }
         }
 
-        private void HandleNamespaceDeclarations(SyntaxNodeAnalysisContext context)
+        private static void HandleNamespaceDeclarations(SyntaxNodeAnalysisContext context)
         {
             var namespaceDeclaration = (NamespaceDeclarationSyntax)context.Node;
             CheckViolation(context, namespaceDeclaration.OpenBraceToken, namespaceDeclaration.CloseBraceToken);

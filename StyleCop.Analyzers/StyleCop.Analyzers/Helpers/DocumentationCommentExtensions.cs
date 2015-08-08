@@ -68,19 +68,6 @@
                 (originalTrivia, rewrittenTrivia) => SelectExteriorTrivia(rewrittenTrivia, trivia, triviaWithSpace));
         }
 
-        private static SyntaxTrivia SelectExteriorTrivia(SyntaxTrivia rewrittenTrivia, SyntaxTrivia trivia, SyntaxTrivia triviaWithSpace)
-        {
-            // if the trivia had a trailing space, make sure to preserve it
-            if (rewrittenTrivia.ToString().EndsWith(" "))
-            {
-                return triviaWithSpace;
-            }
-
-            // otherwise the space is part of the leading trivia of the following token, so don't add an extra one to
-            // the exterior trivia
-            return trivia;
-        }
-
         public static SyntaxList<XmlNodeSyntax> WithoutFirstAndLastNewlines(this SyntaxList<XmlNodeSyntax> summaryContent)
         {
             if (summaryContent.Count == 0)
@@ -242,6 +229,19 @@
             }
 
             return node.ReplaceTokens(replacements.Keys, (originalToken, rewrittenToken) => replacements[originalToken]);
+        }
+
+        private static SyntaxTrivia SelectExteriorTrivia(SyntaxTrivia rewrittenTrivia, SyntaxTrivia trivia, SyntaxTrivia triviaWithSpace)
+        {
+            // if the trivia had a trailing space, make sure to preserve it
+            if (rewrittenTrivia.ToString().EndsWith(" "))
+            {
+                return triviaWithSpace;
+            }
+
+            // otherwise the space is part of the leading trivia of the following token, so don't add an extra one to
+            // the exterior trivia
+            return trivia;
         }
     }
 }

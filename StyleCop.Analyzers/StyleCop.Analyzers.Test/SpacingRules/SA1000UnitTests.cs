@@ -833,6 +833,16 @@ default:
             await this.TestKeywordStatementAsync(statementWithoutSpace, expected, statementWithSpace).ConfigureAwait(false);
         }
 
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        {
+            yield return new SA1000KeywordsMustBeSpacedCorrectly();
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1000CodeFixProvider();
+        }
+
         private Task TestKeywordStatementAsync(string statement, DiagnosticResult expected, string fixedStatement, string returnType = "void", bool asyncMethod = false)
         {
             return this.TestKeywordStatementAsync(statement, new[] { expected }, fixedStatement, returnType, asyncMethod);
@@ -893,16 +903,6 @@ namespace Namespace
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1000KeywordsMustBeSpacedCorrectly();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1000CodeFixProvider();
         }
     }
 }

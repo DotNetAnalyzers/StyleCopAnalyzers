@@ -51,17 +51,17 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
         }
 
-        private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
             var methodDeclaration = context.Node as MethodDeclarationSyntax;
             HandleMember(context, methodDeclaration?.ReturnType);
         }
 
-        private void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
         {
             var delegateDeclaration = context.Node as DelegateDeclarationSyntax;
             HandleMember(context, delegateDeclaration?.ReturnType);

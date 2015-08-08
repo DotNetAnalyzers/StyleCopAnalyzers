@@ -81,19 +81,19 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
 
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleCompilationUnit, SyntaxKind.CompilationUnit);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleNamespaceDeclaration, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleCompilationUnit, SyntaxKind.CompilationUnit);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleNamespaceDeclaration, SyntaxKind.NamespaceDeclaration);
 
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandlePropertyDeclaration, SyntaxKind.PropertyDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandlePropertyDeclaration, SyntaxKind.EventDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandlePropertyDeclaration, SyntaxKind.IndexerDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandlePropertyDeclaration, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandlePropertyDeclaration, SyntaxKind.EventDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandlePropertyDeclaration, SyntaxKind.IndexerDeclaration);
         }
 
-        private void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
         {
             var propertyDeclaration = context.Node as BasePropertyDeclarationSyntax;
 
@@ -121,7 +121,7 @@
             }
         }
 
-        private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
             var typeDeclaration = context.Node as TypeDeclarationSyntax;
 
@@ -129,11 +129,11 @@
             {
                 var members = typeDeclaration.Members;
 
-                this.HandleMemberList(context, members);
+                HandleMemberList(context, members);
             }
         }
 
-        private void HandleCompilationUnit(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context)
         {
             var compilationUnit = context.Node as CompilationUnitSyntax;
 
@@ -141,7 +141,7 @@
             {
                 var members = compilationUnit.Members;
 
-                this.HandleMemberList(context, members);
+                HandleMemberList(context, members);
 
                 if (members.Count > 0 && compilationUnit.Usings.Count > 0)
                 {
@@ -155,7 +155,7 @@
             }
         }
 
-        private void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context)
         {
             var namespaceDeclaration = context.Node as NamespaceDeclarationSyntax;
 
@@ -163,7 +163,7 @@
             {
                 var members = namespaceDeclaration.Members;
 
-                this.HandleMemberList(context, members);
+                HandleMemberList(context, members);
 
                 if (members.Count > 0 && namespaceDeclaration.Usings.Count > 0)
                 {
@@ -177,7 +177,7 @@
             }
         }
 
-        private void HandleMemberList(SyntaxNodeAnalysisContext context, SyntaxList<MemberDeclarationSyntax> members)
+        private static void HandleMemberList(SyntaxNodeAnalysisContext context, SyntaxList<MemberDeclarationSyntax> members)
         {
             for (int i = 1; i < members.Count; i++)
             {

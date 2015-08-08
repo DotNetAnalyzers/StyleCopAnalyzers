@@ -81,12 +81,12 @@
                 // is disabled
                 if (startContext.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(Descriptor.Id) != Microsoft.CodeAnalysis.ReportDiagnostic.Suppress)
                 {
-                    startContext.RegisterSyntaxNodeActionHonorExclusions(this.HandleParenthesizedExpression, SyntaxKind.ParenthesizedExpression);
+                    startContext.RegisterSyntaxNodeActionHonorExclusions(HandleParenthesizedExpression, SyntaxKind.ParenthesizedExpression);
                 }
             });
         }
 
-        private void HandleParenthesizedExpression(SyntaxNodeAnalysisContext context)
+        private static void HandleParenthesizedExpression(SyntaxNodeAnalysisContext context)
         {
             var node = context.Node as ParenthesizedExpressionSyntax;
 

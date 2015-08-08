@@ -15,74 +15,6 @@
     /// </summary>
     public class SA1122UnitTests : CodeFixVerifier
     {
-        private async Task TestEmptyStringLiteralAsync(bool useVerbatimLiteral)
-        {
-            var testCode = @"public class Foo
-{{
-    public void Bar()
-    {{
-        string test = {0}"""";
-    }}
-}}";
-
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 23);
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, useVerbatimLiteral ? "@" : string.Empty), expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private async Task TestParenthesizedEmptyStringLiteralAsync(bool useVerbatimLiteral)
-        {
-            var testCode = @"public class Foo
-{{
-    public void Bar()
-    {{
-        string test = ({0}"""");
-    }}
-}}";
-
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 24);
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, useVerbatimLiteral ? "@" : string.Empty), expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private async Task TestLocalStringLiteralImplAsync(bool useVerbatimLiteral, bool isConst)
-        {
-            var testCode = @"public class Foo
-{{
-    public void Bar()
-    {{
-        {1}
-string test = {0}"""";
-    }}
-}}";
-
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(6, 15)
-                };
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, useVerbatimLiteral ? "@" : string.Empty, isConst ? "const" : string.Empty), isConst ? EmptyDiagnosticResults : expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private async Task TestParenthesizedLocalStringLiteralImplAsync(bool useVerbatimLiteral, bool isConst)
-        {
-            var testCode = @"public class Foo
-{{
-    public void Bar()
-    {{
-        {1}
-string test = ({0}"""");
-    }}
-}}";
-
-            DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(6, 16)
-                };
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, useVerbatimLiteral ? "@" : string.Empty, isConst ? "const" : string.Empty), isConst ? EmptyDiagnosticResults : expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
         public async Task TestWhitespaceStringLiteralAsync(bool useVerbatimLiteral)
         {
             var testCode = @"public class Foo
@@ -92,33 +24,6 @@ string test = ({0}"""");
         string test = {0}""  "";
     }}
 }}";
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, useVerbatimLiteral ? "@" : string.Empty), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private async Task TestAttributeStringLiteralImplAsync(bool useVerbatimLiteral)
-        {
-            var testCode = @"using System.Diagnostics.CodeAnalysis;
-public class Foo
-{{
-    [System.Diagnostics.CodeAnalysis.SuppressMessage({0}"""", ""checkId"",
-                                                    Justification = ({0}""""))]
-    public void Bar()
-    {{
-    }}
-}}";
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, useVerbatimLiteral ? "@" : string.Empty), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private async Task TestDefaultParameterStringLiteralImplAsync(bool useVerbatimLiteral)
-        {
-            var testCode = @"using System.Diagnostics.CodeAnalysis;
-public class Foo
-{{
-    public void Bar(string x = {0}"""", string y = ({0}""""))
-    {{
-    }}
-}}";
-
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, useVerbatimLiteral ? "@" : string.Empty), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -132,26 +37,6 @@ public class Foo
     }}
 }}";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private async Task TestSimpleCodeFixAsync(bool useVerbatimLiteral)
-        {
-            string oldSource = @"public class Foo
-{{
-    public void Bar()
-    {{
-        string test = {0}"""";
-    }}
-}}";
-            string newSource = @"public class Foo
-{
-    public void Bar()
-    {
-        string test = string.Empty;
-    }
-}";
-
-            await this.VerifyCSharpFixAsync(string.Format(oldSource, useVerbatimLiteral ? "@" : string.Empty), newSource).ConfigureAwait(false);
         }
 
         [Fact]
@@ -383,6 +268,121 @@ class ClassName
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new SA1122CodeFixProvider();
+        }
+
+        private async Task TestEmptyStringLiteralAsync(bool useVerbatimLiteral)
+        {
+            var testCode = @"public class Foo
+{{
+    public void Bar()
+    {{
+        string test = {0}"""";
+    }}
+}}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 23);
+
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, useVerbatimLiteral ? "@" : string.Empty), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        private async Task TestParenthesizedEmptyStringLiteralAsync(bool useVerbatimLiteral)
+        {
+            var testCode = @"public class Foo
+{{
+    public void Bar()
+    {{
+        string test = ({0}"""");
+    }}
+}}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 24);
+
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, useVerbatimLiteral ? "@" : string.Empty), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        private async Task TestLocalStringLiteralImplAsync(bool useVerbatimLiteral, bool isConst)
+        {
+            var testCode = @"public class Foo
+{{
+    public void Bar()
+    {{
+        {1}
+string test = {0}"""";
+    }}
+}}";
+
+            DiagnosticResult[] expected =
+                {
+                    this.CSharpDiagnostic().WithLocation(6, 15)
+                };
+
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, useVerbatimLiteral ? "@" : string.Empty, isConst ? "const" : string.Empty), isConst ? EmptyDiagnosticResults : expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        private async Task TestParenthesizedLocalStringLiteralImplAsync(bool useVerbatimLiteral, bool isConst)
+        {
+            var testCode = @"public class Foo
+{{
+    public void Bar()
+    {{
+        {1}
+string test = ({0}"""");
+    }}
+}}";
+
+            DiagnosticResult[] expected =
+                {
+                    this.CSharpDiagnostic().WithLocation(6, 16)
+                };
+
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, useVerbatimLiteral ? "@" : string.Empty, isConst ? "const" : string.Empty), isConst ? EmptyDiagnosticResults : expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        private async Task TestAttributeStringLiteralImplAsync(bool useVerbatimLiteral)
+        {
+            var testCode = @"using System.Diagnostics.CodeAnalysis;
+public class Foo
+{{
+    [System.Diagnostics.CodeAnalysis.SuppressMessage({0}"""", ""checkId"",
+                                                    Justification = ({0}""""))]
+    public void Bar()
+    {{
+    }}
+}}";
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, useVerbatimLiteral ? "@" : string.Empty), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        private async Task TestDefaultParameterStringLiteralImplAsync(bool useVerbatimLiteral)
+        {
+            var testCode = @"using System.Diagnostics.CodeAnalysis;
+public class Foo
+{{
+    public void Bar(string x = {0}"""", string y = ({0}""""))
+    {{
+    }}
+}}";
+
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, useVerbatimLiteral ? "@" : string.Empty), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        private async Task TestSimpleCodeFixAsync(bool useVerbatimLiteral)
+        {
+            string oldSource = @"public class Foo
+{{
+    public void Bar()
+    {{
+        string test = {0}"""";
+    }}
+}}";
+            string newSource = @"public class Foo
+{
+    public void Bar()
+    {
+        string test = string.Empty;
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(string.Format(oldSource, useVerbatimLiteral ? "@" : string.Empty), newSource).ConfigureAwait(false);
         }
     }
 }

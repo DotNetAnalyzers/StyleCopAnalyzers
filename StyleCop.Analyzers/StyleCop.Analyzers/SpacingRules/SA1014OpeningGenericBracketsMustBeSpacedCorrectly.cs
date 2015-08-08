@@ -47,10 +47,10 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
         }
 
-        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())

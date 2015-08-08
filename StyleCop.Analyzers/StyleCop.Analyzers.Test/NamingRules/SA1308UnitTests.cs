@@ -27,26 +27,6 @@
             }
         }
 
-        private async Task TestFieldSpecifyingModifierAndPrefixAsync(string modifier, string codePrefix, string diagnosticPrefix)
-        {
-            var originalCode = @"public class Foo
-{{
-    {0}
-string {1}bar = ""baz"";
-}}";
-
-            DiagnosticResult expected =
-                this.CSharpDiagnostic()
-                .WithArguments($"{diagnosticPrefix}bar", diagnosticPrefix)
-                .WithLocation(4, 8);
-
-            var testCode = string.Format(originalCode, modifier, codePrefix);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-
-            var fixedCode = string.Format(originalCode, modifier, string.Empty);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
-        }
-
         [Fact]
         public async Task TestMUnderscoreOnlyAsync()
         {
@@ -146,6 +126,26 @@ string m_bar = ""baz"";
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new SA1308CodeFixProvider();
+        }
+
+        private async Task TestFieldSpecifyingModifierAndPrefixAsync(string modifier, string codePrefix, string diagnosticPrefix)
+        {
+            var originalCode = @"public class Foo
+{{
+    {0}
+string {1}bar = ""baz"";
+}}";
+
+            DiagnosticResult expected =
+                this.CSharpDiagnostic()
+                .WithArguments($"{diagnosticPrefix}bar", diagnosticPrefix)
+                .WithLocation(4, 8);
+
+            var testCode = string.Format(originalCode, modifier, codePrefix);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedCode = string.Format(originalCode, modifier, string.Empty);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
     }
 }

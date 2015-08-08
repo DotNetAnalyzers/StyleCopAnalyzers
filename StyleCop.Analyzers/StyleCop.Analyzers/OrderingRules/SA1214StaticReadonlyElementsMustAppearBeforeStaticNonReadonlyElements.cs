@@ -46,10 +46,10 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.AnalyzeTypeDeclaration, SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(AnalyzeTypeDeclaration, SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration);
         }
 
-        private void AnalyzeTypeDeclaration(SyntaxNodeAnalysisContext context)
+        private static void AnalyzeTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
             var typeDeclaration = (TypeDeclarationSyntax)context.Node;
 

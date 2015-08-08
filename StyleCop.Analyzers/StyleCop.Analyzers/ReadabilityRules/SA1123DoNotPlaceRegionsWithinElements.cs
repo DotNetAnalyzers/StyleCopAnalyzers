@@ -50,17 +50,6 @@
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleRegionDirectiveTrivia, SyntaxKind.RegionDirectiveTrivia);
         }
 
-        private void HandleRegionDirectiveTrivia(SyntaxNodeAnalysisContext context)
-        {
-            RegionDirectiveTriviaSyntax regionSyntax = context.Node as RegionDirectiveTriviaSyntax;
-
-            if (regionSyntax != null && IsCompletelyContainedInBody(regionSyntax))
-            {
-                // Region must not be located within a code element.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, regionSyntax.GetLocation()));
-            }
-        }
-
         /// <summary>
         /// Checks if a region is completely part of a body. That means that the <c>#region</c> and <c>#endregion</c>
         /// tags both have to have a common <see cref="BlockSyntax"/> as one of their ancestors.
@@ -97,6 +86,17 @@
             }
 
             return true;
+        }
+
+        private void HandleRegionDirectiveTrivia(SyntaxNodeAnalysisContext context)
+        {
+            RegionDirectiveTriviaSyntax regionSyntax = context.Node as RegionDirectiveTriviaSyntax;
+
+            if (regionSyntax != null && IsCompletelyContainedInBody(regionSyntax))
+            {
+                // Region must not be located within a code element.
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, regionSyntax.GetLocation()));
+            }
         }
     }
 }

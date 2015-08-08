@@ -25,10 +25,10 @@
         /// The ID for diagnostics produced by the <see cref="SA1652EnableXmlDocumentationOutput"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1652";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1652.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1652Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1652MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1652Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1652.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

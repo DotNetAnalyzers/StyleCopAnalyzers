@@ -98,10 +98,10 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTreeAnalysis);
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTreeAnalysis);
         }
 
-        private void HandleSyntaxTreeAnalysis(SyntaxTreeAnalysisContext context)
+        private static void HandleSyntaxTreeAnalysis(SyntaxTreeAnalysisContext context)
         {
             var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
 

@@ -649,6 +649,16 @@
             await this.TestNestedDeclarationWithDirectivesAsync("private", "OuterTypeName", "static OuterTypeName(", " ) { }", warning: false).ConfigureAwait(false);
         }
 
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        {
+            yield return new SA1400AccessModifierMustBeDeclared();
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1400CodeFixProvider();
+        }
+
         private async Task TestTypeDeclarationAsync(string keyword, bool warning = true)
         {
             await this.TestDeclarationAsync("internal", "TypeName", $"{keyword} TypeName", "{\n}", warning: warning).ConfigureAwait(false);
@@ -839,16 +849,6 @@ public {containingType} OuterTypeName {baseTypeList} {{
 {baseTypeDeclarations}";
 
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1400AccessModifierMustBeDeclared();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1400CodeFixProvider();
         }
     }
 }

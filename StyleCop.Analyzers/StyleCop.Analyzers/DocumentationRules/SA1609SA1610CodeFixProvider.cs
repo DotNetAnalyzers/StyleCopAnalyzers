@@ -56,6 +56,29 @@
             return SpecializedTasks.CompletedTask;
         }
 
+        private static bool IsContentElement(XmlNodeSyntax syntax)
+        {
+            switch (syntax.Kind())
+            {
+            case SyntaxKind.XmlCDataSection:
+            case SyntaxKind.XmlElement:
+            case SyntaxKind.XmlEmptyElement:
+            case SyntaxKind.XmlText:
+                return true;
+
+            default:
+                return false;
+            }
+        }
+
+        private static SyntaxTrivia GetLastDocumentationCommentExteriorTrivia(SyntaxNode node)
+        {
+            return node
+                .DescendantTrivia(descendIntoTrivia: true)
+                .Where(trivia => trivia.IsKind(SyntaxKind.DocumentationCommentExteriorTrivia))
+                .LastOrDefault();
+        }
+
         private async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var documentRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
@@ -193,29 +216,6 @@
             SyntaxToken replaced = SyntaxFactory.Token(prefixToken.LeadingTrivia, prefixToken.Kind(), text, valueText, prefixToken.TrailingTrivia);
             summaryContent = summaryContent.Replace(firstText, firstText.ReplaceToken(prefixToken, replaced));
             return true;
-        }
-
-        private static bool IsContentElement(XmlNodeSyntax syntax)
-        {
-            switch (syntax.Kind())
-            {
-            case SyntaxKind.XmlCDataSection:
-            case SyntaxKind.XmlElement:
-            case SyntaxKind.XmlEmptyElement:
-            case SyntaxKind.XmlText:
-                return true;
-
-            default:
-                return false;
-            }
-        }
-
-        private static SyntaxTrivia GetLastDocumentationCommentExteriorTrivia(SyntaxNode node)
-        {
-            return node
-                .DescendantTrivia(descendIntoTrivia: true)
-                .Where(trivia => trivia.IsKind(SyntaxKind.DocumentationCommentExteriorTrivia))
-                .LastOrDefault();
         }
     }
 }

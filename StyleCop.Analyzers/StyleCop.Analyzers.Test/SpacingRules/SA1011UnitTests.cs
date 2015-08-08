@@ -282,6 +282,18 @@ public class ClassName
             await this.TestWhitespaceInStatementOrDeclAsync(invalidStatament, fixedStatament, expected).ConfigureAwait(false);
         }
 
+        /// <inheritdoc/>
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        {
+            yield return new SA1011ClosingSquareBracketsMustBeSpacedCorrectly();
+        }
+
+        /// <inheritdoc/>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new OpenCloseSpacingCodeFixProvider();
+        }
+
         private async Task TestWhitespaceInStatementOrDeclAsync(string originalStatement, string fixedStatement, params DiagnosticResult[] expected)
         {
             string template = @"namespace Foo
@@ -304,18 +316,6 @@ public class ClassName
             {
                 await this.VerifyCSharpFixAsync(originalCode, fixedCode).ConfigureAwait(false);
             }
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1011ClosingSquareBracketsMustBeSpacedCorrectly();
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new OpenCloseSpacingCodeFixProvider();
         }
     }
 }

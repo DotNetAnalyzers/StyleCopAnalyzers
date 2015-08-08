@@ -16,13 +16,6 @@
         private int fileHeaderEnd;
 
         /// <summary>
-        /// Prevents a default instance of the <see cref="FileHeader"/> class from being created.
-        /// </summary>
-        private FileHeader()
-        {
-        }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="FileHeader"/> class.
         /// </summary>
         /// <param name="headerXml">The parsed XML tree from the header.</param>
@@ -33,6 +26,13 @@
             this.headerXml = headerXml;
             this.fileHeaderStart = fileHeaderStart;
             this.fileHeaderEnd = fileHeaderEnd;
+        }
+
+        /// <summary>
+        /// Prevents a default instance of the <see cref="FileHeader"/> class from being created.
+        /// </summary>
+        private FileHeader()
+        {
         }
 
         /// <summary>

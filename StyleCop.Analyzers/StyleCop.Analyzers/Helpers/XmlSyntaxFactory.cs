@@ -246,12 +246,6 @@
             return KeywordElement("null");
         }
 
-        private static XmlEmptyElementSyntax KeywordElement(string keyword)
-        {
-            return EmptyElement("see").AddAttributes(
-                TextAttribute("langword", keyword));
-        }
-
         public static XmlElementSyntax PlaceholderElement(params XmlNodeSyntax[] content)
         {
             return PlaceholderElement(List(content));
@@ -282,6 +276,12 @@
         public static XmlElementSyntax TokenElement(string value)
         {
             return Element("token", List(Text(value)));
+        }
+
+        private static XmlEmptyElementSyntax KeywordElement(string keyword)
+        {
+            return EmptyElement("see").AddAttributes(
+                TextAttribute("langword", keyword));
         }
 
         private static SyntaxToken ReplaceBracketTokens(SyntaxToken originalToken, SyntaxToken rewrittenToken)

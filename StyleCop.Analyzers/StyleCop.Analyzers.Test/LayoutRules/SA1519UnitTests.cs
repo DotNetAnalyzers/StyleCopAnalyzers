@@ -296,7 +296,7 @@ public class Foo
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TestStatements))]
-        private async Task TestCodeFixForStatementAsync(string statementText)
+        public async Task TestCodeFixForStatementAsync(string statementText)
         {
             await this.VerifyCSharpFixAsync(this.GenerateMultiLineTestStatement(statementText), this.GenerateFixedTestStatement(statementText)).ConfigureAwait(false);
         }
@@ -559,6 +559,16 @@ public class Foo
             await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
         }
 
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        {
+            yield return new SA1519CurlyBracketsMustNotBeOmittedFromMultiLineChildStatement();
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1503CodeFixProvider();
+        }
+
         private string GenerateSingleLineTestStatement(string statementText)
         {
             var testCodeFormat = @"using System.Diagnostics;
@@ -603,16 +613,6 @@ public class Foo
     }
 }";
             return fixedTestCodeFormat.Replace("#STATEMENT#", statementText);
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1519CurlyBracketsMustNotBeOmittedFromMultiLineChildStatement();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1503CodeFixProvider();
         }
     }
 }

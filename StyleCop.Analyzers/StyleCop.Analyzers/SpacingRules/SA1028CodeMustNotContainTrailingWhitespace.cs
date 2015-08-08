@@ -43,14 +43,14 @@
         /// <inheritdoc />
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
         }
 
         /// <summary>
         /// Scans an entire document for lines with trailing whitespace.
         /// </summary>
         /// <param name="context">The context that provides the document to scan.</param>
-        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             var root = context.Tree.GetRoot(context.CancellationToken);
             var text = root.GetText();
