@@ -561,10 +561,17 @@
 // some comment
 public class TestClass
 {
+    // yet another comment
+
     /// <summary>more documentation.</summary>
 
     // another comment
-    public void TestMethod() { }
+    public void TestMethod1() { }
+
+    /// <summary>more documentation.</summary>
+    
+    /* another comment */
+    public void TestMethod2() { }
 }
 ";
 
@@ -573,16 +580,23 @@ public class TestClass
 // some comment
 public class TestClass
 {
+    // yet another comment
+
     /// <summary>more documentation.</summary>
     // another comment
-    public void TestMethod() { }
+    public void TestMethod1() { }
+
+    /// <summary>more documentation.</summary>
+    /* another comment */
+    public void TestMethod2() { }
 }
 ";
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(2, 1),
-                this.CSharpDiagnostic().WithLocation(7, 5),
+                this.CSharpDiagnostic().WithLocation(3, 1),
+                this.CSharpDiagnostic().WithLocation(10, 1),
+                this.CSharpDiagnostic().WithLocation(15, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

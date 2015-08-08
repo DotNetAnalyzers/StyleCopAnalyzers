@@ -134,7 +134,7 @@
                     continue;
                 }
 
-                if (IsPrecededBySingleLineComment(triviaList, triviaIndex))
+                if (IsPrecededBySingleLineCommentOrDocumentation(triviaList, triviaIndex))
                 {
                     // allow consecutive single line comments.
                     continue;
@@ -172,7 +172,7 @@
             return false;
         }
 
-        private static bool IsPrecededBySingleLineComment(IReadOnlyList<SyntaxTrivia> triviaList, int triviaIndex)
+        private static bool IsPrecededBySingleLineCommentOrDocumentation(IReadOnlyList<SyntaxTrivia> triviaList, int triviaIndex)
         {
             var eolCount = 0;
 
@@ -191,6 +191,7 @@
                     break;
 
                 case SyntaxKind.SingleLineCommentTrivia:
+                case SyntaxKind.SingleLineDocumentationCommentTrivia:
                     return true;
 
                 default:
