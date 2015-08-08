@@ -105,5 +105,14 @@ namespace StyleCop.Analyzers.MaintainabilityRules {
                 return ResourceManager.GetString("SA1410SA1411CodeFix", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fix encoding.
+        /// </summary>
+        internal static string SA1412CodeFix {
+            get {
+                return ResourceManager.GetString("SA1412CodeFix", resourceCulture);
+            }
+        }
     }
 }

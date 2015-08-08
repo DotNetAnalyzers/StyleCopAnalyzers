@@ -132,4 +132,7 @@
   <data name="SA1410SA1411CodeFix" xml:space="preserve">
     <value>Remove parentheses</value>
   </data>
+  <data name="SA1412CodeFix" xml:space="preserve">
+    <value>Fix encoding</value>
+  </data>
 </root>

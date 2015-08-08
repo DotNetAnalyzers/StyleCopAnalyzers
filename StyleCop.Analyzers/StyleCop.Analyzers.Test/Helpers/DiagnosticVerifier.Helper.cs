@@ -154,6 +154,36 @@
         }
 
         /// <summary>
+        /// Create a project using the input strings as sources.
+        /// </summary>
+        /// <param name="sources">Classes in the form of strings.</param>
+        /// <param name="language">The language the source classes are in. Values may be taken from the
+        /// <see cref="LanguageNames"/> class.</param>
+        /// <param name="filenames">The filenames or null if the default filename should be used</param>
+        /// <returns>A <see cref="Project"/> created out of the <see cref="Document"/>s created from the source
+        /// strings.</returns>
+        protected virtual Project CreateProject(string[] sources, string language = LanguageNames.CSharp, string[] filenames = null)
+        {
+            string fileNamePrefix = DefaultFilePathPrefix;
+            string fileExt = language == LanguageNames.CSharp ? CSharpDefaultFileExt : VisualBasicDefaultExt;
+
+            var projectId = ProjectId.CreateNewId(debugName: TestProjectName);
+            var solution = this.CreateSolution(projectId, language);
+
+            int count = 0;
+            for (int i = 0; i < sources.Length; i++)
+            {
+                string source = sources[i];
+                var newFileName = filenames?[i] ?? fileNamePrefix + count + "." + fileExt;
+                var documentId = DocumentId.CreateNewId(projectId, debugName: newFileName);
+                solution = solution.AddDocument(documentId, newFileName, SourceText.From(source));
+                count++;
+            }
+
+            return solution.GetProject(projectId);
+        }
+
+        /// <summary>
         /// Sort <see cref="Diagnostic"/>s by location in source document.
         /// </summary>
         /// <param name="diagnostics">A collection of <see cref="Diagnostic"/>s to be sorted.</param>
@@ -207,36 +237,6 @@
             }
 
             return documents;
-        }
-
-        /// <summary>
-        /// Create a project using the input strings as sources.
-        /// </summary>
-        /// <param name="sources">Classes in the form of strings.</param>
-        /// <param name="language">The language the source classes are in. Values may be taken from the
-        /// <see cref="LanguageNames"/> class.</param>
-        /// <param name="filenames">The filenames or null if the default filename should be used</param>
-        /// <returns>A <see cref="Project"/> created out of the <see cref="Document"/>s created from the source
-        /// strings.</returns>
-        private Project CreateProject(string[] sources, string language = LanguageNames.CSharp, string[] filenames = null)
-        {
-            string fileNamePrefix = DefaultFilePathPrefix;
-            string fileExt = language == LanguageNames.CSharp ? CSharpDefaultFileExt : VisualBasicDefaultExt;
-
-            var projectId = ProjectId.CreateNewId(debugName: TestProjectName);
-            var solution = this.CreateSolution(projectId, language);
-
-            int count = 0;
-            for (int i = 0; i < sources.Length; i++)
-            {
-                string source = sources[i];
-                var newFileName = filenames?[i] ?? fileNamePrefix + count + "." + fileExt;
-                var documentId = DocumentId.CreateNewId(projectId, debugName: newFileName);
-                solution = solution.AddDocument(documentId, newFileName, SourceText.From(source));
-                count++;
-            }
-
-            return solution.GetProject(projectId);
         }
     }
 }
