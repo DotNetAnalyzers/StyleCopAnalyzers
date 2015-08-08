@@ -44,6 +44,7 @@
             [SyntaxKind.StructDeclaration] = "structs",
             [SyntaxKind.ClassDeclaration] = "classes",
             [SyntaxKind.FieldDeclaration] = "fields",
+            [SyntaxKind.ConstructorDeclaration] = "constructors",
             [SyntaxKind.EventDeclaration] = "events",
             [SyntaxKind.PropertyDeclaration] = "properties",
             [SyntaxKind.IndexerDeclaration] = "indexers",
@@ -100,10 +101,18 @@
                 var currentSyntaxKind = member.Kind();
                 currentSyntaxKind = currentSyntaxKind == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : currentSyntaxKind;
                 var modifiers = member.GetModifiers();
-                var currentAccessLevel = AccessLevelHelper.GetAccessLevel(modifiers);
-                currentAccessLevel = currentAccessLevel == AccessLevel.NotSpecified ? defaultAccessLevel : currentAccessLevel;
                 var currentMemberStatic = modifiers.Any(SyntaxKind.StaticKeyword);
                 var currentMemberConst = modifiers.Any(SyntaxKind.ConstKeyword);
+                AccessLevel currentAccessLevel;
+                if (currentMemberStatic && currentSyntaxKind == SyntaxKind.ConstructorDeclaration)
+                {
+                    currentAccessLevel = AccessLevel.Public;
+                }
+                else
+                {
+                    currentAccessLevel = AccessLevelHelper.GetAccessLevel(member.GetModifiers());
+                    currentAccessLevel = currentAccessLevel == AccessLevel.NotSpecified ? defaultAccessLevel : currentAccessLevel;
+                }
 
                 if (currentSyntaxKind == previousSyntaxKind
                     && currentAccessLevel == previousAccessLevel
