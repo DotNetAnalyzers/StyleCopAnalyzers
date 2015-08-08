@@ -54,7 +54,7 @@
 
             var previousFieldReadonly = true;
             var previousAccessLevel = AccessLevel.NotSpecified;
-            var previousMemberStatic = true;
+            var previousMemberStaticOrConst = true;
             foreach (var member in typeDeclaration.Members)
             {
                 var field = member as FieldDeclarationSyntax;
@@ -66,10 +66,10 @@
                 var currentFieldReadonly = field.Modifiers.Any(SyntaxKind.ReadOnlyKeyword);
                 var currentAccessLevel = AccessLevelHelper.GetAccessLevel(field.Modifiers);
                 currentAccessLevel = currentAccessLevel == AccessLevel.NotSpecified ? AccessLevel.Private : currentAccessLevel;
-                var currentMemberStatic = field.Modifiers.Any(SyntaxKind.StaticKeyword);
+                var currentMemberStaticOrConst = field.Modifiers.Any(SyntaxKind.StaticKeyword) || field.Modifiers.Any(SyntaxKind.ConstKeyword);
                 if (currentAccessLevel == previousAccessLevel
-                    && !currentMemberStatic
-                    && !previousMemberStatic
+                    && !currentMemberStaticOrConst
+                    && !previousMemberStaticOrConst
                     && currentFieldReadonly
                     && !previousFieldReadonly)
                 {
@@ -78,7 +78,7 @@
 
                 previousFieldReadonly = currentFieldReadonly;
                 previousAccessLevel = currentAccessLevel;
-                previousMemberStatic = currentMemberStatic;
+                previousMemberStaticOrConst = currentMemberStaticOrConst;
             }
         }
     }
