@@ -2,18 +2,18 @@
 {
     internal struct Statistic
     {
-        public Statistic(int numberOf1, int numberOf2, int numberOf3)
+        public Statistic(int numberOfNodes, int numberOfTokens, int numberOfTrivia)
         {
-            this.NumberofNodes = numberOf1;
-            this.NumberOfTokens = numberOf2;
-            this.NumberOfTrivia = numberOf3;
+            this.NumberofNodes = numberOfNodes;
+            this.NumberOfTokens = numberOfTokens;
+            this.NumberOfTrivia = numberOfTrivia;
         }
 
-        public int NumberofNodes { get; set; }
+        public int NumberofNodes { get; }
 
-        public int NumberOfTokens { get; set; }
+        public int NumberOfTokens { get; }
 
-        public int NumberOfTrivia { get; set; }
+        public int NumberOfTrivia { get; }
 
         public static Statistic operator +(Statistic statistic1, Statistic statistic2)
         {
