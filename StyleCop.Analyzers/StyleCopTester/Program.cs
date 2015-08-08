@@ -120,6 +120,11 @@
             // Make sure we analyze the projects in parallel
             foreach (var project in solution.Projects)
             {
+                if (project.Language != LanguageNames.CSharp)
+                {
+                    continue;
+                }
+
                 projectDiagnosticTasks.Add(GetProjectAnalyzerDiagnostics(analyzers, project));
             }
 
