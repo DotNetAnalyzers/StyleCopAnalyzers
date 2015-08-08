@@ -1,6 +1,7 @@
 ﻿namespace StyleCopTester
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Diagnostics;
@@ -47,10 +48,12 @@
 
                 if (!args.Contains("/nostats"))
                 {
-                    Console.WriteLine("Number of projects:\t\t" + solution.ProjectIds.Count);
-                    Console.WriteLine("Number of documents:\t\t" + solution.Projects.Sum(x => x.DocumentIds.Count));
+                    List<Project> csharpProjects = solution.Projects.Where(i => i.Language == LanguageNames.CSharp).ToList();
 
-                    var statistics = GetAnalyzerStatistics(solution);
+                    Console.WriteLine("Number of projects:\t\t" + csharpProjects.Count);
+                    Console.WriteLine("Number of documents:\t\t" + csharpProjects.Sum(x => x.DocumentIds.Count));
+
+                    var statistics = GetAnalyzerStatistics(csharpProjects);
 
                     Console.WriteLine("Number of syntax nodes:\t\t" + statistics.NumberofNodes);
                     Console.WriteLine("Number of syntax tokens:\t" + statistics.NumberOfTokens);
@@ -79,27 +82,17 @@
             }
         }
 
-        private static Statistic GetAnalyzerStatistics(Solution solution)
+        private static Statistic GetAnalyzerStatistics(IEnumerable<Project> projects)
         {
-            ThreadLocal<Statistic> sums = new ThreadLocal<Statistic>(() => new Statistic(0, 0, 0), true);
+            ConcurrentBag<Statistic> sums = new ConcurrentBag<Statistic>();
 
-            foreach (var project in solution.Projects)
+            Parallel.ForEach(projects.SelectMany(i => i.Documents), document =>
             {
-                Parallel.ForEach(project.Documents, document =>
-                {
-                    var documentStatistics = GetAnalyzerStatistics(document).ConfigureAwait(false).GetAwaiter().GetResult();
+                var documentStatistics = GetAnalyzerStatistics(document).ConfigureAwait(false).GetAwaiter().GetResult();
+                sums.Add(documentStatistics);
+            });
 
-                    var value = sums.Value;
-                    sums.Value = value + documentStatistics;
-                });
-            }
-
-            Statistic sum = new Statistic(0, 0, 0);
-            foreach (var value in sums.Values)
-            {
-                sum += value;
-            }
-
+            Statistic sum = sums.Aggregate(new Statistic(0, 0, 0), (currentResult, value) => currentResult + value);
             return sum;
         }
 
