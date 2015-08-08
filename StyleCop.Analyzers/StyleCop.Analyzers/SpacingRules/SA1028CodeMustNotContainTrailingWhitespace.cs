@@ -53,7 +53,7 @@
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             var root = context.Tree.GetRoot(context.CancellationToken);
-            var text = root.GetText();
+            var text = context.Tree.GetText(context.CancellationToken);
 
             foreach (var trivia in root.DescendantTrivia(descendIntoTrivia: true))
             {
