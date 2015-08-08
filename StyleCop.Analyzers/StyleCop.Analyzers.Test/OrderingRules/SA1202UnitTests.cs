@@ -517,6 +517,31 @@ class MyClass
         }
 
         /// <summary>
+        /// Verifies that the analyzer will properly handle constructors.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestConstructorsAsync()
+        {
+            var testCode = @"
+class MyClass
+{
+    private MyClass()
+    {
+    }
+
+    public MyClass(int a)
+    {
+    }
+}
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(8, 12).WithArguments("public", "constructors", "private");
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that the analyzer will properly handle incomplete members.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>

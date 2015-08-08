@@ -114,13 +114,14 @@
                 var currentSyntaxKind = member.Kind();
                 currentSyntaxKind = currentSyntaxKind == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : currentSyntaxKind;
                 AccessLevel currentAccessLevel;
-                if (currentSyntaxKind == SyntaxKind.ConstructorDeclaration)
+                var modifiers = member.GetModifiers();
+                if (currentSyntaxKind == SyntaxKind.ConstructorDeclaration && modifiers.Any(SyntaxKind.StaticKeyword))
                 {
                     currentAccessLevel = AccessLevel.Public;
                 }
                 else
                 {
-                    currentAccessLevel = AccessLevelHelper.GetAccessLevel(member.GetModifiers());
+                    currentAccessLevel = AccessLevelHelper.GetAccessLevel(modifiers);
                     currentAccessLevel = currentAccessLevel == AccessLevel.NotSpecified ? defaultAccessLevel : currentAccessLevel;
                 }
 
