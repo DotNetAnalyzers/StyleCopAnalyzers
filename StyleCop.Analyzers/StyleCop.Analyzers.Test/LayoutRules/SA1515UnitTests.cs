@@ -186,6 +186,27 @@ using System.Runtime.InteropServices;
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies the analyzer will properly handle documentation followed by a comment.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestDocumentationFollowedByCommentAsync()
+        {
+            var testCode = @"
+/// <summary>some documentation</summary>
+// some comment
+public class TestClass
+{
+    /// <summary>more documentation.</summary>
+    // another comment
+    public void TestMethod() { }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {

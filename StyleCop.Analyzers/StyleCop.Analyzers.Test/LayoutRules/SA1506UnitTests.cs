@@ -548,6 +548,48 @@
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that documentation followed by comments are handled properly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestDocumentationFollowedByCommentAsync()
+        {
+            var testCode = @"
+/// <summary>some documentation</summary>
+
+// some comment
+public class TestClass
+{
+    /// <summary>more documentation.</summary>
+
+    // another comment
+    public void TestMethod() { }
+}
+";
+
+            var fixedCode = @"
+/// <summary>some documentation</summary>
+// some comment
+public class TestClass
+{
+    /// <summary>more documentation.</summary>
+    // another comment
+    public void TestMethod() { }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(2, 1),
+                this.CSharpDiagnostic().WithLocation(7, 5),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1506ElementDocumentationHeadersMustNotBeFollowedByBlankLine();
