@@ -110,62 +110,6 @@
             await this.TestFixAllAsync(codepage, FixAllScope.Solution).ConfigureAwait(false);
         }
 
-        private async Task TestFixAllAsync(int codepage, FixAllScope scope)
-        {
-            string[] testCode = new[] { "class Foo { }", "class Bar { }" };
-
-            this.fileEncoding = Encoding.GetEncoding(codepage);
-
-            // Create a project using the specified encoding
-            Project project = this.CreateProject(testCode);
-            Project oldProject = project;
-
-            Workspace workspace = project.Solution.Workspace;
-
-            var codeFixer = this.GetCSharpCodeFixProvider();
-            var fixAllProvider = codeFixer.GetFixAllProvider();
-            var diagnostics = new List<Diagnostic>();
-            var descriptor = this.GetCSharpDiagnosticAnalyzers().First().SupportedDiagnostics.First();
-            foreach (var document in project.Documents)
-            {
-                // Create a diagnostic for the document to fix
-                var diagnostic = Diagnostic.Create(descriptor,
-                    Location.Create(await document.GetSyntaxTreeAsync().ConfigureAwait(false), TextSpan.FromBounds(0, 0)));
-                diagnostics.Add(diagnostic);
-            }
-
-            FixAllContext fixAllContext = new FixAllContext(project.Documents.First(),
-                codeFixer,
-                scope,
-                nameof(SA1412CodeFixProvider),
-                new[] { SA1412StoreFilesAsUtf8.DiagnosticId },
-                TestDiagnosticProvider.Create(diagnostics.ToImmutableArray()),
-                CancellationToken.None);
-
-            CodeAction codeAction = await fixAllProvider.GetFixAsync(fixAllContext).ConfigureAwait(false);
-            var operation = codeAction.GetOperationsAsync(CancellationToken.None).ConfigureAwait(false).GetAwaiter().GetResult()[0];
-
-            operation.Apply(workspace, CancellationToken.None);
-
-            // project should now have the "fixed document" in it.
-            // Because of limitations in roslyn the fixed document should
-            // have a different DocumentId then the broken document
-            project = workspace.CurrentSolution.Projects.First();
-
-            Assert.Equal(2, project.DocumentIds.Count);
-
-            for (int i = 0; i < project.DocumentIds.Count; i++)
-            {
-                DocumentId documentId = project.DocumentIds[i];
-                SourceText sourceText = await project.GetDocument(documentId).GetTextAsync().ConfigureAwait(false);
-
-                Assert.Equal(testCode[i], sourceText.ToString());
-
-                Assert.Equal(Encoding.UTF8, sourceText.Encoding);
-                Assert.NotEqual(oldProject.DocumentIds[i], project.DocumentIds[i]);
-            }
-        }
-
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1412StoreFilesAsUtf8();
@@ -195,6 +139,138 @@
             }
 
             return solution.GetProject(projectId);
+        }
+
+        private async Task TestFixAllAsync(int codepage, FixAllScope scope)
+        {
+            string[] testCode = new[] { "class Foo { }", "class Bar { }" };
+
+            this.fileEncoding = Encoding.GetEncoding(codepage);
+
+            // Create a project using the specified encoding
+            Project project = this.CreateProject(testCode);
+            Project oldProject = project;
+
+            Workspace workspace = project.Solution.Workspace;
+
+            var codeFixer = this.GetCSharpCodeFixProvider();
+            var fixAllProvider = codeFixer.GetFixAllProvider();
+            var diagnostics = new List<Diagnostic>();
+            var descriptor = this.GetCSharpDiagnosticAnalyzers().First().SupportedDiagnostics.First();
+            foreach (var document in project.Documents)
+            {
+                // Create a diagnostic for the document to fix
+                var diagnostic = Diagnostic.Create(descriptor,
+                    Location.Create(await document.GetSyntaxTreeAsync().ConfigureAwait(false), TextSpan.FromBounds(0, 0)));
+                diagnostics.Add(diagnostic);
+            }
+
+            FixAllContext fixAllContext = new FixAllContext(project.Documents.First(),
+                codeFixer,
+                scope,
+                nameof(SA1412CodeFixProvider) + "." + this.fileEncoding.WebName,
+                new[] { SA1412StoreFilesAsUtf8.DiagnosticId },
+                TestDiagnosticProvider.Create(diagnostics.ToImmutableArray()),
+                CancellationToken.None);
+
+            CodeAction codeAction = await fixAllProvider.GetFixAsync(fixAllContext).ConfigureAwait(false);
+            var operation = codeAction.GetOperationsAsync(CancellationToken.None).ConfigureAwait(false).GetAwaiter().GetResult()[0];
+
+            operation.Apply(workspace, CancellationToken.None);
+
+            // project should now have the "fixed document" in it.
+            // Because of limitations in roslyn the fixed document should
+            // have a different DocumentId then the broken document
+            project = workspace.CurrentSolution.Projects.First();
+
+            Assert.Equal(2, project.DocumentIds.Count);
+
+            for (int i = 0; i < project.DocumentIds.Count; i++)
+            {
+                DocumentId documentId = project.DocumentIds[i];
+                SourceText sourceText = await project.GetDocument(documentId).GetTextAsync().ConfigureAwait(false);
+
+                Assert.Equal(testCode[i], sourceText.ToString());
+
+                Assert.Equal(Encoding.UTF8, sourceText.Encoding);
+                Assert.NotEqual(oldProject.DocumentIds[i], project.DocumentIds[i]);
+            }
+        }
+
+        [Theory]
+        [InlineData(FixAllScope.Solution)]
+        [InlineData(FixAllScope.Project)]
+        private async Task TestFixAllWithMultipleEncodingsAsync(FixAllScope scope)
+        {
+            string[] testCode = new[] { "class Foo { }", "class Bar { }" };
+
+            this.fileEncoding = Encoding.Unicode;
+
+            // Create a project using the specified encoding
+            Project project = this.CreateProject(testCode);
+
+            project = project.AddDocument("Test2.cs", SourceText.From("class FooBar { }", Encoding.UTF7)).Project;
+
+            Project oldProject = project;
+
+            Workspace workspace = project.Solution.Workspace;
+
+            var codeFixer = this.GetCSharpCodeFixProvider();
+            var fixAllProvider = codeFixer.GetFixAllProvider();
+            var diagnostics = new List<Diagnostic>();
+            var descriptor = this.GetCSharpDiagnosticAnalyzers().First().SupportedDiagnostics.First();
+            foreach (var document in project.Documents)
+            {
+                // Create a diagnostic for the document to fix
+                var diagnostic = Diagnostic.Create(descriptor,
+                    Location.Create(await document.GetSyntaxTreeAsync().ConfigureAwait(false), TextSpan.FromBounds(0, 0)));
+                diagnostics.Add(diagnostic);
+            }
+
+            FixAllContext fixAllContext = new FixAllContext(project.Documents.First(),
+                codeFixer,
+                scope,
+                nameof(SA1412CodeFixProvider) + "." + this.fileEncoding.WebName,
+                new[] { SA1412StoreFilesAsUtf8.DiagnosticId },
+                TestDiagnosticProvider.Create(diagnostics.ToImmutableArray()),
+                CancellationToken.None);
+
+            CodeAction codeAction = await fixAllProvider.GetFixAsync(fixAllContext).ConfigureAwait(false);
+            var operation = codeAction.GetOperationsAsync(CancellationToken.None).ConfigureAwait(false).GetAwaiter().GetResult()[0];
+
+            operation.Apply(workspace, CancellationToken.None);
+
+            // project should now have the "fixed document" in it.
+            // Because of limitations in roslyn the fixed document should
+            // have a different DocumentId then the broken document
+            project = workspace.CurrentSolution.Projects.First();
+
+            Assert.Equal(3, project.DocumentIds.Count);
+
+            // The order of the document ids is now different from the order before.
+            for (int i = 1; i < 3; i++)
+            {
+                DocumentId documentId = project.DocumentIds[i];
+                SourceText sourceText = await project.GetDocument(documentId).GetTextAsync().ConfigureAwait(false);
+
+                Assert.Equal(testCode[i - 1], sourceText.ToString());
+
+                Assert.Equal(Encoding.UTF8, sourceText.Encoding);
+                Assert.NotEqual(oldProject.DocumentIds[i - 1], project.DocumentIds[i]);
+            }
+
+            // Check that Test2.cs was not changed
+            DocumentId otherDocumentId = project.DocumentIds[0];
+            var otherDocument = project.GetDocument(otherDocumentId);
+
+            Assert.Equal("Test2.cs", otherDocument.Name);
+
+            SourceText otherDocumentText = await otherDocument.GetTextAsync().ConfigureAwait(false);
+
+            Assert.Equal("class FooBar { }", otherDocumentText.ToString());
+
+            Assert.Equal(Encoding.UTF7, otherDocumentText.Encoding);
+            Assert.Equal(oldProject.DocumentIds[2], project.DocumentIds[0]);
         }
     }
 }

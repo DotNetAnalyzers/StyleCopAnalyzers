@@ -107,7 +107,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Fix encoding.
+        ///   Looks up a localized string similar to Change encoding from &apos;{0}&apos; to UTF-8 with byte order mark.
         /// </summary>
         internal static string SA1412CodeFix {
             get {
