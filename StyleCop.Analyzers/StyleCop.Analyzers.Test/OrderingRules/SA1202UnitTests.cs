@@ -494,6 +494,29 @@ public class TestClass2 { }
         }
 
         /// <summary>
+        /// Verifies that the analyzer will properly handle static constructors.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestStaticConstructorsAsync()
+        {
+            var testCode = @"
+class MyClass
+{
+    static MyClass()
+    {
+    }
+
+    public MyClass()
+    {
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that the analyzer will properly handle incomplete members.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
