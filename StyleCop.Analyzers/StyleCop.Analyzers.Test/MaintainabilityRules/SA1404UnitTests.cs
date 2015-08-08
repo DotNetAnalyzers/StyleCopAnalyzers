@@ -27,6 +27,22 @@
         }
 
         [Fact]
+        public async Task TestSuppressionWithStringLiteralAndUsingAliasDirectiveAsync()
+        {
+            var testCode = @"using SuppressMessageAttribute = System.Diagnostics.CodeAnalysis.SuppressMessageAttribute;
+public class Foo
+{
+    [SuppressMessage(null, null, Justification = ""a justification"")]
+    public void Bar()
+    {
+
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestSuppressionWithNoJustificationAsync()
         {
             var testCode = @"public class Foo
@@ -39,6 +55,42 @@
 }";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 6);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestSuppressionWithUsingAliasDirectiveAndNoJustificationAsync()
+        {
+            var testCode = @"using SuppressMessageAttribute = System.Diagnostics.CodeAnalysis.SuppressMessageAttribute;
+public class Foo
+{
+    [SuppressMessage(null, null)]
+    public void Bar()
+    {
+
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 6);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestSuppressionWithUsingDifferentAliasDirectiveAndNoJustificationAsync()
+        {
+            var testCode = @"using MySuppressionAttribute = System.Diagnostics.CodeAnalysis.SuppressMessageAttribute;
+public class Foo
+{
+    [MySuppression(null, null)]
+    public void Bar()
+    {
+
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 6);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
