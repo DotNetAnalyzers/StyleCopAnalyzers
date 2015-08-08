@@ -255,6 +255,10 @@
             }
 
             var firstArgument = argumentListSyntax.Arguments[0];
+            if (firstArgument.GetLeadingTrivia().Any(SyntaxKind.PragmaWarningDirectiveTrivia))
+            {
+                return;
+            }
 
             var firstArgumentLineSpan = firstArgument.GetLineSpan();
             if (!firstArgumentLineSpan.IsValid)
@@ -286,6 +290,10 @@
             }
 
             var firstArgument = argumentListSyntax.Arguments[0];
+            if (firstArgument.GetLeadingTrivia().Any(SyntaxKind.PragmaWarningDirectiveTrivia))
+            {
+                return;
+            }
 
             var firstArgumentLineSpan = firstArgument.GetLineSpan();
             if (!firstArgumentLineSpan.IsValid)
@@ -317,6 +325,10 @@
             }
 
             var firstArgument = argumentListSyntax.Arguments[0];
+            if (firstArgument.GetLeadingTrivia().Any(SyntaxKind.PragmaWarningDirectiveTrivia))
+            {
+                return;
+            }
 
             var firstArgumentLineSpan = firstArgument.GetLineSpan();
             if (!firstArgumentLineSpan.IsValid)
