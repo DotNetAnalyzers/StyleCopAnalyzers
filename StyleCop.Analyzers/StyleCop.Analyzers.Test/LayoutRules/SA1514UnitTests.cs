@@ -665,6 +665,55 @@ namespace TestNamespace
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that comments before documentation are properly handled.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestDocumenationPrecededByCommentNotReportedAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    // some comment
+    /// <summary>
+    /// some documentation.
+    /// </summary>
+    public class TestClass
+    {
+        // another comment
+        /// <summary>more documentation.</summary>
+        public void TestMethod() { }
+    }
+}
+";
+            var fixedCode = @"namespace TestNamespace
+{
+    // some comment
+
+    /// <summary>
+    /// some documentation.
+    /// </summary>
+    public class TestClass
+    {
+        // another comment
+
+        /// <summary>more documentation.</summary>
+        public void TestMethod() { }
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(4, 9),
+                this.CSharpDiagnostic().WithLocation(9, 10)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1514ElementDocumentationHeaderMustBePrecededByBlankLine();
