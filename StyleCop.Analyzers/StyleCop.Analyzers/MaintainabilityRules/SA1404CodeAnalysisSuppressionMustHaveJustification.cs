@@ -2,6 +2,7 @@
 {
     using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
+    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -54,25 +55,61 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleAttributeNode, SyntaxKind.Attribute);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleAttributeNode(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            var attribute = context.Node as AttributeSyntax;
-            if (attribute != null)
+            AnalyzerInstance instance = new AnalyzerInstance();
+            context.RegisterSyntaxNodeActionHonorExclusions(instance.HandleAttributeNode, SyntaxKind.Attribute);
+        }
+
+        /// <summary>
+        /// This class holds analyzer state information for analysis within a particular <see cref="Compilation"/>.
+        /// </summary>
+        private sealed class AnalyzerInstance
+        {
+            /// <summary>
+            /// A lazily-initialized reference to <see cref="SuppressMessageAttribute"/> within the context of a
+            /// particular <see cref="Compilation"/>.
+            /// </summary>
+            private INamedTypeSymbol suppressMessageAttribute;
+
+            public void HandleAttributeNode(SyntaxNodeAnalysisContext context)
             {
+                var attribute = (AttributeSyntax)context.Node;
+
+                // Return fast if the name doesn't match and the file doesn't contain any using alias directives
+                if (!attribute.SyntaxTree.ContainsUsingAlias())
+                {
+                    SimpleNameSyntax simpleNameSyntax = attribute.Name as SimpleNameSyntax;
+                    if (simpleNameSyntax == null)
+                    {
+                        QualifiedNameSyntax qualifiedNameSyntax = attribute.Name as QualifiedNameSyntax;
+                        simpleNameSyntax = qualifiedNameSyntax.Right;
+                    }
+
+                    if (simpleNameSyntax.Identifier.ValueText != nameof(SuppressMessageAttribute)
+                        && simpleNameSyntax.Identifier.ValueText != "SuppressMessage")
+                    {
+                        return;
+                    }
+                }
+
                 SymbolInfo symbolInfo = context.SemanticModel.GetSymbolInfo(attribute);
                 ISymbol symbol = symbolInfo.Symbol;
                 if (symbol != null)
                 {
-                    var suppressMessageType = context.SemanticModel.Compilation.GetTypeByMetadataName(typeof(SuppressMessageAttribute).FullName);
-                    if (symbol.ContainingType == suppressMessageType)
+                    if (this.suppressMessageAttribute == null)
                     {
-                        foreach (var argument in attribute.ArgumentList.ChildNodes())
+                        this.suppressMessageAttribute = context.SemanticModel.Compilation.GetTypeByMetadataName(typeof(SuppressMessageAttribute).FullName);
+                    }
+
+                    if (symbol.ContainingType == this.suppressMessageAttribute)
+                    {
+                        foreach (var attributeArgument in attribute.ArgumentList.Arguments)
                         {
-                            var attributeArgument = argument as AttributeArgumentSyntax;
-                            if (attributeArgument?.NameEquals?.Name?.Identifier.ValueText == nameof(SuppressMessageAttribute.Justification))
+                            if (attributeArgument.NameEquals?.Name?.Identifier.ValueText == nameof(SuppressMessageAttribute.Justification))
                             {
                                 // Check if the justification is not empty
                                 var value = context.SemanticModel.GetConstantValue(attributeArgument.Expression);
