@@ -187,6 +187,7 @@
     <Compile Include="LayoutRules\SA1518CodeMustNotContainBlankLinesAtEndOfFile.cs" />
     <Compile Include="LayoutRules\SA1519CurlyBracketsMustNotBeOmittedFromMultiLineChildStatement.cs" />
     <Compile Include="LayoutRules\SA1520UseCurlyBracketsConsistently.cs" />
+    <Compile Include="LinqHelpers\SyntaxTriviaListEnumerable.cs" />
     <Compile Include="MaintainabilityRules\MaintainabilityResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
