@@ -705,8 +705,8 @@ namespace TestNamespace
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(4, 9),
-                this.CSharpDiagnostic().WithLocation(9, 10)
+                this.CSharpDiagnostic().WithLocation(4, 5),
+                this.CSharpDiagnostic().WithLocation(10, 9)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
