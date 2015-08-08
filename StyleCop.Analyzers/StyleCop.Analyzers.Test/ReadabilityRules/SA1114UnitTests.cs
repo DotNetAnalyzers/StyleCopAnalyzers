@@ -1035,6 +1035,35 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestPragmaDirectivesAsync()
+        {
+            var testCode = @"using System;
+
+public class SomeOtherClass
+{
+    private void SomeMethod()
+    {
+        this.SomeOtherMethod(
+#pragma warning disable 618
+                this.SomeObsoleteMethod());
+#pragma warning restore 618
+    }
+
+    [Obsolete(""Don't use me!"")]
+    private int SomeObsoleteMethod()
+    {
+        return 0;
+    }
+
+    private void SomeOtherMethod(int someParameter)
+    {
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1114ParameterListMustFollowDeclaration();
