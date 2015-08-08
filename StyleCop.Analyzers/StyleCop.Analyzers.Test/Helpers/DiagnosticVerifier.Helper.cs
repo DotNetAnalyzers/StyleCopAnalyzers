@@ -177,7 +177,7 @@
         /// <param name="filenames">The filenames or null if the default filename should be used</param>
         /// <returns>A <see cref="Project"/> created out of the <see cref="Document"/>s created from the source
         /// strings.</returns>
-        private Project CreateProject(string[] sources, string language = LanguageNames.CSharp, string[] filenames = null)
+        protected virtual Project CreateProject(string[] sources, string language = LanguageNames.CSharp, string[] filenames = null)
         {
             string fileNamePrefix = DefaultFilePathPrefix;
             string fileExt = language == LanguageNames.CSharp ? CSharpDefaultFileExt : VisualBasicDefaultExt;

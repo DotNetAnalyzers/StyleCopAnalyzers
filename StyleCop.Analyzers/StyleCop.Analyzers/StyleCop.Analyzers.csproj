@@ -209,8 +209,10 @@
     <Compile Include="MaintainabilityRules\SA1408ConditionalExpressionsMustDeclarePrecedence.cs" />
     <Compile Include="MaintainabilityRules\SA1409RemoveUnnecessaryCode.cs" />
     <Compile Include="MaintainabilityRules\SA1410RemoveDelegateParenthesisWhenPossible.cs" />
+    <Compile Include="MaintainabilityRules\SA1412CodeFixProvider.cs" />
     <Compile Include="MaintainabilityRules\SA1410SA1411CodeFixProvider.cs" />
     <Compile Include="MaintainabilityRules\SA1411AttributeConstructorMustNotUseUnnecessaryParenthesis.cs" />
+    <Compile Include="MaintainabilityRules\SA1412StoreFilesAsUtf8.cs" />
     <Compile Include="MaintainabilityRules\SystemDiagnosticsDebugDiagnosticBase.cs" />
     <Compile Include="NamingRules\NamingResources.Designer.cs">
       <AutoGen>True</AutoGen>
