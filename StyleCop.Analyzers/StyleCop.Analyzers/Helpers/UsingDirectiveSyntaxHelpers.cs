@@ -34,23 +34,8 @@
 
             foreach (var trivia in usingDirective.GetLeadingTrivia())
             {
-                switch (trivia.Kind())
+                if (trivia.IsDirective)
                 {
-                case SyntaxKind.IfDirectiveTrivia:
-                case SyntaxKind.ElifDirectiveTrivia:
-                case SyntaxKind.ElseDirectiveTrivia:
-                case SyntaxKind.EndIfDirectiveTrivia:
-                case SyntaxKind.RegionDirectiveTrivia:
-                case SyntaxKind.EndRegionDirectiveTrivia:
-                case SyntaxKind.DefineDirectiveTrivia:
-                case SyntaxKind.UndefDirectiveTrivia:
-                case SyntaxKind.ErrorDirectiveTrivia:
-                case SyntaxKind.WarningDirectiveTrivia:
-                case SyntaxKind.LineDirectiveTrivia:
-                case SyntaxKind.PragmaWarningDirectiveTrivia:
-                case SyntaxKind.PragmaChecksumDirectiveTrivia:
-                case SyntaxKind.ReferenceDirectiveTrivia:
-                case SyntaxKind.BadDirectiveTrivia:
                     return true;
                 }
             }
