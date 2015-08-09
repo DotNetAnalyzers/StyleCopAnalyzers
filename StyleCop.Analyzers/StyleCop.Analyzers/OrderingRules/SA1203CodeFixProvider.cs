@@ -1,5 +1,8 @@
+using System;
+
 namespace StyleCop.Analyzers.OrderingRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
@@ -48,31 +51,23 @@ namespace StyleCop.Analyzers.OrderingRules
 
             while (true)
             {
-                var typeDeclarationNode = syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<TypeDeclarationSyntax>();
+                var typeDeclarationNode =
+                    syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<TypeDeclarationSyntax>();
 
                 var fieldReplaced = false;
 
-                FieldDeclarationSyntax firstNonConst = null;
-                foreach (var member in typeDeclarationNode.Members)
+                var allFields = GetOrderHelperForFields(typeDeclarationNode);
+                var fieldToMove = GetFieldToMove(allFields);
+                if (fieldToMove != null)
                 {
-                    if (!member.IsKind(SyntaxKind.FieldDeclaration))
+                    for (var i = 0; i < allFields.Count; i++)
                     {
-                        continue;
-                    }
-
-                    var field = (FieldDeclarationSyntax)member;
-
-                    var fieldIsConst = field.Modifiers.Any(m => m.IsKind(SyntaxKind.ConstKeyword));
-                    if (firstNonConst != null && fieldIsConst)
-                    {
-                        syntaxRoot = MoveField(syntaxRoot, field, firstNonConst);
-                        fieldReplaced = true;
-                        break;
-                    }
-
-                    if (firstNonConst == null && !fieldIsConst)
-                    {
-                        firstNonConst = field;
+                        if (allFields[i].Priority > fieldToMove.Priority)
+                        {
+                            syntaxRoot = MoveField(syntaxRoot, fieldToMove.Member, allFields[i].Member);
+                            fieldReplaced = true;
+                            break;
+                        }
                     }
                 }
 
@@ -85,7 +80,38 @@ namespace StyleCop.Analyzers.OrderingRules
             return document.WithSyntaxRoot(syntaxRoot);
         }
 
-        private static SyntaxNode MoveField(SyntaxNode root, FieldDeclarationSyntax field, FieldDeclarationSyntax firstNonConst)
+        private static List<MemberOrderHelper> GetOrderHelperForFields(TypeDeclarationSyntax typeDeclarationNode)
+        {
+            var allFields = new List<MemberOrderHelper>();
+            foreach (var member in typeDeclarationNode.Members)
+            {
+                if (!member.IsKind(SyntaxKind.FieldDeclaration))
+                {
+                    continue;
+                }
+
+                allFields.Add(new MemberOrderHelper(member));
+            }
+
+            return allFields;
+        }
+
+        private static MemberOrderHelper GetFieldToMove(List<MemberOrderHelper> allFields)
+        {
+            MemberOrderHelper fieldToMove = null;
+            for (var i = 1; i < allFields.Count; i++)
+            {
+                if (allFields[i].Priority < allFields[i - 1].Priority)
+                {
+                    fieldToMove = allFields[i];
+                    break;
+                }
+            }
+
+            return fieldToMove;
+        }
+
+        private static SyntaxNode MoveField(SyntaxNode root, MemberDeclarationSyntax field, MemberDeclarationSyntax firstNonConst)
         {
             var trackedRoot = root.TrackNodes(field, firstNonConst);
             var fieldToMove = trackedRoot.GetCurrentNode(field);
