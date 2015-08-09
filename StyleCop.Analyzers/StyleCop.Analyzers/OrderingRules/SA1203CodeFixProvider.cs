@@ -51,8 +51,11 @@ namespace StyleCop.Analyzers.OrderingRules
 
             while (true)
             {
-                var typeDeclarationNode =
-                    syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<TypeDeclarationSyntax>();
+                var typeDeclarationNode = syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<TypeDeclarationSyntax>();
+                if (typeDeclarationNode == null)
+                {
+                    break;
+                }
 
                 var fieldReplaced = false;
 
