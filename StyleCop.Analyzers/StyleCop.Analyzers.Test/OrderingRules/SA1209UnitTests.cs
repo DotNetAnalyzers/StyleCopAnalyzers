@@ -113,12 +113,7 @@ namespace Test
     }
 }";
 
-            DiagnosticResult[] expected =
-            {
-                this.CSharpDiagnostic().WithLocation("Test0.cs", 7, 5),
-            };
-
-            await this.VerifyCSharpDiagnosticAsync(compilationUnit, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(compilationUnit, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -164,6 +159,28 @@ namespace Test
             };
 
             await this.VerifyCSharpDiagnosticAsync(namespaceDeclaration, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestPreprocessorDirectivesAsync()
+        {
+            var testCode = @"
+using System;
+using Microsoft.VisualStudio;
+using MyList = System.Collections.Generic.List<int>;
+
+#if true
+using Threads = System.Threading;
+using Microsoft.CodeAnalysis;
+#else
+using Threads = System.Threading;
+using Microsoft.CodeAnalysis;
+#endif";
+
+            // else block is skipped
+            var expected = this.CSharpDiagnostic().WithLocation(7, 1);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

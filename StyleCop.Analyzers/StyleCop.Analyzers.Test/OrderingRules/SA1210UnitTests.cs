@@ -190,6 +190,28 @@ namespace Test
             await this.VerifyCSharpDiagnosticAsync(compilationUnit, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestPreprocessorDirectivesAsync()
+        {
+            var testCode = @"
+using System;
+using Microsoft.VisualStudio;
+using MyList = System.Collections.Generic.List<int>;
+
+#if true
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis;
+#else
+using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.CodeAnalysis;
+#endif";
+
+            // else block is skipped
+            var expected = this.CSharpDiagnostic().WithLocation(7, 1);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace();

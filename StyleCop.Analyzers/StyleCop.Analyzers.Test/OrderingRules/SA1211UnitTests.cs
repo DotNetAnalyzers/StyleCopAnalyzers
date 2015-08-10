@@ -129,6 +129,28 @@ namespace Spam
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestPreprocessorDirectivesAsync()
+        {
+            var testCode = @"
+using System;
+using Microsoft.VisualStudio;
+using MyList = System.Collections.Generic.List<int>;
+
+#if true
+using BThing = System.Threading.Tasks;
+using AThing = System.Threading;
+#else
+using BThing = System.Threading.Tasks;
+using AThing = System.Threading;
+#endif";
+
+            // else block is skipped
+            var expected = this.CSharpDiagnostic().WithLocation(8, 1).WithArguments("AThing", "BThing");
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {

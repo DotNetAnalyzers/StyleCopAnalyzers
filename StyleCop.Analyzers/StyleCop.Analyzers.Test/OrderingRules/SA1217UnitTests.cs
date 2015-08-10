@@ -152,6 +152,33 @@ namespace Bar
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that the analyzer will properly handle preprocessor directives.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestPreprocessorDirectivesAsync()
+        {
+            var testCode = @"
+using System;
+using Microsoft.VisualStudio;
+using MyList = System.Collections.Generic.List<int>;
+using static System.Tuple;
+
+#if true
+using static System.String;
+using static System.Math;
+#else
+using static System.String;
+using static System.Math;
+#endif";
+
+            // else block is skipped
+            var expected = this.CSharpDiagnostic().WithLocation(8, 1).WithArguments("System.String", "System.Math");
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
