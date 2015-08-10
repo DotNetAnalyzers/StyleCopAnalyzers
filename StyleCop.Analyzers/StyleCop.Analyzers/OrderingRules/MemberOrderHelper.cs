@@ -1,7 +1,6 @@
 namespace StyleCop.Analyzers.OrderingRules
 {
     using System;
-    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -13,7 +12,7 @@ namespace StyleCop.Analyzers.OrderingRules
     public class MemberOrderHelper
     {
         private readonly ModifierFlags modifierFlags;
-        private readonly AccesibilityFlags accessibiltyFlags;
+        private readonly Accessibility accessibilty;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MemberOrderHelper"/> class.
@@ -25,56 +24,28 @@ namespace StyleCop.Analyzers.OrderingRules
             var modifiers = member.GetModifiers();
 
             this.modifierFlags = GetModifierFlags(modifiers);
-            this.accessibiltyFlags = GetAccessibilityFlags(modifiers);
+            this.accessibilty = GetAccessibilityFlags(modifiers);
         }
 
         [Flags]
         private enum ModifierFlags
         {
             /// <summary>
-            /// Const modifier
+            /// No modifiers
             /// </summary>
-            Const = 1,
+            None = 0,
+            /// <summary>
+            /// Readonly modifier
+            /// </summary>
+            Readonly = 1,
             /// <summary>
             /// Static modifier
             /// </summary>
             Static = 1 << 2,
             /// <summary>
-            /// Readonly modifier
+            /// Const modifier
             /// </summary>
-            Readonly = 1 << 3,
-            /// <summary>
-            /// No modifiers
-            /// </summary>
-            None = 1 << 4
-        }
-
-        private enum AccesibilityFlags
-        {
-            /// <summary>
-            /// Public accessibility
-            /// </summary>
-            Public = 1,
-            /// <summary>
-            /// Internal accessibility
-            /// </summary>
-            Internal = 1 << 1,
-            /// <summary>
-            /// Protected Internal accessibility
-            /// </summary>
-            ProtectedInternal = 1 << 2,
-            /// <summary>
-            /// Protected accessibility
-            /// </summary>
-            Protected = 1 << 3,
-            /// <summary>
-            /// No accessibility specified
-            /// </summary>
-            None = 1 << 4,
-            /// <summary>
-            /// Private accessibility
-            /// </summary>
-            Private = 1 << 5,
+            Const = 1 << 3,
         }
 
         /// <summary>
@@ -91,64 +62,63 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <value>
         /// The priority for this member.
         /// </value>
-        public int Priority => (int)this.modifierFlags + (int)this.accessibiltyFlags;
+        public int Priority => (int)this.modifierFlags + ((int)this.accessibilty * 100/*the * 100 ensures the accesibility is more important than the modifier*/);
 
-        private static AccesibilityFlags GetAccessibilityFlags(SyntaxTokenList syntax)
+        /// <summary>
+        /// Checks if the current field should be declared before the other.
+        /// </summary>
+        /// <param name="other">The field to compare against.</param>
+        /// <returns>True if the field should be delcared before the other.</returns>
+        public bool ShouldBeBefore(MemberOrderHelper other) => this.Priority > other.Priority;
+
+        private static Accessibility GetAccessibilityFlags(SyntaxTokenList syntax)
         {
-            if (Has(syntax, SyntaxKind.PublicKeyword))
+            if (syntax.Any(SyntaxKind.PublicKeyword))
             {
-                return AccesibilityFlags.Public;
+                return Accessibility.Public;
             }
 
-            if (Has(syntax, SyntaxKind.InternalKeyword))
+            if (syntax.Any(SyntaxKind.InternalKeyword))
             {
-                return AccesibilityFlags.Internal;
+                return Accessibility.Internal;
             }
 
-            if (Has(syntax, SyntaxKind.InternalKeyword) && Has(syntax, SyntaxKind.ProtectedKeyword))
+            if (syntax.Any(SyntaxKind.InternalKeyword) && syntax.Any(SyntaxKind.ProtectedKeyword))
             {
-                return AccesibilityFlags.ProtectedInternal;
+                return Accessibility.ProtectedAndInternal;
             }
 
-            if (Has(syntax, SyntaxKind.ProtectedKeyword))
+            if (syntax.Any(SyntaxKind.ProtectedKeyword))
             {
-                return AccesibilityFlags.Protected;
+                return Accessibility.Protected;
             }
 
-            if (Has(syntax, SyntaxKind.PrivateKeyword))
-            {
-                return AccesibilityFlags.Private;
-            }
+            // Do not assign private accessiblity here, since we ant to have private come after non qualified.
 
-            return AccesibilityFlags.None;
+            return Accessibility.NotApplicable;
         }
 
         private static ModifierFlags GetModifierFlags(SyntaxTokenList syntax)
         {
             ModifierFlags flags = 0;
-            if (Has(syntax, SyntaxKind.ConstKeyword))
+            if (syntax.Any(SyntaxKind.ConstKeyword))
             {
                 flags |= ModifierFlags.Const;
             }
             else
             {
-                if (Has(syntax, SyntaxKind.StaticKeyword))
+                if (syntax.Any(SyntaxKind.StaticKeyword))
                 {
                     flags |= ModifierFlags.Static;
                 }
 
-                if (Has(syntax, SyntaxKind.ReadOnlyKeyword))
+                if (syntax.Any(SyntaxKind.ReadOnlyKeyword))
                 {
                     flags |= ModifierFlags.Readonly;
                 }
             }
 
             return flags == 0 ? ModifierFlags.None : flags;
-        }
-
-        private static bool Has(SyntaxTokenList list, SyntaxKind modifier)
-        {
-            return list.Any(x => x.IsKind(modifier));
         }
     }
 }
