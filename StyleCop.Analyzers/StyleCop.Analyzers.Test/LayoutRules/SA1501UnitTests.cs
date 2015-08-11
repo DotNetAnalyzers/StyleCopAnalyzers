@@ -418,6 +418,78 @@ public class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Test for issue 1172, https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1172
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestRegressionIssue1172Async()
+        {
+            var testCode = @"using System;
+
+public class Foo
+{
+    public void Bar()
+    {
+        do { Bar(); } while (false);
+    }
+}
+";
+
+            var fixedTestCode = @"using System;
+
+public class Foo
+{
+    public void Bar()
+    {
+        do
+        {
+            Bar();
+        }
+        while (false);
+    }
+}
+";
+
+            DiagnosticResult expectedDiagnostics = this.CSharpDiagnostic().WithLocation(7, 12);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Test for issue 1172, https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1172
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestRegressionIssue1172WithHalfClassAsync()
+        {
+            var testCode = @"using System;
+
+class TypeName
+{
+    void MethodName()
+    {
+        do { Bar(); } while (false);
+";
+
+            var fixedTestCode = @"using System;
+
+class TypeName
+{
+    void MethodName()
+    {
+        do
+        {
+            Bar();
+        }
+        while (false);
+";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
