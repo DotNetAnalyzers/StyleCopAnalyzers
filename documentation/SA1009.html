@@ -1,0 +1,36 @@
+﻿<html xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <head>
+        <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"/>
+        <meta content="history" name="save"/>
+        <title>SA1009: ClosingParenthesisMustBeSpacedCorrectly</title>
+        <link rel="stylesheet" type="text/css" href="stylesheets/helpstudio.css"/><link rel="stylesheet" type="text/css" href="styles/Presentation.css"/>
+        <script src="script/helpstudio.js" type="text/javascript"></script>
+        <script src="script/StandardText.js" type="text/jscript"></script>
+    </head>
+    <body id="hsbody">
+        <input type="hidden" id="userDataCache" class="userDataStyle" name="userDataCache" />
+        <div id="allHistory" class="saveHistory" onsave="saveScrollPosition()" onload="loadScrollPosition()"></div>
+        <script type="text/jscript">WritePageTop(document.title);</script>
+        <div id="pagebody">
+            <div id="mainbody">
+                <table>
+                    <col />
+                    <tr><td><p>TypeName</p></td><td><p>ClosingParenthesisMustBeSpacedCorrectly</p></td></tr>
+                    <tr><td><p>CheckId</p></td><td><p>SA1009</p></td></tr>
+                    <tr><td><p>Category</p></td><td><p>Spacing Rules</p></td></tr>
+                </table>           
+                <h2>Cause</h2>
+                <P>A closing parenthesis within a C# statement is not spaced correctly.</P>
+                <H2>Rule Description</H2>
+                <P>A violation of this rule occurs when the closing parenthesis within a statement is not spaced correctly.</P>
+                <P>A closing parenthesis should never be preceded by whitespace. In most cases, a closing parenthesis should be followed by a single space, unless the closing parenthesis comes at the end of a cast, or the closing parenthesis is followed by certain types of operator symbols, such as positive signs, negative signs, and colons.</P>
+                <P>If the closing parenthesis is followed by whitespace, the next non-whitespace character must not be an opening or closing parenthesis or square bracket, or a semicolon or comma.</P>
+                <H2>How to Fix Violations</H2>
+                <P>To fix a violation of this rule, ensure that the spacing around the closing parenthesis follows the rule described above.</P>
+                 <h2>How to Suppress Violations</h2>
+                <pre>[SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1009:ClosingParenthesisMustBeSpacedCorrectly", Justification = "Reviewed.")]</pre>
+            </div>
+            <script type="text/jscript">WritePageFooter();</script>      
+        </div>
+    </body>
+</html>

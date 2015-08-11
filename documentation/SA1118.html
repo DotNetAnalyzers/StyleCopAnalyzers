@@ -1,0 +1,55 @@
+﻿<html xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <head>
+        <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"/>
+        <meta content="history" name="save"/>
+        <title>SA1118: ParameterMustNotSpanMultipleLines</title>
+        <link rel="stylesheet" type="text/css" href="stylesheets/helpstudio.css"/><link rel="stylesheet" type="text/css" href="styles/Presentation.css"/>
+        <script src="script/helpstudio.js" type="text/javascript"></script>
+        <script src="script/StandardText.js" type="text/jscript"></script>  
+    </head>
+    <body id="hsbody">
+        <input type="hidden" id="userDataCache" class="userDataStyle" name="userDataCache" />
+        <div id="allHistory" class="saveHistory" onsave="saveScrollPosition()" onload="loadScrollPosition()"></div>
+        <script type="text/jscript">WritePageTop(document.title);</script>
+        <div id="pagebody">
+            <div id="mainbody">
+                <table>
+                    <col />
+                    <tr><td><p>TypeName</p></td><td><p>ParameterMustNotSpanMultipleLines</p></td></tr>
+                    <tr><td><p>CheckId</p></td><td><p>SA1118</p></td></tr>
+                    <tr><td><p>Category</p></td><td><p>Readability Rules</p></td></tr>
+                </table>           
+                <h2>Cause</h2>
+                <P>A parameter to a C# method or indexer, other than the first parameter, spans across multiple lines.</P>
+                <H2>Rule Description</H2>
+                <P>To prevent method calls from becoming excessively complicated and unreadable, only the first parameter to a method or indexer call is allowed to span across multiple lines. The exception is an anonymous method passed as a parameter, which is always allowed to span multiple lines. A violation of this rule occurs whenever a parameter other than the first parameter spans across multiple lines, and the parameter does not contain an anonymous method.</P>
+                <P>For example, the following code would violate this rule, since the second parameter spans across multiple lines:</P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN><SPAN style="COLOR: blue">return</SPAN> JoinStrings(</SPAN></P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160;&#160;&#160;&#160;&#160; </SPAN><SPAN style="COLOR: #a31515">"John"</SPAN>,</SPAN></P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160;&#160;&#160;&#160;&#160; </SPAN><SPAN style="COLOR: #a31515">"Smith"</SPAN> + </SPAN></P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160;&#160;&#160;&#160;&#160; </SPAN><SPAN style="COLOR: #a31515">" Doe"</SPAN>);</SPAN></P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes">&#160;</SPAN></P>
+                <P>When parameters other than the first parameter span across multiple lines, it can be difficult to tell how many parameters are passed to the method. In general, the code becomes difficult to read.</P>
+                <P></P>
+                <P>To fix the example above, ensure that the parameters after the first parameter do not span across multiple lines. If this will cause a parameter to be excessively long, store the value of the parameter within a temporary variable. For example:</P>
+                <P></P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; COLOR: blue; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN>string </SPAN><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes">last = <SPAN style="COLOR: #a31515">"Smith"</SPAN> + </SPAN></P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160;&#160;&#160;&#160;&#160; </SPAN><SPAN style="COLOR: #a31515">" Doe"</SPAN>;</SPAN></P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes">&#160;</SPAN></P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN><SPAN style="COLOR: blue">return</SPAN> JoinStrings(</SPAN></P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160;&#160;&#160;&#160;&#160; </SPAN><SPAN style="COLOR: #a31515">"John"</SPAN>,</SPAN></P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160;&#160;&#160;&#160;&#160; </SPAN>last);</SPAN></P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes">&#160;</SPAN></P>
+                <P>In some cases, this will allow the method to be written even more concisely, such as:</P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US'>&#160;</SPAN></P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN><SPAN style="COLOR: blue">return</SPAN> JoinStrings(<SPAN style="COLOR: #a31515">"John"</SPAN>, last);</SPAN></P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes">&#160;</SPAN></P>
+                <H2>How to Fix Violations</H2>
+                <P>To fix a violation of this rule, ensure that the parameters after the first parameter do not span multiple lines, unless the parameter contains an anonymous method.</P>
+                <h2>How to Suppress Violations</h2>
+                <pre>[SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1118:ParameterMustNotSpanMultipleLines", Justification = "Reviewed.")]</pre>
+            </div>
+            <script type="text/jscript">WritePageFooter();</script>   
+        </div>
+    </body>
+</html>

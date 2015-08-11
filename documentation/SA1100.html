@@ -1,0 +1,49 @@
+﻿<html xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <head>
+        <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"/>
+        <meta content="history" name="save"/>
+        <title>SA1100: DoNotPrefixCallsWithBaseUnlessLocalImplementationExists</title>
+        <link rel="stylesheet" type="text/css" href="stylesheets/helpstudio.css"/><link rel="stylesheet" type="text/css" href="styles/Presentation.css"/>
+        <script src="script/helpstudio.js" type="text/javascript"></script>
+        <script src="script/StandardText.js" type="text/jscript"></script>
+    </head>
+    <body id="hsbody">
+            <input type="hidden" id="userDataCache" class="userDataStyle" name="userDataCache" />
+            <div id="allHistory" class="saveHistory" onsave="saveScrollPosition()" onload="loadScrollPosition()"></div>
+            <script type="text/jscript"> WritePageTop(document.title);</script>
+            <div id="pagebody">
+                <div id="mainbody">
+                    <table>
+                        <col />
+                        <tr><td><p>TypeName</p></td><td><p>DoNotPrefixCallsWithBaseUnlessLocalImplementationExists</p></td></tr>
+                        <tr><td><p>CheckId</p></td><td><p>SA1100</p></td></tr>
+                        <tr><td><p>Category</p></td><td><p>Readability Rules</p></td></tr>
+                    </table>           
+                    <h2>Cause</h2>
+    <P>A call to a member from an inherited class begins with ‘base.’, and the local class does not contain an override or implementation of the member.</P>
+    <H2>Rule Description</H2>
+    <P>A violation of this rule occurs whenever the code contains a call to a member from the base class prefixed with ‘base.’, and there is no local implementation of the member. For example:</P>
+    <P class='MsoNormal' style="MARGIN: 0cm 0cm 7.5pt"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; COLOR: blue; LINE-HEIGHT: 140%; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN>string</SPAN><SPAN lang='EN-US' style="FONT-SIZE: 9pt; LINE-HEIGHT: 140%; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"> name = <SPAN style="COLOR: blue">base</SPAN>.JoinName(<SPAN style="COLOR: #a31515">"John"</SPAN>, <SPAN style="COLOR: #a31515">"Doe"</SPAN>);</SPAN></P>
+    <P>This rule is in place to prevent a potential source of bugs. Consider a base class which contains the following virtual method:</P>
+    <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN><SPAN style="COLOR: blue">public</SPAN> <SPAN style="COLOR: blue">virtual</SPAN> <SPAN style="COLOR: blue">string</SPAN> JoinName(<SPAN style="COLOR: blue">string</SPAN> first, <SPAN style="COLOR: blue">string</SPAN> last)</SPAN></P>
+    <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN>{</SPAN></P>
+    <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN>}</SPAN></P>
+    <P class='MsoNormal' style="MARGIN: 0cm 0cm 7.5pt"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; LINE-HEIGHT: 140%; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes">&#160;</SPAN></P>
+    <P>Another class inherits from this base class but does not provide a local override of this method. Somewhere within this class, the base class method is called using <SPAN lang='EN-US' style="FONT-SIZE: 9pt; COLOR: blue; LINE-HEIGHT: 140%; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes">base</SPAN><SPAN lang='EN-US' style="FONT-SIZE: 9pt; LINE-HEIGHT: 140%; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes">.JoinName(...)</SPAN>. This&#160;works as expected. At a later date, someone adds a local override of this method to the class:</P>
+    <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN><SPAN style="COLOR: blue">public</SPAN> <SPAN style="COLOR: blue">override</SPAN> <SPAN style="COLOR: blue">string</SPAN> JoinName(<SPAN style="COLOR: blue">string</SPAN> first, <SPAN style="COLOR: blue">string</SPAN> last)</SPAN></P>
+    <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN>{</SPAN></P>
+    <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;return</SPAN> “Bob”;</SPAN></P>
+    <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN>}</SPAN></P>
+    <P class='MsoNormal' style="MARGIN: 0cm 0cm 7.5pt"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; LINE-HEIGHT: 140%; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes">&#160;</SPAN></P>
+    <P>At this point, the local call to <SPAN lang='EN-US' style="FONT-SIZE: 9pt; COLOR: blue; LINE-HEIGHT: 140%; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes">base</SPAN><SPAN lang='EN-US' style="FONT-SIZE: 9pt; LINE-HEIGHT: 140%; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes">.JoinName(...)</SPAN><SPAN lang='EN-US'> most likely introduces a bug into the code. This call will always call the base class method and will cause the local override to be ignored. </SPAN></P>
+    <P>For this reason, calls to members from a base class should not begin with ‘base.’, unless a local override is implemented, and the developer wants to specifically call the base class member. When there is no local override of the base class member, the call should be prefixed with 'this.' rather than 'base.'.</P>
+    <H2>How to Fix Violations</H2>
+    <P>To fix a violation of this rule, change the ‘base.’ prefix to ‘this.’.</P>
+     <h2>How to Suppress Violations</h2>
+                <pre>[SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1100:DoNotPrefixCallsWithBaseUnlessLocalImplementationExists", Justification = "Reviewed.")]</pre>
+
+            </div>
+            <script type="text/jscript">WritePageFooter();</script>        
+        </div>
+    </body>
+</html>

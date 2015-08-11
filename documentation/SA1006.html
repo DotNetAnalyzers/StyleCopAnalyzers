@@ -1,0 +1,37 @@
+﻿<html xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <head>
+        <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"/>
+        <meta content="history" name="save"/>
+        <title>SA1006: PreprocessorKeywordsMustNotBePrecededBySpace</title>
+        <link rel="stylesheet" type="text/css" href="stylesheets/helpstudio.css"/><link rel="stylesheet" type="text/css" href="styles/Presentation.css"/>
+        <script src="script/helpstudio.js" type="text/javascript"></script>
+        <script src="script/StandardText.js" type="text/jscript"></script> 
+    </head>
+    <body id="hsbody">
+            <input type="hidden" id="userDataCache" class="userDataStyle" name="userDataCache" />
+            <div id="allHistory" class="saveHistory" onsave="saveScrollPosition()" onload="loadScrollPosition()"></div>
+            <script type="text/jscript">WritePageTop(document.title);</script>
+            <div id="pagebody">
+                <div id="mainbody">
+                    <table>
+                        <col />
+                        <tr><td><p>TypeName</p></td><td><p>PreprocessorKeywordsMustNotBePrecededBySpace</p></td></tr>
+                        <tr><td><p>CheckId</p></td><td><p>SA1006</p></td></tr>
+                        <tr><td><p>Category</p></td><td><p>Spacing Rules</p></td></tr>
+                    </table>           
+                    <h2>Cause</h2>
+                    <P>A C# preprocessor-type keyword is preceded by space.</P>
+                    <H2>Rule Description</H2>
+                    <P>A violation of this rule occurs when the preprocessor-type keyword in a preprocessor directive is preceded by space. For example:</P>
+                    <P class='MsoNormal' style="MARGIN: 0cm 0cm 7.5pt"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; COLOR: blue; LINE-HEIGHT: 140%; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN># if</SPAN><SPAN lang='EN-US' style="FONT-SIZE: 9pt; LINE-HEIGHT: 140%; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"> Debug</SPAN></P>
+                    <P class='MsoNormal' style="MARGIN: 0cm 0cm 7.5pt"><SPAN lang='EN-US'>There should not be any whitespace between the opening hash mark and the preprocessor-type keyword:</SPAN><SPAN lang='EN-US' style="FONT-SIZE: 9pt; LINE-HEIGHT: 140%"></SPAN></P>
+                    <P class='MsoNormal' style="MARGIN: 0cm 0cm 7.5pt"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; COLOR: blue; LINE-HEIGHT: 140%; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN>#if</SPAN><SPAN lang='EN-US' style="FONT-SIZE: 9pt; LINE-HEIGHT: 140%; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"> Debug</SPAN></P>
+                    <H2>How to Fix Violations</H2>
+                    <P>To fix a violation of this rule, ensure that there is no whitespace between the opening hash mark and the preprocessor-type keyword.</P>
+                     <h2>How to Suppress Violations</h2>
+                <pre>[SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1006:PreprocessorKeywordsMustNotBePrecededBySpace", Justification = "Reviewed.")]</pre>  
+            </div>
+            <script type="text/jscript">WritePageFooter();</script>   
+        </div>
+    </body>
+</html>

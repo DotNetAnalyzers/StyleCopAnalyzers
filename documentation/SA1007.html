@@ -1,0 +1,38 @@
+﻿<html xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <head>
+        <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"/>
+        <meta content="history" name="save"/>
+        <title>SA1007: OperatorKeywordMustBeFollowedBySpace</title>
+        <link rel="stylesheet" type="text/css" href="stylesheets/helpstudio.css"/><link rel="stylesheet" type="text/css" href="styles/Presentation.css"/>
+        <script src="script/helpstudio.js" type="text/javascript"></script>
+        <script src="script/StandardText.js" type="text/jscript"></script>
+    </head>
+    <body id="hsbody">
+        <input type="hidden" id="userDataCache" class="userDataStyle" name="userDataCache" />
+        <div id="allHistory" class="saveHistory" onsave="saveScrollPosition()" onload="loadScrollPosition()"></div>
+        <script type="text/jscript">WritePageTop(document.title);</script>
+        <div id="pagebody">
+            <div id="mainbody">
+                <table>
+                    <col />
+                    <tr><td><p>TypeName</p></td><td><p>OperatorKeywordMustBeFollowedBySpace</p></td></tr>
+                    <tr><td><p>CheckId</p></td><td><p>SA1007</p></td></tr>
+                    <tr><td><p>Category</p></td><td><p>Spacing Rules</p></td></tr>
+                </table>           
+                <h2>Cause</h2>
+                <P>The operator keyword within a C# operator overload method is not followed by any whitespace.</P>
+                <H2>Rule Description</H2>
+                <P>A violation of this rule occurs when the operator keyword within an operator overload method is not followed by any whitespace. The operator keyword should always be followed by a single space. For example:</P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN><SPAN style="COLOR: blue">public</SPAN> MyClass <SPAN style="COLOR: blue">operator</SPAN> +(MyClass a, MyClass b)</SPAN></P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN>{</SPAN></P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN>}</SPAN></P>
+                <P />
+                <H2>How to Fix Violations</H2>
+                <P>To fix a violation of this rule, add a single space after the operator keyword.</P>
+                 <h2>How to Suppress Violations</h2>
+                <pre>[SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1007:OperatorKeywordMustBeFollowedBySpace", Justification = "Reviewed.")]</pre>
+            </div>
+            <script type="text/jscript">WritePageFooter();</script>        
+        </div>
+    </body>
+</html>

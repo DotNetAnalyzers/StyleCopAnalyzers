@@ -1,0 +1,36 @@
+﻿
+<html xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <head>
+        <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"/>
+        <meta content="history" name="save"/>
+        <title>SA1400: AccessModifierMustBeDeclared</title>
+        <link rel="stylesheet" type="text/css" href="stylesheets/helpstudio.css"/><link rel="stylesheet" type="text/css" href="styles/Presentation.css"/>
+        <script src="script/helpstudio.js" type="text/javascript"></script>
+        <script src="script/StandardText.js" type="text/jscript"></script>
+    </head>
+    <body id="hsbody">
+        <input type="hidden" id="userDataCache" class="userDataStyle" name="userDataCache" />
+        <div id="allHistory" class="saveHistory" onsave="saveScrollPosition()" onload="loadScrollPosition()"></div>
+        <script type="text/jscript">WritePageTop(document.title);</script>
+        <div id="pagebody">
+            <div id="mainbody">
+                <table>
+                    <col />
+                    <tr><td><p>TypeName</p></td><td><p>AccessModifierMustBeDeclared</p></td></tr>
+                    <tr><td><p>CheckId</p></td><td><p>SA1400</p></td></tr>
+                    <tr><td><p>Category</p></td><td><p>Maintainability Rules</p></td></tr>
+                </table>           
+                <h2>Cause</h2>
+                <P>The access modifier for a C# element has not been explicitly defined.</P>
+                <H2>Rule Description</H2>
+                <P>C# allows elements to be defined without an access modifier. Depending upon the type of element, C# will automatically assign an access level to the element in this case.</P>
+                <P>This rule requires an access modifier to be explicitly defined for every element. This removes the need for the reader to make assumptions about the code, improving the readability of the code.</P>
+                <H2>How to Fix Violations</H2>
+                <P>To fix a violation of this rule, add an access modifier to the declaration of the element.</P>
+                <h2>How to Suppress Violations</h2>
+                <pre>[SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1400:AccessModifierMustBeDeclared", Justification = "Reviewed.")]</pre>
+            </div>
+            <script type="text/jscript">WritePageFooter();</script>   
+        </div>
+    </body>
+</html>

@@ -1,0 +1,37 @@
+﻿
+<html xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <head>
+        <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"/>
+        <meta content="history" name="save"/>
+        <title>SA1405: DebugAssertMustProvideMessageText</title>
+        <link rel="stylesheet" type="text/css" href="stylesheets/helpstudio.css"/><link rel="stylesheet" type="text/css" href="styles/Presentation.css"/>
+        <script src="script/helpstudio.js" type="text/javascript"></script>
+        <script src="script/StandardText.js" type="text/jscript"></script>
+    </head>
+    <body id="hsbody">
+        <input type="hidden" id="userDataCache" class="userDataStyle" name="userDataCache" />
+        <div id="allHistory" class="saveHistory" onsave="saveScrollPosition()" onload="loadScrollPosition()"></div>
+        <script type="text/jscript">WritePageTop(document.title);</script>
+        <div id="pagebody">
+            <div id="mainbody">
+                <table>
+                    <col />
+                    <tr><td><p>TypeName</p></td><td><p>DebugAssertMustProvideMessageText</p></td></tr>
+                    <tr><td><p>CheckId</p></td><td><p>SA1405</p></td></tr>
+                    <tr><td><p>Category</p></td><td><p>Maintainability Rules</p></td></tr>
+                </table>           
+                <h2>Cause</h2>
+                <P>A call to Debug.Assert in C# code does not include a descriptive message.</P>
+                <H2>Rule Description</H2>
+                <P>A violation of this rule occurs when the code contains a call to Debug.Assert which does not provide a description for the end-user. For example, the following assert includes a description message:</P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN><SPAN style="COLOR: #2b91af">Debug</SPAN>.Assert(<SPAN style="COLOR: blue">value</SPAN> != <SPAN style="COLOR: blue">true</SPAN>, <SPAN style="COLOR: #a31515">"The value must always be true."</SPAN>);</SPAN></P>
+                <P />
+                <H2>How to Fix Violations</H2>
+                <P>To fix a violation of this rule, add a descriptive message to the assert which will appear to the end user when the assert is fired.</P>
+                <h2>How to Suppress Violations</h2>
+                <pre>[SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1405:DebugAssertMustProvideMessageText", Justification = "Reviewed.")]</pre>
+            </div>
+            <script type="text/jscript">WritePageFooter();</script>   
+        </div>
+    </body>
+</html>

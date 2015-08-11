@@ -1,0 +1,46 @@
+﻿
+<html xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <head>
+        <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"/>
+        <meta content="history" name="save"/>
+        <title>SA1620: GenericTypeParameterDocumentationMustMatchTypeParameters</title>
+        <link rel="stylesheet" type="text/css" href="stylesheets/helpstudio.css"/>
+        <link rel="stylesheet" type="text/css" href="styles/Presentation.css"/>
+        <script src="script/helpstudio.js" type="text/javascript"></script>
+        <script src="script/StandardText.js" type="text/jscript"></script>
+    </head>
+    <body id="hsbody">
+        <input type="hidden" id="userDataCache" class="userDataStyle" name="userDataCache" />
+        <div id="allHistory" class="saveHistory" onsave="saveScrollPosition()" onload="loadScrollPosition()"></div>
+        <script type="text/jscript">WritePageTop(document.title);</script>
+        <div id="pagebody">
+            <div id="mainbody">
+                <table>
+                    <col />
+                    <tr><td><p>TypeName</p></td><td><p>GenericTypeParameterDocumentationMustMatchTypeParameters</p></td></tr>
+                    <tr><td><p>CheckId</p></td><td><p>SA1620</p></td></tr>
+                    <tr><td><p>Category</p></td><td><p>Documentation Rules</p></td></tr>
+                </table>           
+                <h2>Cause</h2>
+                <P>The &lt;typeparam&gt; tags within the Xml header documentation for a generic C# element do not match the generic type parameters on the element.</P>
+                <H2>Rule Description</H2>
+                <P>C# syntax provides a mechanism for inserting documentation for classes and elements directly into the code, through the use of Xml documentation headers. For an introduction to these headers and a description of the header syntax, see the following article: <A href="http://msdn.microsoft.com/en-us/magazine/cc302121.aspx">http://msdn.microsoft.com/en-us/magazine/cc302121.aspx</A>.</P>
+                <P>A violation of this rule occurs if the &lt;typeparam&gt; tags within the element’s header documentation do not match the generic type parameters on the element, or do not appear in the same order as the element’s type parameters.</P>
+                <H2>How to Fix Violations</H2>
+                <P>To fix a violation of this rule, add and fill-in one &lt;typeparam&gt; tag for each generic type parameter on the element, and make sure that the &lt;typeparam&gt; tags appear in the same order as the element’s type parameters.</P>
+                <P>The following example shows a method with a valid documentation header:</P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN><SPAN style="COLOR: gray">///</SPAN><SPAN style="COLOR: green"> </SPAN><SPAN style="COLOR: gray">&lt;summary&gt;</SPAN></SPAN></P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN><SPAN style="COLOR: gray">///</SPAN><SPAN style="COLOR: green"> A sample generic class.</SPAN></SPAN></P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN><SPAN style="COLOR: gray">///</SPAN><SPAN style="COLOR: green"> </SPAN><SPAN style="COLOR: gray">&lt;/summary&gt;</SPAN></SPAN></P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN><SPAN style="COLOR: gray">///</SPAN><SPAN style="COLOR: green"> </SPAN><SPAN style="COLOR: gray">&lt;typeparam name="S"&gt;</SPAN><SPAN style="COLOR: green">The first generic type parameter.</SPAN><SPAN style="COLOR: gray">&lt;/typeparam&gt;</SPAN></SPAN></P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN><SPAN style="COLOR: gray">///</SPAN><SPAN style="COLOR: green"> </SPAN><SPAN style="COLOR: gray">&lt;typeparam name="T"&gt;</SPAN><SPAN style="COLOR: green">The second generic type parameter.</SPAN><SPAN style="COLOR: gray">&lt;/typeparam&gt;</SPAN></SPAN></P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN><SPAN style="COLOR: blue">public</SPAN> <SPAN style="COLOR: blue">class</SPAN> <SPAN style="COLOR: #2b91af">Class1</SPAN>&lt;S, T&gt;</SPAN></P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN>{ </SPAN></P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN>}</SPAN></P>
+            <h2>How to Suppress Violations</h2>
+                <pre>[SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1620:GenericTypeParameterDocumentationMustMatchTypeParameters", Justification = "Reviewed.")]</pre>
+            </div>
+            <script type="text/jscript">WritePageFooter();</script>   
+        </div>
+    </body>
+</html>

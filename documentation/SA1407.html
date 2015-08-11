@@ -1,0 +1,42 @@
+﻿
+<html xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <head>
+        <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"/>
+        <meta content="history" name="save"/>
+        <title>SA1407: ArithmeticExpressionsMustDeclarePrecedence</title>
+        <link rel="stylesheet" type="text/css" href="stylesheets/helpstudio.css"/><link rel="stylesheet" type="text/css" href="styles/Presentation.css"/>
+        <script src="script/helpstudio.js" type="text/javascript"></script>
+        <script src="script/StandardText.js" type="text/jscript"></script>
+    </head>
+    <body id="hsbody">
+        <input type="hidden" id="userDataCache" class="userDataStyle" name="userDataCache" />
+        <div id="allHistory" class="saveHistory" onsave="saveScrollPosition()" onload="loadScrollPosition()"></div>
+        <script type="text/jscript">WritePageTop(document.title);</script>
+        <div id="pagebody">
+            <div id="mainbody">
+                <table>
+                    <col />
+                    <tr><td><p>TypeName</p></td><td><p>ArithmeticExpressionsMustDeclarePrecedence</p></td></tr>
+                    <tr><td><p>CheckId</p></td><td><p>SA1407</p></td></tr>
+                    <tr><td><p>Category</p></td><td><p>Maintainability Rules</p></td></tr>
+                </table>           
+                <h2>Cause</h2>
+                <P>A C# statement contains a complex arithmetic expression which omits parenthesis around operators.</P>
+                <H2>Rule Description</H2>
+                <P>C# maintains a hierarchy of precedence for arithmetic operators. It is possible in C# to string multiple arithmetic operations together in one statement without wrapping any of the operations in parenthesis, in which case the compiler will automatically set the order and precedence of the operations based on these pre-established rules. For example:</P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN><SPAN style="COLOR: blue">int</SPAN> x = 5 + y * b / 6 % z - 2;</SPAN></P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes">&#160;</SPAN></P>
+                <P>Although this code is legal, it is not highly readable or maintainable. In order to achieve full understanding of this code, the developer must know and understand the basic operator precedence rules in C#.</P>
+                <P>This rule is intended to increase the readability and maintainability of this type of code, and to reduce the risk of introducing bugs later, by forcing the developer to insert parenthesis to explicitly declare the operator precedence. The example below shows multiple arithmetic operations surrounded by parenthesis:</P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN><SPAN style="COLOR: blue">int</SPAN> x = 5 + (y * ((b / 6) % z)) - 2;</SPAN></P>
+                <P />
+                <P>Inserting parenthesis makes the code more obvious and easy to understand, and removes the need for the reader to make assumptions about the code.</P>
+                <H2>How to Fix Violations</H2>
+                <P>To fix a violation of this rule, insert parenthesis within the arithmetic expression to declare the precedence of the operations.</P>
+                <h2>How to Suppress Violations</h2>
+                <pre>[SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1407:ArithmeticExpressionsMustDeclarePrecedence", Justification = "Reviewed.")]</pre>
+            </div>
+           <script type="text/jscript">WritePageFooter();</script>   
+        </div>
+    </body>
+</html>

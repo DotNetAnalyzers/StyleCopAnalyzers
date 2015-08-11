@@ -1,0 +1,36 @@
+﻿<html xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <head>
+        <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"/>
+        <meta content="history" name="save"/>
+        <title>SA1002: SemicolonsMustBeSpacedCorrectly</title>
+        <link rel="stylesheet" type="text/css" href="stylesheets/helpstudio.css" />
+        <link rel="stylesheet" type="text/css" href="styles/Presentation.css" />
+        <script src="script/helpstudio.js" type="text/jscript"></script>
+        <script src="script/StandardText.js" type="text/jscript"></script>   
+    </head>
+    <body id="hsbody">
+        <input type="hidden" id="userDataCache" class="userDataStyle" name="userDataCache" />
+        <div id="allHistory" class="saveHistory" onsave="saveScrollPosition()" onload="loadScrollPosition()"></div>
+        <script type="text/jscript">WritePageTop(document.title);</script>
+        <div id="pagebody">
+            <div id="mainbody">
+                <table>                
+                    <col />
+                    <tr><td><p>TypeName</p></td><td><p>SemicolonsMustBeSpacedCorrectly</p></td></tr>
+                    <tr><td><p>CheckId</p></td><td><p>SA1002</p></td></tr>
+                    <tr><td><p>Category</p></td><td><p>Spacing Rules</p></td></tr>                              
+                </table>           
+                <h2>Cause</h2>
+                <P>The spacing around a semicolon is incorrect, within a C# code file.</P>
+                <H2>Rule Description</H2>
+                <P >A violation of this rule occurs when the spacing around a semicolon is incorrect.</P>
+                <P>A semicolon should always be followed by a single space, unless it is the last character on the line, and a semicolon should never be preceded by any whitespace, unless it is the first character on the line.</P>
+                <H2>How to Fix Violations</H2>
+                <P>To fix a violation of this rule, ensure that the semicolon is followed by a single space, and is not preceded by any space.</P> 
+                 <h2>How to Suppress Violations</h2>
+                <pre>[SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1002:SemicolonsMustBeSpacedCorrectly", Justification = "Reviewed.")]</pre>     
+            </div>
+            <script type="text/jscript">WritePageFooter();</script>   
+        </div>
+    </body>
+</html>

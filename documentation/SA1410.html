@@ -1,0 +1,41 @@
+﻿
+<html xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <head>
+        <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"/>
+        <meta content="history" name="save"/>
+        <title>SA1410: RemoveDelegateParenthesisWhenPossible</title>
+        <link rel="stylesheet" type="text/css" href="stylesheets/helpstudio.css"/><link rel="stylesheet" type="text/css" href="styles/Presentation.css"/>
+        <script src="script/helpstudio.js" type="text/javascript"></script>
+        <script src="script/StandardText.js" type="text/jscript"></script>
+    </head>
+    <body id="hsbody">
+        <input type="hidden" id="userDataCache" class="userDataStyle" name="userDataCache" />
+        <div id="allHistory" class="saveHistory" onsave="saveScrollPosition()" onload="loadScrollPosition()"></div>
+        <script type="text/jscript">WritePageTop(document.title);</script>
+        <div id="pagebody">
+            <div id="mainbody">
+                <table>
+                    <col />
+                    <tr><td><p>TypeName</p></td><td><p>RemoveDelegateParenthesisWhenPossible</p></td></tr>
+                    <tr><td><p>CheckId</p></td><td><p>SA1410</p></td></tr>
+                    <tr><td><p>Category</p></td><td><p>Maintainability Rules</p></td></tr>
+                </table>           
+                <h2>Cause</h2>
+                <P>A call to a C# anonymous method does not contain any method parameters, yet the statement still includes parenthesis.</P>
+                <H2>Rule Description</H2>
+                <P>When an anonymous method does not contain any method parameters, the parenthesis around the parameters are optional.</P>
+                <P>A violation of this rule occurs when the parenthesis are present on an anonymous method call which takes no method parameters. For example:</P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN><SPAN style="COLOR: blue">this</SPAN>.Method(<SPAN style="COLOR: blue">delegate</SPAN>() { <SPAN style="COLOR: blue">return</SPAN> 2; });</SPAN></P>
+                <P></P>
+                <P>The parenthesis are unnecessary and should be removed:</P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN><SPAN style="COLOR: blue">this</SPAN>.Method(<SPAN style="COLOR: blue">delegate</SPAN> { <SPAN style="COLOR: blue">return</SPAN> 2; });</SPAN></P>
+                <P></P>
+                <H2>How to Fix Violations</H2>
+                <P>Remove the unnecessary parenthesis after the delegate keyword.</P>
+                <h2>How to Suppress Violations</h2>
+                <pre>[SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1410:RemoveDelegateParenthesisWhenPossible", Justification = "Reviewed.")]</pre>
+            </div>
+            <script type="text/jscript">WritePageFooter();</script>   
+        </div>
+    </body>
+</html>

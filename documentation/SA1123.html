@@ -1,0 +1,34 @@
+﻿<html xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <head>
+        <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"/>
+        <meta content="history" name="save"/>
+        <title>SA1123: DoNotPlaceRegionsWithinElements</title>
+        <link rel="stylesheet" type="text/css" href="stylesheets/helpstudio.css"/><link rel="stylesheet" type="text/css" href="styles/Presentation.css"/>
+        <script src="script/helpstudio.js" type="text/javascript"></script>
+        <script src="script/StandardText.js" type="text/jscript"></script>    
+    </head>
+    <body id="hsbody">
+        <input type="hidden" id="userDataCache" class="userDataStyle" name="userDataCache" />
+        <div id="allHistory" class="saveHistory" onsave="saveScrollPosition()" onload="loadScrollPosition()"></div>
+        <script type="text/jscript">WritePageTop(document.title);</script>
+        <div id="pagebody">
+            <div id="mainbody">
+                <table>
+                    <col />
+                    <tr><td><p>TypeName</p></td><td><p>DoNotPlaceRegionsWithinElements</p></td></tr>
+                    <tr><td><p>CheckId</p></td><td><p>SA1123</p></td></tr>
+                    <tr><td><p>Category</p></td><td><p>Readability Rules</p></td></tr>
+                </table>           
+                <h2>Cause</h2>
+                <P>The C# code contains a region within the body of a code element.</P>
+                <H2>Rule Description</H2>
+                <P>A violation of this rule occurs whenever a region is placed within the body of a code element. In many editors, including Visual Studio, the region will appear collapsed by default, hiding the code within the region. It is generally a bad practice to hide code within the body of an element, as this can lead to bad decisions as the code is maintained over time.</P>      
+                <H2>How to Fix Violations</H2>
+                <P>To fix a violation of this rule, remove the region from the code.</P>
+                <h2>How to Suppress Violations</h2>
+                <pre>[SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1123:DoNotPlaceRegionsWithinElements", Justification = "Reviewed.")]</pre>
+            </div>
+            <script type="text/jscript">WritePageFooter();</script>  
+        </div>
+    </body>
+</html>

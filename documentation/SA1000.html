@@ -1,0 +1,38 @@
+﻿<html xmlns:mshelp="http://msdn.microsoft.com/mshelp">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta content="history" name="save" />
+        <title>SA1000: KeywordsMustBeSpacedCorrectly</title>
+        <link rel="stylesheet" type="text/css" href="stylesheets/helpstudio.css" />
+        <link rel="stylesheet" type="text/css" href="styles/Presentation.css" />
+        <script src="script/helpstudio.js" type="text/jscript"></script>
+        <script src="script/StandardText.js" type="text/jscript"></script>
+    </head>
+    <body id="hsbody">
+        <input type="hidden" id="userDataCache" class="userDataStyle" name="userDataCache" />
+        <div id="allHistory" class="saveHistory" onsave="saveScrollPosition()" onload="loadScrollPosition()"></div>
+        <script type="text/jscript">WritePageTop(document.title);</script>
+        <div id="pagebody">
+            <div id="mainbody">
+                <table>
+                    <col />
+                    <tr><td><p>TypeName</p></td><td><p>KeywordsMustBeSpacedCorrectly</p></td></tr>
+                    <tr><td><p>CheckId</p></td><td><p>SA1000</p></td></tr>
+                    <tr><td><p>Category</p></td><td><p>Spacing Rules</p></td></tr>
+                </table>           
+                <h2>Cause</h2>
+                <p>The spacing around a C# keyword is incorrect.</p>
+                <h2>Rule Description</h2>
+                <p>A violation of this rule occurs when the spacing around a keyword is incorrect.</p>
+                <p>The following C# keywords must always be followed by a single space: <em>catch, fixed, for, foreach, from, group, if, in, into, join, let, lock, orderby, return, select, stackalloc, switch, throw, using, where, while, yield</em>.</p>
+                <p>The following keywords must not be followed by any space: <em>checked, default, sizeof, typeof, unchecked</em>.</p>
+                <p>The <em>new</em> keyword should always be followed by a space, unless it is used to create a new array, in which case there should be no space between the <em>new</em> keyword and the opening array bracket.</p>
+                <h2>How to Fix Violations</h2>
+                <p>To fix a violation of this rule, add or remove a space after the keyword, according to the description above.</p>
+                <h2>How to Suppress Violations</h2>
+                <pre>[SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1000:KeywordsMustBeSpacedCorrectly", Justification = "Reviewed.")]</pre>
+            </div>
+            <script type="text/jscript">WritePageFooter();</script>        
+        </div>
+    </body>
+</html>

@@ -1,0 +1,37 @@
+﻿
+<html xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <head>
+        <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"/>
+        <meta content="history" name="save"/>
+        <title>SA1648: InheritDocMustBeUsedWithInheritingClass</title>
+        <link rel="stylesheet" type="text/css" href="stylesheets/helpstudio.css"/>
+        <link rel="stylesheet" type="text/css" href="styles/Presentation.css"/>
+        <script src="script/helpstudio.js" type="text/javascript"></script>
+        <script src="script/StandardText.js" type="text/jscript"></script>
+    </head>
+    <body id="hsbody">
+        <input type="hidden" id="userDataCache" class="userDataStyle" name="userDataCache" />
+        <div id="allHistory" class="saveHistory" onsave="saveScrollPosition()" onload="loadScrollPosition()"></div>
+        <script type="text/jscript">WritePageTop(document.title);</script>
+        <div id="pagebody">
+            <div id="mainbody">
+                <table>
+                    <col />
+                    <tr><td><p>TypeName</p></td><td><p>InheritDocMustBeUsedWithInheritingClass</p></td></tr>
+                    <tr><td><p>CheckId</p></td><td><p>SA1648</p></td></tr>
+                    <tr><td><p>Category</p></td><td><p>Documentation Rules</p></td></tr>
+                </table>           
+                <h2>Cause</h2>
+                <P>&lt;inheritdoc&gt; has been used on an element that doesnt inherit from a base class or implement an interface..</P>
+                <H2>Rule Description</H2>
+                <P>Verifies that an 'inheritdoc' tag is not used when the class or interface does not inherit from a base class or interface.</P>
+                <P>A violation of this rule occurs when the element having the inheritdoc tag doesn't inherit from a base case or implement an interface.</P>
+                <H2>How to Fix Violations</H2>
+                <P>To fix a violation of this rule, remove the &lt;inheritdoc&gt; tag and document the element appropriately.</P>
+                <h2>How to Suppress Violations</h2>
+                <pre>[SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1648:InheritDocMustBeUsedWithInheritingClass", Justification = "Reviewed.")]</pre>
+            </div>
+            <script type="text/jscript">WritePageFooter();</script>  
+        </div>
+    </body>
+</html>

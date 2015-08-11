@@ -1,0 +1,38 @@
+﻿<html xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
+    <head>
+        <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=UTF-8"/>
+        <meta content="history" name="save"/>
+        <title>SA1122: UseStringEmptyForEmptyStrings</title>
+        <link rel="stylesheet" type="text/css" href="stylesheets/helpstudio.css"/><link rel="stylesheet" type="text/css" href="styles/Presentation.css"/>
+        <script src="script/helpstudio.js" type="text/javascript"></script>
+       <script src="script/StandardText.js" type="text/jscript"></script>    
+    </head>
+    <body id="hsbody">
+        <input type="hidden" id="userDataCache" class="userDataStyle" name="userDataCache" />
+        <div id="allHistory" class="saveHistory" onsave="saveScrollPosition()" onload="loadScrollPosition()"></div>
+        <script type="text/jscript">WritePageTop(document.title);</script>
+        <div id="pagebody">
+            <div id="mainbody">
+                <table>
+                    <col />
+                    <tr><td><p>TypeName</p></td><td><p>UseStringEmptyForEmptyStrings</p></td></tr>
+                    <tr><td><p>CheckId</p></td><td><p>SA1122</p></td></tr>
+                    <tr><td><p>Category</p></td><td><p>Readability Rules</p></td></tr>
+                </table>           
+                <h2>Cause</h2>
+                <P>The C# code includes an empty string, written as “”.</P>
+                <H2>Rule Description</H2>
+                <P>A violation of this rule occurs when the code contains an empty string. For example:</P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 7.5pt"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; COLOR: blue; LINE-HEIGHT: 140%; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN>string</SPAN><SPAN lang='EN-US' style="FONT-SIZE: 9pt; LINE-HEIGHT: 140%; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"> s = <SPAN style="COLOR: #a31515">""</SPAN>;</SPAN><SPAN lang='EN-US' style="FONT-SIZE: 9pt; LINE-HEIGHT: 140%"></SPAN></P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 7.5pt"><SPAN lang='EN-US'>This will cause the compiler to embed an empty string into the compiled code. Rather than including a hard-coded empty string, use the static string.Empty property:</SPAN></P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 7.5pt"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; COLOR: blue; LINE-HEIGHT: 140%; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"><SPAN style="mso-spacerun: yes">&#160;&#160;&#160; </SPAN>string</SPAN><SPAN lang='EN-US' style="FONT-SIZE: 9pt; LINE-HEIGHT: 140%; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"> s = <SPAN style="COLOR: blue">string</SPAN>.Empty;</SPAN><SPAN lang='EN-US' style="FONT-SIZE: 9pt; LINE-HEIGHT: 140%"></SPAN></P>
+                <P class='MsoNormal' style="MARGIN: 0cm 0cm 0pt; LINE-HEIGHT: normal; mso-vertical-align-alt: auto; mso-layout-grid-align: none"><SPAN lang='EN-US' style="FONT-SIZE: 9pt; FONT-FAMILY: 'Courier New'; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-no-proof: yes"></SPAN></P>
+                <H2>How to Fix Violations</H2>
+                <P>To fix a violation of this rule, replace the hard-coded empty string with string.Empty.</P>
+                <h2>How to Suppress Violations</h2>
+                <pre>[SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1122:UseStringEmptyForEmptyStrings", Justification = "Reviewed.")]</pre>
+            </div>
+            <script type="text/jscript">WritePageFooter();</script>     
+        </div>
+    </body>
+</html>
