@@ -28,6 +28,9 @@
                 yield return new[] { "while (i == 0)" };
                 yield return new[] { "for (var j = 0; j < i; j++)" };
                 yield return new[] { "foreach (var j in new[] { 1, 2, 3 })" };
+                yield return new[] { "lock (this)" };
+                yield return new[] { "using (this)" };
+                yield return new[] { "fixed (byte* ptr = new byte[10])" };
             }
         }
 
@@ -412,13 +415,15 @@ public class Foo
         private string GenerateTestStatement(string statementText)
         {
             var testCodeFormat = @"using System.Diagnostics;
-public class Foo
+public class Foo : System.IDisposable
 {
-    public void Bar(int i)
+    public unsafe void Bar(int i)
     {
         #STATEMENT#
             Debug.Assert(true);
     }
+
+    public void Dispose() {}
 }";
             return testCodeFormat.Replace("#STATEMENT#", statementText);
         }
@@ -426,15 +431,17 @@ public class Foo
         private string GenerateFixedTestStatement(string statementText)
         {
             var fixedTestCodeFormat = @"using System.Diagnostics;
-public class Foo
+public class Foo : System.IDisposable
 {
-    public void Bar(int i)
+    public unsafe void Bar(int i)
     {
         #STATEMENT#
         {
             Debug.Assert(true);
         }
     }
+
+    public void Dispose() {}
 }";
             return fixedTestCodeFormat.Replace("#STATEMENT#", statementText);
         }
