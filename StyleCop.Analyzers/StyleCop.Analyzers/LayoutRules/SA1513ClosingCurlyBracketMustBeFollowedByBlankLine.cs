@@ -127,6 +127,12 @@
                 // check if the next token is not preceded by significant trivia.
                 if (nextToken.LeadingTrivia.All(trivia => trivia.IsKind(SyntaxKind.WhitespaceTrivia)))
                 {
+                    if (nextToken.IsKind(SyntaxKind.DotToken))
+                    {
+                        // the close brace is followed by a member accessor on the next line
+                        return;
+                    }
+
                     if (nextToken.IsKind(SyntaxKind.CloseBraceToken))
                     {
                         // the close brace is followed by another close brace on the next line
