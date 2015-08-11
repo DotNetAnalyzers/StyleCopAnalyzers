@@ -63,7 +63,7 @@
             var parentLastToken = block.OpenBraceToken.GetPreviousToken();
 
             var parentEndLine = parentLastToken.GetLineSpan().EndLinePosition.Line;
-            var blockStartLine = block.OpenBraceToken.GetLineSpan().StartLinePosition.Line;
+            var blockStartLine = block.OpenBraceToken.GetLine();
 
             var newParentLastToken = parentLastToken;
             if (parentEndLine == blockStartLine)
@@ -77,7 +77,7 @@
 
             var parentNextToken = block.CloseBraceToken.GetNextToken();
 
-            var nextTokenLine = parentNextToken.GetLineSpan().StartLinePosition.Line;
+            var nextTokenLine = parentNextToken.GetLine();
             var blockCloseLine = block.CloseBraceToken.GetLineSpan().EndLinePosition.Line;
 
             var newParentNextToken = parentNextToken;
