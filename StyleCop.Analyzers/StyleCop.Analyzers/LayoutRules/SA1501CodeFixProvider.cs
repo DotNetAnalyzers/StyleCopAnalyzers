@@ -63,7 +63,7 @@
             var parentLastToken = block.OpenBraceToken.GetPreviousToken();
 
             var parentEndLine = parentLastToken.GetLineSpan().EndLinePosition.Line;
-            var blockStartLine = block.OpenBraceToken.GetLineSpan().StartLinePosition.Line;
+            var blockStartLine = block.OpenBraceToken.GetLine();
 
             var newParentLastToken = parentLastToken;
             if (parentEndLine == blockStartLine)
@@ -75,8 +75,19 @@
                 newParentLastToken = newParentLastToken.WithTrailingTrivia(newTrailingTrivia);
             }
 
+            var parentNextToken = block.CloseBraceToken.GetNextToken();
+
+            var nextTokenLine = parentNextToken.GetLine();
+            var blockCloseLine = block.CloseBraceToken.GetLineSpan().EndLinePosition.Line;
+
+            var newParentNextToken = parentNextToken;
+            if (nextTokenLine == blockCloseLine)
+            {
+                newParentNextToken = newParentNextToken.WithLeadingTrivia(parentLastToken.LeadingTrivia);
+            }
+
             var newBlock = ReformatBlock(document, block);
-            var rewriter = new BlockRewriter(parentLastToken, newParentLastToken, block, newBlock);
+            var rewriter = new BlockRewriter(parentLastToken, newParentLastToken, block, newBlock, parentNextToken, newParentNextToken);
 
             var newSyntaxRoot = rewriter.Visit(syntaxRoot);
             return newSyntaxRoot.WithoutFormatting();
@@ -174,17 +185,21 @@
 
         private class BlockRewriter : CSharpSyntaxRewriter
         {
-            private SyntaxToken parentToken;
-            private SyntaxToken newParentToken;
-            private BlockSyntax block;
-            private BlockSyntax newBlock;
+            private readonly SyntaxToken parentToken;
+            private readonly SyntaxToken newParentToken;
+            private readonly BlockSyntax block;
+            private readonly BlockSyntax newBlock;
+            private readonly SyntaxToken nextToken;
+            private readonly SyntaxToken newNextToken;
 
-            public BlockRewriter(SyntaxToken parentToken, SyntaxToken newParentToken, BlockSyntax block, BlockSyntax newBlock)
+            public BlockRewriter(SyntaxToken parentToken, SyntaxToken newParentToken, BlockSyntax block, BlockSyntax newBlock, SyntaxToken nextToken, SyntaxToken newNextToken)
             {
                 this.parentToken = parentToken;
                 this.newParentToken = newParentToken;
                 this.block = block;
                 this.newBlock = newBlock;
+                this.nextToken = nextToken;
+                this.newNextToken = newNextToken;
             }
 
             public override SyntaxToken VisitToken(SyntaxToken token)
@@ -192,6 +207,11 @@
                 if (token == this.parentToken)
                 {
                     return this.newParentToken;
+                }
+
+                if (token == this.nextToken)
+                {
+                    return this.newNextToken;
                 }
 
                 return base.VisitToken(token);
