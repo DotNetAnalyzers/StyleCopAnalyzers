@@ -238,8 +238,7 @@ namespace Test
 
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation("Test2.cs", 5, 5).WithArguments("System.Threading", "Namespace"),
-                this.CSharpDiagnostic().WithLocation("Test2.cs", 7, 5).WithArguments("System.IO", "Namespace")
+                this.CSharpDiagnostic().WithLocation("Test2.cs", 5, 5).WithArguments("System.Threading", "Namespace")
             };
 
             await this.VerifyCSharpDiagnosticAsync(sources, expected, CancellationToken.None).ConfigureAwait(false);
@@ -272,6 +271,31 @@ namespace Test
             };
 
             await this.VerifyCSharpDiagnosticAsync(sources, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestPreprocessorDirectivesAsync()
+        {
+            var testCode = @"
+using System;
+using Microsoft.VisualStudio;
+using MyList = System.Collections.Generic.List<int>;
+using Microsoft.CodeAnalysis;
+
+#if true
+using System.Collections;
+using Microsoft.CodeAnalysis;
+using System.Threading;
+#else
+using System.Collections;
+using Microsoft.CodeAnalysis;
+using System.Threading;
+#endif";
+
+            // else block is skipped
+            var expected = this.CSharpDiagnostic().WithLocation(10, 1).WithArguments("System.Threading", "Microsoft.CodeAnalysis");
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
