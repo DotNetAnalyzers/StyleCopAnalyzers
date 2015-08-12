@@ -539,7 +539,7 @@ class TypeName
             this.suppressSA1503 = true;
 
             var testCode = @"using System.Diagnostics;
-public class Foo
+public class TypeName
 {
     public void Bar(int i)
     {
@@ -548,7 +548,7 @@ public class Foo
     }
 }";
             var fixedCode = @"using System.Diagnostics;
-public class Foo
+public class TypeName
 {
     public void Bar(int i)
     {
@@ -589,7 +589,7 @@ public class Foo
             this.suppressSA1503 = true;
 
             var testCode = @"using System.Diagnostics;
-public class Foo
+public class TypeName
 {
     public void Bar(int i)
     {
@@ -616,7 +616,7 @@ public class Foo
             this.suppressSA1503 = true;
 
             var testCode = @"using System.Diagnostics;
-public class Foo
+public class TypeName
 {
     public void Bar(int i)
     {
@@ -643,7 +643,7 @@ public class Foo
             this.suppressSA1503 = true;
 
             var testCode = @"using System.Diagnostics;
-public class Foo
+public class TypeName
 {
     public void Bar(int i)
     {
@@ -652,7 +652,7 @@ public class Foo
 }";
 
             var fixedTestCode = @"using System.Diagnostics;
-public class Foo
+public class TypeName
 {
     public void Bar(int i)
     {
@@ -677,7 +677,7 @@ else
             this.suppressSA1503 = true;
 
             var testCode = @"using System.Diagnostics;
-public class Foo
+public class TypeName
 {
  public void Bar(int i)
  {
@@ -686,7 +686,7 @@ public class Foo
 }";
 
             var fixedTestCode = @"using System.Diagnostics;
-public class Foo
+public class TypeName
 {
  public void Bar(int i)
  {
@@ -708,7 +708,7 @@ public class Foo
             this.suppressSA1503 = true;
 
             var testCode = @"using System.Diagnostics;
-public class Foo
+public class TypeName
 {
     public void Bar(int i)
     {
@@ -719,7 +719,7 @@ public class Foo
 }";
 
             var fixedTestCode = @"using System.Diagnostics;
-public class Foo
+public class TypeName
 {
     public void Bar(int i)
     {
@@ -742,7 +742,7 @@ public class Foo
             this.suppressSA1503 = true;
 
             var testCode = @"using System.Diagnostics;
-public class Foo
+public class TypeName
 {
     public void Bar(int i)
     {
@@ -751,7 +751,7 @@ public class Foo
 }";
 
             var fixedTestCode = @"using System.Diagnostics;
-public class Foo
+public class TypeName
 {
     public void Bar(int i)
     {
@@ -762,7 +762,7 @@ public class Foo
 }";
 
             var batchFixedTestCode = @"using System.Diagnostics;
-public class Foo
+public class TypeName
 {
     public void Bar(int i)
     {
@@ -819,7 +819,7 @@ public class Foo
         private string GenerateTestStatement(string statementText)
         {
             var testCodeFormat = @"using System.Diagnostics;
-public class Foo : System.IDisposable
+public class TypeName : System.IDisposable
 {
     public unsafe void Bar(int i)
     {
@@ -834,7 +834,7 @@ public class Foo : System.IDisposable
         private string GenerateFixedTestStatement(string statementText)
         {
             var fixedTestCodeFormat = @"using System.Diagnostics;
-public class Foo : System.IDisposable
+public class TypeName : System.IDisposable
 {
     public unsafe void Bar(int i)
     {
