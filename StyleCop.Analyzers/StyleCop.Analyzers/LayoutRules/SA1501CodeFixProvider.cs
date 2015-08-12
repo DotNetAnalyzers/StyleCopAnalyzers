@@ -127,7 +127,10 @@
             var newParentNextToken = parentNextToken;
             if (nextTokenLine == statementCloseLine)
             {
-                newParentNextToken = newParentNextToken.WithLeadingTrivia(parentLastToken.LeadingTrivia);
+                var indentationOptions = IndentationOptions.FromDocument(document);
+                var parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationOptions, GetStatementParent(statement.Parent));
+                var indentationString = IndentationHelper.GenerateIndentationString(indentationOptions, parentIndentationLevel);
+                newParentNextToken = newParentNextToken.WithLeadingTrivia(SyntaxFactory.Whitespace(indentationString));
             }
 
             var newStatement = ReformatStatement(document, statement);

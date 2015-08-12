@@ -648,7 +648,7 @@ public class TypeName
     {
         if (i == 0)
             Debug.Assert(true);
-else Debug.Assert(false);
+        else Debug.Assert(false);
     }
 }";
 
