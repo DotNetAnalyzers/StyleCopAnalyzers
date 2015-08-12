@@ -565,6 +565,49 @@ public class TypeName
         }
 
         /// <summary>
+        /// Verifies that consecutive single-line statements are properly reported and fixed.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestNoSA1503ConsecutiveStatementsAsync()
+        {
+            this.suppressSA1503 = true;
+
+            var testCode = @"using System;
+using System.Diagnostics;
+public class TypeName
+{
+    public void Bar(string x, string y)
+    {
+        if (x == null) throw new ArgumentNullException(nameof(x));
+        if (y == null) throw new ArgumentNullException(nameof(y));
+    }
+}";
+            var fixedCode = @"using System;
+using System.Diagnostics;
+public class TypeName
+{
+    public void Bar(string x, string y)
+    {
+        if (x == null)
+            throw new ArgumentNullException(nameof(x));
+        if (y == null)
+            throw new ArgumentNullException(nameof(y));
+    }
+}";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(7, 24),
+                this.CSharpDiagnostic().WithLocation(8, 24),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that a statement followed by a block with curly braces will produce no diagnostics results.
         /// </summary>
         /// <param name="statementText">The source code for the first part of a compound statement whose child can be
