@@ -46,15 +46,24 @@
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var block = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) as BlockSyntax;
-            if (block == null)
+            var statement = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) as StatementSyntax;
+            if (statement == null)
             {
                 return document;
             }
 
-            var newSyntaxRoot = ReformatBlockAndParent(document, syntaxRoot, block);
-            var newDocument = document.WithSyntaxRoot(newSyntaxRoot);
+            SyntaxNode newSyntaxRoot;
+            BlockSyntax block = statement as BlockSyntax;
+            if (block != null)
+            {
+                newSyntaxRoot = ReformatBlockAndParent(document, syntaxRoot, block);
+            }
+            else
+            {
+                newSyntaxRoot = ReformatStatementAndParent(document, syntaxRoot, statement);
+            }
 
+            var newDocument = document.WithSyntaxRoot(newSyntaxRoot);
             return newDocument;
         }
 
@@ -90,6 +99,60 @@
             var rewriter = new BlockRewriter(parentLastToken, newParentLastToken, block, newBlock, parentNextToken, newParentNextToken);
 
             var newSyntaxRoot = rewriter.Visit(syntaxRoot);
+            return newSyntaxRoot.WithoutFormatting();
+        }
+
+        private static SyntaxNode ReformatStatementAndParent(Document document, SyntaxNode syntaxRoot, StatementSyntax statement)
+        {
+            var parentLastToken = statement.GetFirstToken().GetPreviousToken();
+
+            var parentEndLine = parentLastToken.GetEndLine();
+            var statementStartLine = statement.GetFirstToken().GetLine();
+
+            var newParentLastToken = parentLastToken;
+            if (parentEndLine == statementStartLine)
+            {
+                var newTrailingTrivia = parentLastToken.TrailingTrivia
+                    .WithoutTrailingWhitespace()
+                    .Add(SyntaxFactory.CarriageReturnLineFeed);
+
+                newParentLastToken = newParentLastToken.WithTrailingTrivia(newTrailingTrivia);
+            }
+
+            var parentNextToken = statement.GetLastToken().GetNextToken();
+
+            var nextTokenLine = parentNextToken.GetLine();
+            var statementCloseLine = statement.GetLastToken().GetEndLine();
+
+            var newParentNextToken = parentNextToken;
+            if (nextTokenLine == statementCloseLine)
+            {
+                newParentNextToken = newParentNextToken.WithLeadingTrivia(parentLastToken.LeadingTrivia);
+            }
+
+            var newStatement = ReformatStatement(document, statement);
+            var newSyntaxRoot = syntaxRoot.ReplaceSyntax(
+                new[] { statement },
+                (originalNode, rewrittenNode) => originalNode == statement ? newStatement : rewrittenNode,
+                new[] { parentLastToken, parentNextToken },
+                (originalToken, rewrittenToken) =>
+                {
+                    if (originalToken == parentLastToken)
+                    {
+                        return newParentLastToken;
+                    }
+                    else if (originalToken == parentNextToken)
+                    {
+                        return newParentNextToken;
+                    }
+                    else
+                    {
+                        return rewrittenToken;
+                    }
+                },
+                Enumerable.Empty<SyntaxTrivia>(),
+                (originalTrivia, rewrittenTrivia) => rewrittenTrivia);
+
             return newSyntaxRoot.WithoutFormatting();
         }
 
@@ -173,14 +236,56 @@
             return SyntaxFactory.Block(openBraceToken, statements, closeBraceToken);
         }
 
-        private static SyntaxNode GetStatementParent(SyntaxNode node)
+        private static StatementSyntax ReformatStatement(Document document, StatementSyntax statement)
         {
-            while ((node != null) && !(node is StatementSyntax))
+            var indentationOptions = IndentationOptions.FromDocument(document);
+            var parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationOptions, GetStatementParent(statement.Parent));
+
+            // use one additional step of indentation for lambdas / anonymous methods
+            switch (statement.Parent.Kind())
             {
-                node = node.Parent;
+            case SyntaxKind.AnonymousMethodExpression:
+            case SyntaxKind.SimpleLambdaExpression:
+            case SyntaxKind.ParenthesizedLambdaExpression:
+                parentIndentationLevel++;
+                break;
             }
 
-            return node;
+            var statementIndentationString = IndentationHelper.GenerateIndentationString(indentationOptions, parentIndentationLevel + 1);
+
+            var newFirstTokenLeadingTrivia = statement.GetFirstToken().LeadingTrivia
+                .WithoutTrailingWhitespace()
+                .Add(SyntaxFactory.Whitespace(statementIndentationString));
+
+            var newLastTokenTrailingTrivia = statement.GetLastToken().TrailingTrivia
+                .WithoutTrailingWhitespace()
+                .Add(SyntaxFactory.CarriageReturnLineFeed);
+
+            var firstToken = statement.GetFirstToken().WithLeadingTrivia(newFirstTokenLeadingTrivia);
+            var lastToken = statement.GetLastToken().WithTrailingTrivia(newLastTokenTrailingTrivia);
+
+            return statement.ReplaceTokens(
+                new[] { statement.GetFirstToken(), statement.GetLastToken() },
+                (originalToken, rewrittenToken) =>
+                {
+                    if (originalToken == statement.GetFirstToken())
+                    {
+                        return firstToken;
+                    }
+                    else if (originalToken == statement.GetLastToken())
+                    {
+                        return lastToken;
+                    }
+                    else
+                    {
+                        return rewrittenToken;
+                    }
+                });
+        }
+
+        private static SyntaxNode GetStatementParent(SyntaxNode node)
+        {
+            return node.FirstAncestorOrSelf<StatementSyntax>();
         }
 
         private class BlockRewriter : CSharpSyntaxRewriter
