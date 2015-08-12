@@ -597,12 +597,7 @@ public class TypeName
     }
 }";
 
-            var expected = new[]
-            {
-                this.CSharpDiagnostic().WithLocation(6, 21),
-                this.CSharpDiagnostic().WithLocation(6, 46)
-            };
-
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 21);
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -624,12 +619,7 @@ public class TypeName
     }
 }";
 
-            var expected = new[]
-            {
-                this.CSharpDiagnostic().WithLocation(6, 21),
-                this.CSharpDiagnostic().WithLocation(6, 33)
-            };
-
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 21);
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -658,8 +648,7 @@ public class TypeName
     {
         if (i == 0)
             Debug.Assert(true);
-else
-            Debug.Assert(false);
+else Debug.Assert(false);
     }
 }";
 
@@ -756,6 +745,49 @@ public class TypeName
     public void Bar(int i)
     {
         if (i == 0)
+            if (i == 0) Debug.Assert(true);
+    }
+}";
+
+            var batchFixedTestCode = @"using System.Diagnostics;
+public class TypeName
+{
+    public void Bar(int i)
+    {
+        if (i == 0)
+            if (i == 0) Debug.Assert(true);
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, batchFixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix provider will work properly handle the second pass of multiple cases of missing
+        /// brackets.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestNoSA1503CodeFixProviderWithMultipleNestingsSecondPassAsync()
+        {
+            this.suppressSA1503 = true;
+
+            var testCode = @"using System.Diagnostics;
+public class TypeName
+{
+    public void Bar(int i)
+    {
+        if (i == 0)
+            if (i == 0) Debug.Assert(true);
+    }
+}";
+
+            var fixedTestCode = @"using System.Diagnostics;
+public class TypeName
+{
+    public void Bar(int i)
+    {
+        if (i == 0)
             if (i == 0)
                 Debug.Assert(true);
     }
@@ -768,7 +800,7 @@ public class TypeName
     {
         if (i == 0)
             if (i == 0)
-    Debug.Assert(true);
+                Debug.Assert(true);
     }
 }";
 
