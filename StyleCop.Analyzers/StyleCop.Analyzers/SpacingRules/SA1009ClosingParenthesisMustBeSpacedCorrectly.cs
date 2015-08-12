@@ -162,6 +162,18 @@
                 break;
             }
 
+            foreach (var trivia in token.TrailingTrivia)
+            {
+                if ((trivia.IsKind(SyntaxKind.SingleLineCommentTrivia) || trivia.IsKind(SyntaxKind.MultiLineCommentTrivia))
+                    && trivia.GetLineSpan().StartLinePosition.Line == token.GetLine())
+                {
+                    lastInLine = false;
+                    precedesStickyCharacter = false;
+
+                    break;
+                }
+            }
+
             if (precededBySpace)
             {
                 // Closing parenthesis must{ not} be {preceded} by a space.
