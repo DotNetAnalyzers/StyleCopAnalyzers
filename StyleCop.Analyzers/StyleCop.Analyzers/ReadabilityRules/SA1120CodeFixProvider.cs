@@ -53,27 +53,23 @@
             var nodesToRemove = new List<SyntaxTrivia>();
             nodesToRemove.Add(node);
 
-            // If there is trailing content on the line, we don't want to remove the leading whitespace
-            bool hasTrailingContent = TriviaHasTrailingContentOnLine(root, triviaList);
-
-            if (diagnosticIndex > 0 && !hasTrailingContent)
+            bool hasTrailingContent = TriviaHasTrailingContentOnLine(root, node);
+            if (!hasTrailingContent && diagnosticIndex > 0)
             {
-                var previousStart = triviaList[diagnosticIndex - 1].SpanStart;
-                var previousNode = root.FindTrivia(previousStart, true);
-                nodesToRemove.Add(previousNode);
+                var previousTrivia = triviaList[diagnosticIndex - 1];
+                if (previousTrivia.IsKind(SyntaxKind.WhitespaceTrivia))
+                {
+                    nodesToRemove.Add(previousTrivia);
+                }
             }
 
-            // If there is leading content on the line, then we don't want to remove the trailing end of lines
-            bool hasLeadingContent = TriviaHasLeadingContentOnLine(root, triviaList);
-
-            if (diagnosticIndex < triviaList.Count - 1)
+            bool hasLeadingContent = TriviaHasLeadingContentOnLine(root, node);
+            if (!hasLeadingContent && diagnosticIndex < triviaList.Count - 1)
             {
-                var nextStart = triviaList[diagnosticIndex + 1].SpanStart;
-                var nextNode = root.FindTrivia(nextStart, true);
-
-                if (nextNode.IsKind(SyntaxKind.EndOfLineTrivia) && !hasLeadingContent)
+                var nextTrivia = triviaList[diagnosticIndex + 1];
+                if (nextTrivia.IsKind(SyntaxKind.EndOfLineTrivia))
                 {
-                    nodesToRemove.Add(nextNode);
+                    nodesToRemove.Add(nextTrivia);
                 }
             }
 
@@ -87,25 +83,12 @@
             return updatedDocument;
         }
 
-        private static bool IsSkippableWhitespace(SyntaxTrivia trivia)
+        private static bool TriviaHasLeadingContentOnLine(SyntaxNode root, SyntaxTrivia commentTrivia)
         {
-            switch (trivia.Kind())
-            {
-            case SyntaxKind.EndOfLineTrivia:
-            case SyntaxKind.WhitespaceTrivia:
-                return true;
-
-            default:
-                return false;
-            }
-        }
-
-        private static bool TriviaHasLeadingContentOnLine(SyntaxNode root, IReadOnlyList<SyntaxTrivia> triviaList)
-        {
-            var nodeBeforeStart = triviaList[0].SpanStart - 1;
+            var nodeBeforeStart = commentTrivia.SpanStart - 1;
             var nodeBefore = root.FindNode(new Microsoft.CodeAnalysis.Text.TextSpan(nodeBeforeStart, 1));
 
-            if (nodeBefore.GetLineSpan().EndLinePosition.Line == triviaList[0].GetLineSpan().StartLinePosition.Line)
+            if (nodeBefore.GetLineSpan().EndLinePosition.Line == commentTrivia.GetLineSpan().StartLinePosition.Line && !nodeBefore.GetLeadingTrivia().Contains(commentTrivia))
             {
                 return true;
             }
@@ -113,12 +96,12 @@
             return false;
         }
 
-        private static bool TriviaHasTrailingContentOnLine(SyntaxNode root, IReadOnlyList<SyntaxTrivia> triviaList)
+        private static bool TriviaHasTrailingContentOnLine(SyntaxNode root, SyntaxTrivia commentTrivia)
         {
-            var nodeAfterTriviaStart = triviaList[triviaList.Count - 1].SpanStart - 1;
+            var nodeAfterTriviaStart = commentTrivia.Span.End + 1;
             var nodeAfterTrivia = root.FindNode(new Microsoft.CodeAnalysis.Text.TextSpan(nodeAfterTriviaStart, 1));
 
-            if (nodeAfterTrivia.GetLineSpan().StartLinePosition.Line == triviaList[triviaList.Count - 1].GetLineSpan().EndLinePosition.Line)
+            if (nodeAfterTrivia.GetLineSpan().StartLinePosition.Line == commentTrivia.GetLineSpan().EndLinePosition.Line && !nodeAfterTrivia.GetTrailingTrivia().Contains(commentTrivia))
             {
                 return true;
             }
