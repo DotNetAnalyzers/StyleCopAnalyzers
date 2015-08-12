@@ -101,6 +101,7 @@
                 SyntaxToken nextToken = token.GetNextToken();
                 precedesSpecialCharacter =
                     nextToken.IsKind(SyntaxKind.CloseParenToken)
+                    || nextToken.IsKind(SyntaxKind.CloseBracketToken)
                     || nextToken.IsKind(SyntaxKind.CommaToken)
                     || nextToken.IsKind(SyntaxKind.SemicolonToken)
                     || nextToken.IsKind(SyntaxKind.DotToken)

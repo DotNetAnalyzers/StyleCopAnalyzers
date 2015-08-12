@@ -337,6 +337,51 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that the analyzer will properly handle closing curly brackets with a trailing closing bracket.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestTrailingClosingBracketAsync()
+        {
+            const string testCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public object TestMethod1()
+        {
+            return this[new { Foo = 42, Bar = """"}];
+        }
+
+        object this[object obj] => obj;
+    }
+}
+";
+
+            const string fixedCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public object TestMethod1()
+        {
+            return this[new { Foo = 42, Bar = """" }];
+        }
+
+        object this[object obj] => obj;
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(7, 49).WithArguments(string.Empty, "preceded"),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
