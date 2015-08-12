@@ -164,12 +164,15 @@
 
             foreach (var trivia in token.TrailingTrivia)
             {
-                if ((trivia.IsKind(SyntaxKind.SingleLineCommentTrivia) || trivia.IsKind(SyntaxKind.MultiLineCommentTrivia))
-                    && trivia.GetLineSpan().StartLinePosition.Line == token.GetLine())
+                if (trivia.IsKind(SyntaxKind.EndOfLineTrivia))
+                {
+                    break;
+                }
+                else if (trivia.IsKind(SyntaxKind.SingleLineCommentTrivia)
+                  || trivia.IsKind(SyntaxKind.MultiLineCommentTrivia))
                 {
                     lastInLine = false;
                     precedesStickyCharacter = false;
-
                     break;
                 }
             }
