@@ -337,6 +337,31 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that the analyzer will properly handle anonymous classes in indexers.
+        /// This is a regression test for <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1191">DotNetAnalyzers/StyleCopAnalyzers#1191</see>
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestIndexersAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod()
+        {
+            var dictionary = new System.Collections.Generic.Dictionary<object, object>();
+            dictionary[new { Foo = ""Foo"", Bar = 5 }] = 42;
+        }
+    }
+}
+";
+
+            // no space between closing curly bracket and closing bracket should not be reported by SA1013
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
