@@ -45,36 +45,36 @@
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var node = root.FindTrivia(diagnostic.Location.SourceSpan.Start, true);
+            var trivia = root.FindTrivia(diagnostic.Location.SourceSpan.Start, true);
 
             int diagnosticIndex = 0;
-            var triviaList = TriviaHelper.GetContainingTriviaList(node, out diagnosticIndex);
+            var triviaList = TriviaHelper.GetContainingTriviaList(trivia, out diagnosticIndex);
 
-            var nodesToRemove = new List<SyntaxTrivia>();
-            nodesToRemove.Add(node);
+            var triviaToRemove = new List<SyntaxTrivia>();
+            triviaToRemove.Add(trivia);
 
-            bool hasTrailingContent = TriviaHasTrailingContentOnLine(root, node);
+            bool hasTrailingContent = TriviaHasTrailingContentOnLine(root, trivia);
             if (!hasTrailingContent && diagnosticIndex > 0)
             {
                 var previousTrivia = triviaList[diagnosticIndex - 1];
                 if (previousTrivia.IsKind(SyntaxKind.WhitespaceTrivia))
                 {
-                    nodesToRemove.Add(previousTrivia);
+                    triviaToRemove.Add(previousTrivia);
                 }
             }
 
-            bool hasLeadingContent = TriviaHasLeadingContentOnLine(root, node);
+            bool hasLeadingContent = TriviaHasLeadingContentOnLine(root, trivia);
             if (!hasLeadingContent && diagnosticIndex < triviaList.Count - 1)
             {
                 var nextTrivia = triviaList[diagnosticIndex + 1];
                 if (nextTrivia.IsKind(SyntaxKind.EndOfLineTrivia))
                 {
-                    nodesToRemove.Add(nextTrivia);
+                    triviaToRemove.Add(nextTrivia);
                 }
             }
 
             // Replace all roots with an empty node
-            var newRoot = root.ReplaceTrivia(nodesToRemove, (original, rewritten) =>
+            var newRoot = root.ReplaceTrivia(triviaToRemove, (original, rewritten) =>
             {
                 return new SyntaxTrivia();
             });
@@ -88,12 +88,7 @@
             var nodeBeforeStart = commentTrivia.SpanStart - 1;
             var nodeBefore = root.FindNode(new Microsoft.CodeAnalysis.Text.TextSpan(nodeBeforeStart, 1));
 
-            if (nodeBefore.GetLineSpan().EndLinePosition.Line == commentTrivia.GetLineSpan().StartLinePosition.Line && !nodeBefore.GetLeadingTrivia().Contains(commentTrivia))
-            {
-                return true;
-            }
-
-            return false;
+            return nodeBefore.GetLineSpan().EndLinePosition.Line == commentTrivia.GetLineSpan().StartLinePosition.Line && !nodeBefore.GetLeadingTrivia().Contains(commentTrivia);
         }
 
         private static bool TriviaHasTrailingContentOnLine(SyntaxNode root, SyntaxTrivia commentTrivia)
@@ -101,12 +96,7 @@
             var nodeAfterTriviaStart = commentTrivia.Span.End + 1;
             var nodeAfterTrivia = root.FindNode(new Microsoft.CodeAnalysis.Text.TextSpan(nodeAfterTriviaStart, 1));
 
-            if (nodeAfterTrivia.GetLineSpan().StartLinePosition.Line == commentTrivia.GetLineSpan().EndLinePosition.Line && !nodeAfterTrivia.GetTrailingTrivia().Contains(commentTrivia))
-            {
-                return true;
-            }
-
-            return false;
+            return nodeAfterTrivia.GetLineSpan().StartLinePosition.Line == commentTrivia.GetLineSpan().EndLinePosition.Line && !nodeAfterTrivia.GetTrailingTrivia().Contains(commentTrivia);
         }
     }
 }
