@@ -88,7 +88,7 @@
             var nodeBeforeStart = commentTrivia.SpanStart - 1;
             var nodeBefore = root.FindNode(new Microsoft.CodeAnalysis.Text.TextSpan(nodeBeforeStart, 1));
 
-            return nodeBefore.GetLineSpan().EndLinePosition.Line == commentTrivia.GetLineSpan().StartLinePosition.Line && !nodeBefore.GetLeadingTrivia().Contains(commentTrivia);
+            return nodeBefore.GetEndLine() == commentTrivia.GetLine() && !nodeBefore.GetLeadingTrivia().Contains(commentTrivia);
         }
 
         private static bool TriviaHasTrailingContentOnLine(SyntaxNode root, SyntaxTrivia commentTrivia)
@@ -96,7 +96,7 @@
             var nodeAfterTriviaStart = commentTrivia.Span.End + 1;
             var nodeAfterTrivia = root.FindNode(new Microsoft.CodeAnalysis.Text.TextSpan(nodeAfterTriviaStart, 1));
 
-            return nodeAfterTrivia.GetLineSpan().StartLinePosition.Line == commentTrivia.GetLineSpan().EndLinePosition.Line && !nodeAfterTrivia.GetTrailingTrivia().Contains(commentTrivia);
+            return nodeAfterTrivia.GetLine() == commentTrivia.GetEndLine() && !nodeAfterTrivia.GetTrailingTrivia().Contains(commentTrivia);
         }
     }
 }

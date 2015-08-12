@@ -58,7 +58,27 @@
         }
 
         /// <summary>
-        /// Gets the end line of token.
+        /// Gets the line on which the given node occurs.
+        /// </summary>
+        /// <param name="node">The node to use.</param>
+        /// <returns>The line on which the given node occurs.</returns>
+        internal static int GetLine(this SyntaxNode node)
+        {
+            return node.GetLineSpan().StartLinePosition.Line;
+        }
+
+        /// <summary>
+        /// Gets the line on which the given trivia occurs.
+        /// </summary>
+        /// <param name="trivia">The trivia to use.</param>
+        /// <returns>The line on which the given trivia occurs.</returns>
+        internal static int GetLine(this SyntaxTrivia trivia)
+        {
+            return trivia.GetLineSpan().StartLinePosition.Line;
+        }
+
+        /// <summary>
+        /// Gets the end line of the given token.
         /// </summary>
         /// <param name="token">The token to use.</param>
         /// <returns>The line on which the given token ends.</returns>
@@ -68,13 +88,23 @@
         }
 
         /// <summary>
-        /// Gets the end line of node.
+        /// Gets the end line of the given node.
         /// </summary>
         /// <param name="node">The node to use.</param>
         /// <returns>The line on which the given node ends.</returns>
         internal static int GetEndLine(this SyntaxNode node)
         {
             return node.GetLineSpan().EndLinePosition.Line;
+        }
+
+        /// <summary>
+        /// Gets the end line of the given trivia.
+        /// </summary>
+        /// <param name="trivia">The trivia to use.</param>
+        /// <returns>The line on which the given trivia ends.</returns>
+        internal static int GetEndLine(this SyntaxTrivia trivia)
+        {
+            return trivia.GetLineSpan().EndLinePosition.Line;
         }
 
         /// <summary>
