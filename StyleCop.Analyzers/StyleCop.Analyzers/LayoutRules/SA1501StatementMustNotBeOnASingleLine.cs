@@ -152,7 +152,13 @@
 
             foreach (StatementSyntax clause in clauses)
             {
-                CheckChildStatement(context, clause.Parent, clause);
+                SyntaxNode node = clause.Parent;
+                if (node.IsKind(SyntaxKind.IfStatement) && node.Parent.IsKind(SyntaxKind.ElseClause))
+                {
+                    node = node.Parent;
+                }
+
+                CheckChildStatement(context, node, clause);
             }
         }
 

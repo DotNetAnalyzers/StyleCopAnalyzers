@@ -608,6 +608,148 @@ public class TypeName
         }
 
         /// <summary>
+        /// Tests the behavior of SA1503 when SA1503 is suppressed for many different forms of <c>if</c> statements.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestNoSA1503IfStatementsAsync()
+        {
+            this.suppressSA1503 = true;
+
+            var testCode = @"using System.Diagnostics;
+public class TypeName
+{
+    public void Bar(int i)
+    {
+        if (i == 0)
+            Debug.Assert(true);
+        else Debug.Assert(false);//8
+
+        if (i == 1) Debug.Assert(true); else if (i == 2) Debug.Assert(false);//10
+
+        if (i == 3)
+            Debug.Assert(true);
+        else if (i == 4) Debug.Assert(false);//14
+
+        if (i == 5) Debug.Assert(true); else if (i == 6) Debug.Assert(false); else Debug.Assert(false);//16
+
+        if (i == 7) if (i == 8) Debug.Assert(false); else Debug.Assert(false); else Debug.Assert(true);//18
+
+        if (i == 9)
+            if (i == 10) Debug.Assert(false); else Debug.Assert(false); else Debug.Assert(true);//21
+
+        if (i == 11) if (i == 12) Debug.Assert(false);
+            else Debug.Assert(false); else if (i == 13) Debug.Assert(true);//24
+    }
+}";
+            var fixedCode = @"using System.Diagnostics;
+public class TypeName
+{
+    public void Bar(int i)
+    {
+        if (i == 0)
+            Debug.Assert(true);
+        else
+            Debug.Assert(false);//8
+
+
+        if (i == 1)
+            Debug.Assert(true);
+        else if (i == 2) Debug.Assert(false);//10
+
+        if (i == 3)
+            Debug.Assert(true);
+        else if (i == 4) Debug.Assert(false);//14
+
+        if (i == 5) Debug.Assert(true); else if (i == 6) Debug.Assert(false); else Debug.Assert(false);//16
+
+        if (i == 7) if (i == 8) Debug.Assert(false); else Debug.Assert(false); else Debug.Assert(true);//18
+
+        if (i == 9)
+            if (i == 10) Debug.Assert(false); else Debug.Assert(false); else Debug.Assert(true);//21
+
+        if (i == 11) if (i == 12) Debug.Assert(false);
+            else Debug.Assert(false); else if (i == 13) Debug.Assert(true);//24
+    }
+}";
+            var batchFixedCode = @"using System.Diagnostics;
+public class TypeName
+{
+    public void Bar(int i)
+    {
+        if (i == 0)
+            Debug.Assert(true);
+        else
+            Debug.Assert(false);//8
+
+
+        if (i == 1)
+            Debug.Assert(true);
+        else if (i == 2)
+            Debug.Assert(false);//10
+
+
+        if (i == 3)
+            Debug.Assert(true);
+        else if (i == 4)
+            Debug.Assert(false);//14
+
+
+        if (i == 5)
+            Debug.Assert(true);
+        else if (i == 6)
+            Debug.Assert(false);
+        else
+            Debug.Assert(false);//16
+
+
+        if (i == 7)
+            if (i == 8)
+                Debug.Assert(false);
+            else
+                Debug.Assert(false);
+        else
+            Debug.Assert(true);//18
+
+
+        if (i == 9)
+            if (i == 10)
+                Debug.Assert(false);
+            else
+                Debug.Assert(false);
+            else
+            Debug.Assert(true);//21
+
+
+        if (i == 11) if (i == 12) Debug.Assert(false);
+            else
+    Debug.Assert(false);
+else if (i == 13)
+    Debug.Assert(true);//24
+
+    }
+}";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(8, 14),
+                this.CSharpDiagnostic().WithLocation(10, 21),
+                this.CSharpDiagnostic().WithLocation(14, 26),
+                this.CSharpDiagnostic().WithLocation(16, 21),
+                this.CSharpDiagnostic().WithLocation(18, 21),
+                this.CSharpDiagnostic().WithLocation(21, 26),
+                this.CSharpDiagnostic().WithLocation(24, 18),
+            };
+
+            DiagnosticResult[] expectedAfterFix =
+            { };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            ////await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, batchFixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that a statement followed by a block with curly braces will produce no diagnostics results.
         /// </summary>
         /// <param name="statementText">The source code for the first part of a compound statement whose child can be

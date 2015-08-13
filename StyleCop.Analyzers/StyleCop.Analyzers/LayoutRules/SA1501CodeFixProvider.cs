@@ -288,7 +288,18 @@
 
         private static SyntaxNode GetStatementParent(SyntaxNode node)
         {
-            return node.FirstAncestorOrSelf<StatementSyntax>();
+            StatementSyntax statementSyntax = node.FirstAncestorOrSelf<StatementSyntax>();
+            if (statementSyntax == null)
+            {
+                return null;
+            }
+
+            if (statementSyntax.IsKind(SyntaxKind.IfStatement) && statementSyntax.Parent.IsKind(SyntaxKind.ElseClause))
+            {
+                return statementSyntax.Parent;
+            }
+
+            return statementSyntax;
         }
 
         private class BlockRewriter : CSharpSyntaxRewriter
