@@ -88,5 +88,17 @@
 
             return lineSpan.StartLinePosition.Line < lineSpan.EndLinePosition.Line;
         }
+
+        /// <summary>
+        /// Get a value indicating whether the given trivia span multiple source text lines.
+        /// </summary>
+        /// <param name="trivia">The trivia to check.</param>
+        /// <returns>True, if the trivia spans multiple source text lines.</returns>
+        internal static bool SpansMultipleLines(this SyntaxTrivia trivia)
+        {
+            var lineSpan = trivia.GetLineSpan();
+
+            return lineSpan.StartLinePosition.Line < lineSpan.EndLinePosition.Line;
+        }
     }
 }
