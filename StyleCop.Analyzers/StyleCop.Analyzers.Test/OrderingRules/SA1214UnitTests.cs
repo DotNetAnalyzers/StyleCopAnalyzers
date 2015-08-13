@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.OrderingRules;
     using TestHelper;
@@ -96,6 +97,15 @@ public class Foo
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixTestCode = @"
+public class Foo
+{
+    private static readonly int j = 0;
+    private static int i = 0;
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -126,6 +136,14 @@ public class Foo
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixTestCode = @"
+public class Foo
+{
+    private static readonly int j = 0;
+    private static int i = 0;}";
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -170,6 +188,15 @@ public struct Foo
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixTestCode = @"
+public struct Foo
+{
+    private static readonly int j = 0;
+    private static int i = 0;
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -207,6 +234,31 @@ public class Foo
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixTestCode = @"
+public class Foo
+{
+
+    public static readonly int  u = 5;
+
+    public static readonly int j = 0;
+
+    public static string s2 = ""qwe"";
+    public string s = ""qwe"";
+    private static readonly int i = 0;
+
+    public void Ff() {}
+
+    public class FooInner 
+    {
+        public static readonly int t = 2;
+        private static readonly int e = 1;
+        private static int z = 999;
+        private int aa = 0;
+    }
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -225,6 +277,11 @@ public class Foo
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1214StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements();
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1203SA1214CodeFixProvider();
         }
     }
 }

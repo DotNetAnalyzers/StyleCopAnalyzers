@@ -1,3 +1,5 @@
+using System;
+
 namespace StyleCop.Analyzers.OrderingRules
 {
     using System.Collections.Generic;
@@ -16,12 +18,12 @@ namespace StyleCop.Analyzers.OrderingRules
     /// <summary>
     /// Implements code fixes for <see cref="SA1203ConstantsMustAppearBeforeFields"/>.
     /// </summary>
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1203CodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1203SA1214CodeFixProvider))]
     [Shared]
-    public class SA1203CodeFixProvider : CodeFixProvider
+    public class SA1203SA1214CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1203ConstantsMustAppearBeforeFields.DiagnosticId);
+            ImmutableArray.Create(SA1203ConstantsMustAppearBeforeFields.DiagnosticId, SA1214StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
@@ -37,7 +39,7 @@ namespace StyleCop.Analyzers.OrderingRules
         {
             foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                context.RegisterCodeFix(CodeAction.Create(OrderingResources.SA1203CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token), equivalenceKey: nameof(SA1203CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(OrderingResources.SA1203CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token), equivalenceKey: nameof(SA1203SA1214CodeFixProvider)), diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;
@@ -115,6 +117,11 @@ namespace StyleCop.Analyzers.OrderingRules
             var trackedRoot = root.TrackNodes(field, firstNonConst);
             var fieldToMove = trackedRoot.GetCurrentNode(field);
             var firstNonConstTracked = trackedRoot.GetCurrentNode(firstNonConst);
+            if (!fieldToMove.HasLeadingTrivia)
+            {
+                fieldToMove = fieldToMove.WithLeadingTrivia(firstNonConstTracked.GetLeadingTrivia());
+            }
+
             root = trackedRoot.InsertNodesBefore(firstNonConstTracked, new[] { fieldToMove });
             var fieldToMoveTracked = root.GetCurrentNodes(field).Last();
             return root.RemoveNode(fieldToMoveTracked, SyntaxRemoveOptions.KeepNoTrivia);
