@@ -642,37 +642,8 @@ public class TypeName
             else Debug.Assert(false); else if (i == 13) Debug.Assert(true);//24
     }
 }";
+
             var fixedCode = @"using System.Diagnostics;
-public class TypeName
-{
-    public void Bar(int i)
-    {
-        if (i == 0)
-            Debug.Assert(true);
-        else
-            Debug.Assert(false);//8
-
-
-        if (i == 1)
-            Debug.Assert(true);
-        else if (i == 2) Debug.Assert(false);//10
-
-        if (i == 3)
-            Debug.Assert(true);
-        else if (i == 4) Debug.Assert(false);//14
-
-        if (i == 5) Debug.Assert(true); else if (i == 6) Debug.Assert(false); else Debug.Assert(false);//16
-
-        if (i == 7) if (i == 8) Debug.Assert(false); else Debug.Assert(false); else Debug.Assert(true);//18
-
-        if (i == 9)
-            if (i == 10) Debug.Assert(false); else Debug.Assert(false); else Debug.Assert(true);//21
-
-        if (i == 11) if (i == 12) Debug.Assert(false);
-            else Debug.Assert(false); else if (i == 13) Debug.Assert(true);//24
-    }
-}";
-            var batchFixedCode = @"using System.Diagnostics;
 public class TypeName
 {
     public void Bar(int i)
@@ -746,7 +717,7 @@ else if (i == 13)
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             ////await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, batchFixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -833,7 +804,8 @@ public class TypeName
     {
         if (i == 0)
             Debug.Assert(true);
-        else Debug.Assert(false);
+        else
+            Debug.Assert(false);
     }
 }";
 
@@ -930,21 +902,12 @@ public class TypeName
     public void Bar(int i)
     {
         if (i == 0)
-            if (i == 0) Debug.Assert(true);
+            if (i == 0)
+                Debug.Assert(true);
     }
 }";
 
-            var batchFixedTestCode = @"using System.Diagnostics;
-public class TypeName
-{
-    public void Bar(int i)
-    {
-        if (i == 0)
-            if (i == 0) Debug.Assert(true);
-    }
-}";
-
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, batchFixedTestCode).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
