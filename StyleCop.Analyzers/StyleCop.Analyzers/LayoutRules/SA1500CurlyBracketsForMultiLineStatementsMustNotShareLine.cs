@@ -205,7 +205,6 @@
                 case SyntaxKind.CommaToken:
                 case SyntaxKind.SemicolonToken:
                 case SyntaxKind.DotToken:
-                case SyntaxKind.QuestionToken:
                     // these are allowed to appear on the same line
                     return;
 
