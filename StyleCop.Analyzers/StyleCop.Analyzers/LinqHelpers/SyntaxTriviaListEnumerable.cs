@@ -24,15 +24,7 @@
         /// </returns>
         internal static bool Contains(this SyntaxTriviaList list, SyntaxTrivia trivia)
         {
-            foreach (SyntaxTrivia item in list)
-            {
-                if (item.Equals(trivia))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return list.IndexOf(trivia) != -1;
         }
     }
 }
