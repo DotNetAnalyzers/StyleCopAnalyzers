@@ -66,7 +66,7 @@
             {
                 if (usingDirective.StaticKeyword.IsKind(SyntaxKind.StaticKeyword))
                 {
-                    if (lastStaticUsingDirective != null)
+                    if (lastStaticUsingDirective != null && !usingDirective.IsPrecededByPreprocessorDirective())
                     {
                         var firstName = lastStaticUsingDirective.Name.ToUnaliasedString();
                         var secondName = usingDirective.Name.ToUnaliasedString();

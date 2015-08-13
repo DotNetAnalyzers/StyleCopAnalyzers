@@ -46,15 +46,24 @@
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var block = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) as BlockSyntax;
-            if (block == null)
+            var statement = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) as StatementSyntax;
+            if (statement == null)
             {
                 return document;
             }
 
-            var newSyntaxRoot = ReformatBlockAndParent(document, syntaxRoot, block);
-            var newDocument = document.WithSyntaxRoot(newSyntaxRoot);
+            SyntaxNode newSyntaxRoot;
+            BlockSyntax block = statement as BlockSyntax;
+            if (block != null)
+            {
+                newSyntaxRoot = ReformatBlockAndParent(document, syntaxRoot, block);
+            }
+            else
+            {
+                newSyntaxRoot = ReformatStatementAndParent(document, syntaxRoot, statement);
+            }
 
+            var newDocument = document.WithSyntaxRoot(newSyntaxRoot);
             return newDocument;
         }
 
@@ -62,8 +71,8 @@
         {
             var parentLastToken = block.OpenBraceToken.GetPreviousToken();
 
-            var parentEndLine = parentLastToken.GetLineSpan().EndLinePosition.Line;
-            var blockStartLine = block.OpenBraceToken.GetLineSpan().StartLinePosition.Line;
+            var parentEndLine = parentLastToken.GetEndLine();
+            var blockStartLine = block.OpenBraceToken.GetLine();
 
             var newParentLastToken = parentLastToken;
             if (parentEndLine == blockStartLine)
@@ -75,10 +84,78 @@
                 newParentLastToken = newParentLastToken.WithTrailingTrivia(newTrailingTrivia);
             }
 
+            var parentNextToken = block.CloseBraceToken.GetNextToken();
+
+            var nextTokenLine = parentNextToken.GetLine();
+            var blockCloseLine = block.CloseBraceToken.GetEndLine();
+
+            var newParentNextToken = parentNextToken;
+            if (nextTokenLine == blockCloseLine)
+            {
+                newParentNextToken = newParentNextToken.WithLeadingTrivia(parentLastToken.LeadingTrivia);
+            }
+
             var newBlock = ReformatBlock(document, block);
-            var rewriter = new BlockRewriter(parentLastToken, newParentLastToken, block, newBlock);
+            var rewriter = new BlockRewriter(parentLastToken, newParentLastToken, block, newBlock, parentNextToken, newParentNextToken);
 
             var newSyntaxRoot = rewriter.Visit(syntaxRoot);
+            return newSyntaxRoot.WithoutFormatting();
+        }
+
+        private static SyntaxNode ReformatStatementAndParent(Document document, SyntaxNode syntaxRoot, StatementSyntax statement)
+        {
+            var parentLastToken = statement.GetFirstToken().GetPreviousToken();
+
+            var parentEndLine = parentLastToken.GetEndLine();
+            var statementStartLine = statement.GetFirstToken().GetLine();
+
+            var newParentLastToken = parentLastToken;
+            if (parentEndLine == statementStartLine)
+            {
+                var newTrailingTrivia = parentLastToken.TrailingTrivia
+                    .WithoutTrailingWhitespace()
+                    .Add(SyntaxFactory.CarriageReturnLineFeed);
+
+                newParentLastToken = newParentLastToken.WithTrailingTrivia(newTrailingTrivia);
+            }
+
+            var parentNextToken = statement.GetLastToken().GetNextToken();
+
+            var nextTokenLine = parentNextToken.GetLine();
+            var statementCloseLine = statement.GetLastToken().GetEndLine();
+
+            var newParentNextToken = parentNextToken;
+            if (nextTokenLine == statementCloseLine)
+            {
+                var indentationOptions = IndentationOptions.FromDocument(document);
+                var parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationOptions, GetStatementParent(statement.Parent));
+                var indentationString = IndentationHelper.GenerateIndentationString(indentationOptions, parentIndentationLevel);
+                newParentNextToken = newParentNextToken.WithLeadingTrivia(SyntaxFactory.Whitespace(indentationString));
+            }
+
+            var newStatement = ReformatStatement(document, statement);
+            var newSyntaxRoot = syntaxRoot.ReplaceSyntax(
+                new[] { statement },
+                (originalNode, rewrittenNode) => originalNode == statement ? newStatement : rewrittenNode,
+                new[] { parentLastToken, parentNextToken },
+                (originalToken, rewrittenToken) =>
+                {
+                    if (originalToken == parentLastToken)
+                    {
+                        return newParentLastToken;
+                    }
+                    else if (originalToken == parentNextToken)
+                    {
+                        return newParentNextToken;
+                    }
+                    else
+                    {
+                        return rewrittenToken;
+                    }
+                },
+                Enumerable.Empty<SyntaxTrivia>(),
+                (originalTrivia, rewrittenTrivia) => rewrittenTrivia);
+
             return newSyntaxRoot.WithoutFormatting();
         }
 
@@ -162,29 +239,86 @@
             return SyntaxFactory.Block(openBraceToken, statements, closeBraceToken);
         }
 
-        private static SyntaxNode GetStatementParent(SyntaxNode node)
+        private static StatementSyntax ReformatStatement(Document document, StatementSyntax statement)
         {
-            while ((node != null) && !(node is StatementSyntax))
+            var indentationOptions = IndentationOptions.FromDocument(document);
+            var parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationOptions, GetStatementParent(statement.Parent));
+
+            // use one additional step of indentation for lambdas / anonymous methods
+            switch (statement.Parent.Kind())
             {
-                node = node.Parent;
+            case SyntaxKind.AnonymousMethodExpression:
+            case SyntaxKind.SimpleLambdaExpression:
+            case SyntaxKind.ParenthesizedLambdaExpression:
+                parentIndentationLevel++;
+                break;
             }
 
-            return node;
+            var statementIndentationString = IndentationHelper.GenerateIndentationString(indentationOptions, parentIndentationLevel + 1);
+
+            var newFirstTokenLeadingTrivia = statement.GetFirstToken().LeadingTrivia
+                .WithoutTrailingWhitespace()
+                .Add(SyntaxFactory.Whitespace(statementIndentationString));
+
+            var newLastTokenTrailingTrivia = statement.GetLastToken().TrailingTrivia
+                .WithoutTrailingWhitespace()
+                .Add(SyntaxFactory.CarriageReturnLineFeed);
+
+            var firstToken = statement.GetFirstToken().WithLeadingTrivia(newFirstTokenLeadingTrivia);
+            var lastToken = statement.GetLastToken().WithTrailingTrivia(newLastTokenTrailingTrivia);
+
+            return statement.ReplaceTokens(
+                new[] { statement.GetFirstToken(), statement.GetLastToken() },
+                (originalToken, rewrittenToken) =>
+                {
+                    if (originalToken == statement.GetFirstToken())
+                    {
+                        return firstToken;
+                    }
+                    else if (originalToken == statement.GetLastToken())
+                    {
+                        return lastToken;
+                    }
+                    else
+                    {
+                        return rewrittenToken;
+                    }
+                });
+        }
+
+        private static SyntaxNode GetStatementParent(SyntaxNode node)
+        {
+            StatementSyntax statementSyntax = node.FirstAncestorOrSelf<StatementSyntax>();
+            if (statementSyntax == null)
+            {
+                return null;
+            }
+
+            if (statementSyntax.IsKind(SyntaxKind.IfStatement) && statementSyntax.Parent.IsKind(SyntaxKind.ElseClause))
+            {
+                return statementSyntax.Parent;
+            }
+
+            return statementSyntax;
         }
 
         private class BlockRewriter : CSharpSyntaxRewriter
         {
-            private SyntaxToken parentToken;
-            private SyntaxToken newParentToken;
-            private BlockSyntax block;
-            private BlockSyntax newBlock;
+            private readonly SyntaxToken parentToken;
+            private readonly SyntaxToken newParentToken;
+            private readonly BlockSyntax block;
+            private readonly BlockSyntax newBlock;
+            private readonly SyntaxToken nextToken;
+            private readonly SyntaxToken newNextToken;
 
-            public BlockRewriter(SyntaxToken parentToken, SyntaxToken newParentToken, BlockSyntax block, BlockSyntax newBlock)
+            public BlockRewriter(SyntaxToken parentToken, SyntaxToken newParentToken, BlockSyntax block, BlockSyntax newBlock, SyntaxToken nextToken, SyntaxToken newNextToken)
             {
                 this.parentToken = parentToken;
                 this.newParentToken = newParentToken;
                 this.block = block;
                 this.newBlock = newBlock;
+                this.nextToken = nextToken;
+                this.newNextToken = newNextToken;
             }
 
             public override SyntaxToken VisitToken(SyntaxToken token)
@@ -192,6 +326,11 @@
                 if (token == this.parentToken)
                 {
                     return this.newParentToken;
+                }
+
+                if (token == this.nextToken)
+                {
+                    return this.newNextToken;
                 }
 
                 return base.VisitToken(token);

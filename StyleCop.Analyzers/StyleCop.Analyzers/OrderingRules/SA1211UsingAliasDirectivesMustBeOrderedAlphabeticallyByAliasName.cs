@@ -6,6 +6,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The using-alias directives within a C# code file are not sorted alphabetically by alias name.
@@ -87,6 +88,12 @@
                 }
 
                 string currentAliasName = usingDirective.Alias.Name.Identifier.ValueText;
+                if (usingDirective.IsPrecededByPreprocessorDirective())
+                {
+                    usingAliasNames.Clear();
+                    prevAliasUsingDirective = null;
+                }
+
                 if (prevAliasUsingDirective != null)
                 {
                     string currentLowerInvariant = currentAliasName.ToLowerInvariant();

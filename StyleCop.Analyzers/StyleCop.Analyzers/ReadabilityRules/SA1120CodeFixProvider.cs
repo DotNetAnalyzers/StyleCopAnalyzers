@@ -45,40 +45,36 @@
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var node = root.FindTrivia(diagnostic.Location.SourceSpan.Start, true);
+            var trivia = root.FindTrivia(diagnostic.Location.SourceSpan.Start, true);
 
             int diagnosticIndex = 0;
-            var triviaList = TriviaHelper.GetContainingTriviaList(node, out diagnosticIndex);
+            var triviaList = TriviaHelper.GetContainingTriviaList(trivia, out diagnosticIndex);
 
-            var nodesToRemove = new List<SyntaxTrivia>();
-            nodesToRemove.Add(node);
+            var triviaToRemove = new List<SyntaxTrivia>();
+            triviaToRemove.Add(trivia);
 
-            // If there is trailing content on the line, we don't want to remove the leading whitespace
-            bool hasTrailingContent = TriviaHasTrailingContentOnLine(root, triviaList);
-
-            if (diagnosticIndex > 0 && !hasTrailingContent)
+            bool hasTrailingContent = TriviaHasTrailingContentOnLine(root, trivia);
+            if (!hasTrailingContent && diagnosticIndex > 0)
             {
-                var previousStart = triviaList[diagnosticIndex - 1].SpanStart;
-                var previousNode = root.FindTrivia(previousStart, true);
-                nodesToRemove.Add(previousNode);
+                var previousTrivia = triviaList[diagnosticIndex - 1];
+                if (previousTrivia.IsKind(SyntaxKind.WhitespaceTrivia))
+                {
+                    triviaToRemove.Add(previousTrivia);
+                }
             }
 
-            // If there is leading content on the line, then we don't want to remove the trailing end of lines
-            bool hasLeadingContent = TriviaHasLeadingContentOnLine(root, triviaList);
-
-            if (diagnosticIndex < triviaList.Count - 1)
+            bool hasLeadingContent = TriviaHasLeadingContentOnLine(root, trivia);
+            if (!hasLeadingContent && diagnosticIndex < triviaList.Count - 1)
             {
-                var nextStart = triviaList[diagnosticIndex + 1].SpanStart;
-                var nextNode = root.FindTrivia(nextStart, true);
-
-                if (nextNode.IsKind(SyntaxKind.EndOfLineTrivia) && !hasLeadingContent)
+                var nextTrivia = triviaList[diagnosticIndex + 1];
+                if (nextTrivia.IsKind(SyntaxKind.EndOfLineTrivia))
                 {
-                    nodesToRemove.Add(nextNode);
+                    triviaToRemove.Add(nextTrivia);
                 }
             }
 
             // Replace all roots with an empty node
-            var newRoot = root.ReplaceTrivia(nodesToRemove, (original, rewritten) =>
+            var newRoot = root.ReplaceTrivia(triviaToRemove, (original, rewritten) =>
             {
                 return new SyntaxTrivia();
             });
@@ -87,43 +83,20 @@
             return updatedDocument;
         }
 
-        private static bool IsSkippableWhitespace(SyntaxTrivia trivia)
+        private static bool TriviaHasLeadingContentOnLine(SyntaxNode root, SyntaxTrivia commentTrivia)
         {
-            switch (trivia.Kind())
-            {
-            case SyntaxKind.EndOfLineTrivia:
-            case SyntaxKind.WhitespaceTrivia:
-                return true;
-
-            default:
-                return false;
-            }
-        }
-
-        private static bool TriviaHasLeadingContentOnLine(SyntaxNode root, IReadOnlyList<SyntaxTrivia> triviaList)
-        {
-            var nodeBeforeStart = triviaList[0].SpanStart - 1;
+            var nodeBeforeStart = commentTrivia.SpanStart - 1;
             var nodeBefore = root.FindNode(new Microsoft.CodeAnalysis.Text.TextSpan(nodeBeforeStart, 1));
 
-            if (nodeBefore.GetLineSpan().EndLinePosition.Line == triviaList[0].GetLineSpan().StartLinePosition.Line)
-            {
-                return true;
-            }
-
-            return false;
+            return nodeBefore.GetEndLine() == commentTrivia.GetLine() && !nodeBefore.GetLeadingTrivia().Contains(commentTrivia);
         }
 
-        private static bool TriviaHasTrailingContentOnLine(SyntaxNode root, IReadOnlyList<SyntaxTrivia> triviaList)
+        private static bool TriviaHasTrailingContentOnLine(SyntaxNode root, SyntaxTrivia commentTrivia)
         {
-            var nodeAfterTriviaStart = triviaList[triviaList.Count - 1].SpanStart - 1;
+            var nodeAfterTriviaStart = commentTrivia.Span.End + 1;
             var nodeAfterTrivia = root.FindNode(new Microsoft.CodeAnalysis.Text.TextSpan(nodeAfterTriviaStart, 1));
 
-            if (nodeAfterTrivia.GetLineSpan().StartLinePosition.Line == triviaList[triviaList.Count - 1].GetLineSpan().EndLinePosition.Line)
-            {
-                return true;
-            }
-
-            return false;
+            return nodeAfterTrivia.GetLine() == commentTrivia.GetEndLine() && !nodeAfterTrivia.GetTrailingTrivia().Contains(commentTrivia);
         }
     }
 }
