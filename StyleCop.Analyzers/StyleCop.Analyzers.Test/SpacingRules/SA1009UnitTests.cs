@@ -441,6 +441,114 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies the analyzer will properly handle trailing single line comments.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestTrailingSingleLineCommentAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public bool TestMethod1() { return true; }
+
+    public void TestMethod2()
+    {
+        TestMethod1()// some comment
+;
+        TestMethod3(
+            TestMethod1()// some comment
+            , TestMethod1());
+    }
+
+    public void TestMethod3(bool a, bool b) { }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    public bool TestMethod1() { return true; }
+
+    public void TestMethod2()
+    {
+        TestMethod1() // some comment
+;
+        TestMethod3(
+            TestMethod1() // some comment
+            , TestMethod1());
+    }
+
+    public void TestMethod3(bool a, bool b) { }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(8, 21).WithArguments(string.Empty, "followed"),
+                this.CSharpDiagnostic().WithLocation(11, 25).WithArguments(string.Empty, "followed")
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies the analyzer will properly handle trailing multi-line comments.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestTrailingMultiLineCommentAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public bool TestMethod1() { return true; }
+
+    public void TestMethod2()
+    {
+        TestMethod1()/* some comment */
+;
+        TestMethod3(
+            TestMethod1()/* some comment */
+            , TestMethod1());
+    }
+
+    public void TestMethod3(bool a, bool b) { }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    public bool TestMethod1() { return true; }
+
+    public void TestMethod2()
+    {
+        TestMethod1() /* some comment */
+;
+        TestMethod3(
+            TestMethod1() /* some comment */
+            , TestMethod1());
+    }
+
+    public void TestMethod3(bool a, bool b) { }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(8, 21).WithArguments(string.Empty, "followed"),
+                this.CSharpDiagnostic().WithLocation(11, 25).WithArguments(string.Empty, "followed")
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
