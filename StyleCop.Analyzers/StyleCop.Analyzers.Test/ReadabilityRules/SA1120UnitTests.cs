@@ -263,6 +263,94 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestLeadingAndEndingViolationsInCodeBlockWithStatementAsync()
+        {
+            var testCode = @"using System.Collections.Generic;
+using System.Linq;
+
+class TestClass
+{
+    private IEnumerable<int> Build(int argument)
+    {
+        //
+        // Text line 1
+        // Text line 2
+        //
+        return Enumerable.Range(1, 10);
+    }
+}
+";
+
+            var fixedCode = @"using System.Collections.Generic;
+using System.Linq;
+
+class TestClass
+{
+    private IEnumerable<int> Build(int argument)
+    {
+        // Text line 1
+        // Text line 2
+        return Enumerable.Range(1, 10);
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(8, 9),
+                this.CSharpDiagnostic().WithLocation(11, 9)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestLeadingAndEndingViolationsInClassAsync()
+        {
+            var testCode = @"using System;
+public class SomeException : Exception
+{
+    //
+    // For guidelines regarding the creation of new exception types, see
+    //    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpgenref/html/cpconerrorraisinghandlingguidelines.asp
+    // and
+    //    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dncscol/html/csharp07192001.asp
+    //
+
+    public SomeException()
+    {
+    }
+}
+";
+
+            var fixedCode = @"using System;
+public class SomeException : Exception
+{
+    // For guidelines regarding the creation of new exception types, see
+    //    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpgenref/html/cpconerrorraisinghandlingguidelines.asp
+    // and
+    //    http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dncscol/html/csharp07192001.asp
+
+    public SomeException()
+    {
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(4, 5),
+                this.CSharpDiagnostic().WithLocation(9, 5)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1120CommentsMustContainText();
