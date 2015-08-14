@@ -253,7 +253,8 @@
 
             for (var i = 0; i < analyzerDiagnostics.Length; i++)
             {
-                if (analyzerDiagnostics[i].Id != previousDiagnostics[i].Id)
+                if ((analyzerDiagnostics[i].Id != previousDiagnostics[i].Id)
+                    || (analyzerDiagnostics[i].Location.SourceSpan != previousDiagnostics[i].Location.SourceSpan))
                 {
                     return true;
                 }
