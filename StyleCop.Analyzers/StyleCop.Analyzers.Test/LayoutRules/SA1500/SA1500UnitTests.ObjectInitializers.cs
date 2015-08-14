@@ -22,6 +22,7 @@
         public async Task TestObjectInitializersValidAsync()
         {
             var testCode = @"using System.Collections.Generic;
+using System.Linq;
 
 public class Foo
 {
@@ -111,7 +112,18 @@ public class Foo
         };
 
         // Valid object initializer #11
-        var contacts11 = new { Name = ""Foo Bar"", PhoneNumbers = new[] { ""000-000-0000"" } };
+        var contacts11 = new { Name = ""Foo Bar"", PhoneNumbers = new[] { ""000-000-0000"" } };    
+    }
+
+    // Valid object initializer #12
+    public void Fish()
+    {
+        var someList = new List<int>
+                        {
+                            1,
+                            2,
+                            3
+                        }.Select(x => x.ToString());
     }
 
     private class Contact
