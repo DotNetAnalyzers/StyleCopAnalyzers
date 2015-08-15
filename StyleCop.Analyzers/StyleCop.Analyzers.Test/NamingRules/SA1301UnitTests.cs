@@ -1,8 +1,7 @@
 ﻿namespace StyleCop.Analyzers.Test.NamingRules
 {
     using System.Collections.Generic;
-    using System.Threading;
-    using System.Threading.Tasks;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.NamingRules;
@@ -14,19 +13,16 @@
     /// </summary>
     public class SA1301UnitTests : DiagnosticVerifier
     {
-        /// <summary>
-        /// This is a simple test which simply ensure no error is thrown by the analyzer engine during the instantiation
-        /// of the <see cref="SA1301ElementMustBeginWithLowerCaseLetter"/> analyzer (e.g. from an incorrect argument to
-        /// its <see cref="DiagnosticDescriptor"/>.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestSimpleEmptyNamespaceAsync()
+        public void TestDisabledByDefaultAndNotConfigurable()
         {
-            var testCode = @"namespace Test { }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            var analyzer = this.GetCSharpDiagnosticAnalyzers().Single();
+            Assert.Equal(1, analyzer.SupportedDiagnostics.Length);
+            Assert.False(analyzer.SupportedDiagnostics[0].IsEnabledByDefault);
+            Assert.Contains(WellKnownDiagnosticTags.NotConfigurable, analyzer.SupportedDiagnostics[0].CustomTags);
         }
 
+        /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1301ElementMustBeginWithLowerCaseLetter();
