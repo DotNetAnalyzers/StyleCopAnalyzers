@@ -42,6 +42,7 @@
                 SA1020IncrementDecrementSymbolsMustBeSpacedCorrectly.DiagnosticId,
                 SA1023DereferenceAndAccessOfSymbolsMustBeSpacedCorrectly.DiagnosticId,
                 SA1110OpeningParenthesisMustBeOnDeclarationLine.DiagnosticId,
+                SA1111ClosingParenthesisMustBeOnLineOfLastParameter.DiagnosticId,
                 SA1113CommaMustBeOnSameLineAsPreviousParameter.DiagnosticId);
 
         /// <inheritdoc/>
