@@ -136,8 +136,12 @@
         {
             var attribute = (AttributeSyntax)context.Node;
             AttributeArgumentListSyntax argumentListSyntax = attribute.ArgumentList;
-            SeparatedSyntaxList<AttributeArgumentSyntax> arguments = argumentListSyntax.Arguments;
+            if (argumentListSyntax == null)
+            {
+                return;
+            }
 
+            SeparatedSyntaxList<AttributeArgumentSyntax> arguments = argumentListSyntax.Arguments;
             if (arguments.Count > 1)
             {
                 Analyze(context, argumentListSyntax.OpenParenToken, arguments[0], arguments[1]);
@@ -197,8 +201,12 @@
 
         private static void HandleParameterListSyntax(SyntaxNodeAnalysisContext context, ParameterListSyntax parameterList)
         {
-            SeparatedSyntaxList<ParameterSyntax> parameters = parameterList.Parameters;
+            if (parameterList == null)
+            {
+                return;
+            }
 
+            SeparatedSyntaxList<ParameterSyntax> parameters = parameterList.Parameters;
             if (parameters.Count > 1)
             {
                 Analyze(context, parameterList.OpenParenToken, parameters[0], parameters[1]);

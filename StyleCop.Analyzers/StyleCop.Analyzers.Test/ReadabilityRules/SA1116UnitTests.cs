@@ -37,6 +37,13 @@
             yield return new object[] { $"long ll = this[2,{delimiter} 2];", 24 };
         }
 
+        public static IEnumerable<object[]> ValidTestExpressions()
+        {
+            yield return new object[] { $"System.Action func = () => Bar(0, 3)", 0 };
+            yield return new object[] { $"System.Action<int> func = x => Bar(x, 3)", 0 };
+            yield return new object[] { $"System.Action func = delegate {{ Bar(0, 0); }}", 0 };
+        }
+
         [Theory]
         [MemberData(nameof(GetTestDeclarations), "")]
         public async Task TestValidDeclarationAsync(string declaration, int column)
@@ -120,6 +127,7 @@ class Derived : Base
 
         [Theory]
         [MemberData(nameof(GetTestExpressions), "")]
+        [MemberData(nameof(ValidTestExpressions))]
         public async Task TestValidExpressionAsync(string expression, int column)
         {
             var testCode = $@"
@@ -192,6 +200,12 @@ public class MyAttribute : System.Attribute
 
 [MyAttribute(1, 2)]
 class Foo
+{
+}
+
+// This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1211
+[System.Obsolete]
+class ObsoleteType
 {
 }";
 
