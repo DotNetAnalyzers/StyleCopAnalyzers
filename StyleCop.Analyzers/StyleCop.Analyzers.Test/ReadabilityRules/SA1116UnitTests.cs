@@ -193,6 +193,12 @@ public class MyAttribute : System.Attribute
 [MyAttribute(1, 2)]
 class Foo
 {
+}
+
+// This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1211
+[System.Obsolete]
+class ObsoleteType
+{
 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
