@@ -43,6 +43,7 @@
                 SA1023DereferenceAndAccessOfSymbolsMustBeSpacedCorrectly.DiagnosticId,
                 SA1110OpeningParenthesisMustBeOnDeclarationLine.DiagnosticId,
                 SA1111ClosingParenthesisMustBeOnLineOfLastParameter.DiagnosticId,
+                SA1112ClosingParenthesisMustBeOnLineOfOpeningParenthesis.DiagnosticId,
                 SA1113CommaMustBeOnSameLineAsPreviousParameter.DiagnosticId);
 
         /// <inheritdoc/>
