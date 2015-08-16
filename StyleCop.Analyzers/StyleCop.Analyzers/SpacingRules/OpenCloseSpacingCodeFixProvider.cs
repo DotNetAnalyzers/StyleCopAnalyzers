@@ -124,15 +124,11 @@
                             SyntaxTriviaList trailingTrivia = prevToken.TrailingTrivia;
                             if (lastNewLineLeading >= 0)
                             {
-                                trailingTrivia.AddRange(token.LeadingTrivia.Take(lastNewLineLeading + 1));
-                            }
-                            else
-                            {
-                                trailingTrivia.AddRange(token.LeadingTrivia);
+                                trailingTrivia = trailingTrivia.AddRange(token.LeadingTrivia.Take(lastNewLineLeading + 1));
                             }
 
                             // firstNewLineFollowing was adjusted above to account for the missing case.
-                            trailingTrivia.AddRange(token.TrailingTrivia.Take(firstNewLineFollowing));
+                            trailingTrivia = trailingTrivia.AddRange(token.TrailingTrivia.Take(firstNewLineFollowing));
 
                             replaceMap[token] = token.WithLeadingTrivia().WithTrailingTrivia(trailingTrivia);
                         }
