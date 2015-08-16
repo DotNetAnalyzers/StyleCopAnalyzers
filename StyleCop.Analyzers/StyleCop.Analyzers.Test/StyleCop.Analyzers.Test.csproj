@@ -152,6 +152,9 @@
     <Compile Include="DocumentationRules\SA1640UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1642UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1643UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1645UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1646UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1647UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1648UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1650UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1651UnitTests.cs" />
