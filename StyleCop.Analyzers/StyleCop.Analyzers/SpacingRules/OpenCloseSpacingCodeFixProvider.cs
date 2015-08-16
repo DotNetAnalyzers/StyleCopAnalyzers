@@ -10,6 +10,7 @@
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using ReadabilityRules;
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
@@ -21,10 +22,13 @@
     {
         internal const string LocationKey = "location";
         internal const string ActionKey = "action";
+        internal const string LayoutKey = "layout";
         internal const string LocationPreceding = "preceding";
         internal const string LocationFollowing = "following";
         internal const string ActionInsert = "insert";
         internal const string ActionRemove = "remove";
+        internal const string LayoutPack = "pack";
+        internal const string LayoutPreserve = "preserve";
 
         private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(
@@ -36,7 +40,11 @@
                 SA1015ClosingGenericBracketsMustBeSpacedCorrectly.DiagnosticId,
                 SA1019MemberAccessSymbolsMustBeSpacedCorrectly.DiagnosticId,
                 SA1020IncrementDecrementSymbolsMustBeSpacedCorrectly.DiagnosticId,
-                SA1023DereferenceAndAccessOfSymbolsMustBeSpacedCorrectly.DiagnosticId);
+                SA1023DereferenceAndAccessOfSymbolsMustBeSpacedCorrectly.DiagnosticId,
+                SA1110OpeningParenthesisMustBeOnDeclarationLine.DiagnosticId,
+                SA1111ClosingParenthesisMustBeOnLineOfLastParameter.DiagnosticId,
+                SA1112ClosingParenthesisMustBeOnLineOfOpeningParenthesis.DiagnosticId,
+                SA1113CommaMustBeOnSameLineAsPreviousParameter.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
@@ -76,6 +84,12 @@
                 return document;
             }
 
+            string layout;
+            if (!diagnostic.Properties.TryGetValue(LayoutKey, out layout))
+            {
+                layout = LayoutPack;
+            }
+
             var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>();
             SyntaxTriviaList triviaList;
             switch (location)
@@ -89,14 +103,17 @@
 
                 case ActionRemove:
                     var prevToken = token.GetPreviousToken();
+                    bool tokenIsFirstInLine = token.IsFirstInLine();
+                    bool preserveLayout = layout == LayoutPreserve;
                     triviaList = prevToken.TrailingTrivia.AddRange(token.LeadingTrivia);
 
                     replaceMap[prevToken] = prevToken.WithTrailingTrivia();
-                    if (triviaList.All(i => i.IsKind(SyntaxKind.WhitespaceTrivia) || i.IsKind(SyntaxKind.EndOfLineTrivia)))
+                    if ((!preserveLayout || !tokenIsFirstInLine)
+                        && triviaList.All(i => i.IsKind(SyntaxKind.WhitespaceTrivia) || i.IsKind(SyntaxKind.EndOfLineTrivia)))
                     {
                         replaceMap[token] = token.WithLeadingTrivia();
                     }
-                    else if (token.IsFirstInLine() && token.IsLastInLine())
+                    else if (tokenIsFirstInLine && token.IsLastInLine())
                     {
                         /* This block covers the case where `token` is the only non-trivia token on its line. However,
                          * the line may still contain non-whitespace trivia which we want the removal process to
@@ -141,7 +158,7 @@
                     }
                     else
                     {
-                        SyntaxTriviaList trailingTrivia = triviaList.AddRange(token.TrailingTrivia);
+                        SyntaxTriviaList trailingTrivia = triviaList.AddRange(token.TrailingTrivia.WithoutLeadingWhitespace(endOfLineIsWhitespace: false));
                         replaceMap[token] = token.WithLeadingTrivia().WithTrailingTrivia(trailingTrivia);
                     }
 
