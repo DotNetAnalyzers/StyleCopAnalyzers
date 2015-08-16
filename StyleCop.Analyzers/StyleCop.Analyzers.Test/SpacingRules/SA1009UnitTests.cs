@@ -460,6 +460,38 @@ public class TestClass
         TestMethod3(
             TestMethod1()// some comment
             , TestMethod1());
+
+        // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1206
+        TestMethod3(
+            true,
+            (false || true) // comment
+        );
+
+        // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1206
+        if (
+            true || // Comment 1
+            false // Comment 2
+           )
+        {
+        }
+
+        // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1206
+        if (
+            true || // Comment 1
+            false
+    // Comment 2
+           )
+        {
+        }
+
+        // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1206
+        if (
+            true || // Comment 1
+            false
+    // Comment 2
+           ) // Comment 3
+        {
+        }
     }
 
     public void TestMethod3(bool a, bool b) { }
@@ -478,6 +510,36 @@ public class TestClass
         TestMethod3(
             TestMethod1() // some comment
             , TestMethod1());
+
+        // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1206
+        TestMethod3(
+            true,
+            (false || true)) // comment
+        ;
+
+        // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1206
+        if (
+            true || // Comment 1
+            false) // Comment 2
+        {
+        }
+
+        // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1206
+        if (
+            true || // Comment 1
+            false)
+    // Comment 2
+        {
+        }
+
+        // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1206
+        if (
+            true || // Comment 1
+            false)
+    // Comment 2
+            // Comment 3
+        {
+        }
     }
 
     public void TestMethod3(bool a, bool b) { }
@@ -487,7 +549,11 @@ public class TestClass
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(8, 21).WithArguments(string.Empty, "followed"),
-                this.CSharpDiagnostic().WithLocation(11, 25).WithArguments(string.Empty, "followed")
+                this.CSharpDiagnostic().WithLocation(11, 25).WithArguments(string.Empty, "followed"),
+                this.CSharpDiagnostic().WithLocation(18, 9).WithArguments(" not", "preceded"),
+                this.CSharpDiagnostic().WithLocation(24, 12).WithArguments(" not", "preceded"),
+                this.CSharpDiagnostic().WithLocation(33, 12).WithArguments(" not", "preceded"),
+                this.CSharpDiagnostic().WithLocation(42, 12).WithArguments(" not", "preceded"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

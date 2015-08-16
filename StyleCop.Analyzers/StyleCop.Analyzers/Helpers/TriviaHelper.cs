@@ -101,6 +101,29 @@
         }
 
         /// <summary>
+        /// Returns the index of the last trivia of a specified kind in the trivia list.
+        /// </summary>
+        /// <param name="list">The trivia list.</param>
+        /// <param name="kind">The syntax kind to find.</param>
+        /// <returns>
+        /// <para>The non-negative index of the last trivia which matches <paramref name="kind"/>.</para>
+        /// <para>-or-</para>
+        /// <para>-1, if the list did not contain any matching trivia.</para>
+        /// </returns>
+        internal static int LastIndexOf(this SyntaxTriviaList list, SyntaxKind kind)
+        {
+            for (int i = list.Count - 1; i >= 0; i--)
+            {
+                if (list[i].IsKind(kind))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        /// <summary>
         /// Strips all trailing whitespace trivia from the trivia list until a non-whitespace trivia is encountered.
         /// </summary>
         /// <param name="triviaList">The trivia list to strip of its trailing whitespace.</param>

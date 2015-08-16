@@ -92,7 +92,59 @@
                     triviaList = prevToken.TrailingTrivia.AddRange(token.LeadingTrivia);
 
                     replaceMap[prevToken] = prevToken.WithTrailingTrivia();
-                    replaceMap[token] = token.WithLeadingTrivia(triviaList.WithoutTrailingWhitespace());
+                    if (triviaList.All(i => i.IsKind(SyntaxKind.WhitespaceTrivia) || i.IsKind(SyntaxKind.EndOfLineTrivia)))
+                    {
+                        replaceMap[token] = token.WithLeadingTrivia();
+                    }
+                    else if (token.IsFirstInLine() && token.IsLastInLine())
+                    {
+                        /* This block covers the case where `token` is the only non-trivia token on its line. However,
+                         * the line may still contain non-whitespace trivia which we want the removal process to
+                         * preserve. This code fix only removes the whitespace surrounding `token` if it is the only
+                         * non-whitespace token on the line.
+                         */
+                        int lastNewLineLeading = token.LeadingTrivia.LastIndexOf(SyntaxKind.EndOfLineTrivia);
+                        int firstNewLineFollowing = token.TrailingTrivia.IndexOf(SyntaxKind.EndOfLineTrivia);
+                        bool onlyWhitespace = true;
+                        for (int i = lastNewLineLeading + 1; i < token.LeadingTrivia.Count; i++)
+                        {
+                            onlyWhitespace &= token.LeadingTrivia[i].IsKind(SyntaxKind.WhitespaceTrivia);
+                        }
+
+                        firstNewLineFollowing = firstNewLineFollowing == -1 ? token.TrailingTrivia.Count : firstNewLineFollowing;
+                        for (int i = 0; i < firstNewLineFollowing; i++)
+                        {
+                            onlyWhitespace &= token.TrailingTrivia[i].IsKind(SyntaxKind.WhitespaceTrivia);
+                        }
+
+                        if (onlyWhitespace)
+                        {
+                            // Move the token, and remove the other tokens from its line. Keep all other surrounding
+                            // trivia. Keep the last newline that precedes token, but not the first that follows it.
+                            SyntaxTriviaList trailingTrivia = prevToken.TrailingTrivia;
+                            if (lastNewLineLeading >= 0)
+                            {
+                                trailingTrivia = trailingTrivia.AddRange(token.LeadingTrivia.Take(lastNewLineLeading + 1));
+                            }
+
+                            // firstNewLineFollowing was adjusted above to account for the missing case.
+                            trailingTrivia = trailingTrivia.AddRange(token.TrailingTrivia.Take(firstNewLineFollowing));
+
+                            replaceMap[token] = token.WithLeadingTrivia().WithTrailingTrivia(trailingTrivia);
+                        }
+                        else
+                        {
+                            // Just move the token and keep all surrounding trivia.
+                            SyntaxTriviaList trailingTrivia = triviaList.AddRange(token.TrailingTrivia);
+                            replaceMap[token] = token.WithLeadingTrivia().WithTrailingTrivia(trailingTrivia);
+                        }
+                    }
+                    else
+                    {
+                        SyntaxTriviaList trailingTrivia = triviaList.AddRange(token.TrailingTrivia);
+                        replaceMap[token] = token.WithLeadingTrivia().WithTrailingTrivia(trailingTrivia);
+                    }
+
                     break;
 
                 default:
