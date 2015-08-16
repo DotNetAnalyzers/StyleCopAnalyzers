@@ -111,7 +111,6 @@
             var triviaList = TriviaHelper.GetContainingTriviaList(documentationHeader, out documentationHeaderIndex);
             var eolCount = 0;
             var done = false;
-            var hasComment = false;
             for (var i = documentationHeaderIndex - 1; !done && (i >= 0); i--)
             {
                 switch (triviaList[i].Kind())
@@ -131,17 +130,9 @@
                     eolCount++;
                     done = true;
                     break;
-                case SyntaxKind.SingleLineCommentTrivia:
-                    if (triviaList[i].GetLine() != triviaList[i].Token.GetLine())
-                    {
-                        eolCount--;
-                    }
-
-                    hasComment = true;
-                    break;
                 default:
                     done = true;
-                    return;
+                    break;
                 }
             }
 
@@ -151,7 +142,7 @@
                 return;
             }
 
-            if (!done && !hasComment)
+            if (!done)
             {
                 var prevToken = documentationHeader.Token.GetPreviousToken();
                 if (prevToken.IsKind(SyntaxKind.OpenBraceToken))

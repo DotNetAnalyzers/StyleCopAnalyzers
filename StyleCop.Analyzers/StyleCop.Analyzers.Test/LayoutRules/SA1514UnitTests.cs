@@ -715,6 +715,51 @@ namespace TestNamespace
         }
 
         /// <summary>
+        /// Verifies that comments before documentation are properly handled, when the comment is preceded by empty lines.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestDocumenationPrecededByCommentNotReportedForLooseCommentAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    using System;
+
+    // some comment
+    /// <summary>
+    /// some documentation.
+    /// </summary>
+    public class TestClass
+    {
+    }
+}
+";
+            var fixedCode = @"namespace TestNamespace
+{
+    using System;
+
+    // some comment
+
+    /// <summary>
+    /// some documentation.
+    /// </summary>
+    public class TestClass
+    {
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(6, 5)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that trailing comments before documentation are properly handled.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
