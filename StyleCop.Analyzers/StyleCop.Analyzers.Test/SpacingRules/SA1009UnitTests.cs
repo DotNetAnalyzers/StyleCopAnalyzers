@@ -615,6 +615,87 @@ public class TestClass
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies preprocessor directives will be properly handled.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestDirectiveTriviaAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod1(int a,
+#if false
+int b
+#else
+int c
+#endif
+        )
+    {
+    }
+
+    public void TestMethod2(
+#if true
+int a )
+#endif
+    {
+        TestMethod3(TestMethod3(
+#if true
+                0 )
+#else
+                1 )
+#endif
+                );
+    }
+
+    public int TestMethod3(int a) { return a; }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    public void TestMethod1(int a,
+#if false
+int b
+#else
+int c
+#endif
+        )
+    {
+    }
+
+    public void TestMethod2(
+#if true
+int a)
+#endif
+    {
+        TestMethod3(TestMethod3(
+#if true
+                0)
+#else
+                1 )
+#endif
+                );
+    }
+
+    public int TestMethod3(int a) { return a; }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(10, 9).WithArguments(" not", "preceded"),
+                this.CSharpDiagnostic().WithLocation(16, 7).WithArguments(" not", "preceded"),
+                this.CSharpDiagnostic().WithLocation(21, 19).WithArguments(" not", "preceded"),
+                this.CSharpDiagnostic().WithLocation(25, 17).WithArguments(" not", "preceded")
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {

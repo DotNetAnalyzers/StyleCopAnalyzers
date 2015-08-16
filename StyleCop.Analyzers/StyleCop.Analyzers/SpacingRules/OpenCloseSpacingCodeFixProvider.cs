@@ -106,6 +106,10 @@
                     bool tokenIsFirstInLine = token.IsFirstInLine();
                     bool preserveLayout = layout == LayoutPreserve;
                     triviaList = prevToken.TrailingTrivia.AddRange(token.LeadingTrivia);
+                    if (triviaList.Any(t => t.IsDirective))
+                    {
+                        return document;
+                    }
 
                     replaceMap[prevToken] = prevToken.WithTrailingTrivia();
                     if ((!preserveLayout || !tokenIsFirstInLine)
