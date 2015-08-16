@@ -132,7 +132,11 @@
                     done = true;
                     break;
                 case SyntaxKind.SingleLineCommentTrivia:
-                    eolCount--;
+                    if (triviaList[i].GetLine() != triviaList[i].Token.GetLine())
+                    {
+                        eolCount--;
+                    }
+
                     hasComment = true;
                     break;
                 default:
