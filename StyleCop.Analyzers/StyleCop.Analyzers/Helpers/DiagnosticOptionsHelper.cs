@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.Helpers
+﻿// There are no start actions in this file. This warning should not be reported.
+#pragma warning disable RS1012 // Start action has no registered actions.
+
+namespace StyleCop.Analyzers.Helpers
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
@@ -19,9 +22,6 @@
         {
             return context.SemanticModel.Compilation.IsAnalyzerSuppressed(diagnosticId);
         }
-
-        // There are no start actions in this file. This warning should not be reported.
-#pragma warning disable RS1012 // Start action has no registered actions.
 
         /// <summary>
         /// Determines if the diagnostic identified by the given identifier is currently suppressed.
