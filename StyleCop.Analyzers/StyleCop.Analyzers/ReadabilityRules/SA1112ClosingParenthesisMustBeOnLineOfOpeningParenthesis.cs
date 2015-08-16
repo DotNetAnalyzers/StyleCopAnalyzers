@@ -74,7 +74,8 @@
             if (!objectCreation.ArgumentList.OpenParenToken.IsMissing &&
                     !objectCreation.ArgumentList.CloseParenToken.IsMissing)
             {
-                CheckIfLocationOfOpenAndCloseTokensAreTheSame(context,
+                CheckIfLocationOfOpenAndCloseTokensAreTheSame(
+                    context,
                     objectCreation.ArgumentList.OpenParenToken, objectCreation.ArgumentList.CloseParenToken);
             }
         }
@@ -92,7 +93,8 @@
             if (!invocationExpression.ArgumentList.OpenParenToken.IsMissing &&
                 !invocationExpression.ArgumentList.CloseParenToken.IsMissing)
             {
-                CheckIfLocationOfOpenAndCloseTokensAreTheSame(context,
+                CheckIfLocationOfOpenAndCloseTokensAreTheSame(
+                    context,
                     invocationExpression.ArgumentList.OpenParenToken, invocationExpression.ArgumentList.CloseParenToken);
             }
         }
@@ -109,7 +111,8 @@
             HandleBaseMethodDeclaration(context, methodDeclaration);
         }
 
-        private static void HandleBaseMethodDeclaration(SyntaxNodeAnalysisContext context,
+        private static void HandleBaseMethodDeclaration(
+            SyntaxNodeAnalysisContext context,
             BaseMethodDeclarationSyntax baseMethodDeclarationSyntax)
         {
             var parameterListSyntax =
@@ -125,7 +128,8 @@
             }
         }
 
-        private static void CheckIfLocationOfOpenAndCloseTokensAreTheSame(SyntaxNodeAnalysisContext context,
+        private static void CheckIfLocationOfOpenAndCloseTokensAreTheSame(
+            SyntaxNodeAnalysisContext context,
             SyntaxToken openToken, SyntaxToken closeToken)
         {
             var closeParenLine = closeToken.GetLineSpan();

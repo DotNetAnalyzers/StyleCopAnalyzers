@@ -39,10 +39,11 @@
             foreach (var diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
                 context.RegisterCodeFix(
-                    CodeAction.Create(SpacingResources.SA1025CodeFix,
+                    CodeAction.Create(
+                        SpacingResources.SA1025CodeFix,
                         cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
                         equivalenceKey: nameof(SA1025CodeFixProvider)),
-                        diagnostic);
+                    diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;

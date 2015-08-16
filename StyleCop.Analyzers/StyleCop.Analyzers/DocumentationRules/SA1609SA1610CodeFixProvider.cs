@@ -149,8 +149,9 @@
             else
             {
                 DocumentationCommentTriviaSyntax newDocumentationComment = documentationComment.WithContent(
-                    documentationComment.Content.InsertRange(documentationComment.Content.Count - 1,
-                    XmlSyntaxFactory.List(leadingNewLine, valueElement)));
+                    documentationComment.Content.InsertRange(
+                        documentationComment.Content.Count - 1,
+                        XmlSyntaxFactory.List(leadingNewLine, valueElement)));
 
                 newRoot = root.ReplaceNode(documentationComment, newDocumentationComment);
             }

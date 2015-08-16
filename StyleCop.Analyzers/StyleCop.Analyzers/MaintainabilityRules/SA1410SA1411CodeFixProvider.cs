@@ -20,7 +20,8 @@
     public class SA1410SA1411CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1410RemoveDelegateParenthesisWhenPossible.DiagnosticId,
+            ImmutableArray.Create(
+                SA1410RemoveDelegateParenthesisWhenPossible.DiagnosticId,
                 SA1411AttributeConstructorMustNotUseUnnecessaryParenthesis.DiagnosticId);
 
         /// <inheritdoc/>
