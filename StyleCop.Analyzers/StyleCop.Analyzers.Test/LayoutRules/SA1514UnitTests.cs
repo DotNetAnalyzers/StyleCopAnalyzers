@@ -800,6 +800,69 @@ public class TestClass
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that a pragma before a documentation header is properly handled.
+        /// This is regression for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1223
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestPragmaPrecedingDocumentationAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    #pragma warning disable RS1012
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method1()
+    {
+    }
+
+    #pragma checksum ""test0.cs"" ""{00000000-0000-0000-0000-000000000000}"" ""{01234567}"" // comment
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method2()
+    {
+    }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    #pragma warning disable RS1012
+
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method1()
+    {
+    }
+
+    #pragma checksum ""test0.cs"" ""{00000000-0000-0000-0000-000000000000}"" ""{01234567}"" // comment
+
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method2()
+    {
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(5, 5),
+                this.CSharpDiagnostic().WithLocation(13, 5)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1514ElementDocumentationHeaderMustBePrecededByBlankLine();

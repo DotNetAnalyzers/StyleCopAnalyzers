@@ -127,6 +127,8 @@
                     return;
 
                 case SyntaxKind.EndIfDirectiveTrivia:
+                case SyntaxKind.PragmaWarningDirectiveTrivia:
+                case SyntaxKind.PragmaChecksumDirectiveTrivia:
                     eolCount++;
                     done = true;
                     break;
