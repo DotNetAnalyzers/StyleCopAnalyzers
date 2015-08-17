@@ -607,6 +607,32 @@ class Test : IA
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestExplicitInterfaceFollowedByPrivateStaticAsync()
+        {
+            var testCode = @"
+public interface TestInterface
+{
+    void SomeMethod();
+}
+
+public class TestClass : TestInterface
+{
+    private static void ExampleMethod()
+    {
+    }
+
+    void TestInterface.SomeMethod()
+    {
+    }
+}
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(13, 24).WithArguments("public", "methods", "private");
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Verifies that the analyzer will properly handle incomplete members.
         /// </summary>
