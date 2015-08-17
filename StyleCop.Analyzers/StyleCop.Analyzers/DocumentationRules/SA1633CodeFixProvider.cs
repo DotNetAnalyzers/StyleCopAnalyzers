@@ -11,7 +11,6 @@
     using Microsoft.CodeAnalysis.CSharp;
     using StyleCop.Analyzers.Helpers;
 
-
     /// <summary>
     /// Implements a code fix for <see cref="SA1633FileMustHaveHeader"/>.
     /// </summary>
@@ -41,13 +40,13 @@
         {
             foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                context.RegisterCodeFix(CodeAction.Create(DocumentationResources.SA1617CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token), equivalenceKey: nameof(SA1633CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(DocumentationResources.SA1633CodeFix, token => GetTransformedDocumentAsync(context.Document, token), equivalenceKey: nameof(SA1633CodeFixProvider)), diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;
         }
 
-        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
@@ -59,25 +58,16 @@
             }
             else
             {
-                newSyntaxRoot = await ReplaceHeaderAsync(document, fileHeader, root, cancellationToken).ConfigureAwait(false);
+                newSyntaxRoot = ReplaceHeader(document, root);
             }
 
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
 
-        private static async Task<SyntaxNode> ReplaceHeaderAsync(
-            Document document,
-            FileHeader fileHeader,
-            SyntaxNode root,
-            CancellationToken cancellationToken)
+        private static SyntaxNode ReplaceHeader(Document document, SyntaxNode root)
         {
-            var tree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
-            var headerSpan = fileHeader.GetLocation(tree).SourceSpan;
-            var overlappingTrivia = root.GetLeadingTrivia().Where(x => x.GetLocation().SourceSpan.OverlapsWith(headerSpan));
-            var newSyntaxRoot = root.ReplaceTrivia(
-                overlappingTrivia,
-                (trivia, syntaxTrivia) => SyntaxFactory.ParseLeadingTrivia(string.Empty).Single());
-            return root.WithLeadingTrivia(CreateNewHeader(document.Name).Add(SyntaxFactory.CarriageReturnLineFeed));
+            var existingTrivia = root.GetLeadingTrivia().Where(x => !x.IsKind(SyntaxKind.EndOfLineTrivia) && !x.IsKind(SyntaxKind.SingleLineCommentTrivia));
+            return root.WithLeadingTrivia(CreateNewHeader(document.Name).AddRange(existingTrivia).Add(SyntaxFactory.CarriageReturnLineFeed));
         }
 
         private static SyntaxNode AddHeader(SyntaxNode root, string name)
@@ -87,6 +77,7 @@
             {
                 newTrivia = newTrivia.Add(SyntaxFactory.CarriageReturnLineFeed);
             }
+
             return root.WithLeadingTrivia(newTrivia);
         }
 

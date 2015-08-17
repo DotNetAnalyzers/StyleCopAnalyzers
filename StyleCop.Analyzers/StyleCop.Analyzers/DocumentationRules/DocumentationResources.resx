@@ -123,6 +123,9 @@
   <data name="SA1617CodeFix" xml:space="preserve">
     <value>Remove &lt;returns&gt; XML comment</value>
   </data>
+  <data name="SA1633CodeFix" xml:space="preserve">
+    <value>Add Fileheader</value>
+  </data>
   <data name="SA1642SA1643CodeFix" xml:space="preserve">
     <value>Add standard text</value>
   </data>

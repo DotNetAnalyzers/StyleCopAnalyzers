@@ -161,11 +161,42 @@ namespace Foo
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(1, 1).WithArguments("XML is invalid.");
+            await
+                this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None)
+                    .ConfigureAwait(false);
+
+            var fixCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
+//   Copyright (c) FooCorp. All rights reserved.
+// </copyright>
+
+namespace Foo
+{
+}
+";
+        }
+
+        /// <summary>
+        /// Verifies that a file header with an invalid XML structure will produce the correct diagnostic message.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestMalformedHeaderAsync()
+        {
+            var testCode = @"// <copyright test0.cs company=""FooCorp"">
+#define MYDEFINE
+
+namespace Foo
+{
+}
+";
+
+            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(1, 1).WithArguments("XML is invalid.");
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
 
             var fixCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
 //   Copyright (c) FooCorp. All rights reserved.
 // </copyright>
+#define MYDEFINE
 
 namespace Foo
 {
