@@ -297,6 +297,7 @@
     <Compile Include="ReadabilityRules\SA1113CommaMustBeOnSameLineAsPreviousParameter.cs" />
     <Compile Include="ReadabilityRules\SA1114ParameterListMustFollowDeclaration.cs" />
     <Compile Include="ReadabilityRules\SA1115ParameterMustFollowComma.cs" />
+    <Compile Include="ReadabilityRules\SA1116CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1116SplitParametersMustStartOnLineAfterDeclaration.cs" />
     <Compile Include="ReadabilityRules\SA1117ParametersMustBeOnSameLineOrSeparateLines.cs" />
     <Compile Include="ReadabilityRules\SA1118ParameterMustNotSpanMultipleLines.cs" />
