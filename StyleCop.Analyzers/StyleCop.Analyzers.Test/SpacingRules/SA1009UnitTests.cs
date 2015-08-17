@@ -340,10 +340,12 @@ public class Foo
         [InlineData("--")]
         public async Task TestSpaceIncrementOrDecrementOperatorFollowingParenthesisAsync(string operatorValue)
         {
-            var invalidStatement = string.Format(@"int i = 0;
+            var invalidStatement = string.Format(
+                @"int i = 0;
             (i) {0};",
             operatorValue);
-            var validStatement = string.Format(@"int i = 0;
+            var validStatement = string.Format(
+                @"int i = 0;
             (i){0};",
             operatorValue);
 

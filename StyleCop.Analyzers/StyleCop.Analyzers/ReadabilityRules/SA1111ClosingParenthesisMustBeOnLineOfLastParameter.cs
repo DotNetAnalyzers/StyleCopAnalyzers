@@ -311,7 +311,8 @@
             }
         }
 
-        private static void HandleBaseMethodDeclaration(SyntaxNodeAnalysisContext context,
+        private static void HandleBaseMethodDeclaration(
+            SyntaxNodeAnalysisContext context,
             BaseMethodDeclarationSyntax baseMethodDeclarationSyntax)
         {
             if (baseMethodDeclarationSyntax.ParameterList == null ||
@@ -331,8 +332,9 @@
             }
         }
 
-        private static void CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(SyntaxNodeAnalysisContext context,
-       CSharpSyntaxNode parameterOrArgument, SyntaxToken closeToken)
+        private static void CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(
+            SyntaxNodeAnalysisContext context,
+            CSharpSyntaxNode parameterOrArgument, SyntaxToken closeToken)
         {
             var lastParameterLine = parameterOrArgument.GetLineSpan();
             var closeParenLine = closeToken.GetLineSpan();

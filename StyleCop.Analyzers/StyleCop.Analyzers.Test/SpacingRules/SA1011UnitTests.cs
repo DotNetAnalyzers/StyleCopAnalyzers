@@ -260,7 +260,8 @@ public class ClassName
         [InlineData("--")]
         public async Task TestClosingBracketFollowedByNoSpaceAndIncrementOrDecrementOperatorAsync(string operatorText)
         {
-            string validStatament = string.Format(@"var i = new int[1];
+            string validStatament = string.Format(
+                @"var i = new int[1];
             i[0]{0};", operatorText);
 
             await this.TestWhitespaceInStatementOrDeclAsync(validStatament, string.Empty, EmptyDiagnosticResults).ConfigureAwait(false);
@@ -271,10 +272,12 @@ public class ClassName
         [InlineData("--")]
         public async Task TestClosingBracketFollowedBySpaceAndIncrementOrDecrementOperatorAsync(string operatorText)
         {
-            string invalidStatament = string.Format(@"var i = new int[1];
+            string invalidStatament = string.Format(
+                @"var i = new int[1];
             i[0] {0};", operatorText);
 
-            string fixedStatament = string.Format(@"var i = new int[1];
+            string fixedStatament = string.Format(
+                @"var i = new int[1];
             i[0]{0};", operatorText);
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 16).WithArguments(" not", "followed");
