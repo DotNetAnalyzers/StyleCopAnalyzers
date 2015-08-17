@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.SpacingRules
 {
+    using System;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -118,7 +119,7 @@
                 switch (lastLeadingTrivia.Kind())
                 {
                 case SyntaxKind.WhitespaceTrivia:
-                    if (lastLeadingTrivia.ToFullString().StartsWith(" "))
+                    if (lastLeadingTrivia.ToFullString().StartsWith(" ", StringComparison.Ordinal))
                     {
                         return;
                     }
@@ -144,7 +145,7 @@
                 return;
 
             case SyntaxKind.XmlTextLiteralToken:
-                if (token.Text.StartsWith(" "))
+                if (token.Text.StartsWith(" ", StringComparison.Ordinal))
                 {
                     return;
                 }

@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.DocumentationRules
 {
+    using System;
     using System.Linq;
     using Helpers;
     using Microsoft.CodeAnalysis;
@@ -131,7 +132,7 @@
             }
 
             string secondTextPartText = XmlCommentHelper.GetText(secondTextPart, normalizeWhitespace: true);
-            if (!secondTextPartText.StartsWith(secondText))
+            if (!secondTextPartText.StartsWith(secondText, StringComparison.Ordinal))
             {
                 return false;
             }

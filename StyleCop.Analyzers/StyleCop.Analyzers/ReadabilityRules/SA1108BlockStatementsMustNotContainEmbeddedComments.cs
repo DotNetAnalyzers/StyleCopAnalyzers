@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.ReadabilityRules
 {
+    using System;
     using System.Collections.Immutable;
     using System.Linq;
     using Microsoft.CodeAnalysis;
@@ -137,7 +138,7 @@
         private bool IsComment(SyntaxTrivia syntaxTrivia)
         {
             var isSingleLineComment = syntaxTrivia.IsKind(SyntaxKind.SingleLineCommentTrivia)
-                && !syntaxTrivia.ToFullString().StartsWith(@"////");
+                && !syntaxTrivia.ToFullString().StartsWith(@"////", StringComparison.Ordinal);
             return isSingleLineComment
                 || syntaxTrivia.IsKind(SyntaxKind.MultiLineCommentTrivia);
         }

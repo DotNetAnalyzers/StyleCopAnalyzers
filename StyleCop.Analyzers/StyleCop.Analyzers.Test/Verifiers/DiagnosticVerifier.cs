@@ -1,5 +1,6 @@
 ﻿namespace TestHelper
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
@@ -306,12 +307,12 @@
             if (filenames == null)
             {
                 // Also check if the analyzer honors exclusions
-                if (expected.Any(x => x.Id.StartsWith("SA") || x.Id.StartsWith("SX")))
+                if (expected.Any(x => x.Id.StartsWith("SA", StringComparison.Ordinal) || x.Id.StartsWith("SX", StringComparison.Ordinal)))
                 {
                     // We want to look at non-stylecop diagnostics only. We also insert a new line at the beginning
                     // so we have to move all diagnostic location down by one line
                     var expectedResults = expected
-                        .Where(x => !x.Id.StartsWith("SA") && !x.Id.StartsWith("SX"))
+                        .Where(x => !x.Id.StartsWith("SA", StringComparison.Ordinal) && !x.Id.StartsWith("SX", StringComparison.Ordinal))
                         .Select(x => x.WithLineOffset(1))
                         .ToArray();
 
