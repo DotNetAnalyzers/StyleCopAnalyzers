@@ -113,22 +113,26 @@
             var done = false;
             for (var i = documentationHeaderIndex - 1; !done && (i >= 0); i--)
             {
-                switch (triviaList[i].Kind())
+                var trivia = triviaList[i];
+                if (trivia.IsDirective
+                    && !trivia.IsKind(SyntaxKind.EndIfDirectiveTrivia)
+                    && !trivia.IsKind(SyntaxKind.RegionDirectiveTrivia)
+                    && !trivia.IsKind(SyntaxKind.EndRegionDirectiveTrivia))
+                {
+                    return;
+                }
+
+                switch (trivia.Kind())
                 {
                 case SyntaxKind.WhitespaceTrivia:
                     break;
                 case SyntaxKind.EndOfLineTrivia:
                     eolCount++;
                     break;
-                case SyntaxKind.IfDirectiveTrivia:
-                case SyntaxKind.ElseDirectiveTrivia:
-                case SyntaxKind.ElifDirectiveTrivia:
-                    // if the documentation header is inside a directive trivia, no leading blank line is needed
-                    return;
 
                 case SyntaxKind.EndIfDirectiveTrivia:
-                case SyntaxKind.PragmaWarningDirectiveTrivia:
-                case SyntaxKind.PragmaChecksumDirectiveTrivia:
+                case SyntaxKind.RegionDirectiveTrivia:
+                case SyntaxKind.EndRegionDirectiveTrivia:
                     eolCount++;
                     done = true;
                     break;

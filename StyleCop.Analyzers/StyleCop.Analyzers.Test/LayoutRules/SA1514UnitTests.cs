@@ -829,24 +829,131 @@ public class TestClass
 }
 ";
 
-            var fixedCode = @"
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that preprocessor directives before a documentation header are properly handled.
+        /// This is regression for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1231
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestDirectivesPrecedingDocumentationAsync()
+        {
+            var testCode = @"
 public class TestClass
 {
-    #pragma warning disable RS1012
-
+#if true
     /// <summary>
     /// ...
     /// </summary>
     public void Method1()
     {
     }
-
-    #pragma checksum ""test0.cs"" ""{00000000-0000-0000-0000-000000000000}"" ""{01234567}"" // comment
-
+#else
     /// <summary>
     /// ...
     /// </summary>
     public void Method2()
+    {
+    }
+#endif
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method3()
+    {
+    }
+
+#region SomeRegion
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method4()
+    {
+    }
+#endregion SomeRegion
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method5()
+    {
+    }
+
+#region AnotherRegion // comment
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method6()
+    {
+    }
+#endregion AnotherRegion // comment
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method7()
+    {
+    }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+#if true
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method1()
+    {
+    }
+#else
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method2()
+    {
+    }
+#endif
+
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method3()
+    {
+    }
+
+#region SomeRegion
+
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method4()
+    {
+    }
+#endregion SomeRegion
+
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method5()
+    {
+    }
+
+#region AnotherRegion // comment
+
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method6()
+    {
+    }
+#endregion AnotherRegion // comment
+
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method7()
     {
     }
 }
@@ -854,8 +961,11 @@ public class TestClass
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(5, 5),
-                this.CSharpDiagnostic().WithLocation(13, 5)
+                this.CSharpDiagnostic().WithLocation(19, 5),
+                this.CSharpDiagnostic().WithLocation(27, 5),
+                this.CSharpDiagnostic().WithLocation(34, 5),
+                this.CSharpDiagnostic().WithLocation(42, 5),
+                this.CSharpDiagnostic().WithLocation(49, 5)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
