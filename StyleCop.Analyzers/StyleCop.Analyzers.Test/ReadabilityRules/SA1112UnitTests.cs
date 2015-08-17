@@ -288,6 +288,59 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestDirectiveTriviaAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod1(
+#if true
+        )
+#endif
+    {
+    }
+
+    public void TestMethod2()
+    {
+        TestMethod1(
+#if true
+#endif
+            );
+    }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    public void TestMethod1(
+#if true
+        )
+#endif
+    {
+    }
+
+    public void TestMethod2()
+    {
+        TestMethod1(
+#if true
+#endif
+            );
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(6, 9),
+                this.CSharpDiagnostic().WithLocation(16, 13)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1112ClosingParenthesisMustBeOnLineOfOpeningParenthesis();

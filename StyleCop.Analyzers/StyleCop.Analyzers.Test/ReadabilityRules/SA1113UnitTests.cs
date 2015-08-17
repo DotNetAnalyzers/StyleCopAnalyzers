@@ -1066,6 +1066,65 @@ public class Foo4
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestDirectiveTriviaAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod1(int a, int b
+#if true
+        , int c)
+#endif
+    {
+    }
+
+    public void TestMethod2()
+    {
+        TestMethod1(1, 2
+#if true
+            , 3
+#else
+            , 4
+#endif
+            );
+    }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    public void TestMethod1(int a, int b
+#if true
+        , int c)
+#endif
+    {
+    }
+
+    public void TestMethod2()
+    {
+        TestMethod1(1, 2
+#if true
+            , 3
+#else
+            , 4
+#endif
+            );
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(6, 9),
+                this.CSharpDiagnostic().WithLocation(15, 13)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1113CommaMustBeOnSameLineAsPreviousParameter();
