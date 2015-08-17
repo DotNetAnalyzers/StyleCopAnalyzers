@@ -8,7 +8,7 @@
     /// <summary>
     /// Base class for file header related unit tests.
     /// </summary>
-    public abstract class FileHeaderTestBase : DiagnosticVerifier
+    public abstract class FileHeaderTestBase : CodeFixVerifier
     {
         /// <summary>
         /// Gets the diagnostics that will be checked in the <see cref="TestNoFileHeaderAsync"/> test case.

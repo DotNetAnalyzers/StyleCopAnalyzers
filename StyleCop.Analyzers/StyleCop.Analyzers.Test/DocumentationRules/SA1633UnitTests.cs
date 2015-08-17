@@ -3,6 +3,8 @@
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
     using TestHelper;
@@ -70,7 +72,7 @@ namespace Bar
         [Fact]
         public async Task TestValidFileHeaderWithWhitespaceAsync()
         {
-            var testCode = @"    // <copyright file=""test0.cs"" company=""FooCorp"">
+            var testCode = @"    // <copyright file=""Test0.cs"" company=""FooCorp"">
     //   Copyright (c) FooCorp. All rights reserved.
     // </copyright>
 
@@ -98,6 +100,19 @@ namespace Foo
 
             var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(1, 1).WithArguments("is missing or not located at the top of the file.");
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+
+            var fixCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
+//   Copyright (c) FooCorp. All rights reserved.
+// </copyright>
+#define MYDEFINE
+
+namespace Foo
+{
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(fixCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -116,6 +131,18 @@ namespace Foo
 
             var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(1, 1).WithArguments("XML is invalid.");
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+
+            var fixCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
+//   Copyright (c) FooCorp. All rights reserved.
+// </copyright>
+
+namespace Foo
+{
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(fixCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -135,6 +162,24 @@ namespace Foo
 
             var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(1, 1).WithArguments("XML is invalid.");
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+
+            var fixCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
+//   Copyright (c) FooCorp. All rights reserved.
+// </copyright>
+
+namespace Foo
+{
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(fixCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixCode).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1633CodeFixProvider();
         }
 
         /// <inheritdoc/>

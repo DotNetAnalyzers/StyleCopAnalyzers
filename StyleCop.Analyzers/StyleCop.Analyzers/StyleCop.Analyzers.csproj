@@ -91,6 +91,7 @@
     <Compile Include="DocumentationRules\SA1630DocumentationTextMustContainWhitespace.cs" />
     <Compile Include="DocumentationRules\SA1631DocumentationMustMeetCharacterPercentage.cs" />
     <Compile Include="DocumentationRules\SA1632DocumentationTextMustMeetMinimumCharacterLength.cs" />
+    <Compile Include="DocumentationRules\SA1633CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1633FileMustHaveHeader.cs" />
     <Compile Include="DocumentationRules\SA1634FileHeaderMustShowCopyright.cs" />
     <Compile Include="DocumentationRules\SA1635FileHeaderMustHaveCopyrightText.cs" />
