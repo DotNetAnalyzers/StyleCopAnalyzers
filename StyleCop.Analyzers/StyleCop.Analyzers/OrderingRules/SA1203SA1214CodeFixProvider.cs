@@ -1,5 +1,3 @@
-using System;
-
 namespace StyleCop.Analyzers.OrderingRules
 {
     using System.Collections.Generic;
@@ -31,7 +29,7 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return WellKnownFixAllProviders.BatchFixer;
+            return CustomFixAllProviders.BatchFixer;
         }
 
         /// <inheritdoc/>
