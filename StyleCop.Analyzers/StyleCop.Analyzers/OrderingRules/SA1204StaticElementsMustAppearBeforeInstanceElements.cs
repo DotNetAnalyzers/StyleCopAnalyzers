@@ -104,7 +104,10 @@
                 var currentMemberStatic = modifiers.Any(SyntaxKind.StaticKeyword);
                 var currentMemberConst = modifiers.Any(SyntaxKind.ConstKeyword);
                 AccessLevel currentAccessLevel;
-                if (currentMemberStatic && currentSyntaxKind == SyntaxKind.ConstructorDeclaration)
+                if ((currentSyntaxKind == SyntaxKind.ConstructorDeclaration && modifiers.Any(SyntaxKind.StaticKeyword))
+                    || (currentSyntaxKind == SyntaxKind.MethodDeclaration && (member as MethodDeclarationSyntax)?.ExplicitInterfaceSpecifier != null)
+                    || (currentSyntaxKind == SyntaxKind.PropertyDeclaration && (member as PropertyDeclarationSyntax)?.ExplicitInterfaceSpecifier != null)
+                    || (currentSyntaxKind == SyntaxKind.IndexerDeclaration && (member as IndexerDeclarationSyntax)?.ExplicitInterfaceSpecifier != null))
                 {
                     currentAccessLevel = AccessLevel.Public;
                 }
