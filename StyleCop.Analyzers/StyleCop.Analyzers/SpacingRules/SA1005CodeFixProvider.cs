@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.SpacingRules
 {
+    using System;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
@@ -58,7 +59,7 @@
         private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxTrivia trivia)
         {
             string text = trivia.ToFullString();
-            if (!text.StartsWith("//"))
+            if (!text.StartsWith("//", StringComparison.Ordinal))
             {
                 return Task.FromResult(document);
             }

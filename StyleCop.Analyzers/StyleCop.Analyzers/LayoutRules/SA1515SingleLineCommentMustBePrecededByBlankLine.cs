@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.LayoutRules
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
@@ -113,7 +114,7 @@
                     continue;
                 }
 
-                if (trivia.ToString().StartsWith("////"))
+                if (trivia.ToString().StartsWith("////", StringComparison.Ordinal))
                 {
                     // ignore commented out code
                     continue;
