@@ -61,10 +61,9 @@
         private static SyntaxNode MoveField(FieldDeclarationSyntax fieldDeclaration, TypeDeclarationSyntax typeDeclarationNode, SyntaxNode syntaxRoot)
         {
             var fieldToMove = new MemberOrderHelper(fieldDeclaration);
-            for (var i = 0; i < typeDeclarationNode.Members.Count; i++)
+            foreach (var member in typeDeclarationNode.Members)
             {
-                var member = typeDeclarationNode.Members[i];
-                if (member.Kind() != SyntaxKind.FieldDeclaration)
+                if (!member.IsKind(SyntaxKind.FieldDeclaration))
                 {
                     continue;
                 }
