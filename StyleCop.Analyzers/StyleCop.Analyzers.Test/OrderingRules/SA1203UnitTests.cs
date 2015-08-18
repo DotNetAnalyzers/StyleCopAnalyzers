@@ -170,15 +170,26 @@ public class Test
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
-            var fixedTestCode = @"
+            var testCodeAfterFix1 = @"
+public class Test
+{
+    const int Test2 = 2;
+    private int Test1 = 1;
+    const int Test3 = 3;
+}";
+            expected = this.CSharpDiagnostic().WithLocation(6, 15).WithArguments("private");
+            await this.VerifyCSharpDiagnosticAsync(testCodeAfterFix1, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixCode = @"
 public class Test
 {
     const int Test2 = 2;
     const int Test3 = 3;
     private int Test1 = 1;
 }";
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+
+            await this.VerifyCSharpDiagnosticAsync(fixCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCodeAfterFix1, fixCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -257,17 +268,17 @@ public class Foo
 
             var fixedTestCode = @"public class Foo
 {
+    private const string Before1 = ""test"";
 
     public const string Before2 = ""test"";
 
-    public const string After2 = ""test"";
-
-    public int between;
-    private const string Before1 = ""test"";
-
     private const string After1 = ""test"";
 
+    public const string After2 = ""test"";
+
     private int field1;
+
+    public int between;
 }
 ";
 

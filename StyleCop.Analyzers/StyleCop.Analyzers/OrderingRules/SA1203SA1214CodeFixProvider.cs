@@ -1,4 +1,4 @@
-namespace StyleCop.Analyzers.OrderingRules
+﻿namespace StyleCop.Analyzers.OrderingRules
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
@@ -47,33 +47,20 @@ namespace StyleCop.Analyzers.OrderingRules
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
-            while (true)
+            var fieldDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<FieldDeclarationSyntax>();
+            var typeDeclarationNode = fieldDeclaration.FirstAncestorOrSelf<TypeDeclarationSyntax>();
+            if (typeDeclarationNode == null)
             {
-                var typeDeclarationNode = syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<TypeDeclarationSyntax>();
-                if (typeDeclarationNode == null)
-                {
-                    break;
-                }
+                return document;
+            }
 
-                var fieldReplaced = false;
-
-                var allFields = GetOrderHelperForFields(typeDeclarationNode);
-                var fieldToMove = GetFieldToMove(allFields);
-                if (fieldToMove != null)
+            var allFields = GetOrderHelperForFields(typeDeclarationNode);
+            var fieldToMove = new MemberOrderHelper(fieldDeclaration);
+            for (var i = 0; i < allFields.Count; i++)
+            {
+                if (allFields[i].ModifierPriority < fieldToMove.ModifierPriority)
                 {
-                    for (var i = 0; i < allFields.Count; i++)
-                    {
-                        if (allFields[i].Priority < fieldToMove.Priority)
-                        {
-                            syntaxRoot = MoveField(syntaxRoot, fieldToMove.Member, allFields[i].Member);
-                            fieldReplaced = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (!fieldReplaced)
-                {
+                    syntaxRoot = MoveField(syntaxRoot, fieldToMove.Member, allFields[i].Member);
                     break;
                 }
             }
@@ -95,19 +82,6 @@ namespace StyleCop.Analyzers.OrderingRules
             }
 
             return allFields;
-        }
-
-        private static MemberOrderHelper GetFieldToMove(List<MemberOrderHelper> allFields)
-        {
-            for (var i = 1; i < allFields.Count; i++)
-            {
-                if (allFields[i].ShouldBeBefore(allFields[i - 1]))
-                {
-                    return allFields[i];
-                }
-            }
-
-            return null;
         }
 
         private static SyntaxNode MoveField(SyntaxNode root, MemberDeclarationSyntax field, MemberDeclarationSyntax firstNonConst)

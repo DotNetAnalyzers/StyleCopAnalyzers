@@ -240,25 +240,47 @@ public class Foo
 {
 
     public static readonly int  u = 5;
-
-    public static readonly int j = 0;
-
-    public static string s2 = ""qwe"";
     public string s = ""qwe"";
     private static readonly int i = 0;
 
     public void Ff() {}
 
+    public static string s2 = ""qwe"";
+
     public class FooInner 
     {
-        public static readonly int t = 2;
-        private static readonly int e = 1;
-        private static int z = 999;
         private int aa = 0;
+        public static readonly int t = 2;
+        private static int z = 999;
+        private static readonly int e = 1;
+    }
+
+    public static readonly int j = 0;
+}";
+            var batchFixTestCode = @"
+public class Foo
+{
+
+    public static readonly int  u = 5;
+
+    public static readonly int j = 0;
+    public string s = ""qwe"";
+    private static readonly int i = 0;
+
+    public void Ff() {}
+
+    public static string s2 = ""qwe"";
+
+    public class FooInner 
+    {
+        private static readonly int e = 1;
+        private int aa = 0;
+        public static readonly int t = 2;
+        private static int z = 999;
     }
 }";
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixTestCode, batchFixTestCode).ConfigureAwait(false);
         }
 
         [Fact]

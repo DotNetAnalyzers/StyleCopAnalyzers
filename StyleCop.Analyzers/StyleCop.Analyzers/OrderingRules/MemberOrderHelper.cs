@@ -1,4 +1,4 @@
-namespace StyleCop.Analyzers.OrderingRules
+﻿namespace StyleCop.Analyzers.OrderingRules
 {
     using System;
     using Microsoft.CodeAnalysis;
@@ -98,11 +98,20 @@ namespace StyleCop.Analyzers.OrderingRules
         public int Priority => (int)this.modifierFlags + ((int)this.accessibilty * 100/*the * 100 ensures the accesibility is more important than the modifier*/);
 
         /// <summary>
-        /// Checks if the current field should be declared before the other.
+        /// The priority for this member only from accesibility.
         /// </summary>
-        /// <param name="other">The field to compare against.</param>
-        /// <returns>True if the field should be delcared before the other.</returns>
-        public bool ShouldBeBefore(MemberOrderHelper other) => this.Priority > other.Priority;
+        /// <value>
+        /// The priority for this member.
+        /// </value>
+        public int AccessibilityPriority => (int)this.accessibilty;
+
+        /// <summary>
+        /// The priority for this member only from modifiers.
+        /// </summary>
+        /// <value>
+        /// The priority for this member.
+        /// </value>
+        public int ModifierPriority => (int)this.modifierFlags;
 
         private static AccesibilityFlags GetAccessibilityFlags(SyntaxTokenList syntax)
         {
