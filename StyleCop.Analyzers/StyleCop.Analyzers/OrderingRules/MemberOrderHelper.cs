@@ -12,7 +12,7 @@
     public class MemberOrderHelper
     {
         private readonly ModifierFlags modifierFlags;
-        private readonly AccesibilityFlags accessibilty;
+        private readonly AccessLevel accessibilty;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MemberOrderHelper"/> class.
@@ -25,39 +25,6 @@
 
             this.modifierFlags = GetModifierFlags(modifiers);
             this.accessibilty = GetAccessibilityFlags(modifiers);
-        }
-
-        private enum AccesibilityFlags
-        {
-            /// <summary>
-            /// Private accessibility
-            /// </summary>
-            Private = 1,
-
-            /// <summary>
-            /// No accessibility specified
-            /// </summary>
-            None = 1 << 1,
-
-            /// <summary>
-            /// Protected accessibility
-            /// </summary>
-            Protected = 1 << 2,
-
-            /// <summary>
-            /// Protected Internal accessibility
-            /// </summary>
-            ProtectedInternal = 1 << 3,
-
-            /// <summary>
-            /// Internal accessibility
-            /// </summary>
-            Internal = 1 << 4,
-
-            /// <summary>
-            /// Public accessibility
-            /// </summary>
-            Public = 1 << 5,
         }
 
         [Flags]
@@ -95,7 +62,12 @@
         /// <value>
         /// The priority for this member.
         /// </value>
-        public int Priority => (int)this.modifierFlags + ((int)this.accessibilty * 100/*the * 100 ensures the accesibility is more important than the modifier*/);
+        public int Priority => 
+            (int)this.modifierFlags + 
+            (
+                /*the * 100 ensures the accesibility is more important than the modifier*/
+                (int)this.accessibilty * 100
+            );
 
         /// <summary>
         /// The priority for this member only from accesibility.
@@ -113,34 +85,29 @@
         /// </value>
         public int ModifierPriority => (int)this.modifierFlags;
 
-        private static AccesibilityFlags GetAccessibilityFlags(SyntaxTokenList syntax)
+        private static AccessLevel GetAccessibilityFlags(SyntaxTokenList syntax)
         {
             if (syntax.Any(SyntaxKind.PublicKeyword))
             {
-                return AccesibilityFlags.Public;
+                return AccessLevel.Public;
             }
 
             if (syntax.Any(SyntaxKind.InternalKeyword))
             {
-                return AccesibilityFlags.Internal;
+                return AccessLevel.Internal;
             }
 
             if (syntax.Any(SyntaxKind.InternalKeyword) && syntax.Any(SyntaxKind.ProtectedKeyword))
             {
-                return AccesibilityFlags.ProtectedInternal;
+                return AccessLevel.ProtectedInternal;
             }
 
             if (syntax.Any(SyntaxKind.ProtectedKeyword))
             {
-                return AccesibilityFlags.Protected;
+                return AccessLevel.Protected;
             }
 
-            if (syntax.Any(SyntaxKind.PrivateKeyword))
-            {
-                return AccesibilityFlags.Private;
-            }
-
-            return AccesibilityFlags.None;
+            return AccessLevel.Private;
         }
 
         private static ModifierFlags GetModifierFlags(SyntaxTokenList syntax)

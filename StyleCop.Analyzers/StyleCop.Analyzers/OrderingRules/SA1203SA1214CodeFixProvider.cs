@@ -1,6 +1,5 @@
 ﻿namespace StyleCop.Analyzers.OrderingRules
 {
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
@@ -54,34 +53,30 @@
                 return document;
             }
 
-            var allFields = GetOrderHelperForFields(typeDeclarationNode);
-            var fieldToMove = new MemberOrderHelper(fieldDeclaration);
-            for (var i = 0; i < allFields.Count; i++)
-            {
-                if (allFields[i].ModifierPriority < fieldToMove.ModifierPriority)
-                {
-                    syntaxRoot = MoveField(syntaxRoot, fieldToMove.Member, allFields[i].Member);
-                    break;
-                }
-            }
+            syntaxRoot = MoveField(fieldDeclaration, typeDeclarationNode, syntaxRoot);
 
             return document.WithSyntaxRoot(syntaxRoot);
         }
 
-        private static List<MemberOrderHelper> GetOrderHelperForFields(TypeDeclarationSyntax typeDeclarationNode)
+        private static SyntaxNode MoveField(FieldDeclarationSyntax fieldDeclaration, TypeDeclarationSyntax typeDeclarationNode, SyntaxNode syntaxRoot)
         {
-            var allFields = new List<MemberOrderHelper>();
-            foreach (var member in typeDeclarationNode.Members)
+            var fieldToMove = new MemberOrderHelper(fieldDeclaration);
+            for (var i = 0; i < typeDeclarationNode.Members.Count; i++)
             {
-                if (!member.IsKind(SyntaxKind.FieldDeclaration))
+                var member = typeDeclarationNode.Members[i];
+                if (member.Kind() != SyntaxKind.FieldDeclaration)
                 {
                     continue;
                 }
 
-                allFields.Add(new MemberOrderHelper(member));
+                var orderHelper = new MemberOrderHelper(member);
+                if (orderHelper.ModifierPriority < fieldToMove.ModifierPriority)
+                {
+                    syntaxRoot = MoveField(syntaxRoot, fieldToMove.Member, member);
+                    break;
+                }
             }
-
-            return allFields;
+            return syntaxRoot;
         }
 
         private static SyntaxNode MoveField(SyntaxNode root, MemberDeclarationSyntax field, MemberDeclarationSyntax firstNonConst)
