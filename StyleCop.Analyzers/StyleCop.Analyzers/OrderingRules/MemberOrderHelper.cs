@@ -91,14 +91,14 @@
                 return AccessLevel.Public;
             }
 
-            if (syntax.Any(SyntaxKind.InternalKeyword))
-            {
-                return AccessLevel.Internal;
-            }
-
             if (syntax.Any(SyntaxKind.InternalKeyword) && syntax.Any(SyntaxKind.ProtectedKeyword))
             {
                 return AccessLevel.ProtectedInternal;
+            }
+
+            if (syntax.Any(SyntaxKind.InternalKeyword))
+            {
+                return AccessLevel.Internal;
             }
 
             if (syntax.Any(SyntaxKind.ProtectedKeyword))
