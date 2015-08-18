@@ -1,17 +1,17 @@
-﻿namespace StyleCop.Analyzers.Test.NamingRules
+﻿namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Collections.Generic;
     using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using StyleCop.Analyzers.NamingRules;
+    using StyleCop.Analyzers.DocumentationRules;
     using TestHelper;
     using Xunit;
 
     /// <summary>
-    /// This class contains tests for <see cref="SA1301ElementMustBeginWithLowerCaseLetter"/>.
+    /// This class contains unit tests for <see cref="SA1647IncludeNodeDoesNotContainValidFileAndPath"/>.
     /// </summary>
-    public class SA1301UnitTests : DiagnosticVerifier
+    public class SA1647UnitTests : DiagnosticVerifier
     {
         [Fact]
         public void TestDisabledByDefaultAndNotConfigurable()
@@ -25,7 +25,7 @@
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1301ElementMustBeginWithLowerCaseLetter();
+            yield return new SA1647IncludeNodeDoesNotContainValidFileAndPath();
         }
     }
 }

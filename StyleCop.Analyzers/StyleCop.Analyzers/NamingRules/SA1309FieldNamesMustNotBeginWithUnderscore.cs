@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.NamingRules
 {
+    using System;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -86,7 +87,7 @@
                     continue;
                 }
 
-                if (!identifier.ValueText.StartsWith("_"))
+                if (!identifier.ValueText.StartsWith("_", StringComparison.Ordinal))
                 {
                     continue;
                 }

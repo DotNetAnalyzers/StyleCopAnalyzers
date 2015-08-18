@@ -1,11 +1,12 @@
 ﻿namespace StyleCop.Analyzers.ReadabilityRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
-    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using SpacingRules;
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
@@ -73,7 +74,8 @@
             if (!objectCreation.ArgumentList.OpenParenToken.IsMissing &&
                     !objectCreation.ArgumentList.CloseParenToken.IsMissing)
             {
-                CheckIfLocationOfOpenAndCloseTokensAreTheSame(context,
+                CheckIfLocationOfOpenAndCloseTokensAreTheSame(
+                    context,
                     objectCreation.ArgumentList.OpenParenToken, objectCreation.ArgumentList.CloseParenToken);
             }
         }
@@ -91,7 +93,8 @@
             if (!invocationExpression.ArgumentList.OpenParenToken.IsMissing &&
                 !invocationExpression.ArgumentList.CloseParenToken.IsMissing)
             {
-                CheckIfLocationOfOpenAndCloseTokensAreTheSame(context,
+                CheckIfLocationOfOpenAndCloseTokensAreTheSame(
+                    context,
                     invocationExpression.ArgumentList.OpenParenToken, invocationExpression.ArgumentList.CloseParenToken);
             }
         }
@@ -108,7 +111,8 @@
             HandleBaseMethodDeclaration(context, methodDeclaration);
         }
 
-        private static void HandleBaseMethodDeclaration(SyntaxNodeAnalysisContext context,
+        private static void HandleBaseMethodDeclaration(
+            SyntaxNodeAnalysisContext context,
             BaseMethodDeclarationSyntax baseMethodDeclarationSyntax)
         {
             var parameterListSyntax =
@@ -124,7 +128,8 @@
             }
         }
 
-        private static void CheckIfLocationOfOpenAndCloseTokensAreTheSame(SyntaxNodeAnalysisContext context,
+        private static void CheckIfLocationOfOpenAndCloseTokensAreTheSame(
+            SyntaxNodeAnalysisContext context,
             SyntaxToken openToken, SyntaxToken closeToken)
         {
             var closeParenLine = closeToken.GetLineSpan();
@@ -133,7 +138,13 @@
                 openParenLine.IsValid &&
                 openParenLine.StartLinePosition.Line != closeParenLine.StartLinePosition.Line)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, closeToken.GetLocation()));
+                var properties = new Dictionary<string, string>
+                {
+                    [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationPreceding,
+                    [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove,
+                    [OpenCloseSpacingCodeFixProvider.LayoutKey] = OpenCloseSpacingCodeFixProvider.LayoutPack
+                };
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, closeToken.GetLocation(), properties.ToImmutableDictionary()));
             }
         }
     }

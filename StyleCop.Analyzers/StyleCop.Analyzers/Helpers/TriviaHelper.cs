@@ -16,8 +16,10 @@
         /// Returns the index of the first non-whitespace trivia in the given trivia list.
         /// </summary>
         /// <param name="triviaList">The trivia list to process.</param>
+        /// <param name="endOfLineIsWhitespace"><see langword="true"/> to treat <see cref="SyntaxKind.EndOfLineTrivia"/>
+        /// as whitespace; otherwise, <see langword="false"/>.</param>
         /// <returns>The index where the non-whitespace starts, or -1 if there is no non-whitespace trivia.</returns>
-        internal static int IndexOfFirstNonWhitespaceTrivia(IReadOnlyList<SyntaxTrivia> triviaList)
+        internal static int IndexOfFirstNonWhitespaceTrivia(IReadOnlyList<SyntaxTrivia> triviaList, bool endOfLineIsWhitespace = true)
         {
             for (var index = 0; index < triviaList.Count; index++)
             {
@@ -25,6 +27,13 @@
                 switch (currentTrivia.Kind())
                 {
                 case SyntaxKind.EndOfLineTrivia:
+                    if (!endOfLineIsWhitespace)
+                    {
+                        return index;
+                    }
+
+                    break;
+
                 case SyntaxKind.WhitespaceTrivia:
                     break;
 
@@ -101,6 +110,29 @@
         }
 
         /// <summary>
+        /// Returns the index of the last trivia of a specified kind in the trivia list.
+        /// </summary>
+        /// <param name="list">The trivia list.</param>
+        /// <param name="kind">The syntax kind to find.</param>
+        /// <returns>
+        /// <para>The non-negative index of the last trivia which matches <paramref name="kind"/>.</para>
+        /// <para>-or-</para>
+        /// <para>-1, if the list did not contain any matching trivia.</para>
+        /// </returns>
+        internal static int LastIndexOf(this SyntaxTriviaList list, SyntaxKind kind)
+        {
+            for (int i = list.Count - 1; i >= 0; i--)
+            {
+                if (list[i].IsKind(kind))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        /// <summary>
         /// Strips all trailing whitespace trivia from the trivia list until a non-whitespace trivia is encountered.
         /// </summary>
         /// <param name="triviaList">The trivia list to strip of its trailing whitespace.</param>
@@ -115,10 +147,12 @@
         /// Strips all leading whitespace trivia from the trivia list until a non-whitespace trivia is encountered.
         /// </summary>
         /// <param name="triviaList">The trivia list to strip of its leading whitespace.</param>
+        /// <param name="endOfLineIsWhitespace"><see langword="true"/> to treat <see cref="SyntaxKind.EndOfLineTrivia"/>
+        /// as whitespace; otherwise, <see langword="false"/>.</param>
         /// <returns>The modified triviaList.</returns>
-        internal static SyntaxTriviaList WithoutLeadingWhitespace(this SyntaxTriviaList triviaList)
+        internal static SyntaxTriviaList WithoutLeadingWhitespace(this SyntaxTriviaList triviaList, bool endOfLineIsWhitespace = true)
         {
-            var nonWhitespaceIndex = IndexOfFirstNonWhitespaceTrivia(triviaList);
+            var nonWhitespaceIndex = IndexOfFirstNonWhitespaceTrivia(triviaList, endOfLineIsWhitespace);
             return (nonWhitespaceIndex >= 0) ? SyntaxFactory.TriviaList(triviaList.Take(nonWhitespaceIndex)) : SyntaxFactory.TriviaList();
         }
 

@@ -1,11 +1,13 @@
 ﻿namespace StyleCop.Analyzers.ReadabilityRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using SpacingRules;
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
@@ -90,7 +92,8 @@
 
             if (parameterListSyntax != null && !parameterListSyntax.OpenParenToken.IsMissing)
             {
-                CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, parameterListSyntax.OpenParenToken);
+                bool preserveLayout = parameterListSyntax.Parameters.Any();
+                CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, parameterListSyntax.OpenParenToken, preserveLayout);
             }
         }
 
@@ -107,7 +110,8 @@
 
             if (parameterListSyntax != null && !parameterListSyntax.OpenParenToken.IsMissing)
             {
-                CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, parameterListSyntax.OpenParenToken);
+                bool preserveLayout = parameterListSyntax.Parameters.Any();
+                CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, parameterListSyntax.OpenParenToken, preserveLayout);
             }
         }
 
@@ -126,7 +130,8 @@
 
             if (!firstSize.OpenBracketToken.IsMissing)
             {
-                CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, firstSize.OpenBracketToken);
+                bool preserveLayout = firstSize.Sizes.Any();
+                CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, firstSize.OpenBracketToken, preserveLayout);
             }
         }
 
@@ -142,7 +147,8 @@
                 return;
             }
 
-            CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, anonymousMethod.ParameterList.OpenParenToken);
+            bool preserveLayout = anonymousMethod.ParameterList.Parameters.Any();
+            CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, anonymousMethod.ParameterList.OpenParenToken, preserveLayout);
         }
 
         private static void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
@@ -153,7 +159,8 @@
                 delegateDeclaration.ParameterList != null &&
                 !delegateDeclaration.ParameterList.OpenParenToken.IsMissing)
             {
-                CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, delegateDeclaration.ParameterList.OpenParenToken);
+                bool preserveLayout = delegateDeclaration.ParameterList.Parameters.Any();
+                CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, delegateDeclaration.ParameterList.OpenParenToken, preserveLayout);
             }
         }
 
@@ -178,7 +185,8 @@
                     !attribute.ArgumentList.OpenParenToken.IsMissing &&
                     !identifierNameSyntax.Identifier.IsMissing)
                 {
-                    CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, attribute.ArgumentList.OpenParenToken);
+                    bool preserveLayout = attribute.ArgumentList.Arguments.Any();
+                    CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, attribute.ArgumentList.OpenParenToken, preserveLayout);
                 }
             }
         }
@@ -194,7 +202,8 @@
                 return;
             }
 
-            CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, elementAccess.ArgumentList.OpenBracketToken);
+            bool preserveLayout = elementAccess.ArgumentList.Arguments.Any();
+            CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, elementAccess.ArgumentList.OpenBracketToken, preserveLayout);
         }
 
         private static void HandleIndexerDeclaration(SyntaxNodeAnalysisContext obj)
@@ -206,7 +215,8 @@
                 !indexerDeclaration.ParameterList.IsMissing &&
                 !indexerDeclaration.ParameterList.OpenBracketToken.IsMissing)
             {
-                CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(obj, indexerDeclaration.ParameterList.OpenBracketToken);
+                bool preserveLayout = indexerDeclaration.ParameterList.Parameters.Any();
+                CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(obj, indexerDeclaration.ParameterList.OpenBracketToken, preserveLayout);
             }
         }
 
@@ -224,7 +234,8 @@
             if (objectCreation.ArgumentList != null
                 && !objectCreation.ArgumentList.OpenParenToken.IsMissing)
             {
-                CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, objectCreation.ArgumentList.OpenParenToken);
+                bool preserveLayout = objectCreation.ArgumentList.Arguments.Any();
+                CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, objectCreation.ArgumentList.OpenParenToken, preserveLayout);
             }
         }
 
@@ -261,7 +272,8 @@
                     !invocationExpression.ArgumentList.OpenParenToken.IsMissing &&
                     !identifierNameSyntax.Identifier.IsMissing)
                 {
-                    CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, invocationExpression.ArgumentList.OpenParenToken);
+                    bool preserveLayout = invocationExpression.ArgumentList.Arguments.Any();
+                    CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, invocationExpression.ArgumentList.OpenParenToken, preserveLayout);
                 }
             }
         }
@@ -273,7 +285,8 @@
                 && !constructotDeclarationSyntax.ParameterList.OpenParenToken.IsMissing
                 && !constructotDeclarationSyntax.Identifier.IsMissing)
             {
-                CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, constructotDeclarationSyntax.ParameterList.OpenParenToken);
+                bool preserveLayout = constructotDeclarationSyntax.ParameterList.Parameters.Any();
+                CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, constructotDeclarationSyntax.ParameterList.OpenParenToken, preserveLayout);
             }
         }
 
@@ -284,11 +297,12 @@
                 && !methodDeclaration.ParameterList.OpenParenToken.IsMissing
                 && !methodDeclaration.Identifier.IsMissing)
             {
-                CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, methodDeclaration.ParameterList.OpenParenToken);
+                bool preserveLayout = methodDeclaration.ParameterList.Parameters.Any();
+                CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, methodDeclaration.ParameterList.OpenParenToken, preserveLayout);
             }
         }
 
-        private static void CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(SyntaxNodeAnalysisContext context, SyntaxToken openToken)
+        private static void CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(SyntaxNodeAnalysisContext context, SyntaxToken openToken, bool preserveLayout)
         {
             var previousToken = openToken.GetPreviousToken();
             if (previousToken.IsMissing)
@@ -302,7 +316,13 @@
                 openParenLine.IsValid &&
                 openParenLine.StartLinePosition.Line != prevTokenLine.StartLinePosition.Line)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, openToken.GetLocation()));
+                var properties = new Dictionary<string, string>
+                {
+                    [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationPreceding,
+                    [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove,
+                    [OpenCloseSpacingCodeFixProvider.LayoutKey] = preserveLayout ? OpenCloseSpacingCodeFixProvider.LayoutPreserve : OpenCloseSpacingCodeFixProvider.LayoutPack
+                };
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, openToken.GetLocation(), properties.ToImmutableDictionary()));
             }
         }
     }

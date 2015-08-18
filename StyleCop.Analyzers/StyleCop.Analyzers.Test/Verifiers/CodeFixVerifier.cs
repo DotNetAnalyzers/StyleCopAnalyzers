@@ -253,7 +253,8 @@
 
             for (var i = 0; i < analyzerDiagnostics.Length; i++)
             {
-                if (analyzerDiagnostics[i].Id != previousDiagnostics[i].Id)
+                if ((analyzerDiagnostics[i].Id != previousDiagnostics[i].Id)
+                    || (analyzerDiagnostics[i].Location.SourceSpan != previousDiagnostics[i].Location.SourceSpan))
                 {
                     return true;
                 }
@@ -280,7 +281,8 @@
                 newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, await GetCompilerDiagnosticsAsync(document, cancellationToken).ConfigureAwait(false));
 
                 string message =
-                    string.Format("Fix introduced new compiler diagnostics:\r\n{0}\r\n\r\nNew document:\r\n{1}\r\n",
+                    string.Format(
+                        "Fix introduced new compiler diagnostics:\r\n{0}\r\n\r\nNew document:\r\n{1}\r\n",
                         string.Join("\r\n", newCompilerDiagnostics.Select(d => d.ToString())),
                         (await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false)).ToFullString());
                 Assert.True(false, message);

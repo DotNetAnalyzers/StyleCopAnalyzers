@@ -8,6 +8,7 @@
     /// There are currently no situations in which this rule will fire.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    [NoDiagnostic("This rule has no behavior by design.")]
     [NoCodeFix("Don't fix what isn't broken.")]
     public class SA1301ElementMustBeginWithLowerCaseLetter : DiagnosticAnalyzer
     {
@@ -21,7 +22,7 @@
         private const string HelpLink = "http://www.stylecop.com/docs/SA1301.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledByDefault, Description, HelpLink, WellKnownDiagnosticTags.NotConfigurable);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);

@@ -557,6 +557,15 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Move first argument to next line.
+        /// </summary>
+        internal static string SA1116CodeFix {
+            get {
+                return ResourceManager.GetString("SA1116CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The parameters to a C# method or indexer call or declaration span across multiple lines, but the first parameter does not start on the line after the opening bracket..
         /// </summary>
         internal static string SA1116Description {
@@ -566,7 +575,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to The parameters must begin on the line after the declaration, whenever the parameter span across multiple lines.
         /// </summary>
         internal static string SA1116MessageFormat {
             get {

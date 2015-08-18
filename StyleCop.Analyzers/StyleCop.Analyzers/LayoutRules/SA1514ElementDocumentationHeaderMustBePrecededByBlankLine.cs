@@ -111,33 +111,34 @@
             var triviaList = TriviaHelper.GetContainingTriviaList(documentationHeader, out documentationHeaderIndex);
             var eolCount = 0;
             var done = false;
-            var hasComment = false;
             for (var i = documentationHeaderIndex - 1; !done && (i >= 0); i--)
             {
-                switch (triviaList[i].Kind())
+                var trivia = triviaList[i];
+                if (trivia.IsDirective
+                    && !trivia.IsKind(SyntaxKind.EndIfDirectiveTrivia)
+                    && !trivia.IsKind(SyntaxKind.RegionDirectiveTrivia)
+                    && !trivia.IsKind(SyntaxKind.EndRegionDirectiveTrivia))
+                {
+                    return;
+                }
+
+                switch (trivia.Kind())
                 {
                 case SyntaxKind.WhitespaceTrivia:
                     break;
                 case SyntaxKind.EndOfLineTrivia:
                     eolCount++;
                     break;
-                case SyntaxKind.IfDirectiveTrivia:
-                case SyntaxKind.ElseDirectiveTrivia:
-                case SyntaxKind.ElifDirectiveTrivia:
-                    // if the documentation header is inside a directive trivia, no leading blank line is needed
-                    return;
 
                 case SyntaxKind.EndIfDirectiveTrivia:
+                case SyntaxKind.RegionDirectiveTrivia:
+                case SyntaxKind.EndRegionDirectiveTrivia:
                     eolCount++;
                     done = true;
                     break;
-                case SyntaxKind.SingleLineCommentTrivia:
-                    eolCount--;
-                    hasComment = true;
-                    break;
                 default:
                     done = true;
-                    return;
+                    break;
                 }
             }
 
@@ -147,7 +148,7 @@
                 return;
             }
 
-            if (!done && !hasComment)
+            if (!done)
             {
                 var prevToken = documentationHeader.Token.GetPreviousToken();
                 if (prevToken.IsKind(SyntaxKind.OpenBraceToken))

@@ -43,9 +43,11 @@
 
                 string usedEncoding = await GetEncodingNameForDocumentAsync(context.Document).ConfigureAwait(false);
 
-                context.RegisterCodeFix(CodeAction.Create(string.Format(MaintainabilityResources.SA1412CodeFix, usedEncoding),
-                    token => GetTransformedSolutionAsync(context.Document),
-                    equivalenceKey: await GetEquivalenceKeyForDocumentAsync(context.Document).ConfigureAwait(false)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        string.Format(MaintainabilityResources.SA1412CodeFix, usedEncoding),
+                        token => GetTransformedSolutionAsync(context.Document),
+                        equivalenceKey: await GetEquivalenceKeyForDocumentAsync(context.Document).ConfigureAwait(false)), diagnostic);
             }
         }
 
