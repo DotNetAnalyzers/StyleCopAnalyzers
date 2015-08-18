@@ -76,6 +76,7 @@
                     break;
                 }
             }
+
             return syntaxRoot;
         }
 
