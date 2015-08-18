@@ -15,7 +15,6 @@
         public async Task TestValidOrderingAsync()
         {
             var testCode = @"public static class TestClass1 { }
-
 public class TestClass2
 {
     public const int TestField1 = 1;
