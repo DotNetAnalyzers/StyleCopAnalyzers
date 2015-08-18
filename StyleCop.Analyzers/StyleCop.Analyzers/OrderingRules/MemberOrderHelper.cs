@@ -62,12 +62,11 @@
         /// <value>
         /// The priority for this member.
         /// </value>
-        public int Priority => 
-            (int)this.modifierFlags + 
+        public int Priority =>
+            (int)this.modifierFlags +
             (
                 /*the * 100 ensures the accesibility is more important than the modifier*/
-                (int)this.accessibilty * 100
-            );
+                (int)this.accessibilty * 100);
 
         /// <summary>
         /// The priority for this member only from accesibility.
