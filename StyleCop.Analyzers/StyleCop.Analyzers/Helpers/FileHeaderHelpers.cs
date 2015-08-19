@@ -79,7 +79,7 @@
                 var parsedFileHeaderXml = XElement.Parse(sb.ToString());
 
                 // a header without any XML tags is malformed.
-                if (parsedFileHeaderXml.Descendants().Count() == 0)
+                if (!parsedFileHeaderXml.Descendants().Any())
                 {
                     return FileHeader.MalformedFileHeader;
                 }

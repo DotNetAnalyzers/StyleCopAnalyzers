@@ -59,11 +59,11 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1503CodeFix, token => GetTransformedDocumentAsync(context.Document, syntaxRoot, node, token), equivalenceKey: nameof(SA1503CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1503CodeFix, token => GetTransformedDocumentAsync(context.Document, syntaxRoot, node), equivalenceKey: nameof(SA1503CodeFixProvider)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, StatementSyntax node, CancellationToken cancellationToken)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, StatementSyntax node)
         {
             var newSyntaxRoot = root.ReplaceNode(node, SyntaxFactory.Block(node));
             return Task.FromResult(document.WithSyntaxRoot(newSyntaxRoot));

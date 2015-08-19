@@ -11,9 +11,9 @@
     /// </summary>
     internal class FileHeader
     {
-        private XElement headerXml;
-        private int fileHeaderStart;
-        private int fileHeaderEnd;
+        private readonly XElement headerXml;
+        private readonly int fileHeaderStart;
+        private readonly int fileHeaderEnd;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileHeader"/> class.
