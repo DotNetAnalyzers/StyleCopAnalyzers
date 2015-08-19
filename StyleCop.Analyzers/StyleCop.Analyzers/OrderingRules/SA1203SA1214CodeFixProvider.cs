@@ -13,7 +13,7 @@
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// Implements code fixes for <see cref="SA1203ConstantsMustAppearBeforeFields"/>.
+    /// Implements code fixes for <see cref="SA1203ConstantsMustAppearBeforeFields"/> and <see cref="SA1214StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements" />.
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1203SA1214CodeFixProvider))]
     [Shared]
