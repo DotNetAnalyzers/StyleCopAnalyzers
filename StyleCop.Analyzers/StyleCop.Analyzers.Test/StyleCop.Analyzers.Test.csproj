@@ -49,6 +49,10 @@
     <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn),1573,1591</NoWarn>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\build\keys\TestingKey.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CodeAnalysis, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.CodeAnalysis.Common.1.0.0\lib\net45\Microsoft.CodeAnalysis.dll</HintPath>
@@ -324,6 +328,9 @@
     <Compile Include="Verifiers\DiagnosticVerifier.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\build\keys\TestingKey.snk">
+      <Link>TestingKey.snk</Link>
+    </None>
     <None Include="..\StyleCop.Analyzers.ruleset">
       <Link>StyleCop.Analyzers.ruleset</Link>
     </None>
