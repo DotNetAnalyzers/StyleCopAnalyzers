@@ -314,6 +314,12 @@
     <Compile Include="ReadabilityRules\SA1125UseShorthandForNullableTypes.cs" />
     <Compile Include="ReadabilityRules\SA1126PrefixCallsCorrectly.cs" />
     <Compile Include="ReadabilityRules\SA1102CodeFixProvider.cs" />
+    <Compile Include="Settings\SettingsFileCodeFixProvider.cs" />
+    <Compile Include="Settings\SettingsResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SettingsResources.resx</DependentUpon>
+    </Compile>
     <Compile Include="SpacingRules\OpenCloseSpacingCodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1000CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1000KeywordsMustBeSpacedCorrectly.cs" />
@@ -466,6 +472,10 @@
     <EmbeddedResource Include="ReadabilityRules\ReadabilityResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ReadabilityResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Settings\SettingsResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SettingsResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="SpacingRules\SpacingResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
