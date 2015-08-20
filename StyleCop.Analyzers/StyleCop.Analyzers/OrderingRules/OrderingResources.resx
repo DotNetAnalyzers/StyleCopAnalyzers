@@ -123,4 +123,7 @@
   <data name="SA1207CodeFix" xml:space="preserve">
     <value>Place keyword 'protected' before keyword 'internal'</value>
   </data>
+  <data name="SA1213CodeFix" xml:space="preserve">
+    <value>Fix accessor order</value>
+  </data>
 </root>

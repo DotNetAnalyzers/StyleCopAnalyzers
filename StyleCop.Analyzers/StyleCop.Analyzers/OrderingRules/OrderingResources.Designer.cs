@@ -78,5 +78,14 @@ namespace StyleCop.Analyzers.OrderingRules {
                 return ResourceManager.GetString("SA1207CodeFix", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fix accessor order.
+        /// </summary>
+        internal static string SA1213CodeFix {
+            get {
+                return ResourceManager.GetString("SA1213CodeFix", resourceCulture);
+            }
+        }
     }
 }

@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.OrderingRules;
     using TestHelper;
@@ -35,6 +36,28 @@ public class Foo
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(9, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixTestCode = @"
+using System;
+public class Foo
+{
+    private EventHandler nameChanged;
+
+    public event EventHandler NameChanged
+    {
+        add
+        {
+            this.nameChanged += value;
+        }
+        remove
+        {
+            this.nameChanged -= value;
+        }
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -55,6 +78,22 @@ public class Foo
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(9, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixTestCode = @"
+using System;
+public class Foo
+{
+    private EventHandler nameChanged;
+
+    public event EventHandler NameChanged
+    {
+        add { this.nameChanged += value; }
+        remove { this.nameChanged -= value; } 
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -68,14 +107,8 @@ public class Foo
 
     public event EventHandler NameChanged
     {
-        add
-        {
-            this.nameChanged += value;
-        }
-        remove
-        {
-            this.nameChanged -= value;
-        }
+        add { this.nameChanged += value; }
+        remove { this.nameChanged -= value; }
     }
 }";
 
@@ -103,6 +136,11 @@ public class Foo
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1213EventAccessorsMustFollowOrder();
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1213CodeFixProvider();
         }
     }
 }
