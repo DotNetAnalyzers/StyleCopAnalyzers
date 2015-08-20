@@ -284,7 +284,7 @@ public class Foo
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1203SA1214CodeFixProvider();
+            return new SA1203SA1214SA1215CodeFixProvider();
         }
     }
 }

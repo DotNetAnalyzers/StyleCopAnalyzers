@@ -13,14 +13,18 @@
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// Implements code fixes for <see cref="SA1203ConstantsMustAppearBeforeFields"/> and <see cref="SA1214StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements" />.
+    /// Implements code fixes for <see cref="SA1203ConstantsMustAppearBeforeFields"/>, <see cref="SA1214StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements" />
+    /// and <see cref="SA1215InstanceReadonlyElementsMustAppearBeforeInstanceNonReadonlyElements" />.
     /// </summary>
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1203SA1214CodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1203SA1214SA1215CodeFixProvider))]
     [Shared]
-    public class SA1203SA1214CodeFixProvider : CodeFixProvider
+    public class SA1203SA1214SA1215CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1203ConstantsMustAppearBeforeFields.DiagnosticId, SA1214StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements.DiagnosticId);
+            ImmutableArray.Create(
+                SA1203ConstantsMustAppearBeforeFields.DiagnosticId,
+                SA1214StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements.DiagnosticId,
+                SA1215InstanceReadonlyElementsMustAppearBeforeInstanceNonReadonlyElements.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
@@ -36,7 +40,7 @@
         {
             foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                context.RegisterCodeFix(CodeAction.Create(OrderingResources.SA1203CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token), equivalenceKey: nameof(SA1203SA1214CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(OrderingResources.SA1203CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token), equivalenceKey: nameof(SA1203SA1214SA1215CodeFixProvider)), diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;
