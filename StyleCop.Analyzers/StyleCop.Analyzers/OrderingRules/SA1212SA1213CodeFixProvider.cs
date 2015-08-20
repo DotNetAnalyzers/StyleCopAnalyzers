@@ -13,14 +13,14 @@
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// Implements code fixes for <see cref="SA1213EventAccessorsMustFollowOrder"/>.
+    /// Implements code fixes for <see cref="SA1212PropertyAccessorsMustFollowOrder"/> and <see cref="SA1213EventAccessorsMustFollowOrder"/>.
     /// </summary>
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1213CodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1212SA1213CodeFixProvider))]
     [Shared]
-    public class SA1213CodeFixProvider : CodeFixProvider
+    public class SA1212SA1213CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1213EventAccessorsMustFollowOrder.DiagnosticId);
+            ImmutableArray.Create(SA1212PropertyAccessorsMustFollowOrder.DiagnosticId, SA1213EventAccessorsMustFollowOrder.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
@@ -40,7 +40,7 @@
                     CodeAction.Create(
                         OrderingResources.SA1213CodeFix,
                         token => GetTransformedDocumentAsync(context.Document, diagnostic, token),
-                        nameof(SA1213CodeFixProvider)), diagnostic);
+                        nameof(SA1212SA1213CodeFixProvider)), diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;

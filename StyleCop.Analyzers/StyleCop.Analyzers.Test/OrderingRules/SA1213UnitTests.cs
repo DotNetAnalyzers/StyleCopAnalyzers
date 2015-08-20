@@ -140,7 +140,7 @@ public class Foo
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1213CodeFixProvider();
+            return new SA1212SA1213CodeFixProvider();
         }
     }
 }

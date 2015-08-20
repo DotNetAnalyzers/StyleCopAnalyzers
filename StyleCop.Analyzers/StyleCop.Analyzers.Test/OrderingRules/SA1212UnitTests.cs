@@ -1,4 +1,6 @@
-﻿namespace StyleCop.Analyzers.Test.OrderingRules
+﻿using Microsoft.CodeAnalysis.CodeFixes;
+
+namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Collections.Generic;
     using System.Threading;
@@ -35,6 +37,27 @@ public class Foo
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixTestCode = @"
+public class Foo
+{
+    private int i = 0;
+
+    public int Prop
+    {
+        get
+        {
+            return i;
+        }
+        set
+        {
+            i = value;
+        }
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -117,6 +140,19 @@ public class Foo
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixTestCode = @"
+public class Foo
+{
+    public int Prop
+    {
+        get;
+        set;
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -144,6 +180,27 @@ public class Foo
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixTestCode = @"
+public class Foo
+{
+    private int field;
+
+    public int this[int index]
+    {
+        get
+        {
+            return field;
+        }
+        set
+        {
+            field = value;
+        }
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -230,6 +287,11 @@ public class Foo
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1212PropertyAccessorsMustFollowOrder();
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1212SA1213CodeFixProvider();
         }
     }
 }

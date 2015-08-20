@@ -266,7 +266,7 @@
     <Compile Include="OrderingRules\SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace.cs" />
     <Compile Include="OrderingRules\SA1211UsingAliasDirectivesMustBeOrderedAlphabeticallyByAliasName.cs" />
     <Compile Include="OrderingRules\SA1212PropertyAccessorsMustFollowOrder.cs" />
-    <Compile Include="OrderingRules\SA1213CodeFixProvider.cs" />
+    <Compile Include="OrderingRules\SA1212SA1213CodeFixProvider.cs" />
     <Compile Include="OrderingRules\SA1213EventAccessorsMustFollowOrder.cs" />
     <Compile Include="OrderingRules\SA1214StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements.cs" />
     <Compile Include="OrderingRules\SA1215InstanceReadonlyElementsMustAppearBeforeInstanceNonReadonlyElements.cs" />
